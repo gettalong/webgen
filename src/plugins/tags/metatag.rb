@@ -4,13 +4,10 @@ require 'plugins/tags/tags'
 class MetaTag < UPS::Plugin
 
     NAME = "Meta tag"
-    SHORT_DESC = "Replaces user defined tags with their respective values from the node meta data"
+    SHORT_DESC = "Replaces all tags without tag plugin with their respective values from the node meta data"
 
     def init
-        tags = UPS::Registry['Configuration'].get_config_value( NAME, 'tags' ) || ['title', 'content']
-        tags.each do |tag|
-            UPS::Registry['Tags'].tags[tag] = self
-        end
+        UPS::Registry['Tags'].tags[:default] = self
     end
 
 	def process_tag( tag, content, node, templateNode )

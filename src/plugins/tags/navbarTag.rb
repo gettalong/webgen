@@ -7,6 +7,9 @@ class NavbarTag < UPS::Plugin
     SHORT_DESC = 'Shows the hierarchy of current page'
 
     def init
+        @separator = UPS::Registry['Configuration'].get_config_value( NAME, 'separator' ) || ' / '
+        @startTag = UPS::Registry['Configuration'].get_config_value( NAME, 'startTag' ) || ''
+        @endTag = UPS::Registry['Configuration'].get_config_value( NAME, 'endTag' ) || ''
         UPS::Registry['Tags'].tags['navbar'] = self
     end
 
@@ -21,7 +24,7 @@ class NavbarTag < UPS::Plugin
             node = node.parent while !node.nil? && node['virtual']
         end
 
-        out = out.reverse.join(' / ')
+        out = @startTag + out.reverse.join(@separator) + @endTag
         self.logger.debug out
         out
 	end

@@ -225,6 +225,7 @@
 
   - Content plugin: specifies the content of the page, uses <content>
   tag
+  >>> done
 
   - Menu plugin: specifies the menu, the plugin itself should only feed
   data to other plugins which then actually create the menu. Different
@@ -232,6 +233,7 @@
   <menu> tag; menu is built from tree. Controller knows hot to parse the
   tree and integrate extra entries. Plugins get following hooks:
   start/end menu, start/end submenu, entry
+  >>> mostly done
 
   - Sort plugin: specifies in which order the page files should be; uses
   meta info tag <order> to specify ordering; in configuration file a
@@ -244,11 +246,13 @@
 
   - Navbar plugin: creates a navigation bar that shows the current
   location within the tree; configureable (separator)
+  >>> done
 
   - language plugin: enables more than more language to present; default
   language in configuration file; uses <language> tag; languages are
   encoded in the file name; has resource list for mapping language code
   to language names; only visible if more than one language;
+  >>> mostly done (resource list missing)
 
   - external file binder plugin: includes an external file; external
   file has to be proper XHTML 1.1; useful, for example, for adding
@@ -274,7 +278,7 @@
 Design issues:
 
 * source directory structure
-  
+
   / -> the root directory, has the main file
   /resources/ -> the directory for the resources of the plugins
   /plugins/ -> the plugins

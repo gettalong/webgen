@@ -22,8 +22,14 @@ class Tags < UPS::Plugin
 		content.gsub!(/\{(\w+):\s+(\{.*?\}|.*?)\}/) do |match|
             tagValue = YAML::load( "- #{$2}" )[0]
 			self.logger.info { "Replacing tag #{match} in <#{node.recursive_value( 'dest' )}>" }
-			raise ThgException.new( :UNKNOWN_TAG, $1 ) unless @tags.has_key? $1
-			@tags[$1].process_tag( $1, tagValue, node, templateNode )
+            if @tags.has_key? $1
+                tagProcessor = @tags[$1]
+            elsif @tags.has_key? :default
+                tagProcessor = @tags[:default]
+            else
+                raise ThgException.new( :UNKNOWN_TAG, $1 )
+            end
+			tagProcessor.process_tag( $1, tagValue, node, templateNode )
 		end
 	end
 

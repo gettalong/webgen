@@ -1,3 +1,4 @@
+* command line parameter for listing all available configuration options with default values
 * make file plugins case-insensitiv (convert all uppercase letters to lowercase)
 * create new document which describes iterations and the steps which are taken in each iteration (high risk first)
 * document existing files (RDOC)
@@ -50,3 +51,4 @@ W add multiple language support
 W speed up menu creation by caching the created menu and only substituting the relative paths
 W if a page in one language is in the menu, all other languages for this page should also be in the menu (-> de yaml project page, no selection in menu)
 W link creation for nodes should be done only in one place (now in menu and navbar tags)
+W navbar should be configurable (start tag, separator, end tag)
