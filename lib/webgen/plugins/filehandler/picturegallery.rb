@@ -54,6 +54,7 @@ module FileHandlers
       images = Dir[File.join( path, get_param( 'files' ))].collect {|i| i.sub( /#{path + File::SEPARATOR}/, '' ) }
       self.logger.info { "Creating gallery for file <#{file}> with #{images.length} pictures" }
 
+      create_layouter
       create_gallery( images, parent )
 
       nil
@@ -72,8 +73,18 @@ module FileHandlers
       ( @filedata.has_key?( name ) ? @filedata[name] : super )
     end
 
+    def create_layouter
+      self.logger.info { "Creating layouter..." }
+      @layouter = PictureGalleryLayouter::DefaultLayouter.layouter( get_param( 'layout' ) )
+      if @layouter.nil?
+        self.logger.error { "Layouter '#{get_param( 'layout' )}' does not exist, using default layouter" }
+        @layouter = PictureGalleryLayouter::DefaultLayouter
+      end
+      @layouter = @layouter.new
+    end
+
     def call_layouter( type, data )
-      content = self.send( type.to_s + "_page_" + get_param( 'layout' ), data )
+      content = @layouter.send( type.to_s, data )
       "#{data.to_yaml}\n---\n#{content}"
     end
 
@@ -107,6 +118,7 @@ module FileHandlers
       main['inMenu'] = get_param( 'mainPageInMenu' )
       main['template'] = get_param( 'mainPageTemplate' )
       main['srcName'] = gallery_file_name( main['title'] )
+      main['blocks'] = [{'name'=>'content', 'format'=>'html'}]
       main.update( @filedata['mainPage'] || {} )
       main
     end
@@ -117,6 +129,7 @@ module FileHandlers
       0.step( images.length - 1, picsPerPage ) do |i|
         data = Hash.new
 
+        data['blocks'] = [{'name'=>'content', 'format'=>'html'}]
         data['template'] = get_param( 'galleryPageTemplate' )
         data['inMenu'] = get_param( 'galleryPageInMenu' )
         data['number'] = i/picsPerPage + 1
@@ -149,10 +162,11 @@ module FileHandlers
       images.each do |image|
         imageData = @filedata[image] || {}
 
+        imageData['blocks'] ||= [{'name'=>'content', 'format'=>'html'}]
         imageData['title'] ||= "Picture #{File.basename( image )}"
         imageData['description'] ||= ''
-        imageData['inMenu'] = get_param( 'picturePageInMenu' )
-        imageData['template'] = get_param( 'picturePageTemplate' )
+        imageData['inMenu'] ||= get_param( 'picturePageInMenu' )
+        imageData['template'] ||= get_param( 'picturePageTemplate' )
         imageData['imageFilename'] = image
         imageData['srcName'] = File.basename( image ).tr( ' .', '_' ) + '.html'
 
@@ -161,23 +175,50 @@ module FileHandlers
       imageList
     end
 
-    def main_page_default( data )
+  end
+
+end
+
+
+module PictureGalleryLayouter
+
+  class DefaultLayouter < Webgen::Plugin
+
+    # Holds all layouters
+    @@layouter = {}
+
+    # Associates a specific layout name with a layouter.
+    def self.layout_name( name )
+      @@layouter[name] = self
+    end
+
+    layout_name 'default'
+
+    # Returns the layouter called +name+.
+    def self.layouter( name )
+      @@layouter[name]
+    end
+
+    # Should be overwritten by subclasses!
+    def main( data )
       "
-#{data['galleries'].collect {|g| "<img src='#{g['images'][0]}' width='100' height='100' alt='#{g['title']}' /> \"#{g['title']}\":#{g['link']}"}.join( "\n\n" )}
+#{data['galleries'].collect {|g| "<img src='#{g['images'][0]}' width='100' height='100' alt='#{g['title']}' /><a href=\"#{g['link']}\">#{g['title']}</a>"}.join( "\n\n" )}
 "
     end
 
-    def gallery_page_default( data )
+    # Should be overwritten by subclasses!
+    def gallery( data )
       "
 <div class=\"webgen-gallery\">
 
-#{data['imageList'].collect {|i| "<img src='#{i['imageFilename']}' width='100' height='100' alt='#{i['title']}'/> \"#{i['title']}\":#{i['srcName']}" }.join( "\n\n" )}
+#{data['imageList'].collect {|i| "<img src='#{i['imageFilename']}' width='100' height='100' alt='#{i['title']}'/><a href=\"#{i['srcName']}\">#{i['title']}</a>" }.join( "\n\n" )}
 
 </div>
 "
     end
 
-    def picture_page_default( data )
+    # Should be overwritten by subclasses!
+    def picture( data )
       "
 <div class=\"webgen-picture\">
 

@@ -150,6 +150,10 @@ module FileHandlers
         end
         blocks.each {|b| b.gsub!( /^(\\+)(---\s*)$/ ) {|m| "\\" * ($1.length / 2) + $2 } }
         (options['blocks'] ||= [{'name'=>'content', 'format'=>get_param( 'defaultContentFormat' )}]).each do |blockdata|
+          if !blockdata.kind_of?( Hash ) || !blockdata['name'] || !blockdata['format']
+            self.logger.error { "Block meta information in <#{srcName}> invalid (#{blockdata.inspect})" }
+            next
+          end
           self.logger.debug { "Block '#{blockdata['name']}' formatted using '#{blockdata['format']}'" }
           options[blockdata['name']] = @formats[blockdata['format']].format_content( blocks.shift || '' )
         end
