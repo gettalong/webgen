@@ -54,17 +54,22 @@ module Tags
     # tree node the content of which is used. The +refNode+ parameter specifies relative to which
     # all references should be resolved.
     def substitute_tags( content, node, refNode )
-      content.to_s.gsub!(/\{(\w+):\s+(\{.*?\}|.*?)\}/) do |match|
-        tagValue = YAML::load( "- #{$2}" )[0]
-        self.logger.info { "Replacing tag #{match} in <#{node.recursive_value( 'dest' )}>" }
-        if @tags.has_key? $1
-          tagProcessor = @tags[$1]
-        elsif @tags.has_key? :default
-          tagProcessor = @tags[:default]
+      content.to_s.gsub!(/(\\*)(\{(\w+):\s+(\{.*?\}|.*?)\})/) do |match|
+        nrBackslash = $1.length / 2
+        if $1.length % 2 == 1
+          "\\"*nrBackslash + $2
         else
-          raise Webgen::WebgenError.new( :UNKNOWN_TAG, $1 )
+          tagValue = YAML::load( "- #{$4}" )[0]
+          self.logger.info { "Replacing tag #{match} in <#{node.recursive_value( 'dest' )}>" }
+          if @tags.has_key? $3
+            tagProcessor = @tags[$3]
+          elsif @tags.has_key? :default
+            tagProcessor = @tags[:default]
+          else
+            raise Webgen::WebgenError.new( :UNKNOWN_TAG, $3 )
+          end
+          "\\"*nrBackslash + substitute_tags( tagProcessor.process_tag( $3, tagValue, node, refNode ), node, node )
         end
-        substitute_tags( tagProcessor.process_tag( $1, tagValue, node, refNode ), node, node )
       end
       content
     end

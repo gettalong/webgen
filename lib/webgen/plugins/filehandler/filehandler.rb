@@ -25,7 +25,9 @@ require 'util/listener'
 
 module FileHandlers
 
-  # Super plugin for handling files.
+  # Super plugin for handling files. File handler plugins can register themselves by adding a new
+  # key:value pair to +extensions+. The key has to be the extension in lowercase and the value is
+  # the plugin object itself.
   class FileHandler < UPS::Plugin
 
     include Listener
@@ -118,7 +120,7 @@ module FileHandlers
 
 
     def handle_file( path, parent )
-      extension = path[/\.[^.]*$/][1..-1]
+      extension = path[/\.[^.]*$/][1..-1].downcase
 
       if @extensions.has_key? extension
         node = @extensions[extension].create_node( path, parent )

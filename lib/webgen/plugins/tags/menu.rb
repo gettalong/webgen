@@ -97,9 +97,11 @@ module Tags
       if !defined? @menuTree
         @menuTree = create_menu_tree( Node.root( node ), nil )
         #TODO only call DebugTreePrinter
-        UPS::Registry['Tree Walker'].execute @menuTree unless @menuTree.nil?
-        @menuTree.sort
-        UPS::Registry['Tree Walker'].execute @menuTree unless @menuTree.nil?
+        unless @menuTree.nil?
+          UPS::Registry['Tree Walker'].execute @menuTree
+          @menuTree.sort
+          UPS::Registry['Tree Walker'].execute @menuTree
+        end
       end
       if content.nil? || !content.has_key?( 'level' )
         raise Webgen::WebgenError.new( :TAG_PARAMETER_INVALID, tag, refNode.recursive_value( 'src' ), 'level' )
@@ -145,7 +147,7 @@ module Tags
       style = " class=\"#{styles.join(' ')}\"" if styles.length > 0
       link = langNode['processor'].get_html_link( langNode, srcNode, ( isDir ? langNode['directoryName'] : langNode['title'] ) )
 
-      if styles.include? 'submenu'
+      if styles.include? 'webgen-submenu'
         before = "<#{@itemTag}#{style}>#{link}"
         after = "</#{@itemTag}>"
       else

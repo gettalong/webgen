@@ -143,9 +143,37 @@ module Webgen
 
     def runListPlugins
       print "List of loaded plugins:\n"
-      UPS::Registry.sort.each do |entry|
-        print "  * #{entry[0]}:".ljust(30) +"#{entry[1].class.const_get :SHORT_DESC}\n"
+
+      tagPlugins = []
+      fileHandlerPlugins = []
+      treeWalkers = []
+      others = []
+
+      UPS::Registry.each do |name, plugin|
+        if plugin.class.name =~ /^Tags::/
+          tagPlugins.push plugin
+        elsif plugin.class.name =~ /^FileHandlers::/
+          fileHandlerPlugins.push plugin
+        elsif plugin.class.name =~ /^TreeWalkers::/
+          treeWalkers.push plugin
+        else
+          others.push plugin
+        end
       end
+
+      showProc = proc do |caption, array|
+        print "\n  #{caption}:\n";
+        array.sort do |a, b|
+          a.class.const_get( :NAME ) <=>  b.class.const_get( :NAME )
+        end.each do |plugin|
+          print "    - #{plugin.class.const_get :NAME}:".ljust(30) +"#{plugin.class.const_get :SHORT_DESC}\n"
+        end
+      end
+
+      showProc.call( 'File handler plugins', fileHandlerPlugins )
+      showProc.call( 'Tag plugins', tagPlugins )
+      showProc.call( 'Tree walker plugins', treeWalkers )
+      showProc.call( 'Other plugins', others )
     end
 
 
@@ -153,7 +181,7 @@ module Webgen
       print "List of configuration parameters:\n"
       params = UPS::Registry['Configuration'].configParams
       params.sort.each do |entry|
-        print "  * #{entry[0]}\n"
+        print "  - #{entry[0]}\n"
         entry[1].each do |paramValue|
           print "      #{paramValue[0]}:".ljust(30) +"#{paramValue[1].inspect} | #{paramValue[2].inspect}\n"
         end

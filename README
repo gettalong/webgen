@@ -131,8 +131,7 @@ complete list.
 == Example
 
 There is a demo website in the +testsite+ directory. Open a shell and change into it, then execute
-+webgen+ to generate the output files. After that have a look at the resulting pages. Each page
-describes which feature of webgen has been used in the source file.
++webgen+ to generate the output files. After that have a look at the resulting pages.
 
 = Contact
 

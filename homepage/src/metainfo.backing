@@ -1,0 +1,51 @@
+index.html:
+  en:
+    title: Home
+    inMenu: true
+    directoryName: Webgen
+
+
+tags/index.html:
+  en:
+    title: Tags
+    directoryName: Tags
+
+tags/lang.html:
+  en:
+    title: Language Tag
+    inMenu: true
+
+tags/multilang.html:
+  en:
+    title: Multi language page
+  de:
+    title: Seite in verschiedenen Sprachen
+  fr:
+    title: Francais
+
+tags/navbar.html:
+  en:
+    title: Navigation Bar Tag
+    inMenu: true
+
+tags/meta.html:
+  en:
+    title: Meta Tag
+    inMenu: true
+
+tags/menu.html:
+  en:
+    title: Menu Tag
+    inMenu: true
+  de:
+    title: Menütag
+
+tags/relocatable.html:
+  en:
+    title: Relocatable Tag
+    inMenu: true
+
+filehandler/index.html:
+  en:
+    title: File Handlers
+    directoryName: File Handlers
