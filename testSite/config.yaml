@@ -1,0 +1,11 @@
+Configuration:
+    srcDirectory: src
+    outDirectory: output
+    verbosityLevel: 0
+
+XML Page Plugin:
+    defaultTemplate: default.template
+    defaultDirectoryIndex: index.page
+
+Copy Files:
+    types: css,jpg,png,gif

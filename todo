@@ -1,7 +1,5 @@
 * meta tag replacer - replaces tag with contents of equally named node.metainfo entry
 * replace current loggin mechanism with Log4r
-* redo configuration file as yaml file
-* define format of config.yaml
 * create new document which describes iterations and the steps which are taken in each iteration (high risk first)
 * document existing files (RDOC)
 * implement <template> meta-info tag (see template based)
@@ -34,3 +32,5 @@ W refactor current classes
 W implement tag <relocatable> for references that should be relocatable
 W FileCopyPlugin: check if file has changed and only then copy
 W think about how to print out warnings uniformly --> log4r
+W define format of config.yaml
+W redo configuration file as yaml file

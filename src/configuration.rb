@@ -1,5 +1,5 @@
 require 'ups/ups'
-require 'rexml/document'
+require 'yaml'
 require 'singleton'
 require 'thgexception'
 require 'log4r'
@@ -30,34 +30,26 @@ class ThgConfigurationPlugin < UPS::Plugin
 
 	def initialize
 		@homeDir = File.dirname( $0 )
-		@configFile = 'config.xml'
+		@configFile = 'config.yaml'
 		@pluginData = Hash.new
 	end
 
 	def parse_config_file
 		raise ThgException.new( :CFG_FILE_NOT_FOUND, @configFile ) unless File.exists? @configFile
 
-		root = REXML::Document.new( File.new( @configFile ) ).root
+		@pluginData = YAML::load( File.new( @configFile ) )
 
-		# initialize attributes
-		read_config_value( root, :@srcDirectory, '/configuration/main/srcDir' )
-		read_config_value( root, :@outDirectory, '/configuration/main/outDir' )
-		read_config_value( root, :@verbosityLevel, '/configuration/main/verbosityLevel', Integer )
-		# fill plugin data structure
-		root.each_element( '/configuration/plugins/*' ) { |element|
-			@pluginData[element.name] = element
-		}
+        @srcDirectory ||= @pluginData['Configuration']['srcDirectory']
+        @outDirectory ||= @pluginData['Configuration']['outDirectory']
+        @verbosityLevel ||= @pluginData['Configuration']['verbosityLevel']
+
+        @pluginData.delete 'Configuration'
 	end
 
-	#######
-	private
-	#######
-
-	def read_config_value(root, symbol, path, type = String)
-		eval(symbol.id2name << " ||= root.text(path)")
-		raise ThgException.new( :CFG_ENTRY_NOT_FOUND, path, @configFile ) if eval(symbol.id2name << ".nil?")
-		eval(symbol.id2name << " = " << type.to_s << "(" << symbol.id2name << ")")
-	end
+    def get_config_value( plugin, key )
+        return unless @pluginData.has_key? plugin
+        @pluginData[plugin][key]
+    end
 
 end
 

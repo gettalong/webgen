@@ -1,3 +1,4 @@
+require 'rexml/document'
 require 'ups/ups'
 require 'thgexception'
 require 'node'
@@ -16,18 +17,16 @@ class XMLPagePlugin < UPS::Plugin
 		"template file in root directory not found",
 		"create an %0 in the root directory"
 
-    attr_reader :templateFile
-    attr_reader :directoryIndexFile
+    attr_reader :defaultTemplate
+    attr_reader :defaultDirectoryIndex
 
     EXTENSION = 'page'
 
 
     def initialize
-        #TODO config = Configuration.instance.pluginData['xmlPagePlugin']
-        #TODO raise ThgException.new(ThgException::CFG_ENTRY_NOT_FOUND, 'xmlPagePlugin') if config.nil?
 
-        @defaultTemplate =  'default.template' #TODO config.text('templateFile')
-        @defaultDirectoryIndex = 'index.page'  #TODO config.text('directoryIndexFile')
+        @defaultTemplate =  UPS::Registry['Configuration'].get_config_value( NAME, 'defaultTemplate' ) || 'default.template'
+        @defaultDirectoryIndex = UPS::Registry['Configuration'].get_config_value( NAME, 'defaultDirectoryIndex' ) || 'index.page'
     end
 
 
