@@ -100,8 +100,8 @@ class MenuTag < UPS::Plugin
 
     def put_node_in_menu?( node )
         inMenu = node['inMenu']
-        inMenu ||=  node.parent != nil && node.parent['pagePlugin:basename'] != nil &&
-                    node['processor'].get_lang_node( node )['inMenu']
+        inMenu ||=  node.parent && node.parent['pagePlugin:basename'] &&
+                    node.parent.find do |child| child['inMenu'] end
         inMenu &&= !node['virtual']
         inMenu
     end

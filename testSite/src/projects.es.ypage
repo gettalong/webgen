@@ -1,0 +1,7 @@
+metainfo:
+    title: YAML Projektas Pagas
+    inMenu: true
+
+content:
+    <h1>Projektas Pagas</h1>
+    Soy il paga.
