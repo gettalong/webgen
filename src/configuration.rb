@@ -72,12 +72,13 @@ class ThgConfigurationPlugin < UPS::Plugin
 	attr_accessor :configFile
 
 	attr_reader :pluginData
-
+    attr_reader :configParams
 
     def initialize
         @homeDir = File.dirname( $0 )
         @configFile = 'config.yaml'
         @pluginData = Hash.new
+        @configParams = Hash.new
     end
 
 
@@ -86,17 +87,20 @@ class ThgConfigurationPlugin < UPS::Plugin
             @pluginData = YAML::load( File.new( @configFile ) )
         end
 
-        @srcDirectory ||= get_config_value( 'Configuration', 'srcDirectory' ) || 'src'
-        @outDirectory ||= get_config_value( 'Configuration', 'outDirectory' ) || 'output'
-        @verbosityLevel ||= get_config_value( 'Configuration', 'verbosityLevel' ) || 3
-        @lang ||= get_config_value( 'Configuration', 'lang') || 'en'
+        @srcDirectory ||= get_config_value( 'Configuration', 'srcDirectory', 'src' )
+        @outDirectory ||= get_config_value( 'Configuration', 'outDirectory', 'output' )
+        @verbosityLevel ||= get_config_value( 'Configuration', 'verbosityLevel', 3 )
+        @lang ||= get_config_value( 'Configuration', 'lang', 'en' )
         Log4r::Outputter['stdout'].level = @verbosityLevel
 	end
 
 
-    def get_config_value( plugin, key )
-        return unless @pluginData.has_key? plugin
-        @pluginData[plugin][key]
+    def get_config_value( pluginName, key, defaultValue )
+        value = @pluginData[pluginName][key] if @pluginData.has_key? pluginName
+        value ||= defaultValue
+        @configParams[pluginName] ||= Array.new
+        @configParams[pluginName].push [key, value, defaultValue]
+        value
     end
 
 end

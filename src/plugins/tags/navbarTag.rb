@@ -7,9 +7,9 @@ class NavbarTag < UPS::Plugin
     SHORT_DESC = 'Shows the hierarchy of current page'
 
     def init
-        @separator = UPS::Registry['Configuration'].get_config_value( NAME, 'separator' ) || ' / '
-        @startTag = UPS::Registry['Configuration'].get_config_value( NAME, 'startTag' ) || ''
-        @endTag = UPS::Registry['Configuration'].get_config_value( NAME, 'endTag' ) || ''
+        @separator = UPS::Registry['Configuration'].get_config_value( NAME, 'separator', ' / ' )
+        @startTag = UPS::Registry['Configuration'].get_config_value( NAME, 'startTag', '' )
+        @endTag = UPS::Registry['Configuration'].get_config_value( NAME, 'endTag', '' )
         UPS::Registry['Tags'].tags['navbar'] = self
     end
 

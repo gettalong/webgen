@@ -28,7 +28,7 @@ class FileHandler < UPS::Plugin
 
 
     def init
-        @ignoredFiles = UPS::Registry['Configuration'].get_config_value( NAME, 'ignoredFiles' ) || ['.svn', 'CVS']
+        @ignoredFiles = UPS::Registry['Configuration'].get_config_value( NAME, 'ignoredFiles', ['.svn', 'CVS'] )
     end
 
 

@@ -16,7 +16,12 @@ end
 
 def runListPlugins
     print "List of loaded plugins:\n"
-	UPS::Registry[ThgListPlugin::NAME].list_plugins
+	UPS::Registry[ThgListPlugin::NAME].list
+end
+
+def runListConfiguration
+    print "List of configuration parameters:\n"
+    UPS::Registry[ThgListConfiguration::NAME].list
 end
 
 # everything is catched
@@ -41,7 +46,8 @@ begin
 		opts.on( "--config-file FILE", "-c", String, "The configuration file which should be used" ) { |config.configFile| }
 		opts.on( "--source-dir DIR", "-s", String, "The  directory from where the files are read" ) { |config.srcDirectory| }
 		opts.on( "--output-dir DIR", "-o", String, "The directory where the output should go" ) { |config.outDirectory| }
-		opts.on( "--list-plugins", "-l", "List all the plugins and information about them" ) { require 'listplugins'; main = method(:runListPlugins) }
+		opts.on( "--list-plugins", "-p", "List all the plugins and information about them" ) { require 'listplugins'; main = method( :runListPlugins ) }
+        opts.on( "--list-configuration", "-e", "List all plugin configuration parameters" ) { require 'listplugins'; main = method( :runListConfiguration ) }
 		opts.on( "--verbosity LEVEL", "-v", Integer, "The verbosity level" ) { |config.verbosityLevel| }
 
 		begin

@@ -24,7 +24,7 @@ class DirHandlerPlugin < UPS::Plugin
     attr_reader :indexFile
 
     def init
-        @indexFile = UPS::Registry['Configuration'].get_config_value( NAME, 'indexFile' ) || 'index.html'
+        @indexFile = UPS::Registry['Configuration'].get_config_value( NAME, 'indexFile', 'index.html' )
         UPS::Registry['File Handler'].extensions[:dir] = self
         UPS::Registry['File Handler'].add_msg_listener( :AFTER_DIR_READ, method( :process_dir_index ) )
     end

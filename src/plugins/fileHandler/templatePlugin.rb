@@ -22,7 +22,7 @@ class TemplatePlugin < UPS::Plugin
     attr_reader :defaultTemplate
 
 	def init
-        @defaultTemplate = UPS::Registry['Configuration'].get_config_value( NAME, 'defaultTemplate' ) || 'default.template'
+        @defaultTemplate = UPS::Registry['Configuration'].get_config_value( NAME, 'defaultTemplate', 'default.template' )
 		UPS::Registry['File Handler'].extensions[EXTENSION] = self
         UPS::Registry['File Handler'].add_msg_listener( :AFTER_DIR_READ, method( :add_template_to_node ) )
 	end
