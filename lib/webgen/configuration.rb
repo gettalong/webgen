@@ -83,7 +83,7 @@ module Webgen
     # +default+:: the default value of the parameter
     # +description+:: a small description of the parameter
     def self.add_param( name, default, description )
-      self.logger.debug { "Adding parameter #{name} for plugin class #{self.name}" }
+      self.logger.debug { "Adding parameter '#{name}' for plugin class '#{self.name}'" }
       data = OpenStruct.new( :name => name, :value => default, :default => default, :description => description )
       (@@config[self.name].params ||= {})[name] = data
     end
@@ -96,7 +96,7 @@ module Webgen
           item = @@config[k.name]
           if !item.nil? && !item.params.nil? && item.params.has_key?( name )
             item.params[name].value = value
-            logger.debug { "Setting parameter #{name} for plugin #{plugin} to #{value.inspect}" }
+            logger.debug { "Setting parameter '#{name}' for plugin '#{plugin}' to #{value.inspect}" }
             throw :found, true
           end
         end
@@ -154,12 +154,16 @@ module Webgen
 
     # Does all the initialisation stuff
     def init_all( data )
+      data.each {|k,v| Plugin['Configuration'][k] = v}
+      logger.level = get_param( 'verbosityLevel' )
+
       load_plugins( File.dirname( __FILE__) + '/plugins', File.dirname( __FILE__).sub(/webgen$/, '') )
       parse_config_file
+
       data.each {|k,v| Plugin['Configuration'][k] = v}
       logger.level = get_param( 'verbosityLevel' )
       init_plugins
-      Plugin['Tag Loader'].parse_config_file
+      Plugin['ExtensionLoader'].parse_config_file
     end
 
     # Parse config file and load the configuration values.
@@ -177,6 +181,7 @@ module Webgen
     def load_plugins( path, trimpath )
       Find.find( path ) do |file|
         Find.prune unless File.directory?( file ) || (/.rb$/ =~ file)
+        self.logger.debug { "Loading plugin file <#{file}>..." }
         require file.gsub(/^#{trimpath}/, '') if File.file?( file )
       end
     end

@@ -70,7 +70,7 @@ module Webgen
         opts.separator ""
         opts.separator "Configuration options:"
 
-        opts.on( "--config-file FILE", "-C", String, "The configuration file which should be used" ) { |config['configFile']| }
+        opts.on( "--config-file FILE", "-C", String, "The configuration file which should be used" ) { |data['configfile']| }
         opts.on( "--source-dir DIR", "-S", String, "The directory from where the files are read" ) { |data['srcDirectory']| }
         opts.on( "--output-dir DIR", "-O", String, "The directory where the output should go" ) { |data['outDirectory']| }
         opts.on( "--verbosity LEVEL", "-V", Integer, "The verbosity level" ) { |data['verbosityLevel']| }

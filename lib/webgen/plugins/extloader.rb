@@ -21,27 +21,25 @@
 #
 
 require 'webgen/plugins/tags/tags'
+require 'webgen/plugins/filehandler/filehandler'
 
 module Webgen
 
-  # Loads tag definitions from a file for project specific tags.
-  class TagLoader < Plugin
+  # Loads website specific extensions.
+  class ExtensionLoader < Plugin
 
-    plugin "Tag Loader"
-    summary "Loads tags from a configuration file"
-    depends_on 'Tags'
-    add_param 'tagconfig', 'tags.config', 'Configuration file for additional tags'
-
-    def initialize
-      @tags = {}
-    end
+    plugin "ExtensionLoader"
+    summary "Loads extensions from a configuration file"
+    depends_on 'Tags', 'FileHandler'
+    add_param 'extconfig', 'extension.config', 'Configuration file for extensions'
 
     def parse_config_file
-      if File.exists?( get_param( 'tagconfig' ) )
+      file = get_param( 'extconfig' )
+      if File.exists?( file )
         begin
-          instance_eval( File.read( get_param( 'tagconfig' ) ), get_param( 'tagconfig' ) )
+          instance_eval( File.read( file ), file )
         rescue Exception => e
-          self.logger.error { "Error parsing file <#{get_param( 'tagconfig' )}>: #{e.message}" }
+          self.logger.error { "Error parsing file <#{file}>: #{e.message}" }
         end
       end
     end
@@ -52,6 +50,10 @@ module Webgen
 
     def register_tag( name, processor )
       Plugin['Tags'].tags[name] = processor
+    end
+
+    def register_filehandler( name, processor )
+      Plugin['FileHandler'].extensions[name] = processor
     end
 
   end
@@ -75,7 +77,12 @@ module Tags
     end
 
     def process_tag( tag, node, refNode )
-      @block.call( tag, node, refNode )
+      begin
+        @block.call( tag, node, refNode )
+      rescue Exception => e
+        self.logger.error { "Error executing extension code: #{e.message}" }
+        return ''
+      end
     end
 
   end

@@ -2,15 +2,11 @@ HIGH PRIORITY TODO: test everything (automatically) and try to refactor!!!
 
 ---- CURRENT ----
 
-* document in file handler that :dir extension is used for directory handler
 * options for PageHandler: default file format if none given
-* add optional extension method to Plugin class
 * allow a template to use another template (templates as page description files?) (template2 uses template1)
-* create thumbnails of pictures on the fly with rmagick
 * ev. create a GalleryNode and put gallery/pictures pages beneath it???
 * think about filename conflicts for picture pages
 * ordering of picture/gallery files for menu
-* multi-lingual picture/gallery files
 * create webgen 0.2.0 to 0.3.0 converter
 * security concerns (setting different $SAFE level???)
 * register with Freshmeat.net
@@ -20,13 +16,15 @@ HIGH PRIORITY TODO: test everything (automatically) and try to refactor!!!
 
 ---- DOCU ----
 
-* motto: Don't stop processing the web site unless it's armageddon!
+* state that if a dependency is not found (e.g. redcloth) the plugin is disabled and a warning issued
 * DEV: self.logger.warn/error/info/debug can be used for messages
 * add example section for each plugin
 
 ---- FUTURE ----
 
 * tag 'resume', uses xmlresume2x to provide HTML version of xml resume
+* multi-lingual picture/gallery files
+* create thumbnails of pictures on the fly with rmagick
 
 ---- DONE ----
 
@@ -119,3 +117,7 @@ W do not allow two or more page files in the same language, print warn
 * add facility to check output files on conformity to a HTML standard
 * tag 'wikilink'
 * file handler for 'picture gallery' files
+* add optional extension method to Plugin class
+* rename tag loader -> extension loader
+* document extension loader and its config file
+* document in file handler that :dir extension is used for directory handler

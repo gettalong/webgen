@@ -20,29 +20,35 @@
 #++
 #
 
-require 'bluecloth'
-require 'webgen/plugins/filehandler/page'
 
-module ContentHandlers
+begin
+  require 'bluecloth'
+  require 'webgen/plugins/filehandler/page'
 
-  # Handles text formatted in Markdown format using BlueCloth.
-  class MarkdownHandler < ContentHandler
+  module ContentHandlers
 
-    plugin "MarkdownHandler"
-    summary "Handles content formatted in Markdown format using BlueCloth"
-    depends_on "PageHandler"
+    # Handles text formatted in Markdown format using BlueCloth.
+    class MarkdownHandler < ContentHandler
 
-    def initialize
-      register_format( 'markdown' )
-    end
+      plugin "MarkdownHandler"
+      summary "Handles content formatted in Markdown format using BlueCloth"
+      depends_on "PageHandler"
 
-    def format_content( txt )
-      BlueCloth.new( txt ).to_html
-    rescue
-      self.logger.error { "Error converting Markdown text to HTML" }
-      ''
+      def initialize
+        register_format( 'markdown' )
+      end
+
+      def format_content( txt )
+        BlueCloth.new( txt ).to_html
+      rescue
+        self.logger.error { "Error converting Markdown text to HTML" }
+        ''
+      end
+
     end
 
   end
 
+rescue LoadError => e
+  self.logger.warn { "Markdown not available as content format as BlueCloth could not be loaded: #{e.message}" }
 end
