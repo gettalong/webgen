@@ -61,12 +61,12 @@ module Tags
       # Retrieves the order value for the specific node.
       def get_order_value( node )
         # be optimistic and try metainfo field first
-        node = node['node'] if node.kind_of? MenuNode
+        node = node['node'] if node.kind_of?( MenuNode )
         value = node['menuOrder'].to_s.to_i unless node['menuOrder'].nil?
 
         # find the first menuOrder entry in the page files
-        node = node['indexFile'] if node.kind_of? FileHandlers::DirHandler::DirNode
-        node = node.find do |child| child['menuOrder'].to_s.to_i != 0 end if node.kind_of? FileHandlers::PagePlugin::PageNode
+        node = node['indexFile'] if node.kind_of?( FileHandlers::DirHandler::DirNode )
+        node = node.find do |child| child['menuOrder'].to_s.to_i != 0 end if node.kind_of?( FileHandlers::PagePlugin::PageNode )
         value ||= node['menuOrder'].to_s.to_i unless node.nil?
 
         # fallback value
@@ -80,6 +80,7 @@ module Tags
 
     plugin 'Menu Tag'
     summary 'Builds up a menu'
+    depends_on 'Tags'
 
     add_param 'submenuTag', 'ul', 'The tag used for making sub menus.'
     add_param 'itemTag', 'li', 'The tag used for menu items.'
@@ -93,15 +94,17 @@ module Tags
     'True if only the current subtree should be shown in the menu. If set to false, ' \
     'each subtree will be shown.'
 
-    TAG_NAME = 'menu'
+    def initialize
+      register_tag( 'menu' )
+    end
 
     def process_tag( tag, node, refNode )
-      unless defined? @menuTree
+      unless defined?( @menuTree )
         @menuTree = create_menu_tree( Node.root( node ), nil )
         unless @menuTree.nil?
-          Plugin['Tree Walker'].execute( @menuTree, Plugin['Debug Tree Printer'] )
+          Webgen::Plugin['TreeWalker'].execute( @menuTree, Webgen::Plugin['DebugTreePrinter'] )
           @menuTree.sort
-          Plugin['Tree Walker'].execute( @menuTree, Plugin['Debug Tree Printer'] )
+          Webgen::Plugin['TreeWalker'].execute( @menuTree, Webgen::Plugin['DebugTreePrinter'] )
         end
       end
       build_menu( node, @menuTree, 1 )
@@ -115,18 +118,18 @@ module Tags
 
     def build_menu( srcNode, node, level )
       if node.nil? \
-        || level > get_config_param( 'subtreeLevel' ) \
-        || ( level > get_config_param( 'level' ) \
+        || level > get_param( 'subtreeLevel' ) \
+        || ( level > get_param( 'level' ) \
              && ( node['node'].level > srcNode.level \
-                  || ( get_config_param( 'showCurrentSubtreeOnly' ) && !node['node'].in_subtree?( srcNode ) )
+                  || ( get_param( 'showCurrentSubtreeOnly' ) && !node['node'].in_subtree?( srcNode ) )
                   )
              )
         return ''
       end
 
-      out = "<#{get_config_param( 'submenuTag' )}>"
+      out = "<#{get_param( 'submenuTag' )}>"
       node.each do |child|
-        if child.kind_of? MenuNode
+        if child.kind_of?( MenuNode )
           submenu = child['node'].kind_of?( FileHandlers::DirHandler::DirNode ) ? build_menu( srcNode, child, level + 1 ) : ''
           before, after = menu_entry( srcNode, child['node'] )
         else
@@ -138,7 +141,7 @@ module Tags
         out << submenu
         out << after
       end
-      out << "</#{get_config_param( 'submenuTag' )}>"
+      out << "</#{get_param( 'submenuTag' )}>"
 
       return out
     end
@@ -146,17 +149,17 @@ module Tags
 
     def menu_entry( srcNode, node )
       langNode = node['processor'].get_lang_node( node, srcNode['lang'] )
-      isDir = node.kind_of? FileHandlers::DirHandler::DirNode
+      isDir = node.kind_of?( FileHandlers::DirHandler::DirNode )
 
       styles = []
       styles << 'webgen-submenu' if isDir
       styles << 'webgen-menuitem-selected' if langNode.recursive_value( 'dest' ) == srcNode.recursive_value( 'dest' )
 
       style = " class=\"#{styles.join(' ')}\"" if styles.length > 0
-      link = langNode['processor'].get_html_link( langNode, srcNode, ( isDir ? langNode['directoryName'] : langNode['title'] ) )
+      link = langNode['processor'].get_html_link( langNode, srcNode, ( isDir ? langNode['directoryName'] || node['directoryName'] : langNode['title'] ) )
 
-      itemTag = get_config_param( 'itemTag' )
-      if styles.include? 'webgen-submenu'
+      itemTag = get_param( 'itemTag' )
+      if styles.include?( 'webgen-submenu' )
         before = "<#{itemTag}#{style}>#{link}"
         after = "</#{itemTag}>"
       else
@@ -174,7 +177,7 @@ module Tags
 
       node.each do |child|
         menu = create_menu_tree( child, menuNode )
-        menuNode.add_child menu unless menu.nil?
+        menuNode.add_child( menu ) unless menu.nil?
       end
 
       return menuNode.has_children? ? menuNode : ( put_node_in_menu?( node ) ? node : nil )

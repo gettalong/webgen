@@ -20,24 +20,24 @@
 #++
 #
 
+require 'bluecloth'
 require 'webgen/plugins/filehandler/page'
 
-module FileHandlers
+module ContentHandlers
 
-  # Handles HTML fragment files and assumes that their content is valid HTML. The files should only
-  # contain the content part of the web page because the layout is defined by the template. This
-  # means you should not put <html> or <body> inside these HTML fragments.
-  class HTMLPage < PagePlugin
+  # Handles text formatted in Markdown format using BlueCloth.
+  class MarkdownHandler < ContentHandler
 
-    plugin "HTML Fragment Handler"
-    summary "Handles HTML webpage fragments as page description files"
+    plugin "MarkdownHandler"
+    summary "Handles content formatted in Markdown format using BlueCloth"
+    depends_on "PageHandler"
 
-    EXTENSION = 'fragment'
+    def initialize
+      register_format( 'markdown' )
+    end
 
-    def get_file_data( srcName )
-      data = Hash.new
-      data['content'] = File.new( srcName ).read
-      data
+    def format_content( txt )
+      BlueCloth.new( txt ).to_html
     end
 
   end

@@ -32,15 +32,17 @@ module Tags
     add_param 'separator', ' | ', 'Separates the languages from each other.'
     add_param 'showSingleLang', true, 'True if the language link should be shown '\
     'although the page is only available in one language.'
+    depends_on 'Tags'
 
-    TAG_NAME = 'lang'
-
+    def initialize
+      register_tag( 'lang' )
+    end
 
     def process_tag( tag, node, refNode )
-      output = node.parent.children.sort do |a, b| a['lang'] <=> b['lang'] end.collect do |node|
-        node['processor'].get_html_link( node, node, node['lang'] )
-      end.join( get_config_param( 'separator' ) )
-      return ( get_config_param( 'showSingleLang' ) || node.parent.children.length > 1 ? output : "" )
+      output = node.parent.children.sort do |a, b| a['lang'] <=> b['lang'] end.collect do |n|
+        n['processor'].get_html_link( n, n, n['lang'] )
+      end.join( get_param( 'separator' ) )
+      return ( get_param( 'showSingleLang' ) || node.parent.children.length > 1 ? output : "" )
     end
 
   end

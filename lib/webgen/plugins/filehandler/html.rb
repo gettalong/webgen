@@ -20,24 +20,23 @@
 #++
 #
 
-require 'yaml'
-require 'redcloth'
 require 'webgen/plugins/filehandler/page'
 
-module FileHandlers
+module ContentHandlers
 
-  # Handles files in Textile format using RedCloth.
-  class RedClothPagePlugin < PagePlugin
+  # Handles HTML content. Assumes that the content is already valid HTML.
+  class HTMLHandler < ContentHandler
 
-    plugin "Textile Page Handler"
-    summary "Handles webpage description files in Textile format using RedCloth"
+    plugin "HTMLHandler"
+    summary "Handles HTML formatted content"
+    depends_on "PageHandler"
 
-    EXTENSION = 'rcloth'
+    def initialize
+      register_format( 'html' )
+    end
 
-    def get_file_data( srcName )
-      data = Hash.new
-      data['content'] = RedCloth.new( File.read( srcName ) ).to_html
-      data
+    def format_content( txt )
+      txt
     end
 
   end

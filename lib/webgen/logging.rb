@@ -32,12 +32,12 @@ module Webgen
       self.level = Logger::ERROR
     end
 
-    def format_message( severity, timestamp, msg, progname )
-      "%s %s -- %s: %s\n" % [timestamp, severity, progname, msg ]
-    end
-
     def set_log_dev( dev )
       @logdev = LogDevice.new( dev )
+    end
+
+    def format_message( severity, timestamp, msg, progname )
+      "%s %5s -- %s: %s\n" % [timestamp, severity, progname, msg ]
     end
 
   end

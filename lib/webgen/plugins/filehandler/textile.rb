@@ -20,30 +20,24 @@
 #++
 #
 
-require 'yaml'
-require 'rdoc/markup/simple_markup'
-require 'rdoc/markup/simple_markup/to_html'
+require 'redcloth'
 require 'webgen/plugins/filehandler/page'
 
-module FileHandlers
+module ContentHandlers
 
-  # Handles files in RDoc format.
-  class RDocPagePlugin < PagePlugin
+  # Handles content in Textile format using RedCloth.
+  class TextileHandler < ContentHandler
 
-    plugin "RDoc Page Handler"
-    summary "Handles webpage description files in RDOC format"
-
-    EXTENSION = 'rdoc'
+    plugin "TextileHandler"
+    summary "Handles content in Textile format using RedCloth"
+    depends_on "PageHandler"
 
     def initialize
-      @processor = SM::SimpleMarkup.new
-      @formatter = SM::ToHtml.new
+      register_format( 'textile' )
     end
 
-    def get_file_data( srcName )
-      data = Hash.new
-      data['content'] = @processor.convert( File.read( srcName ), @formatter )
-      data
+    def format_content( txt )
+      RedCloth.new( txt ).to_html
     end
 
   end

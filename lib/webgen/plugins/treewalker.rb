@@ -28,7 +28,7 @@ module TreeWalkers
   # so that it is called when the main class' #execute method is called.
   class TreeWalker < Webgen::Plugin
 
-    plugin "Tree Walker"
+    plugin "TreeWalker"
     summary "Super plugin for transforming the data tree"
 
     attr_reader :walkers
@@ -36,7 +36,6 @@ module TreeWalkers
     def initialize
       @walkers = []
     end
-
 
     # Uses either all registered walkers or the specified +walker+. Walks the +tree+ for each walker
     # separately.
@@ -65,17 +64,18 @@ module TreeWalkers
   # Prints the whole tree of read files if the log level is at least DEBUG.
   class DebugTreePrinter < Webgen::Plugin
 
-    plugin "Debug Tree Printer"
+    plugin "DebugTreePrinter"
     summary "Prints out the information in the tree for debug purposes."
+    depends_on 'TreeWalker'
 
-
-    def init
-      Plugin['Tree Walker'].walkers << self
+    def initialize
+      Webgen::Plugin['TreeWalker'].walkers << self
     end
 
-
     def handle_node( node, level )
-      self.logger.debug { "   "*level  << "\\_ "*(level > 0 ? 1 : 0) << (node['virtual'] ? "[V]" : "") << "#{node['title']}: #{node['src']} -> #{node['dest']}" }
+      self.logger.debug do
+        "   "*level  << "\\_ "*(level > 0 ? 1 : 0) << (node['virtual'] ? "[V]" : "") << "#{node['title']}: #{node['src']} -> #{node['dest']}"
+      end
     end
 
   end

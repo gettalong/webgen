@@ -30,25 +30,23 @@ module Tags
 
     plugin "Include File Tag"
     summary "Includes a file verbatim"
-
-    TAG_NAME = 'includeFile'
+    depends_on 'Tags'
 
     def initialize
       super
+      register_tag( 'includeFile' )
       @processOutput = false
     end
 
-
     def check_mandatory_param( config )
-      config.kind_of? String
+      config.kind_of?( String )
     end
-
 
     def process_tag( tag, node, refNode )
       content = ''
       begin
-        filename = refNode.parent.recursive_value( 'src' ) + get_config_param( :mandatory )
-        self.logger.debug { "File location: #{filename}" }
+        filename = refNode.parent.recursive_value( 'src' ) + get_param( :mandatory )
+        self.logger.debug { "File location: <#{filename}>" }
         content = CGI::escapeHTML( File.open( filename, 'r' ).read )
       rescue
         self.logger.error { "Given file <#{filename}> does not exist (tag specified in <#{refNode.recursive_value( 'src' )}>" }

@@ -20,32 +20,27 @@
 #++
 #
 
-require 'yaml'
+require 'rdoc/markup/simple_markup'
+require 'rdoc/markup/simple_markup/to_html'
 require 'webgen/plugins/filehandler/page'
 
-module FileHandlers
+module ContentHandlers
 
-  # Handles page description files written in YAML. The structure of such a file should be like the
-  # following example:
-  #
-  #  key1: value1
-  #  key2: value2
-  #  title: This will be the title of the file
-  #  an other meta information: value of this item
-  #
-  #  content:
-  #    This will be the content of this page file.
-  #
-  # You can specify any key:value pairs but you have to specify at least the content part.
-  class YAMLPagePlugin < PagePlugin
+  # Handles text in RDoc format.
+  class RDocHandler < ContentHandler
 
-    plugin "YAML Page Handler"
-    summary "Handles YAML webpage description files"
+    plugin "RDocHandler"
+    summary "Handles content in RDOC format"
+    depends_on "PageHandler"
 
-    EXTENSION = 'ypage'
+    def initialize
+      register_format( 'rdoc' )
+      @processor = SM::SimpleMarkup.new
+      @formatter = SM::ToHtml.new
+    end
 
-    def get_file_data( srcName )
-      YAML::load( File.new( srcName ) )
+    def format_content( txt )
+      @processor.convert( txt, @formatter )
     end
 
   end

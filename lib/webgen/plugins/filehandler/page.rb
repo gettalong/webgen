@@ -20,8 +20,8 @@
 #++
 #
 
-require 'webgen/node'
 require 'webgen/plugins/filehandler/filehandler'
+require 'yaml'
 
 module FileHandlers
 
@@ -42,16 +42,22 @@ module FileHandlers
 
     end
 
-
-    plugin "Page Handler"
-    summary "Super class for all page plugins"
+    plugin "PageHandler"
+    summary "Class for processing page files"
     add_param 'defaultLangInFilename', false, \
     'If true, the output files for the default language will have the ' \
     'language in the file name like all other page files. If false, they won''t.'
+    depends_on 'FileHandler'
 
+    attr_reader :formats
+
+    def initialize
+      @formats = Hash.new( ContentHandlers::ContentHandler.new )
+      extension( 'page', PagePlugin )
+    end
 
     def create_node( srcName, parent )
-      data = get_file_data srcName
+      data = parse_file( srcName )
 
       fileData = analyse_file_name( File.basename( srcName ) )
 
@@ -67,36 +73,33 @@ module FileHandlers
           "instead of <#{srcName}>"
         end
       else
-        node = Node.new pageNode
+        node = Node.new( pageNode )
         node.metainfo = data
         node['src'] = fileData.srcName
         node['dest'] = fileData.urlName
         node['lang'] ||= fileData.lang
         node['title'] ||= fileData.title
         node['menuOrder'] ||= fileData.menuOrder
-        node['content'] ||= ''
         node['processor'] = self
-        pageNode.add_child node
+        pageNode.add_child( node )
       end
 
       return ( created ? pageNode : nil )
     end
 
-
     def write_node( node )
       # do nothing if page base node
       return unless node['virtual'].nil?
-      templateNode = Plugin['Template File Handler'].get_template_for_node( node )
+      templateNode = Webgen::Plugin['TemplateFileHandler'].get_template_for_node( node )
 
       outstring = templateNode['content'].dup
 
-      Plugin['Tags'].substitute_tags( outstring, node, templateNode )
+      Webgen::Plugin['Tags'].substitute_tags( outstring, node, templateNode )
 
       File.open( node.recursive_value( 'dest' ), File::CREAT|File::TRUNC|File::RDWR ) do |file|
-        file.write outstring
+        file.write( outstring )
       end
     end
-
 
     def get_page_node( basename, dirNode )
       node = dirNode.find do |node| node['page:basename'] == basename end
@@ -107,21 +110,19 @@ module FileHandlers
       [node, created]
     end
 
-
     def lang_node_exists?( pageNode, lang )
       langNode = pageNode.find do |child| child['lang'] == lang end
       return !langNode.nil?
     end
 
-
     def get_lang_node( node, lang = node['lang'] )
       node = node.parent unless node['page:basename']
       langNode = node.find do |child| child['lang'] == lang end
-      langNode = node.find do |child| child['lang'] == Plugin['Configuration']['lang'] end if langNode.nil?
+      langNode = node.find do |child| child['lang'] == Webgen::Plugin['Configuration']['lang'] end if langNode.nil?
       if langNode.nil?
         langNode = node.children[0]
         self.logger.warn do
-          "No input file in language '#{lang}' nor the default language (#{UPS::Registry['Configuration'].lang}) found," +
+          "No input file in language '#{lang}' nor the default language (#{Webgen::Plugin['Configuration']['lang']}) found," +
           "using first available input file for <#{node['title']}>"
         end
       end
@@ -132,21 +133,62 @@ module FileHandlers
     private
     #######
 
-    def analyse_file_name( srcName )
-      matchData = /^(?:(\d+)\.)?([^.]*?)(?:\.(\w\w))?\.(.*)$/.match srcName
-      fileData = Struct.new(:baseName, :srcName, :urlName, :menuOrder, :title, :lang).new
+    def parse_file( srcName )
+      data = File.read( srcName )
+      options = {}
+      blocks = data.split( /^---$/ )
+      if blocks[0] == ''
+        options = YAML::load( blocks[1] )
+        blocks[0..1] = []
+      end
+      (options['blocks'] ||= [{'name'=>'content', 'format'=>'textile'}]).each do |blockdata|
+        self.logger.debug { "Block '#{blockdata['name']}' formatted using '#{blockdata['format']}'" }
+        options[blockdata['name']] = @formats[blockdata['format']].format_content( blocks.shift || '' )
+      end
+      options
+    end
 
-      fileData.lang      = matchData[3] || UPS::Registry['Configuration'].lang
+    def analyse_file_name( srcName )
+      matchData = /^(?:(\d+)\.)?([^.]*?)(?:\.(\w\w))?\.(.*)$/.match( srcName )
+      fileData = OpenStruct.new
+
+      fileData.lang      = matchData[3] || Webgen::Plugin['Configuration']['lang']
       fileData.baseName  = matchData[2] + '.html'
       fileData.srcName   = srcName
-      langPart = ( !get_config_param( 'defaultLangInFilename' ) && Plugin['Configuration']['lang'] == fileData.lang ? '' : '.' + fileData.lang )
+      langPart = ( !get_param( 'defaultLangInFilename' ) && Webgen::Plugin['Configuration']['lang'] == fileData.lang ? '' : '.' + fileData.lang )
       fileData.urlName   = matchData[2] + langPart + '.html'
       fileData.menuOrder = matchData[1].to_i
       fileData.title     = matchData[2].tr('_-', ' ').capitalize
 
-      self.logger.debug { fileData.to_s }
+      self.logger.debug { fileData.inspect }
 
       fileData
+    end
+
+  end
+
+end
+
+
+module ContentHandlers
+
+  class ContentHandler < Webgen::Plugin
+
+    VIRTUAL = true
+
+    plugin "ContentHandler"
+    summary "Base class for all page file content handlers"
+
+    # Register the format specified by a subclass.
+    def register_format( fmt )
+      self.logger.info { "Registering class #{self.class.name} for formatting '#{fmt}'" }
+      Webgen::Plugin['PageHandler'].formats[fmt] = self
+    end
+
+    # Format the given +content+. Should be overriden in subclass!
+    def format_content( content )
+      self.logger.error { "Invalid content format specified, copying source verbatim!" }
+      content
     end
 
   end

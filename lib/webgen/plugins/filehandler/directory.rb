@@ -20,7 +20,6 @@
 #++
 #
 
-require 'webgen/node'
 require 'webgen/plugins/filehandler/filehandler'
 
 module FileHandlers
@@ -31,65 +30,54 @@ module FileHandlers
     # Specialized node describing a directory.
     class DirNode < Node
 
-
       def initialize( parent, name )
-        super parent
+        super( parent )
         self['title'] = self['directoryName'] = name
         self['src'] = self['dest'] = name + File::SEPARATOR
       end
 
-
       def []( name )
-        if name == 'indexFile' && !metainfo.has_key?( 'indexFile' )
-          process_dir_index self
-        end
+        process_dir_index if name == 'indexFile' && super('indexFile').nil?
         super
       end
 
-
-      def process_dir_index( dirNode )
-        node, created = Plugin['Page Handler'].get_page_node( indexFile, dirNode )
+      def process_dir_index
+        node, created = Webgen::Plugin['PageHandler'].get_page_node( Webgen::Plugin['DirectoryHandler']['indexFile'], self )
         if created
-          self.logger.warn { "No directory index file found for directory <#{dirNode.recursive_value( 'src' )}>" }
-          dirNode['indexFile'] = nil
+          self.logger.warn { "No directory index file found for directory <#{self.recursive_value( 'src' )}>" }
+          self['indexFile'] = nil
         else
-          self.logger.info { "Directory index file for <#{dirNode.recursive_value( 'src' )}> => <#{node['title']}>" }
-          dirNode['indexFile'] = node
-          node.each do |child| child['directoryName'] ||= dirNode['directoryName'] end
+          self.logger.info { "Directory index file for <#{self.recursive_value( 'src' )}> => <#{node['title']}>" }
+          self['indexFile'] = node
         end
       end
 
-
-      def indexFile
-        if !defined? @@indexFile
-          item = Plugin['Directory Handler']['indexFile']
-          @@indexFile = item.value
-        end
-        @@indexFile
-      end
     end
 
 
-    plugin "Directory Handler"
+    plugin "DirectoryHandler"
     summary "Handles directories"
     add_param 'indexFile','index.html', 'The default file name for the directory index file.'
+    depends_on 'FileHandler'
 
-    EXTENSION = :dir
+    def initialize
+      extension( :dir, DirHandler )
+    end
 
-    attr_reader :indexFile
-
-
+    # Return a new DirNode.
     def create_node( path, parent )
       DirNode.new( parent, File.basename( path ) )
     end
 
-
+    # Create the directory (and all its parent directories if necessary).
     def write_node( node )
-      name = node.recursive_value 'dest'
-      FileUtils.makedirs( name ) unless File.exists? name
+      name = node.recursive_value( 'dest' )
+      FileUtils.makedirs( name ) unless File.exists?( name )
     end
 
-
+    # Return the language node for the directory +node+ using the specified language +lang+. If an
+    # index file is specified, then the its correct language node is returned, else +node+ is
+    # returned.
     def get_lang_node( node, lang = node['lang'] )
       if node['indexFile']
         node['indexFile']['processor'].get_lang_node( node['indexFile'], lang )
@@ -98,11 +86,11 @@ module FileHandlers
       end
     end
 
-
+    # Get the HTML link for the directory +node+.
     def get_html_link( node, refNode, title = nil )
-      node = get_lang_node( node, refNode['lang'] )
-      title ||=  node['directoryName']
-      super( node, refNode, title )
+      lang_node = get_lang_node( node, refNode['lang'] )
+      title ||=  lang_node['directoryName'] || node['directoryName']
+      super( lang_node, refNode, title )
     end
 
   end

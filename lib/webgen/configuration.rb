@@ -22,8 +22,21 @@
 
 require 'yaml'
 require 'ostruct'
-require 'webgen/logging'
 require 'find'
+require 'tsort'
+require 'webgen/node'
+require 'webgen/logging'
+
+# Helper class for calculating plugin dependencies.
+class Dependency < Hash
+  include TSort
+
+  alias tsort_each_node each_key
+  def tsort_each_child(node, &block)
+    fetch(node).each(&block)
+  end
+end
+
 
 module Webgen
 
@@ -40,7 +53,7 @@ module Webgen
     @@config = {}
 
     def self.inherited( klass )
-      (@@config[klass.name] = OpenStruct.new).obj = klass.new unless klass.const_defined?( 'VIRTUAL' )
+      (@@config[klass.name] = OpenStruct.new).klass = klass
     end
 
     ['plugin', 'summary', 'description'].each do |name|
@@ -50,6 +63,12 @@ module Webgen
     # Return plugin data
     def self.config
       @@config
+    end
+
+    # Add a dependency to the plugin. Dependencies are instantiated before the plugin gets
+    # instantiated.
+    def self.depends_on( *dep )
+      dep.each {|d| (@@config[self.name].dependencies ||= []) << d}
     end
 
     # Shortcut for getting the plugin with the name +name+.
@@ -101,6 +120,7 @@ module Webgen
   end
 
 
+  # Responsible for loading the other plugin files and holds the basic configuration options.
   class Configuration < Plugin
 
     plugin "Configuration"
@@ -111,6 +131,7 @@ module Webgen
     add_param 'verbosityLevel', 3, 'The level of verbosity for the output of messages on the standard output.'
     add_param 'lang', 'en', 'The default language.'
     add_param 'configfile', 'config.yaml', 'The file from which extra configuration data is taken'
+    add_param 'logfile', 'webgen.log', 'The name of the log file if the log should be written to a file'
 
     def initialize
       @homeDir = File.dirname( $0 )
@@ -121,44 +142,51 @@ module Webgen
       if File.exists?( get_param( 'configfile' ) )
         @pluginData = YAML::load( File.new( get_param( 'configfile' ) ) )
         @pluginData.each {|plugin, params| params.each {|name,value| Plugin.set_param( plugin, name, value ) } }
-        logger.level = get_param( 'verbosityLevel' )
       else
         logger.info { "Config file <#{get_param( 'configfile' )}> does not exist, not extra configuration data read." }
       end
+      set_log_level
     end
 
-    # Loads all plugins in the given +path+. Before +require+ is actually called the path is
+    def load_config( data )
+      data.each {|k,v| Plugin['Configuration'][k] = v}
+      set_log_level
+    end
+
+    # Load all plugins in the given +path+. Before +require+ is actually called the path is
     # trimmed: if +trimpath+ matches the beginning of the string, +trimpath+ is deleted from it.
     def load_plugins( path, trimpath )
       Find.find( path ) do |file|
         Find.prune unless File.directory?( file ) || (/.rb$/ =~ file)
-        require file.gsub(/^#{trimpath}/, '') if File.file? file
+        require file.gsub(/^#{trimpath}/, '') if File.file?( file )
       end
     end
 
-    def load_file_outputter
-      logger.set_log_dev( File.open( 'webgen.log', 'a' ) )
+    # Instantiate the plugins in the correct order.
+    def init_plugins
+      dep = Dependency.new
+      Plugin.config.each {|k,data| dep[data.plugin] = data.dependencies || []}
+      dep.tsort.each do |plugin|
+        data = Plugin.config.find {|k,v| v.plugin == plugin }[1]
+        self.logger.debug { "Create object of class #{data.klass.name}" }
+        data.obj ||= data.klass.new unless data.klass.const_defined?( 'VIRTUAL' )
+      end
+    end
+
+    # Set the log device to the logfile.
+    def set_log_dev_to_logfile
+      logger.set_log_dev( File.open( get_param( 'logfile' ), 'a' ) )
+    end
+
+    # Set the logging level.
+    def set_log_level
+      logger.level = get_param( 'verbosityLevel' )
     end
 
   end
 
-
-  class Logger < ::Logger
-
-    def initialize( dev )
-      super( dev )
-      self.datetime_format = "%Y-%m-%d %H:%M:%S"
-    end
-
-    def format_message( severity, timestamp, msg, progname )
-      "%s %s -- %s: %s\n" % [timestamp, severity, progname, msg ]
-    end
-
-    def set_log_dev( dev )
-      @logdev = LogDevice.new( dev )
-    end
-
-  end
+  # Initialize single configuration instance
+  Plugin.config[Configuration.name].obj = Configuration.new
 
 end
 

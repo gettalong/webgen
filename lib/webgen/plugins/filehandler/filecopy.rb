@@ -29,35 +29,32 @@ module FileHandlers
   # directory. The extensions of the files to copy are customizable.
   class FileCopyPlugin < DefaultHandler
 
-    plugin "File Copy Handler"
+    plugin "FileCopyHandler"
     summary "Copies files from source to destination without modification"
-    description <<-EOF.gsub( /^\s*/, '' ).gsub( /\n/, ' ' )
-        Implements a generic file copy plugin. All the file types which are specified in the
-        configuration file are copied without any transformation into the destination directory.
-      EOF
-    add_param 'types', ['css', 'jpg', 'png', 'gif'],
-       'The extension that will be registered by this handler. All files with ' \
-    'these extensions will be copied from the source to the destination folder.'
+    description "Implements a generic file copy plugin. All the file types which are specified
+      in the configuration file are copied without any transformation into the destination directory.
+    ".gsub( /^\s*/, '' ).gsub( /\n/, ' ' )
 
-    def init
-      unless get_config_param( 'types' ).nil?
-        get_config_param( 'types' ).each do |type|
-          Plugin['File Handler'].extensions[type] ||= self
-        end
+    add_param 'types', ['css', 'jpg', 'png', 'gif'], \
+    'The extension that will be registered by this handler. All files with ' \
+    'these extensions will be copied from the source to the destination folder.'
+    depends_on 'FileHandler'
+
+    def initialize
+      get_param( 'types' ).each do |type|
+        extension( type, FileCopyPlugin )
       end
     end
 
-
     def create_node( srcName, parent )
-      relName = File.basename srcName
-      node = Node.new parent
-      node['dest'] = node['src'] = node['title'] = relName
+      node = Node.new( parent )
+      node['dest'] = node['src'] = node['title'] = File.basename( srcName )
       node
     end
 
-
+    # Copy the file to the destination directory if it has been modified.
     def write_node( node )
-      FileUtils.cp( node.recursive_value( 'src' ), node.recursive_value( 'dest' ) ) if Plugin['File Handler'].file_modified?( node )
+      FileUtils.cp( node.recursive_value( 'src' ), node.recursive_value( 'dest' ) ) if Webgen::Plugin['FileHandler'].file_modified?( node )
     end
 
   end

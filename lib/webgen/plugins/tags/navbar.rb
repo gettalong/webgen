@@ -37,8 +37,11 @@ module Tags
     plugin 'Navigation Bar Tag'
     summary 'Shows the hierarchy of current page'
     add_param 'separator', ' / ', 'Separates the hierachy entries from each other.'
+    depends_on 'Tags'
 
-    TAG_NAME = 'navbar'
+    def initialize
+      register_tag( 'navbar' )
+    end
 
     def process_tag( tag, srcNode, refNode )
       out = []
@@ -50,8 +53,8 @@ module Tags
         node = node.parent while !node.nil? && node['virtual']
       end
 
-      out = out.reverse.join( get_config_param( 'separator' ) )
-      self.logger.debug out
+      out = out.reverse.join( get_param( 'separator' ) )
+      self.logger.debug { out }
       out
     end
 

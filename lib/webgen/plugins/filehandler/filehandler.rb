@@ -29,7 +29,7 @@ module FileHandlers
   # the plugin object itself.
   class FileHandler < Webgen::Plugin
 
-    plugin "File Handler"
+    plugin "FileHandler"
     summary "Super plugin for handling files"
     description "Provides interface on file level. The FileHandler goes through the source
         directory, reads in all files for which approriate plugins exist and
@@ -37,7 +37,7 @@ module FileHandlers
         been performed the FileHandler is used to write the output files.
       ".gsub( /^\s+/, '' ).gsub( /\n/, ' ' )
 
-    add_param 'ignoredFiles', ['.svn', 'CVS'],'Specifies path names which should be ignored.'
+    add_param 'ignoredFiles', ['.svn', 'CVS'], 'Specifies path names which should be ignored.'
 
 
     include Listener
@@ -55,10 +55,12 @@ module FileHandlers
 
     # Recursively builds the tree with all the nodes and returns it.
     def build_tree
-      root = build_entry( Plugin['Configuration']['srcDirectory'], nil )
-      root['title'] = '/'
-      root['dest'] = Plugin['Configuration']['outDirectory'] + File::SEPARATOR
-      root['src'] = Plugin['Configuration']['srcDirectory'] + File::SEPARATOR
+      root = build_entry( Webgen::Plugin['Configuration']['srcDirectory'], nil )
+      unless root.nil?
+        root['title'] = '/'
+        root['dest'] = Webgen::Plugin['Configuration']['outDirectory'] + File::SEPARATOR
+        root['src'] = Webgen::Plugin['Configuration']['srcDirectory'] + File::SEPARATOR
+      end
       root
     end
 
@@ -78,8 +80,8 @@ module FileHandlers
     # Returns true if the source file specified by +node+ has been modified since the last execution
     # of webgen. The +mtime+ values for the source and destination files are used to find this out.
     def file_modified?( node )
-      src = node.recursive_value 'src'
-      dest = node.recursive_value 'dest'
+      src = node.recursive_value( 'src' )
+      dest = node.recursive_value( 'dest' )
       if File.exists?( dest ) && ( File.mtime( src ) < File.mtime( dest ) )
         self.logger.info { "File is up to date: <#{dest}>" }
         return false
@@ -96,12 +98,12 @@ module FileHandlers
     def build_entry( path, parent )
       self.logger.info { "Processing #{path}" }
 
-      if FileTest.file? path
+      if FileTest.file?( path )
         node = handle_file( path, parent )
-      elsif FileTest.directory? path
+      elsif FileTest.directory?( path )
         node = handle_directory( path, parent )
       else
-        self.logger.warn { "Path <#{path}> cannot be handled as it is neither a file nor a directory" }
+        self.logger.warn { "Path <#{path}> (type: #{File.lstat(path).ftype}) cannot be handled as it is neither a file nor a directory" }
         node = nil
       end
 
@@ -112,14 +114,14 @@ module FileHandlers
     def handle_file( path, parent )
       extension = File.extname( path )[1..-1].downcase
 
-      if @extensions.has_key? extension
+      if @extensions.has_key?( extension )
         node = @extensions[extension].create_node( path, parent )
         unless node.nil?
           node['processor'] = @extensions[extension]
           dispatch_msg( :FILE_NODE_CREATED, node )
         end
       else
-        self.logger.warn { "No plugin for path #{path} (extension: #{extension}) -> ignored" } if node.nil?
+        self.logger.warn { "No plugin for path #{path} (extension: #{extension}) -> ignored" }
       end
 
       return node
@@ -129,14 +131,14 @@ module FileHandlers
     def handle_directory( path, parent )
       node = nil
 
-      if @extensions.has_key? :dir
+      if @extensions.has_key?( :dir )
         node = @extensions[:dir].create_node( path, parent )
         node['processor'] = @extensions[:dir]
 
         dispatch_msg( :DIR_NODE_CREATED, node )
 
         entries = Dir[path + File::SEPARATOR + '{.*,*}'].delete_if do |name|
-          name =~ /#{File::SEPARATOR}.{1,2}$/ || get_config_param( 'ignoredFiles' ).include?( File.basename( name ) )
+          name =~ /#{File::SEPARATOR}.{1,2}$/ || get_param( 'ignoredFiles' ).include?( File.basename( name ) )
         end
 
         entries.sort! do |a, b|
@@ -151,7 +153,7 @@ module FileHandlers
 
         entries.each do |filename|
           child = build_entry( filename, node )
-          node.add_child child unless child.nil?
+          node.add_child( child ) unless child.nil?
         end
 
         dispatch_msg( :AFTER_DIR_READ, node )
@@ -170,10 +172,11 @@ module FileHandlers
     plugin "Default Handler"
     summary "Base class of all file handler plugins"
 
-    # Registers the file extension specified by a subclass.
-    def init
-      if self.class.const_defined? :EXTENSION
-        Plugin['File Handler'].extensions[self.class::EXTENSION] = self
+    # Register the file extension specified by a subclass.
+    def extension( ext, klass )
+      if self.instance_of?( klass )
+        self.logger.info { "Registering file handler #{self.class.name} (#{self.object_id}) with extension '#{ext}'" }
+        Webgen::Plugin['FileHandler'].extensions[ext] = self
       end
     end
 

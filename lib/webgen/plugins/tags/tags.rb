@@ -43,7 +43,6 @@ module Tags
       @tags = Hash.new
     end
 
-
     # Substitutes all references to tags in the string +content+. The +node+ parameter specifies the
     # tree node the content of which is used. The +refNode+ parameter specifies relative to which
     # all references should be resolved.
@@ -54,7 +53,7 @@ module Tags
       end
       return replace_tags( content ) do |tag, data|
         self.logger.info { "Replacing tag #{tag} with data '#{data}' in <#{node.recursive_value( 'dest' )}>" }
-        processor = get_tag_processor tag
+        processor = get_tag_processor( tag )
         processor.set_tag_config( YAML::load( "- #{data}" )[0], refNode )
         output = processor.process_tag( tag, node, refNode )
         processor.reset_tag_config
@@ -102,13 +101,13 @@ module Tags
 
     # Returns the tag processor for +tag+ or throws an error if +tag+ is unkown.
     def get_tag_processor( tag )
-      if @tags.has_key? tag
+      if @tags.has_key?( tag )
         return @tags[tag]
-      elsif @tags.has_key? :default
+      elsif @tags.has_key?( :default )
         return @tags[:default]
       else
         self.logger.error { "No tag processor for tag '#{tag}' found" }
-        return DefaulTag.new
+        return DefaultTag.new
       end
     end
 
@@ -124,6 +123,7 @@ module Tags
 
     plugin "Default tag"
     summary "Base class for all tag plugins"
+    depends_on "Tags"
 
     # +true+, if the output should be processed again
     attr_reader :processOutput
@@ -132,10 +132,8 @@ module Tags
       @processOutput = true
     end
 
-    def init
-      if self.class.const_defined? :TAG_NAME
-        UPS::Registry[Tags::NAME].tags[self.class::TAG_NAME] = self
-      end
+    def register_tag( tag )
+      Webgen::Plugin['Tags'].tags[tag] = self
     end
 
     # Sets the configuration parameters for the next #process_tag call. The configuration, if
@@ -148,9 +146,9 @@ module Tags
 
       when Array
         config.each do |item|
-          set_cur_config( item, node ) if item.kind_of? Hash
+          set_cur_config( item, node ) if item.kind_of?( Hash )
         end
-        config = config.delete_if do |item| item.kind_of? Hash end
+        config = config.delete_if do |item| item.kind_of?( Hash )end
         config = config[0] if config.length == 1
         set_mandatory_config( config, node )
 
@@ -158,7 +156,7 @@ module Tags
         set_mandatory_config( config, node )
 
       when NilClass
-        if self.class.method_defined? :check_mandatory_param
+        if self.class.method_defined?( :check_mandatory_param )
           self.logger.error { "Mandatory parameter for tag '#{self.class.name}' in <#{node.recursive_value( 'src' )}> not specified" }
         end
 
@@ -190,9 +188,9 @@ module Tags
       config.each do |key, value|
         if defined?( @config ) && @config.has_key?( key )
           @curConfig[key] = value
-          self.logger.debug { "Setting parameter '#{key}' for tag '#{self.class::NAME}' in <#{node.recursive_value( 'src' )}>" }
+          self.logger.debug { "Setting parameter '#{key}' for tag '#{self.class.name}' in <#{node.recursive_value( 'src' )}>" } #TODO change self.class.name 4x
         else
-          self.logger.warn { "Invalid parameter '#{key}' for tag '#{self.class::NAME}' in <#{node.recursive_value( 'src' )}>" }
+          self.logger.warn { "Invalid parameter '#{key}' for tag '#{self.class.name}' in <#{node.recursive_value( 'src' )}>" }
         end
       end
     end
@@ -200,25 +198,25 @@ module Tags
 
     # Sets the mandatory parameter (key = :mandatory).
     def set_mandatory_config( config, node )
-      if self.class.method_defined? :check_mandatory_param
-        if check_mandatory_param config
+      if self.class.method_defined?( :check_mandatory_param )
+        if check_mandatory_param( config )
           @curConfig[:mandatory] = config
         else
-          self.logger.error { "Invalid mandatory parameter for tag '#{self.class::NAME}' in <#{node.recursive_value( 'src' )}>"}
+          self.logger.error { "Invalid mandatory parameter for tag '#{self.class.name}' in <#{node.recursive_value( 'src' )}>"}
         end
       else
-        self.logger.info { "Unused tag parameters specified for tag '#{self.class::NAME}' in <#{node.recursive_value( 'src' )}>" }
+        self.logger.info { "Unused tag parameters specified for tag '#{self.class.name}' in <#{node.recursive_value( 'src' )}>" }
       end
     end
 
 
     # Retrieves the parameter value for +name+. The value is taken from the current tag if the
     # parameter is specified there or the default value set in #register_config_value is used.
-    def get_config_param( name )
+    def get_param( name )
       if !@curConfig.nil? && @curConfig.has_key?( name )
         return @curConfig[name]
       else
-        super name
+        super( name )
       end
     end
 

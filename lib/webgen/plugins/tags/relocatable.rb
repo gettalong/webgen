@@ -36,16 +36,18 @@ module Tags
 
     plugin 'Relocatable Tag'
     summary 'Adds a relative path to the specified name if necessary'
+    depends_on 'Tags'
 
-    TAG_NAME = 'relocatable'
-
-    def check_mandatory_param( config )
-      config.kind_of? String
+    def initialize
+      register_tag( 'relocatable' )
     end
 
+    def check_mandatory_param( config )
+      config.kind_of?( String )
+    end
 
     def process_tag( tag, node, refNode )
-      destNode = refNode.get_node_for_string( get_config_param( :mandatory ) )
+      destNode = refNode.get_node_for_string( get_param( :mandatory ) )
       if !destNode.nil? && destNode.kind_of?( FileHandlers::PagePlugin::PageNode )
         destNode = destNode['processor'].get_lang_node( destNode, node['lang'] )
       end

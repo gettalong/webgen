@@ -31,11 +31,14 @@ module Tags
     plugin "Date Tag"
     summary "Prints out the date"
     add_param 'format', '%A, %B %d %H:%M:%S %Z %Y', 'The format of the date (same options as Time#strftime).'
+    depends_on 'Tags'
 
-    TAG_NAME = 'date'
+    def initialize
+      register_tag( 'date' )
+    end
 
     def process_tag( tag, node, refNode )
-      Time.now.strftime( get_config_param( 'format' ) )
+      Time.now.strftime( get_param( 'format' ) )
     end
 
   end

@@ -53,7 +53,7 @@ module Webgen
 
       Plugin['Configuration'].load_plugins( File.dirname( __FILE__) + '/plugins', File.dirname( __FILE__).sub(/webgen$/, '') )
       Plugin['Configuration'].parse_config_file
-      data.each {|k,v| Plugin['Configuration'][k] = v}
+      Plugin['Configuration'].load_config( data )
       main.call
     end
 
@@ -76,7 +76,7 @@ module Webgen
         opts.on( "--source-dir DIR", "-S", String, "The directory from where the files are read" ) { |data['srcDirectory']| }
         opts.on( "--output-dir DIR", "-O", String, "The directory where the output should go" ) { |data['outDirectory']| }
         opts.on( "--verbosity LEVEL", "-V", Integer, "The verbosity level" ) { |data['verbosityLevel']| }
-        opts.on( "--[no-]logfile", "-L", "Log to file webgen.log" ) { |logfile| config.load_file_outputter if logfile }
+        opts.on( "--[no-]logfile", "-L", "Log to file webgen.log" ) { |logfile| config.set_log_dev_to_logfile if logfile }
 
         opts.separator ""
         opts.separator "Other options:"
@@ -105,14 +105,16 @@ module Webgen
     def runMain
       logger.info "Starting Webgen..."
 
+      Plugin['Configuration'].init_plugins
+
       # load all the files in src dir and build tree
-      tree = Plugin['File Handler'].build_tree
+      tree = Plugin['FileHandler'].build_tree
 
       # execute tree transformer plugins
-      Plugin['Tree Walker'].execute( tree )
+      Plugin['TreeWalker'].execute( tree ) unless tree.nil?
 
       # generate output files
-      Plugin['File Handler'].write_tree( tree )
+      Plugin['FileHandler'].write_tree( tree ) unless tree.nil?
 
       logger.info "Webgen finished"
     end
@@ -121,12 +123,7 @@ module Webgen
     def runListPlugins
       print "List of loaded plugins:\n"
 
-      headers = {
-        'FileHandlers' => 'File handler plugins',
-        'Tags' => 'Tag plugins',
-        'TreeWalkers' => 'Tree walker plugins'
-      }
-      headers.default = 'Other plugins'
+      headers = Hash.new {|h,k| h[k] = k.gsub(/([A-Z])/, ' \1').strip}
 
       ljustlength = 30 + Color.green.length + Color.reset.length
       header = ''

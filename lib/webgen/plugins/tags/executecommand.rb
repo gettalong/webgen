@@ -31,22 +31,22 @@ module Tags
 
     plugin "Execute Command Tag"
     summary "Executes the given command and includes its standard output"
-
-    TAG_NAME = 'execute'
+    depends_on 'Tags'
 
     def initialize
       super
+      register_tag( 'execute' )
       @processOutput = false
     end
 
 
     def check_mandatory_param( config )
-      config.kind_of? String
+      config.kind_of?( String )
     end
 
 
     def process_tag( tag, node, refNode )
-      CGI::escapeHTML( `#{get_config_param( :mandatory )}` )
+      CGI::escapeHTML( `#{get_param( :mandatory )}` )
     end
 
   end

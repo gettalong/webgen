@@ -33,17 +33,18 @@ module Tags
 
     plugin "Meta tag"
     summary "Replaces all tags without tag plugin with their respective values from the node meta data"
+    depends_on 'Tags'
 
-    TAG_NAME = :default
+    def initialize
+      register_tag( :default )
+    end
 
     def process_tag( tag, node, refNode )
       output = ''
       if node[tag]
         output = node[tag]
       else
-        self.logger.warn do
-          "No value for tag '#{tag}' in <#{refNode.recursive_value( 'src' )}> found in <#{node.recursive_value( 'src' )}>"
-        end
+        self.logger.warn { "No value for tag '#{tag}' in <#{refNode.recursive_value( 'src' )}> found in <#{node.recursive_value( 'src' )}>" }
       end
       return output
     end
