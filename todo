@@ -1,5 +1,5 @@
+* convert everything to utf8 before writing
 * think about logging levels and when to use which level
-W implement <template> meta-info tag (see template based)
 * create new document which describes iterations and the steps which are taken in each iteration (high risk first)
 * document existing files (RDOC)
 * design Thaumaturge logo
@@ -40,3 +40,5 @@ W implement "creation of files only when necessary" (i.e. if dependencies have c
     change the behaviour in file copy plugin
 W think about configureable list of files patterns which should always be ignored when reading src dir
 W replace current logging mechanism with Log4r
+W implement <template> meta-info tag (see template based)
+W redo tree transformer

@@ -10,11 +10,16 @@ class TreeTransformer < UPS::Plugin
     SHORT_DESC = "Super plugin for transforming the data tree"
 
     def initialize
-        add_msg_name :execute
+        add_msg_name :preorder
+        add_msg_name :postorder
     end
 
-	def execute( tree )
-        dispatch_msg :execute, tree
+	def execute( tree, level = 0 )
+        dispatch_msg :preorder, tree, level
+        tree.each do |child|
+            execute( child, level + 1 )
+        end
+        dispatch_msg :postorder, tree, level
 	end
 
 end
@@ -26,14 +31,11 @@ class DebugTreePrinter < UPS::Plugin
     SHORT_DESC = "Prints out the information in the tree for debug purposes."
 
     def init
-        UPS::Registry[TreeTransformer::NAME].add_msg_listener( :execute, method( :execute ) )
+        UPS::Registry[TreeTransformer::NAME].add_msg_listener( :preorder, method( :execute ) )
     end
 
-	def execute( node, level = 0 )
+	def execute( node, level )
         Log4r::Logger['plugin'].debug { "   "*level  << "\\_ "*(level > 0 ? 1 : 0) <<  "#{node['title']}: #{node['src']} -> #{node['dest']}" }
-		node.each do |child|
-			execute( child, level + 1 )
-		end
 	end
 
 end

@@ -2,6 +2,7 @@ require 'ups/ups'
 require 'thgexception'
 require 'node'
 require 'plugins/fileHandler/fileHandler'
+require 'plugins/treeTransformer'
 require 'configuration'
 
 class TemplatePlugin < UPS::Plugin
@@ -68,4 +69,30 @@ class TemplatePlugin < UPS::Plugin
 
 end
 
+
+class TemplateTreeWalker < UPS::Plugin
+
+    NAME = "Template Tree Walker"
+    SHORT_DESC = "Substitutes all 'templateFile' infos with the approriate node"
+
+    def init
+        UPS::Registry['Tree Transformer'].add_msg_listener( :preorder, method( :execute ) )
+    end
+
+    def execute( node, level )
+        if node.metainfo.has_key?( "templateFile" ) && node['templateFile'].kind_of?( String )
+            templateNode = UPS::Registry['Tree Utils'].get_node_for_string( node, node['templateFile'] )
+            if templateNode.nil?
+                node.metainfo.delete "templateFile"
+            else
+                node['templateFile'] = templateNode
+                Log4r::Logger['plugin'].info { "Replacing 'templateFile' in <#{node['src']}> with <#{templateNode['src']}>" }
+            end
+        end
+    end
+
+end
+
+
 UPS::Registry.register_plugin TemplatePlugin
+UPS::Registry.register_plugin TemplateTreeWalker

@@ -29,8 +29,7 @@ class XMLPagePlugin < PagePlugin
 
         node = Node.new parent
         node['title'] = root.text( '/thg/metainfo/title' )
-        #TODO retrieve template node after dir read
-        #node['templateFile'] = root.text('/thg/metainfo/template') unless root.text('/thg/metainfo/template').nil?
+        node['templateFile'] = root.text('/thg/metainfo/template') unless root.text('/thg/metainfo/template').nil?
         node['src'] = srcName
         node['dest'] = urlName
         node['content'] = ''

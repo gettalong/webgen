@@ -66,13 +66,6 @@ class FileHandler < UPS::Plugin
     end
 
 
-    def get_relpath_to_node( srcNode, destNode )
-        i = -2 # do not count file + current directory
-        ( i += 1; srcNode = srcNode.parent ) until srcNode.nil? # how many levels?
-        ( ".." + File::SEPARATOR )*i + destNode.parent.recursive_value( 'dest' ).sub(/^#{UPS::Registry['Configuration'].outDirectory + File::SEPARATOR}/, "")
-    end
-
-
 	#######
 	private
 	#######

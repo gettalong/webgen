@@ -21,8 +21,7 @@ class YAMLPagePlugin < PagePlugin
 
         node = Node.new parent
         node['title'] = data['metainfo']['title']
-        #TODO retrieve template node after dir read
-        #node['templateFile'] = data['metainfo']['template'] unless data['metainfo']['template'].nil?
+        node['templateFile'] = data['metainfo']['template'] unless data['metainfo']['template'].nil?
         node['src'] = srcName
         node['dest'] = urlName
         node['content'] = data['content']

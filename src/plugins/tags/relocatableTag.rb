@@ -11,7 +11,7 @@ class RelocatableTag < UPS::Plugin
     end
 
 	def process_tag( tag, content, node, templateNode )
-        UPS::Registry['File Handler'].get_relpath_to_node( node, templateNode ) + content
+        UPS::Registry['Tree Utils'].get_relpath_to_node( node, templateNode ) + content
 	end
 
 end
