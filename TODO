@@ -2,6 +2,7 @@ HIGH PRIORITY TODO: test everything (automatically) and try to refactor!!!
 
 ---- CURRENT ----
 
+* add example section for each plugin
 * more tags (in docu: how to use them, parameters, ..., structure should be the same everywhere)
 * register with Freshmeat.net
 * option for includeFile tag: escapeHTML (should special html tags be escaped?)
@@ -99,3 +100,4 @@ W do not allow two or more page files in the same language, print warn
 * create tags in config file which produce informational output about filehandlers and tags (param listing,...)
 * include version number in documentation
 * get_relpath_to_node: if destNode['external'] --> check for URL pattern
+* add mandatory param info to output of 'describe'

@@ -32,6 +32,8 @@ module Tags
     plugin "ExecuteCommandTag"
     summary "Executes the given command and includes its standard output"
     depends_on 'Tags'
+    add_param 'command', nil, 'The command which should be executed'
+    set_mandatory 'command', true
 
     def initialize
       super
@@ -39,14 +41,8 @@ module Tags
       @processOutput = false
     end
 
-
-    def check_mandatory_param( config )
-      config.kind_of?( String )
-    end
-
-
     def process_tag( tag, node, refNode )
-      CGI::escapeHTML( `#{get_param( :mandatory )}` )
+      CGI::escapeHTML( `#{get_param( 'command' )}` ) if get_param( 'command' )
     end
 
   end

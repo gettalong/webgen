@@ -31,6 +31,8 @@ module Tags
     plugin "IncludeFileTag"
     summary "Includes a file verbatim"
     depends_on 'Tags'
+    add_param 'filename', nil, 'The name of the file which should be included'
+    set_mandatory 'filename', true
 
     def initialize
       super
@@ -38,14 +40,10 @@ module Tags
       @processOutput = false
     end
 
-    def check_mandatory_param( config )
-      config.kind_of?( String )
-    end
-
     def process_tag( tag, node, refNode )
       content = ''
       begin
-        filename = refNode.parent.recursive_value( 'src' ) + get_param( :mandatory )
+        filename = refNode.parent.recursive_value( 'src' ) + get_param( 'filename' )
         self.logger.debug { "File location: <#{filename}>" }
         content = CGI::escapeHTML( File.open( filename, 'r' ).read )
       rescue

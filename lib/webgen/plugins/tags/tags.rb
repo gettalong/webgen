@@ -91,8 +91,6 @@ module Tags
           else
             tagHeaderLength = $1.length + tag.length + 2
             realContent = content[index + tagHeaderLength, length - tagHeaderLength - 1]
-#            realContent.gsub!( /(\n+)/ ) { $1.length == 1 ? " " : "\n" * ( $1.length / 2 ) }
-#            realContent.strip!
             newContent += yield( tag, realContent )
           end
           content[index, length] = newContent
@@ -135,11 +133,25 @@ module Tags
       @processOutput = true
     end
 
+    # Set the parameter +param+ as mandatory. The parameter +default+ specifies, if this parameter
+    # should be the default mandatory parameter. If only a String is supplied in a tag, its value
+    # will be assigned to the default mandatory parameter. There *should* be only one default
+    # mandatory parameter.
+    def self.set_mandatory( param, default = false )
+      if Webgen::Plugin.config[self.name].params.nil? || !Webgen::Plugin.config[self.name].params.has_key?( param )
+        self.logger.error { "Cannot set parameter #{param} as mandatory as this parameter does not exist for #{self.name}" }
+      else
+        Webgen::Plugin.config[self.name].params[param].mandatory = true
+        Webgen::Plugin.config[self.name].params[param].mandatoryDefault = default
+      end
+    end
+
+    # Register +tag+ at the Tags plugin.
     def register_tag( tag )
       Webgen::Plugin['Tags'].tags[tag] = self
     end
 
-    # Sets the configuration parameters for the next #process_tag call. The configuration, if
+    # Set the configuration parameters for the next #process_tag call. The configuration, if
     # specified, is taken from the tag itself.
     def set_tag_config( config, node )
       @curConfig = {}
@@ -147,24 +159,19 @@ module Tags
       when Hash
         set_cur_config( config, node )
 
-      when Array
-        config.each do |item|
-          set_cur_config( item, node ) if item.kind_of?( Hash )
-        end
-        config = config.delete_if do |item| item.kind_of?( Hash )end
-        config = config[0] if config.length == 1
-        set_mandatory_config( config, node )
-
       when String
-        set_mandatory_config( config, node )
+        set_default_mandatory_param( config )
 
       when NilClass
-        if self.class.method_defined?( :check_mandatory_param )
-          self.logger.error { "Mandatory parameter for tag '#{self.class.name}' in <#{node.recursive_value( 'src' )}> not specified" }
+        if has_mandatory_params?
+          self.logger.error { "Mandatory parameters for tag '#{self.class.name}' in <#{node.recursive_value( 'src' )}> not specified" }
         end
 
       else
         self.logger.error { "Invalid parameter for tag '#{self.class.name}' in <#{node.recursive_value( 'src' )}>" }
+      end
+      unless all_mandatory_params_set?
+        self.logger.error { "Not all mandatory parameters for tag '#{self.class.name}' in <#{node.recursive_value( 'src' )}> set" }
       end
     end
 
@@ -186,7 +193,7 @@ module Tags
     private
     #######
 
-    # Sets the current configuration taking values from +config+ which has to be a Hash.
+    # Set the current configuration taking values from +config+ which has to be a Hash.
     def set_cur_config( config, node )
       config.each do |key, value|
         if has_param?( key )
@@ -198,21 +205,28 @@ module Tags
       end
     end
 
-
-    # Sets the mandatory parameter (key = :mandatory).
-    def set_mandatory_config( config, node )
-      if self.class.method_defined?( :check_mandatory_param )
-        if check_mandatory_param( config )
-          @curConfig[:mandatory] = config
-          self.logger.debug { "Setting mandatory parameter for tag '#{self.class.name}' in <#{node.recursive_value( 'src' )}> to: '#{config}'" }
-        else
-          self.logger.error { "Invalid mandatory parameter for tag '#{self.class.name}' in <#{node.recursive_value( 'src' )}>"}
-        end
+    # Set the default mandatory parameter.
+    def set_default_mandatory_param( value )
+      data = Webgen::Plugin.config[self.class.name]
+      key = data.params.detect {|k,v| v.mandatoryDefault} unless data.params.nil?
+      if key.nil?
+        self.logger.error { "Default mandatory parameter not specified for tag '#{self.class.name}'"}
       else
-        self.logger.info { "Unused tag parameters specified for tag '#{self.class.name}' in <#{node.recursive_value( 'src' )}>" }
+        @curConfig[key[0]] = value
       end
     end
 
+    # Check if this tag has mandatory parameters.
+    def has_mandatory_params?
+      data = Webgen::Plugin.config[self.class.name]
+      !data.params.nil? && data.params.any? {|k,v| v.mandatory }
+    end
+
+    # Check if all mandatory parameters have been set
+    def all_mandatory_params_set?
+      params = Webgen::Plugin.config[self.class.name].params
+      ( params.nil? ? true : params.all? { |k,v| !v.mandatory || @curConfig.has_key?( k ) } )
+    end
 
     # Retrieves the parameter value for +name+. The value is taken from the current tag if the
     # parameter is specified there or the default value set in #register_config_value is used.

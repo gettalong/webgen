@@ -101,7 +101,7 @@ module Webgen
 
     # Return parameter +name+.
     def []( name )
-      classes = self.class.ancestors[0..-3].delete_if {|c| c.instance_of?( Module ) }
+      classes = self.class.ancestors[0..-4].delete_if {|c| c.instance_of?( Module ) }
       while klass = classes.shift
         data = @@config[klass.name]
         return data.params[name].value unless data.params.nil? || data.params[name].nil?
