@@ -38,7 +38,11 @@ module Webgen
 
     def parse_config_file
       if File.exists?( get_param( 'tagconfig' ) )
-        instance_eval( File.read( get_param( 'tagconfig' ) ), get_param( 'tagconfig' ) )
+        begin
+          instance_eval( File.read( get_param( 'tagconfig' ) ), get_param( 'tagconfig' ) )
+        rescue Exception => e
+          self.logger.error { "Error parsing file <#{get_param( 'tagconfig' )}>: #{e.message}" }
+        end
       end
     end
 

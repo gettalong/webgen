@@ -56,7 +56,7 @@ module Webgen
       (@@config[klass.name] = OpenStruct.new).klass = klass
     end
 
-    ['plugin', 'summary', 'description'].each do |name|
+    ['extension', 'plugin', 'summary', 'description'].each do |name|
       self.module_eval "def self.#{name}( obj ); @@config[self.name].#{name} = obj; end"
     end
 

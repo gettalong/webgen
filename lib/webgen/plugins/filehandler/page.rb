@@ -45,6 +45,7 @@ module FileHandlers
 
     plugin "PageHandler"
     summary "Class for processing page files"
+    extension 'page'
     add_param 'defaultLangInFilename', false, \
     'If true, the output files for the default language will have the ' \
     'language in the file name like all other page files. If false, they won''t.'
@@ -54,7 +55,7 @@ module FileHandlers
 
     def initialize
       @formats = Hash.new( ContentHandlers::ContentHandler.new )
-      extension( 'page', PagePlugin )
+      extension( Webgen::Plugin.config[self.class.name].extension, PagePlugin )
     end
 
     def create_node( srcName, parent )

@@ -2,6 +2,7 @@ HIGH PRIORITY TODO: test everything (automatically) and try to refactor!!!
 
 ---- CURRENT ----
 
+* document in file handler that :dir extension is used for directory handler
 * options for PageHandler: default file format if none given
 * add optional extension method to Plugin class
 * allow a template to use another template (templates as page description files?) (template2 uses template1)

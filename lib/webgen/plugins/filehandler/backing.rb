@@ -59,13 +59,11 @@ module FileHandlers
 
     plugin "BackingFileHandler"
     summary "Handles backing files for page file"
-
+    extension 'info'
     depends_on 'FileHandler'
 
-    EXT = 'info'
-
     def initialize
-      extension( EXT, BackingFileHandler )
+      extension( Webgen::Plugin.config[self.class.name].extension, BackingFileHandler )
       Webgen::Plugin['FileHandler'].add_msg_listener( :AFTER_DIR_READ, method( :process_backing_file ) )
     end
 
@@ -101,7 +99,7 @@ module FileHandlers
     end
 
     def process_backing_file( dirNode )
-      backingFiles = dirNode.find_all {|child| /\.#{EXT}$/ =~ child['src'] }
+      backingFiles = dirNode.find_all {|child| /\.#{Webgen::Plugin.config[self.class.name].extension}$/ =~ child['src'] }
 
       backingFiles.each do |backingFile|
         backingFile['content'].each do |filename, data|

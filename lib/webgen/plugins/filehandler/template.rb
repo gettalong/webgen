@@ -29,11 +29,12 @@ module FileHandlers
 
     plugin "TemplateFileHandler"
     summary "Represents the template files for the page generation in the tree"
+    extension 'template'
     add_param 'defaultTemplate', 'default.template', 'The default file name for the template file.'
     depends_on 'FileHandler'
 
     def initialize
-      extension( 'template', TemplatePlugin )
+      extension( Webgen::Plugin.config[self.class.name].extension, TemplatePlugin )
     end
 
     def create_node( srcName, parent )

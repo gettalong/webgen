@@ -58,11 +58,12 @@ module FileHandlers
 
     plugin "DirectoryHandler"
     summary "Handles directories"
+    extension :dir
     add_param 'indexFile', 'index.html', 'The default file name for the directory index file.'
     depends_on 'FileHandler'
 
     def initialize
-      extension( :dir, DirHandler )
+      extension( Webgen::Plugin.config[self.class.name].extension, DirHandler )
     end
 
     # Return a new DirNode.

@@ -30,6 +30,7 @@ module FileHandlers
 
     plugin "PictureGalleryFileHandler"
     summary "Handles picture gallery files for page file"
+    extension 'gallery'
     add_param "picturesPerPage", 20, 'Number of picture per gallery page'
     add_param "picturePageInMenu", false, 'True if the picture pages should be in the menu'
     add_param "galleryPageInMenu", true, 'True if the gallery pages should be in the menu'
@@ -41,7 +42,7 @@ module FileHandlers
     depends_on 'FileHandler'
 
     def initialize
-      extension( 'gallery', PictureGalleryFileHandler )
+      extension( Webgen::Plugin.config[self.class.name].extension, PictureGalleryFileHandler )
     end
 
     def create_node( file, parent )
