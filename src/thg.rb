@@ -49,6 +49,7 @@ begin
 		opts.on("--output-dir DIR", "-o", String, "The directory where the output should go") { |Configuration.instance.outDirectory| }
 		opts.on("--list-plugins", "-l", "List all the plugins and information about them") { require 'listplugins'; main = method(:runListPlugins) }
 		opts.on("--verbosity LEVEL", "-v", Integer, "The verbosity level (0, 1, or 2)") { |Configuration.instance.verbosityLevel| }
+		opts.on("--no-ansi-color", "-n", Integer, "Output text without colorisation") { Configuration.instance.ansiColorUsed = true }
 
 		begin
 			opts.parse!

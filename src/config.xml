@@ -4,6 +4,7 @@
 		<srcDir>src</srcDir>
 		<outDir>output</outDir>
 		<verbosityLevel>0</verbosityLevel>
+		<ansiColorUsed>0</ansiColorUsed>
 	</main>
 	<plugins>
 		<xmlPagePlugin>

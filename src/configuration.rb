@@ -29,6 +29,7 @@ class Configuration
 	attr_accessor :srcDirectory
 	attr_accessor :outDirectory	
 	attr_accessor :verbosityLevel
+	attr_accessor :ansiColorUsed
 	attr_accessor :configFile
 
 	attr_reader :pluginData
@@ -48,7 +49,7 @@ class Configuration
 		read_config_value(root, :@srcDirectory, '/configuration/main/srcDir')
 		read_config_value(root, :@outDirectory, '/configuration/main/outDir')
 		read_config_value(root, :@verbosityLevel, '/configuration/main/verbosityLevel', Integer)
-
+		read_config_value(root, :@ansiColorUsed, '/configuration/main/ansiColorUsed', Integer)
 		# fill plugin data structure
 		root.each_element('/configuration/plugins/*') { |element|
 			@pluginData[element.name] = element
@@ -61,14 +62,18 @@ class Configuration
 
 	def log(level, str)
 		if @verbosityLevel >= level
-			print Time.now.strftime('%Y%m%d%H%M%S') << ' >> ' 
+			s = Time.now.strftime('%Y%m%d%H%M%S') << ' >> ' 
 			case level
 			when 2
-				print AnsiColor.green, 'WARNING: '
+				s += AnsiColor.green + 'WARNING: '
 			when 3
-				print AnsiColor.red, 'DEBUG: '
+				s += AnsiColor.red + 'DEBUG: '
 			end
-			print str, AnsiColor.reset, "\n" 
+			s += str + AnsiColor.reset + "\n" 
+			if @ansiColorUsed != 1
+				s = AnsiColor.uncolored(s)
+			end
+			print s
 		end
 	end
 
