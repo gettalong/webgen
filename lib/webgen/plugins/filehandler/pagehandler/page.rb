@@ -27,7 +27,7 @@ module FileHandlers
 
   # Super class for all page description files. Provides helper methods so that writing new plugins
   # for page description files is easy.
-  class PagePlugin < DefaultHandler
+  class PageHandler < DefaultHandler
 
     # Specialized node describing a page. A page node itself is virtual, it has sub nodes which
     # describe the page files in all available languages.
@@ -43,7 +43,6 @@ module FileHandlers
 
     end
 
-    plugin "PageHandler"
     summary "Class for processing page files"
     extension 'page'
     add_param 'defaultLangInFilename', false, \
@@ -55,16 +54,16 @@ module FileHandlers
     attr_reader :formats
 
     def initialize
+      super
       @formats = Hash.new( ContentHandlers::ContentHandler.new )
-      extension( Webgen::Plugin.config[self.class.name].extension, PagePlugin )
     end
 
     def create_node( srcName, parent )
-      create_node_internally( parse_file( srcName ), analyse_file_name( File.basename( srcName ) ), parent )
+      create_node_internally( parse_data( File.read( srcName ), srcName ), analyse_file_name( File.basename( srcName ) ), parent )
     end
 
     def create_node_from_data( data, srcName, parent )
-      create_node_internally( parse_file( data, false ), analyse_file_name( srcName ), parent )
+      create_node_internally( parse_data( data, srcName ), analyse_file_name( File.basename( srcName ) ), parent )
     end
 
     def write_node( node )
@@ -137,27 +136,23 @@ module FileHandlers
       return ( pageNodeExisted ? nil : pageNode )
     end
 
-    def parse_file( data, isFilename = true )
-      srcName = '-STRING-'
-      if isFilename
-        srcName = data
-        data = File.read( srcName )
-      end
-
+    def parse_data( data, srcName )
       options = {}
       blocks = data.split( /^---$/ )
-      if blocks[0] == ''
-        begin
-          options = YAML::load( blocks[1] )
-        rescue ArgumentError => x
-          self.logger.error { "Error parsing options for file <#{srcName}>: #{x.message}" }
+      if blocks.length > 0
+        if blocks[0] == ''
+          begin
+            options = YAML::load( blocks[1] )
+          rescue ArgumentError => x
+            self.logger.error { "Error parsing options for file <#{srcName}>: #{x.message}" }
+          end
+          blocks[0..1] = []
         end
-        blocks[0..1] = []
-      end
-      blocks.each {|b| b.gsub!( /^(\\+)(---)$/ ) {|m| "\\" * ($1.length / 2) + $2 } }
-      (options['blocks'] ||= [{'name'=>'content', 'format'=>get_param( 'defaultContentFormat' )}]).each do |blockdata|
-        self.logger.debug { "Block '#{blockdata['name']}' formatted using '#{blockdata['format']}'" }
-        options[blockdata['name']] = @formats[blockdata['format']].format_content( blocks.shift || '' )
+        blocks.each {|b| b.gsub!( /^(\\+)(---)$/ ) {|m| "\\" * ($1.length / 2) + $2 } }
+        (options['blocks'] ||= [{'name'=>'content', 'format'=>get_param( 'defaultContentFormat' )}]).each do |blockdata|
+          self.logger.debug { "Block '#{blockdata['name']}' formatted using '#{blockdata['format']}'" }
+          options[blockdata['name']] = @formats[blockdata['format']].format_content( blocks.shift || '' )
+        end
       end
       options
     end
@@ -166,6 +161,7 @@ module FileHandlers
       matchData = /^(?:(\d+)\.)?([^.]*?)(?:\.(\w\w))?\.(.*)$/.match( srcName )
       analysed = OpenStruct.new
 
+      self.logger.info { "Using default language for file <#{srcName}>" } if matchData[3].nil?
       analysed.lang      = matchData[3] || Webgen::Plugin['Configuration']['lang']
       analysed.baseName  = matchData[2] + '.html'
       analysed.srcName   = srcName
@@ -190,7 +186,6 @@ module ContentHandlers
 
     VIRTUAL = true
 
-    plugin "ContentHandler"
     summary "Base class for all page file content handlers"
 
     # Register the format specified by a subclass.
@@ -199,7 +194,7 @@ module ContentHandlers
       Webgen::Plugin['PageHandler'].formats[fmt] = self
     end
 
-    # Format the given +content+. Should be overriden in subclass!
+    # Format the given +content+. Should be overridden in subclass!
     def format_content( content )
       self.logger.error { "Invalid content format specified, copying source verbatim!" }
       content

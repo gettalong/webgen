@@ -28,7 +28,6 @@ module Webgen
   # Loads website specific extensions.
   class ExtensionLoader < Plugin
 
-    plugin "ExtensionLoader"
     summary "Loads extensions from a configuration file"
     depends_on 'Tags', 'FileHandler'
     add_param 'extconfig', 'extension.config', 'Configuration file for extensions'
@@ -67,7 +66,6 @@ module Tags
 
     VIRTUAL = true
 
-    plugin "Simple Tag"
     summary "Used by the Tag Loader, provides the interface used by the Tags class"
 
     def initialize( processOutput, block )

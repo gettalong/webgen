@@ -20,27 +20,27 @@
 #++
 #
 
+
 begin
-  require 'redcloth'
-  require 'webgen/plugins/filehandler/page'
+  require 'bluecloth'
+  require 'webgen/plugins/filehandler/pagehandler/page'
 
   module ContentHandlers
 
-    # Handles content in Textile format using RedCloth.
-    class TextileHandler < ContentHandler
+    # Handles text formatted in Markdown format using BlueCloth.
+    class MarkdownHandler < ContentHandler
 
-      plugin "TextileHandler"
-      summary "Handles content in Textile format using RedCloth"
+      summary "Handles content formatted in Markdown format using BlueCloth"
       depends_on "PageHandler"
 
       def initialize
-        register_format( 'textile' )
+        register_format( 'markdown' )
       end
 
       def format_content( txt )
-        RedCloth.new( txt ).to_html
+        BlueCloth.new( txt ).to_html
       rescue
-        self.logger.error { "Error converting Textile text to HTML" }
+        self.logger.error { "Error converting Markdown text to HTML" }
         ''
       end
 
@@ -49,5 +49,5 @@ begin
   end
 
 rescue LoadError => e
-  self.logger.warn { "Textile not available as content format as RedCloth could not be loaded: #{e.message}" }
+  self.logger.warn { "Markdown not available as content format as BlueCloth could not be loaded: #{e.message}" }
 end

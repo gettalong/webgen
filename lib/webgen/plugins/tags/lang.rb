@@ -25,9 +25,8 @@ require 'webgen/plugins/tags/tags'
 module Tags
 
   # Generates a list with all the languages for a page.
-  class LangTag < DefaultTag
+  class LanguageTag < DefaultTag
 
-    plugin 'LanguageTag'
     summary 'Provides links to translations of the page'
     add_param 'separator', ' | ', 'Separates the languages from each other.'
     add_param 'showSingleLang', true, 'True if the language link should be shown '\

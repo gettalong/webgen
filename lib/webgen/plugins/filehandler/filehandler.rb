@@ -29,7 +29,6 @@ module FileHandlers
   # the plugin object itself.
   class FileHandler < Webgen::Plugin
 
-    plugin "FileHandler"
     summary "Super plugin for handling files"
     description "Provides interface on file level. The FileHandler goes through the source
         directory, reads in all files for which approriate plugins exist and
@@ -164,15 +163,16 @@ module FileHandlers
 
     VIRTUAL = true
 
-    plugin "Default Handler"
     summary "Base class of all file handler plugins"
 
+    def initialize
+      extension( Webgen::Plugin.config[self.class.name].extension ) if Webgen::Plugin.config[self.class.name].extension
+    end
+
     # Register the file extension specified by a subclass.
-    def extension( ext, klass )
-      if self.instance_of?( klass )
-        self.logger.info { "Registering file handler #{self.class.name} (#{self.object_id}) with extension '#{ext}'" }
-        Webgen::Plugin['FileHandler'].extensions[ext] = self
-      end
+    def extension( ext )
+      self.logger.info { "Registering file handler #{self.class.name} (#{self.object_id}) with extension '#{ext}'" }
+      Webgen::Plugin['FileHandler'].extensions[ext] = self
     end
 
     # Supplies the +path+ to a file and the +parent+ node sothat the plugin can create a node for this

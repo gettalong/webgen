@@ -22,7 +22,7 @@
 
 require 'webgen/plugins/filehandler/filehandler'
 require 'webgen/plugins/filehandler/directory'
-require 'webgen/plugins/filehandler/page'
+require 'webgen/plugins/filehandler/pagehandler/page'
 
 module FileHandlers
 
@@ -57,13 +57,12 @@ module FileHandlers
   # add the +external+ meta information (i.e. set +external+ to +true+).
   class BackingFileHandler < DefaultHandler
 
-    plugin "BackingFileHandler"
     summary "Handles backing files for page file"
     extension 'info'
     depends_on 'FileHandler'
 
     def initialize
-      extension( Webgen::Plugin.config[self.class.name].extension, BackingFileHandler )
+      super
       Webgen::Plugin['FileHandler'].add_msg_listener( :AFTER_DIR_READ, method( :process_backing_file ) )
     end
 
@@ -130,7 +129,7 @@ module FileHandlers
         filedata['lang'] = language
 
         handler = VirtualPageHandler.new
-        pageNode = handler.create_node( filename, dirNode )
+        pageNode = handler.create_node_from_data( '', filename, dirNode )
         unless pageNode.nil?
           pageNode['processor'] = Webgen::Plugin['VirtualPageHandler']
           self.logger.debug { "Adding virtual page node <#{pageNode.recursive_value( 'src', false )}> to directory <#{dirNode.recursive_value( 'src' )}>" }
@@ -139,7 +138,6 @@ module FileHandlers
         pageNode ||= Webgen::Plugin['VirtualPageHandler'].get_page_node( filename, dirNode ) #TODO
         node = Webgen::Plugin['VirtualPageHandler'].get_lang_node( pageNode, language )
         node.metainfo.update( filedata )
-
         self.logger.info { "Created virtual node <#{node.recursive_value( 'src' )}> (#{language}) in <#{dirNode.recursive_value( 'dest' )}> " \
           "referencing '#{node['dest']}'" }
       end
@@ -180,9 +178,8 @@ module FileHandlers
   # Handles virtual directories, that is, directories that do not exist in the source tree.
   class VirtualDirHandler < DirHandler
 
-    plugin "VirtualDirHandler"
     summary "Handles virtual directories"
-    depends_on "DirectoryHandler"
+    depends_on "DirHandler"
 
     def write_node( node )
     end
@@ -190,15 +187,10 @@ module FileHandlers
   end
 
   # Handles virtual pages, that is, pages that do not exist in the source tree.
-  class VirtualPageHandler < PagePlugin
+  class VirtualPageHandler < PageHandler
 
-    plugin "VirtualPageHandler"
     summary "Handles virtual pages"
     depends_on "PageHandler"
-
-    def parse_file( name )
-      {}
-    end
 
     def write_node( node )
     end

@@ -33,7 +33,6 @@ module Tags
   # The default plugin can be registered by using the special key <tt>:default</tt>.
   class Tags < Webgen::Plugin
 
-    plugin "Tags"
     summary "Super plugin for handling tags"
 
     # Tag plugins should add an entry to this hash.
@@ -126,7 +125,6 @@ module Tags
 
     VIRTUAL = true
 
-    plugin "Default tag"
     summary "Base class for all tag plugins"
     depends_on "Tags"
 

@@ -18,6 +18,9 @@ class NodeTest < Test::Unit::TestCase
     @n['root/file1'] = create_node( @n['root'] )
     @n['root/file1']['dest'] = 'file1'
     @n['root/file1']['otherdest'] = 'file1o'
+    @n['root/file11'] = create_node( @n['root'] )
+    @n['root/file11']['dest'] = 'rdoc/file11'
+    @n['root/file11']['otherdest'] = 'file1o'
     @n['root/virtdir1'] = create_node( @n['root'] )
     @n['root/virtdir1']['virtual'] = true
     @n['root/virtdir1']['dest'] = 'virtdir1/'
@@ -73,6 +76,7 @@ class NodeTest < Test::Unit::TestCase
 
     assert_equal( '.', @n['root/file1'].relpath_to_node( @n['root'] ) )
     assert_equal( '.', @n['root/file1'].relpath_to_node( @n['root'], false ) )
+    assert_equal( '../rdoc/file11', @n['root/dir2/file3'].relpath_to_node( @n['root/file11'] ) )
     assert_equal( '.', @n['root/dir2'].relpath_to_node( @n['root'] ) )
     assert_equal( '.', @n['root/virtdir1/file2'].relpath_to_node( @n['root'] ) )
     assert_equal( '..', @n['root/dir2/file3'].relpath_to_node( @n['root'] ) )

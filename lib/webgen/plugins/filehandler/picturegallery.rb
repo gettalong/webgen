@@ -22,13 +22,12 @@
 
 require 'webgen/plugins/filehandler/filehandler'
 require 'webgen/plugins/filehandler/directory'
-require 'webgen/plugins/filehandler/page'
+require 'webgen/plugins/filehandler/pagehandler/page'
 
 module FileHandlers
 
   class PictureGalleryFileHandler < DefaultHandler
 
-    plugin "PictureGalleryFileHandler"
     summary "Handles picture gallery files for page file"
     extension 'gallery'
     add_param "picturesPerPage", 20, 'Number of picture per gallery page'
@@ -39,11 +38,7 @@ module FileHandlers
     add_param "files", 'images/**/*.jpg', 'The Dir glob for specifying the picture files'
     add_param "title", 'Gallery', 'The title of the gallery'
 
-    depends_on 'FileHandler'
-
-    def initialize
-      extension( Webgen::Plugin.config[self.class.name].extension, PictureGalleryFileHandler )
-    end
+    depends_on 'FileHandler', 'PageHandler'
 
     def create_node( file, parent )
       begin

@@ -22,14 +22,13 @@
 
 require 'rdoc/markup/simple_markup'
 require 'rdoc/markup/simple_markup/to_html'
-require 'webgen/plugins/filehandler/page'
+require 'webgen/plugins/filehandler/pagehandler/page'
 
 module ContentHandlers
 
   # Handles text in RDoc format.
   class RDocHandler < ContentHandler
 
-    plugin "RDocHandler"
     summary "Handles content in RDOC format"
     depends_on "PageHandler"
 

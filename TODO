@@ -1,5 +1,3 @@
-HIGH PRIORITY TODO: test everything (automatically) and try to refactor!!!
-
 ---- CURRENT ----
 
 * allow specification of metadata for gallery and picture pages
@@ -15,14 +13,19 @@ HIGH PRIORITY TODO: test everything (automatically) and try to refactor!!!
 
 ---- DOCU ----
 
+* extend plugins section on main documentation page
 * add design gallery
 * DEV: self.logger.warn/error/info/debug can be used for messages
 
 ---- FUTURE ----
 
 * tag 'resume', uses xmlresume2x to provide HTML version of xml resume
+* tag 'mrplot' -> generate a plot with mrplot
+* tag 'sitemap' -> generate site map
 * multi-lingual picture/gallery files
 * create thumbnails of pictures on the fly with rmagick
+* create logo "Created with webgen"
+* refactor menu: abstract menu generator+parser, concrete impls (vert. menu, horz. menu, ...)
 
 ---- DONE ----
 
@@ -123,3 +126,7 @@ W do not allow two or more page files in the same language, print warn
 * state that if a dependency is not found (e.g. redcloth) the plugin is disabled and a warning issued
 * add example section for each plugin
 * add tests for all parameters with which webgen can be called
+* Bug in analyse_filename if langpart.length != 2 (write test!) -> was already handled gracefully ;-)
+* remove Plugin.plugin method -> use class name! (short class name, without modules, Test::Hallo.name.split(/::/).last )
+* remove extension(...) call from file handlers -> DefaultHandler#initialize
+* pagehandler + converter into own subdir

@@ -65,8 +65,8 @@ class Node
     if destNode['dest'] =~ /^http:\/\//
       path = ''
     else
-      from = recursive_value( 'dest' ).split( '/' )[1..-2]
-      to = destNode.recursive_value( 'dest' ).split( '/' )[1..-2]
+      from = recursive_value( 'dest' ).sub( /#{self['dest']}$/, '' ).split( '/' )[1..-1] || []
+      to = destNode.recursive_value( 'dest' ).sub( /#{destNode['dest']}$/, '' ).split( '/' )[1..-1] || []
 
       while from.size > 0 and to.size > 0 and from[0] == to[0]
         from.shift

@@ -28,7 +28,6 @@ module Tags
   # can use everything Time#strftime offers.
   class DateTag < DefaultTag
 
-    plugin "DateTag"
     summary "Prints out the date"
     add_param 'format', '%A, %B %d %H:%M:%S %Z %Y', 'The format of the date (same options as Time#strftime).'
     depends_on 'Tags'

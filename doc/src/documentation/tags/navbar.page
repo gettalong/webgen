@@ -4,7 +4,7 @@ inMenu: true
 ---
 h2. Information
 
-<notextile>{describe: NavigationBarTag}</notextile>
+<notextile>{describe: NavbarTag}</notextile>
 
 h2. Description
 

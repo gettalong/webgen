@@ -28,7 +28,6 @@ module TreeWalkers
   # so that it is called when the main class' #execute method is called.
   class TreeWalker < Webgen::Plugin
 
-    plugin "TreeWalker"
     summary "Super plugin for transforming the data tree"
 
     attr_reader :walkers
@@ -64,7 +63,6 @@ module TreeWalkers
   # Prints the whole tree of read files if the log level is at least DEBUG.
   class DebugTreePrinter < Webgen::Plugin
 
-    plugin "DebugTreePrinter"
     summary "Prints out the information in the tree for debug purposes."
     depends_on 'TreeWalker'
 

@@ -6,10 +6,8 @@ class PluginTest < Test::Unit::TestCase
 
   class TestPlugin < Webgen::Plugin
 
-    plugin "plugin"
     summary "summary"
     description "description"
-    depends_on 'depends_on'
     add_param "name", TestPlugin, "description"
 
     def param( name )
@@ -41,11 +39,11 @@ class PluginTest < Test::Unit::TestCase
   end
 
   def test_setter_methods
-    ['plugin','summary','description'].each do |text|
+    ['summary','description'].each do |text|
       assert_equal( text, Webgen::Plugin.config[TestPlugin.name].send( text ) )
     end
-    assert_instance_of( Array, Webgen::Plugin.config[TestPlugin.name].dependencies )
-    assert_equal( ['depends_on'], Webgen::Plugin.config[TestPlugin.name].dependencies )
+    assert_nil( Webgen::Plugin.config[TestPlugin.name].dependencies )
+    assert_equal( nil, Webgen::Plugin.config[TestPlugin.name].dependencies )
     assert_instance_of( Hash, Webgen::Plugin.config[TestPlugin.name].params )
     assert_equal( 'name', Webgen::Plugin.config[TestPlugin.name].params['name'].name )
     assert_equal( TestPlugin, Webgen::Plugin.config[TestPlugin.name].params['name'].value )
@@ -59,7 +57,7 @@ class PluginTest < Test::Unit::TestCase
   end
 
   def test_getter_methods
-    assert_equal( @x, Webgen::Plugin['plugin'] )
+    assert_equal( @x, Webgen::Plugin['TestPlugin'] )
     assert_equal( TestPlugin, @x.param( 'name' ) )
     assert( @x.param?( 'name' ) )
     assert_equal( nil, @x.param( 'noname' ) )

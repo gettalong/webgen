@@ -26,7 +26,6 @@ module Tags
 
   class WikiLinkTag < DefaultTag
 
-    plugin 'WikiLinkTag'
     summary 'Adds a link to wiki page'
     depends_on 'Tags'
     add_param 'title', nil, 'The title of the link. If it is not specified, the title of the current page is used.'

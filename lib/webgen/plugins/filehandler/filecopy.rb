@@ -27,9 +27,8 @@ module FileHandlers
 
   # A simple file handler which copies files with a specific extension from the source to the output
   # directory. The extensions of the files to copy are customizable.
-  class FileCopyPlugin < DefaultHandler
+  class FileCopyHandler < DefaultHandler
 
-    plugin "FileCopyHandler"
     summary "Copies files from source to destination without modification"
     add_param 'types', ['css', 'jpg', 'png', 'gif'], \
     'The extension that will be registered by this handler. All files with ' \
@@ -37,8 +36,9 @@ module FileHandlers
     depends_on 'FileHandler'
 
     def initialize
+      super
       get_param( 'types' ).each do |type|
-        extension( type, FileCopyPlugin )
+        extension( type )
       end
     end
 

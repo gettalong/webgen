@@ -34,7 +34,7 @@ module FileHandlers
         super( parent )
         self['title'] = self['directoryName'] = name
         self['src'] = self['dest'] = name + '/'
-        self['processor'] = Webgen::Plugin['DirectoryHandler']
+        self['processor'] = Webgen::Plugin['DirHandler']
       end
 
       def []( name )
@@ -43,7 +43,7 @@ module FileHandlers
       end
 
       def process_dir_index
-        node = Webgen::Plugin['PageHandler'].get_page_node( Webgen::Plugin['DirectoryHandler']['indexFile'], self )
+        node = Webgen::Plugin['PageHandler'].get_page_node( Webgen::Plugin['DirHandler']['indexFile'], self )
         if node
           self.logger.info { "Directory index file for <#{self.recursive_value( 'src' )}> => <#{node.recursive_value( 'src', false )}>" }
           self['indexFile'] = node
@@ -56,15 +56,11 @@ module FileHandlers
     end
 
 
-    plugin "DirectoryHandler"
     summary "Handles directories"
     extension :dir
     add_param 'indexFile', 'index.html', 'The default file name for the directory index file.'
     depends_on 'FileHandler'
 
-    def initialize
-      extension( Webgen::Plugin.config[self.class.name].extension, DirHandler )
-    end
 
     # Return a new DirNode.
     def create_node( path, parent )

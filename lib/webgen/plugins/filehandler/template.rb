@@ -25,17 +25,12 @@ require 'webgen/plugins/filehandler/filehandler'
 module FileHandlers
 
   # Handles template files. Template files are generic files which specify the layout.
-  class TemplatePlugin < DefaultHandler
+  class TemplateFileHandler < DefaultHandler
 
-    plugin "TemplateFileHandler"
     summary "Represents the template files for the page generation in the tree"
     extension 'template'
     add_param 'defaultTemplate', 'default.template', 'The default file name for the template file.'
     depends_on 'FileHandler'
-
-    def initialize
-      extension( Webgen::Plugin.config[self.class.name].extension, TemplatePlugin )
-    end
 
     def create_node( srcName, parent )
       node = Node.new( parent )

@@ -34,7 +34,6 @@ module Tags
   # Tag parameter: the name of the file which should be relocated
   class RelocatableTag < DefaultTag
 
-    plugin 'RelocatableTag'
     summary 'Adds a relative path to the specified name if necessary'
     depends_on 'Tags'
     add_param 'item', nil, 'The item which should be relocatable'

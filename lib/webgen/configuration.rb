@@ -54,9 +54,10 @@ module Webgen
 
     def self.inherited( klass )
       (@@config[klass.name] = OpenStruct.new).klass = klass
+      @@config[klass.name].plugin = klass.name.split( /::/ ).last
     end
 
-    ['extension', 'plugin', 'summary', 'description'].each do |name|
+    ['extension', 'summary', 'description'].each do |name|
       self.module_eval "def self.#{name}( obj ); @@config[self.name].#{name} = obj; end"
     end
 
@@ -73,7 +74,9 @@ module Webgen
 
     # Shortcut for getting the plugin with the name +name+.
     def self.[]( name )
-      @@config.find {|k,v| v.plugin == name }[1].obj
+      pair = @@config.find {|k,v| v.plugin == name }
+      self.logger.warn { "Could not retrieve plugin '#{name}' as such a plugin does not exist!" } if pair.nil?
+      pair[1].obj unless pair.nil?
     end
 
     # Add a parameter for the current class. Has to be used by subclasses to define their parameters!
@@ -142,12 +145,11 @@ module Webgen
   # Responsible for loading the other plugin files and holds the basic configuration options.
   class Configuration < Plugin
 
-    plugin "Configuration"
     summary "Responsible for loading the configuration data"
 
     add_param 'srcDirectory', 'src', 'The directory from which the source files are read.'
     add_param 'outDirectory', 'output', 'The directory to which the output files are written.'
-    add_param 'verbosityLevel', 3, 'The level of verbosity for the output of messages on the standard output.'
+    add_param 'verbosityLevel', 2, 'The level of verbosity for the output of messages on the standard output.'
     add_param 'lang', 'en', 'The default language.'
     add_param 'configfile', 'config.yaml', 'The file from which extra configuration data is taken.'
     add_param 'logfile', 'webgen.log', 'The name of the log file if the log should be written to a file.'
@@ -191,6 +193,7 @@ module Webgen
     def init_plugins
       dep = Dependency.new
       Plugin.config.each {|k,data| dep[data.plugin] = data.dependencies || []}
+      self.logger.debug { "Dependencies: #{dep.inspect}" }
       dep.tsort.each do |plugin|
         data = Plugin.config.find {|k,v| v.plugin == plugin }[1]
         self.logger.debug { "Creating plugin of class #{data.klass.name}" }

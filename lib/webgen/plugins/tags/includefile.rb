@@ -28,7 +28,6 @@ module Tags
   # Includes a file verbatim. All HTML special characters are escaped.
   class IncludeFileTag < DefaultTag
 
-    plugin "IncludeFileTag"
     summary "Includes a file verbatim"
     depends_on 'Tags'
     add_param 'filename', nil, 'The name of the file which should be included'
