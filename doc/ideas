@@ -213,7 +213,7 @@
 >>> configurable (default index.xml).
 
 * error handling
-  
+
   abort on error found but provide detailed information, only abort if
   recovery not possible. error information should include what error
   it was and a solution to correct error
@@ -233,7 +233,7 @@
   <menu> tag; menu is built from tree. Controller knows hot to parse the
   tree and integrate extra entries. Plugins get following hooks:
   start/end menu, start/end submenu, entry
-  >>> mostly done
+  >>> mostly done -> menu creation is not splitted into separate plugins
 
   - Sort plugin: specifies in which order the page files should be; uses
   meta info tag <order> to specify ordering; in configuration file a
@@ -266,6 +266,8 @@
   - sitemap plugin: provides a sitemap, uses the <sitemap>
   tag. controller traverses the tree structure, feeds data to style
   plugin, following hooks: start/end sitemap, start/end submenu, entry
+  >>> similar to menu plugin, but with all available page nodes (configuration
+      option for extending output to all nodes)
 
   - database text plugin: fetches text from a database during the
   creation of the page; uses the <database> tag
@@ -331,4 +333,4 @@ Design issues:
     - virtual: specifies if this node is a virtual one. virtual ones do
     not have a file representation in the source directory
 	- meta info element: the top level meta info element if available.
-    
+

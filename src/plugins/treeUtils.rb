@@ -19,7 +19,7 @@ class TreeUtils < UPS::Plugin
         path
     end
 
-    
+
     def get_node_for_string( srcNode, destString )
         node = srcNode.parent
         destString.split(File::SEPARATOR).each do |element|

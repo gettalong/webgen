@@ -1,4 +1,6 @@
-W add check so that all needed metainfo tags are in read files
+* eventually put TreeUtils methods into Node
+* make get_relpath_to_node work for all nodes, not only page nodes
+* get_node_for_string should also work for absolute paths (ie. '/images' or '/projects/index.html')
 * make file plugins case-insensitiv (convert all uppercase letters to lowercase)
 * create new document which describes iterations and the steps which are taken in each iteration (high risk first)
 * document existing files (RDOC)
@@ -53,3 +55,4 @@ W if a page in one language is in the menu, all other languages for this page sh
 W link creation for nodes should be done only in one place (now in menu and navbar tags)
 W navbar should be configurable (start tag, separator, end tag)
 W command line parameter for listing all available configuration options with default values
+W add check so that all needed metainfo tags are in read files
