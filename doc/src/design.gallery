@@ -4,7 +4,7 @@ files: designs/*.png
 mainPage:
     menuOrder: 8
 
-designs/default.png:
+designs/curdesign.png:
     title: Default Design
     description: This is the default and the current design for the webgen homepage.
 
