@@ -13,10 +13,10 @@ class FileHandler < UPS::Controller
 		@extensions = Hash.new
 
 		config = Configuration.instance.pluginData['fileHandler']
-		raise ThgException.new(ThgException::PLUGIN_CFG_NOT_FOUND, 'fileHandler') if config.nil?
+		raise ThgException.new(ThgException::CFG_ENTRY_NOT_FOUND, 'fileHandler') if config.nil?
 
 		@outputDir = config.text('outputDir')
-		raise ThgException.new(ThgException::CFG_ENTRY_NOT_FOUND, 'outputDir') if @outputDir.nil?
+		raise ThgException.new(ThgException::CFG_ENTRY_NOT_FOUND, 'fileHandler/outputDir') if @outputDir.nil?
 	end
 
 	def describe
@@ -87,12 +87,21 @@ end
 
 class XMLPagePlugin < UPS::StandardPlugin
 	
+	ThgException.add_entry :PAGE_META_ENTRY_NOT_FOUND,
+		"the tag <%0> has not be found in the <meta> section of the page file %1",
+		"<%0> is not optional, you have to add it to the page file"
+
 	def initialize
 		super('fileHandler', 'xmlPagePlugin')
-	end
+	end	
 
 	def after_register
 		UPS::PluginRegistry.instance['fileHandler'].extensions['xml'] = self
+	end
+
+	def describe
+		"Implements the handling of xml page files. These are the files that are transformed into " <<
+			"XHTML files."
 	end
 
 	def build_node(absName, relName)
@@ -100,7 +109,7 @@ class XMLPagePlugin < UPS::StandardPlugin
 			
 		# initialize attributes
 		title = root.text('/thg/metainfo/title')
-		raise "title entry not found" if title.nil? 
+		raise ThgException.new(ThgException::PAGE_META_ENTRY_NOT_FOUND, 'title', absName) if title.nil? 
 		
 		urlName = relName.gsub(/\.xml$/, '.html')
 
@@ -136,11 +145,17 @@ class FileCopyPlugin < UPS::StandardPlugin
 
 	def after_register
 		types = Configuration.instance.pluginData['fileCopy'].text
+		
 		if !types.nil?
 			types.split(',').each {|type|
 				UPS::PluginRegistry.instance['fileHandler'].extensions[type] = self
 			}
 		end
+	end
+
+	def describe
+		"Implements a generic file copy plugin. All the file types which are specified in the " <<
+			"configuration file are copied without any transformation into the destination directory."
 	end
 
 	def build_node(absName, relName)

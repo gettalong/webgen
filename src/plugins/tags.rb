@@ -2,6 +2,10 @@ require 'ups'
 
 class Tags < UPS::Controller
 
+	ThgException.add_entry :TAGS_UNKNOWN_TAG,
+		"found tag <thg:%0> for which no plugin exists",
+		"either remove the tag or implement a plugin for it"
+
 	def initialize
 		super('tags')
 	end
@@ -16,11 +20,7 @@ class Tags < UPS::Controller
 
 	def substituteTags(content, node)
 		content.gsub!(/<thg:(\w+)\s*?.*?(\/>|<\/\1>)/) { |match|
-			if !@plugins.has_key?($1)
-				raise ThgException.new('remove the invalid thg tag'),
-					"thg tag found for which no plugin exists (#{$1})", caller
-			end
-			
+			raise ThgException.new(ThgException::TAGS_UNKNOWN_TAG, $1) if !@plugins.has_key?($1)
 			@plugins[$1].execute(match, node)
 		}
 	end

@@ -1,52 +1,45 @@
 
-class ThgException < Exception
+class ThgException < RuntimeError
 
 	attr_reader :solution
 
 	def initialize(*args)
-		id = args[0]
-		if id.kind_of? Integer
-			# use message map
-			
-			# set message
-			super(substitute_entries(id, 0, args[1..-1]))
-			# set solution
-			@solution = substitute_entries(id, 1, args[1..-1])
-		else
-			# other exception
-			@solution = id
-		end
+		# set message
+		super(substitute_entries(args[0], 0, args[1..-1]))
+		# set solution
+		@solution = substitute_entries(args[0], 1, args[1..-1])
 	end
 
 	def substitute_entries(id, msgIndex, *args)
 		args.flatten!
 		@@messageMap[id][msgIndex].gsub(/%(\d+)/) { |match|
-			args[$1.to_i]
+			args[$1.to_i].to_s
 		}
 	end
 
-	@@messageMap = {
-		(CFG_ENTRY_NOT_FOUND = 1) => [
-			"%0 entry not found", 
-			"add entry %0 to the configuration file"
-		],
+	### Class variables and methods ###
 
-		(CFG_FILE_NOT_FOUND = 2) => [
-			"configuration file not found",
-			"create the configuration file (current search path: %0)"
-		],
+	@@messageMap = Hash.new
 
-		(ARG_PARSE_ERROR = 3) => [
-			"%0: %1 %2 %3 %4 %5",
-			"look at the online help to correct this error"
-		],
+	def ThgException.add_entry(symbol, message, solution)
+		name = symbol.id2name
+		raise ThgException.new(EXCEPTION_SYMBOL_INVALID, symbol, caller[0]) if ('a'..'z') === name[0..0]
+		raise ThgException.new(EXCEPTION_SYMBOL_IS_DEFINED, symbol, caller[0]) if const_defined? name
 
-		(PLUGIN_CFG_NOT_FOUND = 4) => [
-			"the configuration file has no section for %0",
-			"add entries for %0"
-		],
+		# declare the constant
+		class_eval("#{name} = #{name.hash}")
+
+		# add the hash entries
+		@@messageMap[name.hash] = [message, solution]
+	end
 
 
-	}
+	ThgException.add_entry :EXCEPTION_SYMBOL_INVALID,
+		"the symbol %0 does not start with an upper case letter (%1)",
+		"change the name of the symbol so that it starts with an upper case letter"
+
+	ThgException.add_entry :EXCEPTION_SYMBOL_IS_DEFINED,
+		"the symbol %0 is already defined (%1)",
+		"change the name of the symbol"
 
 end
