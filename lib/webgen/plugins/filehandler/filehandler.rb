@@ -46,8 +46,7 @@ module FileHandlers
       "check the source directory setting and that you called webgen from the correct directory"
 
 
-    attr_accessor :extensions
-    attr_accessor :ignoredFiles
+    attr_reader :extensions
 
 
     def initialize

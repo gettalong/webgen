@@ -47,7 +47,7 @@ module Tags
 
 
     # Tag plugins should add an entry to this hash.
-    attr_accessor :tags
+    attr_reader :tags
 
     def initialize
       @tags = Hash.new

@@ -95,15 +95,15 @@ module Tags
     def process_tag( tag, node, refNode )
       unless defined? @menuTree
         @menuTree = create_menu_tree( Node.root( node ), nil )
-        #TODO only call DebugTreePrinter
         unless @menuTree.nil?
-          UPS::Registry['Tree Walker'].execute @menuTree
+          UPS::Registry['Tree Walker'].execute( @menuTree, UPS::Registry['Debug Tree Printer'] )
           @menuTree.sort
-          UPS::Registry['Tree Walker'].execute @menuTree
+          UPS::Registry['Tree Walker'].execute( @menuTree, UPS::Registry['Debug Tree Printer'] )
         end
       end
       build_menu( node, @menuTree, 1 )
     end
+
 
     #######
     private

@@ -104,11 +104,11 @@ module TreeWalkers
 
 
     def init
-      UPS::Registry['Tree Walker'].add_msg_listener( :preorder, method( :execute ) )
+      UPS::Registry['Tree Walker'].walkers << self
     end
 
 
-    def execute( node, level )
+    def handle_node( node, level )
       if node.metainfo.has_key?( "template" ) && node['template'].kind_of?( String )
         templateNode = node.get_node_for_string( node['template'] )
         if templateNode.nil?

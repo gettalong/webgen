@@ -45,9 +45,13 @@ tags/relocatable.html:
     title: Relocatable Tag
     inMenu: true
 
+tags/date.html:
+  en:
+    title: Date Tag
+    inMenu: true
+
 
 filehandler/index.html:
   en:
     title: File Handlers
     directoryName: File Handlers
-    inMenu: true

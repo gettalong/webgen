@@ -21,7 +21,6 @@
 #
 
 require 'util/ups'
-require 'util/listener'
 
 # All plugins which count as "tree walkers" should be put into this module.
 module TreeWalkers
@@ -30,25 +29,36 @@ module TreeWalkers
   # so that it is called when the main class' #execute method is called.
   class TreeWalker < UPS::Plugin
 
-    include Listener
 
     NAME = "Tree Walker"
     SHORT_DESC = "Super plugin for transforming the data tree"
 
+    attr_reader :walkers
 
     def initialize
-      add_msg_name :preorder
-      add_msg_name :postorder
+      @walkers = []
     end
 
 
-    # Walks the tree and calls all registered plugins for each and every node.
-    def execute( tree, level = 0 )
-      dispatch_msg :preorder, tree, level
-      tree.each do |child|
-        execute( child, level + 1 )
+    # Uses either all registered walkers or the specified +walker+. Walks the +tree+ for each walker
+    # separately.
+    def execute( tree, walker = nil )
+      walkers = ( walker.nil? ? @walkers : [walker] )
+      walkers.each do |walker|
+        walk_tree( tree, walker, 0 )
       end
-      dispatch_msg :postorder, tree, level
+    end
+
+    #######
+    private
+    #######
+
+    # Walks the tree and calls the plugin +walker+ for each and every node.
+    def walk_tree( node, walker, level )
+      walker.handle_node( node, level )
+      node.each do |child|
+        walk_tree( child, walker, level + 1 )
+      end
     end
 
   end
@@ -62,11 +72,11 @@ module TreeWalkers
 
 
     def init
-      UPS::Registry[TreeWalker::NAME].add_msg_listener( :preorder, method( :execute ) )
+      UPS::Registry[TreeWalker::NAME].walkers << self
     end
 
 
-    def execute( node, level )
+    def handle_node( node, level )
       self.logger.debug { "   "*level  << "\\_ "*(level > 0 ? 1 : 0) << (node['virtual'] ? "[V]" : "") << "#{node['title']}: #{node['src']} -> #{node['dest']}" }
     end
 
