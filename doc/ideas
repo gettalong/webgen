@@ -150,6 +150,12 @@
   It should be possible to customize the pages so that different CSS
   media types can be used easily.
 
+* Separate CSS files for color
+
+  Separate the CSS file for structure and color so that the color design
+  of the homepage can be easily changed by changing the entries in one
+  file.
+
 * DTD for page files -- wish list
 
   Generate a DTD for the page format depending on the current

@@ -6,15 +6,7 @@ require 'ups'
 require 'configuration'
 require 'parser'
 require 'tree'
-
-
-class ThaumaturgeException < Exception
-	attr_accessor :solution
-
-	def initialize
-		@solution = 'None available'
-	end
-end
+require 'thgexception'
 
 class Main < UPS::StandardPlugin
 
@@ -29,17 +21,19 @@ class Main < UPS::StandardPlugin
 	def run(*arg)
 		begin
 			# initialise the configuration
-			cfg = Configuration.new
+			cfg = Configuration.instance
+			#print "Config: #{cfg.inspect}\n"
 
 			# load the plugins
 			cfg.loadPlugins
-
-			# load all the files in src dir and build tree
-			parser = Parser.new(cfg.srcDirectory)
-			tree = parser.build_tree
-
 			#UPS::PluginRegistry.instance['listRegistry'].list
+			#print UPS::PluginRegistry.instance['fileWriter'].inspect
 			
+			# load all the files in src dir and build tree
+			parser = Parser.new
+			tree = parser.build_tree
+			#print "Tree: #{tree.inspect}\n"
+
 			# execute tree transformer plugins
 			UPS::PluginRegistry.instance['treeTransformer'].execute(tree)
 
@@ -47,8 +41,9 @@ class Main < UPS::StandardPlugin
 			UPS::PluginRegistry.instance['fileWriter'].execute(tree)
 
 		rescue ThaumaturgeException => e
-			print "\nAn error occured: #{e.message}\n"
-			print "Possible solution: #{e.solution}\n"
+			print "An error occured: #{e.message}\n"
+			print "Possible solution: #{e.solution}\n\n"
+			print "Stack trace: #{e.backtrace.join("\n")}\n"
 		end
 	end
 
