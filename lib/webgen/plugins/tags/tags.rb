@@ -115,8 +115,7 @@ module Tags
 
 
   # Base class for all tag plugins. The base class provides a default mechanism for retrieving
-  # configuration data from either the configuration file or the tag itself. This behaviour can be
-  # overridden in a subclass.
+  # configuration data from either the configuration file or the tag itself.
   class DefaultTag < Webgen::Plugin
 
     VIRTUAL = true

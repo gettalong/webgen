@@ -40,6 +40,7 @@ module Tags
     depends_on 'Tags'
 
     def initialize
+      super
       register_tag( 'navbar' )
     end
 

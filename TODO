@@ -2,8 +2,6 @@ HIGH PRIORITY TODO: test everything (automatically) and try to refactor!!!
 
 ---- CURRENT ----
 
-* remove log4r support, add STDLIB logger support
-* one file format, many content formats
 * more tags (in docu: how to use them, parameters, ..., structure should be the same everywhere)
 * include version number in documentation
 * register with Freshmeat.net
@@ -96,3 +94,5 @@ W add RedCloth and BlueCloth and RDOC page description files
 W use File.basename(filename, '.*) to strip ext, File.extname(filename) to get ext
 W add debug statements to method_added in configuration.rb
 W do not allow two or more page files in the same language, print warn
+* remove log4r support, add STDLIB logger support
+* one file format, many content formats

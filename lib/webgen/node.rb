@@ -48,7 +48,7 @@ class Node
   # not be appended, but they are traversed nonetheless.
   def recursive_value( name, ignoreVirtual = true )
     value = ignoreVirtual && @metainfo['virtual'] ? '' : @metainfo[name]
-    @parent.nil? ? value : @parent.recursive_value( name ) + value
+    @parent.nil? ? value : @parent.recursive_value( name, ignoreVirtual ) + value
   end
 
 
@@ -78,11 +78,11 @@ class Node
   # Returns the node identified by +destString+ relative to the current node.
   def get_node_for_string( destString, fieldname = 'dest' )
     if /^#{File::SEPARATOR}/ =~ destString
-      node = Node.root self
+      node = Node.root( self )
       destString = destString[1..-1]
     else
       node = self
-      node = node.parent until node.kind_of? FileHandlers::DirHandler::DirNode
+      node = node.parent until node.kind_of?( FileHandlers::DirHandler::DirNode )
     end
 
     destString.split( File::SEPARATOR ).each do |element|
@@ -103,7 +103,7 @@ class Node
 
   # Returns the level of the node. The level specifies how deep the node is in the hierarchy.
   def level( ignoreVirtual = true )
-    recursive_value( 'dest', ignoreVirtual ).count( File::SEPARATOR )
+    recursive_value( 'dest', ignoreVirtual ).count( File::SEPARATOR ) #TODO redo without using recursive_value
   end
 
   # Checks if the current node is in the subtree in which the supplied node is. This is done by
@@ -113,7 +113,7 @@ class Node
   end
 
   # Returns the root node for +node+.
-  def Node.root( node )
+  def self.root( node )
     node = node.parent until node.parent.nil?
     node
   end

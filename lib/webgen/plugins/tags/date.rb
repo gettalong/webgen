@@ -34,6 +34,7 @@ module Tags
     depends_on 'Tags'
 
     def initialize
+      super
       register_tag( 'date' )
     end
 

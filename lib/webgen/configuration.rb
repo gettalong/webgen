@@ -130,12 +130,8 @@ module Webgen
     add_param 'outDirectory', 'output', 'The directory to which the output files are written.'
     add_param 'verbosityLevel', 3, 'The level of verbosity for the output of messages on the standard output.'
     add_param 'lang', 'en', 'The default language.'
-    add_param 'configfile', 'config.yaml', 'The file from which extra configuration data is taken'
-    add_param 'logfile', 'webgen.log', 'The name of the log file if the log should be written to a file'
-
-    def initialize
-      @homeDir = File.dirname( $0 )
-    end
+    add_param 'configfile', 'config.yaml', 'The file from which extra configuration data is taken.'
+    add_param 'logfile', 'webgen.log', 'The name of the log file if the log should be written to a file.'
 
     # Parse config file and load the configuration values.
     def parse_config_file
@@ -162,13 +158,14 @@ module Webgen
       end
     end
 
-    # Instantiate the plugins in the correct order.
+    # Instantiate the plugins in the correct order, except the classes which have a constant
+    # +VIRTUAL+.
     def init_plugins
       dep = Dependency.new
       Plugin.config.each {|k,data| dep[data.plugin] = data.dependencies || []}
       dep.tsort.each do |plugin|
         data = Plugin.config.find {|k,v| v.plugin == plugin }[1]
-        self.logger.debug { "Create object of class #{data.klass.name}" }
+        self.logger.debug { "Creating plugin of class #{data.klass.name}" }
         data.obj ||= data.klass.new unless data.klass.const_defined?( 'VIRTUAL' )
       end
     end

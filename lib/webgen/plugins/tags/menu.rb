@@ -95,6 +95,7 @@ module Tags
     'each subtree will be shown.'
 
     def initialize
+      super
       register_tag( 'menu' )
     end
 
