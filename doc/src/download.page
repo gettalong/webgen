@@ -1,0 +1,42 @@
+---
+title: Download &amp; Installation
+inMenu: true
+---
+h2. Download
+
+The newest version of webgen can be downloaded from Rubyforge.
+
+Homepage: "webgen.rubyforge.org":http://webgen.rubyforge.org
+
+Download: "http://rubyforge.org/frs/?group_id=296":http://rubyforge.org/frs/?group_id=296
+
+h2. Dependencies
+
+* "RedCloth":http://redcloth.rubyforge.org version 2.0.10 or higher
+* "BlueCloth":http://www.deveiate.org version 1.0.0 or higher
+
+h2. Installation
+
+There are many ways to install webgen. Choose the one you like best:
+
+* Via RPA
+ <pre>
+  $ rpa install webgen
+ </pre>
+
+* Via RubyGems
+ <pre>
+  $ gem install webgen
+ </pre>
+
+* The do-it-yourself way
+ <pre>
+  $ ruby setup.rb config
+  $ ruby setup.rb setup
+  $ ruby setup.rb install
+ </pre>
+
+* The simplified do-it-yourself way
+ <pre>
+  $ rake install
+ </pre>

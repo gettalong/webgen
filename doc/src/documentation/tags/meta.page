@@ -1,0 +1,18 @@
+---
+title: Meta
+inMenu: true
+dummyForMeta: This is content specified in the meta information section.
+---
+h2. Information
+
+<notextile>{describe: MetaTag}</notextile>
+
+h2. Description
+
+The meta tag is used to copy meta information verbatim to the output file. For example, if you
+define a meta information with the key <code>revision</code>, you could put the tag
+<code>\{revision: }</code> into the content part of the file and the value gets substituted
+automatically.
+
+Example: There is a meta information called 'dummyForMeta' defined for this page, so when this tag
+is used @\{dummyForMeta:}@, you get this '@{dummyForMeta:}@'.

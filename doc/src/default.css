@@ -109,11 +109,7 @@
 
   /* styling the content */
 
-  div.section {
-	margin-bottom: 30px;
-  }
-
-  h2.section_header {
+  h2 {
 	padding: 0px;
 	border-bottom: 3px double #8b5;
 

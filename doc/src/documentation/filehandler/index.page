@@ -1,0 +1,9 @@
+---
+directoryName: File Handlers
+---
+h2. About
+
+File handlers are used to handle different types of input files. You can see the currently exisiting
+file handlers in the menu. Choose one to get a short description for it! Have a look at the
+<a href="{relocatable: /api.html}">API documentation</a> to get detailed information about a file
+handler.

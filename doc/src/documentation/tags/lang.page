@@ -1,0 +1,17 @@
+---
+title: Language
+inMenu: true
+---
+h2. Information
+
+<notextile>{describe: LanguageTag}</notextile>
+
+h2. Description
+
+The language tag is used to display a list of languages for a page. Take a look at the lower right
+corner of the header. There you will find a link titled 'en'. This is the link to the english (=en)
+version of this page. As this page is not translated into any other language, there is only this one
+item.
+
+Here is a <a href="{relocatable: multilang.html}">link</a> to a page which is translated to several
+languages (more or less ;-). Have a look!

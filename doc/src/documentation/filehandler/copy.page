@@ -1,0 +1,12 @@
+---
+title: File Copy Handler
+inMenu: true
+---
+h2. Information
+
+<notextile>{describe: FileCopyHandler}</notextile>
+
+h2. Description
+
+The file copy handler copies files without modification from the source to the target directory.
+This is useful, for example, for CSS stylesheets and images.

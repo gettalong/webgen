@@ -1,0 +1,16 @@
+---
+title: Relocatable
+inMenu: true
+---
+h2. Information
+
+<notextile>{describe: RelocatableTag}</notextile>
+
+h2. Description
+
+The relocatable tag is used to change the path of the supplied file and is most often used in
+template files. A relocatable tag looks like this: @\{relocatable: default.css}@. If this
+was put into a template and the template was used by a file in a subdirectory, then the
+@relocatable@ tag would put @../default.css@ into the output file.
+
+This ensures that the relative path to the referenced file is always correct.

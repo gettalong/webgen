@@ -1,0 +1,22 @@
+index.html:
+  en:
+    menuOrder: 1
+
+download.html:
+  en:
+    menuOrder: 3
+
+features.html:
+  en:
+    menuOrder: 5
+
+api.html:
+  en:
+    dest: rdoc/index.html
+    title: API Reference
+    menuOrder: 7
+    inMenu: true
+
+documentation/index.html:
+  en:
+    menuOrder: 9

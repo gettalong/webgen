@@ -1,0 +1,37 @@
+---
+directoryName: Documentation
+---
+h2. Information
+
+p={font-size: 150%; color: red}. *!!! This documentation is for Webgen {version: } !!!*
+
+h2. Usage
+
+Webgen uses two directories: one to read the source files from and an other to write the output
+files to. The default source directory is @src@ and the default output directory is @output@. The
+source directory can be structured in any way you like, there is no restriction in respect of the
+number of directories or files.
+
+To build the website you simple need to change to the parent directoy of the source directory and
+type @webgen@. If everything is okay, no output will appear and you can point your browser to the
+output directory and view your _very_ nice website. If not, webgen tries to give detailed
+information about what happened and why something could not be done correctly.
+
+h2. Configuration
+
+Webgen provides a default configuration out of the box. If you can live with that, you do not need
+to write any configuration files. Because most people cannot, you can use your own configuration
+file. The configuration file has to be written in YAML and is called @config.yaml@. Webgen searches
+in the current directory for the configuration file.
+
+If you want to get the configuration values you can run webgen like this
+<pre>
+  $ webgen -c
+</pre>
+
+The list shows sorted by the plugin name the current values and the default values for each
+configuration option. Each option can be overridden in the configuration file by specifing the
+plugin name as top level key and each configuration option as a key/value pair. A configuration file
+looks like this:
+
+<pre class="webgen-file">{includeFile: /../../../testsite/config.yaml}</pre>

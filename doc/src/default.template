@@ -4,6 +4,7 @@
   <head>
     <title>{title: }</title>
     <link href="{relocatable: default.css}" rel="stylesheet" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   </head>
   <body>
     <div id="header">
@@ -24,7 +25,7 @@
     </div>
 
     <div id="footer">
-        generated with <em><b>webgen</b></em> on <b>{date: }</b>
+        generated with <a href="http://webgen.rubyforge.org"><em><b>webgen</b></em></a> on <b>{date: }</b>
     </div>
 
   </body>

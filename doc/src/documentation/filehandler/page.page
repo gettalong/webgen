@@ -1,0 +1,121 @@
+---
+title: Page Handler
+inMenu: true
+---
+h2. Information
+
+<notextile>{describe: PageHandler}</notextile>
+
+h2. Description
+
+Page description files are used to specify the actual content for the website. The contain the
+content for the webpage and, optionally, meta information.
+
+h2(#structure). Structure
+
+The format of these files is a very simple one and can be divided into two cases:
+
+# Only content
+# Meta information and content
+
+A simple file may look like this:
+<pre>
+This is the content!!!
+</pre>
+
+Only content is specified in this file. Meta information can be specified at the beginning of the
+file:
+<pre>
+\---
+title: The title set by Meta info
+\---
+This is the content of the file
+</pre>
+
+In this example, meta information is specified ("more info":#meta). Note the three dashes at the
+beginning of the file. This indicates that the following 'block' is used for meta information. If
+the three dashes at the beginning are omitted, then the parser won't know that the following block
+contains meta information and thinks it is content.
+
+If you want to include a line in your file which only has three dashes, you have to write this:
+<pre>
+\\---
+</pre>
+
+The meta information is separated from the content by another three dashes and so the content itself
+builds a second 'block'. The following examples contains three blocks, the meta information block
+and two content blocks.
+<pre>
+\---
+title: The title set by Meta info
+\---
+This is the 1. content of the file
+\---
+This is the 2. content of the file
+</pre>
+
+However, without naming blocks they cannot be accessed. You can specify the name and the content
+formatting using meta information. Look at the following example:
+<pre>
+\---
+title: The title set by Meta info
+blocks:
+  - \{name: content, format: textile}
+  - \{name: sidebar, format: markdown}
+\---
+This is the 1. content of the file
+\---
+This is the 2. content of the file
+</pre>
+
+The first block in this file is named @content@ and formatted using @textile@. The second block is
+named @sidebar@ and formatted using @markdown@.
+
+h2. Content format
+
+The content of page description can be written in different formats. The following formats are
+currently available:
+
+* textile: Content written using Textile markup ("Reference":http://hobix.com/textile/)
+* markdown: Content written using Markdown markup ("Reference":http://www.deveiate.org)
+* rdoc: Content written using RDOC markup (default documentation system for Ruby source files)
+* html: Content in plain HTML
+
+h2. Default settings
+
+As page description files need not have meta information, defaults are used for needed parameters.
+If meta information is specified in a page description file, the default values are overridden.
+
+The following defaults are used:
+
+* Content format
+
+  If there is only content in a page description file, its formatting defaults to Textile markup.
+
+* Title, ordering and language
+
+  These values are taken from the filename, so the filename of a page description file has to be
+  formatted like this: @[ordering.]title[.language].page@ (the values in square brackets are
+  optional). In detail:
+  * ordering: The ordering is a number which is used for menu generation and the like, where it is
+    necessary to order the items. If not specified, defaults to @0@.
+  * title: This is the title of the page. Hyphens and underscores are replaced with spaces and the
+    title must not contain any dots.
+  * language: This is the language code for this file. It is the international two letter acronym
+    and if it is not specified, it defaults to @en@.
+
+  Consider the following examples:
+  * @name.page@ -> title: Name, language: en, ordering: 0
+  * @name.de.page@ -> title: Name, language: de, ordering: 0
+  * @01.name_of-file.de.page@ -> Title: Name of file, language: de, ordering: 01
+
+
+h2(#meta). Meta Information
+
+Meta information can be specified at the beginning of the file as described "here":#structure. Meta
+information is formatted using YAML, a simple markup language. For more information about YAML, have
+a look at the "www.yaml.org":http://www.yaml.org!
+
+Any information can be specified. The most important use for meta information is to override values
+like the title of the page (e.g. if you want dots in it), the ordering and so on. It is also used to
+specify the names and the formatting of content blocks in the file.

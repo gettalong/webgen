@@ -1,0 +1,17 @@
+---
+title: Execute Command
+inMenu: true
+---
+h2. Information
+
+<notextile>{describe: ExecuteCommandTag}</notextile>
+
+h2. Description
+
+The execute command tag is used to include the output from a shell command. Here are some examples:
+
+table{border:1px solid black}.
+|_.Command|_.Output|
+|\{execute: date}|<pre class="webgen-file">{execute: date}</pre>|
+|\{execute: ls}|<pre class="webgen-file">{execute: ls}</pre>|
+|\{execute: uname -p}|<pre class="webgen-file">{execute: uname -p}</pre>|
