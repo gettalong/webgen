@@ -2,7 +2,6 @@ HIGH PRIORITY TODO: test everything (automatically) and try to refactor!!!
 
 ---- CURRENT ----
 
-* options for PageHandler: default file format if none given
 * allow a template to use another template (templates as page description files?) (template2 uses template1)
 * ev. create a GalleryNode and put gallery/pictures pages beneath it???
 * think about filename conflicts for picture pages
@@ -121,3 +120,4 @@ W do not allow two or more page files in the same language, print warn
 * rename tag loader -> extension loader
 * document extension loader and its config file
 * document in file handler that :dir extension is used for directory handler
+* options for PageHandler: default file format if none given

@@ -11,7 +11,7 @@ h2. Description
 Page description files are used to specify the actual content for the website. The contain the
 content for the webpage and, optionally, meta information.
 
-h2(#structure). Structure
+h2(#structure). File format
 
 The format of these files is a very simple one and can be divided into two cases:
 
@@ -90,7 +90,8 @@ The following defaults are used:
 
 * Content format
 
-  If there is only content in a page description file, its formatting defaults to Textile markup.
+  If there is only content in a page description file, its formatting defaults to the parameter
+  value @defaultContentFormat@.
 
 * Title, ordering and language
 

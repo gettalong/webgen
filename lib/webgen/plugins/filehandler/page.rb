@@ -49,6 +49,7 @@ module FileHandlers
     add_param 'defaultLangInFilename', false, \
     'If true, the output files for the default language will have the ' \
     'language in the file name like all other page files. If false, they won''t.'
+    add_param 'defaultContentFormat', 'textile', 'The default content format used in page files'
     depends_on 'FileHandler'
 
     attr_reader :formats
@@ -154,7 +155,7 @@ module FileHandlers
         blocks[0..1] = []
       end
       blocks.each {|b| b.gsub!( /^(\\+)(---)$/ ) {|m| "\\" * ($1.length / 2) + $2 } }
-      (options['blocks'] ||= [{'name'=>'content', 'format'=>'textile'}]).each do |blockdata|
+      (options['blocks'] ||= [{'name'=>'content', 'format'=>get_param( 'defaultContentFormat' )}]).each do |blockdata|
         self.logger.debug { "Block '#{blockdata['name']}' formatted using '#{blockdata['format']}'" }
         options[blockdata['name']] = @formats[blockdata['format']].format_content( blocks.shift || '' )
       end
