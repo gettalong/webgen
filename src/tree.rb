@@ -30,7 +30,7 @@ class DirectoryNode < Node
 		cfg = Configuration.instance
 
 		if !File.exists?(File.join(cfg.srcDirectory, dir, cfg.directoryIndexFile))
-			raise ThaumaturgeException.new("create an #{cfg.directoryIndexFile} in that directory"), 
+			raise ThgException.new("create an #{cfg.directoryIndexFile} in that directory"), 
 				"directory index file does not exist for #{dir == '' ? 'root directory' : dir}", caller
 		end
 
@@ -39,7 +39,7 @@ class DirectoryNode < Node
 		@templateFile = File.join(cfg.srcDirectory, dir, cfg.templateFile)
 		if !File.exists?(@templateFile)
 			if dir == '' # dir is root directory
-				raise ThaumaturgeException.new("create an #{cfg.templateFile} in the root directory"),
+				raise ThgException.new("create an #{cfg.templateFile} in the root directory"),
 					"directory index file in root directory not found", caller
 			end
 			@templateFile = parentTemplateFile

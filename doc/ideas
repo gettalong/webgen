@@ -54,6 +54,11 @@
 >>> other strings), after page written (e.g. to check the validity of
 >>> the file), after directory added to tree, after file added to tree
 
+>>> Module Hooks, each plugin can specify new hooks, extend the Hooks
+>>> Module, special hooks plugin that can be used to listen to hook /
+>>> dispatch event to hook listeners
+
+
 * file name generators
 
   File generation should be abstract, individual plugins should do the
@@ -97,6 +102,10 @@
 >>> directory of the distribution or in the file which is stated in the
 >>> configuration file.
 
+>>> tag <resource>, other plugins can specify resources, javascript or
+>>> css, writes link to approriate file (where all resources have been
+>>> written to), after all files generated writes the resource files
+
 * Central configuration through XML file
 
   Each plugin normally needs some kind of configuration if the user
@@ -118,6 +127,10 @@
 >>> The name of the configuration file is config.xml. This file has to
 >>> reside in the root directory under which the page files are. THINK
 >>> ABOUT FORMAT OF THE CONFIG FILE!!!
+
+>>> configuration should provide getResourcePath method which returns
+>>> the correcct path to a resource or nil if the resource does not
+>>> exist
 
 * New pages
 

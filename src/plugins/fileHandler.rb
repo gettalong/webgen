@@ -13,12 +13,17 @@ class FileHandler < UPS::Controller
 		@extensions = Hash.new
 
 		config = Configuration.instance.pluginData['fileHandler']
-		if config.nil?
-			raise ThaumaturgeException.new('add entries for fileWriter'),
-				'The configuration file has no section for fileWriter', caller
-		end
+		raise ThgException.new(ThgException::PLUGIN_CFG_NOT_FOUND, 'fileHandler') if config.nil?
 
 		@outputDir = config.text('outputDir')
+		raise ThgException.new(ThgException::CFG_ENTRY_NOT_FOUND, 'outputDir') if @outputDir.nil?
+	end
+
+	def describe
+		"Provides interface on file level. The FileHandler goes through the source " +
+			"directory, reads in all files for which approriate plugins exist and " +
+			"builds the tree. When all approriate transformations on the tree have " +
+			"been performed the FileHandler is used to write the output files."
 	end
 
 	def write_tree(tree)
@@ -32,52 +37,38 @@ class FileHandler < UPS::Controller
 	end
 
 
-	def substituteTags(content, node)
-		plugins = UPS::PluginRegistry.instance['tags'].plugins
-		content.gsub!(/<thg:(\w+)\s*?.*?(\/>|<\/\1>)/) { |match|
-			if !plugins.has_key?($1)
-				raise ThaumaturgeException.new('remove the invalid thg tag'),
-					"thg tag found for which no plugin exists (#{$1})", caller
-			end
-			
-			plugins[$1].execute(match, node)
-		}
-	end
-
 	#######
 	private
 	#######
 
 	def write_node(node, parent)
+		if !node.virtual
+			filename = File.join(@outputDir, node.url)
+			Configuration.instance.log(1, "Writing #{filename}")
+			
+			extension = node.srcName[/\.(.*)$/][1..-1]
+			@extensions[extension].write_node(node, parent, filename)
+		end
 		if node.children.length > 0
 			node.each { |child|
 				write_node(child, node)
 			}
 		end
-		if !node.virtual
-			filename = File.join(@outputDir, node.url)
-			print "Writing #{filename}\n"
-			
-			extension = node.srcName[/\.(.*)$/][1..-1]
-			@extensions[extension].write_node(node, parent, filename)
-		end
 	end
 
 	def build_entry(absName, relName, parent)
-		print "Processing #{absName}"
+		Configuration.instance.log(1, "Processing #{absName}")
 
 		if FileTest.file?(absName)
 			extension = absName[/\..*$/][1..-1]
 
 			if !@extensions.has_key?(extension)
-				print " -> ignored\n"
+				Configuration.instance.log(1, "  no plugin for file -> ignored")
 				node = nil;
 			else
-				print "\n"
 				node = @extensions[extension].build_node(absName, relName)
 			end
 		elsif FileTest.directory?(absName)
-			print "\n"
 			node = DirectoryNode.new("Directory #{relName}", relName, (parent.nil? ? '' : parent.templateFile))
 
 			Dir[File.join(absName, '*')].each { |filename|
@@ -126,8 +117,8 @@ class XMLPagePlugin < UPS::StandardPlugin
 			doc = file.read
 		}
 
-		UPS::PluginRegistry.instance['fileHandler'].substituteTags(node.content, node)
-		UPS::PluginRegistry.instance['fileHandler'].substituteTags(doc, node)
+		UPS::PluginRegistry.instance['tags'].substituteTags(node.content, node)
+		UPS::PluginRegistry.instance['tags'].substituteTags(doc, node)
 		FileUtils.makedirs(File.dirname(filename))
 
 		File.open(filename, File::CREAT|File::TRUNC|File::RDWR) {|file|

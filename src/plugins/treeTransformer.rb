@@ -11,7 +11,8 @@ class TreeTransformer < UPS::Controller
 	end
 
 	def execute(node, level = 0)
-		print "".ljust(level*4) << "#{node.title}: #{node.srcName} -> #{node.url}\n"
+		# just print all the nodes
+		Configuration.instance.log(2, "".ljust(level*4) << "#{node.title}: #{node.srcName} -> #{node.url}")
 		if node.children.length > 0
 			node.each { |child|
 				execute(child, level + 1)

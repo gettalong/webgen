@@ -4,6 +4,7 @@
 		<srcDir>src</srcDir>
 		<templateFile>template.html</templateFile>
 		<directoryIndexFile>index.xml</directoryIndexFile>
+		<verbosityLevel>0</verbosityLevel>
 	</main>
 	<plugins>
 		<fileHandler>

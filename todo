@@ -1,3 +1,8 @@
+W update all exceptions to new exception format
+* document existing files (RDOC)
+W restructure current files, make more readable
+* implement <template> meta-info tag (see template based)
+* implement "creation of files only when necessary" (i.e. if dependencies have changed)
 * FileCopyPlugin: check if file has changed and only then copy
 * define format of config.xml
 * think about how to print out warnings uniformly
@@ -13,3 +18,4 @@
 * set up directory structure and build system
 * write ideas and design considerations
 * create sample files to work on
+* change exception mechanism to use IDs for exceptions

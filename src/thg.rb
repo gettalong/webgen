@@ -14,29 +14,22 @@ class ConvertMain < UPS::StandardPlugin
 		super('main', 'thaumaturge')
 	end
 
-	def run(*arg)
-		begin
-			# load all the files in src dir and build tree
-			tree = UPS::PluginRegistry.instance['fileHandler'].build_tree
-			#print "Tree: #{tree.inspect}\n"
-
-			# execute tree transformer plugins
-			UPS::PluginRegistry.instance['treeTransformer'].execute(tree)
-
-			# generate output files
-			UPS::PluginRegistry.instance['fileHandler'].write_tree(tree)
-
-		rescue ThaumaturgeException => e
-			print "An error occured:\n\t #{e.message}\n\n"
-			print "Possible solution:\n\t #{e.solution}\n\n"
-			print "Stack trace: #{e.backtrace.join("\n")}\n"
-		end
-	end
-
 	def describe
 		"Executes the main branch of the progam. The main branch does the actual work, " <<
 			"i.e. it reads in all the files, transforms them and then produces the output "<<
 			"files."
+	end
+
+	def run(*arg)
+		# load all the files in src dir and build tree
+		tree = UPS::PluginRegistry.instance['fileHandler'].build_tree
+		Configuration.instance.log(2, "Tree: #{tree.inspect}")
+		
+		# execute tree transformer plugins
+		UPS::PluginRegistry.instance['treeTransformer'].execute(tree)
+		
+		# generate output files
+		UPS::PluginRegistry.instance['fileHandler'].write_tree(tree)
 	end
 
 end
@@ -45,6 +38,10 @@ class THGListPlugin < UPS::StandardPlugin
 	
 	def initialize
 		super('listRegistry', 'thgPluginList')
+	end
+
+	def describe
+		"Pretty prints the controller and plugin describtions"
 	end
 
 	def after_register
@@ -61,7 +58,7 @@ class THGListPlugin < UPS::StandardPlugin
 
 	def processPlugin(plugin)
 		if plugin.respond_to? :describe
-			print "Plugin '#{plugin.id}:'\n"
+			print "  Plugin '#{plugin.id}:'\n"
 			width = 0;
 			print "    "+plugin.describe.split(' ').collect {|s|
 				width += s.length
@@ -75,10 +72,6 @@ class THGListPlugin < UPS::StandardPlugin
 		end
 	end
 
-	def describe
-		"Pretty prints the controller and plugin describtions"
-	end
-
 end
 
 class ListPluginMain < UPS::StandardPlugin
@@ -87,12 +80,12 @@ class ListPluginMain < UPS::StandardPlugin
 		super('main', 'listPlugins')
 	end
 
-	def run(*arg)
-		UPS::PluginRegistry.instance['listRegistry'].list		
-	end
-
 	def describe
 		"Prints out a description of all plugins which have a describe method"
+	end
+
+	def run(*arg)
+		UPS::PluginRegistry.instance['listRegistry'].list		
 	end
 
 end
@@ -101,24 +94,43 @@ UPS::PluginRegistry.instance.register_plugin(ConvertMain.new)
 UPS::PluginRegistry.instance.register_plugin(ListPluginMain.new)
 UPS::PluginRegistry.instance.register_plugin(THGListPlugin.new)
 
-# load the plugins
-Configuration.instance.loadPlugins
-
-
-# specify which main plugin to execute
-main = 'thaumaturge'
-
-# parse options
-ARGV.options do |opts|
-	opts.summary_width = 20
-	opts.program_name = 'ruby thg.rb'
-	opts.banner << "\nThaumaturge is a template based web page generator for offline page generation.\n\n"
-
-	opts.on_tail("--help", "-h", "Display this help screen") { puts opts; exit }
-	opts.on("--list-plugins", "-l", "List all the plugins and information about them") { main = 'listPlugins' }
+begin
+	# specify which main plugin to execute
+	main = 'thaumaturge'
+	configFile = File.join(File.dirname($0), 'config.xml')
 	
-	opts.parse!
-end
+	# parse options
+	ARGV.options do |opts|
+		opts.summary_width = 25
+		opts.summary_indent = '  '
+		opts.program_name = 'ruby thg.rb'
 
-UPS::PluginRegistry.instance['main'].set_plugin(main)
-UPS::PluginRegistry.instance['main'].run(ARGV)
+		opts.banner << "\nThaumaturge is a template based web page generator for offline page generation.\n\n"
+
+		opts.on_tail("--help", "-h", "Display this help screen") { puts opts; exit }
+		opts.on("--config-file FILE", "-c", String, "The config.xml which should be used") { |configFile| }
+		opts.on("--list-plugins", "-l", "List all the plugins and information about them") { main = 'listPlugins' }
+		opts.on("--verbosity LEVEL", "-v", Integer, "The verbosity level (0, 1, or 2)") { |Configuration.instance.verbosityLevel| }
+
+		begin
+			opts.parse!
+		rescue RuntimeError => e
+			raise ThgException.new(ThgException::ARG_PARSE_ERROR, e.reason, e.args[0])
+		end
+	end
+
+	# parse the configuration file
+	Configuration.instance.parse_config_file(configFile)
+
+	# load the plugins
+	Configuration.instance.loadPlugins
+	
+
+	UPS::PluginRegistry.instance['main'].set_plugin(main)
+	UPS::PluginRegistry.instance['main'].run(ARGV)
+	
+rescue ThgException => e
+	print "An error occured:\n\t #{e.message}\n\n"
+	print "Possible solution:\n\t #{e.solution}\n\n"
+	print "Stack trace: #{e.backtrace.join("\n")}\n"
+end
