@@ -1,4 +1,6 @@
-W update all exceptions to new exception format
+* enable writing of tree again after hooks mechanism installed
+* implement page templates using hooks (after dir read store reference to template file in hash)
+W implement hooks mechanism
 * document existing files (RDOC)
 W restructure current files, make more readable
 * implement <template> meta-info tag (see template based)
@@ -12,10 +14,11 @@ W restructure current files, make more readable
 
 ---- DONE ----
 
-* check if an xml validator is available in ruby
-* think about sequence of actions when program is executed
-* think about how the data is stored in tree/which data is stored in tree
-* set up directory structure and build system
-* write ideas and design considerations
-* create sample files to work on
-* change exception mechanism to use IDs for exceptions
+W check if an xml validator is available in ruby
+W think about sequence of actions when program is executed
+W think about how the data is stored in tree/which data is stored in tree
+W set up directory structure and build system
+W write ideas and design considerations
+W create sample files to work on
+W change exception mechanism to use IDs for exceptions
+W update all exceptions to new exception format

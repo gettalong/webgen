@@ -1,27 +1,48 @@
 require 'composite'
-require 'configuration'
 
 class Node
 	
 	include Composite
 
-	attr_reader   :title
-	attr_reader   :url
-	attr_reader   :srcName
-	attr_reader   :virtual
+	attr_reader   :parent
+	attr_accessor :title
+	attr_accessor :url
+	attr_accessor :src
+
 	attr_accessor :content
+	attr_reader   :metainfo
+	attr_accessor :processor
 	
-	def initialize(title, url, srcName, virtual)
+	def initialize(parent, title, url, src = url)
 		init_composite
 
+		@parent = parent
 		@title = title
 		@url = url
-		@srcName = srcName
-		@virtual = virtual
+		@src = src
+
+		@metainfo = Hash.new
+	end
+
+	def abs_src
+		if parent.nil?
+			src
+		else
+			parent.abs_src + src
+		end
+	end
+
+	def abs_url
+		if parent.nil?
+			url
+		else
+			parent.abs_url + url
+		end
 	end
 
 end
 
+=begin
 class DirectoryNode < Node
 	
 	attr_reader :templateFile
@@ -47,3 +68,4 @@ class DirectoryNode < Node
 	end
 	
 end
+=end

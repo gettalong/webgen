@@ -126,7 +126,7 @@ begin
 			raise ThgException.new(ThgException::ARG_PARSE_ERROR, e.reason, e.args[0])
 		end
 	end
-
+	
 	# parse the configuration file
 	Configuration.instance.parse_config_file
 

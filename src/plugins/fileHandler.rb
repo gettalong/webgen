@@ -7,6 +7,7 @@ require 'fileutils'
 class FileHandler < UPS::Controller
 	
 	attr_accessor :extensions
+	attr_accessor :outputDir
 
 	def initialize
 		super('fileHandler')
@@ -26,55 +27,47 @@ class FileHandler < UPS::Controller
 			"been performed the FileHandler is used to write the output files."
 	end
 
-	def write_tree(tree)
-		tree.each { |child|
-			write_node(child, tree)
-		}
-	end
-
 	def build_tree
-		build_entry(Configuration.instance.srcDirectory, '', nil)
+		@dirProcessor = Object.new
+		def @dirProcessor.write_node(node, filename)
+			FileUtils.makedirs(filename) if !File.exists?(filename)
+		end
+
+		root = build_entry(Configuration.instance.srcDirectory, nil)
+		root.url = ""
+		root.title = '/'
+		root.src = Configuration.instance.srcDirectory + File::SEPARATOR
+		root
 	end
 
+	def write_tree(tree)
+		write_node(tree)
+	end
 
 	#######
 	private
 	#######
 
-	def write_node(node, parent)
-		if !node.virtual
-			filename = File.join(@outputDir, node.url)
-			Configuration.instance.log(1, "Writing #{filename}")
-			
-			extension = node.srcName[/\.(.*)$/][1..-1]
-			@extensions[extension].write_node(node, parent, filename)
-		end
-		if node.children.length > 0
-			node.each { |child|
-				write_node(child, node)
-			}
-		end
-	end
+	def build_entry(srcName, parent)
+		Configuration.instance.log(1, "Processing #{srcName}")
 
-	def build_entry(absName, relName, parent)
-		Configuration.instance.log(1, "Processing #{absName}")
-
-		if FileTest.file?(absName)
-			extension = absName[/\..*$/][1..-1]
+		if FileTest.file?(srcName)
+			extension = srcName[/\..*$/][1..-1]
 
 			if !@extensions.has_key?(extension)
 				Configuration.instance.log(1, "  no plugin for file -> ignored")
 				node = nil;
 			else
-				node = @extensions[extension].build_node(absName, relName)
+				node = @extensions[extension].build_node(srcName, parent)
+				node.processor = @extensions[extension]
 			end
-		elsif FileTest.directory?(absName)
-			node = DirectoryNode.new("Directory #{relName}", relName, (parent.nil? ? '' : parent.templateFile))
+		elsif FileTest.directory?(srcName)
+			relName = File.basename(srcName)
+			node = Node.new(parent, relName, relName + File::SEPARATOR)
+			node.processor = @dirProcessor
 
-			Dir[File.join(absName, '*')].each { |filename|
-				name = (parent.nil? ? '' : relName) + File.basename(filename)
-				name << '/' if FileTest.directory? filename
-				child = build_entry(filename, name, node)
+			Dir[File.join(srcName, '*')].each { |filename|
+				child = build_entry(filename, node)
 				node.add_child(child) if !child.nil?
 			}
 		end
@@ -82,6 +75,18 @@ class FileHandler < UPS::Controller
 		return node
 	end
 
+	def write_node(node)
+		name = File.join(@outputDir, node.abs_url)
+		Configuration.instance.log(1, "Writing #{name}")
+
+		node.processor.write_node(node, name)
+
+		if node.children.length > 0
+			node.each { |child|
+				write_node(child)
+			}
+		end
+	end
 
 end	
 
@@ -104,23 +109,24 @@ class XMLPagePlugin < UPS::StandardPlugin
 			"XHTML files."
 	end
 
-	def build_node(absName, relName)
-		root = REXML::Document.new(File.new(absName)).root
+	def build_node(srcName, parent)
+		root = REXML::Document.new(File.new(srcName)).root
 			
 		# initialize attributes
 		title = root.text('/thg/metainfo/title')
-		raise ThgException.new(ThgException::PAGE_META_ENTRY_NOT_FOUND, 'title', absName) if title.nil? 
+		raise ThgException.new(ThgException::PAGE_META_ENTRY_NOT_FOUND, 'title', srcName) if title.nil? 
 		
-		urlName = relName.gsub(/\.xml$/, '.html')
+		urlName = File.basename(srcName.gsub(/\.xml$/, '.html'))
 
-		node = Node.new(title, urlName, relName, false)
+		node = Node.new(parent, title, urlName, File.basename(srcName))
 		node.content = ''
 		root.elements['content'].each { |child| child.write(node.content) }
 
 		return node
 	end
 
-	def write_node(node, parent, filename)
+	def write_node(node, filename)
+=begin
 		doc = ''
 		File.open(parent.templateFile) { |file|
 			doc = file.read
@@ -128,11 +134,11 @@ class XMLPagePlugin < UPS::StandardPlugin
 
 		UPS::PluginRegistry.instance['tags'].substituteTags(node.content, node)
 		UPS::PluginRegistry.instance['tags'].substituteTags(doc, node)
-		FileUtils.makedirs(File.dirname(filename))
 
-		File.open(filename, File::CREAT|File::TRUNC|File::RDWR) {|file|
+		File.open(filename, File::CREAT|File::TRUNC|File::WR) {|file|
 			file.write(doc)
 		}
+=end
 	end
 
 end
@@ -158,13 +164,13 @@ class FileCopyPlugin < UPS::StandardPlugin
 			"configuration file are copied without any transformation into the destination directory."
 	end
 
-	def build_node(absName, relName)
-		Node.new('<File>', relName, relName, false)
+	def build_node(srcName, parent)
+		relName = File.basename(srcName)
+		Node.new(parent, relName, relName)
 	end
 
-	def write_node(node, parent, filename)
-		srcFile = File.join(Configuration.instance.srcDirectory, node.srcName)
-		FileUtils.cp(srcFile, filename)
+	def write_node(node, filename)
+		FileUtils.cp(node.abs_src, filename)
 	end
 
 end
