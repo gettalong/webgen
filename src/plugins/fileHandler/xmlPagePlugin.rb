@@ -13,26 +13,13 @@ class XMLPagePlugin < UPS::Plugin
 		"the tag <%0> has not be found in the <meta> section of the page file %1",
 		"<%0> is not optional, you have to add it to the page file"
 
-    ThgException.add_entry :PAGE_TEMPLATE_FILE_NOT_FOUND,
-		"template file in root directory not found",
-		"create an %0 in the root directory"
-
     attr_reader :defaultTemplate
     attr_reader :defaultDirectoryIndex
 
     EXTENSION = 'page'
 
-
-    def initialize
-
-        @defaultTemplate =  UPS::Registry['Configuration'].get_config_value( NAME, 'defaultTemplate' ) || 'default.template'
-        @defaultDirectoryIndex = UPS::Registry['Configuration'].get_config_value( NAME, 'defaultDirectoryIndex' ) || 'index.page'
-    end
-
-
     def init
         UPS::Registry['File Handler'].extensions[EXTENSION] = self
-        UPS::Registry['File Handler'].add_msg_listener( :AFTER_DIR_READ, method( :add_template_to_node ) )
     end
 
 
@@ -60,7 +47,7 @@ class XMLPagePlugin < UPS::Plugin
 
 
     def write_node( node, filename )
-        templateNode = get_template_for_node( node )
+        templateNode = UPS::Registry['Template File'].get_template_for_node( node )
 
         outstring = templateNode['content'].dup
 
@@ -69,35 +56,6 @@ class XMLPagePlugin < UPS::Plugin
 
         File.open( filename, File::CREAT|File::TRUNC|File::RDWR ) do |file|
             file.write outstring
-        end
-    end
-
-    #######
-    private
-    #######
-
-    def add_template_to_node( node )
-        cfg = UPS::Registry['Configuration']
-
-        if node.find { |child| child['src'] == @defaultDirectoryIndex }.nil?
-            #TODO Configuration.instance.warning("directory index file for #{node.abs_src} not found")
-        end
-
-        templateNode = node.find { |child| child['src'] == @defaultTemplate }
-        if !templateNode.nil?
-            node['templateFile'] = templateNode
-        elsif node.parent.nil? # dir is root directory
-            raise ThgException.new( :PAGE_TEMPLATE_FILE_NOT_FOUND, @defaultTemplate )
-        end
-    end
-
-
-    def get_template_for_node( node )
-        raise "Template file for node not found -> this should not happen!" if node.nil?
-        if node.metainfo.has_key? 'templateFile'
-            return node['templateFile']
-        else
-            return get_template_for_node( node.parent )
         end
     end
 

@@ -4,7 +4,6 @@ Configuration:
     verbosityLevel: 0
 
 XML Page Plugin:
-    defaultTemplate: default.template
     defaultDirectoryIndex: index.page
 
 Copy Files:
