@@ -1,9 +1,8 @@
 require 'ups/ups'
 require 'ups/listener'
-require 'configuration'
 require 'thgexception'
 require 'node'
-
+require 'configuration'
 
 class FileHandler < UPS::Plugin
 

@@ -11,7 +11,7 @@ class ContentTag < UPS::Plugin
 	end
 
 
-	def process_tag( content, node )
+	def process_tag( content, node, templateNode )
 		node['content']
 	end
 

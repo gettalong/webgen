@@ -1,5 +1,5 @@
-require 'plugins/fileHandler/fileHandler'
 require 'node'
+require 'plugins/fileHandler/fileHandler'
 
 class DirHandlerPlugin < UPS::Plugin
 

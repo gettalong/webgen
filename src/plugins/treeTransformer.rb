@@ -1,6 +1,5 @@
 require 'ups/ups'
 require 'ups/listener'
-require 'configuration'
 
 class TreeTransformer < UPS::Plugin
 

@@ -1,7 +1,7 @@
 require 'ups/ups'
 require 'thgexception'
 require 'node'
-require 'plugins/fileHandler/templatePlugin'
+require 'plugins/fileHandler/fileHandler'
 
 class XMLPagePlugin < UPS::Plugin
 
@@ -21,12 +21,13 @@ class XMLPagePlugin < UPS::Plugin
 
     EXTENSION = 'page'
 
+
     def initialize
         #TODO config = Configuration.instance.pluginData['xmlPagePlugin']
         #TODO raise ThgException.new(ThgException::CFG_ENTRY_NOT_FOUND, 'xmlPagePlugin') if config.nil?
 
-        @templateFile =  'default.template' #TODO config.text('templateFile')
-        @directoryIndexFile = 'index.page'  #TODO config.text('directoryIndexFile')
+        @defaultTemplate =  'default.template' #TODO config.text('templateFile')
+        @defaultDirectoryIndex = 'index.page'  #TODO config.text('directoryIndexFile')
     end
 
 
@@ -44,7 +45,7 @@ class XMLPagePlugin < UPS::Plugin
         raise ThgException.new( :PAGE_META_ENTRY_NOT_FOUND, 'title', srcName ) if title.nil?
 
         srcName = File.basename srcName
-        urlName = srcName.gsub(/\.#{EXTENSION}$/, '.html')
+        urlName = srcName.gsub( /\.#{EXTENSION}$/, '.html' )
 
         node = Node.new parent
         node['title'] = title
@@ -52,7 +53,7 @@ class XMLPagePlugin < UPS::Plugin
         node['dest'] = urlName
         node['content'] = ''
         root.elements['content'].each do
-            |child| child.write(node['content'])
+            |child| child.write( node['content'] )
         end
 
         return node
@@ -60,13 +61,15 @@ class XMLPagePlugin < UPS::Plugin
 
 
     def write_node( node, filename )
-        template = get_template_for_node( node )['content'].dup
+        templateNode = get_template_for_node( node )
+
+        outstring = templateNode['content'].dup
 
         #UPS::PluginRegistry.instance['tags'].substituteTags(node.metainfo['content'], node)
-        UPS::Registry['Tags'].substitute_tags( template, node )
+        UPS::Registry['Tags'].substitute_tags( outstring, node, templateNode )
 
         File.open( filename, File::CREAT|File::TRUNC|File::RDWR ) do |file|
-            file.write(template)
+            file.write outstring
         end
     end
 
@@ -77,15 +80,15 @@ class XMLPagePlugin < UPS::Plugin
     def add_template_to_node( node )
         cfg = UPS::Registry['Configuration']
 
-        if node.find { |child| child['src'] == @directoryIndexFile }.nil?
+        if node.find { |child| child['src'] == @defaultDirectoryIndex }.nil?
             #TODO Configuration.instance.warning("directory index file for #{node.abs_src} not found")
         end
 
-        templateNode = node.find { |child| child['src'] == @templateFile }
+        templateNode = node.find { |child| child['src'] == @defaultTemplate }
         if !templateNode.nil?
             node['templateFile'] = templateNode
         elsif node.parent.nil? # dir is root directory
-            raise ThgException.new( :PAGE_TEMPLATE_FILE_NOT_FOUND, @templateFile )
+            raise ThgException.new( :PAGE_TEMPLATE_FILE_NOT_FOUND, @defaultTemplate )
         end
     end
 

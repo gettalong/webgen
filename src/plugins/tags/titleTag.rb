@@ -10,7 +10,7 @@ class TitleTag < UPS::Plugin
         UPS::Registry['Tags'].tags['title'] = self
     end
 
-	def process_tag( content, node )
+	def process_tag( content, node, templateNode )
 		node['title']
 	end
 

@@ -57,14 +57,8 @@ begin
 
 	# load the plugins
     # TODO this has to be changed certainly
-	#UPS::Registry.load_plugins( File.dirname( __FILE__) + '/plugins' )
-    require File.dirname( __FILE__) + '/plugins/treeTransformer.rb'
-    require File.dirname( __FILE__) + '/plugins/fileHandler/fileCopyPlugin.rb'
-    require File.dirname( __FILE__) + '/plugins/fileHandler/dirPlugin.rb'
-    require File.dirname( __FILE__) + '/plugins/fileHandler/pagePlugin.rb'
-    require File.dirname( __FILE__) + '/plugins/tags/titleTag.rb'
-    require File.dirname( __FILE__) + '/plugins/tags/contentTag.rb'
-    require File.dirname( __FILE__) + '/plugins/tags/relocatableTag.rb'
+	UPS::Registry.load_plugins( File.dirname( __FILE__) + '/plugins', File.dirname( __FILE__) + "/" )
+
 	# run the selected routine
 	main.call
 
