@@ -26,20 +26,22 @@ module PictureGalleryLayouter
 
     summary "Base class for all Picture Gallery Layouters and, at the same time, default layouter"
 
-    # Holds all layouters
-    @@layouter = {}
-
     # Associates a specific layout name with a layouter.
     def self.layout_name( name )
-      @@layouter[name] = self
+      (Webgen::Plugin.config[DefaultGalleryLayouter.name].layouter ||= {})[name] = self.name
       Webgen::Plugin.config[self.name].layout = name
     end
 
     layout_name 'default'
 
     # Returns the layouter called +name+.
-    def self.layouter( name )
-      @@layouter[name]
+    def layouter( name )
+      if Webgen::Plugin.config[DefaultGalleryLayouter.name].layouter.has_key?( name )
+        Webgen::Plugin.config[Webgen::Plugin.config[DefaultGalleryLayouter.name].layouter[name]].obj
+      else
+        self.logger.error { "Invalid gallery layouter specified: #{name}! Using DefaultGalleryLayouter" }
+        Webgen::Plugin['DefaultGalleryLayouter']
+      end
     end
 
     # Returns the thumbnail img tag for the given +image+.

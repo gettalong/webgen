@@ -23,19 +23,16 @@
 
 begin
   require 'bluecloth'
-  require 'webgen/plugins/filehandler/pagehandler/page'
+  require 'webgen/plugins/contenthandler/defaultcontenthandler'
 
   module ContentHandlers
 
     # Handles text formatted in Markdown format using BlueCloth.
-    class MarkdownContentHandler < ContentHandler
+    class MarkdownContentHandler < DefaultContentHandler
 
       summary "Handles content formatted in Markdown format using BlueCloth"
-      depends_on "PageHandler"
 
-      def initialize
-        register_format( 'markdown' )
-      end
+      register_format( 'markdown' )
 
       def format_content( txt )
         BlueCloth.new( txt ).to_html

@@ -49,14 +49,10 @@ module FileHandlers
     'If true, the output files for the default language will have the ' \
     'language in the file name like all other page files. If false, they won''t.'
     add_param 'defaultContentFormat', 'textile', 'The default content format used in page files'
-    depends_on 'FileHandler'
-
-    attr_reader :formats
-
-    def initialize
-      super
-      @formats = Hash.new( ContentHandlers::ContentHandler.new )
-    end
+    add_param 'validHTMLchecker', 'xmllint --noout --catalogs --valid {}', \
+    'The command line which is used to check if a generated HTML file is valid. The character ' \
+    'sequence "{}" is substituted with the file name.'
+    depends_on 'FileHandler', 'DefaultContentHandler'
 
     def create_node( srcName, parent )
       create_node_internally( parse_data( File.read( srcName ), srcName ), analyse_file_name( File.basename( srcName ) ), parent )
@@ -78,6 +74,9 @@ module FileHandlers
       File.open( node.recursive_value( 'dest' ), File::CREAT|File::TRUNC|File::RDWR ) do |file|
         file.write( outstring )
       end
+      #todo
+      output = false
+      self.logger.warn { "Output of HTML check program:\n" + output } if output
     end
 
     def page_node_exists?( basename, dirNode )
@@ -155,7 +154,7 @@ module FileHandlers
             next
           end
           self.logger.debug { "Block '#{blockdata['name']}' formatted using '#{blockdata['format']}'" }
-          options[blockdata['name']] = @formats[blockdata['format']].format_content( blocks.shift || '' )
+          options[blockdata['name']] = Webgen::Plugin['DefaultContentHandler'].get_content_handler( blockdata['format'] ).format_content( blocks.shift || '' )
         end
       end
       options
@@ -183,26 +182,14 @@ module FileHandlers
 
 end
 
+module HTMLValidators
 
-module ContentHandlers
+  class HTMLValidator < Webgen::Plugin
 
-  class ContentHandler < Webgen::Plugin
+    summary "Base class for all HTML validators"
 
-    VIRTUAL = true
-
-    summary "Base class for all page file content handlers"
-
-    # Register the format specified by a subclass.
-    def register_format( fmt )
-      self.logger.info { "Registering class #{self.class.name} for formatting '#{fmt}'" }
-      Webgen::Plugin['PageHandler'].formats[fmt] = self
-      Webgen::Plugin.config[self.class.name].contentFormat = fmt
-    end
-
-    # Format the given +content+. Should be overridden in subclass!
-    def format_content( content )
-      self.logger.error { "Invalid content format specified, copying source verbatim!" }
-      content
+    # Should be overridden in subclass!
+    def validate_file( filename )
     end
 
   end

@@ -20,33 +20,21 @@
 #++
 #
 
-begin
-  require 'redcloth'
-  require 'webgen/plugins/filehandler/pagehandler/page'
+require 'webgen/plugins/contenthandler/defaultcontenthandler'
 
-  module ContentHandlers
+module ContentHandlers
 
-    # Handles content in Textile format using RedCloth.
-    class TextileContentHandler < ContentHandler
+  # Handles HTML content. Assumes that the content is already valid HTML.
+  class HTMLContentHandler < DefaultContentHandler
 
-      summary "Handles content in Textile format using RedCloth"
-      depends_on "PageHandler"
+    summary "Handles HTML formatted content"
 
-      def initialize
-        register_format( 'textile' )
-      end
+    register_format( 'html' )
 
-      def format_content( txt )
-        RedCloth.new( txt ).to_html
-      rescue
-        self.logger.error { "Error converting Textile text to HTML" }
-        ''
-      end
-
+    def format_content( txt )
+      txt
     end
 
   end
 
-rescue LoadError => e
-  self.logger.warn { "Textile not available as content format as RedCloth could not be loaded: #{e.message}" }
 end

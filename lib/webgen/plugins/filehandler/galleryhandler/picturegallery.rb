@@ -54,7 +54,6 @@ module FileHandlers
       images = Dir[File.join( @path, get_param( 'files' ))].collect {|i| i.sub( /#{@path + File::SEPARATOR}/, '' ) }
       self.logger.info { "Creating gallery for file <#{file}> with #{images.length} pictures" }
 
-      create_layouter
       create_gallery( images, parent )
 
       nil
@@ -73,18 +72,8 @@ module FileHandlers
       ( @filedata.has_key?( name ) ? @filedata[name] : super )
     end
 
-    def create_layouter
-      self.logger.info { "Creating layouter..." }
-      @layouter = PictureGalleryLayouter::DefaultGalleryLayouter.layouter( get_param( 'layout' ) )
-      if @layouter.nil?
-        self.logger.error { "Layouter '#{get_param( 'layout' )}' does not exist, using default layouter" }
-        @layouter = PictureGalleryLayouter::DefaultGalleryLayouter
-      end
-      @layouter = @layouter.new
-    end
-
     def call_layouter( type, metainfo, *args )
-      content = @layouter.send( type.to_s, *args )
+      content = Webgen::Plugin['DefaultGalleryLayouter'].layouter( get_param( 'layout' ) ).send( type.to_s, *args )
       "#{metainfo.to_yaml}\n---\n#{content}"
     end
 

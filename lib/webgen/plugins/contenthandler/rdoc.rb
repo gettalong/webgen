@@ -22,18 +22,18 @@
 
 require 'rdoc/markup/simple_markup'
 require 'rdoc/markup/simple_markup/to_html'
-require 'webgen/plugins/filehandler/pagehandler/page'
+require 'webgen/plugins/contenthandler/defaultcontenthandler'
 
 module ContentHandlers
 
   # Handles text in RDoc format.
-  class RDocContentHandler < ContentHandler
+  class RDocContentHandler < DefaultContentHandler
 
     summary "Handles content in RDOC format"
-    depends_on "PageHandler"
+
+    register_format( 'rdoc' )
 
     def initialize
-      register_format( 'rdoc' )
       @processor = SM::SimpleMarkup.new
       @formatter = SM::ToHtml.new
     end

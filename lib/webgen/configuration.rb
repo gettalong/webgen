@@ -40,7 +40,7 @@ end
 
 module Webgen
 
-  VERSION = [0, 3, 0]
+  VERSION = [0, 3, 1]
   SUMMARY = "Webgen is a templated based static website generator."
   DESCRIPTION = "Webgen is a web page generator implemented in Ruby. " \
   "It is used to generate static web pages from templates and page " \

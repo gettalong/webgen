@@ -1,5 +1,8 @@
 ---- CURRENT ----
 
+* show validatorName with describe tag
+* Webgen::Plugin.config should have classes (not class names) as keys
+* simplify DefaultContentHandler, DefaultHTMLValidator, DefaultGalleryLayouter, ...
 * ordering of picture/gallery files for menu
 * allow a template to use another template (templates as page description files?) (template2 uses template1)
 * create webgen 0.2.0 to 0.3.0 converter
@@ -9,6 +12,8 @@
 
 ---- DOCU ----
 
+* restructure documentation (filehandler, contenthandler, htmlvalidator, tags9
+* document TreeWalker plugin
 * DEV: self.logger.warn/error/info/debug can be used for messages
 
 ---- FUTURE ----

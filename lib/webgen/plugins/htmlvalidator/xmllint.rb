@@ -20,22 +20,18 @@
 #++
 #
 
-require 'webgen/plugins/filehandler/pagehandler/page'
+require 'webgen/plugins/htmlvalidator/defaulthtmlvalidator'
 
-module ContentHandlers
+module HTMLValidators
 
-  # Handles HTML content. Assumes that the content is already valid HTML.
-  class HTMLContentHandler < ContentHandler
+  class XmllintHTMLValidator < DefaultHTMLValidator
 
-    summary "Handles HTML formatted content"
-    depends_on "PageHandler"
+    summary "Uses xmllint to check if a file is valid and well-formed"
 
-    def initialize
-      register_format( 'html' )
-    end
+    register_validator 'xmllint'
 
-    def format_content( txt )
-      txt
+    def validate_file( filename )
+      puts "doing it"
     end
 
   end
