@@ -2,6 +2,13 @@ require 'thg/thgexception'
 require 'optparse'
 require 'util/ups'
 
+
+module Thaumaturge
+
+    Version = "0.1.0"
+
+end
+
 def runMain
     # load all the files in src dir and build tree
     tree = UPS::Registry['File Handler'].build_tree
@@ -46,9 +53,10 @@ begin
     ARGV.options do |opts|
         opts.summary_width = 25
         opts.summary_indent = '  '
-        opts.program_name = 'ruby thg.rb'
+        opts.program_name = 'Thaumaturge'
+        opts.version = Thaumaturge::Version
 
-        opts.banner << "\nThaumaturge is a template based web page generator for offline page generation.\n\n"
+        opts.banner << "\nThaumaturge is a template based web page generator.\n\n"
 
         opts.on_tail( "--help", "-h", "Display this help screen" ) { puts opts; exit }
         opts.on( "--config-file FILE", "-c", String, "The configuration file which should be used" ) { |config.configFile| }

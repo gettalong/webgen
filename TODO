@@ -1,3 +1,5 @@
+* prevent creation of thg.log if nothing is done (on -p, -e, --help...)
+* use code coverage tool (-rcoverage) for checking the coverage on the testSite (use with rake)
 W use rake, gem and setup.rb for installing and packaging thaumaturge
 * put every class into the Thaumaturge module
 * make get_node_for_string work with page files as parameters (reference in home.xpage to projects page)
