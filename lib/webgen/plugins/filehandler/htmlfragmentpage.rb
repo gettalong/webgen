@@ -20,17 +20,16 @@
 #++
 #
 
-require 'rexml/document'
-require 'webgen/plugins/fileHandler/pagePlugin'
+require 'webgen/plugins/filehandler/page'
 
 module FileHandlers
 
-  class XMLPagePlugin < PagePlugin
+  class HTMLPage < PagePlugin
 
-    NAME = "XML Page Plugin"
-    SHORT_DESC = "Handles XML webpage description files"
+    NAME = "HTML Page Plugin"
+    SHORT_DESC = "Handles HTML webpage fragments"
 
-    EXTENSION = 'xpage'
+    EXTENSION = 'fragment'
 
 
     def init
@@ -39,24 +38,13 @@ module FileHandlers
 
 
     def get_file_data( srcName )
-      root = REXML::Document.new( File.new( srcName ) ).root
-
-      #TODO rework this sothat arbitrary tags can be included
       data = Hash.new
-      data['title'] = root.text( '/webgen/title' )
-      data['templateFile'] = root.text('/webgen/template') unless root.text('/webgen/template').nil?
-      data['inMenu'] = root.text('/webgen/inMenu') unless root.text('/webgen/inMenu').nil?
-      data['menuOrder'] = root.text('/webgen/menuOrder').to_i unless root.text('/webgen/menuOrder').nil?
-      data['content'] = ''
-      root.elements['content'].each do
-        |child| child.write( data['content'] )
-      end
-
-      return data
+      data['content'] = File.new( srcName ).read
+      data
     end
 
   end
 
-  UPS::Registry.register_plugin XMLPagePlugin
+  UPS::Registry.register_plugin HTMLPage
 
 end

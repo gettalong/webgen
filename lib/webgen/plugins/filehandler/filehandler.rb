@@ -20,7 +20,6 @@
 #++
 #
 
-require 'webgen/node'
 require 'util/ups'
 require 'util/listener'
 

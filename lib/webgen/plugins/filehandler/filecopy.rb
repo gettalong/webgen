@@ -21,7 +21,7 @@
 #
 
 require 'fileutils'
-require 'webgen/plugins/fileHandler/fileHandler'
+require 'webgen/plugins/filehandler/filehandler'
 
 module FileHandlers
 

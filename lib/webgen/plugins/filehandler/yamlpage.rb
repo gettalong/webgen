@@ -21,7 +21,7 @@
 #
 
 require 'yaml'
-require 'webgen/plugins/fileHandler/pagePlugin'
+require 'webgen/plugins/filehandler/page'
 
 module FileHandlers
 

@@ -20,7 +20,8 @@
 #++
 #
 
-require 'webgen/plugins/fileHandler/fileHandler'
+require 'webgen/node'
+require 'webgen/plugins/filehandler/filehandler'
 
 module FileHandlers
 

@@ -20,7 +20,8 @@
 #++
 #
 
-require 'webgen/plugins/fileHandler/fileHandler'
+require 'webgen/node'
+require 'webgen/plugins/filehandler/filehandler'
 
 module FileHandlers
 
@@ -37,7 +38,7 @@ module FileHandlers
     end
 
 
-    NAME = "Dir Handler"
+    NAME = "Dir Handler Plugin"
     SHORT_DESC = "Handles directories"
 
     attr_reader :indexFile

@@ -20,14 +20,14 @@
 #++
 #
 
-require 'webgen/plugins/fileHandler/fileHandler'
-require 'webgen/plugins/treeTransformer'
+require 'webgen/plugins/filehandler/filehandler'
+require 'webgen/plugins/treewalker'
 
 module FileHandlers
 
   class TemplatePlugin < DefaultHandler
 
-    NAME = "Template File"
+    NAME = "Template File Plugin"
     SHORT_DESC = "Represents the template files for the page generation in the tree"
 
     Webgen::WebgenError.add_entry :PAGE_TEMPLATE_FILE_NOT_FOUND,
