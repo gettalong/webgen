@@ -1,4 +1,7 @@
 W implement tag <relocatable> for references that should be relocatable
+* pagePlugin.buildNode: srcName = File.basename(srcName) in front of urlName = ...
+* pagePlugin.get_template_for_node: raise ... if node.nil?
+* replace current loggin mechanism with Log4r
 * document existing files (RDOC)
 * implement <template> meta-info tag (see template based)
 * implement "creation of files only when necessary" (i.e. if dependencies have changed)
