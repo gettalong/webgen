@@ -4,7 +4,7 @@ require 'log4r'
 
 class FileHandler < UPS::Plugin
 
-	include Listener
+    include Listener
 
     NAME = "File Handler"
     SHORT_DESC = "Super plugin for handling files"
@@ -15,16 +15,16 @@ class FileHandler < UPS::Plugin
       been performed the FileHandler is used to write the output files.
     EOF
 
-	attr_accessor :extensions
+    attr_accessor :extensions
     attr_accessor :ignoredFiles
 
-	def initialize
-		@extensions = Hash.new
+    def initialize
+        @extensions = Hash.new
 
-		add_msg_name( :DIR_NODE_CREATED )
-		add_msg_name( :FILE_NODE_CREATED )
-		add_msg_name( :AFTER_DIR_READ )
-	end
+        add_msg_name( :DIR_NODE_CREATED )
+        add_msg_name( :FILE_NODE_CREATED )
+        add_msg_name( :AFTER_DIR_READ )
+    end
 
 
     def init
@@ -32,24 +32,24 @@ class FileHandler < UPS::Plugin
     end
 
 
-	def build_tree
-		root = build_entry( UPS::Registry['Configuration'].srcDirectory, nil )
-		root['title'] = '/'
-		root['dest'] = UPS::Registry['Configuration'].outDirectory + File::SEPARATOR
-		root['src'] = UPS::Registry['Configuration'].srcDirectory + File::SEPARATOR
-		root
-	end
+    def build_tree
+        root = build_entry( UPS::Registry['Configuration'].srcDirectory, nil )
+        root['title'] = '/'
+        root['dest'] = UPS::Registry['Configuration'].outDirectory + File::SEPARATOR
+        root['src'] = UPS::Registry['Configuration'].srcDirectory + File::SEPARATOR
+        root
+    end
 
 
-	def write_tree( node )
+    def write_tree( node )
         self.logger.info { "Writing #{node.recursive_value('dest')}" }
 
-		node['processor'].write_node( node )
+        node['processor'].write_node( node )
 
-		node.each do |child|
-			write_tree child
-		end
-	end
+        node.each do |child|
+            write_tree child
+        end
+    end
 
 
     def file_modified?( node )
@@ -64,27 +64,27 @@ class FileHandler < UPS::Plugin
     end
 
 
-	#######
-	private
-	#######
+    #######
+    private
+    #######
 
-	def build_entry( path, parent )
-		self.logger.info { "Processing #{path}" }
+    def build_entry( path, parent )
+        self.logger.info { "Processing #{path}" }
 
-		if FileTest.file? path
-			extension = path[/\.[^.]*$/][1..-1]
+        if FileTest.file? path
+            extension = path[/\.[^.]*$/][1..-1]
 
-			if @extensions.has_key? extension
-				node = @extensions[extension].create_node( path, parent )
+            if @extensions.has_key? extension
+                node = @extensions[extension].create_node( path, parent )
                 unless node.nil?
                     node['processor'] = @extensions[extension]
                     dispatch_msg( :FILE_NODE_CREATED, node )
                 end
             else
                 self.logger.warn { "No plugin for path #{path} (extension: #{extension}) -> ignored" } if node.nil?
-			end
-		elsif FileTest.directory? path
-			if @extensions.has_key? :dir
+            end
+        elsif FileTest.directory? path
+            if @extensions.has_key? :dir
                 node = @extensions[:dir].create_node( path, parent )
                 node['processor'] = @extensions[:dir]
 
@@ -113,8 +113,8 @@ class FileHandler < UPS::Plugin
             end
         end
 
-		return node
-	end
+        return node
+    end
 
 end
 

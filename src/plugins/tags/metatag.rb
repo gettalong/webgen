@@ -10,9 +10,9 @@ class MetaTag < UPS::Plugin
         UPS::Registry['Tags'].tags[:default] = self
     end
 
-	def process_tag( tag, content, node, templateNode )
-		node[tag] || ''
-	end
+    def process_tag( tag, content, node, templateNode )
+        node[tag] || ''
+    end
 
 end
 

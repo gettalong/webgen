@@ -23,8 +23,8 @@ class PagePlugin < UPS::Plugin
     SHORT_DESC = "Super class for all page plugins"
 
     ThgException.add_entry :PAGE_TITLE_ENTRY_NOT_FOUND,
-		"the file <%0> does not contain a title tag",
-		"add a title tag or remove the file"
+        "the file <%0> does not contain a title tag",
+        "add a title tag or remove the file"
 
 
     def create_node( srcName, parent )

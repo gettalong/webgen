@@ -38,7 +38,7 @@ class DirHandlerPlugin < UPS::Plugin
     def write_node( node )
         name = node.recursive_value 'dest'
         FileUtils.makedirs( name ) unless File.exists? name
-	end
+    end
 
 
     def get_lang_node( node, lang = node['lang'] )

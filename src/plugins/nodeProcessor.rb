@@ -6,7 +6,7 @@ module NodeProcessor
 
     def write_node( node )
         raise "Not implemented"
-	end
+    end
 
     def get_lang_node( node, lang = node['lang'] )
         node

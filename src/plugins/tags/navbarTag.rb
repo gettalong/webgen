@@ -14,7 +14,7 @@ class NavbarTag < UPS::Plugin
     end
 
 
-	def process_tag( tag, content, srcNode, refNode )
+    def process_tag( tag, content, srcNode, refNode )
         out = []
         node = srcNode
 
@@ -27,7 +27,7 @@ class NavbarTag < UPS::Plugin
         out = @startTag + out.reverse.join(@separator) + @endTag
         self.logger.debug out
         out
-	end
+    end
 
 end
 

@@ -2,15 +2,15 @@ require 'ups/composite'
 
 class Node
 
-	include Composite
+    include Composite
 
-	attr_reader   :parent
-	attr_accessor :metainfo
+    attr_reader   :parent
+    attr_accessor :metainfo
 
-	def initialize( parent )
-		@parent = parent
-		@metainfo = Hash.new
-	end
+    def initialize( parent )
+        @parent = parent
+        @metainfo = Hash.new
+    end
 
 
     def []( name )
@@ -25,11 +25,11 @@ class Node
 
     def recursive_value( name )
         if @parent.nil?
-			@metainfo[name].dup
-		else
-			@parent.recursive_value( name ) + @metainfo[name]
-		end
-	end
+            @metainfo[name].dup
+        else
+            @parent.recursive_value( name ) + @metainfo[name]
+        end
+    end
 
 
     # Returns the relative path from the srcNode to the destNode. The srcNode

@@ -44,14 +44,14 @@ class MenuTag < UPS::Plugin
 
     ThgException.add_entry :TAG_PARAMETER_INVALID,
         "Missing or invalid parameter value for tag %0 in <%1>: %2",
-		"Add or correct the parameter value"
+        "Add or correct the parameter value"
 
     def init
         UPS::Registry['Tags'].tags['menu'] = self
     end
 
 
-	def process_tag( tag, content, node, refNode )
+    def process_tag( tag, content, node, refNode )
         if !defined? @menuTree
             @menuTree = create_menu_tree( Node.root( node ), nil )
             #TODO only call DebugTreePrinter
@@ -61,7 +61,7 @@ class MenuTag < UPS::Plugin
         end
         raise ThgException.new( :TAG_PARAMETER_INVALID, tag, refNode.recursive_value( 'src' ), 'level' ) if content.nil? || !content.has_key?( 'level' )
         build_menu( node, @menuTree, content['level'] )
-	end
+    end
 
     #######
     private

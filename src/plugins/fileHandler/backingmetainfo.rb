@@ -27,7 +27,7 @@ class PageFileBacking < UPS::Plugin
 
     def write_node( node )
         # nothing to write
-	end
+    end
 
 
     #######

@@ -61,13 +61,13 @@ class ThgConfigurationPlugin < UPS::Plugin
     NAME = "Configuration"
     SHORT_DESC = "Responsible for loading the configuration data"
 
-	attr_accessor :srcDirectory
-	attr_accessor :outDirectory
-	attr_accessor :verbosityLevel
+    attr_accessor :srcDirectory
+    attr_accessor :outDirectory
+    attr_accessor :verbosityLevel
     attr_accessor :lang
-	attr_accessor :configFile
+    attr_accessor :configFile
 
-	attr_reader :pluginData
+    attr_reader :pluginData
     attr_reader :configParams
 
     def initialize
@@ -78,7 +78,7 @@ class ThgConfigurationPlugin < UPS::Plugin
     end
 
 
-	def parse_config_file
+    def parse_config_file
         if File.exists? @configFile
             @pluginData = YAML::load( File.new( @configFile ) )
         end
@@ -88,7 +88,7 @@ class ThgConfigurationPlugin < UPS::Plugin
         @verbosityLevel ||= get_config_value( 'Configuration', 'verbosityLevel', 3 )
         @lang ||= get_config_value( 'Configuration', 'lang', 'en' )
         Log4r::Outputter['stdout'].level = @verbosityLevel
-	end
+    end
 
 
     def get_config_value( pluginName, key, defaultValue )
