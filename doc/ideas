@@ -260,6 +260,8 @@
 
   - section plugin: provides different sections on one page; uses
   <section> tag. section consists of header and content.
+  >>> done -> arbitrary tags can be defined, therefore there is no
+      need for a special section plugin
 
   - sitemap plugin: provides a sitemap, uses the <sitemap>
   tag. controller traverses the tree structure, feeds data to style
@@ -271,9 +273,11 @@
   - dummy plugin: holds dummy text that is not used in generation, can
   be used to better visualize the template files, dummy tag is ignored
   completely in generation and elsewhere
+  >>> done
 
   - relocatable plugin: performs a substitution on the href attribute of
   the surrounded tag so that relative references are correct.
+  >>> done, but could be improved
 
 Design issues:
 

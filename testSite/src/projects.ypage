@@ -1,6 +1,5 @@
-metainfo:
-    title: YAML Projects page
-    template: default.template
+title: YAML Projects page
+template: default.template
 
 content:
     <h1>The News page</h1>
@@ -13,4 +12,4 @@ content:
     askdjfölajsödf öaksdfka södfkasdök jaslkdfaösdf sdkfasödlfasdfasdf
     aöfkaöskdföksdöfkasöd kös
     askdjfölajsödf öaksdfka södfkasdök jaslkdfaösdf sdkfasödlfasdfasdf
-    aöfkaöskdföksdöfkasöd k : ads
+    aöfkaöskdföksdöfkasöd k

@@ -10,19 +10,24 @@ class PagePlugin < UPS::Plugin
     NAME = "Page Plugin"
     SHORT_DESC = "Super class for all page plugins"
 
+    ThgException.add_entry :PAGE_TITLE_ENTRY_NOT_FOUND,
+		"the file <%0> does not contain a title tag",
+		"add a title tag or remove the file"
+
+
     def create_node( srcName, parent )
         data = get_file_data srcName
+        raise ThgException.new( :PAGE_TITLE_ENTRY_NOT_FOUND, srcName ) unless data['title']
 
         srcName, urlName, baseName, lang = get_file_names srcName
 
         pageNode, created = get_page_node( baseName, parent )
 
         node = Node.new pageNode
-        node.metainfo = data['metainfo']
+        node.metainfo = data
         node['src'] = srcName
         node['dest'] = urlName
         node['lang'] = lang
-        node['content'] = data['content']
         node['processor'] = self
 
         pageNode.add_child node

@@ -1,9 +1,8 @@
 <?xml version="1.0" ?>
 <thg>
-	<metainfo>
-		<title>Home page</title>
-        <inMenu>true</inMenu>
-	</metainfo>
+    <title>Home page</title>
+    <inMenu>true</inMenu>
+
 	<content>
 	<h1>The Homepage</h1>
 	Solvitur acris hiems grata vice veris et Favoni, Trahuntque siccas

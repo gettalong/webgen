@@ -28,7 +28,7 @@
     </div>
 
     <div id="footer">
-      $Id$
+      {revision: }
     </div>
 
   </body>

@@ -73,7 +73,7 @@ class MenuTag < UPS::Plugin
 
     class MenuNode < Node
 
-        def initialize( node, parent )
+        def initialize( parent, node )
             super parent
             self['title'] = 'Menu: '+ node['title']
             self['isMenuNode'] = true
@@ -85,7 +85,7 @@ class MenuTag < UPS::Plugin
 
 
     def create_menu_tree( node, parent )
-        menuNode = MenuNode.new( node, parent)
+        menuNode = MenuNode.new( parent, node )
 
         node.each do |child|
             menu = create_menu_tree( child, menuNode )

@@ -1,9 +1,8 @@
 <?xml version="1.0" ?>
 <thg>
-	<metainfo>
-		<title>News page</title>
-        <inMenu>true</inMenu>
-	</metainfo>
+	<title>News page</title>
+    <inMenu>true</inMenu>
+    <revision>$Id$</revision>
 
 	<content>
 	<h1>The News page</h1>

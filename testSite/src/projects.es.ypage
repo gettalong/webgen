@@ -1,7 +1,7 @@
-metainfo:
-    title: YAML Projektas Pagas
-    inMenu: true
+title: YAML Projektas Pagas
+inMenu: true
 
-content:
+content: |
     <h1>Projektas Pagas</h1>
-    Soy il paga.
+    Soy il paga. : asdfölsö
+    sdfökaösdfd

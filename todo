@@ -1,3 +1,4 @@
+W add check so that all needed metainfo tags are in read files
 * make file plugins case-insensitiv (convert all uppercase letters to lowercase)
 * create new document which describes iterations and the steps which are taken in each iteration (high risk first)
 * document existing files (RDOC)

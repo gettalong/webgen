@@ -1,10 +1,9 @@
 <?xml version="1.0" ?>
 <thg>
-	<metainfo>
-		<title>Project index</title>
-        <inMenu>true</inMenu>
-        <directoryName>Projects</directoryName>
-	</metainfo>
+	<title>Project index</title>
+    <inMenu>true</inMenu>
+    <directoryName>Projects</directoryName>
+
 	<content>
 	<h1>The project index page</h1>
 	Solvitur acris hiems grata vice veris et Favoni, Trahuntque siccas

@@ -16,11 +16,11 @@ class XMLPagePlugin < PagePlugin
     def get_file_data( srcName )
         root = REXML::Document.new( File.new( srcName ) ).root
 
+        #TODO rework this sothat arbitrary tags can be included
         data = Hash.new
-        data['metainfo'] = Hash.new
-        data['metainfo']['title'] = root.text( '/thg/metainfo/title' )
-        data['metainfo']['templateFile'] = root.text('/thg/metainfo/template') unless root.text('/thg/metainfo/template').nil?
-        data['metainfo']['inMenu'] = root.text('/thg/metainfo/inMenu') unless root.text('/thg/metainfo/inMenu').nil?
+        data['title'] = root.text( '/thg/title' )
+        data['templateFile'] = root.text('/thg/template') unless root.text('/thg/template').nil?
+        data['inMenu'] = root.text('/thg/inMenu') unless root.text('/thg/inMenu').nil?
         data['content'] = ''
         root.elements['content'].each do
             |child| child.write( data['content'] )

@@ -11,7 +11,7 @@ class MetaTag < UPS::Plugin
     end
 
 	def process_tag( tag, content, node, templateNode )
-		node[tag]
+		node[tag] || ''
 	end
 
 end

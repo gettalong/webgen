@@ -1,7 +1,6 @@
-metainfo:
-    title: Projekte Seite
-    inMenu: true
-    directoryName: Projekte
+title: Projekte Seite
+inMenu: true
+directoryName: Projekte
 
 content:
     <h1>Projekt Seite</h1>

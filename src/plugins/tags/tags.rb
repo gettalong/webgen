@@ -19,7 +19,7 @@ class Tags < UPS::Plugin
 
 
 	def substitute_tags( content, node, templateNode )
-		content.gsub!(/\{(\w+):\s+(\{.*?\}|.*?)\}/) do |match|
+		content.to_s.gsub!(/\{(\w+):\s+(\{.*?\}|.*?)\}/) do |match|
             tagValue = YAML::load( "- #{$2}" )[0]
 			self.logger.info { "Replacing tag #{match} in <#{node.recursive_value( 'dest' )}>" }
             if @tags.has_key? $1
@@ -29,8 +29,9 @@ class Tags < UPS::Plugin
             else
                 raise ThgException.new( :UNKNOWN_TAG, $1 )
             end
-			tagProcessor.process_tag( $1, tagValue, node, templateNode )
+			substitute_tags( tagProcessor.process_tag( $1, tagValue, node, templateNode ), node, templateNode )
 		end
+        content
 	end
 
 end
