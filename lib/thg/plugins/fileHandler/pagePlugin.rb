@@ -20,11 +20,6 @@ class PagePlugin < UPS::Plugin
     NAME = "Page Plugin"
     SHORT_DESC = "Super class for all page plugins"
 
-    ThgException.add_entry :PAGE_TITLE_ENTRY_NOT_FOUND,
-        "the file <%0> does not contain a title tag",
-        "add a title tag or remove the file"
-
-
     def create_node( srcName, parent )
         data = get_file_data srcName
 
@@ -78,8 +73,8 @@ class PagePlugin < UPS::Plugin
         if langNode.nil?
             langNode = node.children[0]
             self.logger.warn do
-                "No node in language '#{lang}' nor the default language (#{UPS::Registry['Configuration'].lang}) found,"+
-                " using first available node for page file <#{node['title']}>"
+                "No input file in language '#{lang}' nor the default language (#{UPS::Registry['Configuration'].lang}) found,"+
+                " using first available input file for output file <#{node['title']}>"
             end
         end
         langNode
@@ -100,15 +95,17 @@ class PagePlugin < UPS::Plugin
 
 
     def analyse_file_name( srcName )
-        matchData = /^((\d+)\.)?([^.]*?)(\.(\w\w))?\.#{self.class::EXTENSION}$/.match srcName
+        matchData = /^(?:(\d+)\.)?([^.]*?)(?:\.(\w\w))?\.#{self.class::EXTENSION}$/.match srcName
         fileData = Struct.new(:baseName, :srcName, :urlName, :menuOrder, :title, :lang).new
 
-        fileData.lang      = matchData[5] || UPS::Registry['Configuration'].lang
-        fileData.baseName  = matchData[3] + '.html'
+        fileData.lang      = matchData[3] || UPS::Registry['Configuration'].lang
+        fileData.baseName  = matchData[2] + '.html'
         fileData.srcName   = srcName
-        fileData.urlName   = matchData[3] + '.' + fileData.lang + '.html'
-        fileData.menuOrder = matchData[2].to_i
-        fileData.title     = matchData[3].tr('_-', ' ').capitalize
+        fileData.urlName   = matchData[2] + '.' + fileData.lang + '.html'
+        fileData.menuOrder = matchData[1].to_i
+        fileData.title     = matchData[2].tr('_-', ' ').capitalize
+
+        self.logger.debug { fileData.to_s }
 
         fileData
     end

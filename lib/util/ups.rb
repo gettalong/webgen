@@ -11,6 +11,7 @@ require 'util/listener'
 
 module UPS
 
+    # The plugin registry which manages plugins.
     class Registry
 
         include Singleton
@@ -18,11 +19,13 @@ module UPS
         include Enumerable
 
 
+        # Redirects all messages to the Singleton instance
         def Registry.method_missing( symbol, *args, &block )
-            Registry.instance.send symbol, *args, &block
+            Registry.instance.send( symbol, *args, &block )
         end
 
 
+        # Initializes the Singleton instance
         def initialize
             @plugins = Hash.new
             add_msg_name :PLUGIN_REGISTERED
@@ -30,11 +33,14 @@ module UPS
         end
 
 
-        def []( plugin )
-            @plugins[plugin]
+        # Retrieves the plugin with the given +name+
+        def []( name )
+            @plugins[name]
         end
 
 
+        # Registers a new plugin. You have to supply the class of the plugin
+        # which should have been derived from +UPS::Plugin+.
         def register_plugin( pluginClass )
             name = pluginClass.const_get :NAME
             return false if @plugins.has_key? name
@@ -45,6 +51,7 @@ module UPS
         end
 
 
+        # Unregisters the plugin with the given class.
         def unregister_plugin( pluginClass )
             name = pluginClass.const_get :NAME
             return false unless @plugins.has_key? name
@@ -55,6 +62,8 @@ module UPS
         end
 
 
+        # Loads all plugins in the given +path+. Before +require+ is actually called the path is
+        # trimmed: if +trimpath+ matches the beginning of the string, it is deleted from it.
         def load_plugins( path, trimpath )
             Find.find( path ) do |file|
                 Find.prune unless File.directory?( file ) || (/.rb$/ =~ file)
@@ -63,6 +72,7 @@ module UPS
         end
 
 
+        # Iterates over all registered plugins.
         def each( &block )
             @plugins.each( &block )
         end
@@ -70,37 +80,20 @@ module UPS
     end
 
 
+    # The default plugin class which implements the necessary default method stubs.
     class Plugin
 
+        # Initializes the plugin. This method is called by +Registry#register_plugin+ after the
+        # plugin was registered.
         def init
         end
 
+        # Cleans up the plugin. This method is called by +Registry#unregister_plugin+ before the
+        # plugin is deleted from the registry.
         def destroy
         end
 
     end
 
 
-end
-
-
-if __FILE__ == $0
-
-    class Test < UPS::Plugin
-        NAME = "testPlugin"
-
-        def init
-            print "init"
-        end
-
-        def destroy
-            print "destroy"
-        end
-
-    end
-
-    UPS::Registry.add_msg_listener(:PLUGIN_REGISTERED) { |name| print "yes: #{name}" }
-    UPS::Registry.register_plugin(Test)
-    print UPS::Registry[Test::NAME]
-    UPS::Registry.unregister_plugin(Test)
 end

@@ -66,6 +66,26 @@ module Thaumaturge
 end
 
 
+#### Log4r Configuration ####
+
+
+class Log4r::PatternFormatter
+    remove_const(:DirectiveTable)
+
+    # Redefinition of the DirectiveTable to only show the method name in the trace.
+    DirectiveTable =  {
+        "c" => 'event.name',
+        "C" => 'event.fullname',
+        "d" => 'format_date',
+        "t" => "event.tracer[0][/`.*'/][1..-2]",
+        "m" => 'event.data',
+        "M" => 'format_object(event.data)',
+        "l" => 'LNAMES[event.level]',
+        "%" => '"%"'
+    }
+end
+
+
 LoggerConfiguration = <<EOF
 log4r_config:
   pre_config:
@@ -80,6 +100,7 @@ log4r_config:
   loggers:
     - name: default
       level: DEBUG
+      trace: true
       outputters:
         - stdout
 
@@ -90,7 +111,7 @@ log4r_config:
       formatter:
         type        : PatternFormatter
         date_pattern: '%Y-%m-%d %H:%M:%S'
-        pattern     : '%d %-5l %-20c> %m'
+        pattern     : '%d %-5l %c:%-20t> %m'
 
 EOF
 
@@ -107,15 +128,17 @@ log4r_config:
       formatter   :
         type        : PatternFormatter
         date_pattern: '%Y-%m-%d %H:%M:%S'
-        pattern     : '%d %5l %-20c> %m'
+        pattern     : '%d %5l %c:%-20t> %m'
 
 EOF
 Log4r::YamlConfigurator.load_yaml_string LoggerConfiguration
+
 
 class Object
     def logger
         if @logger.nil?
             @logger = Log4r::Logger.new(self.class.name)
+            @logger.trace = true
             @logger.outputters = ['stdout']
             @logger.add 'logfile' if Log4r::Outputter['logfile']
         end

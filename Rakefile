@@ -26,8 +26,8 @@ SRC_RB = FileList['lib/**/*.rb']
 
 # The default task is run if rake is given no explicit arguments.
 
-#desc "Default Task"
-#task :default => :test
+desc "Default Task"
+task :default => :test
 
 
 # End user tasks ################################################################
@@ -78,10 +78,10 @@ PKG_FILES = FileList.new( [
     'lib/**/*.rb',
     'testsite/**/*'
 ]) do |fl|
-    fl.exclude(/\bsvn\b/)
-    fl.exclude('testsite/output')
-    fl.exclude('testsite/coverage')
-    fl.exclude('testsite/thg.log')
+    fl.exclude( /\bsvn\b/ )
+    fl.exclude( 'testsite/output' )
+    fl.exclude( 'testsite/coverage' )
+    fl.exclude( 'testsite/thg.log' )
 end
 
 if !defined? Gem
@@ -101,7 +101,7 @@ else
 
         #### Dependencies, requirements and files
 
-        s.add_dependency('log4r', '> 1.0.4')
+        s.add_dependency( 'log4r', '> 1.0.4' )
         s.files = PKG_FILES.to_a
 
         s.require_path = 'lib'
@@ -131,7 +131,7 @@ else
 
     CLOBBER << "ChangeLog"
 
-    Rake::GemPackageTask.new(spec) do |pkg|
+    Rake::GemPackageTask.new( spec ) do |pkg|
         pkg.need_zip = true
         pkg.need_tar = true
     end
@@ -141,7 +141,7 @@ end
 
 desc "Creates a tag in the repository"
 task :tag do
-    repositoryPath = File.dirname($1) if `svn info` =~ /^URL: (.*)$/
+    repositoryPath = File.dirname( $1 ) if `svn info` =~ /^URL: (.*)$/
     fail "Tag already created in repository " if /#{PKG_NAME}/ =~ `svn ls #{repositoryPath}/versions`
     sh "svn cp -m 'Created version #{PKG_NAME}' #{repositoryPath}/trunk #{repositoryPath}/versions/#{PKG_NAME}"
 end
@@ -150,7 +150,7 @@ end
 # Misc tasks ###################################################################
 
 
-def count_lines(filename)
+def count_lines( filename )
     lines = 0
     codelines = 0
     open( filename ) do |f|
@@ -165,7 +165,7 @@ def count_lines(filename)
 end
 
 
-def show_line(msg, lines, loc)
+def show_line( msg, lines, loc )
     printf "%6s %6s   %s\n", lines.to_s, loc.to_s, msg
 end
 
@@ -174,14 +174,14 @@ desc "Show statistics"
 task :statistics do
     total_lines = 0
     total_code = 0
-    show_line("File Name", "Lines", "LOC")
+    show_line( "File Name", "Lines", "LOC" )
     SRC_RB.each do |fn|
-        lines, codelines = count_lines(fn)
-        show_line(fn, lines, codelines)
+        lines, codelines = count_lines fn
+        show_line( fn, lines, codelines )
         total_lines += lines
         total_code  += codelines
     end
-    show_line("Total", total_lines, total_code)
+    show_line( "Total", total_lines, total_code )
 end
 
 
