@@ -87,7 +87,7 @@ rd = Rake::RDocTask.new do |rdoc|
   rdoc.rdoc_files.include( 'lib/**/*.rb' )
 end
 
-
+CLOBBER << "test/webgen.log"
 task :test do |t|
   chdir 'test' do
     ruby "-I../lib -I. runtests.rb"
