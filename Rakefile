@@ -7,10 +7,10 @@ rescue Exception
     nil
 end
 
-require 'rake/packagetask'
 require 'rake/clean'
+require 'rake/packagetask'
 require 'rake/rdoctask'
-
+require 'rake/testtask'
 
 # General actions  ##############################################################
 
@@ -20,7 +20,7 @@ else
   PKG_VERSION = "0.0.0"
 end
 
-CLOBBER << "thg.log"
+CLOBBER << "thg.log" << "testsite/coverage" << "testsite/output" << "testsite/thg.log"
 
 PKG_NAME = "thaumaturge-#{PKG_VERSION}"
 
@@ -56,11 +56,16 @@ end
 rd = Rake::RDocTask.new do |rdoc|
     rdoc.rdoc_dir = 'rdoc'
     rdoc.title    = "Thaumaturge"
-    rdoc.options << '--line-numbers' << '--inline-source' << '--main README'
+    rdoc.options << '--line-numbers' << '--main README'
     rdoc.rdoc_files.include( 'README' )
     rdoc.rdoc_files.include( 'lib/**/*.rb' )
 end
 
+
+Rake::TestTask.new do |t|
+    t.pattern = "tests/**/*.rb"
+    t.verbose = true
+end
 
 # Developer tasks ##############################################################
 
@@ -73,11 +78,12 @@ PKG_FILES = FileList.new( [
     'Rakefile',
     'bin/**/*',
     'lib/**/*.rb',
-    'testSite/**/*'
+    'testsite/**/*'
 ]) do |fl|
     fl.exclude(/\bsvn\b/)
-    fl.exclude('testSite/output')
-    fl.exclude('testSite/thg.log')
+    fl.exclude('testsite/output')
+    fl.exclude('testsite/coverage')
+    fl.exclude('testsite/thg.log')
 end
 
 if !defined? Gem
@@ -123,12 +129,9 @@ else
     task :package => [:generateFiles]
     task :generateFiles do |t|
         sh "svn log -r HEAD:1 -v > ChangeLog"
-        sh "rake statistics > Statistics"
-        lines = File.readlines("Statistics")[1..-1]
-        File.open("Statistics", "w") do |file| file.write lines end
     end
 
-    CLOBBER << "ChangeLog" << "Statistics"
+    CLOBBER << "ChangeLog"
 
     Rake::GemPackageTask.new(spec) do |pkg|
         pkg.need_zip = true
@@ -183,8 +186,17 @@ task :statistics do
 end
 
 
+def run_testsite( arguments = '' )
+    Dir.chdir("testsite")
+    ruby %{-I../lib #{arguments} ../lib/thg/thg.rb -v 3 }
+end
+
 desc "Build the test site"
 task :buildtestsite do
-    Dir.chdir("testSite")
-    ruby %{-I../lib ../lib/thg/thg.rb -v 3 }
+    run_testsite
+end
+
+desc "Run the code coverage tool on the testsite"
+task :coverage do
+    run_testsite '-rcoverage'
 end
