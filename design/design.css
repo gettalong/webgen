@@ -1,0 +1,127 @@
+body {
+  margin: 0px 10%;
+  padding: 5px;
+  background-color: #fff;
+  font-size: 12px;
+  font-family: Verdana;
+}
+
+/* Hack for IE */
+table {
+  font-size: 12px;
+  font-family: Verdana;
+}
+
+div#header {
+  padding: 0px;
+  margin-bottom: 5px;
+  border: solid 1px #C8C8C8;
+  background-color: #F8F8F8;
+}
+
+div#menu {
+  float: left;
+  width: 20%;
+
+  border: solid 1px #C8C8C8;
+  background-color: #F8F8F8;
+}
+
+
+
+div#menu ul {
+  padding: 0px;
+  margin: 0px;
+}
+
+div#menu ul ul {
+  display: none;
+}
+
+div#menu a {
+  display: block;
+  text-decoration: none;
+}
+
+div#menu li {
+  position: relative;
+  padding: 3px 5px;
+  margin: 0px;
+
+  border: 1px solid transparent;
+  list-style-type: none;
+}
+
+div#menu li.sub > a:after {
+  content: " \BB"; /* \BB = »,	&raquo;	&#187; */
+}
+
+div#menu li:hover {
+  background-color: #F0F0F0;
+  border-bottom: 1px solid #35648A;
+  border-top: 1px solid #35648A;
+}
+
+div#menu li:hover > a {
+}
+
+div#menu li.sub:hover {
+  width: 200%;
+  background-color: #F0F0F0;
+  border: 1px solid #C8C8C8;
+  z-index: 1;
+}
+
+div#menu li.sub:hover > ul {
+  display: block;
+  position: absolute;
+  left: 51%;
+  width: 49%;
+  top: 95%;
+  background-color: #F8F8F8;
+  border: solid 1px #C8C8C8;
+  z-index: 1;
+}
+
+
+
+div#body {
+  float: right;
+  width: 75%;
+}
+
+div.section {
+  margin-bottom: 20px;
+  border: 1px solid #C8C8C8;
+  padding: 5px;
+}
+
+h2.section_header {
+  margin: 0px;
+  padding: 3px;
+  border-bottom: 1px solid #35648A;
+
+  letter-spacing: 2px;
+  font-size: 150%;
+  font-weight: bold;
+  font-variant: small-caps;
+  text-transform: capitalize;
+  
+  background-color: #F0F0F0; /* #35648A; */
+  color: #35648A;
+}
+
+div.section h2.section_header {
+  margin: -5px -5px 5px;
+}
+
+div#footer {
+  padding: 0px;
+  margin-bottom: 5px;
+  border: 1px solid #C8C8C8;
+
+  clear: both;
+
+  text-align: center;
+  background-color: #F8F8F8;
+}
