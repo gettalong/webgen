@@ -15,6 +15,7 @@ end
 
 
 def runListPlugins
+    print "List of loaded plugins:\n"
 	UPS::Registry[ThgListPlugin::NAME].list_plugins
 end
 
@@ -37,7 +38,7 @@ begin
 		opts.banner << "\nThaumaturge is a template based web page generator for offline page generation.\n\n"
 
 		opts.on_tail( "--help", "-h", "Display this help screen" ) { puts opts; exit }
-		opts.on( "--config-file FILE", "-c", String, "The config.xml which should be used" ) { |config.configFile| }
+		opts.on( "--config-file FILE", "-c", String, "The configuration file which should be used" ) { |config.configFile| }
 		opts.on( "--source-dir DIR", "-s", String, "The  directory from where the files are read" ) { |config.srcDirectory| }
 		opts.on( "--output-dir DIR", "-o", String, "The directory where the output should go" ) { |config.outDirectory| }
 		opts.on( "--list-plugins", "-l", "List all the plugins and information about them" ) { require 'listplugins'; main = method(:runListPlugins) }

@@ -1,10 +1,7 @@
 require 'yaml'
-require 'ups/ups'
-require 'thgexception'
-require 'node'
-require 'plugins/fileHandler/fileHandler'
+require 'plugins/fileHandler/pagePlugin'
 
-class YAMLPagePlugin < UPS::Plugin
+class YAMLPagePlugin < PagePlugin
 
     NAME = "YAML Page Plugin"
     SHORT_DESC = "Handles YAML webpage description files"
@@ -12,7 +9,7 @@ class YAMLPagePlugin < UPS::Plugin
     EXTENSION = 'yaml'
 
     def init
-        UPS::Registry['File Handler'].extensions[EXTENSION] = self
+        super
     end
 
 
@@ -24,25 +21,13 @@ class YAMLPagePlugin < UPS::Plugin
 
         node = Node.new parent
         node['title'] = data['metainfo']['title']
+        #TODO retrieve template node after dir read
+        #node['templateFile'] = data['metainfo']['template'] unless data['metainfo']['template'].nil?
         node['src'] = srcName
         node['dest'] = urlName
         node['content'] = data['content']
 
         return node
-    end
-
-
-    def write_node( node, filename )
-        templateNode = UPS::Registry['Template File'].get_template_for_node( node )
-
-        outstring = templateNode['content'].dup
-
-        #UPS::PluginRegistry.instance['tags'].substituteTags(node.metainfo['content'], node)
-        UPS::Registry['Tags'].substitute_tags( outstring, node, templateNode )
-
-        File.open( filename, File::CREAT|File::TRUNC|File::RDWR ) do |file|
-            file.write outstring
-        end
     end
 
 end

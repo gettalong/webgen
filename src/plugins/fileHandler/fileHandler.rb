@@ -1,8 +1,5 @@
 require 'ups/ups'
 require 'ups/listener'
-require 'thgexception'
-require 'node'
-require 'configuration'
 
 class FileHandler < UPS::Plugin
 
@@ -18,12 +15,10 @@ class FileHandler < UPS::Plugin
     EOF
 
 	attr_accessor :extensions
+    attr_accessor :ignoredFiles
 
 	def initialize
 		@extensions = Hash.new
-
-		#TODO config = Configuration.instance.pluginData['fileHandler']
-		#TODO raise ThgException.new(ThgException::CFG_ENTRY_NOT_FOUND, 'fileHandler') if config.nil?
 
 		add_msg_name( :DIR_NODE_CREATED )
 		add_msg_name( :FILE_NODE_CREATED )
@@ -31,27 +26,52 @@ class FileHandler < UPS::Plugin
 	end
 
 
+    def init
+        @ignoredFiles = UPS::Registry['Configuration'].get_config_value( NAME, 'ignoredFiles' ) || ['.svn', 'CVS']
+    end
+
+
 	def build_tree
 		@dirProcessor = Object.new
 
 		root = build_entry( UPS::Registry['Configuration'].srcDirectory, nil )
-		root['dest'] = ""
 		root['title'] = '/'
+		root['dest'] = UPS::Registry['Configuration'].outDirectory + File::SEPARATOR
 		root['src'] = UPS::Registry['Configuration'].srcDirectory + File::SEPARATOR
 		root
 	end
 
 
 	def write_tree( node )
-		name = File.join( UPS::Registry['Configuration'].outDirectory, node.recursive_value( 'dest' ) )
         #TODO Configuration.instance.log(Configuration::NORMAL, "Writing #{name}")
 
-		node['processor'].write_node( node, name )
+		node['processor'].write_node( node )
 
 		node.each do |child|
 			write_tree child
 		end
 	end
+
+
+    def file_modified?( node )
+        src = node.recursive_value 'src'
+        dest = node.recursive_value 'dest'
+        if File.exists?( dest ) && ( File.mtime( src ) < File.mtime( dest ) )
+            #TODO use log4r
+            print "File is up to date: <#{dest}>\n"
+            return false
+        else
+            return true
+        end
+    end
+
+
+    def get_relpath_to_node( srcNode, destNode )
+        i = -2 # do not count file + current directory
+        ( i += 1; srcNode = srcNode.parent ) until srcNode.nil? # how many levels?
+        ( ".." + File::SEPARATOR )*i + destNode.parent.recursive_value( 'dest' ).sub(/^#{UPS::Registry['Configuration'].outDirectory + File::SEPARATOR}/, "")
+    end
+
 
 	#######
 	private
@@ -75,7 +95,21 @@ class FileHandler < UPS::Plugin
 
                 dispatch_msg( :DIR_NODE_CREATED, node )
 
-                Dir[File.join( path, '*' )].each do |filename|
+                entries = Dir[path + File::SEPARATOR + '{.*,*}'].delete_if do |name|
+                    name =~ /\/.{1,2}$/ || @ignoredFiles.include?( File.basename( name ) )
+                end
+
+                entries.sort! do |a, b|
+                     if File.file?( a ) && File.directory?( b )
+                         -1
+                     elsif ( File.file?( a ) && File.file?( b ) ) || ( File.directory?( a ) && File.directory?( b ) )
+                         a <=> b
+                     else
+                         1
+                     end
+                end
+
+                entries.each do |filename|
                     child = build_entry( filename, node )
                     node.add_child child unless child.nil?
                 end

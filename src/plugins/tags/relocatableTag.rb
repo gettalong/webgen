@@ -11,16 +11,8 @@ class RelocatableTag < UPS::Plugin
     end
 
 	def process_tag( tag, content, node, templateNode )
-        get_relpath_to_template( node, templateNode ) + content
+        UPS::Registry['File Handler'].get_relpath_to_node( node, templateNode ) + content
 	end
-
-
-    def get_relpath_to_template( node, template )
-        i = -2 # do not count file + current directory
-        ( i += 1; node = node.parent ) until node.nil?
-        ( ".." + File::SEPARATOR )*i + template.parent.recursive_value( 'dest' )
-    end
-
 
 end
 

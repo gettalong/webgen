@@ -1,10 +1,8 @@
 require 'rexml/document'
-require 'ups/ups'
 require 'thgexception'
-require 'node'
-require 'plugins/fileHandler/fileHandler'
+require 'plugins/fileHandler/pagePlugin'
 
-class XMLPagePlugin < UPS::Plugin
+class XMLPagePlugin < PagePlugin
 
     NAME = "XML Page Plugin"
     SHORT_DESC = "Handles XML webpage description files"
@@ -19,22 +17,20 @@ class XMLPagePlugin < UPS::Plugin
     EXTENSION = 'page'
 
     def init
-        UPS::Registry['File Handler'].extensions[EXTENSION] = self
+        super
     end
 
 
     def create_node( srcName, parent )
         root = REXML::Document.new( File.new( srcName ) ).root
 
-        # initialize attributes
-        title = root.text( '/thg/metainfo/title' )
-        raise ThgException.new( :PAGE_META_ENTRY_NOT_FOUND, 'title', srcName ) if title.nil?
-
         srcName = File.basename srcName
         urlName = srcName.gsub( /\.#{EXTENSION}$/, '.html' )
 
         node = Node.new parent
-        node['title'] = title
+        node['title'] = root.text( '/thg/metainfo/title' )
+        #TODO retrieve template node after dir read
+        #node['templateFile'] = root.text('/thg/metainfo/template') unless root.text('/thg/metainfo/template').nil?
         node['src'] = srcName
         node['dest'] = urlName
         node['content'] = ''
@@ -43,20 +39,6 @@ class XMLPagePlugin < UPS::Plugin
         end
 
         return node
-    end
-
-
-    def write_node( node, filename )
-        templateNode = UPS::Registry['Template File'].get_template_for_node( node )
-
-        outstring = templateNode['content'].dup
-
-        #UPS::PluginRegistry.instance['tags'].substituteTags(node.metainfo['content'], node)
-        UPS::Registry['Tags'].substitute_tags( outstring, node, templateNode )
-
-        File.open( filename, File::CREAT|File::TRUNC|File::RDWR ) do |file|
-            file.write outstring
-        end
     end
 
 end

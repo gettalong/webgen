@@ -18,8 +18,9 @@ class DirHandlerPlugin < UPS::Plugin
         node
     end
 
-    def write_node( node, name )
-		FileUtils.makedirs( name ) unless File.exists? name
+    def write_node( node )
+        name = node.recursive_value 'dest'
+        FileUtils.makedirs( name ) unless File.exists? name
 	end
 
 end

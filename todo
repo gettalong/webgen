@@ -1,11 +1,7 @@
-* add default values for configuration in configuration.rb
+W implement <template> meta-info tag (see template based)
 * replace current logging mechanism with Log4r
 * create new document which describes iterations and the steps which are taken in each iteration (high risk first)
 * document existing files (RDOC)
-* implement <template> meta-info tag (see template based)
-* implement "creation of files only when necessary" (i.e. if dependencies have changed)
-    use modification of source and target to check if source is newer -> changed
-    change the behaviour in file copy plugin
 * think about configureable list of files patterns which should always be ignored when reading src dir
 * design Thaumaturge logo
 * check out http://validator.w3.org/check/referer and http://jigsaw.w3.org/css-validator/check/referer
@@ -38,3 +34,8 @@ W define format of config.yaml
 W redo configuration file as yaml file
 W meta tag replacer - replaces tag with contents of equally named node.metainfo entry
 W add yaml page files
+W add default values for configuration in configuration.rb
+W create super class for page plugins
+W implement "creation of files only when necessary" (i.e. if dependencies have changed)
+    use modification of source and target to check if source is newer -> changed
+    change the behaviour in file copy plugin

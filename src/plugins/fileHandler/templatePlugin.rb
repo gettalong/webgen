@@ -38,7 +38,7 @@ class TemplatePlugin < UPS::Plugin
 	end
 
 
-	def write_node(node, filename)
+	def write_node( node )
 		# do not write anything
 	end
 

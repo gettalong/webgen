@@ -16,7 +16,7 @@ class FileCopyPlugin < UPS::Plugin
 
 	def init
 		#TODO types = Configuration.instance.pluginData['fileCopy'].text
-        types = "css,jpg,png,gif,page"
+        types = "css,jpg,png,gif"
 		unless types.nil?
 			types.split( ',' ).each do |type|
 				UPS::Registry['File Handler'].extensions[type] ||= self
@@ -33,15 +33,8 @@ class FileCopyPlugin < UPS::Plugin
 	end
 
 
-	def write_node( node, filename )
-        srcFile = node.recursive_value 'src'
-        if FileTest.exists?( filename ) && ( File.mtime( filename ) == File.mtime( srcFile ) )
-            #TODO use log4r
-            print "file #{srcFile} not copied, destination file is up to date\n"
-            return
-        end
-		FileUtils.cp( srcFile, filename )
-        File.utime( File.atime( srcFile ), File.mtime( srcFile ), filename )
+	def write_node( node )
+		FileUtils.cp( node.recursive_value( 'src' ), node.recursive_value( 'dest' ) ) if UPS::Registry['File Handler'].file_modified?( node )
 	end
 
 end
