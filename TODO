@@ -1,5 +1,7 @@
 ---- CURRENT ----
 
+* create tests for methods in webgen.rb
+* webgen -c => output same info as on docu pages
 * reloctable tag: correct output for complex URLS???
 * check if duplicate nodes are created??? by using a tag in a template
 * allow a template to use another template (templates as page description files?) (template2 uses template1)

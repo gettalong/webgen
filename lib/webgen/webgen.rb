@@ -123,8 +123,8 @@ module Webgen
 
       ljustlength = 30 + Color.green.length + Color.reset.length
       header = ''
-      Plugin.config.sort { |a, b| a[0] <=> b[0] }.each do |classname, data|
-        newHeader = headers[classname[/^.*?(?=::)/]]
+      Plugin.config.sort { |a, b| a[0].name <=> b[0].name }.each do |klass, data|
+        newHeader = headers[klass.name[/^.*?(?=::)/]]
         unless newHeader == header
           print "\n  #{Color.bold}#{newHeader}#{Color.reset}:\n";
           header = newHeader
@@ -137,7 +137,7 @@ module Webgen
     def runListConfiguration
       print "List of configuration parameters:\n\n"
       ljustlength = 20 + Color.green.length + Color.reset.length
-      Plugin.config.sort.each do |classname, data|
+      Plugin.config.sort { |a, b| a[0].name <=> b[0].name }.each do |klass, data|
         next if data.params.nil?
         print "  #{Color.bold}#{data.plugin}#{Color.reset}:\n"
         data.params.sort.each do |key, item|
