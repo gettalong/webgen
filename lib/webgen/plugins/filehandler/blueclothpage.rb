@@ -20,38 +20,28 @@
 #++
 #
 
-require 'cgi'
-require 'util/ups'
-require 'webgen/plugins/tags/tags'
+require 'yaml'
+require 'bluecloth'
+require 'webgen/plugins/filehandler/page'
 
-module Tags
+module FileHandlers
 
-  # Executes the given command and writes the standard output into the output file. All HTML special
-  # characters are escaped.
-  class ExecuteCommandTag < DefaultTag
+  # Handles files in Markdown format using BlueCloth.
+  class BlueClothPagePlugin < PagePlugin
 
-    NAME = "Execute Command Tag"
-    SHORT_DESC = "Executes the given command and includes its standard output"
+    NAME = "Markdown Page Handler"
+    SHORT_DESC = "Handles webpage description files in Markdown format using BlueCloth"
 
-    TAG_NAME = 'execute'
+    EXTENSION = 'bcloth'
 
-    def initialize
-      super
-      @processOutput = false
+    def get_file_data( srcName )
+      data = Hash.new
+      data['content'] = BlueCloth.new( File.read( srcName ) ).to_html
+      data
     end
-
-
-    def check_mandatory_param( config )
-      config.kind_of? String
-    end
-
-
-    def process_tag( tag, node, refNode )
-      CGI::escapeHTML( `#{get_config_param( :mandatory )}` )
-    end
-
-    UPS::Registry.register_plugin ExecuteCommandTag
 
   end
+
+  UPS::Registry.register_plugin BlueClothPagePlugin
 
 end

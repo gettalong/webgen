@@ -54,16 +54,24 @@ class Node
   end
 
 
-  # Returns the relative path from the srcNode to the destNode. The srcNode
+  # Returns the relative path from this node to the destNode. The current node
   # is normally a page file node, but the method should work for other nodes
   # too. The destNode can be any non virtual node.
   def get_relpath_to_node( destNode )
     if destNode['external']
       path = ''
     else
-      path = @parent.recursive_value( 'dest' )[UPS::Registry['Configuration'].outDirectory.length+1..-1]
-      path = path.gsub(/.*?(#{File::SEPARATOR})/, "..#{File::SEPARATOR}")
-      path += destNode.parent.recursive_value( 'dest' )[UPS::Registry['Configuration'].outDirectory.length+1..-1] unless destNode.parent.nil?
+      from = @parent.recursive_value( 'dest' ).split( File::SEPARATOR )
+      to = destNode.parent.recursive_value( 'dest' ).split( File::SEPARATOR )
+
+      while from.size > 0 and to.size > 0 and from[0] == to[0]
+        from.shift
+        to.shift
+      end
+
+      from.fill( '..' )
+      from.concat( to )
+      path = from.join( '/' ) + ( from.size > 0 ? '/' : '' )
     end
     path
   end

@@ -181,9 +181,6 @@ module Tags
     private
     #######
 
-    attr_writer :processOutput
-
-
     # Sets the current configuration taking values from +config+ which has to be a Hash.
     def set_cur_config( config, node )
       config.each do |key, value|

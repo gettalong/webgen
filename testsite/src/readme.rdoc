@@ -1,0 +1,8 @@
+= Page formatter for RDOC style files
+
+== You see it works
+
+* lists
+* and so on
+
+ verbatim

@@ -20,38 +20,34 @@
 #++
 #
 
-require 'cgi'
-require 'util/ups'
-require 'webgen/plugins/tags/tags'
+require 'yaml'
+require 'rdoc/markup/simple_markup'
+require 'rdoc/markup/simple_markup/to_html'
+require 'webgen/plugins/filehandler/page'
 
-module Tags
+module FileHandlers
 
-  # Executes the given command and writes the standard output into the output file. All HTML special
-  # characters are escaped.
-  class ExecuteCommandTag < DefaultTag
+  # Handles files in RDoc format.
+  class RDocPagePlugin < PagePlugin
 
-    NAME = "Execute Command Tag"
-    SHORT_DESC = "Executes the given command and includes its standard output"
+    NAME = "RDoc Page Handler"
+    SHORT_DESC = "Handles webpage description files in RDOC format"
 
-    TAG_NAME = 'execute'
+    EXTENSION = 'rdoc'
 
     def initialize
-      super
-      @processOutput = false
+      @processor = SM::SimpleMarkup.new
+      @formatter = SM::ToHtml.new
     end
 
-
-    def check_mandatory_param( config )
-      config.kind_of? String
+    def get_file_data( srcName )
+      data = Hash.new
+      data['content'] = @processor.convert( File.read( srcName ), @formatter )
+      data
     end
-
-
-    def process_tag( tag, node, refNode )
-      CGI::escapeHTML( `#{get_config_param( :mandatory )}` )
-    end
-
-    UPS::Registry.register_plugin ExecuteCommandTag
 
   end
+
+  UPS::Registry.register_plugin RDocPagePlugin
 
 end

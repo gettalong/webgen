@@ -20,38 +20,28 @@
 #++
 #
 
-require 'cgi'
-require 'util/ups'
-require 'webgen/plugins/tags/tags'
+require 'yaml'
+require 'redcloth'
+require 'webgen/plugins/filehandler/page'
 
-module Tags
+module FileHandlers
 
-  # Executes the given command and writes the standard output into the output file. All HTML special
-  # characters are escaped.
-  class ExecuteCommandTag < DefaultTag
+  # Handles files in Textile format using RedCloth.
+  class RedClothPagePlugin < PagePlugin
 
-    NAME = "Execute Command Tag"
-    SHORT_DESC = "Executes the given command and includes its standard output"
+    NAME = "Textile Page Handler"
+    SHORT_DESC = "Handles webpage description files in Textile format using RedCloth"
 
-    TAG_NAME = 'execute'
+    EXTENSION = 'rcloth'
 
-    def initialize
-      super
-      @processOutput = false
+    def get_file_data( srcName )
+      data = Hash.new
+      data['content'] = RedCloth.new( File.read( srcName ) ).to_html
+      data
     end
-
-
-    def check_mandatory_param( config )
-      config.kind_of? String
-    end
-
-
-    def process_tag( tag, node, refNode )
-      CGI::escapeHTML( `#{get_config_param( :mandatory )}` )
-    end
-
-    UPS::Registry.register_plugin ExecuteCommandTag
 
   end
+
+  UPS::Registry.register_plugin RedClothPagePlugin
 
 end

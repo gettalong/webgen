@@ -115,7 +115,7 @@ module Webgen
 
     def self.method_added( id )
       return if id != :init || self.class_variables.include?( '@@PLUGIN_INIT' )
-      aliasName = "init_" + self.id.to_s
+      aliasName = "init_" + self.object_id.to_s
       unless method_defined?( aliasName )
         module_eval "alias_method(:#{aliasName}, :init)\n def init() super; #{aliasName}; end"
       end
@@ -209,10 +209,10 @@ class Object
   # Returns the logger for the class of the object. If the logger does not exist, the logger is
   # created using the name of the class.
   def logger
-    if @logger.nil?
+    if !defined? @logger
       @logger = Log4r::Logger[self.class.name]
       if @logger.nil?
-        @logger = Log4r::Logger.new(self.class.name)
+        @logger = Log4r::Logger.new( self.class.name )
         @logger.trace = true
         @logger.outputters = ['stdout']
         @logger.add 'logfile' if Log4r::Outputter['logfile']

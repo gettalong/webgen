@@ -36,7 +36,7 @@ module Tags
 
     def initialize
       super
-      self.processOutput = false
+      @processOutput = false
     end
 
 
