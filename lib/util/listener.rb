@@ -19,14 +19,34 @@
 #
 #++
 #
+
 # Module Listener
 #
 # Implementation of the listener pattern. The including class defines messages to which other
 # classes can listen.
 #
-
-
-# Implements the listener pattern.
+# Usage example:
+#
+#  class Test
+#    include Listener
+#
+#    def initialize
+#      add_msg_name :test
+#    end
+#
+#    def invoke( *param )
+#      dispatch_msg( :test, *param )
+#    end
+#
+#  end
+#
+#  t = Test.new
+#  t.add_msg_listener( :test ) do |*param|
+#    print param.inspect
+#  end
+#  t.invoke 'hello'
+#  t.invoke 'lester', ['tsd', 4, 'test']
+#
 module Listener
 
 

@@ -26,7 +26,7 @@ require 'singleton'
 require 'find'
 require 'util/listener'
 
-
+# The module containing everything related to plugin management.
 module UPS
 
     # The plugin registry which manages plugins.

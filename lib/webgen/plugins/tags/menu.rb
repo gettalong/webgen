@@ -26,8 +26,21 @@ require 'webgen/plugins/tags/tags'
 
 module Tags
 
+  # Generates a menu. All page files for which the meta information +inMenu+ is set are displayed.
+  # If you have one page in several languages, it is sufficient to add this meta information to only
+  # one page file.
+  #
+  # The order in which the menu items are listed can be controlled via the meta information
+  # +menuOrder+. By default the menu items are sorted by the file names.
+  #
+  # Tag parameters:
+  # [<b>level</b>]
+  #   The depth of the menu. A level of one only displays the top level menu files. A level of two
+  #   also displays the menu files in the direct subdirectories and so on.
   class MenuTag < UPS::Plugin
 
+
+    # Specialised node class for the menu.
     class MenuNode < Node
 
       def initialize( parent, node )
@@ -38,11 +51,15 @@ module Tags
         self['node'] = node
       end
 
+
+      # Sorts recursively all children of the node depending on their order value.
       def sort
         self.children.sort! do |a,b| get_order_value( a ) <=> get_order_value( b ) end
         self.children.each do |child| child.sort if child.kind_of?( MenuNode ) && child['node'].kind_of?( FileHandlers::DirHandler::DirNode ) end
       end
 
+
+      # Retrieves the order value for the specific node.
       def get_order_value( node )
         # be optimistic and try metainfo field first
         node = node['node'] if node.kind_of? MenuNode
@@ -70,6 +87,10 @@ module Tags
                                    "Add or correct the parameter value"
 
     def init
+      @startMenuTag = UPS::Registry['Configuration'].get_config_value( NAME, 'startMenuTag', '<span class="webgen-menu">' )
+      @endMenuTag = UPS::Registry['Configuration'].get_config_value( NAME, 'endMenuTag', '</span>' )
+      @submenuTag = UPS::Registry['Configuration'].get_config_value( NAME, 'submenuTag', 'ul' )
+      @itemTag = UPS::Registry['Configuration'].get_config_value( NAME, 'itemTag', 'li' )
       UPS::Registry['Tags'].tags['menu'] = self
     end
 
@@ -85,7 +106,7 @@ module Tags
       if content.nil? || !content.has_key?( 'level' )
         raise Webgen::WebgenError.new( :TAG_PARAMETER_INVALID, tag, refNode.recursive_value( 'src' ), 'level' )
       end
-      build_menu( node, @menuTree, content['level'] )
+      @startMenuTag + build_menu( node, @menuTree, content['level'] ) + @endMenuTag
     end
 
     #######
@@ -95,7 +116,7 @@ module Tags
     def build_menu( srcNode, node, level )
       return '' unless level >= 1 && !node.nil?
 
-      out = '<ul>'
+      out = '<#{submenuTag}>'
       node.each do |child|
         if child.kind_of? MenuNode
           submenu = child['node'].kind_of?( FileHandlers::DirHandler::DirNode ) ? build_menu( srcNode, child, level - 1 ) : ''
@@ -109,7 +130,7 @@ module Tags
         out << submenu
         out << after
       end
-      out << '</ul>'
+      out << '</#{submenuTag}>'
 
       return out
     end
@@ -120,17 +141,17 @@ module Tags
       isDir = node.kind_of? FileHandlers::DirHandler::DirNode
 
       styles = []
-      styles << 'submenu' if isDir
-      styles << 'selectedMenu' if langNode.recursive_value( 'dest' ) == srcNode.recursive_value( 'dest' )
+      styles << 'webgen-submenu' if isDir
+      styles << 'webgen-menuitem-selected' if langNode.recursive_value( 'dest' ) == srcNode.recursive_value( 'dest' )
 
       style = " class=\"#{styles.join(' ')}\"" if styles.length > 0
       link = langNode['processor'].get_html_link( langNode, srcNode, ( isDir ? langNode['directoryName'] : langNode['title'] ) )
 
       if styles.include? 'submenu'
-        before = "<li#{style}>#{link}"
-        after = "</li>"
+        before = "<#{itemTag}#{style}>#{link}"
+        after = "</#{itemTag}>"
       else
-        before = "<li#{style}>#{link}</li>"
+        before = "<#{itemTag}#{style}>#{link}</#{itemTag}>"
         after = ""
       end
 

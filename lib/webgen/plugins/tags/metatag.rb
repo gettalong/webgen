@@ -25,6 +25,11 @@ require 'webgen/plugins/tags/tags'
 
 module Tags
 
+  # This plugin registers itself as default plugin for tags. It substitutes tags with their
+  # respective values from the node meta data.
+  #
+  # This is very useful if you want to add new meta information to the page description files and
+  # simple copy the values to the output file.
   class MetaTag < UPS::Plugin
 
     NAME = "Meta tag"

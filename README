@@ -100,7 +100,6 @@ command is run can be overridden using a configuration file.
    +content+.
 
 [<b>Meta information backing files</b>]
-
    Sometimes it is desirable to have all meta information stored in another file, not in the page
    description file itself. For example, if only plain text page files are used you have no way of
    specifying additional meta information. Therefore special files, called meta information backing

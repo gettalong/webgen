@@ -19,12 +19,25 @@
 #
 #++
 #
+
+
 # Module Composite
 #
 # Implementation of the Composite pattern.
 #
+# Usage example:
+#
+#  class Test
+#    include Composite
+#  end
+#
+#  t = Test.new
+#  t.add_child("Hello")
+#  t.add_child("Lester")
+#  t.each do |child| print child end
+#
 
-# Implements the Composite pattern as mixin.
+
 module Composite
 
     include Enumerable

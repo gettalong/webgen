@@ -23,8 +23,11 @@
 require 'util/ups'
 require 'util/listener'
 
+# All plugins which count as "tree walkers" should be put into this module.
 module TreeWalkers
 
+  # This is the main class for tree walkers. A tree walker plugin can register itself with this class
+  # so that it is called when the main class' #execute method is called.
   class TreeWalker < UPS::Plugin
 
     include Listener
@@ -39,6 +42,7 @@ module TreeWalkers
     end
 
 
+    # Walks the tree and calls all registered plugins for each and every node.
     def execute( tree, level = 0 )
       dispatch_msg :preorder, tree, level
       tree.each do |child|
@@ -50,14 +54,17 @@ module TreeWalkers
   end
 
 
+  # Prints the whole tree of read files if the log level is at least DEBUG.
   class DebugTreePrinter < UPS::Plugin
 
     NAME = "Debug Tree Printer"
     SHORT_DESC = "Prints out the information in the tree for debug purposes."
 
+
     def init
       UPS::Registry[TreeWalker::NAME].add_msg_listener( :preorder, method( :execute ) )
     end
+
 
     def execute( node, level )
       self.logger.debug { "   "*level  << "\\_ "*(level > 0 ? 1 : 0) << (node['virtual'] ? "[V]" : "") << "#{node['title']}: #{node['src']} -> #{node['dest']}" }

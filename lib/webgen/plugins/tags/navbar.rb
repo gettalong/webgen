@@ -25,6 +25,14 @@ require 'webgen/plugins/tags/tags'
 
 module Tags
 
+  # Generates a navigation bar. A navigation bar consists of all pages in the hierarchy of the
+  # current page.
+  #
+  # For example, assuming we have the following branch
+  #   /directory1/directory2/currentFile
+  # this plugin will generate something like this:
+  #   root / directory1 / directory2 / currentFile
+  # where each listed name is linked to the corresponding file.
   class NavbarTag < UPS::Plugin
 
     NAME = 'Navigation Bar Tag'
@@ -32,8 +40,8 @@ module Tags
 
     def init
       @separator = UPS::Registry['Configuration'].get_config_value( NAME, 'separator', ' / ' )
-      @startTag = UPS::Registry['Configuration'].get_config_value( NAME, 'startTag', '' )
-      @endTag = UPS::Registry['Configuration'].get_config_value( NAME, 'endTag', '' )
+      @startTag = UPS::Registry['Configuration'].get_config_value( NAME, 'startTag', '<span class="webgen-navbar">' )
+      @endTag = UPS::Registry['Configuration'].get_config_value( NAME, 'endTag', '</span>' )
       UPS::Registry['Tags'].tags['navbar'] = self
     end
 

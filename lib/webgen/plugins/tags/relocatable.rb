@@ -25,6 +25,14 @@ require 'webgen/plugins/tags/tags'
 
 module Tags
 
+  # Changes the path of file. This is very useful for templates. For example, you normally include a
+  # stylesheet in a template. If you specify the filename of the stylesheet directly, the reference
+  # to the stylesheet in the output file of a page file that is not in the same directory as the template
+  # would be invalid.
+  #
+  # By using the +relocatable+ tag you ensure that the path stays valid.
+  #
+  # Tag parameter: the name of the file which should be relocated
   class RelocatableTag < UPS::Plugin
 
     NAME = 'Relocatable Tag'
