@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
     "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
@@ -9,8 +9,10 @@
   <body>
 	<div id="header">
 	  <h1>|Title|</h1>
-	  <span id="navtree">Home / Projects / Webpage</span>
-	  <span id="languages"><a href="en_news.html">|Select Language|</a></span>
+	  <div id="navbar">
+		<span id="navtree">Home / Projects / Webpage</span>
+		<span id="languages"><a href="en_news.html">|Select Language|</a></span>
+	  </div>
 	  <div style="clear: both; border-bottom: 1px solid #8ad"></div>
 	</div>
 	
@@ -18,22 +20,22 @@
 	<div id="menu">
 	  <ul>
 		<li><a href="en_home.html">Home</a></li>
-		<li><a href="en_news.html">News</a></li>
+		<li class="selectedMenu"><a href="en_news.html">News</a></li>
 		<li><a href="en_aboutme.html">About me</a></li>
 		<li><a href="en_cv.html">Curriculum vitae</a></li>
-		<li class="sub"><a href="en_projects.html">Projects</a>
+		<li class="submenu"><a href="en_projects.html">Projects</a>
 		  <ul>
-			<li><a href="p1">Project 1</a></li>
+			<li class="selectedMenu"><a href="p1">Project 1</a></li>
 			<li><a href="p1">Project 2</a></li>
-			<li class="sub"><a href="p1">Project 3</a>
+			<li class="submenu"><a href="p1">Project 3</a>
 			  <ul>
-				<li>test</li>
-				<li>test2</li>
+				<li><a href="p1">test</a></li>
+				<li><a href="p1">test2</a></li>
 			  </ul>
 			</li>
 		  </ul>
 		</li>
-	  <li class="sub"><a href="en_pictures.html">Pictures</a>
+	  <li class="submenu, selectedMenu"><a href="en_pictures.html">Pictures</a>
 		  <ul>
 			<li>Grönemeyer Konzert</li>
 			<li>AGOL</li>

@@ -52,7 +52,7 @@ class XMLPagePlugin < UPS::StandardPlugin
 		title = root.text('/thg/metainfo/title')
 		raise ThgException.new(ThgException::PAGE_META_ENTRY_NOT_FOUND, 'title', srcName) if title.nil? 
 		
-		urlName = File.basename(srcName.gsub(/\.EXTENSION$/, '.html'))
+		urlName = File.basename(srcName.gsub(/\.#{EXTENSION}$/, '.html'))
 
 		node = Node.new(parent, title, urlName, File.basename(srcName))
 		node.metainfo['content'] = ''

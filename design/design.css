@@ -5,7 +5,6 @@
 
   div#menu, div#footer {
 	display: none;
-	page-break-after: always;
   }
   
 }
@@ -13,62 +12,52 @@
 @media screen, projection {
   body {
 	margin: 0px 10%;
-	padding: 5px;
+	padding: 0px;
 	background-color: #EEE;
 	font-size: 12px;
 	font-family: Verdana, Arial, Helvetica;
   }
 
-  /* Hack for IE */
-  table {
-	font-size: 12px;
-	font-family: Verdana;
-  }
+  /* General layout of the page */
 
-  div#header {
-	/*float: right;*/
+  #header, #footer { 
 	width: 100%;
-	margin: 0px;
 	background-color: #8ad;
 	color: #fff;
   }
 
-  div#pagebody {
+  #pagebody {
 	width: 100%;
 	background-color: #def;
   }
 
-  div#menu {
+  #menu {
 	float: left;
-	width: 200px;
+	width: 180px;
 	margin: 0px;
 	padding-left: 20px;
+	padding-top: 20px;
   }
 
-  div#body {
+  #body {
 	background-color: #fff;
 	margin: 0px;
 	margin-left: 200px;
-	padding-bottom: 100%;
-	padding: 10px;
-	
+	padding: 20px;
+	height: inherit !important; /* only works in Opera, all other browsers work not correct */
   }
 
-  div#footer {
-	padding: 0px;
-	margin-bottom: 5px;
-	border: 1px solid #C8C8C8;
-
+  #footer {
 	clear: both;
-
+	padding: 5px 0px;
 	text-align: center;
-	color: #fff;
-	background-color: #8ad;
   }
 
-  div#navbar {
+
+  /* styling the header */
+
+  #navbar {
 	width: 100%;
-	border-top: 1px solid #0C0;
 	font-size: 90%;
   }
 
@@ -97,72 +86,53 @@
   }
 
 
+  /* styling the menu */
 
-  div#menu ul {
-	padding: 0px;
-	margin: 0px;
-  }
-
-  div#menu ul ul {
-	display: none;
-  }
-
-  div#menu a {
-	display: block;
+  #menu a {
 	text-decoration: none;
+	color: #469;
+	font-weight: bold;
+	font-size: 130%;
   }
 
-  div#menu li {
-	position: relative;
-	padding: 3px 5px;
-	margin: 0px;
+  #menu a:hover { 
+	text-decoration: underline;
+  }
 
-	border: 1px solid transparent;
+  #menu .selectedMenu { 
+	background-color: white;
+	width: 90%;
+	border-right: 3px solid #8ad;
+  }
+
+  #menu ul { 
 	list-style-type: none;
+	padding: 0px;
+	margin-left: 10px;
   }
 
-  div#menu li.sub > a:after {
-	content: " \BB"; /* \BB = »,	&raquo;	&#187; */
+  #menu li > ul { 
+	font-size: 95%;
   }
 
-  div#menu li:hover {
-	background-color: #F0F0F0;
-	border-bottom: 1px solid #C00;
+  #menu li { 
+	margin: 1em 0px;
   }
 
-  div#menu li.sub:hover {
-	width: 200%;
-	background-color: #F0F0F0;
-	z-index: 1;
-  }
-
-  div#menu li.sub:hover > ul {
-	display: block;
-	position: absolute;
-	left: 51%;
-	width: 49%;
-	top: 95%;
-	background-color: #FFF;
-	border: solid 1px #C8C8C8;
-	z-index: 1;
-  }
-
+  /* styling the content */
 
   div.section {
-	margin-left: -2px;
-	margin-bottom: 20px;
-	padding: 10px;
+	margin-bottom: 30px;
   }
 
   h2.section_header {
-	padding: 0px 3px;
-	border-bottom: 3px double #8ad;
+	padding: 0px;
+	border-bottom: 3px double #68b;
 
 	letter-spacing: 0.2em;
 	font-size: 150%;
 	font-weight: normal;
-	
-	color: #35648A;
+	color: #68b;
   }
 
 

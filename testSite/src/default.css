@@ -5,166 +5,135 @@
 
   div#menu, div#footer {
 	display: none;
-	page-break-after: always;
   }
   
 }
 
 @media screen, projection {
   body {
-	margin: 0px 5%;
+	margin: 0px 10%;
 	padding: 5px;
-	background-color: #fff;
+	background-color: #EEE;
 	font-size: 12px;
 	font-family: Verdana, Arial, Helvetica;
   }
 
-  /* Hack for IE */
-  table {
-	font-size: 12px;
-	font-family: Verdana;
-  }
+  /* General layout of the page */
 
-  div#header {
-	float: right;
-	width: 75%;
-	margin-bottom: 10px;
-	border: solid 1px #C8C8C8;
-  }
-
-  div#navbar {
+  #header, #footer { 
 	width: 100%;
-	border-bottom: 1px solid #0C0;
-	background-color: #F0F0F0;
+	background-color: #8ad;
+	color: #fff;
+  }
 
+  #pagebody {
+	width: 100%;
+	background-color: #def;
+  }
+
+  #menu {
+	float: left;
+	width: 180px;
+	margin: 0px;
+	padding-left: 20px;
+	padding-top: 20px;
+  }
+
+  #body {
+	background-color: #fff;
+	margin: 0px;
+	margin-left: 200px;
+	padding: 20px;
+  }
+
+  #footer {
+	clear: left;
+	padding: 5px;
+	text-align: center;
+  }
+
+
+  /* styling the header */
+
+  #navbar {
+	width: 100%;
 	font-size: 90%;
   }
 
   span#navtree, span#languages {
 	padding: 3px;
+	width: 45%;
   }
 
   span#navtree {
 	float: left;
-	width: 45%;
 	text-align: left;
   }
 
   span#languages {
 	float: right;
-	width: 45%;
 	text-align: right;
   }
 
   div#header h1 {
 	margin: 0px;
-	padding: 0.5em 2em;
+	padding: 15px 2em;
 
-	font-size: 200%;
+	font-size: 300%;
 	font-style: italic;
 	font-weight: normal;
-	color: #35648A;
-  }
-
-  div#menu {
-	float: left;
-	width: 20%;
-
-	border: solid 1px #C8C8C8;
   }
 
 
+  /* styling the menu */
 
-  div#menu ul {
-	padding: 0px;
-	margin: 0px;
-  }
-
-  div#menu ul ul {
-	display: none;
-  }
-
-  div#menu a {
-	display: block;
+  #menu a {
 	text-decoration: none;
+	color: #469;
+	font-weight: bold;
+	font-size: 130%;
   }
 
-  div#menu li {
-	position: relative;
-	padding: 3px 5px;
-	margin: 0px;
+  #menu a:hover { 
+	text-decoration: underline;
+  }
 
-	border: 1px solid transparent;
+  #menu .selectedMenu { 
+	background-color: white;
+	width: 90%;
+	border-right: 3px solid #8ad;
+  }
+
+  #menu ul { 
 	list-style-type: none;
+	padding: 0px;
+	margin-left: 10px;
   }
 
-  div#menu li.sub > a:after {
-	content: " \BB"; /* \BB = »,	&raquo;	&#187; */
+  #menu li > ul { 
+	font-size: 95%;
   }
 
-  div#menu li:hover {
-	background-color: #F0F0F0;
-	border-bottom: 1px solid #C00;
+  #menu li { 
+	margin: 1em 0px;
   }
 
-  div#menu li.sub:hover {
-	width: 200%;
-	background-color: #F0F0F0;
-	z-index: 1;
-  }
-
-  div#menu li.sub:hover > ul {
-	display: block;
-	position: absolute;
-	left: 51%;
-	width: 49%;
-	top: 95%;
-	background-color: #FFF;
-	border: solid 1px #C8C8C8;
-	z-index: 1;
-  }
-
-
-  div#body {
-	float: right;
-	width: 75%;
-  }
+  /* styling the content */
 
   div.section {
-	margin-left: -2px;
-	margin-bottom: 20px;
-	border: 1px solid #C8C8C8;
-	padding: 5px;
+	margin-bottom: 30px;
   }
 
   h2.section_header {
-	margin: 0px;
-	padding: 0px 3px;
-	border-bottom: 1px solid #C00;
+	padding: 0px;
+	border-bottom: 3px double #68b;
 
 	letter-spacing: 0.2em;
-	font-size: 125%;
-	font-weight: bold;
-	text-transform: capitalize;
-	
-	background-color: #F0F0F0; 
-	color: #35648A;
+	font-size: 150%;
+	font-weight: normal;
+	color: #68b;
   }
 
-  div.section h2.section_header {
-	margin: -5px -5px 5px;
-	border-bottom: 1px solid #00C;
-  }
 
-  div#footer {
-	padding: 0px;
-	margin-bottom: 5px;
-	border: 1px solid #C8C8C8;
-
-	clear: both;
-
-	text-align: center;
-	background-color: #F8F8F8;
-  }
 
 }
