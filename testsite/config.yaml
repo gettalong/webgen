@@ -1,10 +1,7 @@
 Configuration:
     srcDirectory: src
     outDirectory: output
-    verbosityLevel: 3
-
-XML Page Plugin:
-    defaultDirectoryIndex: index.page
+    verbosityLevel: 2
 
 Copy Files:
-    types: [css, jpg, png, gif]
+    types: [css, jpg, png]

@@ -1,4 +1,22 @@
 # -*- ruby -*-
+#
+# $Id$
+#
+# webgen: a template based web page generator
+# Copyright (C) 2004 Thomas Leitner
+#
+# This program is free software; you can redistribute it and/or modify it under the terms of the GNU
+# General Public License as published by the Free Software Foundation; either version 2 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+# even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with this program; if not,
+# write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+#
+
 
 begin
     require 'rubygems'
@@ -54,7 +72,7 @@ end
 rd = Rake::RDocTask.new do |rdoc|
     rdoc.rdoc_dir = 'rdoc'
     rdoc.title    = "Webgen"
-    rdoc.options << '--line-numbers' << '--main README'
+    rdoc.options << '--line-numbers' << '-m README'
     rdoc.rdoc_files.include( 'README' )
     rdoc.rdoc_files.include( 'lib/**/*.rb' )
 end
@@ -72,6 +90,8 @@ PKG_FILES = FileList.new( [
     'setup.rb',
     'ChangeLog',
     'TODO',
+    'COPYING',
+    'README',
     'Rakefile',
     'bin/**/*',
     'lib/**/*.rb',
@@ -101,11 +121,13 @@ else
 
         #### Dependencies, requirements and files
 
-        s.add_dependency( 'log4r', '> 1.0.4' )
+        # does not work for me
+        #s.add_dependency( 'log4r', '> 1.0.4' )
         s.files = PKG_FILES.to_a
 
         s.require_path = 'lib'
-        s.autorequire = 'webgen'
+        s.autorequire = nil
+
         s.bindir = 'bin'
         s.executables = ['webgen']
         s.default_executable = 'webgen'
@@ -120,8 +142,8 @@ else
 
         s.author = "Thomas Leitner"
         s.email = "t_leitner@gmx.at"
-        #s.homepage = "TBD"
-        #s.rubyforge_project = "TBD"
+        s.homepage = "webgen.rubyforge.org"
+        s.rubyforge_project = "webgen"
     end
 
     task :package => [:generateFiles]
