@@ -23,6 +23,7 @@
       <div id="body">
         <img src="{relocatable: images/bghack.png}" width="100" height="100" />
         <img src="{relocatable: bghack.png}" width="100" height="100" />
+        <a href="{relocatable: /projects/index.html}">Projekte</a>
         {content: }
       </div>
     </div>

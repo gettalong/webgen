@@ -41,6 +41,10 @@ module Tags
       "found tag {%0: ...} for which no plugin exists",
       "either remove the tag or implement a plugin for it"
 
+    Webgen::WebgenError.add_entry :CONTENT_NOT_STRING,
+      "the content in the file <%1> is not a string: \"$0\"",
+      "check the syntax of the file"
+
 
     # Tag plugins should add an entry to this hash.
     attr_accessor :tags
@@ -54,10 +58,13 @@ module Tags
     # tree node the content of which is used. The +refNode+ parameter specifies relative to which
     # all references should be resolved.
     def substitute_tags( content, node, refNode )
-      content.to_s.gsub!(/(\\*)(\{(\w+):\s+(\{.*?\}|.*?)\})/) do |match|
-        nrBackslash = $1.length / 2
+      if !content.kind_of? String
+        raise Webgen::WebgenError.new( :CONTENT_NOT_STRING, content, refNode['src'] )
+      end
+      content.gsub!(/(\\*)(\{(\w+):\s+(\{.*?\}|.*?)\})/) do |match|
+        backslashes = "\\"* ($1.length / 2)
         if $1.length % 2 == 1
-          "\\"*nrBackslash + $2
+          backslashes + $2
         else
           tagValue = YAML::load( "- #{$4}" )[0]
           self.logger.info { "Replacing tag #{match} in <#{node.recursive_value( 'dest' )}>" }
@@ -68,7 +75,7 @@ module Tags
           else
             raise Webgen::WebgenError.new( :UNKNOWN_TAG, $3 )
           end
-          "\\"*nrBackslash + substitute_tags( tagProcessor.process_tag( $3, tagValue, node, refNode ), node, node )
+          backslashes + substitute_tags( tagProcessor.process_tag( $3, tagValue, node, refNode ), node, node ).to_s
         end
       end
       content

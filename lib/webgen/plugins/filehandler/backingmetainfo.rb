@@ -84,7 +84,7 @@ module FileHandlers
       return if backingFile.nil?
 
       backingFile['content'].each do |filename, data|
-        backedFile = dirNode.get_node_for_string( filename, 'title' )
+        backedFile = dirNode.get_node_for_string( filename )
         if backedFile
           data.each do |language, fileData|
             langFile = UPS::Registry['Page Plugin'].get_lang_node( backedFile, language )

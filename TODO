@@ -2,7 +2,6 @@
 * add option to menu tag: showOnlyThisSubtree -> displays only one tree to a deeper level
 * redo TreeWalker -> tree should be walker separately for each registered plugin
 * Page backing plugin should use a tree walker to assign meta information after everything is read
-* make get_node_for_string work with page files as parameters (reference in home.xpage to projects page)
 * check out http://jigsaw.w3.org/css-validator/check/referer
 
 ---- DONE ----
@@ -70,3 +69,5 @@ W check out http://validator.w3.org/check/referer -> use xmllint from libxml2 pa
 W make file plugins case-insensitiv (convert all uppercase letters to lowercase)
 W generate VERSION file when packaging
 W list plugins by category instead of name (file handlers and tags should be grouped together)
+W make get_node_for_string work with page files as parameters (reference in home.xpage to projects page)
+W make get_node_for_string work with localized page names, i.e. /index.html/index.de.html to get the german version of the page

@@ -123,7 +123,7 @@ else
     #### Dependencies, requirements and files
 
     # does not work for me
-    #s.add_dependency( 'log4r', '> 1.0.4' )
+    s.add_dependency( 'log4r', '> 1.0.4' )
     s.files = PKG_FILES.to_a
 
     s.require_path = 'lib'

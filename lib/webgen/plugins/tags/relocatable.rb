@@ -44,7 +44,10 @@ module Tags
 
     def process_tag( tag, content, node, refNode )
       destNode = refNode.get_node_for_string( content )
-      node.get_relpath_to_node( destNode ) + destNode['dest'] unless destNode.nil?
+      if !destNode.nil? && destNode.kind_of?( FileHandlers::PagePlugin::PageNode )
+        destNode = destNode['processor'].get_lang_node( destNode, node['lang'] )
+      end
+      return (destNode.nil? ? '' : node.get_relpath_to_node( destNode ) + destNode['dest'] )
     end
 
   end

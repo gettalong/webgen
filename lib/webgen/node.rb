@@ -45,11 +45,11 @@ class Node
   end
 
 
-  def recursive_value( name )
+  def recursive_value( name, ignoreVirtual = true )
     if @parent.nil?
-      @metainfo[name].dup
+      ignoreVirtual && @metainfo['virtual'] ? '' : @metainfo[name]
     else
-      @parent.recursive_value( name ) + @metainfo[name]
+      @parent.recursive_value( name ) + (ignoreVirtual && @metainfo['virtual'] ? '' : @metainfo[name] )
     end
   end
 
@@ -66,26 +66,24 @@ class Node
 
 
   # Returns the node identified by the given string relative to the current node.
-  def get_node_for_string( destString, fieldname = 'src' )
+  def get_node_for_string( destString, fieldname = 'dest' )
     if /^#{File::SEPARATOR}/ =~ destString
       node = Node.root(self)
       destString = destString[1..-1]
-    elsif self.kind_of? FileHandlers::DirHandler::DirNode
-      node = self
     else
-      node = @parent
+      node = self
+      node = node.parent until node.kind_of? FileHandlers::DirHandler::DirNode
     end
 
     destString.split(File::SEPARATOR).each do |element|
-      node = node.parent while node['virtual']
       case element
       when '..'
         node = node.parent
       else
-        node = node.find do |child| /#{element}#{File::SEPARATOR}?/ =~ child[fieldname] end
+        node = node.find do |child| /^#{element}#{File::SEPARATOR}?$/ =~ child[fieldname] end
       end
       if node.nil?
-        self.logger.error { "Could not get destination node for <#{metainfo['src']}> with '#{destString}', searching field #{fieldname}" }
+        self.logger.error { "Could not get destination node '#{destString}' for <#{metainfo['src']}>, searching field #{fieldname}" }
         return
       end
     end

@@ -5,7 +5,7 @@
 this page. To get a list of all supported parameters for the menu tag, have a look at its API
 documentation.</p>
 
-<p>This page is available in <a href="menu.de.html">German</a>. Try and go to the german version of
+<p>This page is available in <a href="{relocatable: menu.html/menu.de.html}">German</a>. Try and go to the german version of
 this page. You will see that the menu items for which translations exist change their names.</p>
 
  </div>

@@ -28,7 +28,7 @@ require 'util/ups'
 
 module Webgen
 
-  Version = "0.1.0"
+  Version = "0.1.1"
   Description = "Webgen is a template based web page generator."
 
   class WebgenConfigurationPlugin < UPS::Plugin
@@ -131,7 +131,7 @@ log4r_config:
       formatter:
         type        : PatternFormatter
         date_pattern: '%Y-%m-%d %H:%M:%S'
-        pattern     : '%d %-5l %c:%-20t> %m'
+        pattern     : '%d %-5l %-15.15c:%-20.20t > %m'
 
 EOF
 
@@ -148,7 +148,7 @@ log4r_config:
       formatter   :
         type        : PatternFormatter
         date_pattern: '%Y-%m-%d %H:%M:%S'
-        pattern     : '%d %5l %c:%-20t> %m'
+        pattern     : '%d %-5l %-15.15c:%-20.20t > %m'
 
 EOF
 Log4r::YamlConfigurator.load_yaml_string LoggerConfiguration

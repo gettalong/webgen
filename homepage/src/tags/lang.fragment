@@ -6,7 +6,7 @@ right corner of the header. There you will find a link titled 'en'. This is the 
 (=en) version of this page. As this page is not translated into any other language, there is only
 this one item.</p>
 
-<p>Here is a <a href="multilang.en.html">link</a> to a page which is translated to several languages (more or less
+<p>Here is a <a href="{relocatable: multilang.html}">link</a> to a page which is translated to several languages (more or less
 ;-). Have a look!</p>
 
  </div>

@@ -36,7 +36,7 @@ module FileHandlers
       def initialize( parent, basename )
         super parent
         self['page:basename'] = self['title'] = basename
-        self['src'] = self['dest'] = ''
+        self['src'] = self['dest'] = basename
         self['virtual'] = true
       end
 
@@ -102,7 +102,7 @@ module FileHandlers
         langNode = node.children[0]
         self.logger.warn do
           "No input file in language '#{lang}' nor the default language (#{UPS::Registry['Configuration'].lang}) found," +
-          "using first available input file for output file <#{node['title']}>"
+          "using first available input file for <#{node['title']}>"
         end
       end
       langNode
