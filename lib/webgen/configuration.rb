@@ -40,7 +40,7 @@ end
 
 module Webgen
 
-  VERSION = [0, 2, 1]
+  VERSION = [0, 3, 0]
   SUMMARY = "Webgen is a templated based weg page generator."
   DESCRIPTION = "Webgen is a web page generator implemented in Ruby. " \
   "It is used to generate static web pages from templates and page " \
@@ -101,21 +101,25 @@ module Webgen
 
     # Return parameter +name+.
     def []( name )
-      data = @@config[self.class.name]
-      unless data.params.nil? || data.params[name].nil?
-        return data.params[name].value
-      else
-        logger.error { "Referencing invalid configuration value '#{name}' in class #{self.class.name}" }
-        return nil
+      classes = self.class.ancestors[0..-3].delete_if {|c| c.instance_of?( Module ) }
+      while klass = classes.shift
+        data = @@config[klass.name]
+        return data.params[name].value unless data.params.nil? || data.params[name].nil?
       end
+      logger.error { "Referencing invalid configuration value '#{name}' in class #{self.class.name}" }
+      return nil
     end
 
     # Set parameter +name+.
     def []=( name, value )
       self.class.set_param( @@config[self.class.name].plugin, name, value )
     end
-
     alias get_param []
+
+    # Checks if the plugin has a parameter +name+.
+    def has_param?( name )
+      !@@config[self.class.name].params.nil? && @@config[self.class.name].params.has_key?( name )
+    end
 
   end
 
@@ -133,6 +137,16 @@ module Webgen
     add_param 'configfile', 'config.yaml', 'The file from which extra configuration data is taken.'
     add_param 'logfile', 'webgen.log', 'The name of the log file if the log should be written to a file.'
 
+    # Does all the initialisation stuff
+    def init_all( data )
+      load_plugins( File.dirname( __FILE__) + '/plugins', File.dirname( __FILE__).sub(/webgen$/, '') )
+      parse_config_file
+      data.each {|k,v| Plugin['Configuration'][k] = v}
+      logger.level = get_param( 'verbosityLevel' )
+      init_plugins
+      Plugin['Tag Loader'].parse_config_file
+    end
+
     # Parse config file and load the configuration values.
     def parse_config_file
       if File.exists?( get_param( 'configfile' ) )
@@ -141,12 +155,6 @@ module Webgen
       else
         logger.info { "Config file <#{get_param( 'configfile' )}> does not exist, not extra configuration data read." }
       end
-      set_log_level
-    end
-
-    def load_config( data )
-      data.each {|k,v| Plugin['Configuration'][k] = v}
-      set_log_level
     end
 
     # Load all plugins in the given +path+. Before +require+ is actually called the path is
@@ -173,11 +181,6 @@ module Webgen
     # Set the log device to the logfile.
     def set_log_dev_to_logfile
       logger.set_log_dev( File.open( get_param( 'logfile' ), 'a' ) )
-    end
-
-    # Set the logging level.
-    def set_log_level
-      logger.level = get_param( 'verbosityLevel' )
     end
 
   end

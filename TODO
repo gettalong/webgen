@@ -3,12 +3,10 @@ HIGH PRIORITY TODO: test everything (automatically) and try to refactor!!!
 ---- CURRENT ----
 
 * more tags (in docu: how to use them, parameters, ..., structure should be the same everywhere)
-* include version number in documentation
 * register with Freshmeat.net
 * option for includeFile tag: escapeHTML (should special html tags be escaped?)
 * testsite directory should cover every code line (use coverage to verify)
 * use code generator to create test file with all tags and all tag parameter configurations
-* get_relpath_to_node: if destNode['external'] --> check for URL pattern
 * add facility to check output files on conformity to a HTML standard
 * add tests for all parameters with which webgen can be called
 * add different testsites (no files in it, files which are syntactical incorrect, ...)
@@ -96,3 +94,8 @@ W add debug statements to method_added in configuration.rb
 W do not allow two or more page files in the same language, print warn
 * remove log4r support, add STDLIB logger support
 * one file format, many content formats
+* allow line breaks in tags (substitute: \n -> ' ', \n\n -> \n)
+* configuration should be ruby file with special syntax, to allow the specification of additional tags --> additional config file
+* create tags in config file which produce informational output about filehandlers and tags (param listing,...)
+* include version number in documentation
+* get_relpath_to_node: if destNode['external'] --> check for URL pattern

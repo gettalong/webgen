@@ -59,7 +59,7 @@ module FileHandlers
 
     def get_template( node )
       if node.metainfo.has_key?( "template" ) && node['template'].kind_of?( String )
-        templateNode = node.get_node_for_string( node['template'] )
+        templateNode = node.node_for_string( node['template'] )
         if templateNode.nil?
           self.logger.warn { "Specified template for file <#{node.recursive_value('src')}> not found, using default template!" }
         end

@@ -40,6 +40,11 @@ module Webgen
       "%s %5s -- %s: %s\n" % [timestamp, severity, progname, msg ]
     end
 
+    def warn( progname = nil, &block )
+      super
+      self.debug { "Call stack for last warning: #{caller[3..-1].join("\n")}" }
+    end
+
   end
 
 end

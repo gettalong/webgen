@@ -54,7 +54,7 @@ module Tags
       return replace_tags( content ) do |tag, data|
         self.logger.info { "Replacing tag #{tag} with data '#{data}' in <#{node.recursive_value( 'dest' )}>" }
         processor = get_tag_processor( tag )
-        processor.set_tag_config( YAML::load( "- #{data}" )[0], refNode )
+        processor.set_tag_config( YAML::load( "--- #{data}" ), refNode )
         output = processor.process_tag( tag, node, refNode )
         processor.reset_tag_config
         output = substitute_tags( output, node, node ) if processor.processOutput
@@ -73,6 +73,7 @@ module Tags
       while index = content.index( /(\\*)\{(\w+):/, offset )
         bracketCount = 1;
         length = $1.length + 1;
+        tag = $2
         content[(index + length)..-1].each_byte do |char|
           length += 1
           bracketCount += 1 if char == ?{
@@ -88,8 +89,11 @@ module Tags
           if $1.length % 2 == 1
             newContent += content[index + $1.length, length - $1.length]
           else
-            tagHeaderLength = $1.length + $2.length + 2
-            newContent += yield( $2, content[index + tagHeaderLength, length - tagHeaderLength - 1] )
+            tagHeaderLength = $1.length + tag.length + 2
+            realContent = content[index + tagHeaderLength, length - tagHeaderLength - 1]
+#            realContent.gsub!( /(\n+)/ ) { $1.length == 1 ? " " : "\n" * ( $1.length / 2 ) }
+#            realContent.strip!
+            newContent += yield( tag, realContent )
           end
           content[index, length] = newContent
         end
@@ -185,9 +189,9 @@ module Tags
     # Sets the current configuration taking values from +config+ which has to be a Hash.
     def set_cur_config( config, node )
       config.each do |key, value|
-        if defined?( @config ) && @config.has_key?( key )
+        if has_param?( key )
           @curConfig[key] = value
-          self.logger.debug { "Setting parameter '#{key}' for tag '#{self.class.name}' in <#{node.recursive_value( 'src' )}>" } #TODO change self.class.name 4x
+          self.logger.debug { "Setting parameter '#{key}' for tag '#{self.class.name}' in <#{node.recursive_value( 'src' )}>" }
         else
           self.logger.warn { "Invalid parameter '#{key}' for tag '#{self.class.name}' in <#{node.recursive_value( 'src' )}>" }
         end
@@ -200,6 +204,7 @@ module Tags
       if self.class.method_defined?( :check_mandatory_param )
         if check_mandatory_param( config )
           @curConfig[:mandatory] = config
+          self.logger.debug { "Setting mandatory parameter for tag '#{self.class.name}' in <#{node.recursive_value( 'src' )}> to: '#{config}'" }
         else
           self.logger.error { "Invalid mandatory parameter for tag '#{self.class.name}' in <#{node.recursive_value( 'src' )}>"}
         end

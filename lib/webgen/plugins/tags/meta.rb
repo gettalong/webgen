@@ -31,7 +31,7 @@ module Tags
   # simple copy the values to the output file.
   class MetaTag < DefaultTag
 
-    plugin "Meta tag"
+    plugin "MetaTag"
     summary "Replaces all tags without tag plugin with their respective values from the node meta data"
     depends_on 'Tags'
 

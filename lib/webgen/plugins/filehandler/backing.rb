@@ -91,8 +91,8 @@ module FileHandlers
 
       backingFiles.each do |backingFile|
         backingFile['content'].each do |filename, data|
-          backedFile = dirNode.get_node_for_string( filename )
-          if backedFile
+          if dirNode.node_for_string?( filename )
+            backedFile = dirNode.node_for_string( filename )
             data.each do |language, fileData|
               langFile = Webgen::Plugin['PageHandler'].get_lang_node( backedFile, language )
               next unless langFile['lang'] == language
@@ -117,14 +117,16 @@ module FileHandlers
         filedata['lang'] = language
 
         handler = VirtualPageHandler.new
-        handler.set_file_data( filedata )
         pageNode = handler.create_node( filename, dirNode )
         unless pageNode.nil?
           pageNode['processor'] = Webgen::Plugin['VirtualPageHandler']
           dirNode.add_child( pageNode )
         end
+        node = Webgen::Plugin['VirtualPageHandler'].get_lang_node( pageNode, language )
+        node.metainfo.update( filedata )
 
-        self.logger.info { "Created virtual node '#{filename}' (#{language}) in <#{dirNode.recursive_value( 'dest' )}> referencing '#{node['dest']}'" }
+        self.logger.info { "Created virtual node '#{filename}' (#{language}) in <#{dirNode.recursive_value( 'dest' )}> " \
+          "referencing '#{node['dest']}'" }
       end
     end
 
@@ -179,12 +181,8 @@ module FileHandlers
     summary "Handles virtual pages"
     depends_on "PageHandler"
 
-    def set_file_data( data )
-      @data = data
-    end
-
-    def get_file_data( name )
-      @data || {}
+    def parse_file( name )
+      {}
     end
 
     def write_node( node )

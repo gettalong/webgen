@@ -2,52 +2,15 @@ webgen - a template based web page generator
 
 Copyright (C) 2004 Thomas Leitner
 
-= Description
+>>> The documentation for webgen is in the doc/src subdirectory. <<<
 
-Webgen can be used to generate web pages from page description and template files. You create one
-template file in which you define the layout of your page and where the content should go. After
-that you can create page description files in which you only define the content.
-
-When webgen is run it combines the template with each of the page description files and generates
-the HTML output files. During this process special tags are substituted so that, for example, a menu
-is generated.
-
-= Dependencies
-
- log4r - http://log4r.sourceforge.net/
-
-= Installation
-
- $ ruby setup.rb config
- $ ruby setup.rb setup
- $ ruby setup.rb install
-
-Or you could use Rake and substitute the above commands with this:
- $ rake install
-
-Or you could install webgen the "GEM way":
- $ gem install webgen
-
-= Documentation
-
-You can build the documentation by invoking
+You can build the documentation by
+invoking
  $ rake doc
 
 in the root of the package or by running webgen manually in the +doc+ directory:
  $ ruby -I../lib ../bin/webgen
 
-This documentation is actually the same as the one on webgen.rubyforge.org. When releasing
-a new version of webgen, I run one of the above commands to create the pages and then 
-only copy it to the website! :-)
-
-= Example
-
-There is a demo website in the +testsite+ directory. Open a shell and change into it, then execute
-+webgen+ to generate the output files. After that have a look at the resulting pages.
-
-= Contact
-
-Author: Thomas Leitner
-* Web: http://webgen.rubyforge.org
-* e-Mail: t_leitner@gmx.at
-* GPG Key-Id: 0xD942E7F6
+This documentation is actually the same as the one on webgen.rubyforge.org. When releasing a new
+version of webgen, I run one of the above commands to create the pages and then only copy it to the
+website! :-)

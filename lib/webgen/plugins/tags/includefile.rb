@@ -28,7 +28,7 @@ module Tags
   # Includes a file verbatim. All HTML special characters are escaped.
   class IncludeFileTag < DefaultTag
 
-    plugin "Include File Tag"
+    plugin "IncludeFileTag"
     summary "Includes a file verbatim"
     depends_on 'Tags'
 

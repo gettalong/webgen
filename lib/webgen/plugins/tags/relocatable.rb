@@ -34,7 +34,7 @@ module Tags
   # Tag parameter: the name of the file which should be relocated
   class RelocatableTag < DefaultTag
 
-    plugin 'Relocatable Tag'
+    plugin 'RelocatableTag'
     summary 'Adds a relative path to the specified name if necessary'
     depends_on 'Tags'
 
@@ -48,11 +48,11 @@ module Tags
     end
 
     def process_tag( tag, node, refNode )
-      destNode = refNode.get_node_for_string( get_param( :mandatory ) )
+      destNode = refNode.node_for_string( get_param( :mandatory ) )
       if !destNode.nil? && destNode.kind_of?( FileHandlers::PagePlugin::PageNode )
         destNode = destNode['processor'].get_lang_node( destNode, node['lang'] )
       end
-      return ( destNode.nil? ? '' :  node.get_relpath_to_node( destNode ) + destNode['dest'] )
+      return ( destNode.nil? ? '' :  node.relpath_to_node( destNode ) + destNode['dest'] )
     end
 
   end

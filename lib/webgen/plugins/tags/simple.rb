@@ -24,11 +24,10 @@ require 'webgen/plugins/tags/tags'
 
 module Tags
 
-  # Prints out the date using a format string which will be passed to Time#strftime. Therefore you
-  # can use everything Time#strftime offers.
-  class DateTag < DefaultTag
+  # Loads tag definitions from a file for project specific tags.
+  class TagLoader < DefaultTag
 
-    plugin "DateTag"
+    plugin "Date Tag"
     summary "Prints out the date"
     add_param 'format', '%A, %B %d %H:%M:%S %Z %Y', 'The format of the date (same options as Time#strftime).'
     depends_on 'Tags'

@@ -205,7 +205,7 @@ module FileHandlers
     # Returns a HTML link for the given +node+ relative to +refNode+. You can optionally specify the
     # title for the link. If not specified, the title of the node is used.
     def get_html_link( node, refNode, title = node['title'] )
-      url = refNode.get_relpath_to_node( node ) + node['dest']
+      url = refNode.relpath_to_node( node ) + node['dest']
       "<a href=\"#{url}\">#{title}</a>"
     end
 

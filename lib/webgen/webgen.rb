@@ -51,9 +51,7 @@ module Webgen
       Color.colorify if $stdout.isatty
       main, data = parse_options( cmdOptions )
 
-      Plugin['Configuration'].load_plugins( File.dirname( __FILE__) + '/plugins', File.dirname( __FILE__).sub(/webgen$/, '') )
-      Plugin['Configuration'].parse_config_file
-      Plugin['Configuration'].load_config( data )
+      Plugin['Configuration'].init_all( data )
       main.call
     end
 
@@ -104,8 +102,6 @@ module Webgen
 
     def runMain
       logger.info "Starting Webgen..."
-
-      Plugin['Configuration'].init_plugins
 
       # load all the files in src dir and build tree
       tree = Plugin['FileHandler'].build_tree

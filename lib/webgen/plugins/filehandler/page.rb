@@ -141,6 +141,7 @@ module FileHandlers
         options = YAML::load( blocks[1] )
         blocks[0..1] = []
       end
+      blocks.each {|b| b.gsub!( /^(\\+)(---)$/ ) {|m| "\\" * ($1.length / 2) + $2 } }
       (options['blocks'] ||= [{'name'=>'content', 'format'=>'textile'}]).each do |blockdata|
         self.logger.debug { "Block '#{blockdata['name']}' formatted using '#{blockdata['format']}'" }
         options[blockdata['name']] = @formats[blockdata['format']].format_content( blocks.shift || '' )

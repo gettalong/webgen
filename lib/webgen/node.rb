@@ -55,8 +55,8 @@ class Node
   # Returns the relative path from this node to the destNode. The current node
   # is normally a page file node, but the method should work for other nodes
   # too. The destNode can be any non virtual node.
-  def get_relpath_to_node( destNode )
-    if destNode['external']
+  def relpath_to_node( destNode )
+    if destNode['dest'] =~ /^http:\/\//
       path = ''
     else
       from = @parent.recursive_value( 'dest' ).split( File::SEPARATOR )
@@ -76,29 +76,16 @@ class Node
 
 
   # Returns the node identified by +destString+ relative to the current node.
-  def get_node_for_string( destString, fieldname = 'dest' )
-    if /^#{File::SEPARATOR}/ =~ destString
-      node = Node.root( self )
-      destString = destString[1..-1]
-    else
-      node = self
-      node = node.parent until node.kind_of?( FileHandlers::DirHandler::DirNode )
+  def node_for_string( destString, fieldname = 'dest' )
+    node = get_node_for_string( destString, fieldname )
+    if node.nil?
+      self.logger.warn { "Could not get destination node '#{destString}' for <#{metainfo['src']}>, searching field #{fieldname}" }
     end
+    node
+  end
 
-    destString.split( File::SEPARATOR ).each do |element|
-      case element
-      when '..'
-        node = node.parent
-      else
-        node = node.find do |child| /^#{element}#{File::SEPARATOR}?$/ =~ child[fieldname] end
-      end
-      if node.nil?
-        self.logger.warn { "Could not get destination node '#{destString}' for <#{metainfo['src']}>, searching field #{fieldname}" }
-        return
-      end
-    end
-
-    return node
+  def node_for_string?( destString, fieldname = 'dest' )
+    get_node_for_string( destString, fieldname ) != nil
   end
 
   # Returns the level of the node. The level specifies how deep the node is in the hierarchy.
@@ -116,6 +103,32 @@ class Node
   def self.root( node )
     node = node.parent until node.parent.nil?
     node
+  end
+
+  #######
+  private
+  #######
+
+  def get_node_for_string( destString, fieldname )
+    if /^#{File::SEPARATOR}/ =~ destString
+      node = Node.root( self )
+      destString = destString[1..-1]
+    else
+      node = self
+      node = node.parent until node.kind_of?( FileHandlers::DirHandler::DirNode )
+    end
+
+    destString.split( File::SEPARATOR ).each do |element|
+      case element
+      when '..'
+        node = node.parent
+      else
+        node = node.find do |child| /^#{element}#{File::SEPARATOR}?$/ =~ child[fieldname] end
+      end
+      return nil if node.nil?
+    end
+
+    return node
   end
 
 end

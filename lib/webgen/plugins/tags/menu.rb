@@ -78,11 +78,11 @@ module Tags
     end
 
 
-    plugin 'Menu Tag'
+    plugin 'MenuTag'
     summary 'Builds up a menu'
     depends_on 'Tags'
 
-    add_param 'submenuTag', 'ul', 'The tag used for making sub menus.'
+    add_param 'menuTag', 'ul', 'The tag used for menus.'
     add_param 'itemTag', 'li', 'The tag used for menu items.'
     add_param 'level', 1, \
     'Specifies how many levels the menu should have by default, ie. how deep it is. ' \
@@ -128,21 +128,21 @@ module Tags
         return ''
       end
 
-      out = "<#{get_param( 'submenuTag' )}>"
+      out = "<#{get_param( 'menuTag' )}>"
       node.each do |child|
         if child.kind_of?( MenuNode )
-          submenu = child['node'].kind_of?( FileHandlers::DirHandler::DirNode ) ? build_menu( srcNode, child, level + 1 ) : ''
+          menu = child['node'].kind_of?( FileHandlers::DirHandler::DirNode ) ? build_menu( srcNode, child, level + 1 ) : ''
           before, after = menu_entry( srcNode, child['node'] )
         else
-          submenu = ''
+          menu = ''
           before, after = menu_entry( srcNode, child )
         end
 
         out << before
-        out << submenu
+        out << menu
         out << after
       end
-      out << "</#{get_param( 'submenuTag' )}>"
+      out << "</#{get_param( 'menuTag' )}>"
 
       return out
     end

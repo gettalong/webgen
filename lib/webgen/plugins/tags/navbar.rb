@@ -34,7 +34,7 @@ module Tags
   # where each listed name is linked to the corresponding file.
   class NavbarTag < DefaultTag
 
-    plugin 'Navigation Bar Tag'
+    plugin 'NavigationBarTag'
     summary 'Shows the hierarchy of current page'
     add_param 'separator', ' / ', 'Separates the hierachy entries from each other.'
     depends_on 'Tags'

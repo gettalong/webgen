@@ -29,7 +29,7 @@ module Tags
   # characters are escaped.
   class ExecuteCommandTag < DefaultTag
 
-    plugin "Execute Command Tag"
+    plugin "ExecuteCommandTag"
     summary "Executes the given command and includes its standard output"
     depends_on 'Tags'
 
