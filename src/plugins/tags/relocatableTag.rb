@@ -12,7 +12,10 @@ class RelocatableTag < UPS::StandardPlugin
 	end
 
 	def execute(content, node)
-		
+		#TODO make it really relocatable instead of printing the inner element
+		result = ''
+		REXML::Document.new(content).root.elements[1].write(result)
+		result
 	end
 
 end

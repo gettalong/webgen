@@ -31,7 +31,7 @@ class XMLPagePlugin < UPS::StandardPlugin
 
 	def after_register
 		UPS::PluginRegistry.instance['fileHandler'].extensions[EXTENSION] = self
-		UPS::PluginRegistry.instance['fileHandler'].add_msg_listener(FileHandler::DIR_NODE_CREATED, method(:add_template_to_node))
+		UPS::PluginRegistry.instance['fileHandler'].add_msg_listener(FileHandler::AFTER_DIR_READ, method(:add_template_to_node))
 	end
 
 
@@ -59,16 +59,13 @@ class XMLPagePlugin < UPS::StandardPlugin
 
 
 	def write_node(node, filename)
-		doc = ''
-		File.open(node.parent.metainfo['templateFile']) { |file|
-			doc = file.read
-		}
+		template = get_template_for_node(node).metainfo['content'].dup
 
 		UPS::PluginRegistry.instance['tags'].substituteTags(node.metainfo['content'], node)
-		UPS::PluginRegistry.instance['tags'].substituteTags(doc, node)
+		UPS::PluginRegistry.instance['tags'].substituteTags(template, node)
 
 		File.open(filename, File::CREAT|File::TRUNC|File::RDWR) {|file|
-			file.write(doc)
+			file.write(template)
 		}
 	end
 
@@ -77,21 +74,31 @@ class XMLPagePlugin < UPS::StandardPlugin
 	#######
 
 	def add_template_to_node(node)
-		cfg = Configuration.instance
+		cfg = Configuration.instance		
 		
-		if !File.exists?(node.abs_src + @directoryIndexFile)
-			Configuration.instance.warning("directory index file not found")
+		if node.find { |child| child.src == @directoryIndexFile}.nil?
+			Configuration.instance.warning("directory index file for #{node.abs_src} not found")
 		end
 
-		node.metainfo['templateFile'] = node.abs_src + @templateFile
-		if !File.exists?(node.metainfo['templateFile'])
-			if node.parent.nil? # dir is root directory
-				raise ThgException.new(ThgException::PAGE_TEMPLATE_FILE_NOT_FOUND, @templateFile)
-			end
-			node.metainfo['templateFile'] = node.parent.metainfo['templateFile']
+		templateNode = node.find { |child| child.src == @templateFile }
+		if !templateNode.nil? 
+			node.metainfo['templateFile'] = templateNode
+		elsif node.parent.nil? # dir is root directory
+			raise ThgException.new(ThgException::PAGE_TEMPLATE_FILE_NOT_FOUND, @templateFile)
 		end
 	end
 
+
+	def get_template_for_node(node)
+		if node.nil?
+			raise "Template file for node not found -> this should not happen!"
+		end
+		if node.metainfo.has_key? 'templateFile'
+			return node.metainfo['templateFile']
+		else
+			return get_template_for_node(node.parent)
+		end
+	end
 
 end
 

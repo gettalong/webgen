@@ -18,6 +18,8 @@ class FileHandler < UPS::Controller
 		#raise ThgException.new(ThgException::CFG_ENTRY_NOT_FOUND, 'fileHandler') if config.nil?
 
 		add_msg_name(:DIR_NODE_CREATED)
+		add_msg_name(:FILE_NODE_CREATED)
+		add_msg_name(:AFTER_DIR_READ)
 	end
 
 	def describe
@@ -73,6 +75,7 @@ class FileHandler < UPS::Controller
 			else
 				node = @extensions[extension].build_node(srcName, parent)
 				node.processor = @extensions[extension]
+				dispatch_msg(FILE_NODE_CREATED, node)
 			end
 		elsif FileTest.directory?(srcName)
 			relName = File.basename(srcName)
@@ -85,6 +88,8 @@ class FileHandler < UPS::Controller
 				child = build_entry(filename, node)
 				node.add_child(child) if !child.nil?
 			}
+			
+			dispatch_msg(AFTER_DIR_READ, node)
 		end
 
 		return node

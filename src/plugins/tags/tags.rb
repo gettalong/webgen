@@ -20,8 +20,8 @@ class Tags < UPS::Controller
 	end
 
 	def substituteTags(content, node)
-		content.gsub!(/<thg:(\w+)\s*?.*?(\/>|<\/\1>)/) { |match|
-			Configuration.instance.debug("Replacing tag: #{$1}")
+		content.gsub!(/<thg:(\w+)\s*?.*?(\/>|>.*?<\/thg:\1>)/) { |match|
+			Configuration.instance.debug("Replacing tag: #{$1}, match: #{match}")
 			raise ThgException.new(ThgException::TAGS_UNKNOWN_TAG, $1) if !@plugins.has_key?($1)
 			@plugins[$1].execute(match, node)
 		}

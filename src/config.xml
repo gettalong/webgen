@@ -7,7 +7,7 @@
 	</main>
 	<plugins>
 		<xmlPagePlugin>
-			<templateFile>template.html</templateFile>
+			<templateFile>default.template</templateFile>
 			<directoryIndexFile>index.page</directoryIndexFile>
 		</xmlPagePlugin>
 		<fileCopy>css,jpg,png,gif</fileCopy>

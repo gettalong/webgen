@@ -62,7 +62,7 @@ begin
 
 	# load the plugins
 	Configuration.instance.load_plugins
-	
+
 	# run the selected routine
 	main.call
 
