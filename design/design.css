@@ -12,9 +12,9 @@
 
 @media screen, projection {
   body {
-	margin: 0px 5%;
+	margin: 0px 10%;
 	padding: 5px;
-	background-color: #fff;
+	background-color: #EEE;
 	font-size: 12px;
 	font-family: Verdana, Arial, Helvetica;
   }
@@ -26,51 +26,74 @@
   }
 
   div#header {
-	float: right;
-	width: 75%;
-	margin-bottom: 10px;
-	border: solid 1px #C8C8C8;
+	/*float: right;*/
+	width: 100%;
+	margin: 0px;
+	background-color: #8ad;
+	color: #fff;
+  }
+
+  div#pagebody {
+	width: 100%;
+	background-color: #def;
+  }
+
+  div#menu {
+	float: left;
+	width: 200px;
+	margin: 0px;
+	padding-left: 20px;
+  }
+
+  div#body {
+	background-color: #fff;
+	margin: 0px;
+	margin-left: 200px;
+	padding-bottom: 100%;
+	padding: 10px;
+	
+  }
+
+  div#footer {
+	padding: 0px;
+	margin-bottom: 5px;
+	border: 1px solid #C8C8C8;
+
+	clear: both;
+
+	text-align: center;
+	color: #fff;
+	background-color: #8ad;
   }
 
   div#navbar {
 	width: 100%;
-	border-bottom: 1px solid #0C0;
-	background-color: #F0F0F0;
-
+	border-top: 1px solid #0C0;
 	font-size: 90%;
   }
 
   span#navtree, span#languages {
 	padding: 3px;
+	width: 45%;
   }
 
   span#navtree {
 	float: left;
-	width: 45%;
 	text-align: left;
   }
 
   span#languages {
 	float: right;
-	width: 45%;
 	text-align: right;
   }
 
   div#header h1 {
 	margin: 0px;
-	padding: 0.5em 2em;
+	padding: 15px 2em;
 
-	font-size: 200%;
+	font-size: 300%;
 	font-style: italic;
 	font-weight: normal;
-	color: #35648A;
-  }
-
-  div#menu {
-	float: left;
-	width: 20%;
-
-	border: solid 1px #C8C8C8;
   }
 
 
@@ -125,46 +148,23 @@
   }
 
 
-  div#body {
-	float: right;
-	width: 75%;
-  }
-
   div.section {
 	margin-left: -2px;
 	margin-bottom: 20px;
-	border: 1px solid #C8C8C8;
-	padding: 5px;
+	padding: 10px;
   }
 
   h2.section_header {
-	margin: 0px;
 	padding: 0px 3px;
-	border-bottom: 1px solid #C00;
+	border-bottom: 3px double #8ad;
 
 	letter-spacing: 0.2em;
-	font-size: 125%;
-	font-weight: bold;
-	text-transform: capitalize;
+	font-size: 150%;
+	font-weight: normal;
 	
-	background-color: #F0F0F0; 
 	color: #35648A;
   }
 
-  div.section h2.section_header {
-	margin: -5px -5px 5px;
-	border-bottom: 1px solid #00C;
-  }
 
-  div#footer {
-	padding: 0px;
-	margin-bottom: 5px;
-	border: 1px solid #C8C8C8;
-
-	clear: both;
-
-	text-align: center;
-	background-color: #F8F8F8;
-  }
 
 }
