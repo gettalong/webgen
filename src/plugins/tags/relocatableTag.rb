@@ -10,8 +10,9 @@ class RelocatableTag < UPS::Plugin
         UPS::Registry['Tags'].tags['relocatable'] = self
     end
 
-	def process_tag( tag, content, node, templateNode )
-        UPS::Registry['Tree Utils'].get_relpath_to_node( node, templateNode ) + content
+	def process_tag( tag, content, node, refNode )
+        destNode = refNode.get_node_for_string( content )
+        node.get_relpath_to_node( destNode ) + destNode['dest'] unless destNode.nil?
 	end
 
 end

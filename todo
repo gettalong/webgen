@@ -1,6 +1,4 @@
-* eventually put TreeUtils methods into Node
 * make get_relpath_to_node work for all nodes, not only page nodes
-* get_node_for_string should also work for absolute paths (ie. '/images' or '/projects/index.html')
 * make file plugins case-insensitiv (convert all uppercase letters to lowercase)
 * create new document which describes iterations and the steps which are taken in each iteration (high risk first)
 * document existing files (RDOC)
@@ -56,3 +54,6 @@ W link creation for nodes should be done only in one place (now in menu and navb
 W navbar should be configurable (start tag, separator, end tag)
 W command line parameter for listing all available configuration options with default values
 W add check so that all needed metainfo tags are in read files
+W eventually put TreeUtils methods into Node
+W get_node_for_string should also work for absolute paths (ie. '/images' or '/projects/index.html')
+W relocatable tag fails for "{relocatable: /images/bghack.png}" in index.xpage

@@ -1,5 +1,6 @@
 require 'ups/ups'
 require 'node'
+require 'plugins/nodeProcessor'
 require 'plugins/fileHandler/fileHandler'
 
 
@@ -43,7 +44,6 @@ class PagePlugin < UPS::Plugin
 
         outstring = templateNode['content'].dup
 
-        #UPS::PluginRegistry.instance['tags'].substituteTags(node.metainfo['content'], node)
         UPS::Registry['Tags'].substitute_tags( outstring, node, templateNode )
 
         File.open( node.recursive_value( 'dest' ), File::CREAT|File::TRUNC|File::RDWR ) do |file|

@@ -1,9 +1,9 @@
 require 'ups/ups'
 require 'thgexception'
 require 'node'
+require 'plugins/nodeProcessor'
 require 'plugins/fileHandler/fileHandler'
 require 'plugins/treeTransformer'
-require 'configuration'
 
 class TemplatePlugin < UPS::Plugin
 
@@ -47,8 +47,8 @@ class TemplatePlugin < UPS::Plugin
 
     def get_template_for_node( node )
         raise "Template file for node not found -> this should not happen!" if node.nil?
-        if node.metainfo.has_key? 'templateFile'
-            return node['templateFile']
+        if node.metainfo.has_key? 'template'
+            return node['template']
         else
             return get_template_for_node( node.parent )
         end
@@ -62,7 +62,7 @@ class TemplatePlugin < UPS::Plugin
     def add_template_to_node( node )
         templateNode = node.find { |child| child['src'] == @defaultTemplate }
         if !templateNode.nil?
-            node['templateFile'] = templateNode
+            node['template'] = templateNode
         elsif node.parent.nil? # dir is root directory
             raise ThgException.new( :PAGE_TEMPLATE_FILE_NOT_FOUND, @defaultTemplate )
         end
@@ -82,13 +82,13 @@ class TemplateTreeWalker < UPS::Plugin
     end
 
     def execute( node, level )
-        if node.metainfo.has_key?( "templateFile" ) && node['templateFile'].kind_of?( String )
-            templateNode = UPS::Registry['Tree Utils'].get_node_for_string( node, node['templateFile'] )
+        if node.metainfo.has_key?( "template" ) && node['template'].kind_of?( String )
+            templateNode = node.get_node_for_string( node['template'] )
             if templateNode.nil?
                 self.logger.warn { "Specified template for file <#{node['src']}> not found!!!" }
-                node.metainfo.delete "templateFile"
+                node.metainfo.delete "template"
             else
-                node['templateFile'] = templateNode
+                node['template'] = templateNode
                 self.logger.info { "Replacing 'templateFile' in <#{node['src']}> with <#{templateNode['src']}>" }
             end
         end

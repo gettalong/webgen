@@ -1,7 +1,7 @@
 require 'fileutils'
 require 'ups/ups'
-require 'thgexception'
 require 'node'
+require 'plugins/nodeProcessor'
 require 'plugins/fileHandler/fileHandler'
 
 class FileCopyPlugin < UPS::Plugin

@@ -12,10 +12,11 @@ class MenuTag < UPS::Plugin
     end
 
 
-	def process_tag( tag, content, node, templateNode )
+	def process_tag( tag, content, node, refNode )
         if !defined? @menuTree
             @menuTree = create_menu_tree( Node.root( node ), nil )
-            UPS::Registry['Tree Transformer'].execute @menuTree unless @menuTree.nil?
+            #TODO only call DebugTreePrinter
+            #UPS::Registry['Tree Transformer'].execute @menuTree unless @menuTree.nil?
         end
         build_menu( node, @menuTree, content['level'] )
 	end

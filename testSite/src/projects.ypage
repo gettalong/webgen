@@ -1,5 +1,5 @@
 title: YAML Projects page
-template: default.template
+template: /default.template
 
 content:
     <h1>The News page</h1>

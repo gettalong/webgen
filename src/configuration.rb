@@ -45,18 +45,14 @@ cfg = Log4r::YamlConfigurator
 cfg.load_yaml_string LoggerConfiguration
 
 
-module UPS
-
-    class Plugin
-        def logger
-            if @logger.nil?
-                @logger = Log4r::Logger.new(self.class.name)
-                @logger.outputters = ['stdout', 'logfile']
-            end
-            @logger
+class Object
+    def logger
+        if @logger.nil?
+            @logger = Log4r::Logger.new(self.class.name)
+            @logger.outputters = ['stdout', 'logfile']
         end
+        @logger
     end
-
 end
 
 

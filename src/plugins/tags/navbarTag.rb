@@ -14,7 +14,7 @@ class NavbarTag < UPS::Plugin
     end
 
 
-	def process_tag( tag, content, srcNode, templateNode )
+	def process_tag( tag, content, srcNode, refNode )
         out = []
         node = srcNode
 

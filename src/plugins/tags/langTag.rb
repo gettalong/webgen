@@ -11,9 +11,9 @@ class LangTag < UPS::Plugin
     end
 
 
-	def process_tag( tag, content, node, templateNode )
+	def process_tag( tag, content, node, refNode )
         node.parent.children.sort { |a, b| a['lang'] <=> b['lang'] }.collect do |node|
-            "<a href=\"#{node['dest']}\">#{node['lang']}</a>"
+            node['processor'].get_html_link( node, node, node['lang'] )
         end.join('&nbsp;|&nbsp;')
 	end
 
