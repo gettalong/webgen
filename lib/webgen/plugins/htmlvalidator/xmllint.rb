@@ -21,6 +21,29 @@
 #
 
 require 'webgen/plugins/htmlvalidator/defaulthtmlvalidator'
+require "tempfile"
+
+# Allows one to get stdout and stderr from an executed command. Original version
+# by Karl von Laudermann in ruby-talk #113035
+class ExtendedCommand
+
+  attr_reader :ret_code, :out_text, :err_text
+
+  def initialize( command )
+    tempfile = Tempfile.new( 'xmllint' )
+    tempfile.close  # So that child process can write to it
+
+    # Execute command, redirecting stderr to temp file
+    @out_text = `#{command} 2> #{tempfile.path}`
+    @ret_code = $? >> 8
+
+    # Read temp file
+    tempfile.open
+    @err_text = tempfile.readlines.join
+    tempfile.close
+  end
+end
+
 
 module HTMLValidators
 
@@ -28,10 +51,14 @@ module HTMLValidators
 
     summary "Uses xmllint to check if a file is valid and well-formed"
 
+    add_param "args", '--catalogs --noout --valid', 'Arguments passed to the xmllint command'
     register_validator 'xmllint'
 
     def validate_file( filename )
-      puts "doing it"
+      cmd = ExtendedCommand.new( "xmllint #{get_param( 'args' )} #{filename}" )
+      if cmd.ret_code != 0
+        self.logger.warn { "xmllint was run on <#{filename}>, exited with the return code #{cmd.ret_code} and the error message: \n#{cmd.err_text}" }
+      end
     end
 
   end

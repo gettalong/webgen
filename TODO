@@ -1,16 +1,16 @@
 ---- CURRENT ----
 
-* show validatorName with describe tag
 * ordering of picture/gallery files for menu
 * allow a template to use another template (templates as page description files?) (template2 uses template1)
 * create webgen 0.2.0 to 0.3.0 converter
 * security concerns (setting different $SAFE level???)
 * use code generator to create test file with all tags and all tag parameter configurations
-* integrate check on output HTML pages (using xmllint)
 
 ---- DOCU ----
 
-* restructure documentation (filehandler, contenthandler, htmlvalidator, tags9
+* add htmlvalidator to docu
+* change extension.config to output registered handlers
+* restructure documentation (filehandler, contenthandler, htmlvalidator, tags)
 * document TreeWalker plugin
 * DEV: self.logger.warn/error/info/debug can be used for messages
 
@@ -144,3 +144,4 @@ W do not allow two or more page files in the same language, print warn
 * pictureGallery: files param: no path outside src directory
 * simplify DefaultContentHandler, DefaultHTMLValidator, DefaultGalleryLayouter, ...
 * Webgen::Plugin.config should have classes (not class names) as keys
+* integrate check on output HTML pages (using xmllint)

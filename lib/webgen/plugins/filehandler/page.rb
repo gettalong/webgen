@@ -49,9 +49,7 @@ module FileHandlers
     'If true, the output files for the default language will have the ' \
     'language in the file name like all other page files. If false, they won''t.'
     add_param 'defaultContentFormat', 'textile', 'The default content format used in page files'
-    add_param 'validHTMLchecker', 'xmllint --noout --catalogs --valid {}', \
-    'The command line which is used to check if a generated HTML file is valid. The character ' \
-    'sequence "{}" is substituted with the file name.'
+    add_param 'validator', 'xmllint', 'The validator for checking HTML files on their validness. Set to "" or nil to prevent checking'
     depends_on 'FileHandler', 'DefaultContentHandler'
 
     def create_node( srcName, parent )
@@ -74,9 +72,11 @@ module FileHandlers
       File.open( node.recursive_value( 'dest' ), File::CREAT|File::TRUNC|File::RDWR ) do |file|
         file.write( outstring )
       end
-      #todo
-      output = false
-      self.logger.warn { "Output of HTML check program:\n" + output } if output
+
+      validator = get_param( 'validator' )
+      unless validator.nil? || validator == ''
+        Webgen::Plugin['DefaultHTMLValidator'].get_validator( validator ).validate_file( node.recursive_value( 'dest' ) )
+      end
     end
 
     def page_node_exists?( basename, dirNode )
