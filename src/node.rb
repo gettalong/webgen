@@ -33,20 +33,17 @@ class Node
 
 
     # Returns the relative path from the srcNode to the destNode. The srcNode
-    # has to be a page file node, otherwise it is likely that an exception is
-    # thrown. The destNode can be any non virtual node.
+    # is normally a page file node, but the method should work for other nodes
+    # too. The destNode can be any non virtual node.
     def get_relpath_to_node( destNode )
-        path = ''
-        srcNode = ( @children.nil? ? @parent.parent.parent : @parent.parent ) # do not count file + directory or directory
-        until srcNode.nil?
-            path << ".." + File::SEPARATOR unless srcNode['virtual']
-            srcNode = srcNode.parent
-        end
+        path = @parent.recursive_value( 'dest' )[UPS::Registry['Configuration'].outDirectory.length+1..-1]
+        path = path.gsub(/.*?(#{File::SEPARATOR})/, "..#{File::SEPARATOR}")
         path += destNode.parent.recursive_value( 'dest' )[UPS::Registry['Configuration'].outDirectory.length+1..-1] unless destNode.parent.nil?
         path
     end
 
 
+    # Returns the node identified by the given string relative to the current node.
     def get_node_for_string( destString )
         if /^#{File::SEPARATOR}/ =~ destString
             node = Node.root(self)
