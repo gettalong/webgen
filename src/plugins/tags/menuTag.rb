@@ -26,7 +26,7 @@ class MenuTag < UPS::Plugin
     #######
 
     def build_menu( srcNode, node, level )
-        return '' unless level >= 1
+        return '' unless level >= 1 && !node.nil?
 
         out = '<ul>'
         node.each do |child|

@@ -92,7 +92,7 @@ class ThgConfigurationPlugin < UPS::Plugin
 
 
     def get_config_value( pluginName, key, defaultValue )
-        value = @pluginData[pluginName][key] if @pluginData.has_key? pluginName
+        value = @pluginData[pluginName][key] if @pluginData.has_key?( pluginName ) && @pluginData[pluginName].has_key?( key )
         value ||= defaultValue
         @configParams[pluginName] ||= Array.new
         @configParams[pluginName].push [key, value, defaultValue]
