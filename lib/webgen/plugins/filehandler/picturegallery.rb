@@ -22,7 +22,7 @@
 
 require 'webgen/plugins/filehandler/filehandler'
 require 'webgen/plugins/filehandler/directory'
-require 'webgen/plugins/filehandler/pagehandler/page'
+require 'webgen/plugins/filehandler/page'
 
 module FileHandlers
 
@@ -73,7 +73,7 @@ module FileHandlers
     end
 
     def call_layouter( type, metainfo, *args )
-      content = Webgen::Plugin['DefaultGalleryLayouter'].layouter( get_param( 'layout' ) ).send( type.to_s, *args )
+      content = Webgen::Plugin['DefaultGalleryLayouter'].get_layout( get_param( 'layout' ) ).send( type.to_s, *args )
       "#{metainfo.to_yaml}\n---\n#{content}"
     end
 

@@ -163,7 +163,7 @@ module FileHandlers
     summary "Base class of all file handler plugins"
 
     def initialize
-      extension( Webgen::Plugin.config[self.class.name].extension ) if Webgen::Plugin.config[self.class.name].extension
+      extension( Webgen::Plugin.config[self.class].extension ) if Webgen::Plugin.config[self.class].extension
     end
 
     # Register the file extension specified by a subclass.

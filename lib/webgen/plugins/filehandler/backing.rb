@@ -22,7 +22,7 @@
 
 require 'webgen/plugins/filehandler/filehandler'
 require 'webgen/plugins/filehandler/directory'
-require 'webgen/plugins/filehandler/pagehandler/page'
+require 'webgen/plugins/filehandler/page'
 
 module FileHandlers
 
@@ -98,7 +98,7 @@ module FileHandlers
     end
 
     def process_backing_file( dirNode )
-      backingFiles = dirNode.find_all {|child| /\.#{Webgen::Plugin.config[self.class.name].extension}$/ =~ child['src'] }
+      backingFiles = dirNode.find_all {|child| /\.#{Webgen::Plugin.config[self.class].extension}$/ =~ child['src'] }
 
       backingFiles.each do |backingFile|
         backingFile['content'].each do |filename, data|

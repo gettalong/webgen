@@ -154,7 +154,7 @@ module FileHandlers
             next
           end
           self.logger.debug { "Block '#{blockdata['name']}' formatted using '#{blockdata['format']}'" }
-          options[blockdata['name']] = Webgen::Plugin['DefaultContentHandler'].get_content_handler( blockdata['format'] ).format_content( blocks.shift || '' )
+          options[blockdata['name']] = Webgen::Plugin['DefaultContentHandler'].get_format( blockdata['format'] ).format_content( blocks.shift || '' )
         end
       end
       options

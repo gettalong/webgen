@@ -27,21 +27,7 @@ module ContentHandlers
 
     summary "Base class for all content handlers"
 
-    # Register the format specified by a subclass.
-    def self.register_format( fmt )
-      self.logger.info { "Registering class #{self.name} for formatting '#{fmt}'" }
-      (Webgen::Plugin.config[DefaultContentHandler.name].formats ||= {})[fmt] = self.name
-      Webgen::Plugin.config[self.name].contentFormat = fmt
-    end
-
-    def get_content_handler( fmt )
-      if Webgen::Plugin.config[DefaultContentHandler.name].formats.has_key?( fmt )
-        Webgen::Plugin.config[Webgen::Plugin.config[DefaultContentHandler.name].formats[fmt]].obj
-      else
-        self.logger.error { "Invalid content format specified: #{fmt}! Using DefaultContentHandler!" }
-        Webgen::Plugin['DefaultContentHandler']
-      end
-    end
+    define_handler 'format'
 
     # Format the given +content+. Should be overridden in subclass!
     def format_content( content )

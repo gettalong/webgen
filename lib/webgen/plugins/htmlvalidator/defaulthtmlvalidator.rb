@@ -26,21 +26,7 @@ module HTMLValidators
 
     summary "Base class for all HTML validators"
 
-    # Register the format specified by a subclass.
-    def self.register_validator( validator )
-      self.logger.info { "Registering class #{self.name} for validating HTML files" }
-      (Webgen::Plugin.config[DefaultHTMLValidator.name].validators ||= {})[validator] = self.name
-      Webgen::Plugin.config[self.name].validatorName = validator
-    end
-
-    def get_validator( name )
-      if Webgen::Plugin.config[DefaultHTMLValidator.name].validators.has_key?( name )
-        Webgen::Plugin.config[Webgen::Plugin.config[DefaultHTMLValidator.name].formats[name]].obj
-      else
-        self.logger.error { "Invalid content format specified: #{fmt}! Using DefaultHTMLValidator!" }
-        Webgen::Plugin['DefaultHTMLValidator']
-      end
-    end
+    define_handler 'validator'
 
     # Should be overridden in subclass!
     def validate_file( filename )

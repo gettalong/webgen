@@ -53,12 +53,12 @@ module Webgen
     @@config = {}
 
     def self.inherited( klass )
-      (@@config[klass.name] = OpenStruct.new).klass = klass
-      @@config[klass.name].plugin = klass.name.split( /::/ ).last
+      (@@config[klass] = OpenStruct.new).klass = klass
+      @@config[klass].plugin = klass.name.split( /::/ ).last
     end
 
     ['extension', 'summary', 'description'].each do |name|
-      self.module_eval "def self.#{name}( obj ); @@config[self.name].#{name} = obj; end"
+      self.module_eval "def self.#{name}( obj ); @@config[self].#{name} = obj; end"
     end
 
     # Return plugin data
@@ -69,7 +69,7 @@ module Webgen
     # Add a dependency to the plugin. Dependencies are instantiated before the plugin gets
     # instantiated.
     def self.depends_on( *dep )
-      dep.each {|d| (@@config[self.name].dependencies ||= []) << d}
+      dep.each {|d| (@@config[self].dependencies ||= []) << d}
     end
 
     # Shortcut for getting the plugin with the name +name+.
@@ -88,7 +88,7 @@ module Webgen
     def self.add_param( name, default, description )
       self.logger.debug { "Adding parameter '#{name}' for plugin class '#{self.name}'" }
       data = OpenStruct.new( :name => name, :value => default, :default => default, :description => description )
-      (@@config[self.name].params ||= {})[name] = data
+      (@@config[self].params ||= {})[name] = data
     end
 
     # Set parameter +name+ for +plugin+ to +value+.
@@ -96,7 +96,7 @@ module Webgen
       found = catch( :found ) do
         item = @@config.find {|k,v| v.plugin == plugin }[1]
         item.klass.ancestor_classes.each do |k|
-          item = @@config[k.name]
+          item = @@config[k]
           if !item.nil? && !item.params.nil? && item.params.has_key?( name )
             item.params[name].value = value
             logger.debug { "Setting parameter '#{name}' for plugin '#{plugin}' to #{value.inspect}" }
@@ -110,7 +110,7 @@ module Webgen
     # Return parameter +name+.
     def []( name )
       self.class.ancestor_classes.each do |klass|
-        data = @@config[klass.name]
+        data = @@config[klass]
         return data.params[name].value unless data.params.nil? || data.params[name].nil?
       end
       logger.error { "Referencing invalid configuration value '#{name}' in class #{self.class.name}" }
@@ -119,15 +119,35 @@ module Webgen
 
     # Set parameter +name+.
     def []=( name, value )
-      self.class.set_param( @@config[self.class.name].plugin, name, value )
+      self.class.set_param( @@config[self.class].plugin, name, value )
     end
     alias get_param []
 
     # Checks if the plugin has a parameter +name+.
     def has_param?( name )
       self.class.ancestor_classes.any? do |klass|
-        !@@config[klass.name].params.nil? && @@config[klass.name].params.has_key?( name )
+        !@@config[klass].params.nil? && @@config[klass].params.has_key?( name )
       end
+    end
+
+    # Defines a new *handler class. The methods creates two methods based on the parameter +name+:
+    # - klass.register_[name]
+    # - object.get_[name]
+    def self.define_handler( name )
+      s = "def self.register_#{name}( param )
+        self.logger.info { \"Registering class \#{self.name} for handling '\#{param}'\" }
+        (Webgen::Plugin.config[#{self.name}].#{name}s ||= {})[param] = self
+        Webgen::Plugin.config[self].registered_#{name} = param
+      end\n"
+      s += "def get_#{name}( param )
+        if Webgen::Plugin.config[#{self.name}].#{name}s.has_key?( param )
+          Webgen::Plugin.config[Webgen::Plugin.config[#{self.name}].#{name}s[param]].obj
+        else
+          self.logger.error { \"Invalid #{name} specified: \#{param}! Using #{self.name}!\" }
+           Webgen::Plugin.config[#{self.name}].obj
+        end
+      end"
+      module_eval s
     end
 
     #######
@@ -209,7 +229,7 @@ module Webgen
   end
 
   # Initialize single configuration instance
-  Plugin.config[Configuration.name].obj = Configuration.new
+  Plugin.config[Configuration].obj = Configuration.new
 
 end
 

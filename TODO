@@ -1,8 +1,6 @@
 ---- CURRENT ----
 
 * show validatorName with describe tag
-* Webgen::Plugin.config should have classes (not class names) as keys
-* simplify DefaultContentHandler, DefaultHTMLValidator, DefaultGalleryLayouter, ...
 * ordering of picture/gallery files for menu
 * allow a template to use another template (templates as page description files?) (template2 uses template1)
 * create webgen 0.2.0 to 0.3.0 converter
@@ -144,3 +142,5 @@ W do not allow two or more page files in the same language, print warn
 * add pages for content converter and layouter plugins
 * pictureGallery: document layout methods (how to extend -> write subclass, can use config values as layouters are plugins), main things...
 * pictureGallery: files param: no path outside src directory
+* simplify DefaultContentHandler, DefaultHTMLValidator, DefaultGalleryLayouter, ...
+* Webgen::Plugin.config should have classes (not class names) as keys

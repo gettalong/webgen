@@ -140,18 +140,18 @@ module Tags
     # will be assigned to the default mandatory parameter. There *should* be only one default
     # mandatory parameter.
     def self.set_mandatory( param, default = false )
-      if Webgen::Plugin.config[self.name].params.nil? || !Webgen::Plugin.config[self.name].params.has_key?( param )
+      if Webgen::Plugin.config[self].params.nil? || !Webgen::Plugin.config[self].params.has_key?( param )
         self.logger.error { "Cannot set parameter #{param} as mandatory as this parameter does not exist for #{self.name}" }
       else
-        Webgen::Plugin.config[self.name].params[param].mandatory = true
-        Webgen::Plugin.config[self.name].params[param].mandatoryDefault = default
+        Webgen::Plugin.config[self].params[param].mandatory = true
+        Webgen::Plugin.config[self].params[param].mandatoryDefault = default
       end
     end
 
     # Register +tag+ at the Tags plugin.
     def register_tag( tag )
       Webgen::Plugin['Tags'].tags[tag] = self
-      Webgen::Plugin.config[self.class.name].tag = tag
+      Webgen::Plugin.config[self.class].tag = tag
     end
 
     # Set the configuration parameters for the next #process_tag call. The configuration, if
@@ -211,7 +211,7 @@ module Tags
 
     # Set the default mandatory parameter.
     def set_default_mandatory_param( value )
-      data = Webgen::Plugin.config[self.class.name]
+      data = Webgen::Plugin.config[self.class]
       key = data.params.detect {|k,v| v.mandatoryDefault} unless data.params.nil?
       if key.nil?
         self.logger.error { "Default mandatory parameter not specified for tag '#{self.class.name}'"}
@@ -222,13 +222,13 @@ module Tags
 
     # Check if this tag has mandatory parameters.
     def has_mandatory_params?
-      data = Webgen::Plugin.config[self.class.name]
+      data = Webgen::Plugin.config[self.class]
       !data.params.nil? && data.params.any? {|k,v| v.mandatory }
     end
 
     # Check if all mandatory parameters have been set
     def all_mandatory_params_set?
-      params = Webgen::Plugin.config[self.class.name].params
+      params = Webgen::Plugin.config[self.class].params
       ( params.nil? ? true : params.all? { |k,v| !v.mandatory || @curConfig.has_key?( k ) } )
     end
 
