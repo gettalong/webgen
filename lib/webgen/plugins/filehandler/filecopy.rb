@@ -51,7 +51,9 @@ module FileHandlers
 
     # Copy the file to the destination directory if it has been modified.
     def write_node( node )
-      FileUtils.cp( node.recursive_value( 'src' ), node.recursive_value( 'dest' ) ) if Webgen::Plugin['FileHandler'].file_modified?( node )
+      if Webgen::Plugin['FileHandler'].file_modified?( node.recursive_value( 'src' ), node.recursive_value( 'dest' ) )
+        FileUtils.cp( node.recursive_value( 'src' ), node.recursive_value( 'dest' ) )
+      end
     end
 
   end

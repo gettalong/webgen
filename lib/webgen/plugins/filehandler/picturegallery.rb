@@ -30,7 +30,7 @@ module FileHandlers
 
     summary "Handles picture gallery files for page file"
     extension 'gallery'
-    add_param "picturesPerPage", 2, 'Number of picture per gallery page'
+    add_param "picturesPerPage", 20, 'Number of picture per gallery page'
     add_param "picturePageInMenu", false, 'True if the picture pages should be in the menu'
     add_param "galleryPageInMenu", false, 'True if the gallery pages should be in the menu'
     add_param "mainPageInMenu", true, 'True if the main page of the picture gallery should be in the menu'
@@ -99,10 +99,11 @@ module FileHandlers
         main['galleries'][0]['title'] = main['title']
         main['galleries'][0]['inMenu'] = main['inMenu']
         main['galleries'][0].update( @filedata['mainPage'] || {} )
+        main['pageNotUsed'] = true
       end
 
       main['galleries'].each_with_index do |gallery, gIndex|
-        node = Webgen::Plugin['PageHandler'].create_node_from_data( call_layouter( :gallery, gallery, main, gIndex ), gallery['link'], parent )
+        node = Webgen::Plugin['PageHandler'].create_node_from_data( call_layouter( :gallery, gallery, main, gIndex ), gallery['srcName'], parent )
         parent.add_child( node )
         gallery['imageList'].each_with_index do |image, iIndex|
           node = Webgen::Plugin['PageHandler'].create_node_from_data( call_layouter( :picture, image, main, gIndex, iIndex ), image['srcName'], parent )
@@ -133,7 +134,7 @@ module FileHandlers
         data['inMenu'] ||= get_param( 'galleryPageInMenu' )
         data['number'] = i/picsPerPage + 1
         data['title'] = gallery_title( data['number'] )
-        data['link'] = gallery_file_name( data['title'] )
+        data['srcName'] = gallery_file_name( data['title'] )
         data['imageList'] = create_picture_pages( images[i..(i + picsPerPage - 1)], parent )
 
         galleries << data
@@ -204,10 +205,12 @@ module FileHandlers
       end
 
       def write_node( node )
-        image = Magick::ImageList.new( node['tn:imageFile'] )
-        image.change_geometry( get_param( 'thumbnailSize' ) ) {|c,r,i| i.resize!( c, r )}
-        self.logger.info {"Creating thumbnail <#{node.recursive_value('dest')}> from <#{node['tn:imageFile']}>: #{image.inspect}"}
-        image.write( node.recursive_value( 'dest' ) )
+        if Webgen::Plugin['FileHandler'].file_modified?( node['tn:imageFile'], node.recursive_value( 'dest' ) )
+          image = Magick::ImageList.new( node['tn:imageFile'] )
+          image.change_geometry( get_param( 'thumbnailSize' ) ) {|c,r,i| i.resize!( c, r )}
+          self.logger.info {"Creating thumbnail <#{node.recursive_value('dest')}> from <#{node['tn:imageFile']}>: #{image.inspect}"}
+          image.write( node.recursive_value( 'dest' ) )
+        end
       end
 
     end
@@ -249,6 +252,45 @@ module PictureGalleryLayouter
       end
     end
 
+    # Returns the gallery index of the previous gallery, if it exists, or +nil+ otherwise.
+    def prev_gallery( data, gIndex )
+      gIndex != 0 ? gIndex - 1 : nil
+    end
+
+    # Returns the gallery index of the next gallery, if it exists, or +nil+ otherwise.
+    def next_gallery( data, gIndex )
+      gIndex != data['galleries'].length - 1 ? gIndex + 1 : nil
+    end
+
+    # Returns the gallery and image indices of the previous picture, if it exists, or +nil+ otherwise.
+    def prev_picture( data, gIndex, iIndex )
+      result = nil
+      if gIndex != 0 || iIndex != 0
+        if iIndex == 0
+          gIndex -= 1
+          iIndex = data['galleries'][gIndex]['imageList'].length - 1
+        else
+          iIndex -= 1
+        end
+        result = [gIndex, iIndex]
+      end
+      return result
+    end
+
+    # Returns the gallery and image indices of the next picture, if it exists, or +nil+ otherwise.
+    def next_picture( data, gIndex, iIndex )
+      result = nil
+      if gIndex != data['galleries'].length - 1 || iIndex != data['galleries'][gIndex]['imageList'].length - 1
+        if iIndex == data['galleries'][gIndex]['imageList'].length - 1
+          gIndex += 1
+          iIndex = 0
+        else
+          iIndex += 1
+        end
+        result = [gIndex, iIndex]
+      end
+      return result
+    end
 
     # Should be overwritten by subclasses! +data+ is the data structure which holds all information
     # about the gallery.
@@ -260,7 +302,7 @@ module PictureGalleryLayouter
 "
       0.step( data['galleries'].length - 1, 5 ) do |i|
         s += "<tr>"
-        s += data['galleries'][i...i+5].collect {|g| "<td><a href=\"#{g['link']}\">#{thumbnail_tag_for_image( g['imageList'][0] )}<br />#{g['title']}</a></td>"}.join( "\n" )
+        s += data['galleries'][i...i+5].collect {|g| "<td><a href=\"#{g['srcName']}\">#{thumbnail_tag_for_image( g['imageList'][0] )}<br />#{g['title']}</a></td>"}.join( "\n" )
         s += "</tr>"
       end
       s += "</table></div>"
@@ -271,10 +313,18 @@ module PictureGalleryLayouter
     def gallery( data, gIndex )
 
       s = "
-<h2>#{data['title']}</h2>
+<h2>#{data['galleries'][gIndex]['title']}</h2>
 <div class=\"webgen-gallery\">
-<table>
 "
+
+      s += "<a href=\"#{data['srcName']}\">^&nbsp;#{data['title']}&nbsp;^</a><br />" unless data['pageNotUsed']
+      prevIndex = prev_gallery( data, gIndex )
+      nextIndex = next_gallery( data, gIndex )
+      s += "<a href=\"#{data['galleries'][prevIndex]['srcName']}\">&lt;&nbsp;#{data['galleries'][prevIndex]['title']}</a>" unless prevIndex.nil?
+      s += "&nbsp;&mdash;&nbsp;" unless prevIndex.nil? || nextIndex.nil?
+      s += "<a href=\"#{data['galleries'][nextIndex]['srcName']}\">#{data['galleries'][nextIndex]['title']}&nbsp;&gt;</a>" unless nextIndex.nil?
+
+      s += "<table>"
       0.step( data['galleries'][gIndex]['imageList'].length - 1, 5 ) do |i|
         s += "<tr>"
         s += data['galleries'][gIndex]['imageList'][i...i+5].collect {|i| "<td><a href=\"#{i['srcName']}\">#{thumbnail_tag_for_image( i )}<br />#{i['title']}</a></td>"}.join( "\n" )
@@ -287,12 +337,24 @@ module PictureGalleryLayouter
     # about the gallery. +gIndex+ is the index of the current gallery. +iIndex+ is the index of the
     # current image.
     def picture( data, gIndex, iIndex )
-      "
+      s = "
+<h2>#{data['galleries'][gIndex]['imageList'][iIndex]['title']}</h2>
 <div class=\"webgen-picture\">
-<img src='#{data['galleries'][gIndex]['imageList'][iIndex]['imageFilename']}' alt='#{data['galleries'][gIndex]['imageList'][iIndex]['title']}' />
-</div>
+"
+      s += "<a href=\"#{data['galleries'][gIndex]['srcName']}\">^&nbsp;#{data['galleries'][gIndex]['title']}&nbsp;^</a><br />"
+      prevGIndex, prevIIndex = prev_picture( data, gIndex, iIndex )
+      nextGIndex, nextIIndex = next_picture( data, gIndex, iIndex )
+      s += "<a href=\"#{data['galleries'][prevGIndex]['imageList'][prevIIndex]['srcName']}\">" \
+      "&lt;&nbsp;#{data['galleries'][prevGIndex]['imageList'][prevIIndex]['title']}</a>" unless prevGIndex.nil?
+      s += "&nbsp;&mdash;&nbsp;" unless prevGIndex.nil? || nextGIndex.nil?
+      s += "<a href=\"#{data['galleries'][nextGIndex]['imageList'][nextIIndex]['srcName']}\">" \
+      "#{data['galleries'][nextGIndex]['imageList'][nextIIndex]['title']}&nbsp;&gt;</a>" unless nextGIndex.nil?
 
-{description: }
+      s += "
+<img src='#{data['galleries'][gIndex]['imageList'][iIndex]['imageFilename']}' alt='#{data['galleries'][gIndex]['imageList'][iIndex]['title']}' />
+
+<p>{description: }</p>
+</div>
 "
     end
 

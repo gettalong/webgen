@@ -128,6 +128,19 @@
     text-align: center;
   }
 
+  .webgen-picture img {
+    border: 1px solid black;
+  }
+
+  .webgen-gallery {
+    text-align: center;
+  }
+
   .webgen-gallery table {
     width: 100%;
+  }
+
+  .webgen-gallery table td{
+    text-align: center;
+    border: 1px solid black;
   }

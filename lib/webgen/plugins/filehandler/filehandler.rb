@@ -76,11 +76,9 @@ module FileHandlers
     end
 
 
-    # Returns true if the source file specified by +node+ has been modified since the last execution
+    # Returns true if the file +src+ is newer than +dest+ and therefore has been modified since the last execution
     # of webgen. The +mtime+ values for the source and destination files are used to find this out.
-    def file_modified?( node )
-      src = node.recursive_value( 'src' )
-      dest = node.recursive_value( 'dest' )
+    def file_modified?( src, dest )
       if File.exists?( dest ) && ( File.mtime( src ) < File.mtime( dest ) )
         self.logger.info { "File is up to date: <#{dest}>" }
         return false

@@ -1,8 +1,5 @@
 ---- CURRENT ----
 
-* do not create thumbnails if they already exist and the source file has not changed
-* allow specification of metadata for gallery and picture pages
-* ev. create a GalleryNode and put gallery/pictures pages beneath it???
 * ordering of picture/gallery files for menu
 * allow a template to use another template (templates as page description files?) (template2 uses template1)
 * create webgen 0.2.0 to 0.3.0 converter
@@ -22,14 +19,13 @@
 * tag 'mrplot' -> generate a plot with mrplot
 * tag 'sitemap' -> generate site map
 * multi-lingual picture/gallery files
-* create thumbnails of pictures on the fly with rmagick
 * create logo "Created with webgen"
 * refactor menu: abstract menu generator+parser, concrete impls (vert. menu, horz. menu, ...)
 * include exif info for pictures
 
 ---- DONE ----
 
-W check if an xml validator is available in ruby* option for includeFile tag: escapeHTML (should special html tags be escaped?)
+W check if an xml validator is available in ruby
 W think about sequence of actions when program is executed
 W think about how the data is stored in tree/which data is stored in tree
 W set up directory structure and build system
@@ -138,3 +134,7 @@ W do not allow two or more page files in the same language, print warn
 * register with Freshmeat.net
 * check out http://jigsaw.w3.org/css-validator/check/referer -> using xmllint
 * BUG DirHandler#recursive_create_path: handle relativ paths ('..' and '.')
+* allow specification of metadata for gallery and picture pages
+* create thumbnails of pictures on the fly with rmagick
+* do not create thumbnails if they already exist and the source file has not changed
+* ev. create a GalleryNode and put gallery/pictures pages beneath it??? -> No
