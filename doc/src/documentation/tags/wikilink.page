@@ -11,3 +11,8 @@ h2. Description
 This tag can be used to add a link to a wiki page. It is used on this website to automatically
 provide a "Feedback" link for each page.
 
+table{border:1px solid black}.
+|_.Command|_.Output|
+|\{wikilink: }|{wikilink: }|
+|\{wikilink: {relURL: hallo}}|{wikilink: {relURL: hallo}}|
+|\{wikilink: {relURL: hallo, title: MoinMoin}}|{wikilink: {relURL: hallo, title: MoinMoin}}|

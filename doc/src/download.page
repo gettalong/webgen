@@ -12,8 +12,8 @@ Download: "http://rubyforge.org/frs/?group_id=296":http://rubyforge.org/frs/?gro
 
 h2. Dependencies
 
-* "RedCloth":http://redcloth.rubyforge.org version 2.0.10 or higher
-* "BlueCloth":http://www.deveiate.org version 1.0.0 or higher
+* "RedCloth":http://redcloth.rubyforge.org version 2.0.10 or higher if you want Textile support
+* "BlueCloth":http://www.deveiate.org version 1.0.0 or higher if you want Markdown support
 
 h2. Installation
 

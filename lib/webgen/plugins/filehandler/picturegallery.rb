@@ -52,7 +52,6 @@ module FileHandlers
         self.logger.error { "Could not parse gallery file <#{file}>, not creating gallery pages" }
         return
       end
-
       path = File.dirname( file )
       images = Dir[File.join( path, get_param( 'files' ))].collect {|i| i.sub( /#{path + File::SEPARATOR}/, '' ) }
       self.logger.info { "Creating gallery for file <#{file}> with #{images.length} pictures" }
@@ -123,9 +122,10 @@ module FileHandlers
       "---
 inMenu: #{get_param( 'galleryPageInMenu' )}
 template: #{get_param( 'galleryTemplate' )}
+title: #{data.title}
 ---
 <div class=\"webgen-gallery\">
-#{data.filenames.collect {|i| "!#{i}!:#{File.basename( i, '.*' ).tr( ' .', '_' ) + '.html'}" }.join( "\n\n" )}
+#{data.images.collect {|i| "!#{i}!:#{File.basename( i, '.*' ).tr( ' .', '_' ) + '.html'}" }.join( "\n\n" )}
 </div>
 "
     end
@@ -134,6 +134,7 @@ template: #{get_param( 'galleryTemplate' )}
       "---
 inMenu: #{get_param( 'picturePageInMenu' )}
 template: #{get_param( 'pictureTemplate' )}
+title: #{data.title}
 ---
 <div class=\"webgen-picture\">
 !#{data.filename}(#{data.title})!

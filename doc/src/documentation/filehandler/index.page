@@ -1,7 +1,7 @@
 ---
 directoryName: File Handlers
 ---
-h2. Description
+h2. About
 
 File handlers are used to handle different types of input files. You can see the currently exisiting
 file handlers in the menu. Choose one to get a description for it!

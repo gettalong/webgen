@@ -1,89 +1,84 @@
-  html {
-	margin: 0px 5%;
-	background-color: #eee;
-  }
+/*
+#5C73B8 -> background
+#405080 -> headings
+#CFD4E6 -> code
+#3054BF -> other
+ */
 
   body {
-	margin: 0px;
-	padding: 0px;
-	background-color: #fff;
+	margin: 0px 2em;
 	font-size: 12px;
 	font-family: Verdana, Arial, Helvetica;
+    border: 1px solid black;
+    color: black;
   }
 
-  /* General layout of the page */
+  h1, h2, h3, h4, h5 { color: #405080}
 
-  #header, #footer {
-	width: 100%;
-	background-color: #58b;
-	color: #fff;
+  a:visited { color: #405080; }
+  a { color: #5C73B8; }
+  .bar a { color: white }
+  .bar a:visited { color: white }
+
+  #all { background-color: #CFD4E6; }
+
+  #header {
+    border-bottom: 1px solid black;
+    padding: 1ex;
+    background-color: #5C73B8;
+  }
+  #header img {
+    padding-right: 5em;
+  }
+  #header h1 {
+    margin: 0ex;
+	font-size: 300%;
+	font-style: italic;
+	font-weight: normal;
+    color: white;
+  }
+
+, #headerbar { border-bottom: 1px solid black; }
+  #footer { border-top: 1px solid black; }
+
+  #body {
+    margin-left: 250px;
+    margin-right: 20px;
+    padding: 10px;
   }
 
   #menu {
 	float: left;
 	width: 230px;
-    padding: 20px 0px 0px 20px;
-	border: 3px solid #58b;
+    padding: 20px 0px 0px 2px;
   }
 
-  #feedback {
-    float: right;
-    text-align: right;
-    padding: 1em;
-    border-left: 2px solid #58b;
-    border-bottom: 2px solid #58b;
-    border-right: 2px solid #58b;
-  }
-
-  #body {
-	margin-left: 250px;
-	padding: 20px;
-  }
-
-  #footer {
+  .bar {
 	clear: both;
-	padding: 5px 0px;
-	text-align: center;
-  }
-
-
-  /* styling the header */
-
-  #headerbar {
-	width: 100%;
-	font-size: 90%;
-  }
-
-  span#navbar, span#languages {
 	padding: 3px;
-	width: 45%;
+	text-align: center;
+	font-size: 90%;
+    background-color: #3054BF;
   }
 
-  span#navbar {
+  .left, .right {
+    padding: 0px 1em;
+  }
+
+  .left {
 	float: left;
 	text-align: left;
   }
 
-  span#languages {
+  .right {
 	float: right;
 	text-align: right;
   }
-
-  div#header h1 {
-	margin: 0px;
-	padding: 15px 2em;
-
-	font-size: 300%;
-	font-style: italic;
-	font-weight: normal;
-  }
-
 
   /* styling the menu */
 
   #menu a {
 	text-decoration: none;
-	color: #b55;
 	font-weight: bold;
 	font-size: 130%;
   }
@@ -93,10 +88,7 @@
   }
 
   #menu .webgen-menuitem-selected {
-	border-left: 3px solid #58b;
-  }
-
-  #menu .webgen-submenu {
+	border-left: 3px solid #405080;
   }
 
   #menu ul {
@@ -120,18 +112,15 @@
 
   h2 {
 	padding: 0px;
-	border-bottom: 3px double #8b5;
-
 	letter-spacing: 0.2em;
 	font-size: 150%;
 	font-weight: bold;
-	color: #8b5;
+    border-bottom: 1px solid #405080;
   }
 
   pre.webgen-file {
     padding-left: 10px;
     margin: 0px 10px;
-    border-left: 3px solid #8b5;
+    border-left: 3px solid #5C73B8;
   }
 
-}

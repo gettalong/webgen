@@ -14,8 +14,13 @@ number of directories or files.
 
 To build the website you simple need to change to the parent directoy of the source directory and
 type @webgen@. If everything is okay, no output will appear and you can point your browser to the
-output directory and view your _very_ nice website. If not, webgen tries to give detailed
-information about what happened and why something could not be done correctly.
+output directory and view your website. If not, webgen tries to give detailed information about what
+happened and why something could not be done correctly.
+
+Webgen tries to compensate for errors and warnings and _should_ not abort with an error. Instead, it
+uses default values in error or warning cases and only issues messages to the log device (normally
+the screen). This also means that if a library is not found (e.g. RedCloth for Textile support),
+the plugin which uses the library is disabled.
 
 h2. Configuration
 
@@ -35,3 +40,8 @@ plugin name as top level key and each configuration option as a key/value pair. 
 looks like this:
 
 <pre class="webgen-file">{includeFile: /../../../testsite/config.yaml}</pre>
+
+h2. Plugins
+
+Webgen is written with extensibility in mind; therefore most of its features are implemented with
+plugins, only the core functions are not plugins.

@@ -13,6 +13,15 @@ corner of the header. There you will find a link titled 'en'. This is the link t
 version of this page. As this page is not translated into any other language, there is only this one
 item.
 
+h2. Examples
+
 Here is a <a href="{relocatable: multilang.html}">link</a> to a page which is translated to several
 languages (more or less ;-). Have a look at it and don't forget to view the page in the other
 languages!
+
+table{border:1px solid black}.
+|_.Command|_.Output|
+|<notextile>\{lang: }</notextile>|<notextile>{lang: }</notextile>|
+|\{lang: {separator: Hallo}}|{lang: {separator: Hallo}}|
+|\{lang: {showSingleLang: false}}|{lang: {showSingleLang: false}}|
+

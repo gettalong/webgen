@@ -2,6 +2,7 @@ HIGH PRIORITY TODO: test everything (automatically) and try to refactor!!!
 
 ---- CURRENT ----
 
+* allow specification of metadata for gallery and picture pages
 * allow a template to use another template (templates as page description files?) (template2 uses template1)
 * ev. create a GalleryNode and put gallery/pictures pages beneath it???
 * think about filename conflicts for picture pages
@@ -10,14 +11,12 @@ HIGH PRIORITY TODO: test everything (automatically) and try to refactor!!!
 * security concerns (setting different $SAFE level???)
 * register with Freshmeat.net
 * use code generator to create test file with all tags and all tag parameter configurations
-* add tests for all parameters with which webgen can be called
 * check out http://jigsaw.w3.org/css-validator/check/referer
 
 ---- DOCU ----
 
-* state that if a dependency is not found (e.g. redcloth) the plugin is disabled and a warning issued
+* add design gallery
 * DEV: self.logger.warn/error/info/debug can be used for messages
-* add example section for each plugin
 
 ---- FUTURE ----
 
@@ -121,3 +120,6 @@ W do not allow two or more page files in the same language, print warn
 * document extension loader and its config file
 * document in file handler that :dir extension is used for directory handler
 * options for PageHandler: default file format if none given
+* state that if a dependency is not found (e.g. redcloth) the plugin is disabled and a warning issued
+* add example section for each plugin
+* add tests for all parameters with which webgen can be called
