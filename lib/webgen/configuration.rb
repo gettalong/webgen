@@ -37,6 +37,9 @@ class Dependency < Hash
   end
 end
 
+class OpenStruct
+  public :table #:nodoc:#
+end
 
 module Webgen
 
