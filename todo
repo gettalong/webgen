@@ -1,4 +1,5 @@
-E write ideas and design considerations
+W define format of config.xml
+W create sample files to work on
 * design Thaumature logo
 
 ---- DONE ----
@@ -7,3 +8,4 @@ E write ideas and design considerations
 * think about sequence of actions when program is executed
 * think about how the data is stored in tree/which data is stored in tree
 * set up directory structure and build system
+* write ideas and design considerations
