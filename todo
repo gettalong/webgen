@@ -1,6 +1,9 @@
 E write ideas and design considerations
 * design Thaumature logo
-* set up directory structure and build system
-
 
 ---- DONE ----
+
+* check if an xml validator is available in ruby
+* think about sequence of actions when program is executed
+* think about how the data is stored in tree/which data is stored in tree
+* set up directory structure and build system

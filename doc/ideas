@@ -1,4 +1,4 @@
-* name: Thaumaturge - Template Based Homepage Generator
+* name: Thaumaturge - Template Based Homepage Generator (THG)
 
 >>> nothing to do really
 
@@ -22,7 +22,9 @@
   easily be extended.
 
 >>> plugins are based on UPS, some plugins only consist of controller,
->>> most of them should have sub-plugins
+>>> most of them should have sub-plugins. Order of plugins has to be
+>>> configurable, e.g.. external menu entries have to be added before
+>>> tree is sorted
 
 * template based
 
@@ -38,7 +40,7 @@
 >>> namespace for extra tags is thg, template file is called
 >>> template.html per default (configureable), in each directory there
 >>> can be one such file, a page file can reference a different template
->>> file if necessary
+>>> file if necessary (meta tag <template>)
 
 * hooks for plugins
 
@@ -50,7 +52,7 @@
 >>> It should be easy to add new hook types. The following hooks should
 >>> be available: after page generated (e.g. to replace strings with
 >>> other strings), after page written (e.g. to check the validity of
->>> the file).
+>>> the file), after directory added to tree, after file added to tree
 
 * file name generators
 
@@ -65,6 +67,7 @@
 >>> name.
 
 * Many languages
+
   The system should support more languages. If a page was written in
   more than language, the viewer should be able to easily switch between
   the different languages.
@@ -76,6 +79,7 @@
 >>> available, a switch should be available to the user.
 
 * Standards based
+
   Only web standards will be used. Generated files have to be XHTML 1.1
   compatible, the layout is separated from content using CSS2. No
   backwards compatibility is made.
@@ -84,8 +88,9 @@
 >>> compatible to XHTML 1.1. The used CSS standard will be CSS 2.0.
 
 * Plugins can have ressources
+
   This is necessary so that plugins can provide, for example, css
-  fragments which they so that the generated XHTML code looks good.
+  fragments which they need so that the generated XHTML code looks good.
 
 >>> Ressources can either reside in the configuration file or in a
 >>> separate file. The separate file should be under the ressource
@@ -93,6 +98,7 @@
 >>> configuration file.
 
 * Central configuration through XML file
+
   Each plugin normally needs some kind of configuration if the user
   wants to change the default behaviour. All the configurations are
   stored in an XML file which the user can change.
@@ -114,10 +120,12 @@
 >>> ABOUT FORMAT OF THE CONFIG FILE!!!
 
 * New pages
+
   It should be easy to add new pages. Just stick the file in the
   approriate directory, re-run the generator and everything should work
 
 * Validation
+
   After generating the XHTML pages, it should be possible to check if
   the pages are really XHTML 1.1 compatible.
 
@@ -126,6 +134,7 @@
 >>> libxml2 package. Under Windows, for example, the Microsoft Parser.
 
 * Page format
+
   Pages are written in XML. Each page can contain some meta info and a
   content body. The meta info can be used, for example, to sort the page
   and to generate a sorted menu. The meta info tags should be, if
@@ -137,15 +146,18 @@
 >>> is generated using an external tool), 
 
 * Different CSS media types
+
   It should be possible to customize the pages so that different CSS
   media types can be used easily.
 
 * DTD for page files -- wish list
+
   Generate a DTD for the page format depending on the current
   configuration file so that editing is easier in XML editors
   (e.g. XEmacs with PSGML)
 
 * Gallery, Blog, Wiki,...
+
   Enable easy integration of such web sites. Galleries could be, for
   example, generated using this program, Wiki's and Blog could be added.
 
@@ -155,6 +167,7 @@
 >>> and under which menu item the reference should appear)
 
 * Generation algorithm
+
   Every file is read into a hierarchical structure. Then all the
   transformations are done. After everything was transformed, the XHTML
   output is generated using the approriate template and the data from
@@ -165,15 +178,29 @@
 >>> file. Evenentually first use the SAX parser to read in only the
 >>> appropriate things, when generating use DOM parser.
 
+* Virtual tree nodes
+
+  virtual tree nodes do not represent an actual page xml files but
+  virtual ones. E.g. section in a page or additional menu entries
+
 * Data structure
+
   All the page xml files are read and stored in an tree like
   structure. The tree levels represent the menu levels.
 
 >>> The tree represents the directory structure of the source
 >>> files. Each tree level is a menu level, too. A leaf is an actual
->>> page file.
+>>> page file. Directory are virtual nodes; file to which they point is
+>>> configurable (default index.xml).
+
+* error handling
+  
+  abort on error found but provide detailed information, only abort if
+  recovery not possible. error information should include what error
+  it was and a solution to correct error
 
 * Some plugins
+
   The generator should come with some predefined plugins. Here a list of
   possible candidates:
 
@@ -183,11 +210,11 @@
   - Menu plugin: specifies the menu, the plugin itself should only feed
   data to other plugins which then actually create the menu. Different
   menu styles are therefore represented by different menu plugins. uses
-  <menu> tag; A leaf in the tree can specify additional menu entries
-  (e.g. for sections) through use of the metainfo tag <menu>. An anchor
-  name and the display name have to be specified.
+  <menu> tag; menu is built from tree. Controller knows hot to parse the
+  tree and integrate extra entries. Plugins get following hooks:
+  start/end menu, start/end submenu, entry
 
-  - Sort plugin: specifies in which order the plugins should be; uses
+  - Sort plugin: specifies in which order the page files should be; uses
   meta info tag <order> to specify ordering; in configuration file a
   default ordering mechanism if no ordering specified (e.g. use ctime of
   files).
@@ -197,7 +224,7 @@
   smileys; configureable;
 
   - Navbar plugin: creates a navigation bar that shows the current
-  location within the tree; configureable;
+  location within the tree; configureable (separator)
 
   - language plugin: enables more than more language to present; default
   language in configuration file; uses <language> tag; languages are
@@ -206,15 +233,21 @@
  
   - external file binder plugin: includes an external file; external
   file has to be proper XHTML 1.1; useful, for example, for adding
-  colored source code to XHTML files
+  colored source code to XHTML files (uses <external> tag)
 
   - section plugin: provides different sections on one page; uses
-  <section> tag
+  <section> tag. section consists of header and content.
 
-  - sitemap plugin: provides a sitemap, uses the <sitemap> tag
+  - sitemap plugin: provides a sitemap, uses the <sitemap>
+  tag. controller traverses the tree structure, feeds data to style
+  plugin, following hooks: start/end sitemap, start/end submenu, entry
 
   - database text plugin: fetches text from a database during the
   creation of the page; uses the <database> tag
+
+  - dummy plugin: holds dummy text that is not used in generation, can
+  be used to better visualize the template files, dummy tag is ignored
+  completely in generation and elsewhere
 
 
 
@@ -234,3 +267,40 @@ Design issues:
   /resources/  -> the directory where user defined ressources can be
   /src/  -> the page files from which the html files are generated
   /output/  -> the directory where the created files are stored
+
+
+* sequence of action
+
+  - Read in configuration file(s), first the global one, than the user
+  specific one
+
+  - Read in all plugins that are needed (all activated ones)
+
+  - Plugins ev. read in their ressources
+
+  - Read in the files in src directory, only the meta info/what is
+  needed by tree structure
+
+  - Execute plugins which work on the tree, transform it (order of
+  plugin execution is important)
+
+  - Read page files and generate output files
+
+  - Write files to output directory
+
+
+* Data structure
+
+  * Node types:
+    - page xml files
+    - directory
+    - virtual nodes for extra entries (anchors in page, menu items of
+    external files)
+
+  * Each node must have
+    - title: the title of the page (used for menu entries, title of page,...)
+    - url: the url of the page; for page files normally the file name
+    - virtual: specifies if this node is a virtual one. virtual ones do
+    not have a file representation in the source directory
+	- meta info element: the top level meta info element if available.
+    
