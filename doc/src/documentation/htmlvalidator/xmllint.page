@@ -1,0 +1,14 @@
+---
+title: xmllint HTML Validator
+inMenu: true
+---
+h2. Information
+
+<notextile>{describe: XmllintHTMLValidator}</notextile>
+
+h2. Description
+
+This plugin uses the @xmllint@ program from the "libxml2":http://www.xmlsoft.org package. @xmllint@
+can be used to validate an XML file against a DTD, a RelaxNG schema or a WXS schema. For more
+information about where to put the DTD or schema files, have a look at the @libxml2@ documentation
+that comes bundled.

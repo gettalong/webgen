@@ -8,9 +8,6 @@
 
 ---- DOCU ----
 
-* add htmlvalidator to docu
-* restructure documentation (filehandler, contenthandler, htmlvalidator, tags)
-* document TreeWalker plugin
 * DEV: self.logger.warn/error/info/debug can be used for messages
 
 ---- FUTURE ----
@@ -145,3 +142,6 @@ W do not allow two or more page files in the same language, print warn
 * Webgen::Plugin.config should have classes (not class names) as keys
 * integrate check on output HTML pages (using xmllint)
 * change extension.config to output registered handlers
+* add htmlvalidator to docu
+* document TreeWalker plugin -> not needed
+* restructure documentation (filehandler, contenthandler, htmlvalidator, tags)

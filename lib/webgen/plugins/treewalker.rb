@@ -28,7 +28,7 @@ module TreeWalkers
   # so that it is called when the main class' #execute method is called.
   class TreeWalker < Webgen::Plugin
 
-    summary "Super plugin for transforming the data tree"
+    summary "Super plugin for traversing the data tree"
 
     attr_reader :walkers
 
