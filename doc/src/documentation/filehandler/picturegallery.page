@@ -16,6 +16,10 @@ The gallery description files are written in YAML and specify
 * which images should be used
 * the titles/descriptions of the images
 * the templates which should be used
+* meta information for the pages
 
-TODO show an example gallery file
-Here is a link TODO to such a demo picture gallery.
+This is the first version of the picture gallery handler, so do not expect too much!
+
+h2. Examples
+
+You can view an example gallery <a href="{relocatable: /Design_Gallery_1.html}">here</a>!

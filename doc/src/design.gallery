@@ -1,0 +1,18 @@
+title: Design Gallery
+files: designs/*.png
+
+mainPage:
+    menuOrder: 8
+
+designs/default.png:
+    title: Default Design
+    description: This is the default and the current design for the webgen homepage.
+
+designs/nostyle.png:
+    title: Without Stylesheet
+    description: The default homepage with the stylesheet disabled. Not very nice, but
+        still useable.
+
+designs/old.png:
+    title: Old Design
+    description: The old design of the homepage.

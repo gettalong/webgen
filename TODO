@@ -3,7 +3,6 @@
 * allow specification of metadata for gallery and picture pages
 * allow a template to use another template (templates as page description files?) (template2 uses template1)
 * ev. create a GalleryNode and put gallery/pictures pages beneath it???
-* think about filename conflicts for picture pages
 * ordering of picture/gallery files for menu
 * create webgen 0.2.0 to 0.3.0 converter
 * security concerns (setting different $SAFE level???)
@@ -13,6 +12,7 @@
 
 ---- DOCU ----
 
+* pictureGallery: document layout methods (how to extend), main things...
 * extend plugins section on main documentation page
 * add design gallery
 * DEV: self.logger.warn/error/info/debug can be used for messages
@@ -130,3 +130,4 @@ W do not allow two or more page files in the same language, print warn
 * remove Plugin.plugin method -> use class name! (short class name, without modules, Test::Hallo.name.split(/::/).last )
 * remove extension(...) call from file handlers -> DefaultHandler#initialize
 * pagehandler + converter into own subdir
+* think about filename conflicts for picture pages

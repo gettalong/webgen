@@ -138,7 +138,7 @@ module FileHandlers
 
     def parse_data( data, srcName )
       options = {}
-      blocks = data.split( /^---$/ )
+      blocks = data.split( /^---\s*$/ )
       if blocks.length > 0
         if blocks[0] == ''
           begin
@@ -148,7 +148,7 @@ module FileHandlers
           end
           blocks[0..1] = []
         end
-        blocks.each {|b| b.gsub!( /^(\\+)(---)$/ ) {|m| "\\" * ($1.length / 2) + $2 } }
+        blocks.each {|b| b.gsub!( /^(\\+)(---\s*)$/ ) {|m| "\\" * ($1.length / 2) + $2 } }
         (options['blocks'] ||= [{'name'=>'content', 'format'=>get_param( 'defaultContentFormat' )}]).each do |blockdata|
           self.logger.debug { "Block '#{blockdata['name']}' formatted using '#{blockdata['format']}'" }
           options[blockdata['name']] = @formats[blockdata['format']].format_content( blocks.shift || '' )

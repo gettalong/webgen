@@ -32,11 +32,14 @@ module FileHandlers
     extension 'gallery'
     add_param "picturesPerPage", 20, 'Number of picture per gallery page'
     add_param "picturePageInMenu", false, 'True if the picture pages should be in the menu'
-    add_param "galleryPageInMenu", true, 'True if the gallery pages should be in the menu'
-    add_param "galleryTemplate", nil, 'The template for gallery pages. If nil or a not existing file is specified, the default template is used.'
-    add_param "pictureTemplate", nil, 'The template for picture pages. If nil or a not existing file is specified, the default template is used.'
+    add_param "galleryPageInMenu", false, 'True if the gallery pages should be in the menu'
+    add_param "mainPageInMenu", true, 'True if the main page of the picture gallery should be in the menu'
+    add_param "galleryPageTemplate", nil, 'The template for gallery pages. If nil or a not existing file is specified, the default template is used.'
+    add_param "picturePageTemplate", nil, 'The template for picture pages. If nil or a not existing file is specified, the default template is used.'
+    add_param "mainPageTemplate", nil, 'The template for the main page. If nil or a not existing file is specified, the default template is used.'
     add_param "files", 'images/**/*.jpg', 'The Dir glob for specifying the picture files'
     add_param "title", 'Gallery', 'The title of the gallery'
+    add_param "layout", 'default', 'The layout used'
 
     depends_on 'FileHandler', 'PageHandler'
 
@@ -51,7 +54,7 @@ module FileHandlers
       images = Dir[File.join( path, get_param( 'files' ))].collect {|i| i.sub( /#{path + File::SEPARATOR}/, '' ) }
       self.logger.info { "Creating gallery for file <#{file}> with #{images.length} pictures" }
 
-      create_gallery_pages( images, parent )
+      create_gallery( images, parent )
 
       nil
     end
@@ -64,45 +67,73 @@ module FileHandlers
     private
     #######
 
-    # Override method to lookup parameters specified in the gallery file first.
+    # Method overridden to lookup parameters specified in the gallery file first.
     def get_param( name )
       ( @filedata.has_key?( name ) ? @filedata[name] : super )
     end
 
-    def create_gallery_pages( images, parent )
-      picsPerPage = get_param( 'picturesPerPage' )
-      0.step( images.length, picsPerPage ) do |i|
-        data = OpenStruct.new
+    def call_layouter( type, data )
+      content = self.send( type.to_s + "_page_" + get_param( 'layout' ), data )
+      "#{data.to_yaml}\n---\n#{content}"
+    end
 
-        data.number = i/picsPerPage + 1
-        data.title = gallery_title( data.number )
-        data.link = gallery_file_name( data.title )
-        data.prevGalleryNumber = ( i == 0 ? nil : data.number - 1 )
-        data.prevGalleryTitle = gallery_title( data.prevGalleryNumber )
-        data.prevGalleryLink = gallery_file_name( data.prevGalleryTitle )
-        data.nextGalleryNumber = ( images.length <= i + picsPerPage ? nil : data.number + 1 )
-        data.nextGalleryTitle = gallery_title( data.nextGalleryNumber )
-        data.nextGalleryLink = gallery_file_name( data.nextGalleryTitle )
+    def create_gallery( images, parent )
+      nr_gallery_pages = (Float(images.length) / get_param( 'picturesPerPage' ) ).ceil
+      main = create_main_page( images )
+      main['galleries'] = create_gallery_pages( images )
 
-        data.images = images[i..(i + picsPerPage - 1)]
+      if nr_gallery_pages != 1
+        mainNode = Webgen::Plugin['PageHandler'].create_node_from_data( call_layouter( :main, main ), main['srcName'], parent )
+        parent.add_child( mainNode )
+      else
+        main['galleries'][0]['title'] = main['title']
+        main['galleries'][0]['inMenu'] = main['inMenu']
+        main['galleries'][0].update( @filedata['mainPage'] || {} )
+      end
 
-        node = Webgen::Plugin['PageHandler'].create_node_from_data( gallery_page_content( data ), data.link, parent )
+      main['galleries'].each do |gallery|
+        node = Webgen::Plugin['PageHandler'].create_node_from_data( call_layouter( :gallery, gallery ), gallery['link'], parent )
         parent.add_child( node )
-
-        create_picture_pages( data.images, parent )
+        gallery['imageList'].each do |image|
+          node = Webgen::Plugin['PageHandler'].create_node_from_data( call_layouter( :picture, image ), image['srcName'], parent )
+          parent.add_child( node )
+        end
       end
     end
 
-    def create_picture_pages( images, parent )
-      images.each do |image|
-        imageData = OpenStruct.new
-        imageData.title = ( @filedata[image].nil? ? "Picture #{File.basename( image )}" : @filedata[image]['title'] )
-        imageData.filename = image
-        imageData.srcName = File.basename( image, '.*' ).tr( ' .', '_' ) + '.html'
-        imageData.description = ( @filedata[image].nil? ? '' : @filedata[image]['desc'] )
-        node = Webgen::Plugin['PageHandler'].create_node_from_data( picture_page_content( imageData ), imageData.srcName, parent )
-        parent.add_child( node )
+    def create_main_page( images )
+      main = {}
+      main['title'] = get_param( 'title' )
+      main['inMenu'] = get_param( 'mainPageInMenu' )
+      main['template'] = get_param( 'mainPageTemplate' )
+      main['srcName'] = gallery_file_name( main['title'] )
+      main.update( @filedata['mainPage'] || {} )
+      main
+    end
+
+    def create_gallery_pages( images )
+      galleries = []
+      picsPerPage = get_param( 'picturesPerPage' )
+      0.step( images.length - 1, picsPerPage ) do |i|
+        data = Hash.new
+
+        data['template'] = get_param( 'galleryPageTemplate' )
+        data['inMenu'] = get_param( 'galleryPageInMenu' )
+        data['number'] = i/picsPerPage + 1
+        data['title'] = gallery_title( data['number'] )
+        data['link'] = gallery_file_name( data['title'] )
+        data['prevGalleryNumber'] = ( i == 0 ? nil : data['number'] - 1 )
+        data['prevGalleryTitle'] = gallery_title( data['prevGalleryNumber'] )
+        data['prevGalleryLink'] = gallery_file_name( data['prevGalleryTitle'] )
+        data['nextGalleryNumber']= ( images.length <= i + picsPerPage ? nil : data['number'] + 1 )
+        data['nextGalleryTitle'] = gallery_title( data['nextGalleryNumber'] )
+        data['nextGalleryLink'] = gallery_file_name( data['nextGalleryTitle'] )
+        data['images'] = images[i..(i + picsPerPage - 1)]
+        data['imageList'] = create_picture_pages( data['images'] )
+
+        galleries << data
       end
+      galleries
     end
 
     def gallery_title( index )
@@ -113,29 +144,48 @@ module FileHandlers
       ( title.nil? ? nil : title.tr( ' .', '_' ) + '.html' )
     end
 
-    def gallery_page_content( data )
-      "---
-inMenu: #{get_param( 'galleryPageInMenu' )}
-template: #{get_param( 'galleryTemplate' )}
-title: #{data.title}
----
+    def create_picture_pages( images )
+      imageList = []
+      images.each do |image|
+        imageData = @filedata[image] || {}
+
+        imageData['title'] ||= "Picture #{File.basename( image )}"
+        imageData['description'] ||= ''
+        imageData['inMenu'] = get_param( 'picturePageInMenu' )
+        imageData['template'] = get_param( 'picturePageTemplate' )
+        imageData['imageFilename'] = image
+        imageData['srcName'] = File.basename( image ).tr( ' .', '_' ) + '.html'
+
+        imageList << imageData
+      end
+      imageList
+    end
+
+    def main_page_default( data )
+      "
+#{data['galleries'].collect {|g| "<img src='#{g['images'][0]}' width='100' height='100' alt='#{g['title']}' /> \"#{g['title']}\":#{g['link']}"}.join( "\n\n" )}
+"
+    end
+
+    def gallery_page_default( data )
+      "
 <div class=\"webgen-gallery\">
-#{data.images.collect {|i| "!#{i}!:#{File.basename( i, '.*' ).tr( ' .', '_' ) + '.html'}" }.join( "\n\n" )}
+
+#{data['imageList'].collect {|i| "<img src='#{i['imageFilename']}' width='100' height='100' alt='#{i['title']}'/> \"#{i['title']}\":#{i['srcName']}" }.join( "\n\n" )}
+
 </div>
 "
     end
 
-    def picture_page_content( data )
-      "---
-inMenu: #{get_param( 'picturePageInMenu' )}
-template: #{get_param( 'pictureTemplate' )}
-title: #{data.title}
----
+    def picture_page_default( data )
+      "
 <div class=\"webgen-picture\">
-!#{data.filename}(#{data.title})!
+
+<img src='#{data['imageFilename']}' alt='#{data['title']}' />
+
 </div>
 
-#{data.description}
+{description: }
 "
     end
 
