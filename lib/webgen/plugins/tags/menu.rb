@@ -84,6 +84,8 @@ module Tags
 
     add_param 'menuTag', 'ul', 'The tag used for submenus.'
     add_param 'itemTag', 'li', 'The tag used for menu items.'
+    add_param 'submenuClass', 'webgen-submenu', 'Specifies the class of a submenu'
+    add_param 'selectedMenuitemClass', 'webgen-menuitem-selected', 'Specifies the class of the selected menu item'
     add_param 'level', 1, \
     'Specifies how many levels the menu should have by default, ie. how deep it is. ' \
     'For example, if level = 3, then three levels are always shown at least.'
@@ -153,8 +155,8 @@ module Tags
       isDir = node.kind_of?( FileHandlers::DirHandler::DirNode )
 
       styles = []
-      styles << 'webgen-submenu' if isDir
-      styles << 'webgen-menuitem-selected' if langNode.recursive_value( 'dest' ) == srcNode.recursive_value( 'dest' )
+      styles << get_param( 'submenuClass' ) if isDir
+      styles << get_param( 'selectedMenuitemClass' ) if langNode.recursive_value( 'dest' ) == srcNode.recursive_value( 'dest' )
 
       style = " class=\"#{styles.join(' ')}\"" if styles.length > 0
       link = langNode['processor'].get_html_link( langNode, srcNode, ( isDir ? langNode['directoryName'] || node['directoryName'] : langNode['title'] ) )

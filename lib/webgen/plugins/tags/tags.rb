@@ -93,7 +93,7 @@ module Tags
             newContent += content[index + $1.length, length - $1.length]
           else
             tagHeaderLength = $1.length + tag.length + 2
-            realContent = content[index + tagHeaderLength, length - tagHeaderLength - 1]
+            realContent = content[index + tagHeaderLength, length - tagHeaderLength - 1].lstrip
             newContent += yield( tag, realContent )
           end
           content[index, length] = newContent

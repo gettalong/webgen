@@ -25,7 +25,7 @@ require 'webgen/plugins/tags/tags'
 module Tags
 
   # Generates a list with all the languages for a page.
-  class LanguageTag < DefaultTag
+  class LanguageBarTag < DefaultTag
 
     summary 'Provides links to translations of the page'
     add_param 'separator', ' | ', 'Separates the languages from each other.'
@@ -35,7 +35,7 @@ module Tags
 
     def initialize
       super
-      register_tag( 'lang' )
+      register_tag( 'langbar' )
     end
 
     def process_tag( tag, node, refNode )

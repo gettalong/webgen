@@ -19,6 +19,7 @@ Major changes:
 * Better DefaultLayouter for picture galleries (<a href="{relocatable: Design_Gallery_1.html}">online demo</a>)
 * On-the-fly creation of thumbnails for pictures with RMagick
 * New tags: <a href="{relocatable: documentation/tags/sitemap.html}">sitemap</a>
+* Tag @lang@ renamed, new name @langbar@!
 * Automatic checking of HTML files on their validness
 * Fixed bugs
 

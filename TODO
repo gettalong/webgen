@@ -1,5 +1,6 @@
 ---- CURRENT ----
 
+* add params to menu for style classes (webgen-submenu, webgen-menuitem-selected) -> see menu feedback on wiki
 * check if duplicate nodes are created??? by using a tag in a template
 * allow a template to use another template (templates as page description files?) (template2 uses template1)
 * create webgen 0.2.0 to 0.3.0 converter

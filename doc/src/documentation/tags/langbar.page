@@ -1,10 +1,10 @@
 ---
-title: Language
+title: Language Bar
 inMenu: true
 ---
 h2. Information
 
-<notextile>{describe: LanguageTag}</notextile>
+<notextile>{describe: LanguageBarTag}</notextile>
 
 h2. Description
 
@@ -21,7 +21,7 @@ languages!
 
 table{border:1px solid black}.
 |_.Command|_.Output|
-|<notextile>\{lang: }</notextile>|<notextile>{lang: }</notextile>|
-|\{lang: {separator: Hallo}}|{lang: {separator: Hallo}}|
-|\{lang: {showSingleLang: false}}|{lang: {showSingleLang: false}}|
+|<notextile>\{langbar: }</notextile>|<notextile>{langbar: }</notextile>|
+|\{langbar: {separator: Hallo}}|{langbar: {separator: Hallo}}|
+|\{langbar: {showSingleLang: false}}|{langbar: {showSingleLang: false}}|
 
