@@ -33,8 +33,6 @@ class FileHandler < UPS::Plugin
 
 
 	def build_tree
-		@dirProcessor = Object.new
-
 		root = build_entry( UPS::Registry['Configuration'].srcDirectory, nil )
 		root['title'] = '/'
 		root['dest'] = UPS::Registry['Configuration'].outDirectory + File::SEPARATOR
@@ -74,12 +72,16 @@ class FileHandler < UPS::Plugin
 		self.logger.info { "Processing #{path}" }
 
 		if FileTest.file? path
-			extension = path[/\..*$/][1..-1]
+			extension = path[/\.[^.]*$/][1..-1]
 
 			if @extensions.has_key? extension
 				node = @extensions[extension].create_node( path, parent )
-				node['processor'] = @extensions[extension]
-				dispatch_msg( :FILE_NODE_CREATED, node )
+                unless node.nil?
+                    node['processor'] = @extensions[extension]
+                    dispatch_msg( :FILE_NODE_CREATED, node )
+                end
+            else
+                self.logger.warn { "No plugin for path #{path} (extension: #{extension}) -> ignored" } if node.nil?
 			end
 		elsif FileTest.directory? path
 			if @extensions.has_key? :dir
@@ -111,7 +113,6 @@ class FileHandler < UPS::Plugin
             end
         end
 
-        self.logger.warn { "No plugin for path #{path} -> ignored" } if node.nil?
 		return node
 	end
 

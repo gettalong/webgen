@@ -1,0 +1,8 @@
+metainfo:
+    title: YAML Projekt Seite
+    template: default.template
+    inMenu: true
+
+content:
+    <h1>Projekt Seite</h1>
+    Dies ist eine dummy Projektseite mit Umlauten äüüöüpßÖÄÖÜPÄÖ'*

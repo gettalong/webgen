@@ -68,6 +68,7 @@ class ThgConfigurationPlugin < UPS::Plugin
 	attr_accessor :srcDirectory
 	attr_accessor :outDirectory
 	attr_accessor :verbosityLevel
+    attr_accessor :defaultLang
 	attr_accessor :configFile
 
 	attr_reader :pluginData
@@ -88,6 +89,7 @@ class ThgConfigurationPlugin < UPS::Plugin
         @srcDirectory ||= get_config_value( 'Configuration', 'srcDirectory' ) || 'src'
         @outDirectory ||= get_config_value( 'Configuration', 'outDirectory' ) || 'output'
         @verbosityLevel ||= get_config_value( 'Configuration', 'verbosityLevel' ) || 3
+        @defaultLang ||= get_config_value( 'Configuration', 'defaultLang') || 'en'
         Log4r::Outputter['stdout'].level = @verbosityLevel
 	end
 

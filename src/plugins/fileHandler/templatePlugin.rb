@@ -83,6 +83,7 @@ class TemplateTreeWalker < UPS::Plugin
         if node.metainfo.has_key?( "templateFile" ) && node['templateFile'].kind_of?( String )
             templateNode = UPS::Registry['Tree Utils'].get_node_for_string( node, node['templateFile'] )
             if templateNode.nil?
+                self.logger.warn { "Specified template for file <#{node['src']}> not found!!!" }
                 node.metainfo.delete "templateFile"
             else
                 node['templateFile'] = templateNode

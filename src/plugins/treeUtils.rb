@@ -7,13 +7,11 @@ class TreeUtils < UPS::Plugin
 
 
     def get_relpath_to_node( srcNode, destNode )
-        #TODO solve this problem an other way
-        if srcNode.children.nil?
-            i = -2 # do not count file + current directory
-        else
-            i = -1
+        i = ( srcNode.children.nil? ? -2 : -1 ) # do not count file + directory or directory
+        until srcNode.nil?
+            i += 1 unless srcNode['virtual']
+            srcNode = srcNode.parent
         end
-        ( i += 1; srcNode = srcNode.parent ) until srcNode.nil? # how many levels?
         ( ".." + File::SEPARATOR )*i + destNode.parent.recursive_value( 'dest' ).sub(/^#{UPS::Registry['Configuration'].outDirectory + File::SEPARATOR}/, "")
     end
 
@@ -21,6 +19,7 @@ class TreeUtils < UPS::Plugin
     def get_node_for_string( srcNode, destString )
         node = srcNode.parent
         destString.split(File::SEPARATOR).each do |element|
+            node = node.parent while node['virtual']
             case element
             when '..'
                 node = node.parent
@@ -34,6 +33,7 @@ class TreeUtils < UPS::Plugin
         end
         return node
     end
+
 
 end
 

@@ -35,7 +35,7 @@ class DebugTreePrinter < UPS::Plugin
     end
 
 	def execute( node, level )
-        self.logger.debug { "   "*level  << "\\_ "*(level > 0 ? 1 : 0) <<  "#{node['title']}: #{node['src']} -> #{node['dest']}" }
+        self.logger.debug { "   "*level  << "\\_ "*(level > 0 ? 1 : 0) << (node['virtual'] ? "[V]" : "") << "#{node['title']}: #{node['src']} -> #{node['dest']}" }
 	end
 
 end

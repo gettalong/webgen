@@ -5,7 +5,7 @@ class Node
 	include Composite
 
 	attr_reader   :parent
-	attr_reader   :metainfo
+	attr_accessor :metainfo
 
 	def initialize( parent )
 		@parent = parent
