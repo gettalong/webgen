@@ -26,7 +26,8 @@ require 'webgen/plugins/tags/tags'
 
 module Tags
 
-  # Includes a file verbatim. All HTML special characters are escaped.
+  # Executes the given command and writes the standard output into the output file. All HTML special
+  # characters are escaped.
   class ExecuteCommandTag < DefaultTag
 
     NAME = "Execute Command Tag"
@@ -58,8 +59,7 @@ module Tags
         return ''
       end
 
-      content = CGI::escapeHTML( `#{@command}` )
-      return "<pre class=\"webgen-file\">\n" + content + "</pre>"
+      CGI::escapeHTML( `#{@command}` )
     end
 
     UPS::Registry.register_plugin ExecuteCommandTag

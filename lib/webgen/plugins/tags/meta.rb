@@ -44,7 +44,9 @@ module Tags
       if node[tag]
         output = node[tag]
       else
-        self.logger.warn { "No value for tag '#{tag}' in <#{refNode.recursive_value( 'src' )}> found in meta information" }
+        self.logger.warn do
+          "No value for tag '#{tag}' in <#{refNode.recursive_value( 'src' )}> found in <#{node.recursive_value( 'src' )}>"
+        end
       end
       return output
     end

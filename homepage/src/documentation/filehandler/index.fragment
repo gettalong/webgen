@@ -1,5 +1,5 @@
 <div class="section">
-  <h2 class="section_header">Information</h2>
+  <h2 class="section_header">About</h2>
 
   <p>File handlers are used to handle different types of input files. One can distinguish between
   normal file handlers and page file handlers: page file handlers are used to handle page
@@ -7,7 +7,8 @@
   normal file handlers.</p>
 
   <p>You can see the currently exisiting file handlers in the menu. Choose one to get a short
-  description for it!</p>
+  description for it! Have a look at the <a href="{relocatable: /api.html}">API documentation</a> to
+  get detailed information about a file handler.</p>
 
 </div>
 

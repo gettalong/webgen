@@ -122,7 +122,7 @@ module FileHandlers
     #######
 
     def analyse_file_name( srcName )
-      matchData = /^(?:(\d+)\.)?([^.]*?)(?:\.(\w\w))?\.#{self.class::EXTENSION}$/.match srcName
+      matchData = /^(?:(\d+)\.)?([^.]*?)(?:\.(\w\w))?\.(.*)$/.match srcName
       fileData = Struct.new(:baseName, :srcName, :urlName, :menuOrder, :title, :lang).new
 
       fileData.lang      = matchData[3] || UPS::Registry['Configuration'].lang

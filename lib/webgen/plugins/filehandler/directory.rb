@@ -31,12 +31,42 @@ module FileHandlers
     # Specialized node describing a directory.
     class DirNode < Node
 
+
       def initialize( parent, name )
         super parent
         self['title'] = self['directoryName'] = name
         self['src'] = self['dest'] = name + File::SEPARATOR
       end
 
+
+      def []( name )
+        if name == 'indexFile' && !metainfo.has_key?( 'indexFile' )
+          process_dir_index self
+        end
+        super
+      end
+
+
+      def process_dir_index( dirNode )
+        node, created = UPS::Registry['Page Handler'].get_page_node( indexFile, dirNode )
+        if created
+          self.logger.warn { "No directory index file found for directory <#{dirNode.recursive_value( 'src' )}>" }
+          dirNode['indexFile'] = nil
+        else
+          self.logger.info { "Directory index file for <#{dirNode.recursive_value( 'src' )}> => <#{node['title']}>" }
+          dirNode['indexFile'] = node
+          node.each do |child| child['directoryName'] ||= dirNode['directoryName'] end
+        end
+      end
+
+
+      def indexFile
+        if !defined? @@indexFile
+          item = UPS::Registry['Configuration'].configParams[DirHandler::NAME]['indexFile']
+          @@indexFile = item.value
+        end
+        @@indexFile
+      end
     end
 
 
@@ -45,11 +75,9 @@ module FileHandlers
 
     attr_reader :indexFile
 
-
     def init
       @indexFile = UPS::Registry['Configuration'].get_config_value( NAME, 'indexFile', 'index.html' )
       UPS::Registry['File Handler'].extensions[:dir] = self
-      UPS::Registry['File Handler'].add_msg_listener( :AFTER_DIR_READ, method( :process_dir_index ) )
     end
 
 
@@ -77,23 +105,6 @@ module FileHandlers
       node = get_lang_node( node, refNode['lang'] )
       title ||=  node['directoryName']
       super( node, refNode, title )
-    end
-
-
-    #######
-    private
-    #######
-
-
-    def process_dir_index( dirNode )
-      node, created = UPS::Registry['Page Handler'].get_page_node( @indexFile, dirNode )
-      if created
-        self.logger.warn { "No directory index file found for directory <#{dirNode.recursive_value( 'src' )}>" }
-      else
-        self.logger.info { "Directory index file for <#{dirNode.recursive_value( 'src' )}> => <#{node['title']}>" }
-        dirNode['indexFile'] = node
-        node.each do |child| child['directoryName'] ||= dirNode['directoryName'] end
-      end
     end
 
   end

@@ -72,3 +72,4 @@ W add option to lang tag: showAlways -> display lang menu when only one item wou
 W handle configuration options for tags uniformly (default configuration and per tag configuration)
 W add option to menu tag: showOnlyThisSubtree -> displays only one tree to a deeper level
 W redo TreeWalker -> tree should be walked separately for each registered plugin
+W add virtual menu nodes for external html files

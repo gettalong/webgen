@@ -26,19 +26,17 @@ Or you could use Rake and substitute the above commands with this:
  $ rake install
 
 Or you could install webgen the "GEM way":
- $ gem -i webgen-VERSION.gem
-
-where VERSION is the version of webgen you are trying to install.
+ $ gem install webgen
 
 = Documentation
 
 Build the homepage of webgen to view the documentation. You can do this by invoking
- $ rake documentation
+ $ rake homepage
 
 in the root of the package or by running webgen manually in the +homepage+ directory:
  $ ruby -I../lib ../bin/webgen
 
-== Example
+= Example
 
 There is a demo website in the +testsite+ directory. Open a shell and change into it, then execute
 +webgen+ to generate the output files. After that have a look at the resulting pages.

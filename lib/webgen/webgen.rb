@@ -182,10 +182,10 @@ module Webgen
       params = UPS::Registry['Configuration'].configParams
       params.sort.each do |name, config|
         print "  - #{name}\n"
-        config.each do |paramValue|
-          print "      #{paramValue[0]}:".ljust(30) +"#{paramValue[1].inspect} (#{paramValue[2].inspect})\n"
+        config.sort.each do |key, item|
+          print "      #{item.name}:".ljust(30) +"#{item.value.inspect} (#{item.defaultValue.inspect})\n"
         end
-	print "\n"
+        print "\n"
       end
     end
 

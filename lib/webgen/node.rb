@@ -58,9 +58,13 @@ class Node
   # is normally a page file node, but the method should work for other nodes
   # too. The destNode can be any non virtual node.
   def get_relpath_to_node( destNode )
-    path = @parent.recursive_value( 'dest' )[UPS::Registry['Configuration'].outDirectory.length+1..-1]
-    path = path.gsub(/.*?(#{File::SEPARATOR})/, "..#{File::SEPARATOR}")
-    path += destNode.parent.recursive_value( 'dest' )[UPS::Registry['Configuration'].outDirectory.length+1..-1] unless destNode.parent.nil?
+    if destNode['external']
+      path = ''
+    else
+      path = @parent.recursive_value( 'dest' )[UPS::Registry['Configuration'].outDirectory.length+1..-1]
+      path = path.gsub(/.*?(#{File::SEPARATOR})/, "..#{File::SEPARATOR}")
+      path += destNode.parent.recursive_value( 'dest' )[UPS::Registry['Configuration'].outDirectory.length+1..-1] unless destNode.parent.nil?
+    end
     path
   end
 
@@ -68,14 +72,14 @@ class Node
   # Returns the node identified by the given string relative to the current node.
   def get_node_for_string( destString, fieldname = 'dest' )
     if /^#{File::SEPARATOR}/ =~ destString
-      node = Node.root(self)
+      node = Node.root self
       destString = destString[1..-1]
     else
       node = self
       node = node.parent until node.kind_of? FileHandlers::DirHandler::DirNode
     end
 
-    destString.split(File::SEPARATOR).each do |element|
+    destString.split( File::SEPARATOR ).each do |element|
       case element
       when '..'
         node = node.parent
@@ -83,7 +87,7 @@ class Node
         node = node.find do |child| /^#{element}#{File::SEPARATOR}?$/ =~ child[fieldname] end
       end
       if node.nil?
-        self.logger.error { "Could not get destination node '#{destString}' for <#{metainfo['src']}>, searching field #{fieldname}" }
+        self.logger.warn { "Could not get destination node '#{destString}' for <#{metainfo['src']}>, searching field #{fieldname}" }
         return
       end
     end

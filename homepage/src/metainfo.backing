@@ -9,7 +9,14 @@ download.html:
   en:
     title: Download &amp; Installation
     inMenu: true
+    menuOrder: 2
+
+api.html:
+  en:
+    dest: rdoc/index.html
+    title: API Reference
     menuOrder: 3
+    inMenu: true
 
 documentation/index.html:
   en:
@@ -102,3 +109,7 @@ documentation/tags/includefile.html:
     title: Include File Tag
     inMenu: true
 
+documentation/tags/executecommand.html:
+  en:
+    title: Execute Command Tag
+    inMenu: true

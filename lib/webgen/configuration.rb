@@ -21,6 +21,7 @@
 #
 
 require 'yaml'
+require 'ostruct'
 require 'log4r'
 require 'log4r/yamlconfigurator'
 require 'util/ups'
@@ -28,7 +29,7 @@ require 'util/ups'
 
 module Webgen
 
-  Version = "0.1.1"
+  Version = "0.2.0"
   Description = "Webgen is a template based web page generator."
 
   class WebgenConfigurationPlugin < UPS::Plugin
@@ -74,8 +75,8 @@ module Webgen
     def get_config_value( pluginName, key, defaultValue )
       value = @pluginData[pluginName][key] if @pluginData.has_key?( pluginName ) && @pluginData[pluginName].has_key?( key )
       value ||= defaultValue
-      @configParams[pluginName] ||= Array.new
-      @configParams[pluginName].push [key, value, defaultValue]
+      @configParams[pluginName] ||= Hash.new
+      @configParams[pluginName][key] = OpenStruct.new( :name => key, :value => value, :defaultValue => defaultValue )
       value
     end
 

@@ -68,7 +68,7 @@ module Tags
         self.logger.error { "Given file <#{filename}> does not exist (tag specified in <#{refNode.recursive_value( 'src' )}>" }
       end
 
-      return "<pre class=\"webgen-file\">\n" + content + "</pre>"
+      content
     end
 
     UPS::Registry.register_plugin IncludeFileTag

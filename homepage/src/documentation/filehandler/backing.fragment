@@ -5,6 +5,9 @@
 description files do no support in-file meta information. Therefore backing files are used to set
 meta information for these files. However, meta informatin can be set for any page description files.</p>
 
+<p>Backing file can also be used to add virtual pages and directories. For more information have a
+look at the <a href="{relocatable: /api.html}">API documentation</a>.</p>
+
 <p>One file type for which such files are necessary are <a href="{relocatable: htmlfragment.html}">HTML
 fragment files</a>.</p>
 

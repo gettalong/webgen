@@ -46,7 +46,14 @@ module FileHandlers
   # specify meta information for files which are in one of the parent directories of the backing
   # file. These backing files are very useful if you are using page description files which do not
   # support meta information, e.g. HTML fragment files.
-  class PageFileBacking < DefaultHandler
+  #
+  # Using backing files you can add virtual files and directories. If the file specified in the
+  # entry does not exist, a virtual page node for that entry will be created. This will also create
+  # the whole directory tree this virtual node is in. This allows you, for example, to add external
+  # items to the menu. You need to specify the +dest+ meta information which points to the actual
+  # location of the referenced page. If the virtual page references an external page, you have to
+  # add the +external+ meta information (i.e. set +external+ to +true+).
+  class BackingFileHandler < DefaultHandler
 
     NAME = "Backing File Handler"
     SHORT_DESC = "Handles backing files for page file"
@@ -93,12 +100,99 @@ module FileHandlers
             self.logger.info { "Setting meta info data on file <#{langFile.recursive_value( 'dest' )}>" }
             langFile.metainfo.update fileData
           end
+        else
+          add_virtual_node( dirNode, filename, data )
         end
       end
     end
 
+
+    def add_virtual_node( dirNode, path, data )
+      dirname = File.dirname( path ).sub( /^.$/, '' )
+      filename = File.basename path
+      dirNode = create_path( dirname, dirNode )
+
+      data.each do |language, filedata|
+        filedata['lang'] = language
+        pageNode = UPS::Registry[VirtualPageHandler::NAME].create_node( filename, dirNode )
+        unless pageNode.nil?
+          pageNode['processor'] = UPS::Registry[VirtualPageHandler::NAME]
+          dirNode.add_child pageNode
+        end
+
+        pageNode, created = UPS::Registry[VirtualPageHandler::NAME].get_page_node( filename, dirNode )
+        node = UPS::Registry[VirtualPageHandler::NAME].get_lang_node( pageNode, language )
+        node.metainfo.update filedata
+        self.logger.info { "Created virtual node '#{filename}' (#{language}) in <#{dirNode.recursive_value( 'dest' )}> referencing '#{node['dest']}'" }
+      end
+    end
+
+
+    def create_path( dirname, dirNode )
+      if /^#{File::SEPARATOR}/ =~ dirname
+        node = Node.root dirNode
+        dirname = dirname[1..-1]
+      else
+        node = dirNode
+      end
+
+      parent = node
+      dirname.split( File::SEPARATOR ).each do |element|
+        case element
+        when '..'
+          node = node.parent
+        else
+          node = node.find do |child| /^#{element}#{File::SEPARATOR}?$/ =~ child['src'] end
+        end
+        if node.nil?
+          node = FileHandlers::DirHandler::DirNode.new( parent, element )
+          node['processor'] = UPS::Registry[VirtualDirHandler::NAME]
+          parent.add_child node
+          self.logger.info { "Created virtual directory <#{node.recursive_value( 'dest' )}>" }
+        end
+        parent = node
+      end
+
+      return node
+    end
+
   end
 
-  UPS::Registry.register_plugin PageFileBacking
+
+  # Handles virtual directories, that is, directories that do not exist in the source tree.
+  class VirtualDirHandler < DirHandler
+
+    NAME = "Virtual Dir Handler"
+    SHORT_DESC = "Handles virtual directories"
+
+    def init
+    end
+
+    def write_node( node )
+    end
+
+  end
+
+  # Handles virtual pages, that is, pages that do not exist in the source tree.
+  class VirtualPageHandler < PagePlugin
+
+    NAME = "Virtual Page Handler"
+    SHORT_DESC = "Handles virtual pages"
+
+    def init
+    end
+
+    def get_file_data( name )
+      {}
+    end
+
+    def write_node( node )
+    end
+
+  end
+
+  UPS::Registry.register_plugin VirtualPageHandler
+  UPS::Registry.register_plugin VirtualDirHandler
+  UPS::Registry.register_plugin BackingFileHandler
 
 end

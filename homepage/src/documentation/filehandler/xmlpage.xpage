@@ -10,7 +10,7 @@
       <p>The XML page handler is used for handling XML page description files. The source of this
       page is an XML page description file and looks like this:</p>
 
-      {includeFile: xmlpage.xpage}
+      <pre class="webgen-file">{includeFile: xmlpage.xpage}</pre>
 
       As you can see, meta information can be specified in this type of page description file.
     </div>

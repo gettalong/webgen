@@ -69,13 +69,22 @@ task :clean do
 end
 
 
+CLOBBER << "homepage/output" << "homepage/webgen.log"
+desc "Builds the homepage which includes the documentation"
+task :homepage => [:rdoc] do
+  Dir.chdir("homepage")
+  ruby %{-I../lib ../bin/webgen -v 3 }
+  Dir.chdir("..")
+end
+
 rd = Rake::RDocTask.new do |rdoc|
-  rdoc.rdoc_dir = 'rdoc'
+  rdoc.rdoc_dir = 'homepage/output/rdoc'
   rdoc.title    = "Webgen"
   rdoc.options << '--line-numbers' << '-m README'
   rdoc.rdoc_files.include( 'README' )
   rdoc.rdoc_files.include( 'lib/**/*.rb' )
 end
+
 
 
 Rake::TestTask.new do |t|
@@ -97,12 +106,15 @@ PKG_FILES = FileList.new( [
                             'bin/**/*',
                             'lib/**/*.rb',
                             'testsite/**/*',
-                            'tests/**/*'
+                            'tests/**/*',
+                            'homepage/**/*'
                           ]) do |fl|
   fl.exclude( /\bsvn\b/ )
   fl.exclude( 'testsite/output' )
   fl.exclude( 'testsite/coverage' )
   fl.exclude( 'testsite/webgen.log' )
+  fl.exclude( 'homepage/output' )
+  fl.exclude( 'homepage/webgen.log' )
 end
 
 if !defined? Gem
@@ -137,7 +149,7 @@ else
 
     s.has_rdoc = true
     s.extra_rdoc_files = rd.rdoc_files.reject do |fn| fn =~ /\.rb$/ end.to_a
-    s.rdoc_options = rd.options
+    s.rdoc_options = ['--line-numbers', '-m README']
 
     #### Author and project details
 

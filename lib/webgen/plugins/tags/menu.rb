@@ -67,7 +67,7 @@ module Tags
 
         # find the first menuOrder entry in the page files
         node = node['indexFile'] if node.kind_of? FileHandlers::DirHandler::DirNode
-        node = node.find do |child| child['menuOrder'] end if node.kind_of? FileHandlers::PagePlugin::PageNode
+        node = node.find do |child| child['menuOrder'].to_s.to_i != 0 end if node.kind_of? FileHandlers::PagePlugin::PageNode
         value ||= node['menuOrder'].to_s.to_i unless node.nil?
 
         # fallback value
