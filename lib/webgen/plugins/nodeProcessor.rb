@@ -18,4 +18,3 @@ module NodeProcessor
     end
 
 end
-

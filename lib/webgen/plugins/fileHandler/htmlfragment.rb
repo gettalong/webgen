@@ -21,4 +21,3 @@ class HTMLPage < PagePlugin
 end
 
 UPS::Registry.register_plugin HTMLPage
-

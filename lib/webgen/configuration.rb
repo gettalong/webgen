@@ -6,9 +6,9 @@ require 'util/ups'
 
 module Webgen
 
-    VERSION = "0.1.0"
-    NAME = "Webgen"
-    DESCRIPTION = "Webgen is a template based web page generator."
+    Version = "0.1.0"
+    VCId = "$Id$"
+    Description = "Webgen is a template based web page generator."
 
 
     class WebgenConfigurationPlugin < UPS::Plugin

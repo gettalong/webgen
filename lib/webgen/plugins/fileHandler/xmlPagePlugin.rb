@@ -33,4 +33,3 @@ class XMLPagePlugin < PagePlugin
 end
 
 UPS::Registry.register_plugin XMLPagePlugin
-

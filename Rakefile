@@ -14,8 +14,8 @@ require 'rake/testtask'
 
 # General actions  ##############################################################
 
-if `ruby -Ilib ./bin/webgen --version` =~ /\S+$/
-  PKG_VERSION = $&
+if `ruby -Ilib ./bin/webgen --version` =~ /\s([.0-9]*?)(\s*\(.*\))?$/
+  PKG_VERSION = $1
 else
   PKG_VERSION = "0.0.0"
 end

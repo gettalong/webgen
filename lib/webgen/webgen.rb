@@ -13,6 +13,7 @@ module Webgen
             @solution = substitute_entries( id, 1, args )
         end
 
+
         def substitute_entries( id, msgIndex, *args )
             args.flatten!
             @@messageMap[id][msgIndex].gsub( /%(\d+)/ ) do |match|
@@ -68,18 +69,24 @@ module Webgen
             opts = OptionParser.new do |opts|
                 opts.summary_width = 25
                 opts.summary_indent = '  '
-                opts.program_name = Webgen::NAME
-                opts.version = Webgen::VERSION
 
-                opts.banner << "\n#{Webgen::DESCRIPTION}\n\n"
+                opts.banner = "Usage: webgen [options]\n#{Webgen::Description}"
 
-                opts.on_tail( "--help", "-h", "Display this help screen" ) { puts opts; exit }
+                opts.separator ""
+                opts.separator "Configuration options:"
+
                 opts.on( "--config-file FILE", "-c", String, "The configuration file which should be used" ) { |config.configFile| }
-                opts.on( "--source-dir DIR", "-s", String, "The  directory from where the files are read" ) { |config.srcDirectory| }
+                opts.on( "--source-dir DIR", "-s", String, "The directory from where the files are read" ) { |config.srcDirectory| }
                 opts.on( "--output-dir DIR", "-o", String, "The directory where the output should go" ) { |config.outDirectory| }
+                opts.on( "--verbosity LEVEL", "-v", Integer, "The verbosity level" ) { |config.verbosityLevel| }
+
+                opts.separator ""
+                opts.separator "Other options:"
+
                 opts.on( "--list-plugins", "-p", "List all the plugins and information about them" ) { main = method( :runListPlugins ) }
                 opts.on( "--list-configuration", "-e", "List all plugin configuration parameters" ) { main = method( :runListConfiguration ) }
-                opts.on( "--verbosity LEVEL", "-v", Integer, "The verbosity level" ) { |config.verbosityLevel| }
+                opts.on_tail( "--help", "Display this help screen" ) { puts opts; exit }
+                opts.on_tail( "--version", "Show version" ) { puts "Webgen #{Webgen::Version} (#{Webgen::VCId})"; exit }
             end
 
             begin
@@ -92,6 +99,7 @@ module Webgen
 
             main
         end
+
 
         def runMain
             Log4r::Logger['default'].info "Starting Webgen..."

@@ -60,7 +60,7 @@ W file name syntax: [0-9].name-with_blanks.[de].[EXTENSION] -> title: Name with 
 W implement order tag for setting menu order
 W use rake, gem and setup.rb for installing and packaging
 W prevent creation of log file if nothing is done (on -p, -e, --help...)
-W put main and configuration class into the Thaumaturge module
+W put main and configuration class into the Webgen module
 W use code coverage tool (-rcoverage) for checking the coverage on the testSite (use with rake)
 W document existing files (RDOC)
 W check out http://validator.w3.org/check/referer -> use xmllint from libxml2 package

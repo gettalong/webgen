@@ -127,4 +127,3 @@ end
 
 
 UPS::Registry.register_plugin FileHandler
-
