@@ -4,10 +4,8 @@ class ThgException < RuntimeError
 	attr_reader :solution
 
 	def initialize(*args)
-		# set message
 		super(substitute_entries(args[0], 0, args[1..-1]))
-		# set solution
-		@solution = substitute_entries(args[0], 1, args[1..-1])
+		@solution = substitute_entries(args[0], 1, args[1..-1]) 
 	end
 
 	def substitute_entries(id, msgIndex, *args)

@@ -80,7 +80,7 @@ class XMLPagePlugin < UPS::StandardPlugin
 		cfg = Configuration.instance
 		
 		if !File.exists?(node.abs_src + @directoryIndexFile)
-			Configuration.instance.log(Configuration::WARNING, "directory index file not found")
+			Configuration.instance.warning("directory index file not found")
 		end
 
 		node.metainfo['templateFile'] = node.abs_src + @templateFile

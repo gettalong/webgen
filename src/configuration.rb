@@ -72,6 +72,14 @@ class Configuration
 		end
 	end
 
+	def warning(str)
+		log(WARNING, str)
+	end
+	
+	def debug(str)
+		log(DEBUG, str)
+	end
+
 	#######
 	private
 	#######

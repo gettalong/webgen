@@ -68,7 +68,7 @@ class FileHandler < UPS::Controller
 			extension = srcName[/\..*$/][1..-1]
 
 			if !@extensions.has_key?(extension)
-				Configuration.instance.log(Configuration::WARNING, "  no plugin for file -> ignored")
+				Configuration.instance.warning("no plugin for file -> ignored")
 				node = nil;
 			else
 				node = @extensions[extension].build_node(srcName, parent)

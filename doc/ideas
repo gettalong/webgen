@@ -268,7 +268,8 @@
   be used to better visualize the template files, dummy tag is ignored
   completely in generation and elsewhere
 
-
+  - relocatable plugin: performs a substitution on the href attribute of
+  the surrounded tag so that relative references are correct.
 
 Design issues:
 
