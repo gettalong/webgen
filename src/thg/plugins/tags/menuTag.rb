@@ -1,7 +1,6 @@
-require 'ups/ups'
-require 'node'
-require 'thgexception'
-require 'plugins/tags/tags'
+require 'util/ups'
+require 'thg/node'
+require 'thg/plugins/tags/tags'
 
 class MenuNode < Node
 

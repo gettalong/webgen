@@ -1,7 +1,5 @@
-require 'node'
-require 'plugins/nodeProcessor'
-require 'plugins/fileHandler/pagePlugin'
-require 'plugins/fileHandler/fileHandler'
+require 'thg/plugins/nodeProcessor'
+require 'thg/plugins/fileHandler/pagePlugin'
 
 class DirNode < Node
 

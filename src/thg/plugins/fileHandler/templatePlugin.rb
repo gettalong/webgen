@@ -1,9 +1,6 @@
-require 'ups/ups'
-require 'thgexception'
-require 'node'
-require 'plugins/nodeProcessor'
-require 'plugins/fileHandler/fileHandler'
-require 'plugins/treeTransformer'
+require 'thg/plugins/nodeProcessor'
+require 'thg/plugins/fileHandler/fileHandler'
+require 'thg/plugins/treeTransformer'
 
 class TemplatePlugin < UPS::Plugin
 

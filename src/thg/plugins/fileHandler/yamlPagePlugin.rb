@@ -1,5 +1,5 @@
 require 'yaml'
-require 'plugins/fileHandler/pagePlugin'
+require 'thg/plugins/fileHandler/pagePlugin'
 
 class YAMLPagePlugin < PagePlugin
 

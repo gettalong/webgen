@@ -1,6 +1,5 @@
-require 'ups/ups'
-require 'ups/listener'
-require 'log4r'
+require 'util/ups'
+require 'util/listener'
 
 class TreeTransformer < UPS::Plugin
 

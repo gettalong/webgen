@@ -1,5 +1,5 @@
 require 'rexml/document'
-require 'plugins/fileHandler/pagePlugin'
+require 'thg/plugins/fileHandler/pagePlugin'
 
 class XMLPagePlugin < PagePlugin
 

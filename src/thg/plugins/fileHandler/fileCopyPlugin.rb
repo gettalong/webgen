@@ -1,8 +1,6 @@
 require 'fileutils'
-require 'ups/ups'
-require 'node'
-require 'plugins/nodeProcessor'
-require 'plugins/fileHandler/fileHandler'
+require 'thg/plugins/nodeProcessor'
+require 'thg/plugins/fileHandler/fileHandler'
 
 class FileCopyPlugin < UPS::Plugin
 

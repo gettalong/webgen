@@ -1,7 +1,7 @@
-require 'ups/ups'
 require 'yaml'
 require 'log4r'
 require 'log4r/yamlconfigurator'
+require 'util/ups'
 
 LoggerConfiguration = <<EOF
 log4r_config:

@@ -1,6 +1,6 @@
-require 'ups/ups'
-require 'ups/listener'
-require 'log4r'
+require 'thg/node'
+require 'util/ups'
+require 'util/listener'
 
 class FileHandler < UPS::Plugin
 

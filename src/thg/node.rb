@@ -1,4 +1,4 @@
-require 'ups/composite'
+require 'util/composite'
 
 class Node
 

@@ -1,6 +1,5 @@
 require 'yaml'
-require 'ups/ups'
-require 'thgexception'
+require 'util/ups'
 
 class Tags < UPS::Plugin
 

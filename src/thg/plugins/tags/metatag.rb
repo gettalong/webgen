@@ -1,5 +1,5 @@
-require 'ups/ups'
-require 'plugins/tags/tags'
+require 'util/ups'
+require 'thg/plugins/tags/tags'
 
 class MetaTag < UPS::Plugin
 
