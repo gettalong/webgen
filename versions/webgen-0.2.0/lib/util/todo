@@ -1,0 +1,11 @@
+---- done ----
+
+* Create plugin controller
+* Create plugin for main routines
+* - do not distinguish between controllers and plugins
+  - implement controllers as plugins with class controller
+* implement loading with dependencies correctly
+* refactor ups:
+    - dependency loading via require
+    - remove idea of 'Controller'
+    - remove instance variable, use static instance instead

@@ -1,0 +1,7 @@
+Configuration:
+    srcDirectory: src
+    outDirectory: output
+    verbosityLevel: 2
+
+Copy Files:
+    types: [css, jpg, png]

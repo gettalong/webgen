@@ -1,0 +1,7 @@
+Configuration:
+    srcDirectory: src
+    outDirectory: output
+    verbosityLevel: 2
+
+File Copy Handler:
+    types: [css, jpg, png]

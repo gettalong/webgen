@@ -1,0 +1,12 @@
+<div class="section">
+<h2 class="section_header">Information</h2>
+
+<p>The meta tag is used to copy meta information verbatim to the output file. For example, if you
+define a meta information with the key <code>revision</code>, you could put the tag
+<code>\{revision: }</code> into the content part of the file and the value gets substituted
+automatically.</p>
+
+<p>Example: There is a meta information called 'dummyForMeta' defined for this page, so when this
+tag is used <code>\{dummyForMeta:}</code>, you get this '<code>{dummyForMeta:}</code>'.</p>
+
+</div>

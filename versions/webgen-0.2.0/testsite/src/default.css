@@ -1,0 +1,146 @@
+@media print {
+  body {
+    margin: 0px;
+  }
+
+  div#menu, div#footer {
+	display: none;
+  }
+
+}
+
+@media screen, projection {
+
+  html {
+	margin: 0px 10%;
+	background-color: #eee;
+  }
+
+  body {
+	margin: 0px;
+	padding: 0px;
+	background-color: #fff;
+	font-size: 12px;
+	font-family: Verdana, Arial, Helvetica;
+  }
+
+  /* General layout of the page */
+
+  #header, #footer {
+	width: 100%;
+	background-color: #8ad;
+	color: #fff;
+  }
+
+  #pagebody {
+	width: 100%;
+	background: url("images/bghack.png") repeat-y #fff;
+  }
+
+  #menu {
+	float: left;
+	width: 180px;
+	padding: 20px 0px 0px 20px;
+	background: url("images/bghack.png") repeat-y #fff;
+  }
+
+  #body {
+	margin-left: 200px;
+	padding: 20px;
+  }
+
+  #footer {
+	clear: both;
+	padding: 5px 0px;
+	text-align: center;
+  }
+
+
+  /* styling the header */
+
+  #navbar {
+	width: 100%;
+	font-size: 90%;
+  }
+
+  span#navtree, span#languages {
+	padding: 3px;
+	width: 45%;
+  }
+
+  span#navtree {
+	float: left;
+	text-align: left;
+  }
+
+  span#languages {
+	float: right;
+	text-align: right;
+  }
+
+  div#header h1 {
+	margin: 0px;
+	padding: 15px 2em;
+
+	font-size: 300%;
+	font-style: italic;
+	font-weight: normal;
+  }
+
+
+  /* styling the menu */
+
+  #menu a {
+	text-decoration: none;
+	color: #469;
+	font-weight: bold;
+	font-size: 130%;
+  }
+
+  #menu a:hover {
+	text-decoration: underline;
+  }
+
+  #menu .webgen-menuitem-selected {
+	background-color: #fff;
+	width: 90%;
+	border-right: 3px solid #8ad;
+  }
+
+  #menu .webgen-submenu {
+    background-color: #aaa;
+  }
+
+  #menu ul {
+	list-style-type: none;
+	padding: 0px;
+	margin-left: 10px;
+  }
+
+  #menu li > ul {
+	font-size: 95%;
+  }
+
+  #menu li {
+	margin: 0.5em 0px;
+  }
+
+  /* styling the content */
+
+  div.section {
+	margin-bottom: 30px;
+  }
+
+  h2.section_header {
+	padding: 0px;
+	border-bottom: 3px double #68b;
+
+	letter-spacing: 0.2em;
+	font-size: 150%;
+	font-weight: normal;
+	color: #68b;
+  }
+
+
+
+}

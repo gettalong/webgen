@@ -1,0 +1,52 @@
+/* use following things for a popup menu that is structured using
+   ul, li tags; build sub menus with style "sub"
+*/
+
+  div#menu ul {
+	padding: 0px;
+	margin: 0px;
+  }
+
+  div#menu ul ul {
+	display: none;
+  }
+
+  div#menu a {
+	display: block;
+	text-decoration: none;
+  }
+
+  div#menu li {
+	position: relative;
+	padding: 3px 5px;
+	margin: 0px;
+
+	border: 1px solid transparent;
+	list-style-type: none;
+  }
+
+  div#menu li.sub > a:after {
+	content: " \BB"; /* \BB = »,	&raquo;	&#187; */
+  }
+
+  div#menu li:hover {
+	background-color: #F0F0F0;
+	border-bottom: 1px solid #C00;
+  }
+
+  div#menu li.sub:hover {
+	width: 200%;
+	background-color: #F0F0F0;
+	z-index: 1;
+  }
+
+  div#menu li.sub:hover > ul {
+	display: block;
+	position: absolute;
+	left: 51%;
+	width: 49%;
+	top: 95%;
+	background-color: #FFF;
+	border: solid 1px #C8C8C8;
+	z-index: 1;
+  }
