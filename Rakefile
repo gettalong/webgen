@@ -85,9 +85,8 @@ rd = Rake::RDocTask.new do |rdoc|
 end
 
 
-Rake::TestTask.new do |t|
-  t.pattern = "tests/**/*.rb"
-  t.verbose = true
+task :test do |t|
+  ruby "-Ilib -Itest test/runtests.rb"
 end
 
 # Developer tasks ##############################################################

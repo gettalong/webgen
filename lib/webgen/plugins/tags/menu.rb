@@ -122,7 +122,7 @@ module Tags
         || level > get_param( 'subtreeLevel' ) \
         || ( level > get_param( 'level' ) \
              && ( node['node'].level > srcNode.level \
-                  || ( get_param( 'showCurrentSubtreeOnly' ) && !node['node'].in_subtree?( srcNode ) )
+                  || ( get_param( 'showCurrentSubtreeOnly' ) && !srcNode.in_subtree?( node['node'] ) )
                   )
              )
         return ''

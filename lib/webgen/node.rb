@@ -20,6 +20,7 @@
 #++
 #
 
+require 'webgen/logging'
 require 'util/composite'
 
 class Node
@@ -48,19 +49,23 @@ class Node
   # not be appended, but they are traversed nonetheless.
   def recursive_value( name, ignoreVirtual = true )
     value = ignoreVirtual && @metainfo['virtual'] ? '' : @metainfo[name]
+    if value.nil?
+      value = ''
+      self.logger.warn { "No meta information called '#{name}' for <#{metainfo['src']}>" }
+    end
     @parent.nil? ? value : @parent.recursive_value( name, ignoreVirtual ) + value
   end
 
 
-  # Returns the relative path from this node to the destNode. The current node
-  # is normally a page file node, but the method should work for other nodes
-  # too. The destNode can be any non virtual node.
+  # Return the relative path from this node to the destNode, virtual nodes are not used in the
+  # calculation. The destNode can be any non virtual node. If +destNode+ starts with http://, the
+  # relative path to it is the empty string.
   def relpath_to_node( destNode )
     if destNode['dest'] =~ /^http:\/\//
       path = ''
     else
-      from = @parent.recursive_value( 'dest' ).split( File::SEPARATOR )
-      to = destNode.parent.recursive_value( 'dest' ).split( File::SEPARATOR )
+      from = recursive_value( 'dest' ).split( '/' )[1..-2]
+      to = destNode.recursive_value( 'dest' ).split( '/' )[1..-2]
 
       while from.size > 0 and to.size > 0 and from[0] == to[0]
         from.shift
@@ -69,34 +74,41 @@ class Node
 
       from.fill( '..' )
       from.concat( to )
-      path = from.join( '/' ) + ( from.size > 0 ? '/' : '' )
+      path = from.join( '/' )
+      path = '.' if path == ''
     end
     path
   end
 
 
-  # Returns the node identified by +destString+ relative to the current node.
-  def node_for_string( destString, fieldname = 'dest' )
-    node = get_node_for_string( destString, fieldname )
+  # Return the node identified by +destString+ relative to the current node.
+  def node_for_string( destString )
+    node = get_node_for_string( destString )
     if node.nil?
-      self.logger.warn { "Could not get destination node '#{destString}' for <#{metainfo['src']}>, searching field #{fieldname}" }
+      self.logger.warn { "Could not get destination node '#{destString}' for <#{metainfo['src']}>" }
     end
     node
   end
 
-  def node_for_string?( destString, fieldname = 'dest' )
-    get_node_for_string( destString, fieldname ) != nil
+  # Check if there is a node for +destString+.
+  def node_for_string?( destString )
+    get_node_for_string( destString ) != nil
   end
 
-  # Returns the level of the node. The level specifies how deep the node is in the hierarchy.
+  # Return the level of the node. The level specifies how deep the node is in the hierarchy.
   def level( ignoreVirtual = true )
-    recursive_value( 'dest', ignoreVirtual ).count( File::SEPARATOR ) #TODO redo without using recursive_value
+    if self.parent.nil?
+      0
+    else
+      self.parent.level( ignoreVirtual ) + ( @metainfo['virtual'] && ignoreVirtual ? 0 : 1 )
+    end
   end
 
   # Checks if the current node is in the subtree in which the supplied node is. This is done by
   # analyzing the paths of the two nodes.
   def in_subtree?( node )
-    /^#{recursive_value( 'dest' )}/ =~ node.recursive_value( 'dest' )
+    begin node = node.parent end while node['virtual']
+    /^#{node.recursive_value( 'dest' )}/ =~ recursive_value( 'dest' )
   end
 
   # Returns the root node for +node+.
@@ -109,26 +121,24 @@ class Node
   private
   #######
 
-  def get_node_for_string( destString, fieldname )
-    if /^#{File::SEPARATOR}/ =~ destString
+  def get_node_for_string( destString )
+    if /^\// =~ destString
       node = Node.root( self )
       destString = destString[1..-1]
     else
-      node = self
-      node = node.parent until node.kind_of?( FileHandlers::DirHandler::DirNode )
+      node = self.parent || self
+      node = node.parent while !node.nil? && node['virtual']
     end
 
-    destString.split( File::SEPARATOR ).each do |element|
-      case element
-      when '..'
-        node = node.parent
-      else
-        node = node.find do |child| /^#{element}#{File::SEPARATOR}?$/ =~ child[fieldname] end
-      end
+    destString.split( '/' ).each do |element|
       return nil if node.nil?
+      case element
+      when '..' then node = node.parent
+      else node = node.find do |child| /^#{element}\/?$/ =~ child['dest'] end
+      end
     end
 
-    return node
+    node
   end
 
 end
