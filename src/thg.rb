@@ -14,7 +14,7 @@ ThgException.add_entry :ARG_PARSE_ERROR,
 def runMain
 	# load all the files in src dir and build tree
 	tree = UPS::PluginRegistry.instance['fileHandler'].build_tree
-	Configuration.instance.log(2, "Tree: #{tree.inspect}")
+	Configuration.instance.log(Configuration::DEBUG, "Tree: #{tree.inspect}")
 	
 	# execute tree transformer plugins
 	UPS::PluginRegistry.instance['treeTransformer'].execute(tree)

@@ -1,9 +1,20 @@
+require 'term/ansicolor'
 require 'ups'
 require 'rexml/document'
 require 'singleton'
 require 'thgexception'
 
+class AnsiColor
+	class << self
+		include Term::ANSIColor
+	end
+end
+
 class Configuration
+
+	NORMAL  = 1
+	WARNING = 2
+	DEBUG   = 3
 
 	ThgException.add_entry :CFG_ENTRY_NOT_FOUND,
 		"%0 entry in configuration file %1 not found", 
@@ -14,7 +25,7 @@ class Configuration
 		"create the configuration file (current search path: %0)"
 
 	include Singleton
-	
+
 	attr_accessor :srcDirectory
 	attr_accessor :outDirectory	
 	attr_accessor :verbosityLevel
@@ -49,7 +60,16 @@ class Configuration
 	end
 
 	def log(level, str)
-		print Time.now.strftime('%Y%m%d%H%M%S') << ' >> ' << str << "\n" if @verbosityLevel >= level
+		if @verbosityLevel >= level
+			print Time.now.strftime('%Y%m%d%H%M%S') << ' >> ' 
+			case level
+			when 2
+				print AnsiColor.green, 'WARNING: '
+			when 3
+				print AnsiColor.red, 'DEBUG: '
+			end
+			print str, AnsiColor.reset, "\n" 
+		end
 	end
 
 	#######

@@ -36,7 +36,7 @@ class DebugTreePrinter < UPS::StandardPlugin
 
 	def execute(node, level = 0)
 		# just print all the nodes
-		Configuration.instance.log(2, "".ljust(level*4) << "#{node.title}: #{node.src} -> #{node.url}")
+		Configuration.instance.log(Configuration::DEBUG, "".ljust(level*4) << "#{node.title}: #{node.src} -> #{node.url}")
 		if node.children.length > 0
 			node.each { |child|
 				execute(child, level + 1)

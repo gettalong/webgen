@@ -8,10 +8,6 @@ class XMLPagePlugin < UPS::StandardPlugin
 		"the tag <%0> has not be found in the <meta> section of the page file %1",
 		"<%0> is not optional, you have to add it to the page file"
 
-	ThgException.add_entry :PAGE_DIR_INDEX_FILE_NOT_FOUND,
-		"directory index file does not exist for %0",
-		"create an %1 in that directory"
-	
 	ThgException.add_entry :PAGE_TEMPLATE_FILE_NOT_FOUND,
 		"template file in root directory not found",
 		"create an %0 in the root directory"
@@ -84,8 +80,7 @@ class XMLPagePlugin < UPS::StandardPlugin
 		cfg = Configuration.instance
 		
 		if !File.exists?(node.abs_src + @directoryIndexFile)
-			raise ThgException.new(ThgException::PAGE_DIR_INDEX_FILE_NOT_FOUND,
-								   (node.parent.nil? ? 'root directory' : node.abs_src), @directoryIndexFile)
+			Configuration.instance.log(Configuration::WARNING, "directory index file not found")
 		end
 
 		node.metainfo['templateFile'] = node.abs_src + @templateFile

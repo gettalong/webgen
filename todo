@@ -24,3 +24,4 @@ W implement hooks mechanism
 W implement page templates using hooks (after dir read store reference to template file in hash)
 W review Node class, remove all plugin dependent things
 W review configuration class, remove all plugin dependent things
+W check if ansi color output is better (for warnings, debug, etc), should be able to turn off

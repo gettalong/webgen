@@ -46,7 +46,7 @@ class FileHandler < UPS::Controller
 
 	def write_tree(node)
 		name = File.join(Configuration.instance.outDirectory, node.abs_url)
-		Configuration.instance.log(1, "Writing #{name}")
+		Configuration.instance.log(Configuration::NORMAL, "Writing #{name}")
 
 		node.processor.write_node(node, name)
 
@@ -62,13 +62,13 @@ class FileHandler < UPS::Controller
 	#######
 
 	def build_entry(srcName, parent)
-		Configuration.instance.log(1, "Processing #{srcName}")
+		Configuration.instance.log(Configuration::NORMAL, "Processing #{srcName}")
 
 		if FileTest.file?(srcName)
 			extension = srcName[/\..*$/][1..-1]
 
 			if !@extensions.has_key?(extension)
-				Configuration.instance.log(1, "  no plugin for file -> ignored")
+				Configuration.instance.log(Configuration::WARNING, "  no plugin for file -> ignored")
 				node = nil;
 			else
 				node = @extensions[extension].build_node(srcName, parent)
