@@ -43,3 +43,4 @@ class ThgException < RuntimeError
 		"change the name of the symbol"
 
 end
+

@@ -1,20 +1,18 @@
-require 'term/ansicolor'
 require 'ups'
 require 'rexml/document'
 require 'singleton'
 require 'thgexception'
+require 'log4r'
 
-class AnsiColor
-	class << self
-		include Term::ANSIColor
-	end
-end
+# Logger configuration
+Log4r::Logger.root.level = Log4r::INFO
+
+
+
+
+
 
 class Configuration
-
-	NORMAL  = 1
-	WARNING = 2
-	DEBUG   = 3
 
 	ThgException.add_entry :CFG_ENTRY_NOT_FOUND,
 		"%0 entry in configuration file %1 not found", 
@@ -58,31 +56,6 @@ class Configuration
 
 	def load_plugins
 		UPS::PluginRegistry.instance.load_plugins(@homeDir+'/plugins')
-	end
-
-	def log(level, str)
-		if @verbosityLevel >= level
-			s = Time.now.strftime('%Y%m%d%H%M%S') << ' >> ' 
-			case level
-			when 2
-				s += AnsiColor.green + 'WARNING: '
-			when 3
-				s += AnsiColor.red + 'DEBUG: '
-			end
-			s += str + AnsiColor.reset + "\n" 
-			if @ansiColorUsed != 1
-				s = AnsiColor.uncolored(s)
-			end
-			print s
-		end
-	end
-
-	def warning(str)
-		log(WARNING, str)
-	end
-	
-	def debug(str)
-		log(DEBUG, str)
 	end
 
 	#######
