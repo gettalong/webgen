@@ -17,7 +17,7 @@
 
     <div id="pagebody">
       <div id="menu">
-        {menu: {level: 1}}
+        {menu: }
       </div>
 
       <div id="body">

@@ -26,21 +26,24 @@ require 'webgen/plugins/tags/tags'
 module Tags
 
   # Generates a list with all the languages for a page.
-  class LangTag < UPS::Plugin
+  class LangTag < DefaultTag
 
     NAME = 'Language Tag'
-    SHORT_DESC = 'Provides a link to translations of the page'
+    SHORT_DESC = 'Provides links to translations of the page'
+
 
     def init
-      @separator = UPS::Registry['Configuration'].get_config_value( NAME, 'separator', ' | ' )
+      register_config_value( 'separator', ' | ' )
+      register_config_value( 'showSingleLang', true )
       UPS::Registry['Tags'].tags['lang'] = self
     end
 
 
-    def process_tag( tag, content, node, refNode )
-      node.parent.children.sort { |a, b| a['lang'] <=> b['lang'] }.collect do |node|
+    def process_tag( tag, node, refNode )
+      output = node.parent.children.sort do |a, b| a['lang'] <=> b['lang'] end.collect do |node|
         node['processor'].get_html_link( node, node, node['lang'] )
-      end.join(@separator)
+      end.join( get_config_value( 'separator' ) )
+      return ( get_config_value( 'showSingleLang' ) || node.parent.children.length > 1 ? output : "" )
     end
 
   end

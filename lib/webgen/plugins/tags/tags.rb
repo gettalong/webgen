@@ -66,23 +66,98 @@ module Tags
         if $1.length % 2 == 1
           backslashes + $2
         else
-          tagValue = YAML::load( "- #{$4}" )[0]
           self.logger.info { "Replacing tag #{match} in <#{node.recursive_value( 'dest' )}>" }
-          if @tags.has_key? $3
-            tagProcessor = @tags[$3]
-          elsif @tags.has_key? :default
-            tagProcessor = @tags[:default]
-          else
-            raise Webgen::WebgenError.new( :UNKNOWN_TAG, $3 )
-          end
-          backslashes + substitute_tags( tagProcessor.process_tag( $3, tagValue, node, refNode ), node, node ).to_s
+          processor = get_tag_processor $3
+          processor.set_tag_config( YAML::load( "- #{$4}" )[0] )
+          backslashes + substitute_tags( processor.process_tag( $3, node, refNode ), node, node )
         end
       end
       content
     end
 
+    #######
+    private
+    #######
+
+    # Returns the tag processor for +tag+ or throws an error if +tag+ is unkown.
+    def get_tag_processor( tag )
+      if @tags.has_key? tag
+        return @tags[tag]
+      elsif @tags.has_key? :default
+        return @tags[:default]
+      else
+        raise Webgen::WebgenError.new( :UNKNOWN_TAG, tag )
+      end
+    end
+
   end
 
+
+  # Base class for all tag plugins. The base class provides a default mechanism for retrieving
+  # configuration data from either the configuration file or the tag itself. This behaviour can be
+  # overridden in a subclass.
+  class DefaultTag < UPS::Plugin
+
+    Webgen::WebgenError.add_entry :TAG_PARAMETER_INVALID,
+      "Invalid tag parameter configuration with type %0 (should be type %1) and value %2",
+      "Add or correct the parameter value"
+
+
+    # Sets the configuration parameters for the next #process_tag call. The configuration, if
+    # specified, is taken from the tag itself.
+    def set_tag_config( config )
+      @curConfig = {}
+      case config
+      when Hash
+        config.each do |key, value|
+          if @defaultConfig.has_key? key
+            @curConfig[key] = value
+            self.logger.debug { "Setting parameter '#{key}' for tag #{self.class.const_get( :NAME )}" }
+          else
+            self.logger.warn { "Invalid parameter '#{key}' for tag #{self.class.const_get( :NAME )}" }
+          end
+        end
+      when NilClass
+        # ignore, no tag configuration
+      else
+        Webgen::WebgenError.new( :TAG_PARAMETER_INVALID, config.class.name, 'Hash or NilClass', config )
+      end
+    end
+
+
+    # Default implementation for processing a tag.
+    #
+    # Has to be overridden by the subclass!!!
+    def process_tag( tag, node, refNode )
+      raise "not implemented"
+    end
+
+    #######
+    private
+    #######
+
+    # Registers the configuration parameter +name+ for the tag. The Configuration plugin is used to
+    # get the value for the parameter. If no value could be found, +defaultValue+ is used.
+    def register_config_value( name, defaultValue )
+      @defaultConfig ||= {}
+      @defaultConfig[name] = UPS::Registry['Configuration'].get_config_value( self.class.const_get( :NAME ), name, defaultValue )
+    end
+
+
+    # Retrieves the parameter value for +name+. The value is taken from the current tag if the
+    # parameter is specified there or the default value set in #register_config_value is used.
+    def get_config_value( name )
+      if !@curConfig.nil? && @curConfig.has_key?( name )
+        return @curConfig[name]
+      elsif @defaultConfig.has_key?( name )
+        return @defaultConfig[name]
+      else
+        self.logger.error { "Referencing invalid configuration value '#{name}' in class #{self.class.name}" }
+        return ''
+      end
+    end
+
+  end
 
   UPS::Registry.register_plugin Tags
 

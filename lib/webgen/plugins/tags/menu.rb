@@ -37,7 +37,7 @@ module Tags
   # [<b>level</b>]
   #   The depth of the menu. A level of one only displays the top level menu files. A level of two
   #   also displays the menu files in the direct subdirectories and so on.
-  class MenuTag < UPS::Plugin
+  class MenuTag < DefaultTag
 
 
     # Specialised node class for the menu.
@@ -82,19 +82,18 @@ module Tags
     NAME = 'Menu Tag'
     SHORT_DESC = 'Builds up a menu'
 
-    Webgen::WebgenError.add_entry :TAG_PARAMETER_INVALID,
-                                   "Missing or invalid parameter value for tag %0 in <%1>: %2",
-                                   "Add or correct the parameter value"
-
     def init
-      @submenuTag = UPS::Registry['Configuration'].get_config_value( NAME, 'submenuTag', 'ul' )
-      @itemTag = UPS::Registry['Configuration'].get_config_value( NAME, 'itemTag', 'li' )
+      register_config_value( 'submenuTag', 'ul' )
+      register_config_value( 'itemTag', 'li' )
+      register_config_value( 'level', 1 )
+      register_config_value( 'subtreeLevel', 3 )
+      register_config_value( 'showCurrentSubtreeOnly', true )
       UPS::Registry['Tags'].tags['menu'] = self
     end
 
 
-    def process_tag( tag, content, node, refNode )
-      if !defined? @menuTree
+    def process_tag( tag, node, refNode )
+      unless defined? @menuTree
         @menuTree = create_menu_tree( Node.root( node ), nil )
         #TODO only call DebugTreePrinter
         unless @menuTree.nil?
@@ -103,23 +102,29 @@ module Tags
           UPS::Registry['Tree Walker'].execute @menuTree
         end
       end
-      if content.nil? || !content.has_key?( 'level' )
-        raise Webgen::WebgenError.new( :TAG_PARAMETER_INVALID, tag, refNode.recursive_value( 'src' ), 'level' )
-      end
-      build_menu( node, @menuTree, content['level'] )
+      build_menu( node, @menuTree, 1 )
     end
 
     #######
     private
     #######
 
-    def build_menu( srcNode, node, level )
-      return '' unless level >= 1 && !node.nil?
 
-      out = "<#{@submenuTag}>"
+    def build_menu( srcNode, node, level )
+      if node.nil? \
+        || level > get_config_value( 'subtreeLevel' ) \
+        || ( level > get_config_value( 'level' ) \
+             && ( node['node'].level > srcNode.level \
+                  || ( get_config_value( 'showCurrentSubtreeOnly' ) && !node['node'].in_subtree?( srcNode ) )
+                  )
+             )
+        return ''
+      end
+
+      out = "<#{get_config_value( 'submenuTag' )}>"
       node.each do |child|
         if child.kind_of? MenuNode
-          submenu = child['node'].kind_of?( FileHandlers::DirHandler::DirNode ) ? build_menu( srcNode, child, level - 1 ) : ''
+          submenu = child['node'].kind_of?( FileHandlers::DirHandler::DirNode ) ? build_menu( srcNode, child, level + 1 ) : ''
           before, after = menu_entry( srcNode, child['node'] )
         else
           submenu = ''
@@ -130,7 +135,7 @@ module Tags
         out << submenu
         out << after
       end
-      out << "</#{@submenuTag}>"
+      out << "</#{get_config_value( 'submenuTag' )}>"
 
       return out
     end
@@ -147,11 +152,12 @@ module Tags
       style = " class=\"#{styles.join(' ')}\"" if styles.length > 0
       link = langNode['processor'].get_html_link( langNode, srcNode, ( isDir ? langNode['directoryName'] : langNode['title'] ) )
 
+      itemTag = get_config_value( 'itemTag' )
       if styles.include? 'webgen-submenu'
-        before = "<#{@itemTag}#{style}>#{link}"
-        after = "</#{@itemTag}>"
+        before = "<#{itemTag}#{style}>#{link}"
+        after = "</#{itemTag}>"
       else
-        before = "<#{@itemTag}#{style}>#{link}</#{@itemTag}>"
+        before = "<#{itemTag}#{style}>#{link}</#{itemTag}>"
         after = ""
       end
 

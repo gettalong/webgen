@@ -33,7 +33,7 @@ module Tags
   # By using the +relocatable+ tag you ensure that the path stays valid.
   #
   # Tag parameter: the name of the file which should be relocated
-  class RelocatableTag < UPS::Plugin
+  class RelocatableTag < DefaultTag
 
     NAME = 'Relocatable Tag'
     SHORT_DESC = 'Adds a relative path to the specified name if necessary'
@@ -42,8 +42,23 @@ module Tags
       UPS::Registry['Tags'].tags['relocatable'] = self
     end
 
-    def process_tag( tag, content, node, refNode )
-      destNode = refNode.get_node_for_string( content )
+
+    def set_tag_config( config )
+      if config.kind_of? String
+        @filename = config
+      else
+        Webgen::WebgenError( :TAG_PARAMETER_INVALID, config.class.name, 'String', config )
+      end
+    end
+
+
+    def process_tag( tag, node, refNode )
+      if @filename.nil?
+        self.logger.error { 'No filename specified in tag' }
+        return ''
+      end
+      destNode = refNode.get_node_for_string( @filename )
+      @filename = nil
       if !destNode.nil? && destNode.kind_of?( FileHandlers::PagePlugin::PageNode )
         destNode = destNode['processor'].get_lang_node( destNode, node['lang'] )
       end

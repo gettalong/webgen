@@ -50,3 +50,4 @@ filehandler/index.html:
   en:
     title: File Handlers
     directoryName: File Handlers
+    inMenu: true

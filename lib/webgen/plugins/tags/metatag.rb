@@ -30,7 +30,7 @@ module Tags
   #
   # This is very useful if you want to add new meta information to the page description files and
   # simple copy the values to the output file.
-  class MetaTag < UPS::Plugin
+  class MetaTag < DefaultTag
 
     NAME = "Meta tag"
     SHORT_DESC = "Replaces all tags without tag plugin with their respective values from the node meta data"
@@ -39,7 +39,7 @@ module Tags
       UPS::Registry['Tags'].tags[:default] = self
     end
 
-    def process_tag( tag, content, node, templateNode )
+    def process_tag( tag, node, refNode )
       node[tag] || ''
     end
 

@@ -33,18 +33,18 @@ module Tags
   # this plugin will generate something like this:
   #   root / directory1 / directory2 / currentFile
   # where each listed name is linked to the corresponding file.
-  class NavbarTag < UPS::Plugin
+  class NavbarTag < DefaultTag
 
     NAME = 'Navigation Bar Tag'
     SHORT_DESC = 'Shows the hierarchy of current page'
 
     def init
-      @separator = UPS::Registry['Configuration'].get_config_value( NAME, 'separator', ' / ' )
+      register_config_value( 'separator', ' / ' )
       UPS::Registry['Tags'].tags['navbar'] = self
     end
 
 
-    def process_tag( tag, content, srcNode, refNode )
+    def process_tag( tag, srcNode, refNode )
       out = []
       node = srcNode
 
@@ -54,7 +54,7 @@ module Tags
         node = node.parent while !node.nil? && node['virtual']
       end
 
-      out = out.reverse.join(@separator)
+      out = out.reverse.join( get_config_value( 'separator' ) )
       self.logger.debug out
       out
     end
