@@ -21,7 +21,6 @@
 #
 
 require 'yaml'
-require 'util/ups'
 
 module Tags
 
@@ -34,8 +33,8 @@ module Tags
   # The default plugin can be registered by using the special key <tt>:default</tt>.
   class Tags < Webgen::Plugin
 
-    NAME = "Tags"
-    SHORT_DESC = "Super plugin for handling tags"
+    plugin "Tags"
+    summary "Super plugin for handling tags"
 
     # Tag plugins should add an entry to this hash.
     attr_reader :tags
@@ -120,6 +119,11 @@ module Tags
   # configuration data from either the configuration file or the tag itself. This behaviour can be
   # overridden in a subclass.
   class DefaultTag < Webgen::Plugin
+
+    VIRTUAL = true
+
+    plugin "Default tag"
+    summary "Base class for all tag plugins"
 
     # +true+, if the output should be processed again
     attr_reader :processOutput
@@ -219,7 +223,5 @@ module Tags
     end
 
   end
-
-  UPS::Registry.register_plugin Tags
 
 end

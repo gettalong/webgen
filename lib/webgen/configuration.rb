@@ -22,204 +22,144 @@
 
 require 'yaml'
 require 'ostruct'
-require 'log4r'
-require 'log4r/yamlconfigurator'
-require 'util/ups'
-
+require 'webgen/logging'
+require 'find'
 
 module Webgen
 
-  Version = "0.2.1"
-  Description = "Webgen is a template based web page generator."
+  VERSION = [0, 2, 1]
+  SUMMARY = "Webgen is a templated based weg page generator."
+  DESCRIPTION = "Webgen is a web page generator implemented in Ruby. " \
+  "It is used to generate static web pages from templates and page " \
+  "description files."
 
-  class WebgenConfigurationPlugin < UPS::Plugin
+  # Base class for all plugins.
+  class Plugin
 
-    NAME = "Configuration"
-    SHORT_DESC = "Responsible for loading the configuration data"
+    # Holds the plugin data from each and every plugin.
+    @@config = {}
 
-    attr_accessor :srcDirectory
-    attr_accessor :outDirectory
-    attr_accessor :verbosityLevel
-    attr_accessor :lang
-    attr_accessor :configFile
-
-    attr_reader :pluginData
-    attr_reader :configParams
-
-    def initialize
-      @homeDir = File.dirname( $0 )
-      @configFile = 'config.yaml'
-      @pluginData = Hash.new
-      @configParams = Hash.new
+    def self.inherited( klass )
+      (@@config[klass.name] = OpenStruct.new).obj = klass.new unless klass.const_defined?( 'VIRTUAL' )
     end
 
-
-    def parse_config_file
-      if File.exists? @configFile
-        @pluginData = YAML::load( File.new( @configFile ) )
-      end
-
-      @srcDirectory ||= add_config_param( NAME, 'srcDirectory', 'src', 'The directory from which the source files are read.' )
-      @outDirectory ||= add_config_param( NAME, 'outDirectory', 'output', 'The directory to which the output files are written.' )
-      @verbosityLevel ||= add_config_param( NAME, 'verbosityLevel', 3, 'The level of verbosity for the output of messages on the standard output.' )
-      @lang ||= add_config_param( NAME, 'lang', 'en', 'The default language.' )
-      Log4r::Outputter['stdout'].level = @verbosityLevel
+    ['plugin', 'summary', 'description'].each do |name|
+      self.module_eval "def self.#{name}( obj ); @@config[self.name].#{name} = obj; end"
     end
 
-
-    def load_file_outputter
-      Log4r::YamlConfigurator.load_yaml_string FileOutputterConfiguration
+    # Return plugin data
+    def self.config
+      @@config
     end
 
-
-    def add_config_param( pluginName, paramName, defaultValue, description = nil )
-      value = @pluginData[pluginName][paramName] if @pluginData.has_key?( pluginName ) && @pluginData[pluginName].has_key?( paramName )
-      value ||= defaultValue
-
-      paramData = OpenStruct.new( :name => paramName, :value => value, :defaultValue => defaultValue, :description => description.to_s )
-      @configParams[pluginName] ||= Hash.new
-      @configParams[pluginName][paramName] = paramData
-
-      return value
+    # Shortcut for getting the plugin with the name +name+.
+    def self.[]( name )
+      @@config.find {|k,v| v.plugin == name }[1].obj
     end
 
-  end
-
-  UPS::Registry.register_plugin( WebgenConfigurationPlugin )
-
-
-  class Plugin < UPS::Plugin
-
-    def init
-      @config = {}
-      if self.class.const_defined? :CONFIG_PARAMS
-        self.class::CONFIG_PARAMS.each do |param|
-          value = UPS::Registry['Configuration'].add_config_param( self.class::NAME, param[:name], param[:defaultValue], param[:description] )
-          @config[param[:name]] = value
-        end
-      end
-      self.class.ancestors[1..-1].each do |klass|
-        if klass.const_defined? :CONFIG_PARAMS
-          klass::CONFIG_PARAMS.each do |param|
-            @config[param[:name]] = UPS::Registry['Configuration'].configParams[klass::NAME][param[:name]].value
-          end
-        end
-      end
+    # Add a parameter for the current class. Has to be used by subclasses to define their parameters!
+    #
+    # Arguments:
+    # +name+:: the name of the parameter
+    # +default+:: the default value of the parameter
+    # +description+:: a small description of the parameter
+    def self.add_param( name, default, description )
+      self.logger.debug { "Adding parameter #{name} for plugin class #{self.name}" }
+      data = OpenStruct.new( :name => name, :value => default, :default => default, :description => description )
+      (@@config[self.name].params ||= {})[name] = data
     end
 
-
-    def self.no_init_inheritance
-      module_eval "@@PLUGIN_INIT = true"
-    end
-
-
-    def self.method_added( id )
-      return if id != :init || self.class_variables.include?( '@@PLUGIN_INIT' )
-      aliasName = "init_" + self.object_id.abs.to_s
-      unless method_defined?( aliasName )
-        logger.debug { "Renaming #{self.name}#init to #{aliasName}, defining new one" }
-        module_eval( "alias_method(:#{aliasName}, :init)\n def init() super; #{aliasName}; end" )
-      end
-    end
-
-
-    def get_config_param( name )
-      if !@config.nil? && @config.has_key?( name )
-        return @config[name]
+    # Set parameter +name+ for +plugin+ to +value+.
+    def self.set_param( plugin, name, value )
+      logger.debug { "Setting parameter #{name} for plugin #{plugin} to #{value.inspect}" }
+      klass, item = @@config.find {|k,v| v.plugin == plugin }
+      if !item.nil? && !item.params.nil? && item.params.has_key?( name )
+        item.params[name].value = value
       else
-        self.logger.error { "Referencing invalid configuration value '#{name}' in class #{self.class.name}" }
+        logger.error { "Cannot set undefined parameter '#{name}' for plugin '#{plugin}'" }
+      end
+    end
+
+    # Return parameter +name+.
+    def []( name )
+      data = @@config[self.class.name]
+      unless data.params.nil? || data.params[name].nil?
+        return data.params[name].value
+      else
+        logger.error { "Referencing invalid configuration value '#{name}' in class #{self.class.name}" }
         return nil
       end
     end
 
+    # Set parameter +name+.
+    def []=( name, value )
+      self.class.set_param( @@config[self.class.name].plugin, name, value )
+    end
+
+    alias get_param []
+
   end
 
-end
 
+  class Configuration < Plugin
 
-#### Log4r Configuration ####
+    plugin "Configuration"
+    summary "Responsible for loading the configuration data"
 
+    add_param 'srcDirectory', 'src', 'The directory from which the source files are read.'
+    add_param 'outDirectory', 'output', 'The directory to which the output files are written.'
+    add_param 'verbosityLevel', 3, 'The level of verbosity for the output of messages on the standard output.'
+    add_param 'lang', 'en', 'The default language.'
+    add_param 'configfile', 'config.yaml', 'The file from which extra configuration data is taken'
 
-class Log4r::PatternFormatter
-  remove_const(:DirectiveTable)
+    def initialize
+      @homeDir = File.dirname( $0 )
+    end
 
-  # Redefinition of the DirectiveTable to only show the method name in the trace.
-  DirectiveTable =  {
-    "c" => 'event.name',
-    "C" => 'event.fullname',
-    "d" => 'format_date',
-    "t" => "event.tracer[0][/`.*'/][1..-2]",
-    "m" => 'event.data',
-    "M" => 'format_object(event.data)',
-    "l" => 'LNAMES[event.level]',
-    "%" => '"%"'
-  }
-end
-
-
-LoggerConfiguration = <<EOF
-log4r_config:
-  pre_config:
-    custom_levels:
-      - DEBUG
-      - INFO
-      - WARN
-      - ERROR
-    root:
-      level: DEBUG
-
-  loggers:
-    - name: default
-      level: DEBUG
-      trace: true
-      outputters:
-        - stdout
-
-  outputters:
-    - type     : StdoutOutputter
-      name     : stdout
-      level    : WARN
-      formatter:
-        type        : PatternFormatter
-        date_pattern: '%Y-%m-%d %H:%M:%S'
-        pattern     : '%d %-5l %-15.15c:%-20.20t > %m'
-
-EOF
-
-FileOutputterConfiguration = <<EOF
-log4r_config:
-  loggers: {}
-
-  outputters:
-    - type        : FileOutputter
-      name        : logfile
-      level       : DEBUG
-      trunc       : 'false'
-      filename    : 'webgen.log'
-      formatter   :
-        type        : PatternFormatter
-        date_pattern: '%Y-%m-%d %H:%M:%S'
-        pattern     : '%d %-5l %-15.15c:%-20.20t > %m'
-
-EOF
-Log4r::YamlConfigurator.load_yaml_string LoggerConfiguration
-
-
-class Object
-
-  # Returns the logger for the class of the object. If the logger does not exist, the logger is
-  # created using the name of the class.
-  def logger
-    if !defined? @logger
-      @logger = Log4r::Logger[self.class.name]
-      if @logger.nil?
-        @logger = Log4r::Logger.new( self.class.name )
-        @logger.trace = true
-        @logger.outputters = ['stdout']
-        @logger.add 'logfile' if Log4r::Outputter['logfile']
+    # Parse config file and load the configuration values.
+    def parse_config_file
+      if File.exists?( get_param( 'configfile' ) )
+        @pluginData = YAML::load( File.new( get_param( 'configfile' ) ) )
+        @pluginData.each {|plugin, params| params.each {|name,value| Plugin.set_param( plugin, name, value ) } }
+        logger.level = get_param( 'verbosityLevel' )
+      else
+        logger.info { "Config file <#{get_param( 'configfile' )}> does not exist, not extra configuration data read." }
       end
     end
-    @logger
+
+    # Loads all plugins in the given +path+. Before +require+ is actually called the path is
+    # trimmed: if +trimpath+ matches the beginning of the string, +trimpath+ is deleted from it.
+    def load_plugins( path, trimpath )
+      Find.find( path ) do |file|
+        Find.prune unless File.directory?( file ) || (/.rb$/ =~ file)
+        require file.gsub(/^#{trimpath}/, '') if File.file? file
+      end
+    end
+
+    def load_file_outputter
+      logger.set_log_dev( File.open( 'webgen.log', 'a' ) )
+    end
+
   end
+
+
+  class Logger < ::Logger
+
+    def initialize( dev )
+      super( dev )
+      self.datetime_format = "%Y-%m-%d %H:%M:%S"
+    end
+
+    def format_message( severity, timestamp, msg, progname )
+      "%s %s -- %s: %s\n" % [timestamp, severity, progname, msg ]
+    end
+
+    def set_log_dev( dev )
+      @logdev = LogDevice.new( dev )
+    end
+
+  end
+
 end
+
 

@@ -34,23 +34,21 @@ class Node
     @metainfo = Hash.new
   end
 
-
+  # Get object +name+ from +metainfo+.
   def []( name )
     @metainfo[name]
   end
 
-
+  # Assign +value+ to +metainfo+ called +name.
   def []=( name, value )
     @metainfo[name] = value
   end
 
-
+  # Get the recursive value for metainfo +name+. +ignoreVirtual+ specifies if virtual nodes should
+  # not be appended, but they are traversed nonetheless.
   def recursive_value( name, ignoreVirtual = true )
-    if @parent.nil?
-      ignoreVirtual && @metainfo['virtual'] ? '' : @metainfo[name]
-    else
-      @parent.recursive_value( name ) + (ignoreVirtual && @metainfo['virtual'] ? '' : @metainfo[name] )
-    end
+    value = ignoreVirtual && @metainfo['virtual'] ? '' : @metainfo[name]
+    @parent.nil? ? value : @parent.recursive_value( name ) + value
   end
 
 
@@ -77,7 +75,7 @@ class Node
   end
 
 
-  # Returns the node identified by the given string relative to the current node.
+  # Returns the node identified by +destString+ relative to the current node.
   def get_node_for_string( destString, fieldname = 'dest' )
     if /^#{File::SEPARATOR}/ =~ destString
       node = Node.root self
@@ -103,12 +101,10 @@ class Node
     return node
   end
 
-
   # Returns the level of the node. The level specifies how deep the node is in the hierarchy.
   def level( ignoreVirtual = true )
     recursive_value( 'dest', ignoreVirtual ).count( File::SEPARATOR )
   end
-
 
   # Checks if the current node is in the subtree in which the supplied node is. This is done by
   # analyzing the paths of the two nodes.
@@ -116,7 +112,7 @@ class Node
     /^#{recursive_value( 'dest' )}/ =~ node.recursive_value( 'dest' )
   end
 
-
+  # Returns the root node for +node+.
   def Node.root( node )
     node = node.parent until node.parent.nil?
     node

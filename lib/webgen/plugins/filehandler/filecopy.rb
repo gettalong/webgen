@@ -29,27 +29,20 @@ module FileHandlers
   # directory. The extensions of the files to copy are customizable.
   class FileCopyPlugin < DefaultHandler
 
-    NAME = "File Copy Handler"
-    SHORT_DESC = "Copies files from source to destination without modification"
-    DESCRIPTION = <<-EOF.gsub( /^\s*/, '' ).gsub( /\n/, ' ' )
+    plugin "File Copy Handler"
+    summary "Copies files from source to destination without modification"
+    description <<-EOF.gsub( /^\s*/, '' ).gsub( /\n/, ' ' )
         Implements a generic file copy plugin. All the file types which are specified in the
         configuration file are copied without any transformation into the destination directory.
       EOF
-
-
-    CONFIG_PARAMS = [
-      {
-        :name => 'types',
-        :defaultValue => ['css', 'jpg', 'png', 'gif'],
-        :description => 'The extension that will be registered by this handler. All files with ' \
-        + 'these extensions will be copied from the source to the destination folder.'
-      }
-    ]
+    add_param 'types', ['css', 'jpg', 'png', 'gif'],
+       'The extension that will be registered by this handler. All files with ' \
+    'these extensions will be copied from the source to the destination folder.'
 
     def init
       unless get_config_param( 'types' ).nil?
         get_config_param( 'types' ).each do |type|
-          UPS::Registry['File Handler'].extensions[type] ||= self
+          Plugin['File Handler'].extensions[type] ||= self
         end
       end
     end
@@ -64,11 +57,9 @@ module FileHandlers
 
 
     def write_node( node )
-      FileUtils.cp( node.recursive_value( 'src' ), node.recursive_value( 'dest' ) ) if UPS::Registry['File Handler'].file_modified?( node )
+      FileUtils.cp( node.recursive_value( 'src' ), node.recursive_value( 'dest' ) ) if Plugin['File Handler'].file_modified?( node )
     end
 
   end
-
-  UPS::Registry.register_plugin FileCopyPlugin
 
 end

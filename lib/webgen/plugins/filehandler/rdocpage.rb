@@ -30,8 +30,8 @@ module FileHandlers
   # Handles files in RDoc format.
   class RDocPagePlugin < PagePlugin
 
-    NAME = "RDoc Page Handler"
-    SHORT_DESC = "Handles webpage description files in RDOC format"
+    plugin "RDoc Page Handler"
+    summary "Handles webpage description files in RDOC format"
 
     EXTENSION = 'rdoc'
 
@@ -47,7 +47,5 @@ module FileHandlers
     end
 
   end
-
-  UPS::Registry.register_plugin RDocPagePlugin
 
 end

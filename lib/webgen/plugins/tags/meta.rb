@@ -20,7 +20,6 @@
 #++
 #
 
-require 'util/ups'
 require 'webgen/plugins/tags/tags'
 
 module Tags
@@ -32,8 +31,8 @@ module Tags
   # simple copy the values to the output file.
   class MetaTag < DefaultTag
 
-    NAME = "Meta tag"
-    SHORT_DESC = "Replaces all tags without tag plugin with their respective values from the node meta data"
+    plugin "Meta tag"
+    summary "Replaces all tags without tag plugin with their respective values from the node meta data"
 
     TAG_NAME = :default
 
@@ -48,8 +47,6 @@ module Tags
       end
       return output
     end
-
-    UPS::Registry.register_plugin MetaTag
 
   end
 

@@ -29,8 +29,8 @@ module FileHandlers
   # Handles files in Textile format using RedCloth.
   class RedClothPagePlugin < PagePlugin
 
-    NAME = "Textile Page Handler"
-    SHORT_DESC = "Handles webpage description files in Textile format using RedCloth"
+    plugin "Textile Page Handler"
+    summary "Handles webpage description files in Textile format using RedCloth"
 
     EXTENSION = 'rcloth'
 
@@ -41,7 +41,5 @@ module FileHandlers
     end
 
   end
-
-  UPS::Registry.register_plugin RedClothPagePlugin
 
 end

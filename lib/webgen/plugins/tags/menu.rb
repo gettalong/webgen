@@ -20,7 +20,6 @@
 #++
 #
 
-require 'util/ups'
 require 'webgen/node'
 require 'webgen/plugins/tags/tags'
 
@@ -79,44 +78,30 @@ module Tags
     end
 
 
-    NAME = 'Menu Tag'
-    SHORT_DESC = 'Builds up a menu'
+    plugin 'Menu Tag'
+    summary 'Builds up a menu'
+
+    add_param 'submenuTag', 'ul', 'The tag used for making sub menus.'
+    add_param 'itemTag', 'li', 'The tag used for menu items.'
+    add_param 'level', 1, \
+    'Specifies how many levels the menu should have by default, ie. how deep it is. ' \
+    'For example, if level = 3, then three levels are always shown at least.'
+    add_param 'subtreeLevel', 3, \
+    'Specifies how many levels should be shown for subtrees. The number specifies ' \
+    'the maximum depth the menu will have.'
+    add_param 'showCurrentSubtreeOnly', true, \
+    'True if only the current subtree should be shown in the menu. If set to false, ' \
+    'each subtree will be shown.'
 
     TAG_NAME = 'menu'
-    CONFIG_PARAMS = [
-      {
-        :name => 'submenuTag',
-        :defaultValue => 'ul',
-        :description => 'The tag used for making sub menus.'
-      }, {
-        :name => 'itemTag',
-        :defaultValue => 'li',
-        :description => 'The tag used for menu items.'
-      }, {
-        :name => 'level',
-        :defaultValue => 1,
-        :description => 'Specifies how many levels the menu should have by default, ie. how deep it is. ' + \
-        'For example, if level = 3, then three levels are always shown at least.'
-      }, {
-        :name => 'subtreeLevel',
-        :defaultValue => 3,
-        :description => 'Specifies how many levels should be shown for subtrees. The number specifies ' + \
-        'the maximum depth the menu will have.'
-      }, {
-        :name => 'showCurrentSubtreeOnly',
-        :defaultValue => true,
-        :description =>  'True if only the current subtree should be shown in the menu. If set to false, ' + \
-        'each subtree will be shown.'
-      }
-    ]
 
     def process_tag( tag, node, refNode )
       unless defined? @menuTree
         @menuTree = create_menu_tree( Node.root( node ), nil )
         unless @menuTree.nil?
-          UPS::Registry['Tree Walker'].execute( @menuTree, UPS::Registry['Debug Tree Printer'] )
+          Plugin['Tree Walker'].execute( @menuTree, Plugin['Debug Tree Printer'] )
           @menuTree.sort
-          UPS::Registry['Tree Walker'].execute( @menuTree, UPS::Registry['Debug Tree Printer'] )
+          Plugin['Tree Walker'].execute( @menuTree, Plugin['Debug Tree Printer'] )
         end
       end
       build_menu( node, @menuTree, 1 )
@@ -205,7 +190,5 @@ module Tags
     end
 
   end
-
-  UPS::Registry.register_plugin MenuTag
 
 end

@@ -28,20 +28,15 @@ module FileHandlers
   # Handles template files. Template files are generic files which normally specify the layout.
   class TemplatePlugin < DefaultHandler
 
-    NAME = "Template File Handler"
-    SHORT_DESC = "Represents the template files for the page generation in the tree"
+    plugin "Template File Handler"
+    summary "Represents the template files for the page generation in the tree"
+    add_param 'defaultTemplate', 'default.template', 'The default file name for the template file.'
 
     EXTENSION = 'template'
-    CONFIG_PARAMS = [
-      {
-        :name => 'defaultTemplate',
-        :defaultValue => 'default.template',
-        :description => 'The default file name for the template file.'
-      }
-    ]
+
 
     def init
-      UPS::Registry['File Handler'].add_msg_listener( :AFTER_DIR_READ, method( :add_template_to_node ) )
+      Plugin['File Handler'].add_msg_listener( :AFTER_DIR_READ, method( :add_template_to_node ) )
     end
 
 
@@ -91,13 +86,11 @@ module FileHandlers
       templateNode['title'] = 'Template'
       templateNode['src'] = templateNode['dest'] = get_config_param( 'defaultTemplate' )
       templateNode['content'] = "<h1>DUMMY TEMPLATE</h1> {content: }"
-      templateNode['processor'] = UPS::Registry[TemplatePlugin::NAME]
+      templateNode['processor'] = Plugin[TemplatePlugin::NAME]
       templateNode
     end
 
   end
-
-  UPS::Registry.register_plugin TemplatePlugin
 
 end
 
@@ -105,14 +98,13 @@ end
 module TreeWalkers
 
   # Substitutes all occurences of the +template+ meta information with the correct node.
-  class TemplateTreeWalker < UPS::Plugin
+  class TemplateTreeWalker < Webgen::Plugin
 
-    NAME = "Template Tree Walker"
-    SHORT_DESC = "Substitutes all 'template' infos with the approriate node"
-
+    plugin "Template Tree Walker"
+    summary "Substitutes all 'template' infos with the approriate node"
 
     def init
-      UPS::Registry['Tree Walker'].walkers << self
+      Plugin['Tree Walker'].walkers << self
     end
 
 
@@ -130,7 +122,5 @@ module TreeWalkers
     end
 
   end
-
-  UPS::Registry.register_plugin TemplateTreeWalker
 
 end

@@ -21,7 +21,6 @@
 #
 
 require 'cgi'
-require 'util/ups'
 require 'webgen/plugins/tags/tags'
 
 module Tags
@@ -29,8 +28,8 @@ module Tags
   # Includes a file verbatim. All HTML special characters are escaped.
   class IncludeFileTag < DefaultTag
 
-    NAME = "Include File Tag"
-    SHORT_DESC = "Includes a file verbatim"
+    plugin "Include File Tag"
+    summary "Includes a file verbatim"
 
     TAG_NAME = 'includeFile'
 
@@ -57,8 +56,6 @@ module Tags
 
       content
     end
-
-    UPS::Registry.register_plugin IncludeFileTag
 
   end
 

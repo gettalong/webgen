@@ -2,4 +2,4 @@
 
 require 'webgen/webgen'
 
-Webgen::WebgenMain.new.main ARGV
+Webgen::WebgenMain.new.main( ARGV )

@@ -20,26 +20,44 @@
 #++
 #
 
-require 'webgen/plugins/filehandler/page'
+require 'logger'
 
-module FileHandlers
+module Webgen
 
-  # Handles HTML fragment files and assumes that their content is valid HTML. The files should only
-  # contain the content part of the web page because the layout is defined by the template. This
-  # means you should not put <html> or <body> inside these HTML fragments.
-  class HTMLPage < PagePlugin
+  class Logger < ::Logger
 
-    plugin "HTML Fragment Handler"
-    summary "Handles HTML webpage fragments as page description files"
-
-    EXTENSION = 'fragment'
-
-    def get_file_data( srcName )
-      data = Hash.new
-      data['content'] = File.new( srcName ).read
-      data
+    def initialize( dev )
+      super( dev )
+      self.datetime_format = "%Y-%m-%d %H:%M:%S"
+      self.level = Logger::ERROR
     end
 
+    def format_message( severity, timestamp, msg, progname )
+      "%s %s -- %s: %s\n" % [timestamp, severity, progname, msg ]
+    end
+
+    def set_log_dev( dev )
+      @logdev = LogDevice.new( dev )
+    end
+
+  end
+
+end
+
+class Object
+
+  LOGGER = Webgen::Logger.new( STDERR )
+
+  def logger
+    LOGGER
+  end
+
+end
+
+class Module
+
+  def self.logger
+    Object::LOGGER
   end
 
 end

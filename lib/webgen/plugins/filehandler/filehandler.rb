@@ -20,7 +20,6 @@
 #++
 #
 
-require 'util/ups'
 require 'util/listener'
 
 module FileHandlers
@@ -30,27 +29,20 @@ module FileHandlers
   # the plugin object itself.
   class FileHandler < Webgen::Plugin
 
-    include Listener
-
-    NAME = "File Handler"
-    SHORT_DESC = "Super plugin for handling files"
-    DESCRIPTION = <<-EOF.gsub( /^\s+/, '' ).gsub( /\n/, ' ' )
-        Provides interface on file level. The FileHandler goes through the source
+    plugin "File Handler"
+    summary "Super plugin for handling files"
+    description "Provides interface on file level. The FileHandler goes through the source
         directory, reads in all files for which approriate plugins exist and
         builds the tree. When all approriate transformations on the tree have
         been performed the FileHandler is used to write the output files.
-      EOF
+      ".gsub( /^\s+/, '' ).gsub( /\n/, ' ' )
 
-    CONFIG_PARAMS = [
-      {
-        :name => 'ignoredFiles',
-        :defaultValue => ['.svn', 'CVS'],
-        :description => 'Specifies path names which should be ignored.'
-      }
-    ]
+    add_param 'ignoredFiles', ['.svn', 'CVS'],'Specifies path names which should be ignored.'
+
+
+    include Listener
 
     attr_reader :extensions
-
 
     def initialize
       @extensions = Hash.new
@@ -63,10 +55,10 @@ module FileHandlers
 
     # Recursively builds the tree with all the nodes and returns it.
     def build_tree
-      root = build_entry( UPS::Registry['Configuration'].srcDirectory, nil )
+      root = build_entry( Plugin['Configuration']['srcDirectory'], nil )
       root['title'] = '/'
-      root['dest'] = UPS::Registry['Configuration'].outDirectory + File::SEPARATOR
-      root['src'] = UPS::Registry['Configuration'].srcDirectory + File::SEPARATOR
+      root['dest'] = Plugin['Configuration']['outDirectory'] + File::SEPARATOR
+      root['src'] = Plugin['Configuration']['srcDirectory'] + File::SEPARATOR
       root
     end
 
@@ -173,10 +165,15 @@ module FileHandlers
   # The default handler which is the super class of all file handlers.
   class DefaultHandler < Webgen::Plugin
 
+    VIRTUAL = true
+
+    plugin "Default Handler"
+    summary "Base class of all file handler plugins"
+
     # Registers the file extension specified by a subclass.
     def init
       if self.class.const_defined? :EXTENSION
-        UPS::Registry['File Handler'].extensions[self.class::EXTENSION] = self
+        Plugin['File Handler'].extensions[self.class::EXTENSION] = self
       end
     end
 
@@ -203,14 +200,12 @@ module FileHandlers
     end
 
     # Returns a HTML link for the given +node+ relative to +refNode+. You can optionally specify the
-    # title for the link. If not specified the title of the node is used.
+    # title for the link. If not specified, the title of the node is used.
     def get_html_link( node, refNode, title = node['title'] )
       url = refNode.get_relpath_to_node( node ) + node['dest']
       "<a href=\"#{url}\">#{title}</a>"
     end
 
   end
-
-  UPS::Registry.register_plugin FileHandler
 
 end

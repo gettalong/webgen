@@ -21,7 +21,6 @@
 #
 
 require 'cgi'
-require 'util/ups'
 require 'webgen/plugins/tags/tags'
 
 module Tags
@@ -30,8 +29,8 @@ module Tags
   # characters are escaped.
   class ExecuteCommandTag < DefaultTag
 
-    NAME = "Execute Command Tag"
-    SHORT_DESC = "Executes the given command and includes its standard output"
+    plugin "Execute Command Tag"
+    summary "Executes the given command and includes its standard output"
 
     TAG_NAME = 'execute'
 
@@ -49,8 +48,6 @@ module Tags
     def process_tag( tag, node, refNode )
       CGI::escapeHTML( `#{get_config_param( :mandatory )}` )
     end
-
-    UPS::Registry.register_plugin ExecuteCommandTag
 
   end
 

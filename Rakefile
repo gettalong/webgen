@@ -22,7 +22,6 @@ begin
   require 'rubygems'
   require 'rake/gempackagetask'
 rescue Exception
-  nil
 end
 
 require 'rake/clean'
@@ -32,15 +31,16 @@ require 'rake/testtask'
 
 # General actions  ##############################################################
 
-if `ruby -Ilib ./bin/webgen --version` =~ /\s([.0-9]*?)(\s*\(.*\))?$/
-  PKG_VERSION = $1
-else
-  PKG_VERSION = "0.0.0"
-end
+$:.push 'lib'
+require 'webgen/configuration'
 
-PKG_NAME = "webgen-#{PKG_VERSION}"
+PKG_NAME = "webgen"
+PKG_VERSION = Webgen::VERSION.join( '.' )
+PKG_FULLNAME = PKG_NAME + "-" + PKG_VERSION
+PKG_SUMMARY = Webgen::SUMMARY
+PKG_DESCRIPTION = Webgen::DESCRIPTION
 
-           SRC_RB = FileList['lib/**/*.rb']
+SRC_RB = FileList['lib/**/*.rb']
 
 # The default task is run if rake is given no explicit arguments.
 
@@ -57,9 +57,8 @@ task :prepare do
 end
 
 
-desc "Installs Webgen"
-task :install => [:prepare]
-task :install do
+desc "Installs the package #{PKG_NAME}"
+task :install => [:prepare] do
   ruby "setup.rb install"
 end
 
@@ -69,22 +68,21 @@ task :clean do
 end
 
 
-CLOBBER << "doc/output" << "doc/webgen.log"
+CLOBBER << "doc/output"
 desc "Builds the documentation"
 task :doc => [:rdoc] do
-  Dir.chdir("doc")
-  ruby %{-I../lib ../bin/webgen -V 4 }
-  Dir.chdir("..")
+  chdir 'doc' do
+    ruby %{-I../lib ../bin/webgen -V 3 }
+  end
 end
 
 rd = Rake::RDocTask.new do |rdoc|
   rdoc.rdoc_dir = 'doc/output/rdoc'
-  rdoc.title    = "Webgen"
+  rdoc.title    = PKG_NAME
   rdoc.options << '--line-numbers' << '--inline-source' << '-m README'
   rdoc.rdoc_files.include( 'README' )
   rdoc.rdoc_files.include( 'lib/**/*.rb' )
 end
-
 
 
 Rake::TestTask.new do |t|
@@ -103,6 +101,7 @@ PKG_FILES = FileList.new( [
                             'Rakefile',
                             'ChangeLog',
                             'VERSION',
+                            'install.rb',
                             'bin/**/*',
                             'lib/**/*.rb',
                             'testsite/**/*',
@@ -112,9 +111,57 @@ PKG_FILES = FileList.new( [
   fl.exclude( /\bsvn\b/ )
   fl.exclude( 'testsite/output' )
   fl.exclude( 'testsite/coverage' )
-  fl.exclude( 'testsite/webgen.log' )
   fl.exclude( 'doc/output' )
-  fl.exclude( 'doc/webgen.log' )
+end
+
+task :package => [:gen_files] do
+  chdir 'pkg' do
+    sh "rpaadmin packport #{PKG_NAME}-#{PKG_VERSION}"
+  end
+end
+
+task :gen_changelog do
+  sh "svn log -r HEAD:1 -v > ChangeLog"
+end
+
+task :gen_version do
+  puts "Generating VERSION file"
+  File.open( 'VERSION', 'w+' ) do |file| file.write( PKG_VERSION + "\n" ) end
+end
+
+task :gen_installrb do
+  puts "Generating install.rb file"
+  File.open( 'install.rb', 'w+' ) do |file|
+    file.write "
+require 'rpa/install'
+
+class Install_#{PKG_NAME} < RPA::Install::FullInstaller
+  name '#{PKG_NAME}'
+  version '#{PKG_VERSION}-1'
+  classification Application
+  build do
+    installdocs %w[COPYING ChangeLog TODO]
+    installdocs 'docs'
+    installrdoc %w[README] + Dir['lib/**/*.rb']
+    installdata
+  end
+  description <<-EOF
+#{PKG_SUMMARY}
+
+#{PKG_DESCRIPTION}
+  EOF
+end
+"
+    end
+end
+
+task :gen_files => [:gen_changelog, :gen_version, :gen_installrb]
+CLOBBER << "ChangeLog" << "VERSION" << "install.rb"
+
+Rake::PackageTask.new( PKG_NAME, PKG_VERSION ) do |p|
+  p.need_tar = true
+  p.need_zip = true
+  p.package_files = PKG_FILES
 end
 
 if !defined? Gem
@@ -124,24 +171,18 @@ else
 
     #### Basic information
 
-    s.name = 'webgen'
+    s.name = PKG_NAME
     s.version = PKG_VERSION
-    s.summary = "Templated based weg page generator"
-    s.description = <<-EOF
-      Webgen is a web page generator implemented in Ruby. It is used to
-      generate static web pages from templates and page description files.
-    EOF
+    s.summary = PKG_SUMMARY
+    s.description = PKG_DESCRIPTION
 
     #### Dependencies, requirements and files
 
-    # does not work for me
-    s.add_dependency( 'log4r', '> 1.0.4' )
     s.files = PKG_FILES.to_a
 
     s.require_path = 'lib'
     s.autorequire = nil
 
-    s.bindir = 'bin'
     s.executables = ['webgen']
     s.default_executable = 'webgen'
 
@@ -159,14 +200,6 @@ else
     s.rubyforge_project = "webgen"
   end
 
-  task :package => [:generateFiles]
-  task :generateFiles do |t|
-    sh "svn log -r HEAD:1 -v > ChangeLog"
-    File.open('VERSION', 'w+') do |file| file.write( PKG_VERSION + "\n" ) end
-  end
-
-  CLOBBER << "ChangeLog" << "VERSION"
-
   Rake::GemPackageTask.new( spec ) do |pkg|
     pkg.need_zip = true
     pkg.need_tar = true
@@ -174,18 +207,19 @@ else
 
 end
 
-
+=begin
 desc "Creates a tag in the repository"
 task :tag do
   repositoryPath = File.dirname( $1 ) if `svn info` =~ /^URL: (.*)$/
   fail "Tag already created in repository " if /#{PKG_NAME}/ =~ `svn ls #{repositoryPath}/versions`
   sh "svn cp -m 'Created version #{PKG_NAME}' #{repositoryPath}/trunk #{repositoryPath}/versions/#{PKG_NAME}"
 end
+=end
 
 desc "Upload documentation to homepage"
 task :uploaddoc => [:doc] do
   Dir.chdir('doc/output')
-  sh "scp -r * gettalong@rubyforge.org:/var/www/gforge-projects/webgen/"
+  sh "scp -r * gettalong@rubyforge.org:/var/www/gforge-projects/#{PKG_NAME}/"
 end
 
 

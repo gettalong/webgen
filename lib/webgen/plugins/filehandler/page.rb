@@ -43,17 +43,11 @@ module FileHandlers
     end
 
 
-    NAME = "Page Handler"
-    SHORT_DESC = "Super class for all page plugins"
-
-    CONFIG_PARAMS = [
-      {
-        :name => 'defaultLangInFilename',
-        :defaultValue => false,
-        :description => 'If true, the output files for the default language will have the ' \
-        + 'language in the file name like all other page files. If false, they won''t.'
-      }
-    ]
+    plugin "Page Handler"
+    summary "Super class for all page plugins"
+    add_param 'defaultLangInFilename', false, \
+    'If true, the output files for the default language will have the ' \
+    'language in the file name like all other page files. If false, they won''t.'
 
 
     def create_node( srcName, parent )
@@ -92,11 +86,11 @@ module FileHandlers
     def write_node( node )
       # do nothing if page base node
       return unless node['virtual'].nil?
-      templateNode = UPS::Registry['Template File Handler'].get_template_for_node( node )
+      templateNode = Plugin['Template File Handler'].get_template_for_node( node )
 
       outstring = templateNode['content'].dup
 
-      UPS::Registry['Tags'].substitute_tags( outstring, node, templateNode )
+      Plugin['Tags'].substitute_tags( outstring, node, templateNode )
 
       File.open( node.recursive_value( 'dest' ), File::CREAT|File::TRUNC|File::RDWR ) do |file|
         file.write outstring
@@ -123,7 +117,7 @@ module FileHandlers
     def get_lang_node( node, lang = node['lang'] )
       node = node.parent unless node['page:basename']
       langNode = node.find do |child| child['lang'] == lang end
-      langNode = node.find do |child| child['lang'] == UPS::Registry['Configuration'].lang end if langNode.nil?
+      langNode = node.find do |child| child['lang'] == Plugin['Configuration']['lang'] end if langNode.nil?
       if langNode.nil?
         langNode = node.children[0]
         self.logger.warn do
@@ -145,7 +139,7 @@ module FileHandlers
       fileData.lang      = matchData[3] || UPS::Registry['Configuration'].lang
       fileData.baseName  = matchData[2] + '.html'
       fileData.srcName   = srcName
-      langPart = ( !get_config_param( 'defaultLangInFilename' ) && UPS::Registry['Configuration'].lang == fileData.lang ? '' : '.' + fileData.lang )
+      langPart = ( !get_config_param( 'defaultLangInFilename' ) && Plugin['Configuration']['lang'] == fileData.lang ? '' : '.' + fileData.lang )
       fileData.urlName   = matchData[2] + langPart + '.html'
       fileData.menuOrder = matchData[1].to_i
       fileData.title     = matchData[2].tr('_-', ' ').capitalize
@@ -156,7 +150,5 @@ module FileHandlers
     end
 
   end
-
-  UPS::Registry.register_plugin PagePlugin
 
 end

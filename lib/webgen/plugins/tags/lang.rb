@@ -20,7 +20,6 @@
 #++
 #
 
-require 'util/ups'
 require 'webgen/plugins/tags/tags'
 
 module Tags
@@ -28,21 +27,13 @@ module Tags
   # Generates a list with all the languages for a page.
   class LangTag < DefaultTag
 
-    NAME = 'Language Tag'
-    SHORT_DESC = 'Provides links to translations of the page'
+    plugin 'Language Tag'
+    summary 'Provides links to translations of the page'
+    add_param 'separator', ' | ', 'Separates the languages from each other.'
+    add_param 'showSingleLang', true, 'True if the language link should be shown '\
+    'although the page is only available in one language.'
 
     TAG_NAME = 'lang'
-    CONFIG_PARAMS = [
-      {
-        :name => 'separator',
-        :defaultValue => ' | ',
-        :description =>  'Separates the languages from each other.'
-      }, {
-        :name => 'showSingleLang',
-        :defaultValue => true,
-        :description =>  'True if the language link should be shown although the page is only available in one language.'
-      }
-    ]
 
 
     def process_tag( tag, node, refNode )
@@ -53,7 +44,5 @@ module Tags
     end
 
   end
-
-  UPS::Registry.register_plugin LangTag
 
 end

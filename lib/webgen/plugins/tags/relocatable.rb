@@ -20,7 +20,6 @@
 #++
 #
 
-require 'util/ups'
 require 'webgen/plugins/tags/tags'
 
 module Tags
@@ -35,8 +34,8 @@ module Tags
   # Tag parameter: the name of the file which should be relocated
   class RelocatableTag < DefaultTag
 
-    NAME = 'Relocatable Tag'
-    SHORT_DESC = 'Adds a relative path to the specified name if necessary'
+    plugin 'Relocatable Tag'
+    summary 'Adds a relative path to the specified name if necessary'
 
     TAG_NAME = 'relocatable'
 
@@ -54,7 +53,5 @@ module Tags
     end
 
   end
-
-  UPS::Registry.register_plugin RelocatableTag
 
 end

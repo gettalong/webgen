@@ -29,8 +29,8 @@ module FileHandlers
   # Handles files in Markdown format using BlueCloth.
   class BlueClothPagePlugin < PagePlugin
 
-    NAME = "Markdown Page Handler"
-    SHORT_DESC = "Handles webpage description files in Markdown format using BlueCloth"
+    plugin "Markdown Page Handler"
+    summary "Handles webpage description files in Markdown format using BlueCloth"
 
     EXTENSION = 'bcloth'
 
@@ -41,7 +41,5 @@ module FileHandlers
     end
 
   end
-
-  UPS::Registry.register_plugin BlueClothPagePlugin
 
 end

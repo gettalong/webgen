@@ -20,7 +20,6 @@
 #++
 #
 
-require 'util/ups'
 require 'webgen/plugins/tags/tags'
 
 module Tags
@@ -35,17 +34,11 @@ module Tags
   # where each listed name is linked to the corresponding file.
   class NavbarTag < DefaultTag
 
-    NAME = 'Navigation Bar Tag'
-    SHORT_DESC = 'Shows the hierarchy of current page'
+    plugin 'Navigation Bar Tag'
+    summary 'Shows the hierarchy of current page'
+    add_param 'separator', ' / ', 'Separates the hierachy entries from each other.'
 
     TAG_NAME = 'navbar'
-    CONFIG_PARAMS = [
-      {
-        :name => 'separator',
-        :defaultValue => ' / ',
-        :description => 'Separates the hierachy entries from each other.'
-      }
-    ]
 
     def process_tag( tag, srcNode, refNode )
       out = []
@@ -63,7 +56,5 @@ module Tags
     end
 
   end
-
-  UPS::Registry.register_plugin NavbarTag
 
 end

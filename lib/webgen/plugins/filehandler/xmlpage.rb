@@ -38,8 +38,8 @@ module FileHandlers
   #   </webgen>
   class XMLPagePlugin < PagePlugin
 
-    NAME = "XML Page Handler"
-    SHORT_DESC = "Handles XML webpage description files"
+    plugin "XML Page Handler"
+    summary "Handles XML webpage description files"
 
     EXTENSION = 'xpage'
 
@@ -59,7 +59,5 @@ module FileHandlers
     end
 
   end
-
-  UPS::Registry.register_plugin XMLPagePlugin
 
 end

@@ -20,18 +20,16 @@
 #++
 #
 
-require 'util/ups'
 
 # All plugins which count as "tree walkers" should be put into this module.
 module TreeWalkers
 
   # This is the main class for tree walkers. A tree walker plugin can register itself with this class
   # so that it is called when the main class' #execute method is called.
-  class TreeWalker < UPS::Plugin
+  class TreeWalker < Webgen::Plugin
 
-
-    NAME = "Tree Walker"
-    SHORT_DESC = "Super plugin for transforming the data tree"
+    plugin "Tree Walker"
+    summary "Super plugin for transforming the data tree"
 
     attr_reader :walkers
 
@@ -65,14 +63,14 @@ module TreeWalkers
 
 
   # Prints the whole tree of read files if the log level is at least DEBUG.
-  class DebugTreePrinter < UPS::Plugin
+  class DebugTreePrinter < Webgen::Plugin
 
-    NAME = "Debug Tree Printer"
-    SHORT_DESC = "Prints out the information in the tree for debug purposes."
+    plugin "Debug Tree Printer"
+    summary "Prints out the information in the tree for debug purposes."
 
 
     def init
-      UPS::Registry[TreeWalker::NAME].walkers << self
+      Plugin['Tree Walker'].walkers << self
     end
 
 
@@ -81,8 +79,5 @@ module TreeWalkers
     end
 
   end
-
-  UPS::Registry.instance.register_plugin( TreeWalker )
-  UPS::Registry.instance.register_plugin( DebugTreePrinter )
 
 end

@@ -20,7 +20,6 @@
 #++
 #
 
-require 'util/ups'
 require 'webgen/plugins/tags/tags'
 
 module Tags
@@ -29,23 +28,15 @@ module Tags
   # can use everything Time#strftime offers.
   class DateTag < DefaultTag
 
-    NAME = "Date Tag"
-    SHORT_DESC = "Prints out the date"
+    plugin "Date Tag"
+    summary "Prints out the date"
+    add_param 'format', '%A, %B %d %H:%M:%S %Z %Y', 'The format of the date (same options as Time#strftime).'
 
     TAG_NAME = 'date'
-    CONFIG_PARAMS = [
-      {
-        :name => 'format',
-        :defaultValue => '%A, %B %d %H:%M:%S %Z %Y',
-        :description =>  'The format of the date (same options as Time#strftime).'
-      }
-    ]
 
     def process_tag( tag, node, refNode )
       Time.now.strftime( get_config_param( 'format' ) )
     end
-
-    UPS::Registry.register_plugin DateTag
 
   end
 

@@ -39,8 +39,8 @@ module FileHandlers
   # You can specify any key:value pairs but you have to specify at least the content part.
   class YAMLPagePlugin < PagePlugin
 
-    NAME = "YAML Page Handler"
-    SHORT_DESC = "Handles YAML webpage description files"
+    plugin "YAML Page Handler"
+    summary "Handles YAML webpage description files"
 
     EXTENSION = 'ypage'
 
@@ -49,7 +49,5 @@ module FileHandlers
     end
 
   end
-
-  UPS::Registry.register_plugin YAMLPagePlugin
 
 end

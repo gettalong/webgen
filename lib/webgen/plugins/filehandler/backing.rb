@@ -55,22 +55,14 @@ module FileHandlers
   # add the +external+ meta information (i.e. set +external+ to +true+).
   class BackingFileHandler < DefaultHandler
 
-    NAME = "Backing File Handler"
-    SHORT_DESC = "Handles backing files for page file"
-
-    CONFIG_PARAMS = [
-      {
-        :name => 'backingFile',
-        :defaultValue => 'metainfo.backing',
-        :description => 'The default file name for the backing file.'
-      }
-    ]
-
+    plugin "Backing File Handler"
+    summary "Handles backing files for page file"
+    add_param 'backingFile', 'metainfo.backing', 'The default file name for the backing file.'
 
     EXTENSION = "backing"
 
     def init
-      UPS::Registry['File Handler'].add_msg_listener( :AFTER_DIR_READ, method( :process_backing_file ) )
+      Plugin['File Handler'].add_msg_listener( :AFTER_DIR_READ, method( :process_backing_file ) )
     end
 
 
@@ -101,7 +93,7 @@ module FileHandlers
         backedFile = dirNode.get_node_for_string( filename )
         if backedFile
           data.each do |language, fileData|
-            langFile = UPS::Registry['Page Handler'].get_lang_node( backedFile, language )
+            langFile = Plugin['Page Handler'].get_lang_node( backedFile, language )
             next unless langFile['lang'] == language
 
             self.logger.info { "Setting meta info data on file <#{langFile.recursive_value( 'dest' )}>" }
@@ -121,14 +113,14 @@ module FileHandlers
 
       data.each do |language, filedata|
         filedata['lang'] = language
-        pageNode = UPS::Registry[VirtualPageHandler::NAME].create_node( filename, dirNode )
+        pageNode = Plugin[VirtualPageHandler::NAME].create_node( filename, dirNode )
         unless pageNode.nil?
-          pageNode['processor'] = UPS::Registry[VirtualPageHandler::NAME]
+          pageNode['processor'] = Plugin[VirtualPageHandler::NAME]
           dirNode.add_child pageNode
         end
 
-        pageNode, created = UPS::Registry[VirtualPageHandler::NAME].get_page_node( filename, dirNode )
-        node = UPS::Registry[VirtualPageHandler::NAME].get_lang_node( pageNode, language )
+        pageNode, created = Plugin[VirtualPageHandler::NAME].get_page_node( filename, dirNode )
+        node = Plugin[VirtualPageHandler::NAME].get_lang_node( pageNode, language )
         node.metainfo.update filedata
         self.logger.info { "Created virtual node '#{filename}' (#{language}) in <#{dirNode.recursive_value( 'dest' )}> referencing '#{node['dest']}'" }
       end
@@ -153,7 +145,7 @@ module FileHandlers
         end
         if node.nil?
           node = FileHandlers::DirHandler::DirNode.new( parent, element )
-          node['processor'] = UPS::Registry[VirtualDirHandler::NAME]
+          node['processor'] = Plugin[VirtualDirHandler::NAME]
           parent.add_child node
           self.logger.info { "Created virtual directory <#{node.recursive_value( 'dest' )}>" }
         end
@@ -169,10 +161,8 @@ module FileHandlers
   # Handles virtual directories, that is, directories that do not exist in the source tree.
   class VirtualDirHandler < DirHandler
 
-    NAME = "Virtual Dir Handler"
-    SHORT_DESC = "Handles virtual directories"
-
-    no_init_inheritance
+    plugin "Virtual Dir Handler"
+    summary "Handles virtual directories"
 
     def write_node( node )
     end
@@ -182,10 +172,8 @@ module FileHandlers
   # Handles virtual pages, that is, pages that do not exist in the source tree.
   class VirtualPageHandler < PagePlugin
 
-    NAME = "Virtual Page Handler"
-    SHORT_DESC = "Handles virtual pages"
-
-    no_init_inheritance
+    plugin "Virtual Page Handler"
+    summary "Handles virtual pages"
 
     def get_file_data( name )
       {}
@@ -195,9 +183,5 @@ module FileHandlers
     end
 
   end
-
-  UPS::Registry.register_plugin VirtualPageHandler
-  UPS::Registry.register_plugin VirtualDirHandler
-  UPS::Registry.register_plugin BackingFileHandler
 
 end
