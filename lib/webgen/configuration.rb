@@ -29,7 +29,7 @@ require 'util/ups'
 
 module Webgen
 
-  Version = "0.2.0"
+  Version = "0.2.1"
   Description = "Webgen is a template based web page generator."
 
   class WebgenConfigurationPlugin < UPS::Plugin
@@ -115,7 +115,7 @@ module Webgen
 
     def self.method_added( id )
       return if id != :init || self.class_variables.include?( '@@PLUGIN_INIT' )
-      aliasName = "init_" + self.object_id.to_s
+      aliasName = "init_" + self.object_id.abs.to_s
       unless method_defined?( aliasName )
         logger.debug { "Renaming #{self.name}#init to #{aliasName}, defining new one" }
         module_eval( "alias_method(:#{aliasName}, :init)\n def init() super; #{aliasName}; end" )

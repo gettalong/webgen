@@ -36,6 +36,10 @@ You can build the documentation by invoking
 in the root of the package or by running webgen manually in the +doc+ directory:
  $ ruby -I../lib ../bin/webgen
 
+This documentation is actually the same as the one on webgen.rubyforge.org. When releasing
+a new version of webgen, I run one of the above commands to create the pages and then 
+only copy it to the website! :-)
+
 = Example
 
 There is a demo website in the +testsite+ directory. Open a shell and change into it, then execute

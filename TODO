@@ -1,6 +1,6 @@
 HIGH PRIORITY TODO: test everything (automatically) and try to refactor!!!
 
-* send bug report to BlueCloth/RedCloth for generated warning messages
+* register with Freshmeat.net
 * option for includeFile tag: escapeHTML (should special html tags be escaped?)
 * testsite directory should cover every code line (use coverage to verify)
 * use code generator to create test file with all tags and all tag parameter configurations
