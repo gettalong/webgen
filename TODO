@@ -1,5 +1,7 @@
 ---- CURRENT ----
 
+* have a look at wiki
+* Bug in wikilink: & not supported
 * create tests for methods in webgen.rb
 * webgen -c => output same info as on docu pages
 * reloctable tag: correct output for complex URLS???
