@@ -1,3 +1,5 @@
+W use rake, gem and setup.rb for installing and packaging thaumaturge
+* put every class into the Thaumaturge module
 * make get_node_for_string work with page files as parameters (reference in home.xpage to projects page)
 * make file plugins case-insensitiv (convert all uppercase letters to lowercase)
 * create new document which describes iterations and the steps which are taken in each iteration (high risk first)
