@@ -20,26 +20,26 @@
 #++
 #
 
+require 'cgi'
 require 'util/ups'
 require 'webgen/plugins/tags/tags'
 
 module Tags
 
-  # Changes the path of file. This is very useful for templates. For example, you normally include a
-  # stylesheet in a template. If you specify the filename of the stylesheet directly, the reference
-  # to the stylesheet in the output file of a page file that is not in the same directory as the template
-  # would be invalid.
-  #
-  # By using the +relocatable+ tag you ensure that the path stays valid.
-  #
-  # Tag parameter: the name of the file which should be relocated
-  class RelocatableTag < DefaultTag
+  # Includes a file verbatim. All HTML special characters are escaped.
+  class IncludeFileTag < DefaultTag
 
-    NAME = 'Relocatable Tag'
-    SHORT_DESC = 'Adds a relative path to the specified name if necessary'
+    NAME = "Include File Tag"
+    SHORT_DESC = "Includes a file verbatim"
+
+
+    def initialize
+      super
+      self.processOutput = false
+    end
 
     def init
-      UPS::Registry['Tags'].tags['relocatable'] = self
+      UPS::Registry['Tags'].tags['includeFile'] = self
     end
 
 
@@ -57,17 +57,22 @@ module Tags
         self.logger.error { 'No filename specified in tag' }
         return ''
       end
-      destNode = refNode.get_node_for_string( @filename )
-      @filename = nil
 
-      if !destNode.nil? && destNode.kind_of?( FileHandlers::PagePlugin::PageNode )
-        destNode = destNode['processor'].get_lang_node( destNode, node['lang'] )
+      content = ''
+      begin
+        filename = refNode.parent.recursive_value( 'src' ) + @filename
+        self.logger.debug { "File location: #{filename}" }
+        content = CGI::escapeHTML( File.open( filename, 'r' ).read )
+        @filename = nil
+      rescue
+        self.logger.error { "Given file <#{filename}> does not exist (tag specified in <#{refNode.recursive_value( 'src' )}>" }
       end
-      return ( destNode.nil? ? '' :  node.get_relpath_to_node( destNode ) + destNode['dest'] )
+
+      return "<pre class=\"webgen-file\">\n" + content + "</pre>"
     end
 
-  end
+    UPS::Registry.register_plugin IncludeFileTag
 
-  UPS::Registry.register_plugin RelocatableTag
+  end
 
 end

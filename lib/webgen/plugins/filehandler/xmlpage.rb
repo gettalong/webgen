@@ -38,7 +38,7 @@ module FileHandlers
   #   </webgen>
   class XMLPagePlugin < PagePlugin
 
-    NAME = "XML Page Plugin"
+    NAME = "XML Page Handler"
     SHORT_DESC = "Handles XML webpage description files"
 
     EXTENSION = 'xpage'

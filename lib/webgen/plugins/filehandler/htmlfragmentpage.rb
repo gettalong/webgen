@@ -29,8 +29,8 @@ module FileHandlers
   # means you should not put <html> or <body> inside these HTML fragments.
   class HTMLPage < PagePlugin
 
-    NAME = "HTML Page Plugin"
-    SHORT_DESC = "Handles HTML webpage fragments"
+    NAME = "HTML Fragment Handler"
+    SHORT_DESC = "Handles HTML webpage fragments as page description files"
 
     EXTENSION = 'fragment'
 

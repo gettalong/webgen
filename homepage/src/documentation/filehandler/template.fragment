@@ -1,0 +1,17 @@
+<div class="section">
+  <h2 class="section_header">Information</h2>
+
+  <p>The template file handler processes the templates for the page description files. Templates
+  normally specify the layout of the website. For this website only one template was used for all
+  page description files. However, you could assign each page description file its own template, if
+  you want to! (but why would one do that? :-) </p>
+
+  <p>You must have at least one template file in the root of the source directory which is the
+  fallback template if no other template can be found for a page description file. The template
+  files are organized hierarchically. So if during processing webgen does not find the default
+  template file in the directory the page file is, it searches the parent directory for the
+  template. If it isn't there either, it searches the parent's parent directory and so on. If webgen
+  gets to the root of the source directory and could not find a template, it will complain and
+  stop.</p>
+
+</div>

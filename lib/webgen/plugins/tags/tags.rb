@@ -69,7 +69,9 @@ module Tags
           self.logger.info { "Replacing tag #{match} in <#{node.recursive_value( 'dest' )}>" }
           processor = get_tag_processor $3
           processor.set_tag_config( YAML::load( "- #{$4}" )[0] )
-          backslashes + substitute_tags( processor.process_tag( $3, node, refNode ), node, node )
+          output = processor.process_tag( $3, node, refNode )
+          output = substitute_tags(output, node, node ) if processor.processOutput
+          backslashes + output
         end
       end
       content
@@ -102,6 +104,13 @@ module Tags
       "Invalid tag parameter configuration with type %0 (should be type %1) and value %2",
       "Add or correct the parameter value"
 
+    # +true+, if the output should be processed again
+    attr_reader :processOutput
+
+    def initialize
+      @processOutput = true
+    end
+
 
     # Sets the configuration parameters for the next #process_tag call. The configuration, if
     # specified, is taken from the tag itself.
@@ -110,11 +119,11 @@ module Tags
       case config
       when Hash
         config.each do |key, value|
-          if @defaultConfig.has_key? key
+          if defined?( @defaultConfig ) && @defaultConfig.has_key?( key )
             @curConfig[key] = value
-            self.logger.debug { "Setting parameter '#{key}' for tag #{self.class.const_get( :NAME )}" }
+            self.logger.debug { "Setting parameter '#{key}' for tag '#{self.class.const_get( :NAME )}'" }
           else
-            self.logger.warn { "Invalid parameter '#{key}' for tag #{self.class.const_get( :NAME )}" }
+            self.logger.warn { "Invalid parameter '#{key}' for tag '#{self.class.const_get( :NAME )}'" }
           end
         end
       when NilClass
@@ -135,6 +144,8 @@ module Tags
     #######
     private
     #######
+
+    attr_writer :processOutput
 
     # Registers the configuration parameter +name+ for the tag. The Configuration plugin is used to
     # get the value for the parameter. If no value could be found, +defaultValue+ is used.

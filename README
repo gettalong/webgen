@@ -30,103 +30,13 @@ Or you could install webgen the "GEM way":
 
 where VERSION is the version of webgen you are trying to install.
 
-= Usage
+= Documentation
 
-== Configuration
+Build the homepage of webgen to view the documentation. You can do this by invoking
+ $ rake documentation
 
-Webgen uses a two directories: one to read the source files from and an other to write the output
-files to. The default source directory is +src+ and the default output directory is +output+. The
-source directory can be structured in any way you like, there is no restriction in respect of the
-number of directories or files.
-
-General, if you want to get configuration values you can run webgen like this
-
- § webgen -e
-
-This will list all configuration values (the current values and the default values). The default
-values are hardcoded but can be overriden using a configuration file. The configuration file has to
-be written in YAML and is called <tt>config.yaml</tt>. Webgen searches in the current directory for
-the configuration file. Each option that is listed under +Configuration+ when the former mentioned
-command is run can be overridden using a configuration file.
-
-== File Types
-
-[<b>Template files</b>]
-   Templates normally specify the layout of the web pages and where the content should go to. You
-   can specify a default template for a directory by creating a file called <tt>default.template</tt>.
-   You must have at least one template file in the root of the source directory (or you specify a
-   template for each page file separately using the +template+ tag). The template files are organized
-   hierarchically. So if during processing webgen does not find the default template file in the
-   directory the page file is, it searches the parent directory for the template. If it isn't there
-   either, it searches the parent's parent directory and so on. If webgen gets to the root of the
-   source directory and could not find a template, it will complain and stop.
-
-[<b>Page description files</b>]
-   These files contain the actual content. There are different kinds of page description files, e.g.
-   you can write page description files in XML, YAML or plain text. A page description file specifies
-   the following things:
-   * Title of the file
-   * Ordering (used in menu generation)
-   * Language of the file
-   * Content
-   * Additional tags
-
-   The first three things are extracted from the file name if possible. The general format of a file
-   name is: <tt>[ordering.]name[.language].extension</tt> where ordering and language are optional.
-   The name part can consist of any letter except a dot.
-
-   Consider the following examples:
-   * <tt>name.extension</tt> -> title: Name, default language, no ordering
-   * <tt>name.de.extension</tt> -> title: Name, language 'de', no ordering
-   * <tt>01.name_of-file.de.extension</tt> -> Title: Name of file, language 'de', order key: 01
-
-   As you can see, the name part of the filename can have underscores and hypens which are
-   substituted with spaces.
-
-   The content is the main part of a page description file. It defines what will be shown on the
-   resulting HTML page.
-
-   If a language like XML or YAML is used to define a page description file, the file can provide
-   additional information called meta information. This additional data is also read and each plugin
-   can use it. For example, the title, language and ordering information are extracted from the
-   filename but if you want to specify a more complex title (e.g. one with points in it) you can
-   override the default name with a custom one. A YAML page description file that does exactly that
-   would look like this: title: New Title with Points . in it content: This is the content of this
-   file
-
-   You can override any default setting by using custom values in the page description files
-   themselves. Moreover, you can define any data in the file, even if it is not useful to webgen
-   itself. For example, you could add a <tt>"my special key"</tt> entry next to +title+ and
-   +content+.
-
-[<b>Meta information backing files</b>]
-   Sometimes it is desirable to have all meta information stored in another file, not in the page
-   description file itself. For example, if only plain text page files are used you have no way of
-   specifying additional meta information. Therefore special files, called meta information backing
-   files, are used to define meta data for the page description files.
-
-[<b>Other files</b>]
-   Each different file type is handled by a plugin. So if you would like to handle a new file type
-   you only have to write a new plugin that handles it.
-
-To get a list of all available file handlers have a look at the API documentation.
-
-
-== Tags
-
-During processing of the page description files so called 'tags' are substituted. Tags are defined
-by a special markup code. A tag has the following structure:
-
-  {tagname: {optional arguments in YAML format}}
-
-Every time a tag is found in a source file, the registered plugin for the tag is called. The plugin
-returns a string which is put into the output file instead of the tag. The output a tag plugin
-can produce ranges from something simple to something complex. For example, the <tt>Meta Tag</tt>
-plugin copies any additional info specified in the source file verbatim into the correct place in
-the output file. And in contrast, the <tt>Menu Tag</tt> plugin generates a whole menu tree.
-
-There are several tag plugins in the distribution; have a look at the API documentation for a
-complete list.
+in the root of the package or by running webgen manually in the +homepage+ directory:
+ $ ruby -I../lib ../bin/webgen
 
 == Example
 

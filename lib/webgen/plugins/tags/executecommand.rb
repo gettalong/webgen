@@ -20,30 +20,49 @@
 #++
 #
 
+require 'cgi'
 require 'util/ups'
 require 'webgen/plugins/tags/tags'
 
 module Tags
 
-  # This plugin registers itself as default plugin for tags. It substitutes tags with their
-  # respective values from the node meta data.
-  #
-  # This is very useful if you want to add new meta information to the page description files and
-  # simple copy the values to the output file.
-  class MetaTag < DefaultTag
+  # Includes a file verbatim. All HTML special characters are escaped.
+  class ExecuteCommandTag < DefaultTag
 
-    NAME = "Meta tag"
-    SHORT_DESC = "Replaces all tags without tag plugin with their respective values from the node meta data"
+    NAME = "Execute Command Tag"
+    SHORT_DESC = "Executes the given command and includes its standard output"
+
+
+    def initialize
+      super
+      self.processOutput = false
+    end
 
     def init
-      UPS::Registry['Tags'].tags[:default] = self
+      UPS::Registry['Tags'].tags['execute'] = self
     end
+
+
+    def set_tag_config( config )
+      if config.kind_of? String
+        @command = config
+      else
+        Webgen::WebgenError( :TAG_PARAMETER_INVALID, config.class.name, 'String', config )
+      end
+    end
+
 
     def process_tag( tag, node, refNode )
-      node[tag] || ''
+      if @command.nil?
+        self.logger.error { 'No command specified in tag' }
+        return ''
+      end
+
+      content = CGI::escapeHTML( `#{@command}` )
+      return "<pre class=\"webgen-file\">\n" + content + "</pre>"
     end
 
-    UPS::Registry.register_plugin MetaTag
+    UPS::Registry.register_plugin ExecuteCommandTag
 
   end
 

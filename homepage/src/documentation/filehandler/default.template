@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
   <head>
     <title>{title: }</title>
-    <link href="{relocatable: default.css}" rel="stylesheet" />
+    <link href="{relocatable: ../default.css}" rel="stylesheet" />
   </head>
   <body>
     <div id="header">
@@ -11,20 +11,22 @@
       <div id="headerbar">
         <span id="navbar">{navbar: }</span>
         <span id="languages">{lang: }</span>
-        <div style="clear: both; border-top: 1px solid #58b"></div>
+        <div style="clear: both; border-bottom: 1px solid #8ad"></div>
       </div>
     </div>
 
-    <div id="menu">
-      {menu: }
-    </div>
+    <div id="pagebody">
+      <div id="menu">
+        {menu: {level: 2}}
+      </div>
 
-    <div id="body">
-      {content: }
+      <div id="body">
+        {content: }
+      </div>
     </div>
 
     <div id="footer">
-        generated with <em><b>webgen</b></em> on <b>{date: }</b>
+      {revision: }
     </div>
 
   </body>

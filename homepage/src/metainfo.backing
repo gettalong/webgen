@@ -3,19 +3,66 @@ index.html:
     title: Home
     inMenu: true
     directoryName: Webgen
+    menuOrder: 1
+
+download.html:
+  en:
+    title: Download &amp; Installation
+    inMenu: true
+    menuOrder: 3
+
+documentation/index.html:
+  en:
+    title: Documentation
+    directoryName: Documentation
+    menuOrder: 4
 
 
-tags/index.html:
+
+documentation/filehandler/index.html:
+  en:
+    title: File Handlers
+    directoryName: File Handlers
+
+documentation/filehandler/htmlfragment.html:
+  en:
+    title: HTML Fragment Handler
+    inMenu: true
+
+documentation/filehandler/backing.html:
+  en:
+    title: Backing File Handler
+    inMenu: true
+
+documentation/filehandler/directory.html:
+  en:
+    title: Directory Handler
+    inMenu: true
+
+documentation/filehandler/copy.html:
+  en:
+    title: File Copy Handler
+    inMenu: true
+
+documentation/filehandler/template.html:
+  en:
+    title: Template File Handler
+    inMenu: true
+
+
+
+
+documentation/tags/index.html:
   en:
     title: Tags
     directoryName: Tags
 
-tags/lang.html:
+documentation/tags/lang.html:
   en:
     title: Language Tag
     inMenu: true
 
-tags/multilang.html:
+documentation/tags/multilang.html:
   en:
     title: Multi language page
   de:
@@ -23,35 +70,35 @@ tags/multilang.html:
   fr:
     title: Francais
 
-tags/navbar.html:
+documentation/tags/navbar.html:
   en:
     title: Navigation Bar Tag
     inMenu: true
 
-tags/meta.html:
+documentation/tags/meta.html:
   en:
     title: Meta Tag
     inMenu: true
 
-tags/menu.html:
+documentation/tags/menu.html:
   en:
     title: Menu Tag
     inMenu: true
   de:
     title: Menütag
 
-tags/relocatable.html:
+documentation/tags/relocatable.html:
   en:
     title: Relocatable Tag
     inMenu: true
 
-tags/date.html:
+documentation/tags/date.html:
   en:
     title: Date Tag
     inMenu: true
 
-
-filehandler/index.html:
+documentation/tags/includefile.html:
   en:
-    title: File Handlers
-    directoryName: File Handlers
+    title: Include File Tag
+    inMenu: true
+

@@ -25,23 +25,31 @@ require 'webgen/plugins/tags/tags'
 
 module Tags
 
-  # Prints out the date using a format string which will be passed to Time#strftime. Therefore you
-  # can use everything Time#strftime offers.
-  class DateTag < DefaultTag
+  # This plugin registers itself as default plugin for tags. It substitutes tags with their
+  # respective values from the node meta data.
+  #
+  # This is very useful if you want to add new meta information to the page description files and
+  # simple copy the values to the output file.
+  class MetaTag < DefaultTag
 
-    NAME = "Date Tag"
-    SHORT_DESC = "Prints out the date"
+    NAME = "Meta tag"
+    SHORT_DESC = "Replaces all tags without tag plugin with their respective values from the node meta data"
 
     def init
-      register_config_value( 'format', '%A, %B %d %H:%M:%S %Z %Y' )
-      UPS::Registry['Tags'].tags['date'] = self
+      UPS::Registry['Tags'].tags[:default] = self
     end
 
     def process_tag( tag, node, refNode )
-      Time.now.strftime( get_config_value( 'format' ) )
+      output = ''
+      if node[tag]
+        output = node[tag]
+      else
+        self.logger.warn { "No value for tag '#{tag}' in <#{refNode.recursive_value( 'src' )}> found in meta information" }
+      end
+      return output
     end
 
-    UPS::Registry.register_plugin DateTag
+    UPS::Registry.register_plugin MetaTag
 
   end
 

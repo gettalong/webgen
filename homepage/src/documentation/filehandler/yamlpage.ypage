@@ -1,0 +1,14 @@
+title: YAML Page Handler
+inMenu: true
+
+content: |
+  <div class="section">
+    <h2 class="section_header">Information</h2>
+
+    <p>The YAML page handler is used for handling YAML page description files. The source of this
+    page is a YAML page description file and looks like this:</p>
+
+    {includeFile: yamlpage.ypage}
+
+    As you can see, meta information can be specified in this type of page description file.
+  </div>

@@ -48,7 +48,7 @@ module FileHandlers
   # support meta information, e.g. HTML fragment files.
   class PageFileBacking < DefaultHandler
 
-    NAME = "PageFileBacking"
+    NAME = "Backing File Handler"
     SHORT_DESC = "Handles backing files for page file"
 
     EXTENSION = "backing"
@@ -87,7 +87,7 @@ module FileHandlers
         backedFile = dirNode.get_node_for_string( filename )
         if backedFile
           data.each do |language, fileData|
-            langFile = UPS::Registry['Page Plugin'].get_lang_node( backedFile, language )
+            langFile = UPS::Registry['Page Handler'].get_lang_node( backedFile, language )
             next unless langFile['lang'] == language
 
             self.logger.info { "Setting meta info data on file <#{langFile.recursive_value( 'dest' )}>" }

@@ -40,7 +40,7 @@ module FileHandlers
     end
 
 
-    NAME = "Dir Handler Plugin"
+    NAME = "Directory Handler"
     SHORT_DESC = "Handles directories"
 
     attr_reader :indexFile
@@ -86,7 +86,7 @@ module FileHandlers
 
 
     def process_dir_index( dirNode )
-      node, created = UPS::Registry['Page Plugin'].get_page_node( @indexFile, dirNode )
+      node, created = UPS::Registry['Page Handler'].get_page_node( @indexFile, dirNode )
       if created
         self.logger.warn { "No directory index file found for directory <#{dirNode.recursive_value( 'src' )}>" }
       else

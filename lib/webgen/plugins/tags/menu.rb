@@ -63,7 +63,7 @@ module Tags
       def get_order_value( node )
         # be optimistic and try metainfo field first
         node = node['node'] if node.kind_of? MenuNode
-        value = node['menuOrder'].to_s.to_i
+        value = node['menuOrder'].to_s.to_i unless node['menuOrder'].nil?
 
         # find the first menuOrder entry in the page files
         node = node['indexFile'] if node.kind_of? FileHandlers::DirHandler::DirNode

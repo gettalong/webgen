@@ -21,13 +21,13 @@
 
   #menu {
 	float: left;
-	width: 180px;
+	width: 230px;
     padding: 20px 0px 0px 20px;
 	border: 3px solid #58b;
   }
 
   #body {
-	margin-left: 200px;
+	margin-left: 250px;
 	padding: 20px;
   }
 
@@ -123,6 +123,10 @@
 	color: #8b5;
   }
 
-
+  pre.webgen-file {
+    padding-left: 10px;
+    margin: 0px 10px;
+    border-left: 3px solid #8b5;
+  }
 
 }

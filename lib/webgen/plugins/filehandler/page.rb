@@ -43,7 +43,7 @@ module FileHandlers
     end
 
 
-    NAME = "Page Plugin"
+    NAME = "Page Handler"
     SHORT_DESC = "Super class for all page plugins"
 
 
@@ -72,7 +72,7 @@ module FileHandlers
     def write_node( node )
       # do nothing if page base node
       return unless node['virtual'].nil?
-      templateNode = UPS::Registry['Template File Plugin'].get_template_for_node( node )
+      templateNode = UPS::Registry['Template File Handler'].get_template_for_node( node )
 
       outstring = templateNode['content'].dup
 

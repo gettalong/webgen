@@ -178,13 +178,14 @@ module Webgen
 
 
     def runListConfiguration
-      print "List of configuration parameters:\n"
+      print "List of configuration parameters:\n\n"
       params = UPS::Registry['Configuration'].configParams
-      params.sort.each do |entry|
-        print "  - #{entry[0]}\n"
-        entry[1].each do |paramValue|
-          print "      #{paramValue[0]}:".ljust(30) +"#{paramValue[1].inspect} | #{paramValue[2].inspect}\n"
+      params.sort.each do |name, config|
+        print "  - #{name}\n"
+        config.each do |paramValue|
+          print "      #{paramValue[0]}:".ljust(30) +"#{paramValue[1].inspect} (#{paramValue[2].inspect})\n"
         end
+	print "\n"
       end
     end
 

@@ -28,7 +28,7 @@ module FileHandlers
   # Handles template files. Template files are generic files which normally specify the layout.
   class TemplatePlugin < DefaultHandler
 
-    NAME = "Template File Plugin"
+    NAME = "Template File Handler"
     SHORT_DESC = "Represents the template files for the page generation in the tree"
 
     EXTENSION = 'template'

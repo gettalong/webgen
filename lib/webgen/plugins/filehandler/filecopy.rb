@@ -29,7 +29,7 @@ module FileHandlers
   # directory. The extensions of the files to copy are customizable.
   class FileCopyPlugin < DefaultHandler
 
-    NAME = "Copy Files"
+    NAME = "File Copy Handler"
     SHORT_DESC = "Copies files from source to destination without modification"
     DESCRIPTION = <<-EOF.gsub( /^\s*/, '' ).gsub( /\n/, ' ' )
         Implements a generic file copy plugin. All the file types which are specified in the
