@@ -1,0 +1,13 @@
+---
+title: WikiLink
+inMenu: true
+---
+h2. Information
+
+<notextile>{describe: WikiLinkTag}</notextile>
+
+h2. Description
+
+This tag can be used to add a link to a wiki page. It is used on this website to automatically
+provide a "Feedback" link for each page.
+

@@ -22,6 +22,8 @@ The menu to the left is generated with the default settings:
 * subtreeLevel = 3
 * showCurrentSubtreeOnly = true
 
+h2. Examples
+
 Below are some other menus generated from the same source but with different settings:
 
 table{border: 1px solid black}.

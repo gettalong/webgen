@@ -8,7 +8,8 @@ h2. Information
 
 h2. Description
 
-The include file tag is used to include the contents of a file. Here is an example output of this
-tag:
+The include file tag is used to include the contents of a file.
+
+h2. Examples
 
 <pre class="webgen-file">{includeFile: {filename: includefile.page, processOutput: false}}</pre>

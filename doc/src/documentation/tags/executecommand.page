@@ -8,7 +8,9 @@ h2. Information
 
 h2. Description
 
-The execute command tag is used to include the output from a shell command. Here are some examples:
+The execute command tag is used to include the output from a shell command.
+
+h2. Examples
 
 table{border:1px solid black}.
 |_.Command|_.Output|

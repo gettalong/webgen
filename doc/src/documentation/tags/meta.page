@@ -14,5 +14,7 @@ define a meta information with the key <code>revision</code>, you could put the 
 <code>\{revision: }</code> into the content part of the file and the value gets substituted
 automatically.
 
-Example: There is a meta information called 'dummyForMeta' defined for this page, so when this tag
+h2. Examples
+
+There is a meta information called 'dummyForMeta' defined for this page, so when this tag
 is used @\{dummyForMeta:}@, you get this '@{dummyForMeta:}@'.

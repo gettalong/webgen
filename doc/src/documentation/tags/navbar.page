@@ -10,3 +10,10 @@ h2. Description
 
 The navigation bar tag is used to display the hierarchy for the current page. You can see it in
 action in the lower left corner of the header.
+
+h2. Examples
+
+table{border:1px solid black}.
+|_.Command|_.Output|
+|<notextile>\{navbar: {separator: " HALLO "}}</notextile>|<notextile>{navbar: {separator: " HALLO "}}</notextile>|
+|\{navbar:}|{navbar:}|

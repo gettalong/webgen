@@ -54,7 +54,11 @@ module Tags
       return replace_tags( content ) do |tag, data|
         self.logger.info { "Replacing tag #{tag} with data '#{data}' in <#{node.recursive_value( 'dest' )}>" }
         processor = get_tag_processor( tag )
-        processor.set_tag_config( YAML::load( "--- #{data}" ), refNode )
+        begin
+          processor.set_tag_config( YAML::load( "--- #{data}" ), refNode )
+        rescue ArgumentError => e
+          self.logger.error { "Could parse the data '#{data}' for tag #{tag} in <#{node.recursive_value( 'dest' )}>: #{e.message}" }
+        end
         output = processor.process_tag( tag, node, refNode )
         processor.reset_tag_config
         output = substitute_tags( output, node, node ) if processor.processOutput

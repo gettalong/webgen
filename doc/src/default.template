@@ -20,6 +20,8 @@
       {menu: }
     </div>
 
+    <div id="feedback">{wikilink: {rootURL: http://webgen.rubyforge.org/wiki/wiki.pl?, title: Feedback for this page}}</div>
+
     <div id="body">
       {content: }
     </div>

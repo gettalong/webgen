@@ -11,6 +11,9 @@ h2. Description
 The date tag is used to display the current time in a specific format. You can see how the default
 output looks like in the footer.
 
-Here are some more examples for the date plugin:
-* @\{date: {format: %Y-%m-%d %H:%M:%S}}@: {date: {format: %Y-%m-%d %H:%M:%S}}
-* @\{date: {format: %x - %X}}@: {date: {format: %y - %X}}
+h2. Examples
+
+table{border:1px solid black}.
+|_.Command|_.Output|
+|\{date: {format: %Y-%m-%d %H:%M:%S}}|{date: {format: %Y-%m-%d %H:%M:%S}}|
+|\{date: {format: %x - %X}}|{date: {format: %y - %X}}|

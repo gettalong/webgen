@@ -14,9 +14,10 @@ h2. News
 
 *Webgen 0.3.0 was released!!!*
 
-Changes:
+Major changes:
 
 * Textile, Markdown, RDOC and HTML as content format supported!!!
+* New tags: <a href="{relocatable: documentation/tags/wikilink.html}">wikilink</a>
 * Improved plugin system
 * On-the-fly creation of new tags
 * Fixed bugs
