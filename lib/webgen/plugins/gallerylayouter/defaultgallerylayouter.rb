@@ -110,6 +110,7 @@ module PictureGalleryLayouter
       s += "<a href=\"#{data['galleries'][prevIndex]['srcName']}\">&lt;&nbsp;#{data['galleries'][prevIndex]['title']}</a>" unless prevIndex.nil?
       s += "&nbsp;&mdash;&nbsp;" unless prevIndex.nil? || nextIndex.nil?
       s += "<a href=\"#{data['galleries'][nextIndex]['srcName']}\">#{data['galleries'][nextIndex]['title']}&nbsp;&gt;</a>" unless nextIndex.nil?
+      s += "<br />"
 
       s += "<table>"
       0.step( data['galleries'][gIndex]['imageList'].length - 1, 5 ) do |i|
@@ -136,6 +137,7 @@ module PictureGalleryLayouter
       s += "&nbsp;&mdash;&nbsp;" unless prevGIndex.nil? || nextGIndex.nil?
       s += "<a href=\"#{data['galleries'][nextGIndex]['imageList'][nextIIndex]['srcName']}\">" \
       "#{data['galleries'][nextGIndex]['imageList'][nextIIndex]['title']}&nbsp;&gt;</a>" unless nextGIndex.nil?
+      s += "<br />"
 
       s += "
 <img src='#{data['galleries'][gIndex]['imageList'][iIndex]['imageFilename']}' alt='#{data['galleries'][gIndex]['imageList'][iIndex]['title']}' />

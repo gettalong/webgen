@@ -114,6 +114,13 @@ class Node
     /^#{node.recursive_value( 'dest' )}/ =~ recursive_value( 'dest' )
   end
 
+  # Returns the parent directory for this node. This function ignores virtual directories.
+  def parent_dir
+    node = self.parent
+    node = node.parent while !node.nil? && node['virtual']
+    node
+  end
+
   # Returns the root node for +node+.
   def self.root( node )
     node = node.parent until node.parent.nil?
@@ -129,8 +136,7 @@ class Node
       node = Node.root( self )
       destString = destString[1..-1]
     else
-      node = self.parent || self
-      node = node.parent while !node.nil? && node['virtual']
+      node = self.parent_dir || self
     end
 
     destString.split( '/' ).each do |element|

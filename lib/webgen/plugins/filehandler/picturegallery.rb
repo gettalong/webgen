@@ -195,9 +195,9 @@ module FileHandlers
 
       def write_node( node )
         if Webgen::Plugin['FileHandler'].file_modified?( node['tn:imageFile'], node.recursive_value( 'dest' ) )
+          self.logger.info {"Creating thumbnail <#{node.recursive_value('dest')}> from <#{node['tn:imageFile']}>"}
           image = Magick::ImageList.new( node['tn:imageFile'] )
           image.change_geometry( get_param( 'thumbnailSize' ) ) {|c,r,i| i.resize!( c, r )}
-          self.logger.info {"Creating thumbnail <#{node.recursive_value('dest')}> from <#{node['tn:imageFile']}>: #{image.inspect}"}
           image.write( node.recursive_value( 'dest' ) )
         end
       end

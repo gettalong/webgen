@@ -28,27 +28,27 @@ class PluginTest < Test::Unit::TestCase
   end
 
   def setup
-    @x = Webgen::Plugin.config[TestPlugin.name].obj = TestPlugin.new
+    @x = Webgen::Plugin.config[TestPlugin].obj = TestPlugin.new
     @x2 = Test2Plugin.new
   end
 
 
   def test_class_inherited
-    assert_instance_of( OpenStruct, Webgen::Plugin.config[TestPlugin.name] )
-    assert_equal( TestPlugin, Webgen::Plugin.config[TestPlugin.name].klass )
+    assert_instance_of( OpenStruct, Webgen::Plugin.config[TestPlugin] )
+    assert_equal( TestPlugin, Webgen::Plugin.config[TestPlugin].klass )
   end
 
   def test_setter_methods
     ['summary','description'].each do |text|
-      assert_equal( text, Webgen::Plugin.config[TestPlugin.name].send( text ) )
+      assert_equal( text, Webgen::Plugin.config[TestPlugin].send( text ) )
     end
-    assert_nil( Webgen::Plugin.config[TestPlugin.name].dependencies )
-    assert_equal( nil, Webgen::Plugin.config[TestPlugin.name].dependencies )
-    assert_instance_of( Hash, Webgen::Plugin.config[TestPlugin.name].params )
-    assert_equal( 'name', Webgen::Plugin.config[TestPlugin.name].params['name'].name )
-    assert_equal( TestPlugin, Webgen::Plugin.config[TestPlugin.name].params['name'].value )
-    assert_equal( TestPlugin, Webgen::Plugin.config[TestPlugin.name].params['name'].default )
-    assert_equal( 'description', Webgen::Plugin.config[TestPlugin.name].params['name'].description )
+    assert_nil( Webgen::Plugin.config[TestPlugin].dependencies )
+    assert_equal( nil, Webgen::Plugin.config[TestPlugin].dependencies )
+    assert_instance_of( Hash, Webgen::Plugin.config[TestPlugin].params )
+    assert_equal( 'name', Webgen::Plugin.config[TestPlugin].params['name'].name )
+    assert_equal( TestPlugin, Webgen::Plugin.config[TestPlugin].params['name'].value )
+    assert_equal( TestPlugin, Webgen::Plugin.config[TestPlugin].params['name'].default )
+    assert_equal( 'description', Webgen::Plugin.config[TestPlugin].params['name'].description )
 
     @x.param_set( 'name', Test2Plugin )
     assert_equal( Test2Plugin, @x.param( 'name' ) )

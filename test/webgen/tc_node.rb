@@ -127,4 +127,12 @@ class NodeTest < Test::Unit::TestCase
     assert_equal( @n['root'], Node.root( @n['root/dir2/file3'] ) )
   end
 
+  def test_parent_dir
+    assert_equal( @n['root'], @n['root/file1'].parent_dir )
+    assert_equal( @n['root/dir2'], @n['root/dir2/file4'].parent_dir )
+    assert_equal( @n['root'], @n['root/dir2'].parent_dir )
+    assert_equal( @n['root'], @n['root/virtdir1/file2'].parent_dir )
+    assert_equal( nil, @n['root'].parent_dir )
+  end
+
 end
