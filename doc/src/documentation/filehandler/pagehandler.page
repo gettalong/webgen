@@ -1,7 +1,6 @@
 ---
 title: Page Handler
-inMenu: false
-directoryName: Page Handler
+inMenu: true
 ---
 h2. Information
 
