@@ -6,9 +6,9 @@ h2. Feature list
 
 * Easily extendable through plugins
 * Uses templates for separating layout from content
-* Supports several different page description languages (YAML, XML, plain HTML), new ones are easy to add
-* Uses 'tags' to add generated content to the web pages
+* Supports several different content formats (Textile, Markdown, RDOC, plain HTML), new ones are easy to add
+* Uses 'tags' to add generated, ie. dynamic, content to the web pages
 * Standard distribution provides often used tags
 * Supports 'virtual files' via meta information backing files
-* Easy to configure if one needs to
-* Relatively fast: process ~1000 files in ~25 seconds on an {execute: uname -p}
+* Easy to configure if one needs to (no need if you are happy with the default values)
+* Relatively fast: processes ~1000 files in ~25 seconds on an {execute: uname -p}

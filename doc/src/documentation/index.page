@@ -5,6 +5,37 @@ h2. Information
 
 p={font-size: 150%; color: red}. *!!! This documentation is for Webgen {version: } !!!*
 
+The source files for this website are in the @doc/src@ directory of the webgen package. Have a look
+at them to see a real world example on how to use webgen!
+
+h2. Philosophy
+
+There are some things about webgen which I think are important to mention. It's about how webgen
+works and what you can expect when you start webgen.
+
+* <b>Webgen runs till the end and does not stop on errors!</b>
+
+  I did not like it when webgen stopped because there was an error in the configuration file or an
+  error in a page description file. So if something exceptional happens it is logged so that the
+  user can see what happened and a useful default alternative is used instead. For example, if no
+  default template was found in the source directory, a dummy template is used instead.
+
+  Therefore it is also not necessary to install the dependencies (although you would be wise to do
+  it, so that you can use all the features of webgen). If a dependency is not found (e.g. RedCloth
+  for Textile support), the specific feature is turned off and a warning gets issued.
+
+* <b>Useful default values for everything!</b>
+
+  You _do not need_ to configure webgen if you are happy with the default values. Webgen provides
+  default values for every configuration option.
+
+* <b>Every important thing gets logged!</b>
+
+  The logging mechanism is not only used to log error and warning messages, but also to log
+  informational and debug messages. For the normal user, the error and warning messages are
+  important. Developers who extend webgen by writing a new plugin can use the informational and
+  debug messages to see what is going on and to help them develop the plugin.
+
 h2. Usage
 
 Webgen uses two directories: one to read the source files from and an other to write the output
@@ -16,11 +47,6 @@ To build the website you simple need to change to the parent directoy of the sou
 type @webgen@. If everything is okay, no output will appear and you can point your browser to the
 output directory and view your website. If not, webgen tries to give detailed information about what
 happened and why something could not be done correctly.
-
-Webgen tries to compensate for errors and warnings and _should_ not abort with an error. Instead, it
-uses default values in error or warning cases and only issues messages to the log device (normally
-the screen). This also means that if a library is not found (e.g. RedCloth for Textile support),
-the plugin which uses the library is disabled.
 
 h2. Configuration
 
@@ -44,4 +70,5 @@ looks like this:
 h2. Plugins
 
 Webgen is written with extensibility in mind; therefore most of its features are implemented with
-plugins, only the core functions are not plugins.
+plugins, only the core functions are not plugins. Use the menu to view the documentation for
+individual plugins.

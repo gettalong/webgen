@@ -13,8 +13,6 @@
 ---- DOCU ----
 
 * pictureGallery: document layout methods (how to extend), main things...
-* extend plugins section on main documentation page
-* add design gallery
 * DEV: self.logger.warn/error/info/debug can be used for messages
 
 ---- FUTURE ----
@@ -131,3 +129,7 @@ W do not allow two or more page files in the same language, print warn
 * remove extension(...) call from file handlers -> DefaultHandler#initialize
 * pagehandler + converter into own subdir
 * think about filename conflicts for picture pages
+* document that webgen documentation source files (as example website) are in the tar.gz file!
+* document philosophy of webgen (never stop running, errors/warnings, default values,...)
+* extend plugins section on main documentation page
+* add design gallery
