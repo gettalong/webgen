@@ -30,10 +30,10 @@ Or you could install webgen the "GEM way":
 
 = Documentation
 
-Build the homepage of webgen to view the documentation. You can do this by invoking
- $ rake homepage
+You can build the documentation by invoking
+ $ rake doc
 
-in the root of the package or by running webgen manually in the +homepage+ directory:
+in the root of the package or by running webgen manually in the +doc+ directory:
  $ ruby -I../lib ../bin/webgen
 
 = Example

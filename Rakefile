@@ -69,16 +69,16 @@ task :clean do
 end
 
 
-CLOBBER << "homepage/output" << "homepage/webgen.log"
-desc "Builds the homepage which includes the documentation"
-task :homepage => [:rdoc] do
-  Dir.chdir("homepage")
+CLOBBER << "doc/output" << "doc/webgen.log"
+desc "Builds the documentation"
+task :doc => [:rdoc] do
+  Dir.chdir("doc")
   ruby %{-I../lib ../bin/webgen -v 3 }
   Dir.chdir("..")
 end
 
 rd = Rake::RDocTask.new do |rdoc|
-  rdoc.rdoc_dir = 'homepage/output/rdoc'
+  rdoc.rdoc_dir = 'doc/output/rdoc'
   rdoc.title    = "Webgen"
   rdoc.options << '--line-numbers' << '-m README'
   rdoc.rdoc_files.include( 'README' )
@@ -107,14 +107,14 @@ PKG_FILES = FileList.new( [
                             'lib/**/*.rb',
                             'testsite/**/*',
                             'tests/**/*',
-                            'homepage/**/*'
+                            'doc/**/*'
                           ]) do |fl|
   fl.exclude( /\bsvn\b/ )
   fl.exclude( 'testsite/output' )
   fl.exclude( 'testsite/coverage' )
   fl.exclude( 'testsite/webgen.log' )
-  fl.exclude( 'homepage/output' )
-  fl.exclude( 'homepage/webgen.log' )
+  fl.exclude( 'doc/output' )
+  fl.exclude( 'doc/webgen.log' )
 end
 
 if !defined? Gem

@@ -47,6 +47,10 @@ module FileHandlers
     SHORT_DESC = "Super class for all page plugins"
 
 
+    def init
+      @defaultLangInFilename = UPS::Registry['Configuration'].get_config_value( NAME, 'defaultLangInFilename', true )
+    end
+
     def create_node( srcName, parent )
       data = get_file_data srcName
 
@@ -128,7 +132,8 @@ module FileHandlers
       fileData.lang      = matchData[3] || UPS::Registry['Configuration'].lang
       fileData.baseName  = matchData[2] + '.html'
       fileData.srcName   = srcName
-      fileData.urlName   = matchData[2] + '.' + fileData.lang + '.html'
+      langPart = ( @defaultLangInFilename && UPS::Registry['Configuration'].lang == fileData.lang ? '' : '.' + fileData.lang )
+      fileData.urlName   = matchData[2] + langPart + '.html'
       fileData.menuOrder = matchData[1].to_i
       fileData.title     = matchData[2].tr('_-', ' ').capitalize
 

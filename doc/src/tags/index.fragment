@@ -1,0 +1,10 @@
+<div class="section">
+<h2 class="section_header">Information</h2>
+<p>Tags are used to generate content. For example, the menu you see to left was generated. This
+makes it easier to add or remove menu items. If the menu was not generated, you would have to change
+every file which uses the menu.</p>
+<p>Webgen comes bundled with some default tag plugins. Have a look at the API documentation which
+can be generated from the source files of webgen. All currently available tags are exercised in this
+online demo. Choose a tag from the menu to get a short description of what the tag does.</p>
+
+ </div>

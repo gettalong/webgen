@@ -1,0 +1,9 @@
+<div class="section">
+<h2 class="section_header">Information</h2>
+<p>File handlers are used to handle different types of input files. One can distinguish between
+normal file handlers and page file handlers: page file handlers are used to handle page description
+files (which describe HTML files, like this one), all other files are handled by normal file
+handlers.</p>
+<p>You can see the currently exisiting file handlers in the menu. Choose one to get a short
+description for it!</p>
+</div>
