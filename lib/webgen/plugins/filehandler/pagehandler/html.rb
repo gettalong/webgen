@@ -25,7 +25,7 @@ require 'webgen/plugins/filehandler/pagehandler/page'
 module ContentHandlers
 
   # Handles HTML content. Assumes that the content is already valid HTML.
-  class HTMLHandler < ContentHandler
+  class HTMLContentHandler < ContentHandler
 
     summary "Handles HTML formatted content"
     depends_on "PageHandler"

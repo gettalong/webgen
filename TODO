@@ -9,15 +9,12 @@
 
 ---- DOCU ----
 
-* pictureGallery: document layout methods (how to extend -> write subclass, can use config values as layouters are plugins), main things...
-* pictureGallery: files param: no path outside src directory
 * DEV: self.logger.warn/error/info/debug can be used for messages
 
 ---- FUTURE ----
 
 * tag 'resume', uses xmlresume2x to provide HTML version of xml resume
 * tag 'mrplot' -> generate a plot with mrplot
-* tag 'sitemap' -> generate site map
 * multi-lingual picture/gallery files
 * create logo "Created with webgen"
 * refactor menu: abstract menu generator+parser, concrete impls (vert. menu, horz. menu, ...)
@@ -138,3 +135,7 @@ W do not allow two or more page files in the same language, print warn
 * create thumbnails of pictures on the fly with rmagick
 * do not create thumbnails if they already exist and the source file has not changed
 * ev. create a GalleryNode and put gallery/pictures pages beneath it??? -> No
+* tag 'sitemap' -> generate site map
+* add pages for content converter and layouter plugins
+* pictureGallery: document layout methods (how to extend -> write subclass, can use config values as layouters are plugins), main things...
+* pictureGallery: files param: no path outside src directory

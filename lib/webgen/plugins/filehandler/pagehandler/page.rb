@@ -196,6 +196,7 @@ module ContentHandlers
     def register_format( fmt )
       self.logger.info { "Registering class #{self.class.name} for formatting '#{fmt}'" }
       Webgen::Plugin['PageHandler'].formats[fmt] = self
+      Webgen::Plugin.config[self.class.name].contentFormat = fmt
     end
 
     # Format the given +content+. Should be overridden in subclass!

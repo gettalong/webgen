@@ -1,0 +1,21 @@
+---
+title: About
+inMenu: true
+menuOrder: 2
+---
+h2. About _webgen_
+
+Webgen is used to generate web pages from page description and template files. You create one
+template file in which you define the layout of your page and where the content should go. After
+that you can create page description files in which you only define the content.
+
+When webgen is run it combines the template with each of the page description files and generates
+the HTML output files. During this process special tags are substituted so that, for example, a menu
+is generated.
+
+h2. Author
+
+* *Thomas Leitner*
+* Web: "http://webgen.rubyforge.org":http://webgen.rubyforge.org
+* e-Mail: "t_leitner@gmx.at":mailto:t_leitner@gmx.at
+* GPG Key-Id: 0xD942E7F6

@@ -89,7 +89,9 @@ end
 
 
 task :test do |t|
-  ruby "-Ilib -Itest test/runtests.rb"
+  chdir 'test' do
+    ruby "-I../lib -I. runtests.rb"
+  end
 end
 
 # Developer tasks ##############################################################

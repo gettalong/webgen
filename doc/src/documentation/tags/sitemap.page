@@ -1,0 +1,18 @@
+---
+title: Sitemap
+inMenu: true
+---
+h2. Information
+
+<notextile>{describe: SitemapTag}</notextile>
+
+h2. Description
+
+The SitemapTag is used to display the site map of the current web site. It contains all the pages of
+the web site and their hierarchy.
+
+h2. Examples
+
+table{border:1px solid black}.
+|_.Command|_.Output|
+|\{sitemap:}|{sitemap:}|

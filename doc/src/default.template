@@ -27,7 +27,7 @@
       </div>
 
       <div id="menu">
-        {menu: }
+        {menu: {subtreeLevel: 4}}
       </div>
 
       <div id="feedback"></div>

@@ -28,7 +28,7 @@ begin
   module ContentHandlers
 
     # Handles text formatted in Markdown format using BlueCloth.
-    class MarkdownHandler < ContentHandler
+    class MarkdownContentHandler < ContentHandler
 
       summary "Handles content formatted in Markdown format using BlueCloth"
       depends_on "PageHandler"

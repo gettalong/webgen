@@ -27,7 +27,7 @@ begin
   module ContentHandlers
 
     # Handles content in Textile format using RedCloth.
-    class TextileHandler < ContentHandler
+    class TextileContentHandler < ContentHandler
 
       summary "Handles content in Textile format using RedCloth"
       depends_on "PageHandler"

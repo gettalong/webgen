@@ -1,0 +1,11 @@
+---
+title: RDOC
+inMenu: true
+---
+h2. Information
+
+<notextile>{describe: RDocContentHandler}</notextile>
+
+h2. Description
+
+Handles content written in RDOC (default documentation system for Ruby source files).

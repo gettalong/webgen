@@ -159,14 +159,8 @@ module Tags
       style = " class=\"#{styles.join(' ')}\"" if styles.length > 0
       link = langNode['processor'].get_html_link( langNode, srcNode, ( isDir ? langNode['directoryName'] || node['directoryName'] : langNode['title'] ) )
 
-      itemTag = get_param( 'itemTag' )
-      if isDir
-        before = "<#{itemTag}#{style}>#{link}"
-        after = "</#{itemTag}>"
-      else
-        before = "<#{itemTag}#{style}>#{link}</#{itemTag}>"
-        after = ""
-      end
+      before = "<#{get_param( 'itemTag' )}#{style}>#{link}"
+      after = "</#{get_param( 'itemTag' )}>"
 
       self.logger.debug { [before, after] }
       return before, after

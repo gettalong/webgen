@@ -1,6 +1,7 @@
 ---
 title: Page Handler
-inMenu: true
+inMenu: false
+directoryName: Page Handler
 ---
 h2. Information
 
@@ -73,13 +74,8 @@ named @sidebar@ and formatted using @markdown@.
 
 h2. Content format
 
-The content of page description can be written in different formats. The following formats are
-currently available:
-
-* textile: Content written using Textile markup ("Reference":http://hobix.com/textile/)
-* markdown: Content written using Markdown markup ("Reference":http://www.deveiate.org)
-* rdoc: Content written using RDOC markup (default documentation system for Ruby source files)
-* html: Content in plain HTML
+The content of page description can be written in different formats. Have a look at the sub menu
+entries to get an overview of the existing formats.
 
 h2. Default settings
 
