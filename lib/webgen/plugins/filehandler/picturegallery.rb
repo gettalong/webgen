@@ -33,6 +33,7 @@ module FileHandlers
     add_param "picturesPerPage", 20, 'Number of picture per gallery page'
     add_param "picturePageInMenu", false, 'True if the picture pages should be in the menu'
     add_param "galleryPageInMenu", false, 'True if the gallery pages should be in the menu'
+    add_param "galleryMenuOrder", 50, 'The <menuOrder> metainfo for the first gallery page. The second gallery page gets this value plus one, and so on.'
     add_param "mainPageInMenu", true, 'True if the main page of the picture gallery should be in the menu'
     add_param "galleryPageTemplate", nil, 'The template for gallery pages. If nil or a not existing file is specified, the default template is used.'
     add_param "picturePageTemplate", nil, 'The template for picture pages. If nil or a not existing file is specified, the default template is used.'
@@ -122,6 +123,7 @@ module FileHandlers
         data['template'] ||= get_param( 'galleryPageTemplate' )
         data['inMenu'] ||= get_param( 'galleryPageInMenu' )
         data['number'] = i/picsPerPage + 1
+        data['menuOrder'] = get_param( 'galleryMenuOrder' ) + data['number']
         data['title'] = gallery_title( data['number'] )
         data['srcName'] = gallery_file_name( data['title'] )
         data['imageList'] = create_picture_pages( images[i..(i + picsPerPage - 1)], parent )

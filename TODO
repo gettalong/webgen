@@ -1,7 +1,6 @@
 ---- CURRENT ----
 
-* check if duplicate nodes are created??? by using, e.g. mrplot tag in template
-* ordering of picture/gallery files for menu
+* check if duplicate nodes are created??? by using a tag in a template
 * allow a template to use another template (templates as page description files?) (template2 uses template1)
 * create webgen 0.2.0 to 0.3.0 converter
 * security concerns (setting different $SAFE level???)
@@ -14,7 +13,6 @@
 ---- FUTURE ----
 
 * tag 'resume', uses xmlresume2x to provide HTML version of xml resume
-* tag 'mrplot' -> generate a plot with mrplot
 * multi-lingual picture/gallery files
 * create logo "Created with webgen"
 * refactor menu: abstract menu generator+parser, concrete impls (vert. menu, horz. menu, ...)
@@ -146,3 +144,5 @@ W do not allow two or more page files in the same language, print warn
 * add htmlvalidator to docu
 * document TreeWalker plugin -> not needed
 * restructure documentation (filehandler, contenthandler, htmlvalidator, tags)
+* tag 'mrplot' -> generate a plot with mrplot --> tag not very useable
+* ordering of picture/gallery files for menu

@@ -79,10 +79,10 @@ module Tags
     end
 
 
-    summary 'Builds up a menu'
+    summary 'Builds a menu'
     depends_on 'Tags'
 
-    add_param 'menuTag', 'ul', 'The tag used for menus.'
+    add_param 'menuTag', 'ul', 'The tag used for submenus.'
     add_param 'itemTag', 'li', 'The tag used for menu items.'
     add_param 'level', 1, \
     'Specifies how many levels the menu should have by default, ie. how deep it is. ' \
