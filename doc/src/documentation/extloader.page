@@ -16,5 +16,5 @@ then they are only available for the current website.
 h2. The Configuration File
 
 The configuration file for the extension loader has to be a file with valid Ruby code. Have a look
-at the <a href="{relocatable: /api.html}">API</a> documentation to see which special methods you can
+at the <a href="{relocatable: /api.page}">API</a> documentation to see which special methods you can
 use in the configuration file.

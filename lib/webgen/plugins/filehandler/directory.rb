@@ -58,7 +58,7 @@ module FileHandlers
 
     summary "Handles directories"
     extension :dir
-    add_param 'indexFile', 'index.html', 'The default file name for the directory index file.'
+    add_param 'indexFile', 'index.page', 'The default file name for the directory index file.'
     depends_on 'FileHandler'
 
 

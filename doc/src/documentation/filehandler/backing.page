@@ -12,5 +12,5 @@ The backing file handler is used to set meta information for other files. It can
 additional meta information for page description files. However, its main purpose is to add virtual
 pages and directories.
 
-For more information have a look at the <a href="{relocatable: /api.html}">API
+For more information have a look at the <a href="{relocatable: /api.page}">API
 documentation</a>.

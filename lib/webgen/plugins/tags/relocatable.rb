@@ -47,7 +47,7 @@ module Tags
     def process_tag( tag, node, refNode )
       unless get_param( 'item' ).nil?
         destNode = refNode.node_for_string( get_param( 'item' ) )
-        return ( destNode.nil? ? '' :  node.relpath_to_node( destNode['processor'].get_lang_node( destNode, node['lang'] ) ) )
+        return ( destNode.nil? ? '' :  node.relpath_to_node( destNode['node:isLangNode'] ? destNode : destNode['processor'].get_lang_node( destNode, node['lang'] ) ) )
       else
         return ''
       end

@@ -16,10 +16,12 @@ h2. News
 
 Major changes:
 
-* Better DefaultLayouter for picture galleries (<a href="{relocatable: Design_Gallery_1.html}">online demo</a>)
+* Better DefaultLayouter for picture galleries (<a href="{relocatable: Design_Gallery_1.page}">online demo</a>)
+* Output names for page files now customizable (see <a href="{relocatable: documentation/filehandler/pagehandler.page}">PageHandler</a>)
 * On-the-fly creation of thumbnails for pictures with RMagick
-* New tags: <a href="{relocatable: documentation/tags/sitemap.html}">sitemap</a>
+* New tags: <a href="{relocatable: documentation/tags/sitemap.page}">sitemap</a>
 * Tag @lang@ renamed, new name @langbar@!
+* New parameters for @menu@ tag
 * Automatic checking of HTML files on their validness
 * Fixed bugs
 
@@ -30,7 +32,7 @@ h2. News
 Major changes:
 
 * Textile, Markdown, RDOC and HTML as content format supported!!!
-* New tags: <a href="{relocatable: documentation/tags/wikilink.html}">wikilink</a>
+* New tags: <a href="{relocatable: documentation/tags/wikilink.page}">wikilink</a>
 * Improved plugin system
 * On-the-fly creation of new tags
 * Fixed bugs

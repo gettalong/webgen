@@ -12,7 +12,7 @@ The menu tag is used to generate a menu for the website. You can see such a menu
 page. To get a list of all supported parameters for the menu tag, have a look at its API
 documentation.
 
-This page is available in <a href="{relocatable: menu.html/menu.de.html}">German</a>. Try and go to
+This page is available in <a href="{relocatable: menu.page/menu.de.html}">German</a>. Try and go to
 the german version of this page. You will see that the menu items for which translations exist
 change their names.
 

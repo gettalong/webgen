@@ -48,8 +48,11 @@ module FileHandlers
     add_param 'defaultLangInFilename', false, \
     'If true, the output files for the default language will have the ' \
     'language in the file name like all other page files. If false, they won''t.'
-    add_param 'defaultContentFormat', 'textile', 'The default content format used in page files'
-    add_param 'validator', 'xmllint', 'The validator for checking HTML files on their validness. Set to "" or nil to prevent checking'
+    add_param 'defaultContentFormat', 'textile', 'The default content format used in page files.'
+    add_param 'outputNameStyle', [:name, ['.', :lang], '.html'], 'Defines how the output name should be built. The correct name will be used for ' \
+    'the :name part and the file language will be used for the :lang part. If <defaultLangInFilename> is true, the :lang part or the subarray in which '\
+    'the :lang part was defined, will be omitted.'
+    add_param 'validator', 'xmllint', 'The validator for checking HTML files on their validness. Set to "" or nil to prevent checking.'
     depends_on 'FileHandler', 'DefaultContentHandler'
 
     def create_node( srcName, parent )
@@ -123,11 +126,12 @@ module FileHandlers
       else
         node = Node.new( pageNode )
         node.metainfo = data
-        node['src'] = analysed.srcName
-        node['dest'] = analysed.urlName
+        node['node:isLangNode'] = true
         node['lang'] ||= analysed.lang
         node['title'] ||= analysed.title
         node['menuOrder'] ||= analysed.menuOrder
+        node['src'] = analysed.srcName
+        node['dest'] = create_output_name( analysed, node.metainfo )
         node['processor'] = self
         pageNode.add_child( node )
       end
@@ -166,16 +170,36 @@ module FileHandlers
 
       self.logger.info { "Using default language for file <#{srcName}>" } if matchData[3].nil?
       analysed.lang      = matchData[3] || Webgen::Plugin['Configuration']['lang']
-      analysed.baseName  = matchData[2] + '.html'
+      analysed.baseName  = matchData[2] + '.page'
       analysed.srcName   = srcName
-      langPart = ( !get_param( 'defaultLangInFilename' ) && Webgen::Plugin['Configuration']['lang'] == analysed.lang ? '' : '.' + analysed.lang )
-      analysed.urlName   = matchData[2] + langPart + '.html'
+      analysed.useLangPart  = ( !get_param( 'defaultLangInFilename' ) && Webgen::Plugin['Configuration']['lang'] == analysed.lang ? false : true )
+      analysed.name      = matchData[2]
       analysed.menuOrder = matchData[1].to_i
       analysed.title     = matchData[2].tr('_-', ' ').capitalize
 
       self.logger.debug { analysed.inspect }
 
       analysed
+    end
+
+    def create_output_name( analysed, data )
+      def process_array( array, analysed )
+        array.collect do |part|
+          case part
+          when String
+            part
+          when :name
+            analysed.name
+          when :lang
+            analysed.useLangPart ? analysed.lang : ''
+          when Array
+            part.include?( :lang ) && !analysed.useLangPart ? '' : process_array( part, analysed )
+          else
+            ''
+          end
+        end.join( '' )
+      end
+      process_array( data['outputNameStyle'] || get_param( 'outputNameStyle' ), analysed )
     end
 
   end
