@@ -3,7 +3,7 @@
 #
 # $Id$
 #
-# webgen: a template based web page generator
+# webgen: template based static website generator
 # Copyright (C) 2004 Thomas Leitner
 #
 # This program is free software; you can redistribute it and/or modify it under the terms of the GNU
@@ -41,7 +41,7 @@ end
 module Webgen
 
   VERSION = [0, 3, 0]
-  SUMMARY = "Webgen is a templated based weg page generator."
+  SUMMARY = "Webgen is a templated based static website generator."
   DESCRIPTION = "Webgen is a web page generator implemented in Ruby. " \
   "It is used to generate static web pages from templates and page " \
   "description files."
