@@ -138,7 +138,11 @@ module FileHandlers
       options = {}
       blocks = data.split( /^---$/ )
       if blocks[0] == ''
-        options = YAML::load( blocks[1] )
+        begin
+          options = YAML::load( blocks[1] )
+        rescue ArgumentError => x
+          self.logger.error { "Error parsing options for file #{srcName}: #{x.message}" }
+        end
         blocks[0..1] = []
       end
       blocks.each {|b| b.gsub!( /^(\\+)(---)$/ ) {|m| "\\" * ($1.length / 2) + $2 } }

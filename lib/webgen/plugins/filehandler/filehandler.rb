@@ -103,7 +103,8 @@ module FileHandlers
       elsif FileTest.directory?( path )
         node = handle_directory( path, parent )
       else
-        self.logger.warn { "Path <#{path}> (type: #{File.lstat(path).ftype}) cannot be handled as it is neither a file nor a directory" }
+        type = File.lstat( path ).ftype if File.exists?( path )
+        self.logger.warn { "Path <#{path}> (type: #{type || 'non existing file/dir'}) cannot be handled as it is neither a file nor a directory" }
         node = nil
       end
 

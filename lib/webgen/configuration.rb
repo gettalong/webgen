@@ -90,19 +90,23 @@ module Webgen
 
     # Set parameter +name+ for +plugin+ to +value+.
     def self.set_param( plugin, name, value )
-      logger.debug { "Setting parameter #{name} for plugin #{plugin} to #{value.inspect}" }
-      klass, item = @@config.find {|k,v| v.plugin == plugin }
-      if !item.nil? && !item.params.nil? && item.params.has_key?( name )
-        item.params[name].value = value
-      else
-        logger.error { "Cannot set undefined parameter '#{name}' for plugin '#{plugin}'" }
+      found = catch( :found ) do
+        item = @@config.find {|k,v| v.plugin == plugin }[1]
+        item.klass.ancestor_classes.each do |k|
+          item = @@config[k.name]
+          if !item.nil? && !item.params.nil? && item.params.has_key?( name )
+            item.params[name].value = value
+            logger.debug { "Setting parameter #{name} for plugin #{plugin} to #{value.inspect}" }
+            throw :found, true
+          end
+        end
       end
+      logger.error { "Cannot set undefined parameter '#{name}' for plugin '#{plugin}'" } unless found
     end
 
     # Return parameter +name+.
     def []( name )
-      classes = self.class.ancestors[0..-4].delete_if {|c| c.instance_of?( Module ) }
-      while klass = classes.shift
+      self.class.ancestor_classes.each do |klass|
         data = @@config[klass.name]
         return data.params[name].value unless data.params.nil? || data.params[name].nil?
       end
@@ -118,7 +122,18 @@ module Webgen
 
     # Checks if the plugin has a parameter +name+.
     def has_param?( name )
-      !@@config[self.class.name].params.nil? && @@config[self.class.name].params.has_key?( name )
+      self.class.ancestor_classes.any? do |klass|
+        !@@config[klass.name].params.nil? && @@config[klass.name].params.has_key?( name )
+      end
+    end
+
+    #######
+    private
+    #######
+
+    # Return the ancestor classes for the object's class which are sub classes from Plugin.
+    def self.ancestor_classes
+      self.ancestors.delete_if {|c| c.instance_of?( Module ) }[0..-3]
     end
 
   end

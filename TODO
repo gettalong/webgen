@@ -2,7 +2,7 @@ HIGH PRIORITY TODO: test everything (automatically) and try to refactor!!!
 
 ---- CURRENT ----
 
-* add example section for each plugin
+* security concerns (setting different $SAFE level???)
 * more tags (in docu: how to use them, parameters, ..., structure should be the same everywhere)
 * register with Freshmeat.net
 * option for includeFile tag: escapeHTML (should special html tags be escaped?)
@@ -12,6 +12,13 @@ HIGH PRIORITY TODO: test everything (automatically) and try to refactor!!!
 * add tests for all parameters with which webgen can be called
 * add different testsites (no files in it, files which are syntactical incorrect, ...)
 * check out http://jigsaw.w3.org/css-validator/check/referer
+
+---- DOCU ----
+
+* motto: Don't stop processing the web site unless it's armageddon!
+* parameters from super classes can be used/set
+* DEV: self.logger.warn/error/info/debug can be used for messages
+* add example section for each plugin
 
 ---- FUTURE ----
 
