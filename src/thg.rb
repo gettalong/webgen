@@ -33,7 +33,6 @@ end
 begin
 
 	require 'configuration'
-	require 'tree'
 
 	# specify which main method to execute
 	main = method(:runMain)

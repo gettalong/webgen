@@ -16,8 +16,7 @@ class Configuration
 	include Singleton
 	
 	attr_reader :srcDirectory
-	attr_reader :templateFile
-	attr_reader :directoryIndexFile
+	attr_reader :outDirectory
 	
 	attr_accessor :verbosityLevel
 	attr_accessor :configFile
@@ -39,9 +38,8 @@ class Configuration
 		root = REXML::Document.new(File.new(@configFile)).root
 			
 		# initialize attributes
-		read_config_value(root, :@templateFile, '/configuration/main/templateFile')
-		read_config_value(root, :@directoryIndexFile,  '/configuration/main/directoryIndexFile')
 		read_config_value(root, :@srcDirectory, '/configuration/main/srcDir')
+		read_config_value(root, :@outDirectory, '/configuration/main/outDir')
 		read_config_value(root, :@verbosityLevel, '/configuration/main/verbosityLevel', Integer)
 
 		# fill plugin data structure
@@ -55,7 +53,7 @@ class Configuration
 	end
 
 	def log(level, str)
-		print str << "\n" if @verbosityLevel >= level
+		print Time.now.strftime('%Y%m%d%H%M%S') << '>> ' << str << "\n" if @verbosityLevel >= level
 	end
 
 	#######

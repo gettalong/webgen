@@ -2,13 +2,14 @@
 <configuration>
 	<main>
 		<srcDir>src</srcDir>
+		<outDir>output</outDir>
 		<templateFile>template.html</templateFile>
 		<directoryIndexFile>index.xml</directoryIndexFile>
 		<verbosityLevel>0</verbosityLevel>
 	</main>
 	<plugins>
 		<fileHandler>
-			<outputDir>output</outputDir>
+
 		</fileHandler>
 		<fileCopy>css,jpg,png,gif</fileCopy>
 	</plugins>

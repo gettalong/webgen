@@ -23,7 +23,7 @@ class ThgException < RuntimeError
 
 	def ThgException.add_entry(symbol, message, solution)
 		name = symbol.id2name
-		raise ThgException.new(EXCEPTION_SYMBOL_INVALID, symbol, caller[0]) if ('a'..'z') === name[0..0]
+		raise ThgException.new(EXCEPTION_SYMBOL_INVALID, symbol, caller[0]) if !(('A'..'Z') === name[0..0])
 		raise ThgException.new(EXCEPTION_SYMBOL_IS_DEFINED, symbol, caller[0]) if const_defined? name
 
 		# declare the constant

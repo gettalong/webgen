@@ -1,9 +1,10 @@
+require 'fileutils'
+require 'rexml/document'
 require 'ups'
 require 'configuration'
 require 'thgexception'
-require 'rexml/document'
-require 'fileutils'
-require 'plugins/listener'
+require 'listener'
+require 'node'
 
 class FileHandler < UPS::Controller
 	
@@ -19,18 +20,7 @@ class FileHandler < UPS::Controller
 		config = Configuration.instance.pluginData['fileHandler']
 		raise ThgException.new(ThgException::CFG_ENTRY_NOT_FOUND, 'fileHandler') if config.nil?
 
-		@outputDir = config.text('outputDir')
-		raise ThgException.new(ThgException::CFG_ENTRY_NOT_FOUND, 'fileHandler/outputDir') if @outputDir.nil?
-
-		@msgNames = {'FILEHANDLER_DIR_NODE_CREATED' => []}
-	end
-
-	def dependencies
-		['hook']
-	end
-
-	def after_register
-		UPS::PluginRegistry.instance['hook'].add_hook('FILEHANDLER_DIR_NODE_CREATED', self)
+		add_msg_name(:DIR_NODE_CREATED)
 	end
 
 	def describe
@@ -79,7 +69,7 @@ class FileHandler < UPS::Controller
 			node = Node.new(parent, relName, relName + File::SEPARATOR)
 			node.processor = @dirProcessor
 
-			dispatch('FILEHANDLER_DIR_NODE_CREATED', node)
+			dispatch_msg(DIR_NODE_CREATED, node)
 
 			Dir[File.join(srcName, '*')].each { |filename|
 				child = build_entry(filename, node)
@@ -119,17 +109,16 @@ class XMLPagePlugin < UPS::StandardPlugin
 		"template file in root directory not found",
 		"create an %0 in the root directory"
 
+	attr_reader :templateFile
+	attr_reader :directoryIndexFile
+
 	def initialize
 		super('fileHandler', 'xmlPagePlugin')
 	end	
 
-	def dependencies
-		['hook']
-	end
-
 	def after_register
 		UPS::PluginRegistry.instance['fileHandler'].extensions['xml'] = self
-		UPS::PluginRegistry.instance['hook'].add_listener('FILEHANDLER_DIR_NODE_CREATED', method(:add_template_to_node))
+		UPS::PluginRegistry.instance['fileHandler'].add_msg_listener(FileHandler::DIR_NODE_CREATED, method(:add_template_to_node))
 	end
 
 	def describe

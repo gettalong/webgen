@@ -8,10 +8,9 @@ class Node
 	attr_accessor :title
 	attr_accessor :url
 	attr_accessor :src
-
-	attr_accessor :content
-	attr_reader   :metainfo
 	attr_accessor :processor
+
+	attr_reader   :metainfo
 	
 	def initialize(parent, title, url, src = url)
 		init_composite
@@ -26,17 +25,17 @@ class Node
 
 	def abs_src
 		if parent.nil?
-			src
+			src.dup
 		else
-			parent.abs_src + src
+			parent.abs_src << src
 		end
 	end
 
 	def abs_url
 		if parent.nil?
-			url
+			url.dup
 		else
-			parent.abs_url + url
+			parent.abs_url << url
 		end
 	end
 
