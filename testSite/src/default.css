@@ -1,4 +1,4 @@
-@media print { 
+@media print {
   body {
 	margin: 0px;
   }
@@ -6,12 +6,12 @@
   div#menu, div#footer {
 	display: none;
   }
-  
+
 }
 
 @media screen, projection {
 
-  html { 
+  html {
 	margin: 0px 10%;
 	background-color: #eee;
   }
@@ -26,7 +26,7 @@
 
   /* General layout of the page */
 
-  #header, #footer { 
+  #header, #footer {
 	width: 100%;
 	background-color: #8ad;
 	color: #fff;
@@ -41,6 +41,7 @@
 	float: left;
 	width: 180px;
 	padding: 20px 0px 0px 20px;
+	background: url("images/bghack.png") repeat-y #fff;
   }
 
   #body {
@@ -96,27 +97,31 @@
 	font-size: 130%;
   }
 
-  #menu a:hover { 
+  #menu a:hover {
 	text-decoration: underline;
   }
 
-  #menu .selectedMenu { 
+  #menu .selectedMenu {
 	background-color: #fff;
 	width: 90%;
 	border-right: 3px solid #8ad;
   }
 
-  #menu ul { 
+  #menu .submenu {
+    background-color: #aaa;
+  }
+
+  #menu ul {
 	list-style-type: none;
 	padding: 0px;
 	margin-left: 10px;
   }
 
-  #menu li > ul { 
+  #menu li > ul {
 	font-size: 95%;
   }
 
-  #menu li { 
+  #menu li {
 	margin: 0.5em 0px;
   }
 

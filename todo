@@ -1,3 +1,5 @@
+* refacture menu tag plugin
+* update default.css so that the page display correctly
 * convert everything to utf8 before writing
 * think about logging levels and when to use which level
 * create new document which describes iterations and the steps which are taken in each iteration (high risk first)

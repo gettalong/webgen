@@ -17,42 +17,7 @@
 
     <div id="pagebody">
       <div id="menu">
-        <ul>
-          <li><a href="en_home.html">Home</a></li>
-          <li class="selectedMenu"><a href="en_news.html">News</a></li>
-          <li><a href="en_aboutme.html">About me</a></li>
-          <li><a href="en_cv.html">Curriculum vitae</a></li>
-          <li class="sub"><a href="en_projects.html">Projects</a>
-          <ul>
-            <li><a href="p1">Project 1</a></li>
-            <li><a href="p1">Project 2</a></li>
-            <li class="sub"><a href="p1">Project 3</a>
-            <ul>
-              <li>test</li>
-              <li>test2</li>
-            </ul>
-            </li>
-          </ul>
-          </li>
-          <li class="sub"><a href="en_pictures.html">Pictures</a>
-          <ul>
-            <li>Grönemeyer Konzert</li>
-            <li>AGOL</li>
-            <li>Praktikum Woche 1</li>
-            <li>Praktikum Woche 2</li>
-            <li>Praktikum Woche 3</li>
-            <li>Praktikum Woche 4</li>
-            <li>Praktikum Woche 5</li>
-            <li>Praktikum Woche 6</li>
-			<li>Praktikum Woche 7</li>
-            <li>Praktikum Woche 8</li>
-            <li>Praktikum Woche 9</li>
-            <li>Praktikum Woche 10</li>
-            <li>Praktikum Woche 11</li>
-          </ul>
-          </li>
-          <li><a href="en_links.html">Links</a></li>
-        </ul>
+        {menu: {level: 2}}
       </div>
 
       <div id="body">

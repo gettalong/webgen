@@ -10,7 +10,8 @@ class PagePlugin < UPS::Plugin
 
 
     def write_node( node )
-        return unless UPS::Registry['File Handler'].file_modified?( node )
+        #TODO it has to be done more to see if file was modified 
+        #return unless UPS::Registry['File Handler'].file_modified?( node )
 
         templateNode = UPS::Registry['Template File'].get_template_for_node( node )
 
