@@ -1,6 +1,6 @@
 require 'util/ups'
-require 'thg/node'
-require 'thg/plugins/tags/tags'
+require 'webgen/node'
+require 'webgen/plugins/tags/tags'
 
 class MenuNode < Node
 
@@ -41,7 +41,7 @@ class MenuTag < UPS::Plugin
     NAME = 'Menu Tag'
     SHORT_DESC = 'Builds up a menu'
 
-    ThgException.add_entry :TAG_PARAMETER_INVALID,
+    Webgen::WebgenError.add_entry :TAG_PARAMETER_INVALID,
         "Missing or invalid parameter value for tag %0 in <%1>: %2",
         "Add or correct the parameter value"
 
@@ -58,7 +58,7 @@ class MenuTag < UPS::Plugin
             @menuTree.sort
             UPS::Registry['Tree Transformer'].execute @menuTree unless @menuTree.nil?
         end
-        raise ThgException.new( :TAG_PARAMETER_INVALID, tag, refNode.recursive_value( 'src' ), 'level' ) if content.nil? || !content.has_key?( 'level' )
+        raise Webgen::WebgenError.new( :TAG_PARAMETER_INVALID, tag, refNode.recursive_value( 'src' ), 'level' ) if content.nil? || !content.has_key?( 'level' )
         build_menu( node, @menuTree, content['level'] )
     end
 

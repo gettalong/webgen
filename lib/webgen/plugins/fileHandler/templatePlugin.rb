@@ -1,6 +1,6 @@
-require 'thg/plugins/nodeProcessor'
-require 'thg/plugins/fileHandler/fileHandler'
-require 'thg/plugins/treeTransformer'
+require 'webgen/plugins/nodeProcessor'
+require 'webgen/plugins/fileHandler/fileHandler'
+require 'webgen/plugins/treeTransformer'
 
 class TemplatePlugin < UPS::Plugin
 
@@ -9,7 +9,7 @@ class TemplatePlugin < UPS::Plugin
     NAME = "Template File"
     SHORT_DESC = "Represents the template files for the page generation in the tree"
 
-    ThgException.add_entry :PAGE_TEMPLATE_FILE_NOT_FOUND,
+    Webgen::WebgenError.add_entry :PAGE_TEMPLATE_FILE_NOT_FOUND,
         "template file in root directory not found",
         "create an %0 in the root directory"
 
@@ -61,7 +61,7 @@ class TemplatePlugin < UPS::Plugin
         if !templateNode.nil?
             node['template'] = templateNode
         elsif node.parent.nil? # dir is root directory
-            raise ThgException.new( :PAGE_TEMPLATE_FILE_NOT_FOUND, @defaultTemplate )
+            raise Webgen::WebgenError.new( :PAGE_TEMPLATE_FILE_NOT_FOUND, @defaultTemplate )
         end
     end
 

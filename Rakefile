@@ -14,13 +14,13 @@ require 'rake/testtask'
 
 # General actions  ##############################################################
 
-if `ruby -Ilib ./bin/thaumaturge --version` =~ /\S+$/
+if `ruby -Ilib ./bin/webgen --version` =~ /\S+$/
   PKG_VERSION = $&
 else
   PKG_VERSION = "0.0.0"
 end
 
-PKG_NAME = "thaumaturge-#{PKG_VERSION}"
+PKG_NAME = "webgen-#{PKG_VERSION}"
 
 SRC_RB = FileList['lib/**/*.rb']
 
@@ -39,7 +39,7 @@ task :prepare do
 end
 
 
-desc "Installs Thaumaturge"
+desc "Installs Webgen"
 task :install => [:prepare]
 task :install do
     ruby "setup.rb install"
@@ -53,7 +53,7 @@ end
 
 rd = Rake::RDocTask.new do |rdoc|
     rdoc.rdoc_dir = 'rdoc'
-    rdoc.title    = "Thaumaturge"
+    rdoc.title    = "Webgen"
     rdoc.options << '--line-numbers' << '--main README'
     rdoc.rdoc_files.include( 'README' )
     rdoc.rdoc_files.include( 'lib/**/*.rb' )
@@ -71,17 +71,17 @@ end
 PKG_FILES = FileList.new( [
     'setup.rb',
     'ChangeLog',
-    'Statistics',
     'TODO',
     'Rakefile',
     'bin/**/*',
     'lib/**/*.rb',
-    'testsite/**/*'
+    'testsite/**/*',
+    'tests/**/*'
 ]) do |fl|
     fl.exclude( /\bsvn\b/ )
     fl.exclude( 'testsite/output' )
     fl.exclude( 'testsite/coverage' )
-    fl.exclude( 'testsite/thg.log' )
+    fl.exclude( 'testsite/webgen.log' )
 end
 
 if !defined? Gem
@@ -91,11 +91,11 @@ else
 
         #### Basic information
 
-        s.name = 'thaumaturge'
+        s.name = 'webgen'
         s.version = PKG_VERSION
         s.summary = "Templated based weg page generator"
         s.description = <<-EOF
-          Thaumaturge is a web page generator implemented in Ruby. It is used to
+          Webgen is a web page generator implemented in Ruby. It is used to
           generate static web pages from templates and page description files.
         EOF
 
@@ -105,10 +105,10 @@ else
         s.files = PKG_FILES.to_a
 
         s.require_path = 'lib'
-        s.autorequire = 'thaumaturge'
+        s.autorequire = 'webgen'
         s.bindir = 'bin'
-        s.executables = ['thaumaturge']
-        s.default_executable = 'thaumaturge'
+        s.executables = ['webgen']
+        s.default_executable = 'webgen'
 
         #### Documentation
 
@@ -187,11 +187,11 @@ end
 
 def run_testsite( arguments = '' )
     Dir.chdir("testsite")
-    ruby %{-I../lib #{arguments} ../bin/thaumaturge -v 3 }
+    ruby %{-I../lib #{arguments} ../bin/webgen -v 3 }
 end
 
 
-CLOBBER << "testsite/output" << "testsite/thg.log"
+CLOBBER << "testsite/output" << "testsite/webgen.log"
 desc "Build the test site"
 task :testsite do
     run_testsite

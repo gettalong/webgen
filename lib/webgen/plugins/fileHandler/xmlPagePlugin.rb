@@ -1,5 +1,5 @@
 require 'rexml/document'
-require 'thg/plugins/fileHandler/pagePlugin'
+require 'webgen/plugins/fileHandler/pagePlugin'
 
 class XMLPagePlugin < PagePlugin
 
@@ -18,10 +18,10 @@ class XMLPagePlugin < PagePlugin
 
         #TODO rework this sothat arbitrary tags can be included
         data = Hash.new
-        data['title'] = root.text( '/thg/title' )
-        data['templateFile'] = root.text('/thg/template') unless root.text('/thg/template').nil?
-        data['inMenu'] = root.text('/thg/inMenu') unless root.text('/thg/inMenu').nil?
-        data['menuOrder'] = root.text('/thg/menuOrder').to_i unless root.text('/thg/menuOrder').nil?
+        data['title'] = root.text( '/webgen/title' )
+        data['templateFile'] = root.text('/webgen/template') unless root.text('/webgen/template').nil?
+        data['inMenu'] = root.text('/webgen/inMenu') unless root.text('/webgen/inMenu').nil?
+        data['menuOrder'] = root.text('/webgen/menuOrder').to_i unless root.text('/webgen/menuOrder').nil?
         data['content'] = ''
         root.elements['content'].each do
             |child| child.write( data['content'] )

@@ -1,4 +1,4 @@
-require 'thg/plugins/fileHandler/pagePlugin'
+require 'webgen/plugins/fileHandler/pagePlugin'
 
 class HTMLPage < PagePlugin
 

@@ -1,5 +1,5 @@
 <?xml version="1.0" ?>
-<thg>
+<webgen>
     <title>Home page</title>
     <inMenu>true</inMenu>
 
@@ -21,4 +21,4 @@
     <a href="{relocatable: projects.html}">Projekte</a>
 <h2>test</h2>
 	</content>
-</thg>
+</webgen>

@@ -6,7 +6,7 @@ class Tags < UPS::Plugin
     NAME = "Tags"
     SHORT_DESC = "Super plugin for handling tags"
 
-    ThgException.add_entry :UNKNOWN_TAG,
+    Webgen::WebgenError.add_entry :UNKNOWN_TAG,
         "found tag {%0: ...} for which no plugin exists",
         "either remove the tag or implement a plugin for it"
 
@@ -26,7 +26,7 @@ class Tags < UPS::Plugin
             elsif @tags.has_key? :default
                 tagProcessor = @tags[:default]
             else
-                raise ThgException.new( :UNKNOWN_TAG, $1 )
+                raise Webgen::WebgenError.new( :UNKNOWN_TAG, $1 )
             end
             substitute_tags( tagProcessor.process_tag( $1, tagValue, node, refNode ), node, node )
         end

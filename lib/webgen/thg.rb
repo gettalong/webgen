@@ -1,11 +1,44 @@
-require 'thg/thgexception'
 require 'optparse'
-require 'thg/configuration'
+require 'webgen/configuration'
 
 
-module Thaumaturge
+module Webgen
 
-    class ThgMain
+    class WebgenError < RuntimeError
+
+        attr_reader :solution
+
+        def initialize( id, *args )
+            super( substitute_entries( id, 0, args ) )
+            @solution = substitute_entries( id, 1, args )
+        end
+
+        def substitute_entries( id, msgIndex, *args )
+            args.flatten!
+            @@messageMap[id][msgIndex].gsub( /%(\d+)/ ) do |match|
+                args[$1.to_i].to_s
+            end
+        end
+
+        private :substitute_entries
+
+        ### Class variables and methods ###
+
+        @@messageMap = Hash.new
+
+        def WebgenError.add_entry( symbol, message, solution )
+            raise WebgenError.new( :EXCEPTION_SYMBOL_IS_DEFINED, symbol, caller[0] ) if @@messageMap.has_key? symbol
+            @@messageMap[symbol] = [message, solution]
+        end
+
+        WebgenError.add_entry :EXCEPTION_SYMBOL_IS_DEFINED,
+           "the symbol %0 is already defined (%1)",
+           "change the name of the symbol"
+
+    end
+
+
+    class WebgenMain
 
         def main( cmdOptions )
             # everything is catched
@@ -17,9 +50,9 @@ module Thaumaturge
                 UPS::Registry['Configuration'].parse_config_file
                 UPS::Registry['Configuration'].load_file_outputter if main == method( :runMain )
 
-                UPS::Registry.load_plugins( File.dirname( __FILE__) + '/plugins', File.dirname( __FILE__).sub(/thg$/, '') )
+                UPS::Registry.load_plugins( File.dirname( __FILE__) + '/plugins', File.dirname( __FILE__).sub(/webgen$/, '') )
                 main.call
-            rescue ThgException => e
+            rescue WebgenError => e
                 print "An error occured:\n\t #{e.message}\n\n"
                 print "Possible solution:\n\t #{e.solution}\n\n"
                 print "Stack trace: #{e.backtrace.join("\n")}\n" if UPS::Registry['Configuration'].verbosityLevel <= 1
@@ -35,10 +68,10 @@ module Thaumaturge
             opts = OptionParser.new do |opts|
                 opts.summary_width = 25
                 opts.summary_indent = '  '
-                opts.program_name = Thaumaturge::NAME
-                opts.version = Thaumaturge::VERSION
+                opts.program_name = Webgen::NAME
+                opts.version = Webgen::VERSION
 
-                opts.banner << "\n#{Thaumaturge::DESCRIPTION}\n\n"
+                opts.banner << "\n#{Webgen::DESCRIPTION}\n\n"
 
                 opts.on_tail( "--help", "-h", "Display this help screen" ) { puts opts; exit }
                 opts.on( "--config-file FILE", "-c", String, "The configuration file which should be used" ) { |config.configFile| }
@@ -61,7 +94,7 @@ module Thaumaturge
         end
 
         def runMain
-            Log4r::Logger['default'].info "Starting Thaumaturge..."
+            Log4r::Logger['default'].info "Starting Webgen..."
 
             # load all the files in src dir and build tree
             tree = UPS::Registry['File Handler'].build_tree
@@ -72,7 +105,7 @@ module Thaumaturge
             # generate output files
             UPS::Registry['File Handler'].write_tree( tree )
 
-            Log4r::Logger['default'].info "Thaumaturge finished"
+            Log4r::Logger['default'].info "Webgen finished"
         end
 
 

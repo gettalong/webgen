@@ -4,14 +4,14 @@ require 'log4r/yamlconfigurator'
 require 'util/ups'
 
 
-module Thaumaturge
+module Webgen
 
     VERSION = "0.1.0"
-    NAME = "Thaumaturge"
-    DESCRIPTION = "Thaumaturge is a template based web page generator."
+    NAME = "Webgen"
+    DESCRIPTION = "Webgen is a template based web page generator."
 
 
-    class ThgConfigurationPlugin < UPS::Plugin
+    class WebgenConfigurationPlugin < UPS::Plugin
 
         NAME = "Configuration"
         SHORT_DESC = "Responsible for loading the configuration data"
@@ -61,7 +61,7 @@ module Thaumaturge
 
     end
 
-    UPS::Registry.register_plugin( ThgConfigurationPlugin )
+    UPS::Registry.register_plugin( WebgenConfigurationPlugin )
 
 end
 
@@ -124,7 +124,7 @@ log4r_config:
       name        : logfile
       level       : DEBUG
       trunc       : 'false'
-      filename    : 'thg.log'
+      filename    : 'webgen.log'
       formatter   :
         type        : PatternFormatter
         date_pattern: '%Y-%m-%d %H:%M:%S'

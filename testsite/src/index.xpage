@@ -1,5 +1,5 @@
 <?xml version="1.0" ?>
-<thg>
+<webgen>
     <title>Pictures index</title>
     <inMenu>true</inMenu>
 
@@ -20,4 +20,4 @@
 	iuventus Nunc omnis et mox virgines tepebunt.
     <img src="{relocatable: /images/bghack.png}" width="100" height="100"/>
 	</content>
-</thg>
+</webgen>

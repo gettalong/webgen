@@ -1,4 +1,4 @@
-require 'thg/node'
+require 'webgen/node'
 require 'util/ups'
 require 'util/listener'
 
@@ -15,9 +15,9 @@ class FileHandler < UPS::Plugin
       been performed the FileHandler is used to write the output files.
     EOF
 
-    ThgException.add_entry :PATH_NOT_FOUND,
+    Webgen::WebgenError.add_entry :PATH_NOT_FOUND,
         "the path <%0> could not be found",
-        "check the source directory setting and that you called #{Thaumaturge::NAME} from the correct directory"
+        "check the source directory setting and that you called #{Webgen::NAME} from the correct directory"
 
 
     attr_accessor :extensions
@@ -117,7 +117,7 @@ class FileHandler < UPS::Plugin
                 dispatch_msg( :AFTER_DIR_READ, node )
             end
         else
-            raise ThgException.new( :PATH_NOT_FOUND, path )
+            raise Webgen::WebgenError.new( :PATH_NOT_FOUND, path )
         end
 
         return node

@@ -1,5 +1,5 @@
 require 'util/ups'
-require 'thg/plugins/tags/tags'
+require 'webgen/plugins/tags/tags'
 
 class LangTag < UPS::Plugin
 

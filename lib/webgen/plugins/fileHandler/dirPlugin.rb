@@ -1,5 +1,5 @@
-require 'thg/plugins/nodeProcessor'
-require 'thg/plugins/fileHandler/pagePlugin'
+require 'webgen/plugins/nodeProcessor'
+require 'webgen/plugins/fileHandler/pagePlugin'
 
 class DirNode < Node
 

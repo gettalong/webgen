@@ -1,5 +1,0 @@
-#!/usr/bin/env ruby
-
-require 'thg/thg'
-
-Thaumaturge::ThgMain.new.main ARGV
