@@ -1,0 +1,21 @@
+---
+title: Picture Gallery File Handler
+inMenu: true
+---
+h2. Information
+
+<notextile>{describe: PictureGalleryFileHandler}</notextile>
+
+h2. Description
+
+This file handler uses picture gallery description files to automatically build picture galleries.
+These picture galleries are highly configurable and themeable through the use of page templates.
+
+The gallery description files are written in YAML and specify
+
+* which images should be used
+* the titles/descriptions of the images
+* the templates which should be used
+
+TODO show an example gallery file
+Here is a link TODO to such a demo picture gallery.

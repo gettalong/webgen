@@ -34,6 +34,7 @@ module FileHandlers
         super( parent )
         self['title'] = self['directoryName'] = name
         self['src'] = self['dest'] = name + '/'
+        self['processor'] = Webgen::Plugin['DirectoryHandler']
       end
 
       def []( name )

@@ -83,6 +83,7 @@ module FileHandlers
       ensure
         node['content'] ||= {}
       end
+      node['processor'] = self
       node
     end
 

@@ -45,6 +45,7 @@ module FileHandlers
     def create_node( srcName, parent )
       node = Node.new( parent )
       node['dest'] = node['src'] = node['title'] = File.basename( srcName )
+      node['processor'] = self
       node
     end
 

@@ -117,10 +117,7 @@ module FileHandlers
 
       if @extensions.has_key?( extension )
         node = @extensions[extension].create_node( path, parent )
-        unless node.nil?
-          node['processor'] = @extensions[extension]
-          dispatch_msg( :FILE_NODE_CREATED, node )
-        end
+        dispatch_msg( :FILE_NODE_CREATED, node ) unless node.nil?
       else
         self.logger.warn { "No plugin for <#{path}> (extension: #{extension}) -> ignored" }
       end

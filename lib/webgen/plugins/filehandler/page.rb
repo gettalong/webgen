@@ -38,6 +38,7 @@ module FileHandlers
         self['page:basename'] = self['title'] = basename
         self['src'] = self['dest'] = basename
         self['virtual'] = true
+        self['processor'] = Webgen::Plugin['PageHandler']
       end
 
     end
@@ -57,33 +58,11 @@ module FileHandlers
     end
 
     def create_node( srcName, parent )
-      data = parse_file( srcName )
-      analysed = analyse_file_name( File.basename( srcName ) )
-      pageNodeExisted = get_page_node( analysed.baseName, parent )
-      pageNode = pageNodeExisted || PageNode.new( parent, analysed.baseName )
+      create_node_internally( parse_file( srcName ), analyse_file_name( File.basename( srcName ) ), parent )
+    end
 
-      lang = data['lang'] || analysed.lang
-
-      if lang_node_exists?( pageNode, lang )
-        pageNodeExisted = false
-        logger.warn do
-          "Two input files in the same language for one page, " + \
-          "using <#{get_lang_node( pageNode, lang ).recursive_value( 'src' )}> " + \
-          "instead of <#{srcName}>"
-        end
-      else
-        node = Node.new( pageNode )
-        node.metainfo = data
-        node['src'] = analysed.srcName
-        node['dest'] = analysed.urlName
-        node['lang'] ||= analysed.lang
-        node['title'] ||= analysed.title
-        node['menuOrder'] ||= analysed.menuOrder
-        node['processor'] = self
-        pageNode.add_child( node )
-      end
-
-      return ( pageNodeExisted ? nil : pageNode )
+    def create_node_from_data( data, srcName, parent )
+      create_node_internally( parse_file( data, false ), analyse_file_name( srcName ), parent )
     end
 
     def write_node( node )
@@ -128,15 +107,48 @@ module FileHandlers
     private
     #######
 
-    def parse_file( srcName )
-      data = File.read( srcName )
+    def create_node_internally( data, analysed, parent )
+      pageNodeExisted = get_page_node( analysed.baseName, parent )
+      pageNode = pageNodeExisted || PageNode.new( parent, analysed.baseName )
+
+      lang = data['lang'] || analysed.lang
+
+      if lang_node_exists?( pageNode, lang )
+        pageNodeExisted = false
+        logger.warn do
+          "Two input files in the same language for one page, " + \
+          "using <#{get_lang_node( pageNode, lang ).recursive_value( 'src' )}> " + \
+          "instead of <#{analysed.srcName}>"
+        end
+      else
+        node = Node.new( pageNode )
+        node.metainfo = data
+        node['src'] = analysed.srcName
+        node['dest'] = analysed.urlName
+        node['lang'] ||= analysed.lang
+        node['title'] ||= analysed.title
+        node['menuOrder'] ||= analysed.menuOrder
+        node['processor'] = self
+        pageNode.add_child( node )
+      end
+
+      return ( pageNodeExisted ? nil : pageNode )
+    end
+
+    def parse_file( data, isFilename = true )
+      srcName = '-STRING-'
+      if isFilename
+        srcName = data
+        data = File.read( srcName )
+      end
+
       options = {}
       blocks = data.split( /^---$/ )
       if blocks[0] == ''
         begin
           options = YAML::load( blocks[1] )
         rescue ArgumentError => x
-          self.logger.error { "Error parsing options for file #{srcName}: #{x.message}" }
+          self.logger.error { "Error parsing options for file <#{srcName}>: #{x.message}" }
         end
         blocks[0..1] = []
       end

@@ -40,6 +40,7 @@ module FileHandlers
       node = Node.new( parent )
       node['title'] = 'Template'
       node['src'] = node['dest'] = File.basename( srcName )
+      node['processor'] = self
       File.open( srcName ) { |file| node['content'] = file.read }
       node
     end

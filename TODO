@@ -2,7 +2,14 @@ HIGH PRIORITY TODO: test everything (automatically) and try to refactor!!!
 
 ---- CURRENT ----
 
-* tag 'wikilink'
+* options for PageHandler: default file format if none given
+* add optional extension method to Plugin class
+* allow a template to use another template (templates as page description files?) (template2 uses template1)
+* create thumbnails of pictures on the fly with rmagick
+* ev. create a GalleryNode and put gallery/pictures pages beneath it???
+* think about filename conflicts for picture pages
+* ordering of picture/gallery files for menu
+* multi-lingual picture/gallery files
 * create webgen 0.2.0 to 0.3.0 converter
 * security concerns (setting different $SAFE level???)
 * register with Freshmeat.net
@@ -19,7 +26,6 @@ HIGH PRIORITY TODO: test everything (automatically) and try to refactor!!!
 ---- FUTURE ----
 
 * tag 'resume', uses xmlresume2x to provide HTML version of xml resume
-* file handler for 'picture gallery' files
 
 ---- DONE ----
 
@@ -110,3 +116,5 @@ W do not allow two or more page files in the same language, print warn
 * option for includeFile tag: escapeHTML (should special html tags be escaped?)
 * more tags (in docu: how to use them, parameters, ..., structure should be the same everywhere)
 * add facility to check output files on conformity to a HTML standard
+* tag 'wikilink'
+* file handler for 'picture gallery' files
