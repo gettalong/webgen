@@ -2,6 +2,7 @@
 <thg>
 	<metainfo>
 		<title>News page</title>
+        <inMenu>true</inMenu>
 	</metainfo>
 
 	<content>

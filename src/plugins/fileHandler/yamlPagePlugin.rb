@@ -22,6 +22,7 @@ class YAMLPagePlugin < PagePlugin
         node = Node.new parent
         node['title'] = data['metainfo']['title']
         node['templateFile'] = data['metainfo']['template'] unless data['metainfo']['template'].nil?
+        node['inMenu'] = data['metainfo']['inMenu'] unless data['metainfo']['inMenu'].nil?
         node['src'] = srcName
         node['dest'] = urlName
         node['content'] = data['content']

@@ -69,4 +69,3 @@ rescue ThgException => e
 	print "Stack trace: #{e.backtrace.join("\n")}\n" if UPS::Registry['Configuration'].verbosityLevel >= 2
 end
 
-

@@ -2,6 +2,7 @@
 <thg>
 	<metainfo>
 		<title>Pictures index</title>
+        <inMenu>true</inMenu>
 	</metainfo>
 	<content>
 	<h1>The pictures index page</h1>

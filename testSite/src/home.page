@@ -2,6 +2,7 @@
 <thg>
 	<metainfo>
 		<title>Home page</title>
+        <inMenu>true</inMenu>
 	</metainfo>
 	<content>
 	<h1>The Homepage</h1>

@@ -30,6 +30,7 @@ class XMLPagePlugin < PagePlugin
         node = Node.new parent
         node['title'] = root.text( '/thg/metainfo/title' )
         node['templateFile'] = root.text('/thg/metainfo/template') unless root.text('/thg/metainfo/template').nil?
+        node['inMenu'] = root.text('/thg/metainfo/inMenu') unless root.text('/thg/metainfo/inMenu').nil?
         node['src'] = srcName
         node['dest'] = urlName
         node['content'] = ''

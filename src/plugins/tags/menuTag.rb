@@ -11,20 +11,24 @@ class MenuTag < UPS::Plugin
     end
 
 	def process_tag( tag, content, node, templateNode )
-        root = node
-        root = root.parent until root.parent.nil?
-        build_menu( node, root, content['level'] )
+        build_menu( node, Node.root( node ), content['level'] )
 	end
 
 
     def build_menu( srcNode, node, level )
-        return '' if level == 0 || !node['processor'].kind_of?( DirHandlerPlugin )
-        out = '<ul>'
+        out = ''
         node.each do |child|
-            out << menu_entry( srcNode, child ) if  child['processor'].kind_of?( PagePlugin ) || (level > 1 && child['processor'].kind_of?( DirHandlerPlugin ))
-            out << build_menu( srcNode, child, level - 1 ) unless node.children.nil? || level == 1
+            menu = build_menu( srcNode, child, level - 1 ) unless level <= 1 || !node.has_children?
+            if menu != '' || child['inMenu']
+                before, after = menu_entry( srcNode, child )
+                out << before
+                out << menu
+                out << after
+            end
         end
-        out <<'</ul>'
+
+        out = '<ul>' + out + '</ul>' if out != ''
+
         return out
     end
 
@@ -32,13 +36,23 @@ class MenuTag < UPS::Plugin
     def menu_entry( srcNode, node )
         url = UPS::Registry['Tree Utils'].get_relpath_to_node( srcNode, node ) + node['dest']
 
-        style = node.children.nil? ? '' : 'submenu'
-        style += node.recursive_value( 'dest' ) == srcNode.recursive_value( 'dest' ) ? (style != '' ? ',' : '') +'selectedMenu' : ""
-        style = " class=\"#{style}\"" if style != ''
+        styles = []
+        styles << 'submenu' if node.children && node.children.length > 0
+        styles << 'selectedMenu' if node.recursive_value( 'dest' ) == srcNode.recursive_value( 'dest' )
 
-        out = "<li#{style}><a href=\"#{url}\">#{node['title']}</a></li>"
-        Log4r::Logger['plugin'].debug out
-        return out
+        style = " class=\"#{styles.join(',')}\"" if styles.length > 0
+        link = "<a href=\"#{url}\">#{node['title']}</a>"
+
+        if styles.include? 'submenu'
+            before = "<li#{style}>#{link}"
+            after = "</li>"
+        else
+            before = "<li#{style}>#{link}</li>"
+            after = ""
+        end
+
+        Log4r::Logger['plugin'].debug { [before, after] }
+        return before, after
     end
 
 end

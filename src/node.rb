@@ -28,4 +28,9 @@ class Node
 		end
 	end
 
+    def Node.root( node )
+        node = node.parent until node.parent.nil?
+        node
+    end
+
 end

@@ -1,4 +1,4 @@
-* refacture menu tag plugin
+* speed up menu creation by caching the created menu and only substituting the relative paths
 * update default.css so that the page display correctly
 * convert everything to utf8 before writing
 * think about logging levels and when to use which level
@@ -44,3 +44,4 @@ W think about configureable list of files patterns which should always be ignore
 W replace current logging mechanism with Log4r
 W implement <template> meta-info tag (see template based)
 W redo tree transformer
+W refacture menu tag plugin

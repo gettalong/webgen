@@ -1,6 +1,16 @@
 require 'node'
 require 'plugins/fileHandler/fileHandler'
 
+class DirNode < Node
+
+    def initialize( parent, name )
+        super parent
+        self.metainfo['title'] = name
+        self.metainfo['src'] = self.metainfo['dest'] = name + File::SEPARATOR
+    end
+
+end
+
 class DirHandlerPlugin < UPS::Plugin
 
     NAME = "Dir Handler"
@@ -11,11 +21,7 @@ class DirHandlerPlugin < UPS::Plugin
     end
 
     def create_node( path, parent )
-        relName = File.basename path
-        node = Node.new parent
-        node['title'] = relName
-        node['src'] = node['dest'] = relName + File::SEPARATOR
-        node
+        DirNode.new( parent, File.basename( path ) )
     end
 
     def write_node( node )
