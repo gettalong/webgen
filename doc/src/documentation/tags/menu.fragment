@@ -5,18 +5,17 @@
 this page. To get a list of all supported parameters for the menu tag, have a look at its API
 documentation.</p>
 
-<p>This page is available in <a href="{relocatable: menu.html/menu.de.html}">German</a>. Try and go to the german version of
-this page. You will see that the menu items for which translations exist change their names.</p>
+<p>This page is available in <a href="{relocatable: menu.html/menu.de.html}">German</a>. Try and go
+to the german version of this page. You will see that the menu items for which translations exist
+change their names.</p>
 
-<p>
-The menu to the left is generated with the default settings:
+<p>The menu to the left is generated with the default settings:</p>
 <ul>
 <li>level = 1</li>
 <li>subtreeLevel = 3</li>
 <li>showCurrentSubtreeOnly = true</li>
 </ul>
-Below are some other menus generated from the same source but with different settings:
-</p>
+<p>Below are some other menus generated from the same source but with different settings:</p>
 
 <table border="1">
 <tr>

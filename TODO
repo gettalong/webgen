@@ -1,3 +1,6 @@
+* add facility to check output files on conformity to a HTML standard
+* add tests for all parameters with which webgen can be called
+* add different testsites (no files in it, files which are syntactical incorrect, ...)
 * check out http://jigsaw.w3.org/css-validator/check/referer
 
 ---- DONE ----

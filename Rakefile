@@ -182,6 +182,12 @@ task :tag do
   sh "svn cp -m 'Created version #{PKG_NAME}' #{repositoryPath}/trunk #{repositoryPath}/versions/#{PKG_NAME}"
 end
 
+desc "Upload documentation to homepage"
+task :uploaddoc => [:doc] do
+  Dir.chdir('doc/output')
+  sh "scp -r * gettalong@rubyforge.org:/var/www/gforge-projects/webgen/"
+end
+
 
 # Misc tasks ###################################################################
 
