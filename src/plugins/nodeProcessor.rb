@@ -12,5 +12,10 @@ module NodeProcessor
         node
     end
 
+    def get_html_link( node, refNode, title = node['title'] )
+        url = UPS::Registry['Tree Utils'].get_relpath_to_node( refNode, node ) + node['dest']
+        "<a href=\"#{url}\">#{title}</a>"
+    end
+
 end
 

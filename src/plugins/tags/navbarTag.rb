@@ -16,16 +16,7 @@ class NavbarTag < UPS::Plugin
         node = srcNode
 
         until node.nil?
-            if node.instance_of? DirNode
-                tempNode = node['processor'].get_lang_node( node, srcNode['lang'] )
-                title = tempNode['directoryName']
-            else
-                tempNode = node
-                title = node['title']
-            end
-
-            url = UPS::Registry['Tree Utils'].get_relpath_to_node( srcNode, tempNode ) + tempNode['dest']
-            out.push "<a href=\"#{url}\">#{title}</a>"
+            out.push( node['processor'].get_html_link( node, srcNode ) )
             node = node.parent
             node = node.parent while !node.nil? && node['virtual']
         end

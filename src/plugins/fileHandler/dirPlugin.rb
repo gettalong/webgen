@@ -7,8 +7,8 @@ class DirNode < Node
 
     def initialize( parent, name )
         super parent
-        self.metainfo['title'] = name
-        self.metainfo['src'] = self.metainfo['dest'] = name + File::SEPARATOR
+        self['title'] = self['directoryName'] = name
+        self['src'] = self['dest'] = name + File::SEPARATOR
     end
 
 end
@@ -29,14 +29,17 @@ class DirHandlerPlugin < UPS::Plugin
         UPS::Registry['File Handler'].add_msg_listener( :AFTER_DIR_READ, method( :process_dir_index ) )
     end
 
+
     def create_node( path, parent )
         DirNode.new( parent, File.basename( path ) )
     end
+
 
     def write_node( node )
         name = node.recursive_value 'dest'
         FileUtils.makedirs( name ) unless File.exists? name
 	end
+
 
     def get_lang_node( node, lang = node['lang'] )
         if node['indexFile']
@@ -46,9 +49,18 @@ class DirHandlerPlugin < UPS::Plugin
         end
     end
 
+
+    def get_html_link( node, refNode, title = nil )
+        node = get_lang_node( node, refNode['lang'] )
+        title ||=  node['directoryName']
+        super( node, refNode, title )
+    end
+
+
     #######
     private
     #######
+
 
     def process_dir_index( dirNode )
         node, created = UPS::Registry['Page Plugin'].get_page_node( @indexFile, dirNode )
@@ -57,7 +69,7 @@ class DirHandlerPlugin < UPS::Plugin
         else
             self.logger.info { "Directory index file for <#{dirNode.recursive_value( 'src' )}> => <#{node['pagePlugin:basename']}>" }
             dirNode['indexFile'] = node
-            node.each do |child| child['directoryName'] ||= dirNode['title'] end
+            node.each do |child| child['directoryName'] ||= dirNode['directoryName'] end
         end
     end
 

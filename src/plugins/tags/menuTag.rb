@@ -30,11 +30,11 @@ class MenuTag < UPS::Plugin
         out = '<ul>'
         node.each do |child|
             if child.kind_of? MenuNode
-                submenu = child['isDir'] ? build_menu( srcNode, child, level - 1 ) : ''
-                before, after = menu_entry( srcNode, child['node']['processor'].get_lang_node( child['node'], srcNode['lang'] ), child['isDir'] )
+                submenu = child['node'].kind_of?( DirNode ) ? build_menu( srcNode, child, level - 1 ) : ''
+                before, after = menu_entry( srcNode, child['node'] )
             else
                 submenu = ''
-                before, after = menu_entry( srcNode, child['processor'].get_lang_node( child, srcNode['lang'] ) )
+                before, after = menu_entry( srcNode, child )
             end
 
             out << before
@@ -47,17 +47,16 @@ class MenuTag < UPS::Plugin
     end
 
 
-    def menu_entry( srcNode, node, isDir = false )
-        url = UPS::Registry['Tree Utils'].get_relpath_to_node( srcNode, node ) + node['dest']
+    def menu_entry( srcNode, node )
+        langNode = node['processor'].get_lang_node( node, srcNode['lang'] )
+        isDir = node.kind_of? DirNode
 
         styles = []
         styles << 'submenu' if isDir
-        styles << 'selectedMenu' if !isDir && node.recursive_value( 'dest' ) == srcNode.recursive_value( 'dest' )
-
-        title = isDir ? node['directoryName'] : node['title']
+        styles << 'selectedMenu' if !isDir && langNode.recursive_value( 'dest' ) == srcNode.recursive_value( 'dest' )
 
         style = " class=\"#{styles.join(',')}\"" if styles.length > 0
-        link = "<a href=\"#{url}\">#{title}</a>"
+        link = langNode['processor'].get_html_link( langNode, srcNode, ( isDir ? langNode['directoryName'] : langNode['title'] ) )
 
         if styles.include? 'submenu'
             before = "<li#{style}>#{link}"
@@ -79,7 +78,6 @@ class MenuTag < UPS::Plugin
             self['title'] = 'Menu: '+ node['title']
             self['isMenuNode'] = true
             self['virtual'] = true
-            self['isDir'] = node.kind_of? DirNode
             self['node'] = node
         end
 
@@ -94,7 +92,7 @@ class MenuTag < UPS::Plugin
             menuNode.add_child menu unless menu.nil?
         end
 
-        return menuNode.has_children? ? menuNode : (put_node_in_menu?( node ) ? node : nil )
+        return menuNode.has_children? ? menuNode : ( put_node_in_menu?( node ) ? node : nil )
     end
 
 
