@@ -10,10 +10,16 @@
 }
 
 @media screen, projection {
-  body {
+
+  html { 
 	margin: 0px 10%;
+	background-color: #eee;
+  }
+
+  body {
+	margin: 0px;
 	padding: 0px;
-	background-color: #EEE;
+	background-color: #fff;
 	font-size: 12px;
 	font-family: Verdana, Arial, Helvetica;
   }
@@ -28,23 +34,18 @@
 
   #pagebody {
 	width: 100%;
-	background-color: #def;
+	background: url("bghack.png") repeat-y #fff;
   }
 
   #menu {
 	float: left;
 	width: 180px;
-	margin: 0px;
-	padding-left: 20px;
-	padding-top: 20px;
+	padding: 20px 0px 0px 20px;
   }
 
   #body {
-	background-color: #fff;
-	margin: 0px;
 	margin-left: 200px;
 	padding: 20px;
-	height: inherit !important; /* only works in Opera, all other browsers work not correct */
   }
 
   #footer {
@@ -100,7 +101,7 @@
   }
 
   #menu .selectedMenu { 
-	background-color: white;
+	background-color: #fff;
 	width: 90%;
 	border-right: 3px solid #8ad;
   }
@@ -116,7 +117,7 @@
   }
 
   #menu li { 
-	margin: 1em 0px;
+	margin: 0.5em 0px;
   }
 
   /* styling the content */
