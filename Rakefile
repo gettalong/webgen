@@ -20,8 +20,6 @@ else
   PKG_VERSION = "0.0.0"
 end
 
-CLOBBER << "thg.log" << "testsite/coverage" << "testsite/output" << "testsite/thg.log"
-
 PKG_NAME = "thaumaturge-#{PKG_VERSION}"
 
 SRC_RB = FileList['lib/**/*.rb']
@@ -140,6 +138,7 @@ else
 
 end
 
+
 desc "Creates a tag in the repository"
 task :tag do
     repositoryPath = File.dirname($1) if `svn info` =~ /^URL: (.*)$/
@@ -188,14 +187,18 @@ end
 
 def run_testsite( arguments = '' )
     Dir.chdir("testsite")
-    ruby %{-I../lib #{arguments} ../lib/thg/thg.rb -v 3 }
+    ruby %{-I../lib #{arguments} ../bin/thaumaturge -v 3 }
 end
 
+
+CLOBBER << "testsite/output" << "testsite/thg.log"
 desc "Build the test site"
-task :buildtestsite do
+task :testsite do
     run_testsite
 end
 
+
+CLOBBER  << "testsite/coverage"
 desc "Run the code coverage tool on the testsite"
 task :coverage do
     run_testsite '-rcoverage'

@@ -1,7 +1,4 @@
-* prevent creation of thg.log if nothing is done (on -p, -e, --help...)
 * use code coverage tool (-rcoverage) for checking the coverage on the testSite (use with rake)
-W use rake, gem and setup.rb for installing and packaging thaumaturge
-* put every class into the Thaumaturge module
 * make get_node_for_string work with page files as parameters (reference in home.xpage to projects page)
 * make file plugins case-insensitiv (convert all uppercase letters to lowercase)
 * create new document which describes iterations and the steps which are taken in each iteration (high risk first)
@@ -65,3 +62,6 @@ W make get_relpath_to_node work for all nodes, not only page nodes
 W implement meta info backing file for page file types without metainfo (e.g. html fragments)
 W file name syntax: [0-9].name-with_blanks.[de].[EXTENSION] -> title: Name with blanks, Order: [0-9], Language: de
 W implement order tag for setting menu order
+W use rake, gem and setup.rb for installing and packaging thaumaturge
+W prevent creation of thg.log if nothing is done (on -p, -e, --help...)
+W put main and configuration class into the Thaumaturge module

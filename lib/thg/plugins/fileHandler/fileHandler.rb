@@ -15,6 +15,11 @@ class FileHandler < UPS::Plugin
       been performed the FileHandler is used to write the output files.
     EOF
 
+    ThgException.add_entry :PATH_NOT_FOUND,
+        "the path <%0> could not be found",
+        "check the source directory setting and that you called #{Thaumaturge::NAME} from the correct directory"
+
+
     attr_accessor :extensions
     attr_accessor :ignoredFiles
 
@@ -111,6 +116,8 @@ class FileHandler < UPS::Plugin
 
                 dispatch_msg( :AFTER_DIR_READ, node )
             end
+        else
+            raise ThgException.new( :PATH_NOT_FOUND, path )
         end
 
         return node
