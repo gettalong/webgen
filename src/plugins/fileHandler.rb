@@ -11,14 +11,13 @@ class FileHandler < UPS::Controller
 	include Listener
 
 	attr_accessor :extensions
-	attr_accessor :outputDir
 
 	def initialize
 		super('fileHandler')
 		@extensions = Hash.new
 
-		config = Configuration.instance.pluginData['fileHandler']
-		raise ThgException.new(ThgException::CFG_ENTRY_NOT_FOUND, 'fileHandler') if config.nil?
+		#config = Configuration.instance.pluginData['fileHandler']
+		#raise ThgException.new(ThgException::CFG_ENTRY_NOT_FOUND, 'fileHandler') if config.nil?
 
 		add_msg_name(:DIR_NODE_CREATED)
 	end
@@ -81,7 +80,7 @@ class FileHandler < UPS::Controller
 	end
 
 	def write_node(node)
-		name = File.join(@outputDir, node.abs_url)
+		name = File.join(Configuration.instance.outDirectory, node.abs_url)
 		Configuration.instance.log(1, "Writing #{name}")
 
 		node.processor.write_node(node, name)
@@ -114,6 +113,12 @@ class XMLPagePlugin < UPS::StandardPlugin
 
 	def initialize
 		super('fileHandler', 'xmlPagePlugin')
+
+		config = Configuration.instance.pluginData['xmlPagePlugin']
+		raise ThgException.new(ThgException::CFG_ENTRY_NOT_FOUND, 'xmlPagePlugin') if config.nil?
+
+		@templateFile = config.text('templateFile')
+		@directoryIndexFile = config.text('directoryIndexFile')
 	end	
 
 	def after_register
@@ -129,15 +134,15 @@ class XMLPagePlugin < UPS::StandardPlugin
 	def add_template_to_node(node)
 		cfg = Configuration.instance
 		
-		if !File.exists?(node.abs_src + cfg.directoryIndexFile)
+		if !File.exists?(node.abs_src + @directoryIndexFile)
 			raise ThgException.new(ThgException::PAGE_DIR_INDEX_FILE_NOT_FOUND,
-								   (dir == '' ? 'root directory' : dir), cfg.directoryIndexFile)
+								   (dir == '' ? 'root directory' : dir), @directoryIndexFile)
 		end
 
-		node.metainfo['templateFile'] = node.abs_src + cfg.templateFile
+		node.metainfo['templateFile'] = node.abs_src + @templateFile
 		if !File.exists?(node.metainfo['templateFile'])
 			if node.parent.nil? # dir is root directory
-				raise ThgException.new(ThgException::PAGE_TEMPLATE_FILE_NOT_FOUND, cfg.templateFile)
+				raise ThgException.new(ThgException::PAGE_TEMPLATE_FILE_NOT_FOUND, @templateFile)
 			end
 			node.metainfo['templateFile'] = node.parent.metainfo['templateFile']
 		end
@@ -153,8 +158,8 @@ class XMLPagePlugin < UPS::StandardPlugin
 		urlName = File.basename(srcName.gsub(/\.xml$/, '.html'))
 
 		node = Node.new(parent, title, urlName, File.basename(srcName))
-		node.content = ''
-		root.elements['content'].each { |child| child.write(node.content) }
+		node.metainfo['content'] = ''
+		root.elements['content'].each { |child| child.write(node.metainfo['content']) }
 
 		return node
 	end
@@ -165,7 +170,7 @@ class XMLPagePlugin < UPS::StandardPlugin
 			doc = file.read
 		}
 
-		UPS::PluginRegistry.instance['tags'].substituteTags(node.content, node)
+		UPS::PluginRegistry.instance['tags'].substituteTags(node.metainfo['content'], node)
 		UPS::PluginRegistry.instance['tags'].substituteTags(doc, node)
 
 		File.open(filename, File::CREAT|File::TRUNC|File::RDWR) {|file|
@@ -207,6 +212,6 @@ class FileCopyPlugin < UPS::StandardPlugin
 
 end
 
-UPS::PluginRegistry.instance.register_plugin(FileHandler.new, true)
-UPS::PluginRegistry.instance.register_plugin(XMLPagePlugin.new, true)
+UPS::PluginRegistry.instance.register_plugin(FileHandler.new)
+UPS::PluginRegistry.instance.register_plugin(XMLPagePlugin.new)
 UPS::PluginRegistry.instance.register_plugin(FileCopyPlugin.new)

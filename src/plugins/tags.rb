@@ -55,7 +55,7 @@ class ContentTag < UPS::StandardPlugin
 	end
 
 	def execute(content, node)
-		node.content
+		node.metainfo['content']
 	end
 
 end

@@ -53,7 +53,7 @@ class Configuration
 	end
 
 	def log(level, str)
-		print Time.now.strftime('%Y%m%d%H%M%S') << '>> ' << str << "\n" if @verbosityLevel >= level
+		print Time.now.strftime('%Y%m%d%H%M%S') << ' >> ' << str << "\n" if @verbosityLevel >= level
 	end
 
 	#######

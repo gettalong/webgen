@@ -3,14 +3,13 @@
 	<main>
 		<srcDir>src</srcDir>
 		<outDir>output</outDir>
-		<templateFile>template.html</templateFile>
-		<directoryIndexFile>index.xml</directoryIndexFile>
 		<verbosityLevel>0</verbosityLevel>
 	</main>
 	<plugins>
-		<fileHandler>
-
-		</fileHandler>
+		<xmlPagePlugin>
+			<templateFile>template.html</templateFile>
+			<directoryIndexFile>index.xml</directoryIndexFile>
+		</xmlPagePlugin>
 		<fileCopy>css,jpg,png,gif</fileCopy>
 	</plugins>
 </configuration>
