@@ -15,18 +15,11 @@ log4r_config:
       level: DEBUG
 
   loggers:
-    - name      : plugin
-      level     : DEBUG
-      additive  : 'false'
-      trace     : 'true'
-      outputters:
-        - logfile
-        - stdout
-
-    - name: log4r
+    - name: default
       level: DEBUG
       outputters:
         - logfile
+        - stdout
 
   outputters:
     - type     : StdoutOutputter
@@ -50,6 +43,22 @@ log4r_config:
 EOF
 cfg = Log4r::YamlConfigurator
 cfg.load_yaml_string LoggerConfiguration
+
+
+module UPS
+
+    class Plugin
+        def logger
+            if @logger.nil?
+                @logger = Log4r::Logger.new(self.class.name)
+                @logger.outputters = ['stdout', 'logfile']
+            end
+            @logger
+        end
+    end
+
+end
+
 
 class ThgConfigurationPlugin < UPS::Plugin
 

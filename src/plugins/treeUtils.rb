@@ -28,7 +28,7 @@ class TreeUtils < UPS::Plugin
                 node = node.find { |child| child['src'] == element }
             end
             if node.nil?
-                Log4r::Logger['plugin'].error { "Could not get destination node for <#{srcNode['src']}> with '#{destString}'" }
+                self.logger.error { "Could not get destination node for <#{srcNode['src']}> with '#{destString}'" }
                 return
             end
         end

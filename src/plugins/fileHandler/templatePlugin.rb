@@ -86,7 +86,7 @@ class TemplateTreeWalker < UPS::Plugin
                 node.metainfo.delete "templateFile"
             else
                 node['templateFile'] = templateNode
-                Log4r::Logger['plugin'].info { "Replacing 'templateFile' in <#{node['src']}> with <#{templateNode['src']}>" }
+                self.logger.info { "Replacing 'templateFile' in <#{node['src']}> with <#{templateNode['src']}>" }
             end
         end
     end

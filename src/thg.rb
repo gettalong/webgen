@@ -56,12 +56,12 @@ begin
 	# parse the configuration file
 	config.parse_config_file
 
-    Log4r::Logger['plugin'].info "Starting Thaumaturge..."
+    Log4r::Logger['default'].info "Starting Thaumaturge..."
 
 	UPS::Registry.load_plugins( File.dirname( __FILE__) + '/plugins', File.dirname( __FILE__) + "/" )
 	main.call
 
-    Log4r::Logger['plugin'].info "Thaumaturge finished"
+    Log4r::Logger['default'].info "Thaumaturge finished"
 
 rescue ThgException => e
 	print "An error occured:\n\t #{e.message}\n\n"

@@ -52,7 +52,7 @@ class MenuTag < UPS::Plugin
             after = ""
         end
 
-        Log4r::Logger['plugin'].debug { [before, after] }
+        self.logger.debug { [before, after] }
         return before, after
     end
 
