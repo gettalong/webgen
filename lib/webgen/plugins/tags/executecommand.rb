@@ -43,7 +43,12 @@ module Tags
 
     def process_tag( tag, node, refNode )
       @processOutput = get_param( 'processOutput' )
-      output = ( get_param( 'command' ) ? `#{get_param( 'command' )}` : '' )
+      begin
+        output = ( get_param( 'command' ) ? `#{get_param( 'command' )}` : '' )
+      rescue StandardError => e
+        output = ''
+        logger.error { "Could not execute command #{get_param( 'command' )}: #{e.message}" }
+      end
       output = CGI::escapeHTML( output ) if get_param( 'escapeHTML' )
       output
     end

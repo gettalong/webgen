@@ -83,7 +83,7 @@ module Webgen
         opts.on( "--list-configuration", "-c", "List all plugin configuration parameters" ) { main = method( :runListConfiguration ) }
         opts.on_tail( "--help", "Display this help screen" ) { puts opts; exit }
         opts.on_tail( "--version", "-v", "Show version" ) do
-          puts "Webgen #{Webgen::VERSION}"
+          puts "Webgen #{Webgen::VERSION.join('.')}"
           exit
         end
       end
