@@ -3,6 +3,7 @@
 	<metainfo>
 		<title>Project index</title>
         <inMenu>true</inMenu>
+        <directoryName>Projects</directoryName>
 	</metainfo>
 	<content>
 	<h1>The project index page</h1>

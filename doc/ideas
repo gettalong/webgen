@@ -249,7 +249,7 @@
   language in configuration file; uses <language> tag; languages are
   encoded in the file name; has resource list for mapping language code
   to language names; only visible if more than one language;
- 
+
   - external file binder plugin: includes an external file; external
   file has to be proper XHTML 1.1; useful, for example, for adding
   colored source code to XHTML files (uses <external> tag)

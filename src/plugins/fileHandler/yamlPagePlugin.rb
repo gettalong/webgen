@@ -9,7 +9,7 @@ class YAMLPagePlugin < PagePlugin
     EXTENSION = 'ypage'
 
     def init
-        super
+        child_init
     end
 
 

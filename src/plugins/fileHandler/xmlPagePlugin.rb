@@ -9,7 +9,7 @@ class XMLPagePlugin < PagePlugin
     EXTENSION = 'xpage'
 
     def init
-        super
+        child_init
     end
 
 

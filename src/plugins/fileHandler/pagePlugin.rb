@@ -5,10 +5,8 @@ require 'plugins/fileHandler/fileHandler'
 
 class PagePlugin < UPS::Plugin
 
-    def init
-        UPS::Registry['File Handler'].extensions[self.class::EXTENSION] = self
-    end
-
+    NAME = "Page Plugin"
+    SHORT_DESC = "Super class for all page plugins"
 
     def create_node( srcName, parent )
         data = get_file_data srcName
@@ -46,21 +44,6 @@ class PagePlugin < UPS::Plugin
         end
     end
 
-    #######
-    private
-    #######
-
-    def get_file_names( srcName )
-        srcName = File.basename srcName
-        lang = ''
-        urlName = srcName.sub( /(\.\w\w)?\.#{self.class::EXTENSION}$/ ) do |match|
-            lang = $1.nil? ? UPS::Registry['Configuration'].lang : $1[1..-1]
-            ".#{lang}.html"
-        end
-        baseName = srcName.sub( /(\.\w\w)?\.#{self.class::EXTENSION}$/, '.html' )
-        [srcName, urlName, baseName, lang]
-    end
-
 
     def get_page_node( basename, dirNode )
         node = dirNode.find do |node| node['pageBasename'] == basename end
@@ -75,4 +58,38 @@ class PagePlugin < UPS::Plugin
     end
 
 
+    def get_correct_lang_node( node, lang )
+        langNode = node.find do |child| child['lang'] == lang end
+        langNode = node.find do |child| child['lang'] == UPS::Registry['Configuration'].lang end if langNode.nil?
+        langNode
+    end
+
+
+    #########
+    protected
+    #########
+
+    def child_init
+        UPS::Registry['File Handler'].extensions[self.class::EXTENSION] = self
+    end
+
+    #######
+    private
+    #######
+
+
+    def get_file_names( srcName )
+        srcName = File.basename srcName
+        lang = ''
+        urlName = srcName.sub( /(\.\w\w)?\.#{self.class::EXTENSION}$/ ) do |match|
+            lang = $1.nil? ? UPS::Registry['Configuration'].lang : $1[1..-1]
+            ".#{lang}.html"
+        end
+        baseName = srcName.sub( /(\.\w\w)?\.#{self.class::EXTENSION}$/, '.html' )
+        [srcName, urlName, baseName, lang]
+    end
+
+
 end
+
+UPS::Registry.register_plugin PagePlugin

@@ -1,4 +1,5 @@
-* speed up menu creation by caching the created menu and only substituting the relative paths
+* if a page in one language is in the menu, all other languages for this page should also be in the menu (-> de yaml project page, no selection in menu)
+* link creation for nodes should be done only in one place (now in menu and navbar tags)
 * create new document which describes iterations and the steps which are taken in each iteration (high risk first)
 * document existing files (RDOC)
 * design Thaumaturge logo
@@ -47,3 +48,4 @@ N convert everything to utf8 before writing -> the file need to have the correct
 W better loggers for plugins (substitute real plugin name for "plugin")
 N think about logging levels and when to use which level
 W add multiple language support
+W speed up menu creation by caching the created menu and only substituting the relative paths

@@ -1,7 +1,5 @@
 metainfo:
     title: YAML Projekt Seite
-    template: default.template
-    inMenu: true
 
 content:
     <h1>Projekt Seite</h1>

@@ -29,10 +29,10 @@ class MenuTag < UPS::Plugin
         node.each do |child|
             if child['isDir']
                 menu = build_menu( srcNode, child, level - 1 )
-                before, after = menu_entry( srcNode, child['node'] )
+                before, after = menu_entry( srcNode, UPS::Registry['Page Plugin'].get_correct_lang_node( child['node']['indexFile'], srcNode['lang'] ), true )
             else
                 menu = ''
-                before, after = menu_entry( srcNode, get_correct_lang_node( child, srcNode ) )
+                before, after = menu_entry( srcNode, UPS::Registry['Page Plugin'].get_correct_lang_node( child, srcNode['lang'] ) )
             end
 
             out << before
@@ -45,22 +45,17 @@ class MenuTag < UPS::Plugin
     end
 
 
-    def get_correct_lang_node( node, srcNode )
-        langNode = node.find do |child| child['lang'] == srcNode['lang'] end
-        langNode = node.find do |child| child['lang'] == UPS::Registry['Configuration'].lang end if langNode.nil?
-        langNode
-    end
-
-
-    def menu_entry( srcNode, node )
+    def menu_entry( srcNode, node, isDir = false )
         url = UPS::Registry['Tree Utils'].get_relpath_to_node( srcNode, node ) + node['dest']
 
         styles = []
-        styles << 'submenu' if node.children && node.children.length > 0
-        styles << 'selectedMenu' if node.recursive_value( 'dest' ) == srcNode.recursive_value( 'dest' )
+        styles << 'submenu' if isDir
+        styles << 'selectedMenu' if !isDir && node.recursive_value( 'dest' ) == srcNode.recursive_value( 'dest' )
+
+        title = isDir ? node['directoryName'] : node['title']
 
         style = " class=\"#{styles.join(',')}\"" if styles.length > 0
-        link = "<a href=\"#{url}\">#{node['title']}</a>"
+        link = "<a href=\"#{url}\">#{title}</a>"
 
         if styles.include? 'submenu'
             before = "<li#{style}>#{link}"
