@@ -117,7 +117,8 @@ module Webgen
       return if id != :init || self.class_variables.include?( '@@PLUGIN_INIT' )
       aliasName = "init_" + self.object_id.to_s
       unless method_defined?( aliasName )
-        module_eval "alias_method(:#{aliasName}, :init)\n def init() super; #{aliasName}; end"
+        logger.debug { "Renaming #{self.name}#init to #{aliasName}, defining new one" }
+        module_eval( "alias_method(:#{aliasName}, :init)\n def init() super; #{aliasName}; end" )
       end
     end
 

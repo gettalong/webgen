@@ -63,16 +63,27 @@ module FileHandlers
 
       pageNode, created = get_page_node( fileData.baseName, parent )
 
-      node = Node.new pageNode
-      node.metainfo = data
-      node['src'] = fileData.srcName
-      node['dest'] = fileData.urlName
-      node['lang'] ||= fileData.lang
-      node['title'] ||= fileData.title
-      node['menuOrder'] ||= fileData.menuOrder
-      node['content'] ||= ''
-      node['processor'] = self
-      pageNode.add_child node
+      lang = data['lang'] || fileData.lang
+
+      if lang_node_exists?( pageNode, lang )
+        created = false;
+        logger.warn do
+          "Two input files in the same language for one page, " + \
+          "using <#{get_lang_node( pageNode, lang ).recursive_value( 'src' )}> " + \
+          "instead of <#{srcName}>"
+        end
+      else
+        node = Node.new pageNode
+        node.metainfo = data
+        node['src'] = fileData.srcName
+        node['dest'] = fileData.urlName
+        node['lang'] ||= fileData.lang
+        node['title'] ||= fileData.title
+        node['menuOrder'] ||= fileData.menuOrder
+        node['content'] ||= ''
+        node['processor'] = self
+        pageNode.add_child node
+      end
 
       return ( created ? pageNode : nil )
     end
@@ -100,6 +111,12 @@ module FileHandlers
         created = true
       end
       [node, created]
+    end
+
+
+    def lang_node_exists?( pageNode, lang )
+      langNode = pageNode.find do |child| child['lang'] == lang end
+      return !langNode.nil?
     end
 
 

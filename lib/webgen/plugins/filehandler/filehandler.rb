@@ -118,7 +118,7 @@ module FileHandlers
 
 
     def handle_file( path, parent )
-      extension = path[/(?=.)[^.]*$/].downcase
+      extension = File.extname( path )[1..-1].downcase
 
       if @extensions.has_key? extension
         node = @extensions[extension].create_node( path, parent )

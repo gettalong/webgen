@@ -1,10 +1,7 @@
-aHIGH PRIORITY TODO: test everything (automatically) and try to refactor!!!
+HIGH PRIORITY TODO: test everything (automatically) and try to refactor!!!
 
 * send bug report to BlueCloth/RedCloth for generated warning messages
-* use File.basename(filename, '.*) to strip ext, File.extname(filename) to get ext
-* add debug statements to method_added in configuration.rb
 * option for includeFile tag: escapeHTML (should special html tags be escaped?)
-* do not allow two or more page files in the same language, print warn
 * testsite directory should cover every code line (use coverage to verify)
 * use code generator to create test file with all tags and all tag parameter configurations
 * get_relpath_to_node: if destNode['external'] --> check for URL pattern
@@ -88,3 +85,6 @@ W add virtual menu nodes for external html files
 W add mechanism to document configuration parameters
 W modify tag configuration so that mandatory/optional arguments for tags are supported
 W add RedCloth and BlueCloth and RDOC page description files
+W use File.basename(filename, '.*) to strip ext, File.extname(filename) to get ext
+W add debug statements to method_added in configuration.rb
+W do not allow two or more page files in the same language, print warn
