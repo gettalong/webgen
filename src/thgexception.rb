@@ -5,7 +5,7 @@ class ThgException < RuntimeError
 
 	def initialize(*args)
 		super(substitute_entries(args[0], 0, args[1..-1]))
-		@solution = substitute_entries(args[0], 1, args[1..-1]) 
+		@solution = substitute_entries(args[0], 1, args[1..-1])
 	end
 
 	def substitute_entries(id, msgIndex, *args)

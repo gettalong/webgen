@@ -1,25 +1,20 @@
-
 module Listener
-	
-	def initialize(*arg)
-		super(*arg)
-		@msgNames = Hash.new
-	end
 
 	def add_msg_listener(msgName, callableObject = nil, &block)
-		return if !@msgNames.has_key? msgName
-		
+		return unless defined? @msgNames and @msgNames.has_key? msgName
+
 		if !callableObject.nil?
-			@msgNames[msgName].push(callableObject)
+            raise NoMethodError, "listener needs to respond to 'call'" unless callableObject.respond_to? :call
+			@msgNames[msgName].push callableObject
 		elsif !block.nil?
-			@msgNames[msgName].push(block)
+			@msgNames[msgName].push block
 		else
-			raise "you have to define a callback object"
+			raise "you have to provide a callback object or a block"
 		end
 	end
 
 	def del_msg_listener(msgName, object)
-		@msgNames[msgName].delete(object) if @msgNames.has_key? msgName
+		@msgNames[msgName].delete object if defined? @msgNames
 	end
 
 	#######
@@ -27,50 +22,52 @@ module Listener
 	#######
 
 	def add_msg_name(msgName)
-		name = msgName.id2name
-		return if @msgNames.has_key? name
-		raise "msgName must begin with upper case letter" if !(('A'..'Z') === name[0..0])
-
-		@msgNames[name.hash] = []
-		self.class.class_eval("#{name} = #{name.hash}")
+        @msgNames = {}  unless defined? @msgNames
+		@msgNames[msgName] = [] unless @msgNames.has_key? msgName
 	end
 
 	def del_msg_name(msgName)
-		@msgNames.delete(msgName)
+		@msgNames.delete msgName if defined? @msgNames
 	end
 
 	def dispatch_msg(msgName, *args)
-		@msgNames[msgName].each {|obj|
-			obj.call(*args)
-		}
-	end
+        if defined? @msgNames and @msgNames.has_key? msgName
+            @msgNames[msgName].each do |obj|
+                obj.call *args
+            end
+        end
+    end
+
+    private :add_msg_name, :del_msg_name, :dispatch_msg
 
 end
 
+
 if __FILE__ == $0
-	
+
 	class Test
+
 		include Listener
+
 		def initialize
-			super
-			add_msg_name(:Test)
+			add_msg_name(:test)
 		end
 
 		def dispatch_it(i)
-			dispatch_msg(Test, i)
+			dispatch_msg(:test, i)
 		end
 	end
-	
+
 	def doit(i)
 		p i
 	end
 
-	t = Test.new
-	t.add_msg_listener(Test::Test, method(:doit))
-	t.dispatch_it('hallo')
-	p t.inspect
-	t.del_msg_listener(Test::Test, method(:doit))
-	t.dispatch_it('hallo')
-	p t.inspect
 
+	t = Test.new
+	t.add_msg_listener(:test, method(:doit))
+	t.dispatch_it('hallo')
+	p t.inspect
+	t.del_msg_listener(:test, method(:doit))
+	t.dispatch_it('hallo')
+	p t.inspect
 end

@@ -1,5 +1,6 @@
-W implement tag <relocatable> for references that should be relocatable
-W replace current loggin mechanism with Log4r
+* create new document which describes iterations and the steps which are taken in each iteration (high risk first)
+* change the classes which use the listener interface because of the reconfiguration
+* implement tag <relocatable> for references that should be relocatable
 * document existing files (RDOC)
 * implement <template> meta-info tag (see template based)
 * implement "creation of files only when necessary" (i.e. if dependencies have changed)
@@ -29,3 +30,4 @@ W check if ansi color output is better (for warnings, debug, etc), should be abl
 W restructure current files, make more readable
 W pagePlugin.buildNode: srcName = File.basename(srcName) in front of urlName = ...
 W pagePlugin.get_template_for_node: raise ... if node.nil?
+W replace current loggin mechanism with Log4r

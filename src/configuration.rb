@@ -8,14 +8,10 @@ require 'log4r'
 Log4r::Logger.root.level = Log4r::INFO
 
 
-
-
-
-
 class Configuration
 
 	ThgException.add_entry :CFG_ENTRY_NOT_FOUND,
-		"%0 entry in configuration file %1 not found", 
+		"%0 entry in configuration file %1 not found",
 		"add entry %0 to the configuration file"
 
 	ThgException.add_entry :CFG_FILE_NOT_FOUND,
@@ -25,7 +21,7 @@ class Configuration
 	include Singleton
 
 	attr_accessor :srcDirectory
-	attr_accessor :outDirectory	
+	attr_accessor :outDirectory
 	attr_accessor :verbosityLevel
 	attr_accessor :ansiColorUsed
 	attr_accessor :configFile
@@ -37,12 +33,12 @@ class Configuration
 		@configFile = File.join(@homeDir, 'config.xml')
 		@pluginData = Hash.new
 	end
-	
+
 	def parse_config_file
 		raise ThgException.new(ThgException::CFG_FILE_NOT_FOUND, @configFile) if !File.exists?(@configFile)
 
 		root = REXML::Document.new(File.new(@configFile)).root
-			
+
 		# initialize attributes
 		read_config_value(root, :@srcDirectory, '/configuration/main/srcDir')
 		read_config_value(root, :@outDirectory, '/configuration/main/outDir')
@@ -67,5 +63,5 @@ class Configuration
 		raise ThgException.new(ThgException::CFG_ENTRY_NOT_FOUND, path, @configFile) if eval(symbol.id2name << ".nil?")
 		eval(symbol.id2name << " = " << type.to_s << "(" << symbol.id2name << ")")
 	end
-	
+
 end

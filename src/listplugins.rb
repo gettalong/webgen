@@ -1,7 +1,7 @@
 require 'ups'
 
 class ThgListPlugin < UPS::StandardPlugin
-	
+
 	def initialize
 		super('listRegistry', 'thgPluginList')
 	end
@@ -31,7 +31,7 @@ class ThgListPlugin < UPS::StandardPlugin
 				ret = ""
 				if width > 60
 					ret << "\n    "
-					width = 0 
+					width = 0
 				end
 				ret << s << ' '
 			}.join('') + "\n\n"
