@@ -1,6 +1,6 @@
 ---- CURRENT ----
 
-* add params to menu for style classes (webgen-submenu, webgen-menuitem-selected) -> see menu feedback on wiki
+* reloctable tag: correct output for complex URLS???
 * check if duplicate nodes are created??? by using a tag in a template
 * allow a template to use another template (templates as page description files?) (template2 uses template1)
 * create webgen 0.2.0 to 0.3.0 converter
@@ -147,3 +147,4 @@ W do not allow two or more page files in the same language, print warn
 * restructure documentation (filehandler, contenthandler, htmlvalidator, tags)
 * tag 'mrplot' -> generate a plot with mrplot --> tag not very useable
 * ordering of picture/gallery files for menu
+* add params to menu for style classes (webgen-submenu, webgen-menuitem-selected) -> see menu feedback on wiki
