@@ -1,8 +1,11 @@
-title: YAML Projekt Seite
+---
+title: Projekt Seite
+inMenu: true
 revision: |
    $Id$
-
-content: |
+blocks:
+  - {name: content, format: html}
+---
     <h1>Projekt Seite</h1>
     Dies ist eine dummy Projektseite mit Umlauten äüüöüpßÖÄÖÜPÄÖ'*
     Revision: {revision: }

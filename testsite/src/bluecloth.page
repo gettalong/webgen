@@ -1,4 +1,7 @@
-
+---
+blocks:
+  - {name: content, format: markdown}
+---
 BlueCloth
 =========
 

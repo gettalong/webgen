@@ -1,7 +1,9 @@
+---
 title: YAML Projects page
 template: /default.template
-
-content:
+blocks:
+  - {name: content, format: html}
+---
     <h1>The News page</h1>
     askdjfölajsödf öaksdfka södfkasdök jaslkdfaösdf sdkfasödlfasdfasdf
     aöfkaöskdföksdöfkasöd kös

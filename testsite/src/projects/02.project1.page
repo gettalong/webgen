@@ -1,10 +1,10 @@
-<?xml version="1.0" ?>
-<webgen>
-	<title>Project 3</title>
-    <inMenu>true</inMenu>
-
-	<content>
-	<h1>The Project 3 page</h1>
+---
+title: Projekte 1
+inMenu: true
+blocks:
+  - {name: content, format: html}
+---
+	<h1>The Project 1 page</h1>
 	Solvitur acris hiems grata vice veris et Favoni, Trahuntque siccas
 	machinae carinas, Ac neque iam stabulis gaudet pecus aut arator
 	igni, Nec prata canis albicant pruinis. Iam Cytherea chores ducit
@@ -18,6 +18,3 @@
 	fabulaeque Manes, Et domus exilis Plutonia; quo simul mearis, Nec
 	regna vini sortiere talis Nec tenerum Lycidan mirabere, quo calet
 	iuventus Nunc omnis et mox virgines tepebunt.
-    <img src="{relocatable: /images/bghack.png}" width="100" height="100"/>
-	</content>
-</webgen>

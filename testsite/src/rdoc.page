@@ -1,3 +1,7 @@
+---
+blocks:
+  - {name: content, format: rdoc}
+---
 = Page formatter for RDOC style files
 
 == You see it works

@@ -1,7 +1,11 @@
+---
 title: YAML Projektas Pagas
 inMenu: true
-
-content: |
+revision: |
+   $Id$
+blocks:
+  - {name: content, format: html}
+---
     <h1>Projektas Pagas</h1>
     Soy il paga. : asdfölsö
     sdfökaösdfd

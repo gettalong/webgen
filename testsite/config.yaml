@@ -3,5 +3,5 @@ Configuration:
     outDirectory: output
     verbosityLevel: 2
 
-File Copy Handler:
+FileCopyHandler:
     types: [css, jpg, png]

@@ -1,8 +1,10 @@
+---
 title: Projekte Seite
 inMenu: true
 menuOrder: 3
 directoryName: Projekte
-
-content: |
+blocks:
+  - {name: content, format: html}
+---
     <h1>Projekt Seite</h1>
     Dies ist eine dummy Projektseite mit öasdöföasdfljd <a href="{relocatable: /home.html}">Hauptseite</a>

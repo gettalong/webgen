@@ -1,10 +1,10 @@
-<?xml version="1.0" ?>
-<webgen>
-    <title>Pictures index</title>
-    <inMenu>true</inMenu>
-
-	<content>
-	<h1>The pictures index page</h1>
+---
+title: New page
+inMenu: true
+blocks:
+  - {name: content, format: html}
+---
+	<h1>The News page</h1>
 	Solvitur acris hiems grata vice veris et Favoni, Trahuntque siccas
 	machinae carinas, Ac neque iam stabulis gaudet pecus aut arator
 	igni, Nec prata canis albicant pruinis. Iam Cytherea chores ducit
@@ -18,6 +18,3 @@
 	fabulaeque Manes, Et domus exilis Plutonia; quo simul mearis, Nec
 	regna vini sortiere talis Nec tenerum Lycidan mirabere, quo calet
 	iuventus Nunc omnis et mox virgines tepebunt.
-
-	</content>
-</webgen>
