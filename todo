@@ -1,6 +1,4 @@
 * document existing files (RDOC)
-W review Node class, remove all plugin dependent things
-W review configuration class, remove all plugin dependent things
 W restructure current files, make more readable
 * implement <template> meta-info tag (see template based)
 * implement "creation of files only when necessary" (i.e. if dependencies have changed)
@@ -24,3 +22,5 @@ W update all exceptions to new exception format
 W implement hooks mechanism
 * enable writing of tree again after hooks mechanism installed
 W implement page templates using hooks (after dir read store reference to template file in hash)
+W review Node class, remove all plugin dependent things
+W review configuration class, remove all plugin dependent things

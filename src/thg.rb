@@ -28,7 +28,6 @@ def runListPlugins
 	UPS::PluginRegistry.instance['listRegistry'].list 
 end
 
-
 # everything is catched
 begin
 
@@ -47,6 +46,8 @@ begin
 
 		opts.on_tail("--help", "-h", "Display this help screen") { puts opts; exit }
 		opts.on("--config-file FILE", "-c", String, "The config.xml which should be used") { |Configuration.instance.configFile| }
+		opts.on("--source-dir DIR", "-s", String, "The  directory from where the files are read") { |Configuration.instance.srcDirectory| }
+		opts.on("--output-dir DIR", "-o", String, "The directory where the output should go") { |Configuration.instance.outDirectory| }
 		opts.on("--list-plugins", "-l", "List all the plugins and information about them") { require 'listplugins'; main = method(:runListPlugins) }
 		opts.on("--verbosity LEVEL", "-v", Integer, "The verbosity level (0, 1, or 2)") { |Configuration.instance.verbosityLevel| }
 
@@ -71,3 +72,5 @@ rescue ThgException => e
 	print "Possible solution:\n\t #{e.solution}\n\n"
 	print "Stack trace: #{e.backtrace.join("\n")}\n" if Configuration.instance.verbosityLevel >= 2
 end
+
+

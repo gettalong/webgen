@@ -15,9 +15,8 @@ class Configuration
 
 	include Singleton
 	
-	attr_reader :srcDirectory
-	attr_reader :outDirectory
-	
+	attr_accessor :srcDirectory
+	attr_accessor :outDirectory	
 	attr_accessor :verbosityLevel
 	attr_accessor :configFile
 
@@ -27,9 +26,6 @@ class Configuration
 		@homeDir = File.dirname($0)
 		@configFile = File.join(@homeDir, 'config.xml')
 		@pluginData = Hash.new
-
-		# used for dependency tracking
-		@plugins = Hash.new
 	end
 	
 	def parse_config_file

@@ -17,6 +17,8 @@ class ThgException < RuntimeError
 		}
 	end
 
+	private :substitute_entries
+
 	### Class variables and methods ###
 
 	@@messageMap = Hash.new

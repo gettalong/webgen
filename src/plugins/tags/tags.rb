@@ -1,4 +1,5 @@
 require 'ups'
+require 'thgexception'
 
 class Tags < UPS::Controller
 
@@ -28,38 +29,4 @@ class Tags < UPS::Controller
 end
 
 
-class TitleTag < UPS::StandardPlugin
-	
-	def initialize
-		super('tags', 'title')
-	end
-
-	def describe
-		"Replaces <title> tag with title of node"
-	end
-
-	def execute(content, node)
-		node.title
-	end
-
-end
-
-class ContentTag < UPS::StandardPlugin
-	
-	def initialize
-		super('tags', 'content')
-	end
-
-	def describe
-		"Replaces <content> with the actual content of the current file"
-	end
-
-	def execute(content, node)
-		node.metainfo['content']
-	end
-
-end
-
 UPS::PluginRegistry.instance.register_plugin(Tags.new)
-UPS::PluginRegistry.instance.register_plugin(TitleTag.new)
-UPS::PluginRegistry.instance.register_plugin(ContentTag.new)
