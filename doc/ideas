@@ -1,0 +1,236 @@
+* name: Thaumaturge - Template Based Homepage Generator
+
+>>> nothing to do really
+
+* language is Ruby
+
+  Why Ruby? Fast and easy coding, good plugin system (UPS), cross
+  plattform, object oriented (that's the reason why not Python),
+  interpreted
+
+  Everything should be done in one language to avoid to much
+  dependencies and unnecessary difficulties.
+
+>>> Use RDOC for documentation, everything should be object oriented,
+>>> try to use Ruby's special features if possible, clear directory
+>>> structure, classes which are tied closely together should reside in
+>>> one file
+
+* plugins for everything
+
+  Everything should be a plugin, so it is assured that the system can
+  easily be extended.
+
+>>> plugins are based on UPS, some plugins only consist of controller,
+>>> most of them should have sub-plugins
+
+* template based
+
+  each directory can specify a template file, this file is written in XHTML
+  1.1, but can contain extra tags which have another namespace:
+
+  e.g.
+  <body>
+    This is a text and here comes the menu <thg:menu style="popup-menu"/>.
+	Another text
+  </body>
+
+>>> namespace for extra tags is thg, template file is called
+>>> template.html per default (configureable), in each directory there
+>>> can be one such file, a page file can reference a different template
+>>> file if necessary
+
+* hooks for plugins
+
+  The file generator should provide hooks so that plugins can alter the
+  contents before, after, ... some transformations were done.
+
+  For example, one plugin could substitute smiley character to images
+
+>>> It should be easy to add new hook types. The following hooks should
+>>> be available: after page generated (e.g. to replace strings with
+>>> other strings), after page written (e.g. to check the validity of
+>>> the file).
+
+* file name generators
+
+  File generation should be abstract, individual plugins should do the
+  actual generation or naming of files.
+
+  One possiblity is that filenames with directories are created, or
+  everything is stored in one directory.
+
+>>> File name generation should not depend on other files. A name is
+>>> given to the generator and it should return a fully qualified file
+>>> name.
+
+* Many languages
+  The system should support more languages. If a page was written in
+  more than language, the viewer should be able to easily switch between
+  the different languages.
+
+>>> The language is encoded in the name of the file. Files are named
+>>> file.xml, file.en.xml, file.de.xml and so on. If no language token
+>>> is included in file name, the default file language (can be
+>>> configured) is assumed. If more than one language per page is
+>>> available, a switch should be available to the user.
+
+* Standards based
+  Only web standards will be used. Generated files have to be XHTML 1.1
+  compatible, the layout is separated from content using CSS2. No
+  backwards compatibility is made.
+
+>>> All the files should be checked after generation if they are
+>>> compatible to XHTML 1.1. The used CSS standard will be CSS 2.0.
+
+* Plugins can have ressources
+  This is necessary so that plugins can provide, for example, css
+  fragments which they so that the generated XHTML code looks good.
+
+>>> Ressources can either reside in the configuration file or in a
+>>> separate file. The separate file should be under the ressource
+>>> directory of the distribution or in the file which is stated in the
+>>> configuration file.
+
+* Central configuration through XML file
+  Each plugin normally needs some kind of configuration if the user
+  wants to change the default behaviour. All the configurations are
+  stored in an XML file which the user can change.
+  The configuration should be overridable by settings directly in the element.
+
+  e.g.
+  <body>
+    This is a text and here comes the menu <thg:menu style="popup-menu"/>.
+	Another text
+  </body>
+
+  In this example, the style of the menu is overridden.
+
+  For example, CSS fragments can be stored there. Some plugins could be
+  deactivated if not wanted (e.g. the smiley plugin)
+
+>>> The name of the configuration file is config.xml. This file has to
+>>> reside in the root directory under which the page files are. THINK
+>>> ABOUT FORMAT OF THE CONFIG FILE!!!
+
+* New pages
+  It should be easy to add new pages. Just stick the file in the
+  approriate directory, re-run the generator and everything should work
+
+* Validation
+  After generating the XHTML pages, it should be possible to check if
+  the pages are really XHTML 1.1 compatible.
+
+>>> If a Ruby validator is available, use it. Otherwise use an external
+>>> tool to verify this. Under Linux, for examle, xmllint from the
+>>> libxml2 package. Under Windows, for example, the Microsoft Parser.
+
+* Page format
+  Pages are written in XML. Each page can contain some meta info and a
+  content body. The meta info can be used, for example, to sort the page
+  and to generate a sorted menu. The meta info tags should be, if
+  possible, implemented as plugins.
+
+>>> The meta information is loaded when the file is read. Meta
+>>> information includes: title (used for title of page and menu
+>>> generation), external (specifies that the content of this directory
+>>> is generated using an external tool), 
+
+* Different CSS media types
+  It should be possible to customize the pages so that different CSS
+  media types can be used easily.
+
+* DTD for page files -- wish list
+  Generate a DTD for the page format depending on the current
+  configuration file so that editing is easier in XML editors
+  (e.g. XEmacs with PSGML)
+
+* Gallery, Blog, Wiki,...
+  Enable easy integration of such web sites. Galleries could be, for
+  example, generated using this program, Wiki's and Blog could be added.
+
+>>> External references are specified in the configuration file. The
+>>> name of the reference and the URL have to be specified. If needed
+>>> the external reference can appear in the menu (specify order value
+>>> and under which menu item the reference should appear)
+
+* Generation algorithm
+  Every file is read into a hierarchical structure. Then all the
+  transformations are done. After everything was transformed, the XHTML
+  output is generated using the approriate template and the data from
+  the tree.
+
+>>> If possible, only read the necessary parts of the files, and only
+>>> when generating the XHTML files themselves read in the whole
+>>> file. Evenentually first use the SAX parser to read in only the
+>>> appropriate things, when generating use DOM parser.
+
+* Data structure
+  All the page xml files are read and stored in an tree like
+  structure. The tree levels represent the menu levels.
+
+>>> The tree represents the directory structure of the source
+>>> files. Each tree level is a menu level, too. A leaf is an actual
+>>> page file.
+
+* Some plugins
+  The generator should come with some predefined plugins. Here a list of
+  possible candidates:
+
+  - Content plugin: specifies the content of the page, uses <content>
+  tag
+
+  - Menu plugin: specifies the menu, the plugin itself should only feed
+  data to other plugins which then actually create the menu. Different
+  menu styles are therefore represented by different menu plugins. uses
+  <menu> tag; A leaf in the tree can specify additional menu entries
+  (e.g. for sections) through use of the metainfo tag <menu>. An anchor
+  name and the display name have to be specified.
+
+  - Sort plugin: specifies in which order the plugins should be; uses
+  meta info tag <order> to specify ordering; in configuration file a
+  default ordering mechanism if no ordering specified (e.g. use ctime of
+  files).
+
+  - Smiley plugin: replace all smiley character sequences with images;
+  uses hook system; provides ressources (smileys), different sets of
+  smileys; configureable;
+
+  - Navbar plugin: creates a navigation bar that shows the current
+  location within the tree; configureable;
+
+  - language plugin: enables more than more language to present; default
+  language in configuration file; uses <language> tag; languages are
+  encoded in the file name; has resource list for mapping language code
+  to language names; only visible if more than one language;
+ 
+  - external file binder plugin: includes an external file; external
+  file has to be proper XHTML 1.1; useful, for example, for adding
+  colored source code to XHTML files
+
+  - section plugin: provides different sections on one page; uses
+  <section> tag
+
+  - sitemap plugin: provides a sitemap, uses the <sitemap> tag
+
+  - database text plugin: fetches text from a database during the
+  creation of the page; uses the <database> tag
+
+
+
+Design issues:
+
+* source directory structure
+  
+  / -> the root directory, has the main file
+  /resources/ -> the directory for the resources of the plugins
+  /plugins/ -> the plugins
+
+
+* directory structure when used
+
+  / -> the root of the tree in which the source page files are
+  /config.xml -> the configuration file
+  /resources/  -> the directory where user defined ressources can be
+  /src/  -> the page files from which the html files are generated
+  /output/  -> the directory where the created files are stored
