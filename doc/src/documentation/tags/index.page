@@ -8,16 +8,14 @@ are substituted. For example, the menu you see to left was generated. This makes
 remove menu items. If the menu was not generated, you would have to change every file which uses the
 menu.
 
-Webgen comes bundled with some default tag plugins. Have a look at the <a href="{relocatable: /api.html}">
-API documentation</a> to get detailed information about a tag. All currently available
-tags are exercised in this online demo. Choose a tag from the menu to get a short description of
-what the tag does.
+Webgen comes bundled with some default tag plugins. All currently available tags are exercised in
+this online demo. Choose a tag from the menu to get a detailed description of the tag.
 
 h2. Usage
 
 Tags are defined by a special markup code. A tag has the following structure:
 
-<pre class="webgen-file">\{tagname: {optional arguments in YAML format}}</pre>
+<pre class="webgen-file">\{tagname: {parameters}}</pre>
 
 Every time a tag is found in a source file, the registered plugin for the tag is called. The plugin
 returns a string which is put into the output file instead of the tag. The output a tag plugin can
@@ -25,3 +23,17 @@ produce ranges from something simple to something complex. For example, the <a h
 Meta Tag</a> plugin copies any additional info specified in the source file verbatim
 into the correct place in the output file. And in contrast, the <a href="{relocatable: menu.html}">
 Menu Tag</a> plugin generates a whole menu tree.
+
+h2. Tag Parameters
+
+A tag can have zero or more parameters some of which are mandatory. You can see the supported
+parameters (and if they are mandatory) for each tag on the tag's page. The default mandatory
+parameter can be specified in a special way, see the examples below. The format used for parsing the
+parameters is YAML.
+
+h2. Examples
+
+table{border: 1px solid black}.
+|^. @\{tagname: }@|^. No parameter specified|
+|^. @\{tagname: test.html}@|^. The default mandatory parameter is set to @test.html@. This form can only be used if there is only one mandatory parameter|
+|^. @\{tagname: {param1: value1, param2: value2}}@|^. Two parameters (param1 and param2) specified|
