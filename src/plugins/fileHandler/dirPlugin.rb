@@ -67,7 +67,7 @@ class DirHandlerPlugin < UPS::Plugin
         if created
             self.logger.warn { "No directory index file found for directory <#{dirNode.recursive_value( 'src' )}>" }
         else
-            self.logger.info { "Directory index file for <#{dirNode.recursive_value( 'src' )}> => <#{node['pagePlugin:basename']}>" }
+            self.logger.info { "Directory index file for <#{dirNode.recursive_value( 'src' )}> => <#{node['title']}>" }
             dirNode['indexFile'] = node
             node.each do |child| child['directoryName'] ||= dirNode['directoryName'] end
         end

@@ -1,11 +1,16 @@
 require 'ups/ups'
 require 'node'
+require 'thgexception'
 require 'plugins/tags/tags'
 
 class MenuTag < UPS::Plugin
 
     NAME = 'Menu Tag'
     SHORT_DESC = 'Builds up a menu'
+
+    ThgException.add_entry :TAG_PARAMETER_INVALID,
+        "Missing or invalid parameter value for tag %0 in <%1>: %2",
+		"Add or correct the parameter value"
 
     def init
         UPS::Registry['Tags'].tags['menu'] = self
@@ -18,6 +23,7 @@ class MenuTag < UPS::Plugin
             #TODO only call DebugTreePrinter
             #UPS::Registry['Tree Transformer'].execute @menuTree unless @menuTree.nil?
         end
+        raise ThgException.new( :TAG_PARAMETER_INVALID, tag, refNode.recursive_value( 'src' ), 'level' ) if content.nil? || !content.has_key?( 'level' )
         build_menu( node, @menuTree, content['level'] )
 	end
 
@@ -54,9 +60,9 @@ class MenuTag < UPS::Plugin
 
         styles = []
         styles << 'submenu' if isDir
-        styles << 'selectedMenu' if !isDir && langNode.recursive_value( 'dest' ) == srcNode.recursive_value( 'dest' )
+        styles << 'selectedMenu' if langNode.recursive_value( 'dest' ) == srcNode.recursive_value( 'dest' )
 
-        style = " class=\"#{styles.join(',')}\"" if styles.length > 0
+        style = " class=\"#{styles.join(' ')}\"" if styles.length > 0
         link = langNode['processor'].get_html_link( langNode, srcNode, ( isDir ? langNode['directoryName'] : langNode['title'] ) )
 
         if styles.include? 'submenu'
@@ -99,7 +105,7 @@ class MenuTag < UPS::Plugin
 
     def put_node_in_menu?( node )
         inMenu = node['inMenu']
-        inMenu ||=  node.parent && node.parent['pagePlugin:basename'] &&
+        inMenu ||=  node.parent && node.parent.kind_of?( PageNode ) &&
                     node.parent.find do |child| child['inMenu'] end
         inMenu &&= !node['virtual']
         inMenu

@@ -3,6 +3,17 @@ require 'node'
 require 'plugins/nodeProcessor'
 require 'plugins/fileHandler/fileHandler'
 
+class PageNode < Node
+
+    def initialize( parent, basename )
+        super parent
+        self['page:basename'] = self['title'] = basename
+        self['src'] = self['dest'] = ''
+        self['virtual'] = true
+    end
+
+end
+
 
 class PagePlugin < UPS::Plugin
 
@@ -18,7 +29,6 @@ class PagePlugin < UPS::Plugin
 
     def create_node( srcName, parent )
         data = get_file_data srcName
-        raise ThgException.new( :PAGE_TITLE_ENTRY_NOT_FOUND, srcName ) unless data['title']
 
         srcName, urlName, baseName, lang = get_file_names srcName
 
@@ -30,7 +40,7 @@ class PagePlugin < UPS::Plugin
         node['dest'] = urlName
         node['lang'] = lang
         node['processor'] = self
-
+        node['title'] ||= get_default_title srcName
         pageNode.add_child node
 
         return ( created ? pageNode : nil )
@@ -53,12 +63,9 @@ class PagePlugin < UPS::Plugin
 
 
     def get_page_node( basename, dirNode )
-        node = dirNode.find do |node| node['pagePlugin:basename'] == basename end
+        node = dirNode.find do |node| node['page:basename'] == basename end
         if node.nil?
-            node = Node.new dirNode
-            node['pagePlugin:basename'] = node['title'] = basename
-            node['src'] = node['dest'] = ''
-            node['virtual'] = true
+            node = PageNode.new( dirNode, basename )
             created = true
         end
         [node, created]
@@ -66,7 +73,7 @@ class PagePlugin < UPS::Plugin
 
 
     def get_lang_node( node, lang = node['lang'] )
-        node = node.parent unless node['pagePlugin:basename']
+        node = node.parent unless node['page:basename']
         langNode = node.find do |child| child['lang'] == lang end
         langNode = node.find do |child| child['lang'] == UPS::Registry['Configuration'].lang end if langNode.nil?
         langNode
@@ -97,6 +104,11 @@ class PagePlugin < UPS::Plugin
         [srcName, urlName, baseName, lang]
     end
 
+
+    def get_default_title( srcName )
+        name = srcName.gsub(/\.[^.]*?$/, '').tr('_.-', ' ')
+        name[0..0].upcase + name[1..-1]
+    end
 
 end
 
