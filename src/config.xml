@@ -6,9 +6,9 @@
 		<directoryIndexFile>index.xml</directoryIndexFile>
 	</main>
 	<plugins>
-		<fileWriter>
+		<fileHandler>
 			<outputDir>output</outputDir>
-			<filenameGenerator>hierarchicFilename</filenameGenerator>
-		</fileWriter>
+			<filenameGenerator>hierarchicFilenameGenerator</filenameGenerator>
+		</fileHandler>
 	</plugins>
 </configuration>

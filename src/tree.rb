@@ -7,14 +7,16 @@ class Node
 
 	attr_reader   :title
 	attr_reader   :url
+	attr_reader   :srcName
 	attr_reader   :virtual
 	attr_accessor :content
 	
-	def initialize(title, url, virtual)
+	def initialize(title, url, srcName, virtual)
 		init_composite
 
 		@title = title
 		@url = url
+		@srcName = srcName
 		@virtual = virtual
 	end
 
@@ -32,7 +34,8 @@ class DirectoryNode < Node
 				"directory index file does not exist for #{dir == '' ? 'root directory' : dir}", caller
 		end
 
-		super(title, dir+'/'+cfg.directoryIndexFile, true)
+		urlName = (dir+'/'+cfg.directoryIndexFile).gsub(/\.xml$/, '.html')
+		super(title, urlName, dir+'/'+cfg.directoryIndexFile, true)
 		
 		@templateFile = File.join(cfg.srcDirectory, dir, cfg.templateFile)
 		if !File.exists?(@templateFile)

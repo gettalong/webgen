@@ -40,7 +40,7 @@ class Configuration
 
 		rescue
 			raise ThaumaturgeException.new("check if the config.xml file exists (path: #{filename})"), 
-				"Could not read in the configuration file: #{$!.message}", $!.backtrace
+				"error reading the configuration file: #{$!.message}", $!.backtrace
 		end
 	end
 

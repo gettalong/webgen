@@ -4,7 +4,6 @@ $:.push File.dirname($0)
 require 'ups'
 
 require 'configuration'
-require 'parser'
 require 'tree'
 require 'thgexception'
 
@@ -30,19 +29,18 @@ class Main < UPS::StandardPlugin
 			#print UPS::PluginRegistry.instance['fileWriter'].inspect
 			
 			# load all the files in src dir and build tree
-			parser = Parser.new
-			tree = parser.build_tree
+			tree = UPS::PluginRegistry.instance['fileHandler'].build_tree
 			#print "Tree: #{tree.inspect}\n"
 
 			# execute tree transformer plugins
 			UPS::PluginRegistry.instance['treeTransformer'].execute(tree)
 
 			# generate output files
-			UPS::PluginRegistry.instance['fileWriter'].execute(tree)
+			UPS::PluginRegistry.instance['fileHandler'].write_tree(tree)
 
 		rescue ThaumaturgeException => e
-			print "An error occured: #{e.message}\n"
-			print "Possible solution: #{e.solution}\n\n"
+			print "An error occured:\n\t #{e.message}\n\n"
+			print "Possible solution:\n\t #{e.solution}\n\n"
 			print "Stack trace: #{e.backtrace.join("\n")}\n"
 		end
 	end
