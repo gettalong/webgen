@@ -132,7 +132,7 @@ module FileHandlers
         dispatch_msg( :DIR_NODE_CREATED, node )
 
         Dir[path + File::SEPARATOR + '{.*,*}'].delete_if do |name|
-          name =~ /#{File::SEPARATOR}.{1,2}$/ || \
+          name =~ /#{File::SEPARATOR}\.{1,2}$/ || \
           File.basename( name ) =~ Regexp.new( get_param( 'ignored' ).join( '|' ) )
         end.sort! do |a, b|
           if File.file?( a ) && File.directory?( b )
