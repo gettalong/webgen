@@ -127,3 +127,7 @@
   .webgen-picture {
     text-align: center;
   }
+
+  .webgen-gallery table {
+    width: 100%;
+  }

@@ -130,7 +130,6 @@ module FileHandlers
 
       if @extensions.has_key?( :dir )
         node = @extensions[:dir].create_node( path, parent )
-        node['processor'] = @extensions[:dir]
 
         dispatch_msg( :DIR_NODE_CREATED, node )
 

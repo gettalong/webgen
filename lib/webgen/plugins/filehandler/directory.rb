@@ -64,7 +64,10 @@ module FileHandlers
 
     # Return a new DirNode.
     def create_node( path, parent )
-      DirNode.new( parent, File.basename( path ) )
+      unless parent && node = parent.find {|child| /^#{File.basename( path )}\/$/ =~ child['src'] }
+        node = DirNode.new( parent, File.basename( path ) )
+      end
+      node
     end
 
     # Create the directory (and all its parent directories if necessary).
@@ -89,6 +92,25 @@ module FileHandlers
       lang_node = get_lang_node( node, refNode['lang'] )
       title ||=  lang_node['directoryName'] || node['directoryName']
       super( lang_node, refNode, title )
+    end
+
+    # Recursively create a given path
+    def recursive_create_path( path, parent )
+      p = parent
+      node = nil
+      path.split( File::SEPARATOR ).each do |pathname|
+        case pathname
+        when '.' then
+          # do nothing
+        when '..' then
+          p = p.parent
+        else
+          node = create_node( pathname, p )
+          p.add_child( node ) unless p.nil? || node.nil?
+          p = node
+        end
+      end
+      node
     end
 
   end

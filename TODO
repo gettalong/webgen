@@ -1,18 +1,19 @@
 ---- CURRENT ----
 
+* do not create thumbnails if they already exist and the source file has not changed
 * allow specification of metadata for gallery and picture pages
-* allow a template to use another template (templates as page description files?) (template2 uses template1)
 * ev. create a GalleryNode and put gallery/pictures pages beneath it???
 * ordering of picture/gallery files for menu
+* allow a template to use another template (templates as page description files?) (template2 uses template1)
 * create webgen 0.2.0 to 0.3.0 converter
 * security concerns (setting different $SAFE level???)
-* register with Freshmeat.net
 * use code generator to create test file with all tags and all tag parameter configurations
-* check out http://jigsaw.w3.org/css-validator/check/referer
+* integrate check on output HTML pages (using xmllint)
 
 ---- DOCU ----
 
-* pictureGallery: document layout methods (how to extend), main things...
+* pictureGallery: document layout methods (how to extend -> write subclass, can use config values as layouters are plugins), main things...
+* pictureGallery: files param: no path outside src directory
 * DEV: self.logger.warn/error/info/debug can be used for messages
 
 ---- FUTURE ----
@@ -24,6 +25,7 @@
 * create thumbnails of pictures on the fly with rmagick
 * create logo "Created with webgen"
 * refactor menu: abstract menu generator+parser, concrete impls (vert. menu, horz. menu, ...)
+* include exif info for pictures
 
 ---- DONE ----
 
@@ -133,3 +135,6 @@ W do not allow two or more page files in the same language, print warn
 * document philosophy of webgen (never stop running, errors/warnings, default values,...)
 * extend plugins section on main documentation page
 * add design gallery
+* register with Freshmeat.net
+* check out http://jigsaw.w3.org/css-validator/check/referer -> using xmllint
+* BUG DirHandler#recursive_create_path: handle relativ paths ('..' and '.')

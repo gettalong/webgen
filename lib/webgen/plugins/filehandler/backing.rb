@@ -158,7 +158,7 @@ module FileHandlers
         when '..'
           node = node.parent
         else
-          node = node.find do |child| /^#{element}\/?$/ =~ child['src'] end
+          node = node.find {|child| /^#{element}\/?$/ =~ child['src'] }
         end
         if node.nil?
           node = FileHandlers::DirHandler::DirNode.new( parent, element )

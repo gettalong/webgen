@@ -30,7 +30,7 @@ module FileHandlers
 
     summary "Handles picture gallery files for page file"
     extension 'gallery'
-    add_param "picturesPerPage", 20, 'Number of picture per gallery page'
+    add_param "picturesPerPage", 2, 'Number of picture per gallery page'
     add_param "picturePageInMenu", false, 'True if the picture pages should be in the menu'
     add_param "galleryPageInMenu", false, 'True if the gallery pages should be in the menu'
     add_param "mainPageInMenu", true, 'True if the main page of the picture gallery should be in the menu'
@@ -50,8 +50,8 @@ module FileHandlers
         self.logger.error { "Could not parse gallery file <#{file}>, not creating gallery pages" }
         return
       end
-      path = File.dirname( file )
-      images = Dir[File.join( path, get_param( 'files' ))].collect {|i| i.sub( /#{path + File::SEPARATOR}/, '' ) }
+      @path = File.dirname( file )
+      images = Dir[File.join( @path, get_param( 'files' ))].collect {|i| i.sub( /#{@path + File::SEPARATOR}/, '' ) }
       self.logger.info { "Creating gallery for file <#{file}> with #{images.length} pictures" }
 
       create_layouter
@@ -83,18 +83,17 @@ module FileHandlers
       @layouter = @layouter.new
     end
 
-    def call_layouter( type, data )
-      content = @layouter.send( type.to_s, data )
-      "#{data.to_yaml}\n---\n#{content}"
+    def call_layouter( type, metainfo, *args )
+      content = @layouter.send( type.to_s, *args )
+      "#{metainfo.to_yaml}\n---\n#{content}"
     end
 
     def create_gallery( images, parent )
-      nr_gallery_pages = (Float(images.length) / get_param( 'picturesPerPage' ) ).ceil
-      main = create_main_page( images )
-      main['galleries'] = create_gallery_pages( images )
+      main = create_main_page( images, parent )
+      main['galleries'] = create_gallery_pages( images, parent )
 
-      if nr_gallery_pages != 1
-        mainNode = Webgen::Plugin['PageHandler'].create_node_from_data( call_layouter( :main, main ), main['srcName'], parent )
+      if main['galleries'].length != 1
+        mainNode = Webgen::Plugin['PageHandler'].create_node_from_data( call_layouter( :main, main, main ), main['srcName'], parent )
         parent.add_child( mainNode )
       else
         main['galleries'][0]['title'] = main['title']
@@ -102,17 +101,17 @@ module FileHandlers
         main['galleries'][0].update( @filedata['mainPage'] || {} )
       end
 
-      main['galleries'].each do |gallery|
-        node = Webgen::Plugin['PageHandler'].create_node_from_data( call_layouter( :gallery, gallery ), gallery['link'], parent )
+      main['galleries'].each_with_index do |gallery, gIndex|
+        node = Webgen::Plugin['PageHandler'].create_node_from_data( call_layouter( :gallery, gallery, main, gIndex ), gallery['link'], parent )
         parent.add_child( node )
-        gallery['imageList'].each do |image|
-          node = Webgen::Plugin['PageHandler'].create_node_from_data( call_layouter( :picture, image ), image['srcName'], parent )
+        gallery['imageList'].each_with_index do |image, iIndex|
+          node = Webgen::Plugin['PageHandler'].create_node_from_data( call_layouter( :picture, image, main, gIndex, iIndex ), image['srcName'], parent )
           parent.add_child( node )
         end
       end
     end
 
-    def create_main_page( images )
+    def create_main_page( images, parent )
       main = {}
       main['title'] = get_param( 'title' )
       main['inMenu'] = get_param( 'mainPageInMenu' )
@@ -123,26 +122,19 @@ module FileHandlers
       main
     end
 
-    def create_gallery_pages( images )
+    def create_gallery_pages( images, parent )
       galleries = []
       picsPerPage = get_param( 'picturesPerPage' )
       0.step( images.length - 1, picsPerPage ) do |i|
-        data = Hash.new
+        data = (@filedata['galleryPages'] || {}).dup
 
-        data['blocks'] = [{'name'=>'content', 'format'=>'html'}]
-        data['template'] = get_param( 'galleryPageTemplate' )
-        data['inMenu'] = get_param( 'galleryPageInMenu' )
+        data['blocks'] ||= [{'name'=>'content', 'format'=>'html'}]
+        data['template'] ||= get_param( 'galleryPageTemplate' )
+        data['inMenu'] ||= get_param( 'galleryPageInMenu' )
         data['number'] = i/picsPerPage + 1
         data['title'] = gallery_title( data['number'] )
         data['link'] = gallery_file_name( data['title'] )
-        data['prevGalleryNumber'] = ( i == 0 ? nil : data['number'] - 1 )
-        data['prevGalleryTitle'] = gallery_title( data['prevGalleryNumber'] )
-        data['prevGalleryLink'] = gallery_file_name( data['prevGalleryTitle'] )
-        data['nextGalleryNumber']= ( images.length <= i + picsPerPage ? nil : data['number'] + 1 )
-        data['nextGalleryTitle'] = gallery_title( data['nextGalleryNumber'] )
-        data['nextGalleryLink'] = gallery_file_name( data['nextGalleryTitle'] )
-        data['images'] = images[i..(i + picsPerPage - 1)]
-        data['imageList'] = create_picture_pages( data['images'] )
+        data['imageList'] = create_picture_pages( images[i..(i + picsPerPage - 1)], parent )
 
         galleries << data
       end
@@ -157,10 +149,10 @@ module FileHandlers
       ( title.nil? ? nil : title.tr( ' .', '_' ) + '.html' )
     end
 
-    def create_picture_pages( images )
+    def create_picture_pages( images, parent )
       imageList = []
       images.each do |image|
-        imageData = @filedata[image] || {}
+        imageData = (@filedata[image] || {}).dup
 
         imageData['blocks'] ||= [{'name'=>'content', 'format'=>'html'}]
         imageData['title'] ||= "Picture #{File.basename( image )}"
@@ -169,12 +161,59 @@ module FileHandlers
         imageData['template'] ||= get_param( 'picturePageTemplate' )
         imageData['imageFilename'] = image
         imageData['srcName'] = File.basename( image ).tr( ' .', '_' ) + '.html'
+        imageData['thumbnail'] ||= get_thumbnail( imageData, parent )
 
         imageList << imageData
       end
       imageList
     end
 
+    def get_thumbnail( imageData, parent )
+      imageData['imageFilename']
+    end
+
+  end
+
+  # Try to use RMagick as thumbnail creator
+  begin
+    require 'RMagick'
+
+    class PictureGalleryFileHandler
+
+      def get_thumbnail( imageData, parent )
+        p_node = Webgen::Plugin['DirHandler'].recursive_create_path( File.dirname( imageData['imageFilename'] ), parent )
+        node = Webgen::Plugin['ThumbnailWriter'].create_node( File.join( @path, imageData['imageFilename'] ), p_node )
+        p_node.add_child( node )
+
+        File.dirname( imageData['imageFilename'] ) + '/' + node['dest']
+      end
+
+    end
+
+    class ThumbnailWriter < DefaultHandler
+
+      summary "Writes out thumbnails with RMagick"
+      add_param "thumbnailSize", "100x100", "The size of the thumbnails"
+
+      def create_node( file, parent )
+        node = Node.new( parent )
+        node['title'] = node['src'] = node['dest'] = 'tn_' + File.basename( file )
+        node['tn:imageFile'] = file
+        node['processor'] = self
+        node
+      end
+
+      def write_node( node )
+        image = Magick::ImageList.new( node['tn:imageFile'] )
+        image.change_geometry( get_param( 'thumbnailSize' ) ) {|c,r,i| i.resize!( c, r )}
+        self.logger.info {"Creating thumbnail <#{node.recursive_value('dest')}> from <#{node['tn:imageFile']}>: #{image.inspect}"}
+        image.write( node.recursive_value( 'dest' ) )
+      end
+
+    end
+
+  rescue LoadError => e
+    self.logger.warn { "Could not load RMagick, creation of thumbnails not available" }
   end
 
 end
@@ -183,6 +222,8 @@ end
 module PictureGalleryLayouter
 
   class DefaultLayouter < Webgen::Plugin
+
+    summary "Base class for all Picture Gallery Layouters and default layouter"
 
     # Holds all layouters
     @@layouter = {}
@@ -199,31 +240,56 @@ module PictureGalleryLayouter
       @@layouter[name]
     end
 
-    # Should be overwritten by subclasses!
+    # Returns the thumbnail img tag for the given +image+.
+    def thumbnail_tag_for_image( image )
+      if image['thumbnail'] != image['imageFilename']
+        "<img src='#{image['thumbnail']}' alt='#{image['title']}' />"
+      else
+        "<img src='#{image['imageFilename']}' width='100' height='100' alt='#{image['title']}'/>"
+      end
+    end
+
+
+    # Should be overwritten by subclasses! +data+ is the data structure which holds all information
+    # about the gallery.
     def main( data )
-      "
-#{data['galleries'].collect {|g| "<img src='#{g['images'][0]}' width='100' height='100' alt='#{g['title']}' /><a href=\"#{g['link']}\">#{g['title']}</a>"}.join( "\n\n" )}
-"
-    end
-
-    # Should be overwritten by subclasses!
-    def gallery( data )
-      "
+      s = "
+<h2>#{data['title']}</h2>
 <div class=\"webgen-gallery\">
-
-#{data['imageList'].collect {|i| "<img src='#{i['imageFilename']}' width='100' height='100' alt='#{i['title']}'/><a href=\"#{i['srcName']}\">#{i['title']}</a>" }.join( "\n\n" )}
-
-</div>
+<table>
 "
+      0.step( data['galleries'].length - 1, 5 ) do |i|
+        s += "<tr>"
+        s += data['galleries'][i...i+5].collect {|g| "<td><a href=\"#{g['link']}\">#{thumbnail_tag_for_image( g['imageList'][0] )}<br />#{g['title']}</a></td>"}.join( "\n" )
+        s += "</tr>"
+      end
+      s += "</table></div>"
     end
 
-    # Should be overwritten by subclasses!
-    def picture( data )
+    # Should be overwritten by subclasses! +data+ is the data structure which holds all information
+    # about the gallery. +gIndex+ is the index of the current gallery.
+    def gallery( data, gIndex )
+
+      s = "
+<h2>#{data['title']}</h2>
+<div class=\"webgen-gallery\">
+<table>
+"
+      0.step( data['galleries'][gIndex]['imageList'].length - 1, 5 ) do |i|
+        s += "<tr>"
+        s += data['galleries'][gIndex]['imageList'][i...i+5].collect {|i| "<td><a href=\"#{i['srcName']}\">#{thumbnail_tag_for_image( i )}<br />#{i['title']}</a></td>"}.join( "\n" )
+        s += "</tr>"
+      end
+      s += "</table></div>"
+    end
+
+    # Should be overwritten by subclasses! +data+ is the data structure which holds all information
+    # about the gallery. +gIndex+ is the index of the current gallery. +iIndex+ is the index of the
+    # current image.
+    def picture( data, gIndex, iIndex )
       "
 <div class=\"webgen-picture\">
-
-<img src='#{data['imageFilename']}' alt='#{data['title']}' />
-
+<img src='#{data['galleries'][gIndex]['imageList'][iIndex]['imageFilename']}' alt='#{data['galleries'][gIndex]['imageList'][iIndex]['title']}' />
 </div>
 
 {description: }
