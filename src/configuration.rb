@@ -28,6 +28,9 @@ class Configuration
 		@homeDir = File.dirname($0)
 		@configFile = File.join(@homeDir, 'config.xml')
 		@pluginData = Hash.new
+
+		# used for dependency tracking
+		@plugins = Hash.new
 	end
 	
 	def parse_config_file
@@ -48,9 +51,7 @@ class Configuration
 	end
 
 	def load_plugins
-		Dir[@homeDir+'/plugins/*.rb'].each { |file|
-			require file
-		}
+		UPS::PluginRegistry.instance.load_plugins(@homeDir+'/plugins')
 	end
 
 	def log(level, str)

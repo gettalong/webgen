@@ -3,9 +3,12 @@ require 'configuration'
 require 'thgexception'
 require 'rexml/document'
 require 'fileutils'
+require 'plugins/listener'
 
 class FileHandler < UPS::Controller
 	
+	include Listener
+
 	attr_accessor :extensions
 	attr_accessor :outputDir
 
@@ -18,6 +21,16 @@ class FileHandler < UPS::Controller
 
 		@outputDir = config.text('outputDir')
 		raise ThgException.new(ThgException::CFG_ENTRY_NOT_FOUND, 'fileHandler/outputDir') if @outputDir.nil?
+
+		@msgNames = {'FILEHANDLER_DIR_NODE_CREATED' => []}
+	end
+
+	def dependencies
+		['hook']
+	end
+
+	def after_register
+		UPS::PluginRegistry.instance['hook'].add_hook('FILEHANDLER_DIR_NODE_CREATED', self)
 	end
 
 	def describe
@@ -66,6 +79,8 @@ class FileHandler < UPS::Controller
 			node = Node.new(parent, relName, relName + File::SEPARATOR)
 			node.processor = @dirProcessor
 
+			dispatch('FILEHANDLER_DIR_NODE_CREATED', node)
+
 			Dir[File.join(srcName, '*')].each { |filename|
 				child = build_entry(filename, node)
 				node.add_child(child) if !child.nil?
@@ -96,17 +111,47 @@ class XMLPagePlugin < UPS::StandardPlugin
 		"the tag <%0> has not be found in the <meta> section of the page file %1",
 		"<%0> is not optional, you have to add it to the page file"
 
+	ThgException.add_entry :PAGE_DIR_INDEX_FILE_NOT_FOUND,
+		"directory index file does not exist for %0",
+		"create an %1 in that directory"
+	
+	ThgException.add_entry :PAGE_TEMPLATE_FILE_NOT_FOUND,
+		"template file in root directory not found",
+		"create an %0 in the root directory"
+
 	def initialize
 		super('fileHandler', 'xmlPagePlugin')
 	end	
 
+	def dependencies
+		['hook']
+	end
+
 	def after_register
 		UPS::PluginRegistry.instance['fileHandler'].extensions['xml'] = self
+		UPS::PluginRegistry.instance['hook'].add_listener('FILEHANDLER_DIR_NODE_CREATED', method(:add_template_to_node))
 	end
 
 	def describe
 		"Implements the handling of xml page files. These are the files that are transformed into " <<
 			"XHTML files."
+	end
+
+	def add_template_to_node(node)
+		cfg = Configuration.instance
+		
+		if !File.exists?(node.abs_src + cfg.directoryIndexFile)
+			raise ThgException.new(ThgException::PAGE_DIR_INDEX_FILE_NOT_FOUND,
+								   (dir == '' ? 'root directory' : dir), cfg.directoryIndexFile)
+		end
+
+		node.metainfo['templateFile'] = node.abs_src + cfg.templateFile
+		if !File.exists?(node.metainfo['templateFile'])
+			if node.parent.nil? # dir is root directory
+				raise ThgException.new(ThgException::PAGE_TEMPLATE_FILE_NOT_FOUND, cfg.templateFile)
+			end
+			node.metainfo['templateFile'] = node.parent.metainfo['templateFile']
+		end
 	end
 
 	def build_node(srcName, parent)
@@ -126,19 +171,17 @@ class XMLPagePlugin < UPS::StandardPlugin
 	end
 
 	def write_node(node, filename)
-=begin
 		doc = ''
-		File.open(parent.templateFile) { |file|
+		File.open(node.parent.metainfo['templateFile']) { |file|
 			doc = file.read
 		}
 
 		UPS::PluginRegistry.instance['tags'].substituteTags(node.content, node)
 		UPS::PluginRegistry.instance['tags'].substituteTags(doc, node)
 
-		File.open(filename, File::CREAT|File::TRUNC|File::WR) {|file|
+		File.open(filename, File::CREAT|File::TRUNC|File::RDWR) {|file|
 			file.write(doc)
 		}
-=end
 	end
 
 end
@@ -175,6 +218,6 @@ class FileCopyPlugin < UPS::StandardPlugin
 
 end
 
-UPS::PluginRegistry.instance.register_plugin(FileHandler.new)
-UPS::PluginRegistry.instance.register_plugin(XMLPagePlugin.new)
+UPS::PluginRegistry.instance.register_plugin(FileHandler.new, true)
+UPS::PluginRegistry.instance.register_plugin(XMLPagePlugin.new, true)
 UPS::PluginRegistry.instance.register_plugin(FileCopyPlugin.new)

@@ -3,7 +3,7 @@
 #
 # Implementation of the Composite pattern
 #
-# $Id: Composite.rb 33 2003-11-13 08:16:12Z thomasl $
+# $Id$
 #
 
 module Composite
