@@ -32,38 +32,25 @@ module Tags
     NAME = "Include File Tag"
     SHORT_DESC = "Includes a file verbatim"
 
+    TAG_NAME = 'includeFile'
 
     def initialize
       super
       self.processOutput = false
     end
 
-    def init
-      UPS::Registry['Tags'].tags['includeFile'] = self
-    end
 
-
-    def set_tag_config( config )
-      if config.kind_of? String
-        @filename = config
-      else
-        Webgen::WebgenError( :TAG_PARAMETER_INVALID, config.class.name, 'String', config )
-      end
+    def check_mandatory_param( config )
+      config.kind_of? String
     end
 
 
     def process_tag( tag, node, refNode )
-      if @filename.nil?
-        self.logger.error { 'No filename specified in tag' }
-        return ''
-      end
-
       content = ''
       begin
-        filename = refNode.parent.recursive_value( 'src' ) + @filename
+        filename = refNode.parent.recursive_value( 'src' ) + get_config_param( :mandatory )
         self.logger.debug { "File location: #{filename}" }
         content = CGI::escapeHTML( File.open( filename, 'r' ).read )
-        @filename = nil
       rescue
         self.logger.error { "Given file <#{filename}> does not exist (tag specified in <#{refNode.recursive_value( 'src' )}>" }
       end

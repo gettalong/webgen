@@ -35,9 +35,7 @@ module Tags
     NAME = "Meta tag"
     SHORT_DESC = "Replaces all tags without tag plugin with their respective values from the node meta data"
 
-    def init
-      UPS::Registry['Tags'].tags[:default] = self
-    end
+    TAG_NAME = :default
 
     def process_tag( tag, node, refNode )
       output = ''

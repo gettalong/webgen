@@ -37,10 +37,18 @@ module FileHandlers
       EOF
 
 
+    CONFIG_PARAMS = [
+      {
+        :name => 'types',
+        :defaultValue => ['css', 'jpg', 'png', 'gif'],
+        :description => 'The extension that will be registered by this handler. All files with ' \
+        + 'these extensions will be copied from the source to the destination folder.'
+      }
+    ]
+
     def init
-      types = UPS::Registry['Configuration'].get_config_value( NAME, 'types', ['css', 'jpg', 'png', 'gif'] )
-      unless types.nil?
-        types.each do |type|
+      unless get_config_param( 'types' ).nil?
+        get_config_param( 'types' ).each do |type|
           UPS::Registry['File Handler'].extensions[type] ||= self
         end
       end

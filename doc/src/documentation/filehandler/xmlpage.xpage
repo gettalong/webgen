@@ -12,7 +12,7 @@
 
       <pre class="webgen-file">{includeFile: xmlpage.xpage}</pre>
 
-      As you can see, meta information can be specified in this type of page description file.
+      <p>As you can see, meta information can be specified in this type of page description file.</p>
     </div>
   </content>
 </webgen>

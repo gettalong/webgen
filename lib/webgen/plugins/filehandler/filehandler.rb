@@ -28,7 +28,7 @@ module FileHandlers
   # Super plugin for handling files. File handler plugins can register themselves by adding a new
   # key:value pair to +extensions+. The key has to be the extension in lowercase and the value is
   # the plugin object itself.
-  class FileHandler < UPS::Plugin
+  class FileHandler < Webgen::Plugin
 
     include Listener
 
@@ -41,10 +41,13 @@ module FileHandlers
         been performed the FileHandler is used to write the output files.
       EOF
 
-    Webgen::WebgenError.add_entry :PATH_NOT_FOUND,
-      "the path <%0> could not be found",
-      "check the source directory setting and that you called webgen from the correct directory"
-
+    CONFIG_PARAMS = [
+      {
+        :name => 'ignoredFiles',
+        :defaultValue => ['.svn', 'CVS'],
+        :description => 'Specifies path names which should be ignored.'
+      }
+    ]
 
     attr_reader :extensions
 
@@ -55,11 +58,6 @@ module FileHandlers
       add_msg_name( :DIR_NODE_CREATED )
       add_msg_name( :FILE_NODE_CREATED )
       add_msg_name( :AFTER_DIR_READ )
-    end
-
-
-    def init
-      @ignoredFiles = UPS::Registry['Configuration'].get_config_value( NAME, 'ignoredFiles', ['.svn', 'CVS'] )
     end
 
 
@@ -111,7 +109,8 @@ module FileHandlers
       elsif FileTest.directory? path
         node = handle_directory( path, parent )
       else
-        raise Webgen::WebgenError.new( :PATH_NOT_FOUND, path )
+        self.logger.warn { "Path <#{path}> cannot be handled as it is neither a file nor a directory" }
+        node = nil
       end
 
       return node
@@ -119,7 +118,7 @@ module FileHandlers
 
 
     def handle_file( path, parent )
-      extension = path[/\.[^.]*$/][1..-1].downcase
+      extension = path[/(?=.)[^.]*$/].downcase
 
       if @extensions.has_key? extension
         node = @extensions[extension].create_node( path, parent )
@@ -145,7 +144,7 @@ module FileHandlers
         dispatch_msg( :DIR_NODE_CREATED, node )
 
         entries = Dir[path + File::SEPARATOR + '{.*,*}'].delete_if do |name|
-          name =~ /#{File::SEPARATOR}.{1,2}$/ || @ignoredFiles.include?( File.basename( name ) )
+          name =~ /#{File::SEPARATOR}.{1,2}$/ || get_config_param( 'ignoredFiles' ).include?( File.basename( name ) )
         end
 
         entries.sort! do |a, b|
@@ -172,7 +171,14 @@ module FileHandlers
   end
 
   # The default handler which is the super class of all file handlers.
-  class DefaultHandler < UPS::Plugin
+  class DefaultHandler < Webgen::Plugin
+
+    # Registers the file extension specified by a subclass.
+    def init
+      if self.class.const_defined? :EXTENSION
+        UPS::Registry['File Handler'].extensions[self.class::EXTENSION] = self
+      end
+    end
 
     # Supplies the +path+ to a file and the +parent+ node sothat the plugin can create a node for this
     # path. Should return the node for the path or nil if the node could not be created.

@@ -44,12 +44,6 @@ module FileHandlers
 
     EXTENSION = 'ypage'
 
-
-    def init
-      child_init
-    end
-
-
     def get_file_data( srcName )
       YAML::load( File.new( srcName ) )
     end

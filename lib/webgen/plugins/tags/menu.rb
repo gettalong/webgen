@@ -82,15 +82,33 @@ module Tags
     NAME = 'Menu Tag'
     SHORT_DESC = 'Builds up a menu'
 
-    def init
-      register_config_value( 'submenuTag', 'ul' )
-      register_config_value( 'itemTag', 'li' )
-      register_config_value( 'level', 1 )
-      register_config_value( 'subtreeLevel', 3 )
-      register_config_value( 'showCurrentSubtreeOnly', true )
-      UPS::Registry['Tags'].tags['menu'] = self
-    end
-
+    TAG_NAME = 'menu'
+    CONFIG_PARAMS = [
+      {
+        :name => 'submenuTag',
+        :defaultValue => 'ul',
+        :description => 'The tag used for making sub menus.'
+      }, {
+        :name => 'itemTag',
+        :defaultValue => 'li',
+        :description => 'The tag used for menu items.'
+      }, {
+        :name => 'level',
+        :defaultValue => 1,
+        :description => 'Specifies how many levels the menu should have by default, ie. how deep it is. ' + \
+        'For example, if level = 3, then three levels are always shown at least.'
+      }, {
+        :name => 'subtreeLevel',
+        :defaultValue => 3,
+        :description => 'Specifies how many levels should be shown for subtrees. The number specifies ' + \
+        'the maximum depth the menu will have.'
+      }, {
+        :name => 'showCurrentSubtreeOnly',
+        :defaultValue => true,
+        :description =>  'True if only the current subtree should be shown in the menu. If set to false, ' + \
+        'each subtree will be shown.'
+      }
+    ]
 
     def process_tag( tag, node, refNode )
       unless defined? @menuTree
@@ -112,16 +130,16 @@ module Tags
 
     def build_menu( srcNode, node, level )
       if node.nil? \
-        || level > get_config_value( 'subtreeLevel' ) \
-        || ( level > get_config_value( 'level' ) \
+        || level > get_config_param( 'subtreeLevel' ) \
+        || ( level > get_config_param( 'level' ) \
              && ( node['node'].level > srcNode.level \
-                  || ( get_config_value( 'showCurrentSubtreeOnly' ) && !node['node'].in_subtree?( srcNode ) )
+                  || ( get_config_param( 'showCurrentSubtreeOnly' ) && !node['node'].in_subtree?( srcNode ) )
                   )
              )
         return ''
       end
 
-      out = "<#{get_config_value( 'submenuTag' )}>"
+      out = "<#{get_config_param( 'submenuTag' )}>"
       node.each do |child|
         if child.kind_of? MenuNode
           submenu = child['node'].kind_of?( FileHandlers::DirHandler::DirNode ) ? build_menu( srcNode, child, level + 1 ) : ''
@@ -135,7 +153,7 @@ module Tags
         out << submenu
         out << after
       end
-      out << "</#{get_config_value( 'submenuTag' )}>"
+      out << "</#{get_config_param( 'submenuTag' )}>"
 
       return out
     end
@@ -152,7 +170,7 @@ module Tags
       style = " class=\"#{styles.join(' ')}\"" if styles.length > 0
       link = langNode['processor'].get_html_link( langNode, srcNode, ( isDir ? langNode['directoryName'] : langNode['title'] ) )
 
-      itemTag = get_config_value( 'itemTag' )
+      itemTag = get_config_param( 'itemTag' )
       if styles.include? 'webgen-submenu'
         before = "<#{itemTag}#{style}>#{link}"
         after = "</#{itemTag}>"

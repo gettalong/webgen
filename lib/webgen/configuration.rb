@@ -59,10 +59,10 @@ module Webgen
         @pluginData = YAML::load( File.new( @configFile ) )
       end
 
-      @srcDirectory ||= get_config_value( 'Configuration', 'srcDirectory', 'src' )
-      @outDirectory ||= get_config_value( 'Configuration', 'outDirectory', 'output' )
-      @verbosityLevel ||= get_config_value( 'Configuration', 'verbosityLevel', 3 )
-      @lang ||= get_config_value( 'Configuration', 'lang', 'en' )
+      @srcDirectory ||= add_config_param( NAME, 'srcDirectory', 'src', 'The directory from which the source files are read.' )
+      @outDirectory ||= add_config_param( NAME, 'outDirectory', 'output', 'The directory to which the output files are written.' )
+      @verbosityLevel ||= add_config_param( NAME, 'verbosityLevel', 3, 'The level of verbosity for the output of messages on the standard output.' )
+      @lang ||= add_config_param( NAME, 'lang', 'en', 'The default language.' )
       Log4r::Outputter['stdout'].level = @verbosityLevel
     end
 
@@ -72,17 +72,66 @@ module Webgen
     end
 
 
-    def get_config_value( pluginName, key, defaultValue )
-      value = @pluginData[pluginName][key] if @pluginData.has_key?( pluginName ) && @pluginData[pluginName].has_key?( key )
+    def add_config_param( pluginName, paramName, defaultValue, description = nil )
+      value = @pluginData[pluginName][paramName] if @pluginData.has_key?( pluginName ) && @pluginData[pluginName].has_key?( paramName )
       value ||= defaultValue
+
+      paramData = OpenStruct.new( :name => paramName, :value => value, :defaultValue => defaultValue, :description => description.to_s )
       @configParams[pluginName] ||= Hash.new
-      @configParams[pluginName][key] = OpenStruct.new( :name => key, :value => value, :defaultValue => defaultValue )
-      value
+      @configParams[pluginName][paramName] = paramData
+
+      return value
     end
 
   end
 
   UPS::Registry.register_plugin( WebgenConfigurationPlugin )
+
+
+  class Plugin < UPS::Plugin
+
+    def init
+      @config = {}
+      if self.class.const_defined? :CONFIG_PARAMS
+        self.class::CONFIG_PARAMS.each do |param|
+          value = UPS::Registry['Configuration'].add_config_param( self.class::NAME, param[:name], param[:defaultValue], param[:description] )
+          @config[param[:name]] = value
+        end
+      end
+      self.class.ancestors[1..-1].each do |klass|
+        if klass.const_defined? :CONFIG_PARAMS
+          klass::CONFIG_PARAMS.each do |param|
+            @config[param[:name]] = UPS::Registry['Configuration'].configParams[klass::NAME][param[:name]].value
+          end
+        end
+      end
+    end
+
+
+    def self.no_init_inheritance
+      module_eval "@@PLUGIN_INIT = true"
+    end
+
+
+    def self.method_added( id )
+      return if id != :init || self.class_variables.include?( '@@PLUGIN_INIT' )
+      aliasName = "init_" + self.id.to_s
+      unless method_defined?( aliasName )
+        module_eval "alias_method(:#{aliasName}, :init)\n def init() super; #{aliasName}; end"
+      end
+    end
+
+
+    def get_config_param( name )
+      if !@config.nil? && @config.has_key?( name )
+        return @config[name]
+      else
+        self.logger.error { "Referencing invalid configuration value '#{name}' in class #{self.class.name}" }
+        return nil
+      end
+    end
+
+  end
 
 end
 

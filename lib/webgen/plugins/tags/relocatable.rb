@@ -38,28 +38,15 @@ module Tags
     NAME = 'Relocatable Tag'
     SHORT_DESC = 'Adds a relative path to the specified name if necessary'
 
-    def init
-      UPS::Registry['Tags'].tags['relocatable'] = self
-    end
+    TAG_NAME = 'relocatable'
 
-
-    def set_tag_config( config )
-      if config.kind_of? String
-        @filename = config
-      else
-        Webgen::WebgenError( :TAG_PARAMETER_INVALID, config.class.name, 'String', config )
-      end
+    def check_mandatory_param( config )
+      config.kind_of? String
     end
 
 
     def process_tag( tag, node, refNode )
-      if @filename.nil?
-        self.logger.error { 'No filename specified in tag' }
-        return ''
-      end
-      destNode = refNode.get_node_for_string( @filename )
-      @filename = nil
-
+      destNode = refNode.get_node_for_string( get_config_param( :mandatory ) )
       if !destNode.nil? && destNode.kind_of?( FileHandlers::PagePlugin::PageNode )
         destNode = destNode['processor'].get_lang_node( destNode, node['lang'] )
       end

@@ -31,19 +31,25 @@ module Tags
     NAME = 'Language Tag'
     SHORT_DESC = 'Provides links to translations of the page'
 
-
-    def init
-      register_config_value( 'separator', ' | ' )
-      register_config_value( 'showSingleLang', true )
-      UPS::Registry['Tags'].tags['lang'] = self
-    end
+    TAG_NAME = 'lang'
+    CONFIG_PARAMS = [
+      {
+        :name => 'separator',
+        :defaultValue => ' | ',
+        :description =>  'Separates the languages from each other.'
+      }, {
+        :name => 'showSingleLang',
+        :defaultValue => true,
+        :description =>  'True if the language link should be shown although the page is only available in one language.'
+      }
+    ]
 
 
     def process_tag( tag, node, refNode )
       output = node.parent.children.sort do |a, b| a['lang'] <=> b['lang'] end.collect do |node|
         node['processor'].get_html_link( node, node, node['lang'] )
-      end.join( get_config_value( 'separator' ) )
-      return ( get_config_value( 'showSingleLang' ) || node.parent.children.length > 1 ? output : "" )
+      end.join( get_config_param( 'separator' ) )
+      return ( get_config_param( 'showSingleLang' ) || node.parent.children.length > 1 ? output : "" )
     end
 
   end

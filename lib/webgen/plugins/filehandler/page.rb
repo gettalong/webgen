@@ -46,10 +46,15 @@ module FileHandlers
     NAME = "Page Handler"
     SHORT_DESC = "Super class for all page plugins"
 
+    CONFIG_PARAMS = [
+      {
+        :name => 'defaultLangInFilename',
+        :defaultValue => false,
+        :description => 'If true, the output files for the default language will have the ' \
+        + 'language in the file name like all other page files. If false, they won''t.'
+      }
+    ]
 
-    def init
-      @defaultLangInFilename = UPS::Registry['Configuration'].get_config_value( NAME, 'defaultLangInFilename', true )
-    end
 
     def create_node( srcName, parent )
       data = get_file_data srcName
@@ -112,15 +117,6 @@ module FileHandlers
       langNode
     end
 
-
-    #########
-    protected
-    #########
-
-    def child_init
-      UPS::Registry['File Handler'].extensions[self.class::EXTENSION] = self
-    end
-
     #######
     private
     #######
@@ -132,7 +128,7 @@ module FileHandlers
       fileData.lang      = matchData[3] || UPS::Registry['Configuration'].lang
       fileData.baseName  = matchData[2] + '.html'
       fileData.srcName   = srcName
-      langPart = ( @defaultLangInFilename && UPS::Registry['Configuration'].lang == fileData.lang ? '' : '.' + fileData.lang )
+      langPart = ( !get_config_param( 'defaultLangInFilename' ) && UPS::Registry['Configuration'].lang == fileData.lang ? '' : '.' + fileData.lang )
       fileData.urlName   = matchData[2] + langPart + '.html'
       fileData.menuOrder = matchData[1].to_i
       fileData.title     = matchData[2].tr('_-', ' ').capitalize

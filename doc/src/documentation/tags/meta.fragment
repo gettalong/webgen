@@ -6,4 +6,7 @@ define a meta information with the key <code>revision</code>, you could put the 
 <code>\{revision: }</code> into the content part of the file and the value gets substituted
 automatically.</p>
 
- </div>
+<p>Example: There is a meta information called 'dummyForMeta' defined for this page, so when this
+tag is used <code>\{dummyForMeta:}</code>, you get this '<code>{dummyForMeta:}</code>'.</p>
+
+</div>

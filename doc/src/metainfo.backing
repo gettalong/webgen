@@ -9,20 +9,26 @@ download.html:
   en:
     title: Download &amp; Installation
     inMenu: true
-    menuOrder: 2
+    menuOrder: 3
+
+features.html:
+  en:
+    title: Features
+    inMenu: true
+    menuOrder: 5
 
 api.html:
   en:
     dest: rdoc/index.html
     title: API Reference
-    menuOrder: 3
+    menuOrder: 7
     inMenu: true
 
 documentation/index.html:
   en:
     title: Documentation
     directoryName: Documentation
-    menuOrder: 4
+    menuOrder: 9
 
 
 
@@ -86,6 +92,7 @@ documentation/tags/meta.html:
   en:
     title: Meta Tag
     inMenu: true
+    dummyForMeta: This is the meta information value.
 
 documentation/tags/menu.html:
   en:

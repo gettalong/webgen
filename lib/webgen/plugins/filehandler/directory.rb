@@ -73,12 +73,16 @@ module FileHandlers
     NAME = "Directory Handler"
     SHORT_DESC = "Handles directories"
 
-    attr_reader :indexFile
+    EXTENSION = :dir
+    CONFIG_PARAMS = [
+      {
+        :name => 'indexFile',
+        :defaultValue => 'index.html',
+        :description => 'The default file name for the directory index file.'
+      }
+    ]
 
-    def init
-      @indexFile = UPS::Registry['Configuration'].get_config_value( NAME, 'indexFile', 'index.html' )
-      UPS::Registry['File Handler'].extensions[:dir] = self
-    end
+    attr_reader :indexFile
 
 
     def create_node( path, parent )

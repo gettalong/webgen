@@ -21,9 +21,7 @@
   <code>config.yaml</code>. Webgen searches in the current directory for the configuration file.</p>
 
   <p>If you want to get the configuration values you can run webgen like this</p>
-  <pre>$ webgen -e</pre>
-  <p>At the time of generating this page, the output looked liked this:</p>
-  <pre class="webgen-file">{execute: ruby -I../lib ../bin/webgen -e}</pre>
+  <pre>$ webgen -c</pre>
 
   <p>The list shows sorted by the plugin name the current values and the default values for each
   configuration option. Each option can be overridden in the configuration file by specifing the

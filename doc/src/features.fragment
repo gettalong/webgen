@@ -1,0 +1,13 @@
+<div class="section">
+<h2 class="section_header">Feature list</h2>
+<ul>
+  <li>Easily extendable through plugins</li>
+  <li>Uses templates for separating layout from content</li>
+  <li>Supports several different page description languages (YAML, XML, plain HTML), new ones are easy to add</li>
+  <li>Uses 'tags' to add generated content to the web pages</li>
+  <li>Standard distribution provides often used tags</li>
+  <li>Supports 'virtual files' via meta information backing files</li>
+  <li>Easy to configure if one needs to</li>
+  <li>Relatively fast: process ~1000 files in ~25 seconds on an {execute: uname -p}</li>
+</ul>
+</div>

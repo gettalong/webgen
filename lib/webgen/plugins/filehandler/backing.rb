@@ -58,11 +58,18 @@ module FileHandlers
     NAME = "Backing File Handler"
     SHORT_DESC = "Handles backing files for page file"
 
+    CONFIG_PARAMS = [
+      {
+        :name => 'backingFile',
+        :defaultValue => 'metainfo.backing',
+        :description => 'The default file name for the backing file.'
+      }
+    ]
+
+
     EXTENSION = "backing"
 
     def init
-      @backingFile = UPS::Registry['Configuration'].get_config_value( NAME, 'backingFile', 'metainfo.backing' )
-      UPS::Registry['File Handler'].extensions[EXTENSION] = self
       UPS::Registry['File Handler'].add_msg_listener( :AFTER_DIR_READ, method( :process_backing_file ) )
     end
 
@@ -87,7 +94,7 @@ module FileHandlers
 
 
     def process_backing_file( dirNode )
-      backingFile = dirNode.find do |child| child['src'] == @backingFile end
+      backingFile = dirNode.find do |child| child['src'] == get_config_param( 'backingFile' ) end
       return if backingFile.nil?
 
       backingFile['content'].each do |filename, data|
@@ -165,8 +172,7 @@ module FileHandlers
     NAME = "Virtual Dir Handler"
     SHORT_DESC = "Handles virtual directories"
 
-    def init
-    end
+    no_init_inheritance
 
     def write_node( node )
     end
@@ -179,8 +185,7 @@ module FileHandlers
     NAME = "Virtual Page Handler"
     SHORT_DESC = "Handles virtual pages"
 
-    def init
-    end
+    no_init_inheritance
 
     def get_file_data( name )
       {}

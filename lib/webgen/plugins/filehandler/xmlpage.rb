@@ -43,12 +43,6 @@ module FileHandlers
 
     EXTENSION = 'xpage'
 
-
-    def init
-      child_init
-    end
-
-
     def get_file_data( srcName )
       root = REXML::Document.new( File.new( srcName ) ).root
 

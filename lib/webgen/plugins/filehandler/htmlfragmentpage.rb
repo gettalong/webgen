@@ -34,12 +34,6 @@ module FileHandlers
 
     EXTENSION = 'fragment'
 
-
-    def init
-      child_init
-    end
-
-
     def get_file_data( srcName )
       data = Hash.new
       data['content'] = File.new( srcName ).read

@@ -32,17 +32,15 @@ module FileHandlers
     SHORT_DESC = "Represents the template files for the page generation in the tree"
 
     EXTENSION = 'template'
-
-    Webgen::WebgenError.add_entry :PAGE_TEMPLATE_FILE_NOT_FOUND,
-      "template file in root directory not found",
-      "create an %0 in the root directory"
-
-    attr_reader :defaultTemplate
-
+    CONFIG_PARAMS = [
+      {
+        :name => 'defaultTemplate',
+        :defaultValue => 'default.template',
+        :description => 'The default file name for the template file.'
+      }
+    ]
 
     def init
-      @defaultTemplate = UPS::Registry['Configuration'].get_config_value( NAME, 'defaultTemplate', 'default.template' )
-      UPS::Registry['File Handler'].extensions[EXTENSION] = self
       UPS::Registry['File Handler'].add_msg_listener( :AFTER_DIR_READ, method( :add_template_to_node ) )
     end
 
@@ -52,9 +50,7 @@ module FileHandlers
       node = Node.new parent
       node['title'] = 'Template'
       node['src'] = node['dest'] = relName
-      File.open( srcName ) do |file|
-        node['content'] = file.read
-      end
+      File.open( srcName ) { |file| node['content'] = file.read }
       return node
     end
 
@@ -79,12 +75,24 @@ module FileHandlers
     #######
 
     def add_template_to_node( node )
-      templateNode = node.find { |child| child['src'] == @defaultTemplate }
+      templateNode = node.find { |child| child['src'] == get_config_param( 'defaultTemplate' ) }
       if !templateNode.nil?
         node['template'] = templateNode
       elsif node.parent.nil? # dir is root directory
-        raise Webgen::WebgenError.new( :PAGE_TEMPLATE_FILE_NOT_FOUND, @defaultTemplate )
+        self.logger.error { "Template file #{get_config_param( 'defaultTemplate' )} in root directory not found, adding dummy template!" }
+        templateNode = create_dummy_template node
+        node.add_child templateNode
+        node['template'] = templateNode
       end
+    end
+
+    def create_dummy_template( parent )
+      templateNode = Node.new parent
+      templateNode['title'] = 'Template'
+      templateNode['src'] = templateNode['dest'] = get_config_param( 'defaultTemplate' )
+      templateNode['content'] = "<h1>DUMMY TEMPLATE</h1> {content: }"
+      templateNode['processor'] = UPS::Registry[TemplatePlugin::NAME]
+      templateNode
     end
 
   end
@@ -112,7 +120,7 @@ module TreeWalkers
       if node.metainfo.has_key?( "template" ) && node['template'].kind_of?( String )
         templateNode = node.get_node_for_string( node['template'] )
         if templateNode.nil?
-          self.logger.warn { "Specified template for file <#{node['src']}> not found!!!" }
+          self.logger.warn { "Specified template for file <#{node['src']}> not found, using default template!" }
           node.metainfo.delete "template"
         else
           node['template'] = templateNode

@@ -73,14 +73,14 @@ CLOBBER << "doc/output" << "doc/webgen.log"
 desc "Builds the documentation"
 task :doc => [:rdoc] do
   Dir.chdir("doc")
-  ruby %{-I../lib ../bin/webgen -v 3 }
+  ruby %{-I../lib ../bin/webgen -V 4 }
   Dir.chdir("..")
 end
 
 rd = Rake::RDocTask.new do |rdoc|
   rdoc.rdoc_dir = 'doc/output/rdoc'
   rdoc.title    = "Webgen"
-  rdoc.options << '--line-numbers' << '-m README'
+  rdoc.options << '--line-numbers' << '--inline-source' << '-m README'
   rdoc.rdoc_files.include( 'README' )
   rdoc.rdoc_files.include( 'lib/**/*.rb' )
 end
@@ -223,7 +223,7 @@ end
 
 def run_testsite( arguments = '' )
   Dir.chdir("testsite")
-  ruby %{-I../lib #{arguments} ../bin/webgen -v 3 }
+  ruby %{-I../lib #{arguments} ../bin/webgen -V 3 }
 end
 
 

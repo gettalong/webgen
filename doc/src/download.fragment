@@ -7,6 +7,11 @@ Download: <a href="http://rubyforge.org/frs/?group_id=296">http://rubyforge.org/
 </div>
 
 <div class="section">
+<h2 class="section_header">Dependencies</h2>
+<p>log4r - <a href="http://log4r.sourceforge.net">http://log4r.sourceforge.net</a></p>
+</div>
+
+<div class="section">
 <h2 class="section_header">Installation</h2>
 You can use the standard way to install webgen:
 <pre>

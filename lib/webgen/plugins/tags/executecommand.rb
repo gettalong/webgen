@@ -33,33 +33,21 @@ module Tags
     NAME = "Execute Command Tag"
     SHORT_DESC = "Executes the given command and includes its standard output"
 
+    TAG_NAME = 'execute'
 
     def initialize
       super
       self.processOutput = false
     end
 
-    def init
-      UPS::Registry['Tags'].tags['execute'] = self
-    end
 
-
-    def set_tag_config( config )
-      if config.kind_of? String
-        @command = config
-      else
-        Webgen::WebgenError( :TAG_PARAMETER_INVALID, config.class.name, 'String', config )
-      end
+    def check_mandatory_param( config )
+      config.kind_of? String
     end
 
 
     def process_tag( tag, node, refNode )
-      if @command.nil?
-        self.logger.error { 'No command specified in tag' }
-        return ''
-      end
-
-      CGI::escapeHTML( `#{@command}` )
+      CGI::escapeHTML( `#{get_config_param( :mandatory )}` )
     end
 
     UPS::Registry.register_plugin ExecuteCommandTag

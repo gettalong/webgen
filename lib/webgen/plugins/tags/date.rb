@@ -32,13 +32,17 @@ module Tags
     NAME = "Date Tag"
     SHORT_DESC = "Prints out the date"
 
-    def init
-      register_config_value( 'format', '%A, %B %d %H:%M:%S %Z %Y' )
-      UPS::Registry['Tags'].tags['date'] = self
-    end
+    TAG_NAME = 'date'
+    CONFIG_PARAMS = [
+      {
+        :name => 'format',
+        :defaultValue => '%A, %B %d %H:%M:%S %Z %Y',
+        :description =>  'The format of the date (same options as Time#strftime).'
+      }
+    ]
 
     def process_tag( tag, node, refNode )
-      Time.now.strftime( get_config_value( 'format' ) )
+      Time.now.strftime( get_config_param( 'format' ) )
     end
 
     UPS::Registry.register_plugin DateTag

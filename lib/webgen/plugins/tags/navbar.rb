@@ -38,11 +38,14 @@ module Tags
     NAME = 'Navigation Bar Tag'
     SHORT_DESC = 'Shows the hierarchy of current page'
 
-    def init
-      register_config_value( 'separator', ' / ' )
-      UPS::Registry['Tags'].tags['navbar'] = self
-    end
-
+    TAG_NAME = 'navbar'
+    CONFIG_PARAMS = [
+      {
+        :name => 'separator',
+        :defaultValue => ' / ',
+        :description => 'Separates the hierachy entries from each other.'
+      }
+    ]
 
     def process_tag( tag, srcNode, refNode )
       out = []
@@ -54,7 +57,7 @@ module Tags
         node = node.parent while !node.nil? && node['virtual']
       end
 
-      out = out.reverse.join( get_config_value( 'separator' ) )
+      out = out.reverse.join( get_config_param( 'separator' ) )
       self.logger.debug out
       out
     end
