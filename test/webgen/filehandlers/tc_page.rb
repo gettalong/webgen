@@ -22,25 +22,25 @@ class PageHandlerTest < Test::Unit::TestCase
 
   def test_analyse_file_name
     analyse_file_name( OpenStruct.new( {'lang' => Webgen::Plugin['Configuration']['lang'],
-                                        'baseName' => 'default.html', 'srcName' => 'default.page',
-                                        'urlName' => 'default.html', 'menuOrder' => 0,
-                                        'title' => 'Default' } ) )
+                                        'baseName' => 'default.page', 'srcName' => 'default.page',
+                                        'name' => 'default', 'menuOrder' => 0,
+                                        'title' => 'Default', 'useLangPart' => false } ) )
     analyse_file_name( OpenStruct.new( {'lang' => 'de',
-                                        'baseName' => 'default.html', 'srcName' => 'default.de.page',
-                                        'urlName' => 'default.de.html', 'menuOrder' => 0,
-                                        'title' => 'Default' } ) )
+                                        'baseName' => 'default.page', 'srcName' => 'default.de.page',
+                                        'name' => 'default', 'menuOrder' => 0,
+                                        'title' => 'Default', 'useLangPart' => true } ) )
     analyse_file_name( OpenStruct.new( {'lang' => 'eo',
-                                        'baseName' => 'Hello webpage_hello.html', 'srcName' => '12.Hello webpage_hello.eo.page',
-                                        'urlName' => 'Hello webpage_hello.eo.html', 'menuOrder' => 12,
-                                        'title' => 'Hello webpage hello' } ) )
+                                        'baseName' => 'Hello webpage_hello.page', 'srcName' => '12.Hello webpage_hello.eo.page',
+                                        'name' => 'Hello webpage_hello', 'menuOrder' => 12,
+                                        'title' => 'Hello webpage hello', 'useLangPart' => true } ) )
     analyse_file_name( OpenStruct.new( {'lang' => Webgen::Plugin['Configuration']['lang'],
-                                        'baseName' => 'default.html', 'srcName' => 'default.e.page',
-                                        'urlName' => 'default.html', 'menuOrder' => 0,
-                                        'title' => 'Default' } ) )
+                                        'baseName' => 'default.page', 'srcName' => 'default.e.page',
+                                        'name' => 'default', 'menuOrder' => 0,
+                                        'title' => 'Default', 'useLangPart' => false } ) )
     analyse_file_name( OpenStruct.new( {'lang' => Webgen::Plugin['Configuration']['lang'],
-                                        'baseName' => 'default.html', 'srcName' => 'default.eadd.page',
-                                        'urlName' => 'default.html', 'menuOrder' => 0,
-                                        'title' => 'Default' } ) )
+                                        'baseName' => 'default.page', 'srcName' => 'default.eadd.page',
+                                        'name' => 'default', 'menuOrder' => 0,
+                                        'title' => 'Default', 'useLangPart' => false } ) )
   end
 
 end
