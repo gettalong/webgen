@@ -1,41 +1,30 @@
-require 'composite'
+require 'ups/composite'
 
 class Node
-	
+
 	include Composite
 
 	attr_reader   :parent
-	attr_accessor :title
-	attr_accessor :url
-	attr_accessor :src
-	attr_accessor :processor
-
 	attr_reader   :metainfo
-	
-	def initialize(parent, title, url, src = url)
-		init_composite
 
+	def initialize( parent )
 		@parent = parent
-		@title = title
-		@url = url
-		@src = src
-
 		@metainfo = Hash.new
 	end
 
-	def abs_src
-		if parent.nil?
-			src.dup
-		else
-			parent.abs_src << src
-		end
-	end
+    def []( name )
+        @metainfo[name]
+    end
 
-	def abs_url
-		if parent.nil?
-			url.dup
+    def []=( name, value )
+        @metainfo[name] = value
+    end
+
+    def recursive_value( name )
+        if @parent.nil?
+			@metainfo[name].dup
 		else
-			parent.abs_url << url
+			@parent.recursive_value( name ) << @metainfo[name]
 		end
 	end
 

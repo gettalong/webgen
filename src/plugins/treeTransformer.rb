@@ -1,50 +1,44 @@
-require 'ups'
+require 'ups/ups'
+require 'ups/listener'
 require 'configuration'
 
-class TreeTransformer < UPS::Controller
-	
-	def initialize
-		super('treeTransformer')
+class TreeTransformer < UPS::Plugin
+
+    include Listener
+
+    NAME = "Tree Transformer"
+    SHORT_DESC = "Super plugin for transforming the data tree"
+
+    def initialize
+        add_msg_name :execute
+    end
+
+	def execute( tree )
+        dispatch_msg :execute, tree
 	end
 
-	def verify(plugin)
-		true
-	end
-
-	def describe
-		"Provides standard methods for plugins which transform the data tree."
-	end
-
-	def execute(tree, level = 0)
-		@plugins.each_value {|plugin|
-			plugin.execute(tree)
-		}
-	end
-
-end	
+end
 
 
-class DebugTreePrinter < UPS::StandardPlugin
+class DebugTreePrinter < UPS::Plugin
 
-	def initialize
-		super('treeTransformer', 'debugTreePrinter')
-	end
+    NAME = "Debug Tree Printer"
+    SHORT_DESC = "Prints out the information in the tree for debug purposes."
 
-	def describe
-		"Prints out the information in the tree for debug purposes."
-	end
+    def init
+        UPS::Registry[TreeTransformer::NAME].add_msg_listener( :execute, method( :execute ) )
+    end
 
-	def execute(node, level = 0)
+	def execute( node, level = 0 )
 		# just print all the nodes
-		Configuration.instance.log(Configuration::DEBUG, "".ljust(level*4) << "#{node.title}: #{node.src} -> #{node.url}")
-		if node.children.length > 0
-			node.each { |child|
-				execute(child, level + 1)
-			}
+        #TODO Log4r style
+        print "   "*level  << "\\_ "*(level > 0 ? 1 : 0) <<  "#{node['title']}: #{node['src']} -> #{node['dest']}\n"
+		node.each do |child|
+			execute( child, level + 1 )
 		end
 	end
 
 end
 
-UPS::PluginRegistry.instance.register_plugin(TreeTransformer.new)
-UPS::PluginRegistry.instance.register_plugin(DebugTreePrinter.new) if Configuration.instance.verbosityLevel >= 2
+UPS::Registry.instance.register_plugin( TreeTransformer )
+UPS::Registry.instance.register_plugin( DebugTreePrinter ) if UPS::Registry['Configuration'].verbosityLevel >= 2

@@ -1,11 +1,13 @@
+* meta tag replacer - replaces tag with contents of equally named node.metainfo entry
+* replace current loggin mechanism with Log4r
+* redo configuration file as yaml file
 * create new document which describes iterations and the steps which are taken in each iteration (high risk first)
-* change the classes which use the listener interface because of the reconfiguration
 * implement tag <relocatable> for references that should be relocatable
 * document existing files (RDOC)
 * implement <template> meta-info tag (see template based)
 * implement "creation of files only when necessary" (i.e. if dependencies have changed)
 * FileCopyPlugin: check if file has changed and only then copy
-* define format of config.xml
+* define format of config.yaml
 * think about how to print out warnings uniformly
 * think about configureable list of files patterns which should always be ignored when reading src dir
 * design Thaumature logo
@@ -30,4 +32,5 @@ W check if ansi color output is better (for warnings, debug, etc), should be abl
 W restructure current files, make more readable
 W pagePlugin.buildNode: srcName = File.basename(srcName) in front of urlName = ...
 W pagePlugin.get_template_for_node: raise ... if node.nil?
-W replace current loggin mechanism with Log4r
+W change the classes which use the listener/composite module because of the refactorization
+W refactor current classes

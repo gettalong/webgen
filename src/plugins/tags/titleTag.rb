@@ -1,19 +1,19 @@
-require 'ups'
+require 'ups/ups'
+require 'plugins/tags/tags'
 
-class TitleTag < UPS::StandardPlugin
-	
-	def initialize
-		super('tags', 'title')
-	end
+class TitleTag < UPS::Plugin
 
-	def describe
-		"Replaces <title> tag with title of node"
-	end
+    NAME = "Title tag"
+    SHORT_DESC = "Replaces the tag with the title of node"
 
-	def execute(content, node)
-		node.title
+    def init
+        UPS::Registry['Tags'].tags['title'] = self
+    end
+
+	def process_tag( content, node )
+		node['title']
 	end
 
 end
 
-UPS::PluginRegistry.instance.register_plugin(TitleTag.new)
+UPS::Registry.register_plugin TitleTag

@@ -1,23 +1,20 @@
-require 'ups'
+require 'ups/ups'
+require 'plugins/tags/tags'
 
-class RelocatableTag < UPS::StandardPlugin
-	
-	def initialize
-		super('tags', 'relocatable')
-	end
+class RelocatableTag < UPS::Plugin
 
-	def describe
-		"Replaces the href attribute of the surrounded element with the correct " <<
-			"relative reference"
-	end
+    NAME = 'Relocatable Tag'
+    SHORT_DESC = 'Adds a relative path to the specified name if necessary'
 
-	def execute(content, node)
+    def init
+        UPS::Registry['Tags'].tags['relocatable'] = self
+    end
+
+	def process_tag( path, node )
 		#TODO make it really relocatable instead of printing the inner element
-		result = ''
-		REXML::Document.new(content).root.elements[1].write(result)
-		result
+        path
 	end
 
 end
 
-UPS::PluginRegistry.instance.register_plugin(RelocatableTag.new)
+UPS::Registry.register_plugin RelocatableTag

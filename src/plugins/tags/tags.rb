@@ -1,33 +1,34 @@
-require 'ups'
+require 'yaml'
+require 'ups/ups'
 require 'thgexception'
 
-class Tags < UPS::Controller
+class Tags < UPS::Plugin
+
+    NAME = "Tags"
+    SHORT_DESC = "Super plugin for handling tags"
 
 	ThgException.add_entry :TAGS_UNKNOWN_TAG,
-		"found tag <thg:%0> for which no plugin exists",
+        "found tag {%0: ...} for which no plugin exists",
 		"either remove the tag or implement a plugin for it"
 
-	def initialize
-		super('tags')
-	end
+    attr_accessor :tags
 
-	def verify(plugin)
-		plugin.respond_to?(:execute)
-	end
+    def initialize
+        @tags = Hash.new
+    end
 
-	def describe
-		"Provides standard methods for tag plugins"
-	end
 
-	def substituteTags(content, node)
-		content.gsub!(/<thg:(\w+)\s*?.*?(\/>|>.*?<\/thg:\1>)/) { |match|
-			Configuration.instance.debug("Replacing tag: #{$1}, match: #{match}")
-			raise ThgException.new(ThgException::TAGS_UNKNOWN_TAG, $1) if !@plugins.has_key?($1)
-			@plugins[$1].execute(match, node)
-		}
+	def substitute_tags( content, node )
+		content.gsub!(/\{(\w+):\s+(\{.*?\}|.*?)\}/) do |match|
+            tag = YAML::load( "- #{$2}" )[0]
+            #TODO log4r
+			#Configuration.instance.debug("Replacing tag: #{$1}, match: #{match}")
+			raise ThgException.new( :TAGS_UNKNOWN_TAG, $1 ) unless @tags.has_key? $1
+			@tags[$1].process_tag( tag, node )
+		end
 	end
 
 end
 
 
-UPS::PluginRegistry.instance.register_plugin(Tags.new)
+UPS::Registry.register_plugin Tags

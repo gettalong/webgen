@@ -1,29 +1,27 @@
-require 'ups'
+require 'ups/ups'
 require 'thgexception'
 require 'node'
+require 'plugins/fileHandler/fileHandler'
 
-class TemplatePlugin < UPS::StandardPlugin
+class TemplatePlugin < UPS::Plugin
+
+    NAME = "Template File"
+    SHORT_DESC = "Represents the template files for the page generation in the tree"
 
 	EXTENSION = 'template'
 
-	def initialize
-		super('fileHandler', 'templatePlugin')
+	def init
+		UPS::Registry['File Handler'].extensions[EXTENSION] = self
 	end
 
-	def after_register
-		UPS::PluginRegistry.instance['fileHandler'].extensions[EXTENSION] = self
-	end
-
-	def describe
-		"Represents the template files for the page generation in the tree."
-	end
-
-	def build_node(srcName, parent)
-		urlName = File.basename(srcName)
-		node = Node.new(parent, 'Template', urlName)
-		File.open(srcName) { |file|
-			node.metainfo['content'] = file.read
-		}
+	def create_node( srcName, parent )
+		relName = File.basename srcName
+		node = Node.new parent
+        node['title'] = 'Template'
+        node['src'] = node['dest'] = relName
+		File.open( srcName ) do |file|
+			node['content'] = file.read
+		end
 		return node
 	end
 
@@ -33,4 +31,4 @@ class TemplatePlugin < UPS::StandardPlugin
 
 end
 
-UPS::PluginRegistry.instance.register_plugin(TemplatePlugin.new)
+UPS::Registry.register_plugin TemplatePlugin

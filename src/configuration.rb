@@ -1,4 +1,4 @@
-require 'ups'
+require 'ups/ups'
 require 'rexml/document'
 require 'singleton'
 require 'thgexception'
@@ -8,7 +8,10 @@ require 'log4r'
 Log4r::Logger.root.level = Log4r::INFO
 
 
-class Configuration
+class ThgConfigurationPlugin < UPS::Plugin
+
+    NAME = "Configuration"
+    SHORT_DESC = "Responsible for loading the configuration data"
 
 	ThgException.add_entry :CFG_ENTRY_NOT_FOUND,
 		"%0 entry in configuration file %1 not found",
@@ -18,40 +21,32 @@ class Configuration
 		"configuration file not found",
 		"create the configuration file (current search path: %0)"
 
-	include Singleton
-
 	attr_accessor :srcDirectory
 	attr_accessor :outDirectory
 	attr_accessor :verbosityLevel
-	attr_accessor :ansiColorUsed
 	attr_accessor :configFile
 
 	attr_reader :pluginData
 
 	def initialize
-		@homeDir = File.dirname($0)
-		@configFile = File.join(@homeDir, 'config.xml')
+		@homeDir = File.dirname( $0 )
+		@configFile = 'config.xml'
 		@pluginData = Hash.new
 	end
 
 	def parse_config_file
-		raise ThgException.new(ThgException::CFG_FILE_NOT_FOUND, @configFile) if !File.exists?(@configFile)
+		raise ThgException.new( :CFG_FILE_NOT_FOUND, @configFile ) unless File.exists? @configFile
 
-		root = REXML::Document.new(File.new(@configFile)).root
+		root = REXML::Document.new( File.new( @configFile ) ).root
 
 		# initialize attributes
-		read_config_value(root, :@srcDirectory, '/configuration/main/srcDir')
-		read_config_value(root, :@outDirectory, '/configuration/main/outDir')
-		read_config_value(root, :@verbosityLevel, '/configuration/main/verbosityLevel', Integer)
-		read_config_value(root, :@ansiColorUsed, '/configuration/main/ansiColorUsed', Integer)
+		read_config_value( root, :@srcDirectory, '/configuration/main/srcDir' )
+		read_config_value( root, :@outDirectory, '/configuration/main/outDir' )
+		read_config_value( root, :@verbosityLevel, '/configuration/main/verbosityLevel', Integer )
 		# fill plugin data structure
-		root.each_element('/configuration/plugins/*') { |element|
+		root.each_element( '/configuration/plugins/*' ) { |element|
 			@pluginData[element.name] = element
 		}
-	end
-
-	def load_plugins
-		UPS::PluginRegistry.instance.load_plugins(@homeDir+'/plugins')
 	end
 
 	#######
@@ -60,8 +55,10 @@ class Configuration
 
 	def read_config_value(root, symbol, path, type = String)
 		eval(symbol.id2name << " ||= root.text(path)")
-		raise ThgException.new(ThgException::CFG_ENTRY_NOT_FOUND, path, @configFile) if eval(symbol.id2name << ".nil?")
+		raise ThgException.new( :CFG_ENTRY_NOT_FOUND, path, @configFile ) if eval(symbol.id2name << ".nil?")
 		eval(symbol.id2name << " = " << type.to_s << "(" << symbol.id2name << ")")
 	end
 
 end
+
+UPS::Registry.register_plugin( ThgConfigurationPlugin )

@@ -1,43 +1,16 @@
-require 'ups'
+require 'ups/ups'
 
-class ThgListPlugin < UPS::StandardPlugin
+class ThgListPlugin < UPS::Plugin
 
-	def initialize
-		super('listRegistry', 'thgPluginList')
-	end
+    NAME = "List Plugins"
+    SHORT_DESC = "Pretty prints the plugin descriptions"
 
-	def describe
-		"Pretty prints the controller and plugin describtions"
-	end
-
-	def after_register
-		UPS::PluginRegistry.instance['listRegistry'].set_plugin('thgPluginList')
-	end
-
-	def processController(order, controller)
-		if order == UPS::ListController::BEFORE
-			print "Controller group '#{controller.id}':\n"
-		else
-			print "\n"
-		end
-	end
-
-	def processPlugin(plugin)
-		if plugin.respond_to? :describe
-			print "  Plugin '#{plugin.id}:'\n"
-			width = 0;
-			print "    "+plugin.describe.split(' ').collect {|s|
-				width += s.length
-				ret = ""
-				if width > 60
-					ret << "\n    "
-					width = 0
-				end
-				ret << s << ' '
-			}.join('') + "\n\n"
-		end
+	def list_plugins
+        UPS::Registry.each do |name, plugin|
+            print "  * #{name}:".ljust(30) +"#{plugin.class.const_get :SHORT_DESC}\n"
+        end
 	end
 
 end
 
-UPS::PluginRegistry.instance.register_plugin(ThgListPlugin.new)
+UPS::Registry.register_plugin( ThgListPlugin )

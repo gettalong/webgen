@@ -1,19 +1,20 @@
-require 'ups'
+require 'ups/ups'
+require 'plugins/tags/tags'
 
-class ContentTag < UPS::StandardPlugin
-	
-	def initialize
-		super('tags', 'content')
+class ContentTag < UPS::Plugin
+
+    NAME = "Content Tag"
+    SHORT_DESC = "Replaces the tag with the actual content"
+
+	def init
+        UPS::Registry['Tags'].tags['content'] = self
 	end
 
-	def describe
-		"Replaces <content> with the actual content of the current file"
-	end
 
-	def execute(content, node)
-		node.metainfo['content']
+	def process_tag( content, node )
+		node['content']
 	end
 
 end
 
-UPS::PluginRegistry.instance.register_plugin(ContentTag.new)
+UPS::Registry.register_plugin ContentTag
