@@ -1,6 +1,4 @@
-* file name syntax: [0-9].name-with_blanks.[de].[EXTENSION]
 * make get_node_for_string work with page files as parameters (reference in home.xpage to projects page)
-W implement order tag for setting menu order
 * make file plugins case-insensitiv (convert all uppercase letters to lowercase)
 * create new document which describes iterations and the steps which are taken in each iteration (high risk first)
 * document existing files (RDOC)
@@ -61,3 +59,5 @@ W get_node_for_string should also work for absolute paths (ie. '/images' or '/pr
 W relocatable tag fails for "{relocatable: /images/bghack.png}" in index.xpage
 W make get_relpath_to_node work for all nodes, not only page nodes
 W implement meta info backing file for page file types without metainfo (e.g. html fragments)
+W file name syntax: [0-9].name-with_blanks.[de].[EXTENSION] -> title: Name with blanks, Order: [0-9], Language: de
+W implement order tag for setting menu order

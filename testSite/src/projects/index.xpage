@@ -1,7 +1,6 @@
 <?xml version="1.0" ?>
 <thg>
 	<title>Project index</title>
-    <inMenu>true</inMenu>
     <directoryName>Projects</directoryName>
 
 	<content>

@@ -14,15 +14,24 @@ class MenuNode < Node
     end
 
     def sort
-        self.children.sort! do |a,b|
-            # order is like inMenu tag: it counts for all languages -> make that work
-            a = a['node'] if a.kind_of? MenuNode
-            a = a['processor'].get_lang_node( a )['menuOrder'] || 0
-            b = b['node'] if b.kind_of? MenuNode
-            b = b['processor'].get_lang_node( b )['menuOrder'] || 0
-            a <=> b
-        end
-        self.children.each do |child| child.sort if child['node'].kind_of? DirNode  end
+        self.children.sort! do |a,b| get_order_value( a ) <=> get_order_value( b ) end
+        self.children.each do |child| child.sort if child.kind_of?( MenuNode ) && child['node'].kind_of?( DirNode ) end
+    end
+
+    def get_order_value( node )
+        # be optimistic and try metainfo field first
+        node = node['node'] if node.kind_of? MenuNode
+        value = node['menuOrder']
+
+        # find the first menuOrder entry in the page files
+        node = node['indexFile'] if node.kind_of? DirNode
+        node = node.find do |child| child['menuOrder'] end if node.kind_of?( PageNode )
+        value ||= node['menuOrder'] unless node.nil?
+
+        # fallback value
+        value ||= 0
+
+        value
     end
 
 end

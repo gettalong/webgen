@@ -1,5 +1,6 @@
 title: Projekte Seite
 inMenu: true
+menuOrder: 3
 directoryName: Projekte
 
 content:

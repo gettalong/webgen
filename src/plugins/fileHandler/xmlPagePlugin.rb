@@ -21,6 +21,7 @@ class XMLPagePlugin < PagePlugin
         data['title'] = root.text( '/thg/title' )
         data['templateFile'] = root.text('/thg/template') unless root.text('/thg/template').nil?
         data['inMenu'] = root.text('/thg/inMenu') unless root.text('/thg/inMenu').nil?
+        data['menuOrder'] = root.text('/thg/menuOrder').to_i unless root.text('/thg/menuOrder').nil?
         data['content'] = ''
         root.elements['content'].each do
             |child| child.write( data['content'] )

@@ -2,6 +2,7 @@
 <thg>
 	<title>Project index</title>
     <inMenu>true</inMenu>
+	<menuOrder>4</menuOrder>
     <directoryName>Projects</directoryName>
 
 	<content>

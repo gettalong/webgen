@@ -30,17 +30,18 @@ class PagePlugin < UPS::Plugin
     def create_node( srcName, parent )
         data = get_file_data srcName
 
-        srcName, urlName, baseName, lang = get_file_names srcName
+        fileData = analyse_file_name( File.basename( srcName ) )
 
-        pageNode, created = get_page_node( baseName, parent )
+        pageNode, created = get_page_node( fileData.baseName, parent )
 
         node = Node.new pageNode
         node.metainfo = data
-        node['src'] = srcName
-        node['dest'] = urlName
-        node['lang'] = lang
+        node['src'] = fileData.srcName
+        node['dest'] = fileData.urlName
+        node['lang'] ||= fileData.lang
+        node['title'] ||= fileData.title
+        node['menuOrder'] ||= fileData.menuOrder
         node['processor'] = self
-        node['title'] ||= get_default_title srcName
         pageNode.add_child node
 
         return ( created ? pageNode : nil )
@@ -76,6 +77,13 @@ class PagePlugin < UPS::Plugin
         node = node.parent unless node['page:basename']
         langNode = node.find do |child| child['lang'] == lang end
         langNode = node.find do |child| child['lang'] == UPS::Registry['Configuration'].lang end if langNode.nil?
+        if langNode.nil?
+            langNode = node.children[0]
+            self.logger.warn do
+                "No node in language '#{lang}' nor the default language (#{UPS::Registry['Configuration'].lang}) found,"+
+                " using first available node for page file <#{node['title']}>"
+            end
+        end
         langNode
     end
 
@@ -93,21 +101,18 @@ class PagePlugin < UPS::Plugin
     #######
 
 
-    def get_file_names( srcName )
-        srcName = File.basename srcName
-        lang = ''
-        urlName = srcName.sub( /(\.\w\w)?\.#{self.class::EXTENSION}$/ ) do |match|
-            lang = $1.nil? ? UPS::Registry['Configuration'].lang : $1[1..-1]
-            ".#{lang}.html"
-        end
-        baseName = srcName.sub( /(\.\w\w)?\.#{self.class::EXTENSION}$/, '.html' )
-        [srcName, urlName, baseName, lang]
-    end
+    def analyse_file_name( srcName )
+        matchData = /^((\d+)\.)?([^.]*?)(\.(\w\w))?\.#{self.class::EXTENSION}$/.match srcName
+        fileData = Struct.new(:baseName, :srcName, :urlName, :menuOrder, :title, :lang).new
 
+        fileData.lang      = matchData[5] || UPS::Registry['Configuration'].lang
+        fileData.baseName  = matchData[3] + '.html'
+        fileData.srcName   = srcName
+        fileData.urlName   = matchData[3] + '.' + fileData.lang + '.html'
+        fileData.menuOrder = matchData[2].to_i
+        fileData.title     = matchData[3].tr('_-', ' ').capitalize
 
-    def get_default_title( srcName )
-        name = srcName.gsub(/^(\d+\.)?/, '').gsub(/(\.\w\w)?\.[^.]*?$/, '').tr('_-', ' ')
-        name[0..0].upcase + name[1..-1]
+        fileData
     end
 
 end
