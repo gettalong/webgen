@@ -1,4 +1,5 @@
 * redo TreeWalker -> tree should be walker separately for each registered plugin
+* Page backing plugin should use a tree walker to assign meta information after everything is read
 * make get_node_for_string work with page files as parameters (reference in home.xpage to projects page)
 * make file plugins case-insensitiv (convert all uppercase letters to lowercase)
 * check out http://jigsaw.w3.org/css-validator/check/referer

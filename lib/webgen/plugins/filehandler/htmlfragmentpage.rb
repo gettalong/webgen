@@ -24,6 +24,9 @@ require 'webgen/plugins/filehandler/page'
 
 module FileHandlers
 
+  # Handles HTML fragment files and assumes that their content is valid HTML. The files should only
+  # contain the content part of the web page because the layout is defined by the template. This
+  # means you should not put <html> or <body> inside these HTML fragments.
   class HTMLPage < PagePlugin
 
     NAME = "HTML Page Plugin"

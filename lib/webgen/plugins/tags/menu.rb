@@ -63,12 +63,12 @@ module Tags
       def get_order_value( node )
         # be optimistic and try metainfo field first
         node = node['node'] if node.kind_of? MenuNode
-        value = node['menuOrder']
+        value = node['menuOrder'].to_s.to_i
 
         # find the first menuOrder entry in the page files
         node = node['indexFile'] if node.kind_of? FileHandlers::DirHandler::DirNode
         node = node.find do |child| child['menuOrder'] end if node.kind_of? FileHandlers::PagePlugin::PageNode
-        value ||= node['menuOrder'] unless node.nil?
+        value ||= node['menuOrder'].to_s.to_i unless node.nil?
 
         # fallback value
         value ||= 0
@@ -87,8 +87,6 @@ module Tags
                                    "Add or correct the parameter value"
 
     def init
-      @startMenuTag = UPS::Registry['Configuration'].get_config_value( NAME, 'startMenuTag', '<span class="webgen-menu">' )
-      @endMenuTag = UPS::Registry['Configuration'].get_config_value( NAME, 'endMenuTag', '</span>' )
       @submenuTag = UPS::Registry['Configuration'].get_config_value( NAME, 'submenuTag', 'ul' )
       @itemTag = UPS::Registry['Configuration'].get_config_value( NAME, 'itemTag', 'li' )
       UPS::Registry['Tags'].tags['menu'] = self
@@ -106,7 +104,7 @@ module Tags
       if content.nil? || !content.has_key?( 'level' )
         raise Webgen::WebgenError.new( :TAG_PARAMETER_INVALID, tag, refNode.recursive_value( 'src' ), 'level' )
       end
-      @startMenuTag + build_menu( node, @menuTree, content['level'] ) + @endMenuTag
+      build_menu( node, @menuTree, content['level'] )
     end
 
     #######
@@ -116,7 +114,7 @@ module Tags
     def build_menu( srcNode, node, level )
       return '' unless level >= 1 && !node.nil?
 
-      out = '<#{submenuTag}>'
+      out = "<#{@submenuTag}>"
       node.each do |child|
         if child.kind_of? MenuNode
           submenu = child['node'].kind_of?( FileHandlers::DirHandler::DirNode ) ? build_menu( srcNode, child, level - 1 ) : ''
@@ -130,7 +128,7 @@ module Tags
         out << submenu
         out << after
       end
-      out << '</#{submenuTag}>'
+      out << "</#{@submenuTag}>"
 
       return out
     end
@@ -148,10 +146,10 @@ module Tags
       link = langNode['processor'].get_html_link( langNode, srcNode, ( isDir ? langNode['directoryName'] : langNode['title'] ) )
 
       if styles.include? 'submenu'
-        before = "<#{itemTag}#{style}>#{link}"
-        after = "</#{itemTag}>"
+        before = "<#{@itemTag}#{style}>#{link}"
+        after = "</#{@itemTag}>"
       else
-        before = "<#{itemTag}#{style}>#{link}</#{itemTag}>"
+        before = "<#{@itemTag}#{style}>#{link}</#{@itemTag}>"
         after = ""
       end
 

@@ -25,19 +25,20 @@ require 'webgen/plugins/treewalker'
 
 module FileHandlers
 
+  # Handles template files. Template files are generic files which normally specify the layout.
   class TemplatePlugin < DefaultHandler
 
     NAME = "Template File Plugin"
     SHORT_DESC = "Represents the template files for the page generation in the tree"
 
-    Webgen::WebgenError.add_entry :PAGE_TEMPLATE_FILE_NOT_FOUND,
-  "template file in root directory not found",
-                                            "create an %0 in the root directory"
-
     EXTENSION = 'template'
 
+    Webgen::WebgenError.add_entry :PAGE_TEMPLATE_FILE_NOT_FOUND,
+      "template file in root directory not found",
+      "create an %0 in the root directory"
 
     attr_reader :defaultTemplate
+
 
     def init
       @defaultTemplate = UPS::Registry['Configuration'].get_config_value( NAME, 'defaultTemplate', 'default.template' )
@@ -95,10 +96,11 @@ end
 
 module TreeWalkers
 
+  # Substitutes all occurences of the +template+ meta information with the correct node.
   class TemplateTreeWalker < UPS::Plugin
 
     NAME = "Template Tree Walker"
-    SHORT_DESC = "Substitutes all 'templateFile' infos with the approriate node"
+    SHORT_DESC = "Substitutes all 'template' infos with the approriate node"
 
 
     def init
@@ -114,7 +116,7 @@ module TreeWalkers
           node.metainfo.delete "template"
         else
           node['template'] = templateNode
-          self.logger.info { "Replacing 'templateFile' in <#{node['src']}> with <#{templateNode['src']}>" }
+          self.logger.info { "Replacing 'template' in <#{node['src']}> with <#{templateNode['src']}>" }
         end
       end
     end

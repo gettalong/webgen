@@ -25,8 +25,10 @@ require 'webgen/plugins/filehandler/filehandler'
 
 module FileHandlers
 
+  # Handles directories.
   class DirHandler < DefaultHandler
 
+    # Specialized node describing a directory.
     class DirNode < Node
 
       def initialize( parent, name )

@@ -101,13 +101,13 @@
 	text-decoration: underline;
   }
 
-  #menu .selectedMenu {
+  #menu .webgen-menuitem-selected {
 	background-color: #fff;
 	width: 90%;
 	border-right: 3px solid #8ad;
   }
 
-  #menu .submenu {
+  #menu .webgen-submenu {
     background-color: #aaa;
   }
 

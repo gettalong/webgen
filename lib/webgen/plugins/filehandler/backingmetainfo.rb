@@ -24,15 +24,38 @@ require 'webgen/plugins/filehandler/filehandler'
 
 module FileHandlers
 
+  # Handles page description backing files. Backing files are files that specify meta information
+  # for other files. They are written in YAML and have a very easy structure:
+  #
+  #    filename1.html:
+  #      lang1:
+  #        metainfo1: value1
+  #        metainfo2: value2
+  #      lang2:
+  #        metainfo21: value21
+  #
+  #    dir1/../dir1/filenam2.html:
+  #      lang1:
+  #        title: New titel by backing file
+  #
+  #    /index.html:
+  #      lang1:
+  #        title: YES!!!
+  #
+  # As you can see, you can use relative and absoulte paths in the filenames. However, you cannot
+  # specify meta information for files which are in one of the parent directories of the backing
+  # file. These backing files are very useful if you are using page description files which do not
+  # support meta information, e.g. HTML fragment files.
   class PageFileBacking < DefaultHandler
 
     NAME = "PageFileBacking"
     SHORT_DESC = "Handles backing files for page file"
 
+    EXTENSION = "backing"
 
     def init
       @backingFile = UPS::Registry['Configuration'].get_config_value( NAME, 'backingFile', 'metainfo.backing' )
-      UPS::Registry['File Handler'].extensions['backing'] = self
+      UPS::Registry['File Handler'].extensions[EXTENSION] = self
       UPS::Registry['File Handler'].add_msg_listener( :AFTER_DIR_READ, method( :process_backing_file ) )
     end
 
@@ -61,7 +84,7 @@ module FileHandlers
       return if backingFile.nil?
 
       backingFile['content'].each do |filename, data|
-        backedFile = dirNode.find do |child| child['title'] == filename end
+        backedFile = dirNode.get_node_for_string( filename, 'title' )
         if backedFile
           data.each do |language, fileData|
             langFile = UPS::Registry['Page Plugin'].get_lang_node( backedFile, language )

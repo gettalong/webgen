@@ -40,8 +40,6 @@ module Tags
 
     def init
       @separator = UPS::Registry['Configuration'].get_config_value( NAME, 'separator', ' / ' )
-      @startTag = UPS::Registry['Configuration'].get_config_value( NAME, 'startTag', '<span class="webgen-navbar">' )
-      @endTag = UPS::Registry['Configuration'].get_config_value( NAME, 'endTag', '</span>' )
       UPS::Registry['Tags'].tags['navbar'] = self
     end
 
@@ -56,7 +54,7 @@ module Tags
         node = node.parent while !node.nil? && node['virtual']
       end
 
-      out = @startTag + out.reverse.join(@separator) + @endTag
+      out = out.reverse.join(@separator)
       self.logger.debug out
       out
     end

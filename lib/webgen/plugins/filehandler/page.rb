@@ -25,8 +25,12 @@ require 'webgen/plugins/filehandler/filehandler'
 
 module FileHandlers
 
+  # Super class for all page description files. Provides helper methods so that writing new plugins
+  # for page description files is easy.
   class PagePlugin < DefaultHandler
 
+    # Specialized node describing a page. A page node itself is virtual, it has sub nodes which
+    # describe the page files in all available languages.
     class PageNode < Node
 
       def initialize( parent, basename )
@@ -57,6 +61,7 @@ module FileHandlers
       node['lang'] ||= fileData.lang
       node['title'] ||= fileData.title
       node['menuOrder'] ||= fileData.menuOrder
+      node['content'] ||= ''
       node['processor'] = self
       pageNode.add_child node
 

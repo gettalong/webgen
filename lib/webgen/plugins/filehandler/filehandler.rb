@@ -25,6 +25,7 @@ require 'util/listener'
 
 module FileHandlers
 
+  # Super plugin for handling files.
   class FileHandler < UPS::Plugin
 
     include Listener
@@ -39,8 +40,8 @@ module FileHandlers
       EOF
 
     Webgen::WebgenError.add_entry :PATH_NOT_FOUND,
-  "the path <%0> could not be found",
-             "check the source directory setting and that you called webgen from the correct directory"
+      "the path <%0> could not be found",
+      "check the source directory setting and that you called webgen from the correct directory"
 
 
     attr_accessor :extensions
@@ -61,6 +62,7 @@ module FileHandlers
     end
 
 
+    # Recursively builds the tree with all the nodes and returns it.
     def build_tree
       root = build_entry( UPS::Registry['Configuration'].srcDirectory, nil )
       root['title'] = '/'
@@ -70,6 +72,7 @@ module FileHandlers
     end
 
 
+    # Recursively writes out the tree specified by +node+.
     def write_tree( node )
       self.logger.info { "Writing #{node.recursive_value('dest')}" }
 
@@ -81,6 +84,8 @@ module FileHandlers
     end
 
 
+    # Returns true if the source file specified by +node+ has been modified since the last execution
+    # of webgen. The +mtime+ values for the source and destination files are used to find this out.
     def file_modified?( node )
       src = node.recursive_value 'src'
       dest = node.recursive_value 'dest'
@@ -165,24 +170,33 @@ module FileHandlers
 
   end
 
-
+  # The default handler which is the super class of all file handlers.
   class DefaultHandler < UPS::Plugin
 
+    # Supplies the +path+ to a file and the +parent+ node sothat the plugin can create a node for this
+    # path. Should return the node for the path or nil if the node could not be created.
+    #
+    # Has to be overridden by the subclass!!!
     def create_node( path, parent )
       raise "Not implemented"
     end
 
-
+    # Asks the plugin to write out the node.
+    #
+    # Has to be overridden by the subclass!!!
     def write_node( node )
       raise "Not implemented"
     end
 
-
+    # Returns the language node for the given +node+. The default implementation returns the node
+    # itself. You can optionally specify the language of the node which should be returned. If not
+    # specified the language of the node is used.
     def get_lang_node( node, lang = node['lang'] )
       node
     end
 
-
+    # Returns a HTML link for the given +node+ relative to +refNode+. You can optionally specify the
+    # title for the link. If not specified the title of the node is used.
     def get_html_link( node, refNode, title = node['title'] )
       url = refNode.get_relpath_to_node( node ) + node['dest']
       "<a href=\"#{url}\">#{title}</a>"

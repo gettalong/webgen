@@ -9,3 +9,7 @@ home.html:
 index.html:
   en:
     directoryName: ''
+
+noindex/noindex.html:
+  en:
+    title: Title by backing file

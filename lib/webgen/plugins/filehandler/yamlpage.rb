@@ -25,6 +25,18 @@ require 'webgen/plugins/filehandler/page'
 
 module FileHandlers
 
+  # Handles page description files written in YAML. The structure of such a file should be like the
+  # following example:
+  #
+  #  key1: value1
+  #  key2: value2
+  #  title: This will be the title of the file
+  #  an other meta information: value of this item
+  #
+  #  content:
+  #    This will be the content of this page file.
+  #
+  # You can specify any key:value pairs but you have to specify at least the content part.
   class YAMLPagePlugin < PagePlugin
 
     NAME = "YAML Page Plugin"

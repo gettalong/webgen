@@ -25,6 +25,8 @@ require 'webgen/plugins/filehandler/filehandler'
 
 module FileHandlers
 
+  # A simple file handler which copies files with a specific extension from the source to the output
+  # directory. The extensions of the files to copy are customizable.
   class FileCopyPlugin < DefaultHandler
 
     NAME = "Copy Files"

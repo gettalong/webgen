@@ -25,6 +25,17 @@ require 'webgen/plugins/filehandler/page'
 
 module FileHandlers
 
+  # Handles page description files written in XML. A typical XML page looks like this:
+  #
+  #   <?xml version="1.0" ?>
+  #   <webgen>
+  #     <title>Title of file</title>
+  #     <inMenu>true</inMenu>
+  #
+  #     <content>
+  #       <h1>This is the Homepage</h1> The content of the page file.
+  #     </content>
+  #   </webgen>
   class XMLPagePlugin < PagePlugin
 
     NAME = "XML Page Plugin"
@@ -41,12 +52,10 @@ module FileHandlers
     def get_file_data( srcName )
       root = REXML::Document.new( File.new( srcName ) ).root
 
-      #TODO rework this sothat arbitrary tags can be included
       data = Hash.new
-      data['title'] = root.text( '/webgen/title' )
-      data['templateFile'] = root.text('/webgen/template') unless root.text('/webgen/template').nil?
-      data['inMenu'] = root.text('/webgen/inMenu') unless root.text('/webgen/inMenu').nil?
-      data['menuOrder'] = root.text('/webgen/menuOrder').to_i unless root.text('/webgen/menuOrder').nil?
+      root.each_element( '/webgen/*' ) do |element|
+        data[element.name] = element.text
+      end
       data['content'] = ''
       root.elements['content'].each do
         |child| child.write( data['content'] )

@@ -33,16 +33,14 @@ module Tags
 
     def init
       @separator = UPS::Registry['Configuration'].get_config_value( NAME, 'separator', ' | ' )
-      @startTag = UPS::Registry['Configuration'].get_config_value( NAME, 'startTag', '<span class="webgen-lang">' )
-      @endTag = UPS::Registry['Configuration'].get_config_value( NAME, 'endTag', '</span>' )
       UPS::Registry['Tags'].tags['lang'] = self
     end
 
 
     def process_tag( tag, content, node, refNode )
-      @startTag + node.parent.children.sort { |a, b| a['lang'] <=> b['lang'] }.collect do |node|
+      node.parent.children.sort { |a, b| a['lang'] <=> b['lang'] }.collect do |node|
         node['processor'].get_html_link( node, node, node['lang'] )
-      end.join(@separator) + @endTag
+      end.join(@separator)
     end
 
   end
