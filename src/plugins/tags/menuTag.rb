@@ -16,18 +16,19 @@ class MenuTag < UPS::Plugin
 
 
     def build_menu( srcNode, node, level )
+        return unless level >= 1
+
         out = ''
         node.each do |child|
-            menu = build_menu( srcNode, child, level - 1 ) unless level <= 1 || !node.has_children?
-            if menu != '' || child['inMenu']
-                before, after = menu_entry( srcNode, child )
-                out << before
-                out << menu
-                out << after
-            end
+            menu = (build_menu( srcNode, child, level - 1 ) if level > 1 && child.has_children?) || ''
+            before, after = (menu_entry( srcNode, child ) if child['inMenu'] || menu != '') || ['', '']
+
+            out << before
+            out << menu
+            out << after
         end
 
-        out = '<ul>' + out + '</ul>' if out != ''
+        out = '<ul>' + out + '</ul>' unless out == ''
 
         return out
     end

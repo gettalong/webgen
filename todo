@@ -1,7 +1,6 @@
 * speed up menu creation by caching the created menu and only substituting the relative paths
-* update default.css so that the page display correctly
-* convert everything to utf8 before writing
 * think about logging levels and when to use which level
+* better loggers for plugins (substitute real plugin name for "plugin")
 * create new document which describes iterations and the steps which are taken in each iteration (high risk first)
 * document existing files (RDOC)
 * design Thaumaturge logo
@@ -45,3 +44,5 @@ W replace current logging mechanism with Log4r
 W implement <template> meta-info tag (see template based)
 W redo tree transformer
 W refacture menu tag plugin
+W update default.css so that the page display correctly
+N convert everything to utf8 before writing -> the file need to have the correct encoding

@@ -18,7 +18,7 @@ log4r_config:
     - name      : plugin
       level     : DEBUG
       additive  : 'false'
-      trace     : 'false'
+      trace     : 'true'
       outputters:
         - logfile
         - stdout
