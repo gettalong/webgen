@@ -106,7 +106,7 @@ class PagePlugin < UPS::Plugin
 
 
     def get_default_title( srcName )
-        name = srcName.gsub(/\.[^.]*?$/, '').tr('_.-', ' ')
+        name = srcName.gsub(/^(\d+\.)?/, '').gsub(/(\.\w\w)?\.[^.]*?$/, '').tr('_-', ' ')
         name[0..0].upcase + name[1..-1]
     end
 

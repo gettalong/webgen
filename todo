@@ -1,5 +1,6 @@
+* file name syntax: [0-9].name-with_blanks.[de].[EXTENSION]
 * make get_node_for_string work with page files as parameters (reference in home.xpage to projects page)
-* implement order tag for setting menu order
+W implement order tag for setting menu order
 * make file plugins case-insensitiv (convert all uppercase letters to lowercase)
 * create new document which describes iterations and the steps which are taken in each iteration (high risk first)
 * document existing files (RDOC)

@@ -3,6 +3,31 @@ require 'node'
 require 'thgexception'
 require 'plugins/tags/tags'
 
+class MenuNode < Node
+
+    def initialize( parent, node )
+        super parent
+        self['title'] = 'Menu: '+ node['title']
+        self['isMenuNode'] = true
+        self['virtual'] = true
+        self['node'] = node
+    end
+
+    def sort
+        self.children.sort! do |a,b|
+            # order is like inMenu tag: it counts for all languages -> make that work
+            a = a['node'] if a.kind_of? MenuNode
+            a = a['processor'].get_lang_node( a )['menuOrder'] || 0
+            b = b['node'] if b.kind_of? MenuNode
+            b = b['processor'].get_lang_node( b )['menuOrder'] || 0
+            a <=> b
+        end
+        self.children.each do |child| child.sort if child['node'].kind_of? DirNode  end
+    end
+
+end
+
+
 class MenuTag < UPS::Plugin
 
     NAME = 'Menu Tag'
@@ -21,7 +46,9 @@ class MenuTag < UPS::Plugin
         if !defined? @menuTree
             @menuTree = create_menu_tree( Node.root( node ), nil )
             #TODO only call DebugTreePrinter
-            #UPS::Registry['Tree Transformer'].execute @menuTree unless @menuTree.nil?
+            UPS::Registry['Tree Transformer'].execute @menuTree unless @menuTree.nil?
+            @menuTree.sort
+            UPS::Registry['Tree Transformer'].execute @menuTree unless @menuTree.nil?
         end
         raise ThgException.new( :TAG_PARAMETER_INVALID, tag, refNode.recursive_value( 'src' ), 'level' ) if content.nil? || !content.has_key?( 'level' )
         build_menu( node, @menuTree, content['level'] )
@@ -75,19 +102,6 @@ class MenuTag < UPS::Plugin
 
         self.logger.debug { [before, after] }
         return before, after
-    end
-
-
-    class MenuNode < Node
-
-        def initialize( parent, node )
-            super parent
-            self['title'] = 'Menu: '+ node['title']
-            self['isMenuNode'] = true
-            self['virtual'] = true
-            self['node'] = node
-        end
-
     end
 
 

@@ -1,0 +1,11 @@
+home.html:
+  de:
+    title: Neuer Titel
+    inMenu: true
+
+  en:
+    title: Home page menu
+
+index.html:
+  en:
+    directoryName: ''
