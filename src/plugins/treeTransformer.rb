@@ -1,5 +1,6 @@
 require 'ups/ups'
 require 'ups/listener'
+require 'log4r'
 
 class TreeTransformer < UPS::Plugin
 
@@ -29,9 +30,7 @@ class DebugTreePrinter < UPS::Plugin
     end
 
 	def execute( node, level = 0 )
-		# just print all the nodes
-        #TODO Log4r style
-        print "   "*level  << "\\_ "*(level > 0 ? 1 : 0) <<  "#{node['title']}: #{node['src']} -> #{node['dest']}\n"
+        Log4r::Logger['plugin'].debug { "   "*level  << "\\_ "*(level > 0 ? 1 : 0) <<  "#{node['title']}: #{node['src']} -> #{node['dest']}" }
 		node.each do |child|
 			execute( child, level + 1 )
 		end
@@ -40,4 +39,4 @@ class DebugTreePrinter < UPS::Plugin
 end
 
 UPS::Registry.instance.register_plugin( TreeTransformer )
-UPS::Registry.instance.register_plugin( DebugTreePrinter ) if UPS::Registry['Configuration'].verbosityLevel >= 2
+UPS::Registry.instance.register_plugin( DebugTreePrinter )

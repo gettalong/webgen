@@ -15,10 +15,9 @@ class FileCopyPlugin < UPS::Plugin
 
 
 	def init
-		#TODO types = Configuration.instance.pluginData['fileCopy'].text
-        types = "css,jpg,png,gif"
+        types = UPS::Registry['Configuration'].get_config_value( NAME, 'types' ) || ['css', 'jpg', 'png', 'gif']
 		unless types.nil?
-			types.split( ',' ).each do |type|
+			types.each do |type|
 				UPS::Registry['File Handler'].extensions[type] ||= self
 			end
 		end

@@ -1,11 +1,55 @@
 require 'ups/ups'
 require 'yaml'
 require 'log4r'
+require 'log4r/yamlconfigurator'
 
-# Logger configuration
-#TODO use verbosityLevel to set logger level
-Log4r::Logger.root.level = Log4r::INFO
+LoggerConfiguration = <<EOF
+log4r_config:
+  pre_config:
+    custom_levels:
+      - DEBUG
+      - INFO
+      - WARN
+      - ERROR
+    root:
+      level: DEBUG
 
+  loggers:
+    - name      : plugin
+      level     : DEBUG
+      additive  : 'false'
+      trace     : 'false'
+      outputters:
+        - logfile
+        - stdout
+
+    - name: log4r
+      level: DEBUG
+      outputters:
+        - logfile
+
+  outputters:
+    - type     : StdoutOutputter
+      name     : stdout
+      level    : WARN
+      formatter:
+        type        : PatternFormatter
+        date_pattern: '%Y-%m-%d %H:%M:%S'
+        pattern     : '%d %l %c: %m'
+
+    - type        : FileOutputter
+      name        : logfile
+      level       : DEBUG
+      trunc       : 'false'
+      filename    : 'thg.log'
+      formatter   :
+        type        : PatternFormatter
+        date_pattern: '%Y-%m-%d %H:%M:%S'
+        pattern     : '%d %l %c: %m'
+
+EOF
+cfg = Log4r::YamlConfigurator
+cfg.load_yaml_string LoggerConfiguration
 
 class ThgConfigurationPlugin < UPS::Plugin
 
@@ -34,7 +78,8 @@ class ThgConfigurationPlugin < UPS::Plugin
 
         @srcDirectory ||= get_config_value( 'Configuration', 'srcDirectory' ) || 'src'
         @outDirectory ||= get_config_value( 'Configuration', 'outDirectory' ) || 'output'
-        @verbosityLevel ||= get_config_value( 'Configuration', 'verbosityLevel' ) || 0
+        @verbosityLevel ||= get_config_value( 'Configuration', 'verbosityLevel' ) || 3
+        Log4r::Outputter['stdout'].level = @verbosityLevel
 	end
 
 

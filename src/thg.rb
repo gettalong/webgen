@@ -42,7 +42,7 @@ begin
 		opts.on( "--source-dir DIR", "-s", String, "The  directory from where the files are read" ) { |config.srcDirectory| }
 		opts.on( "--output-dir DIR", "-o", String, "The directory where the output should go" ) { |config.outDirectory| }
 		opts.on( "--list-plugins", "-l", "List all the plugins and information about them" ) { require 'listplugins'; main = method(:runListPlugins) }
-		opts.on( "--verbosity LEVEL", "-v", Integer, "The verbosity level (0, 1, or 2)" ) { |config.verbosityLevel| }
+		opts.on( "--verbosity LEVEL", "-v", Integer, "The verbosity level" ) { |config.verbosityLevel| }
 
 		begin
 			opts.parse!
@@ -56,12 +56,12 @@ begin
 	# parse the configuration file
 	config.parse_config_file
 
-	# load the plugins
-    # TODO this has to be changed certainly
-	UPS::Registry.load_plugins( File.dirname( __FILE__) + '/plugins', File.dirname( __FILE__) + "/" )
+    Log4r::Logger['plugin'].info "Starting Thaumaturge..."
 
-	# run the selected routine
+	UPS::Registry.load_plugins( File.dirname( __FILE__) + '/plugins', File.dirname( __FILE__) + "/" )
 	main.call
+
+    Log4r::Logger['plugin'].info "Thaumaturge finished"
 
 rescue ThgException => e
 	print "An error occured:\n\t #{e.message}\n\n"

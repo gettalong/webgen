@@ -1,5 +1,6 @@
 require 'ups/ups'
 require 'ups/listener'
+require 'log4r'
 
 class FileHandler < UPS::Plugin
 
@@ -43,7 +44,7 @@ class FileHandler < UPS::Plugin
 
 
 	def write_tree( node )
-        #TODO Configuration.instance.log(Configuration::NORMAL, "Writing #{name}")
+        Log4r::Logger['plugin'].info { "Writing #{node.recursive_value('dest')}" }
 
 		node['processor'].write_node( node )
 
@@ -57,8 +58,7 @@ class FileHandler < UPS::Plugin
         src = node.recursive_value 'src'
         dest = node.recursive_value 'dest'
         if File.exists?( dest ) && ( File.mtime( src ) < File.mtime( dest ) )
-            #TODO use log4r
-            print "File is up to date: <#{dest}>\n"
+            Log4r::Logger['plugin'].info { "File is up to date: <#{dest}>" }
             return false
         else
             return true
@@ -78,7 +78,7 @@ class FileHandler < UPS::Plugin
 	#######
 
 	def build_entry( path, parent )
-		#TODO Configuration.instance.log(Configuration::NORMAL, "Processing #{srcName}")
+		Log4r::Logger['plugin'].info { "Processing #{path}" }
 
 		if FileTest.file? path
 			extension = path[/\..*$/][1..-1]
@@ -118,10 +118,7 @@ class FileHandler < UPS::Plugin
             end
         end
 
-        if node.nil?
-            #TODO Configuration.instance.warning("no plugin for path #{path} -> ignored")
-        end
-
+        Log4r::Logger['plugin'].warn { "No plugin for path #{path} -> ignored" } if node.nil?
 		return node
 	end
 
