@@ -7,12 +7,13 @@ class TreeUtils < UPS::Plugin
 
 
     def get_relpath_to_node( srcNode, destNode )
-        i = ( srcNode.children.nil? ? -2 : -1 ) # do not count file + directory or directory
+        path = ''
+        srcNode = ( srcNode.children.nil? ? srcNode.parent.parent.parent : srcNode.parent.parent ) # do not count file + directory or directory
         until srcNode.nil?
-            i += 1 unless srcNode['virtual']
+            path << ".." + File::SEPARATOR unless srcNode['virtual']
             srcNode = srcNode.parent
         end
-        ( ".." + File::SEPARATOR )*i + destNode.parent.recursive_value( 'dest' ).sub(/^#{UPS::Registry['Configuration'].outDirectory + File::SEPARATOR}/, "")
+        path + destNode.parent.recursive_value( 'dest' )[UPS::Registry['Configuration'].outDirectory.length+1..-1]
     end
 
 

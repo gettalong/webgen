@@ -11,56 +11,44 @@ class MenuTag < UPS::Plugin
     end
 
 	def process_tag( tag, content, node, templateNode )
-        #build_menu( node, Node.root( node ), content['level'] )
         if !defined? @menuTree
-            @menuTree = create_menu_tree( Node.root( node ), nil, content['level'] )
+            @menuTree = create_menu_tree( Node.root( node ), nil )
             UPS::Registry['Tree Transformer'].execute @menuTree unless @menuTree.nil?
         end
-        ''
+        build_menu( node, @menuTree, content['level'] )
 	end
 
-    def create_menu_tree( node, parent, level )
-        treeNode = Node.new parent
-        treeNode['title'] = 'Menu: '+ node['title']
-        treeNode['isMenuNode'] = true
-        treeNode['virtual'] = true
-
-        added = node['inMenu'] && !node['virtual']
-
-        node.each do |child|
-            menu = create_menu_tree( child, treeNode, (child['virtual'] ? level : level - 1) )
-            treeNode.add_child menu unless menu.nil?
-        end
-
-        return treeNode.has_children? ? treeNode : (added ? node : nil )
-    end
-
+    #######
+    private
+    #######
 
     def build_menu( srcNode, node, level )
-        return unless level >= 1
+        return '' unless level >= 1
 
-        out = ''
+        out = '<ul>'
         node.each do |child|
-            menu = (build_menu( srcNode, child, level - 1 ) if level > 1 && child.has_children?) || ''
-            if (child['inMenu'] || menu != '')
-                if child['lang'] == srcNode['lang']
-                    usedNode = child
-                else
-                    usedNode = UPS::Registry['Language Tag'].get_other_lang_nodes( child, [UPS::Registry['Configuration'].defaultLang] )[0]
-                end
-                before, after = menu_entry( srcNode, usedNode )
+            if child['isDir']
+                menu = build_menu( srcNode, child, level - 1 )
+                before, after = menu_entry( srcNode, child['node'] )
             else
-                before, after = ['', '']
+                menu = ''
+                before, after = menu_entry( srcNode, get_correct_lang_node( child, srcNode ) )
             end
 
             out << before
             out << menu
             out << after
         end
-
-        out = '<ul>' + out + '</ul>' unless out == ''
+        out << '</ul>'
 
         return out
+    end
+
+
+    def get_correct_lang_node( node, srcNode )
+        langNode = node.find do |child| child['lang'] == srcNode['lang'] end
+        langNode = node.find do |child| child['lang'] == UPS::Registry['Configuration'].lang end if langNode.nil?
+        langNode
     end
 
 
@@ -85,6 +73,25 @@ class MenuTag < UPS::Plugin
         self.logger.debug { [before, after] }
         return before, after
     end
+
+
+    def create_menu_tree( node, parent )
+        treeNode = Node.new parent
+        treeNode['title'] = 'Menu: '+ node['title']
+        treeNode['isMenuNode'] = treeNode['virtual'] = true
+        treeNode['isDir'] = node.kind_of? DirNode
+        treeNode['node'] = node
+
+        useNode = node['inMenu'] && !node['virtual']
+
+        node.each do |child|
+            menu = create_menu_tree( child, treeNode )
+            treeNode.add_child menu unless menu.nil?
+        end
+
+        return treeNode.has_children? ? treeNode : (useNode ? node : nil )
+    end
+
 
 end
 

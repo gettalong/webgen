@@ -24,7 +24,7 @@ class Node
         if @parent.nil?
 			@metainfo[name].dup
 		else
-			@parent.recursive_value( name ) << @metainfo[name]
+			@parent.recursive_value( name ) + @metainfo[name]
 		end
 	end
 

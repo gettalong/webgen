@@ -28,7 +28,7 @@ log4r_config:
       formatter:
         type        : PatternFormatter
         date_pattern: '%Y-%m-%d %H:%M:%S'
-        pattern     : '%d %l %c: %m'
+        pattern     : '%d %-5l %-20c> %m'
 
     - type        : FileOutputter
       name        : logfile
@@ -38,7 +38,7 @@ log4r_config:
       formatter   :
         type        : PatternFormatter
         date_pattern: '%Y-%m-%d %H:%M:%S'
-        pattern     : '%d %l %c: %m'
+        pattern     : '%d %5l %-20c> %m'
 
 EOF
 cfg = Log4r::YamlConfigurator
@@ -68,7 +68,7 @@ class ThgConfigurationPlugin < UPS::Plugin
 	attr_accessor :srcDirectory
 	attr_accessor :outDirectory
 	attr_accessor :verbosityLevel
-    attr_accessor :defaultLang
+    attr_accessor :lang
 	attr_accessor :configFile
 
 	attr_reader :pluginData
@@ -89,7 +89,7 @@ class ThgConfigurationPlugin < UPS::Plugin
         @srcDirectory ||= get_config_value( 'Configuration', 'srcDirectory' ) || 'src'
         @outDirectory ||= get_config_value( 'Configuration', 'outDirectory' ) || 'output'
         @verbosityLevel ||= get_config_value( 'Configuration', 'verbosityLevel' ) || 3
-        @defaultLang ||= get_config_value( 'Configuration', 'defaultLang') || 'en'
+        @lang ||= get_config_value( 'Configuration', 'lang') || 'en'
         Log4r::Outputter['stdout'].level = @verbosityLevel
 	end
 

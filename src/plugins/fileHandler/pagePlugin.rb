@@ -54,7 +54,7 @@ class PagePlugin < UPS::Plugin
         srcName = File.basename srcName
         lang = ''
         urlName = srcName.sub( /(\.\w\w)?\.#{self.class::EXTENSION}$/ ) do |match|
-            lang = $1.nil? ? UPS::Registry['Configuration'].defaultLang : $1[1..-1]
+            lang = $1.nil? ? UPS::Registry['Configuration'].lang : $1[1..-1]
             ".#{lang}.html"
         end
         baseName = srcName.sub( /(\.\w\w)?\.#{self.class::EXTENSION}$/, '.html' )
