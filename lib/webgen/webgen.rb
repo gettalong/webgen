@@ -86,7 +86,11 @@ module Webgen
                 opts.on( "--list-plugins", "-p", "List all the plugins and information about them" ) { main = method( :runListPlugins ) }
                 opts.on( "--list-configuration", "-e", "List all plugin configuration parameters" ) { main = method( :runListConfiguration ) }
                 opts.on_tail( "--help", "Display this help screen" ) { puts opts; exit }
-                opts.on_tail( "--version", "Show version" ) { puts "Webgen #{Webgen::Version} (#{Webgen::VCId})"; exit }
+                opts.on_tail( "--version", "Show version" ) do
+                    vcids = Webgen::VCId.split(/ /)
+                    puts "Webgen #{Webgen::Version} (Rev: #{vcids[2]}, Date: #{vcids[3]})"
+                    exit
+                end
             end
 
             begin

@@ -17,7 +17,7 @@ class FileHandler < UPS::Plugin
 
     Webgen::WebgenError.add_entry :PATH_NOT_FOUND,
         "the path <%0> could not be found",
-        "check the source directory setting and that you called #{Webgen::NAME} from the correct directory"
+        "check the source directory setting and that you called webgen from the correct directory"
 
 
     attr_accessor :extensions
