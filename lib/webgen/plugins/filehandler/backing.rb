@@ -70,10 +70,19 @@ module FileHandlers
     end
 
     def create_node( path, parent )
-      node = Node.new parent
-      node['virtual'] = true #TODO can be removed?
+      node = Node.new( parent )
       node['src'] = node['dest'] = node['title'] = File.basename( path )
-      node['content'] = YAML::load( File.new( path ) )
+      begin
+        node['content'] = YAML::load( File.new( path ) )
+        if !valid_content( node['content'] )
+          node['content'] = {}
+          self.logger.error { "Content of backing file <#{backingFile.recursive_value( 'src' )}> not correctcly structured" }
+        end
+      rescue
+        self.logger.error { "Content not correctly formatted (should be valid YAML) in backing file <#{path}>" }
+      ensure
+        node['content'] ||= {}
+      end
       node
     end
 
@@ -85,9 +94,13 @@ module FileHandlers
     private
     #######
 
+    def valid_content( data )
+      data.kind_of?( Hash ) \
+      && data.all? {|k,v| v.kind_of?( Hash ) && v.all? {|k1,v1| v1.kind_of?( Hash )} }
+    end
+
     def process_backing_file( dirNode )
-      backingFiles = dirNode.find_all do |child| /\.#{EXT}$/ =~ child['src'] end
-      return if backingFiles.length == 0
+      backingFiles = dirNode.find_all {|child| /\.#{EXT}$/ =~ child['src'] }
 
       backingFiles.each do |backingFile|
         backingFile['content'].each do |filename, data|
@@ -114,18 +127,21 @@ module FileHandlers
       dirNode = create_path( dirname, dirNode )
 
       data.each do |language, filedata|
+        self.logger.debug { "Trying to create virtual node for '#{filename}'..." }
         filedata['lang'] = language
 
         handler = VirtualPageHandler.new
         pageNode = handler.create_node( filename, dirNode )
         unless pageNode.nil?
           pageNode['processor'] = Webgen::Plugin['VirtualPageHandler']
+          self.logger.debug { "Adding virtual page node <#{pageNode.recursive_value( 'src', false )}> to directory <#{dirNode.recursive_value( 'src' )}>" }
           dirNode.add_child( pageNode )
         end
+        pageNode ||= Webgen::Plugin['VirtualPageHandler'].get_page_node( filename, dirNode ) #TODO
         node = Webgen::Plugin['VirtualPageHandler'].get_lang_node( pageNode, language )
         node.metainfo.update( filedata )
 
-        self.logger.info { "Created virtual node '#{filename}' (#{language}) in <#{dirNode.recursive_value( 'dest' )}> " \
+        self.logger.info { "Created virtual node <#{node.recursive_value( 'src' )}> (#{language}) in <#{dirNode.recursive_value( 'dest' )}> " \
           "referencing '#{node['dest']}'" }
       end
     end
@@ -145,7 +161,7 @@ module FileHandlers
         when '..'
           node = node.parent
         else
-          node = node.find do |child| /^#{element}#{File::SEPARATOR}?$/ =~ child['src'] end
+          node = node.find do |child| /^#{element}\/?$/ =~ child['src'] end
         end
         if node.nil?
           node = FileHandlers::DirHandler::DirNode.new( parent, element )

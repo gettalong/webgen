@@ -38,6 +38,9 @@ module ContentHandlers
 
     def format_content( txt )
       RedCloth.new( txt ).to_html
+    rescue
+      self.logger.error { "Error converting Textile text to HTML" }
+      ''
     end
 
   end

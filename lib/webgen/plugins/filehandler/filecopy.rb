@@ -31,10 +31,6 @@ module FileHandlers
 
     plugin "FileCopyHandler"
     summary "Copies files from source to destination without modification"
-    description "Implements a generic file copy plugin. All the file types which are specified
-      in the configuration file are copied without any transformation into the destination directory.
-    ".gsub( /^\s*/, '' ).gsub( /\n/, ' ' )
-
     add_param 'types', ['css', 'jpg', 'png', 'gif'], \
     'The extension that will be registered by this handler. All files with ' \
     'these extensions will be copied from the source to the destination folder.'

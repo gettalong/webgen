@@ -38,6 +38,9 @@ module ContentHandlers
 
     def format_content( txt )
       BlueCloth.new( txt ).to_html
+    rescue
+      self.logger.error { "Error converting Markdown text to HTML" }
+      ''
     end
 
   end

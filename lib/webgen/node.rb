@@ -59,8 +59,9 @@ class Node
 
   # Return the relative path from this node to the destNode, virtual nodes are not used in the
   # calculation. The destNode can be any non virtual node. If +destNode+ starts with http://, the
-  # relative path to it is the empty string.
-  def relpath_to_node( destNode )
+  # relative path to it is the empty string. If +includeDestNode+ is true, then the path of the
+  # destination node is appended to the calculated path.
+  def relpath_to_node( destNode, includeDestNode = true)
     if destNode['dest'] =~ /^http:\/\//
       path = ''
     else
@@ -74,8 +75,8 @@ class Node
 
       from.fill( '..' )
       from.concat( to )
-      path = from.join( '/' )
-      path = '.' if path == ''
+      path = ( from.length == 0 ? '.' : from.join( '/' ) )
+      path += '/' + destNode['dest'] if includeDestNode && !destNode.parent.nil?
     end
     path
   end
@@ -98,16 +99,18 @@ class Node
   # Return the level of the node. The level specifies how deep the node is in the hierarchy.
   def level( ignoreVirtual = true )
     if self.parent.nil?
-      0
+      1
     else
-      self.parent.level( ignoreVirtual ) + ( @metainfo['virtual'] && ignoreVirtual ? 0 : 1 )
+      self.parent.level( ignoreVirtual ) \
+      + ( (@metainfo['virtual'] && ignoreVirtual) || (@metainfo['dest'] !~ /\/$/) ? 0 : 1 )
     end
   end
 
   # Checks if the current node is in the subtree in which the supplied node is. This is done by
   # analyzing the paths of the two nodes.
   def in_subtree?( node )
-    begin node = node.parent end while node['virtual']
+    node = node.parent if node.metainfo['dest'] !~ /\/$/
+    node = node.parent while node['virtual']
     /^#{node.recursive_value( 'dest' )}/ =~ recursive_value( 'dest' )
   end
 

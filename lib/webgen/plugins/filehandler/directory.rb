@@ -33,22 +33,22 @@ module FileHandlers
       def initialize( parent, name )
         super( parent )
         self['title'] = self['directoryName'] = name
-        self['src'] = self['dest'] = name + File::SEPARATOR
+        self['src'] = self['dest'] = name + '/'
       end
 
       def []( name )
-        process_dir_index if name == 'indexFile' && super('indexFile').nil?
+        process_dir_index if super('indexFile').nil? && name == 'indexFile'
         super
       end
 
       def process_dir_index
-        node, created = Webgen::Plugin['PageHandler'].get_page_node( Webgen::Plugin['DirectoryHandler']['indexFile'], self )
-        if created
+        node = Webgen::Plugin['PageHandler'].get_page_node( Webgen::Plugin['DirectoryHandler']['indexFile'], self )
+        if node
+          self.logger.info { "Directory index file for <#{self.recursive_value( 'src' )}> => <#{node.recursive_value( 'src', false )}>" }
+          self['indexFile'] = node
+        else
           self.logger.warn { "No directory index file found for directory <#{self.recursive_value( 'src' )}>" }
           self['indexFile'] = nil
-        else
-          self.logger.info { "Directory index file for <#{self.recursive_value( 'src' )}> => <#{node['title']}>" }
-          self['indexFile'] = node
         end
       end
 
@@ -57,7 +57,7 @@ module FileHandlers
 
     plugin "DirectoryHandler"
     summary "Handles directories"
-    add_param 'indexFile','index.html', 'The default file name for the directory index file.'
+    add_param 'indexFile', 'index.html', 'The default file name for the directory index file.'
     depends_on 'FileHandler'
 
     def initialize

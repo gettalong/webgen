@@ -43,7 +43,8 @@ module Tags
     class MenuNode < Node
 
       def initialize( parent, node )
-        super parent
+        super( parent )
+        self.logger.info { "Creating menu node for <#{node.recursive_value( 'src', false )}>" }
         self['title'] = 'Menu: '+ node['title']
         self['isMenuNode'] = true
         self['virtual'] = true
@@ -52,9 +53,9 @@ module Tags
 
 
       # Sorts recursively all children of the node depending on their order value.
-      def sort
-        self.children.sort! do |a,b| get_order_value( a ) <=> get_order_value( b ) end
-        self.children.each do |child| child.sort if child.kind_of?( MenuNode ) && child['node'].kind_of?( FileHandlers::DirHandler::DirNode ) end
+      def sort!
+        self.children.sort! {|a,b| get_order_value( a ) <=> get_order_value( b )}
+        self.children.each {|child| child.sort! if child.kind_of?( MenuNode ) && child['node'].kind_of?( FileHandlers::DirHandler::DirNode )}
       end
 
 
@@ -66,7 +67,7 @@ module Tags
 
         # find the first menuOrder entry in the page files
         node = node['indexFile'] if node.kind_of?( FileHandlers::DirHandler::DirNode )
-        node = node.find do |child| child['menuOrder'].to_s.to_i != 0 end if node.kind_of?( FileHandlers::PagePlugin::PageNode )
+        node = node.find {|child| child['menuOrder'].to_s.to_i != 0} if node.kind_of?( FileHandlers::PagePlugin::PageNode )
         value ||= node['menuOrder'].to_s.to_i unless node.nil?
 
         # fallback value
@@ -104,7 +105,7 @@ module Tags
         @menuTree = create_menu_tree( Node.root( node ), nil )
         unless @menuTree.nil?
           Webgen::Plugin['TreeWalker'].execute( @menuTree, Webgen::Plugin['DebugTreePrinter'] )
-          @menuTree.sort
+          @menuTree.sort!
           Webgen::Plugin['TreeWalker'].execute( @menuTree, Webgen::Plugin['DebugTreePrinter'] )
         end
       end
@@ -160,7 +161,7 @@ module Tags
       link = langNode['processor'].get_html_link( langNode, srcNode, ( isDir ? langNode['directoryName'] || node['directoryName'] : langNode['title'] ) )
 
       itemTag = get_param( 'itemTag' )
-      if styles.include?( 'webgen-submenu' )
+      if isDir
         before = "<#{itemTag}#{style}>#{link}"
         after = "</#{itemTag}>"
       else

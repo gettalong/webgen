@@ -34,7 +34,7 @@ module FileHandlers
     class PageNode < Node
 
       def initialize( parent, basename )
-        super parent
+        super( parent )
         self['page:basename'] = self['title'] = basename
         self['src'] = self['dest'] = basename
         self['virtual'] = true
@@ -58,15 +58,14 @@ module FileHandlers
 
     def create_node( srcName, parent )
       data = parse_file( srcName )
+      analysed = analyse_file_name( File.basename( srcName ) )
+      pageNodeExisted = get_page_node( analysed.baseName, parent )
+      pageNode = pageNodeExisted || PageNode.new( parent, analysed.baseName )
 
-      fileData = analyse_file_name( File.basename( srcName ) )
-
-      pageNode, created = get_page_node( fileData.baseName, parent )
-
-      lang = data['lang'] || fileData.lang
+      lang = data['lang'] || analysed.lang
 
       if lang_node_exists?( pageNode, lang )
-        created = false;
+        pageNodeExisted = false
         logger.warn do
           "Two input files in the same language for one page, " + \
           "using <#{get_lang_node( pageNode, lang ).recursive_value( 'src' )}> " + \
@@ -75,16 +74,16 @@ module FileHandlers
       else
         node = Node.new( pageNode )
         node.metainfo = data
-        node['src'] = fileData.srcName
-        node['dest'] = fileData.urlName
-        node['lang'] ||= fileData.lang
-        node['title'] ||= fileData.title
-        node['menuOrder'] ||= fileData.menuOrder
+        node['src'] = analysed.srcName
+        node['dest'] = analysed.urlName
+        node['lang'] ||= analysed.lang
+        node['title'] ||= analysed.title
+        node['menuOrder'] ||= analysed.menuOrder
         node['processor'] = self
         pageNode.add_child( node )
       end
 
-      return ( created ? pageNode : nil )
+      return ( pageNodeExisted ? nil : pageNode )
     end
 
     def write_node( node )
@@ -101,24 +100,20 @@ module FileHandlers
       end
     end
 
-    def get_page_node( basename, dirNode )
-      node = dirNode.find do |node| node['page:basename'] == basename end
-      if node.nil?
-        node = PageNode.new( dirNode, basename )
-        created = true
-      end
-      [node, created]
+    def page_node_exists?( basename, dirNode )
+      dirNode.find {|node| node['page:basename'] == basename}
     end
+    alias :get_page_node :page_node_exists?
 
     def lang_node_exists?( pageNode, lang )
-      langNode = pageNode.find do |child| child['lang'] == lang end
+      langNode = pageNode.find {|child| child['lang'] == lang }
       return !langNode.nil?
     end
 
     def get_lang_node( node, lang = node['lang'] )
       node = node.parent unless node['page:basename']
-      langNode = node.find do |child| child['lang'] == lang end
-      langNode = node.find do |child| child['lang'] == Webgen::Plugin['Configuration']['lang'] end if langNode.nil?
+      langNode = node.find {|child| child['lang'] == lang} ||
+                 node.find {|child| child['lang'] == Webgen::Plugin['Configuration']['lang']}
       if langNode.nil?
         langNode = node.children[0]
         self.logger.warn do
@@ -155,19 +150,19 @@ module FileHandlers
 
     def analyse_file_name( srcName )
       matchData = /^(?:(\d+)\.)?([^.]*?)(?:\.(\w\w))?\.(.*)$/.match( srcName )
-      fileData = OpenStruct.new
+      analysed = OpenStruct.new
 
-      fileData.lang      = matchData[3] || Webgen::Plugin['Configuration']['lang']
-      fileData.baseName  = matchData[2] + '.html'
-      fileData.srcName   = srcName
-      langPart = ( !get_param( 'defaultLangInFilename' ) && Webgen::Plugin['Configuration']['lang'] == fileData.lang ? '' : '.' + fileData.lang )
-      fileData.urlName   = matchData[2] + langPart + '.html'
-      fileData.menuOrder = matchData[1].to_i
-      fileData.title     = matchData[2].tr('_-', ' ').capitalize
+      analysed.lang      = matchData[3] || Webgen::Plugin['Configuration']['lang']
+      analysed.baseName  = matchData[2] + '.html'
+      analysed.srcName   = srcName
+      langPart = ( !get_param( 'defaultLangInFilename' ) && Webgen::Plugin['Configuration']['lang'] == analysed.lang ? '' : '.' + analysed.lang )
+      analysed.urlName   = matchData[2] + langPart + '.html'
+      analysed.menuOrder = matchData[1].to_i
+      analysed.title     = matchData[2].tr('_-', ' ').capitalize
 
-      self.logger.debug { fileData.inspect }
+      self.logger.debug { analysed.inspect }
 
-      fileData
+      analysed
     end
 
   end

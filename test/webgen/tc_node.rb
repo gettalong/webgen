@@ -29,6 +29,10 @@ class NodeTest < Test::Unit::TestCase
     @n['root/dir2/file3']['dest'] = 'file3'
     @n['root/dir2/file4'] = create_node( @n['root/dir2'] )
     @n['root/dir2/file4']['dest'] = 'file4'
+    @n['root/dir2/dir3'] = create_node( @n['root/dir2'] )
+    @n['root/dir2/dir3']['dest'] = 'dir3/'
+    @n['root/dir4'] = create_node( @n['root'] )
+    @n['root/dir4']['dest'] = 'dir4/'
   end
 
   def create_node( parent )
@@ -68,12 +72,16 @@ class NodeTest < Test::Unit::TestCase
     assert_raise( NoMethodError ) { @n['root/file1'].relpath_to_node( nil ) }
 
     assert_equal( '.', @n['root/file1'].relpath_to_node( @n['root'] ) )
+    assert_equal( '.', @n['root/file1'].relpath_to_node( @n['root'], false ) )
     assert_equal( '.', @n['root/dir2'].relpath_to_node( @n['root'] ) )
     assert_equal( '.', @n['root/virtdir1/file2'].relpath_to_node( @n['root'] ) )
     assert_equal( '..', @n['root/dir2/file3'].relpath_to_node( @n['root'] ) )
-    assert_equal( '..', @n['root/dir2/file3'].relpath_to_node( @n['root/file1'] ) )
-    assert_equal( '..', @n['root/dir2/file3'].relpath_to_node( @n['root/dir2'] ) )
-    assert_equal( '.', @n['root/dir2/file3'].relpath_to_node( @n['root/dir2/file4'] ) )
+    assert_equal( '..', @n['root/dir2/file3'].relpath_to_node( @n['root/file1'], false ) )
+    assert_equal( '../file1', @n['root/dir2/file3'].relpath_to_node( @n['root/file1'] ) )
+    assert_equal( '..', @n['root/dir2/file3'].relpath_to_node( @n['root/dir2'], false ) )
+    assert_equal( '../dir2/', @n['root/dir2/file3'].relpath_to_node( @n['root/dir2'] ) )
+    assert_equal( '../virtdir1/', @n['root/dir2/file3'].relpath_to_node( @n['root/virtdir1'] ) )
+    assert_equal( '.', @n['root/dir2/file3'].relpath_to_node( @n['root/dir2/file4'], false ) )
 
     assert_equal( '', @n['root/file1'].relpath_to_node( @n['external'] ) )
   end
@@ -92,6 +100,8 @@ class NodeTest < Test::Unit::TestCase
   end
 
   def test_level
+    assert_equal( 1, @n['root'].level )
+    assert_equal( 2, @n['root/dir2'].level )
     assert_equal( 1, @n['root/file1'].level )
     assert_equal( 1, @n['root/virtdir1/file2'].level )
     assert_equal( 2, @n['root/virtdir1/file2'].level( false ) )
@@ -103,6 +113,10 @@ class NodeTest < Test::Unit::TestCase
     assert( @n['root/dir2/file3'].in_subtree?( @n['root/dir2'] ) )
     assert( @n['root/dir2/file3'].in_subtree?( @n['root/dir2/file4'] ) )
     assert( @n['root/file1'].in_subtree?( @n['root/virtdir1/file2'] ) )
+    assert( @n['root/dir2/dir3'].in_subtree?( @n['root/dir2'] ) )
+    assert( !@n['root/dir2/dir3'].in_subtree?( @n['root/dir4'] ) )
+    assert( !@n['root/dir2'].in_subtree?( @n['root/dir4'] ) )
+    assert( !@n['root/dir2/file3'].in_subtree?( @n['root/dir4'] ) )
   end
 
   def test_root

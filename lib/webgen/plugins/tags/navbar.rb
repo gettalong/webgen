@@ -50,12 +50,11 @@ module Tags
 
       until node.nil?
         out.push( node['processor'].get_html_link( node, srcNode ) )
-        node = node.parent
-        node = node.parent while !node.nil? && node['virtual']
+        begin node = node.parent end while !node.nil? && node['virtual']
       end
 
       out = out.reverse.join( get_param( 'separator' ) )
-      self.logger.debug { out }
+      self.logger.debug { "Navbar for #{srcNode.recursive_value( 'src' )}: #{out}" }
       out
     end
 

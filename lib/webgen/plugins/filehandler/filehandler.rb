@@ -37,7 +37,7 @@ module FileHandlers
         been performed the FileHandler is used to write the output files.
       ".gsub( /^\s+/, '' ).gsub( /\n/, ' ' )
 
-    add_param 'ignoredFiles', ['.svn', 'CVS'], 'Specifies path names which should be ignored.'
+    add_param 'ignored', ['.svn', 'CVS'], 'Specifies path names via regular expresssions which should be ignored.'
 
 
     include Listener
@@ -58,8 +58,8 @@ module FileHandlers
       root = build_entry( Webgen::Plugin['Configuration']['srcDirectory'], nil )
       unless root.nil?
         root['title'] = '/'
-        root['dest'] = Webgen::Plugin['Configuration']['outDirectory'] + File::SEPARATOR
-        root['src'] = Webgen::Plugin['Configuration']['srcDirectory'] + File::SEPARATOR
+        root['dest'] = Webgen::Plugin['Configuration']['outDirectory'] + '/'
+        root['src'] = Webgen::Plugin['Configuration']['srcDirectory'] + '/'
       end
       root
     end
@@ -67,7 +67,7 @@ module FileHandlers
 
     # Recursively writes out the tree specified by +node+.
     def write_tree( node )
-      self.logger.info { "Writing #{node.recursive_value('dest')}" }
+      self.logger.info { "Writing <#{node.recursive_value('dest')}>" }
 
       node['processor'].write_node( node )
 
@@ -96,7 +96,7 @@ module FileHandlers
     #######
 
     def build_entry( path, parent )
-      self.logger.info { "Processing #{path}" }
+      self.logger.info { "Processing <#{path}> ..." }
 
       if FileTest.file?( path )
         node = handle_file( path, parent )
@@ -122,7 +122,7 @@ module FileHandlers
           dispatch_msg( :FILE_NODE_CREATED, node )
         end
       else
-        self.logger.warn { "No plugin for path #{path} (extension: #{extension}) -> ignored" }
+        self.logger.warn { "No plugin for <#{path}> (extension: #{extension}) -> ignored" }
       end
 
       return node
@@ -138,11 +138,10 @@ module FileHandlers
 
         dispatch_msg( :DIR_NODE_CREATED, node )
 
-        entries = Dir[path + File::SEPARATOR + '{.*,*}'].delete_if do |name|
-          name =~ /#{File::SEPARATOR}.{1,2}$/ || get_param( 'ignoredFiles' ).include?( File.basename( name ) )
-        end
-
-        entries.sort! do |a, b|
+        Dir[path + File::SEPARATOR + '{.*,*}'].delete_if do |name|
+          name =~ /#{File::SEPARATOR}.{1,2}$/ || \
+          File.basename( name ) =~ Regexp.new( get_param( 'ignored' ).join( '|' ) )
+        end.sort! do |a, b|
           if File.file?( a ) && File.directory?( b )
             -1
           elsif ( File.file?( a ) && File.file?( b ) ) || ( File.directory?( a ) && File.directory?( b ) )
@@ -150,9 +149,7 @@ module FileHandlers
           else
             1
           end
-        end
-
-        entries.each do |filename|
+        end.each do |filename|
           child = build_entry( filename, node )
           node.add_child( child ) unless child.nil?
         end
@@ -206,7 +203,7 @@ module FileHandlers
     # Returns a HTML link for the given +node+ relative to +refNode+. You can optionally specify the
     # title for the link. If not specified, the title of the node is used.
     def get_html_link( node, refNode, title = node['title'] )
-      url = refNode.relpath_to_node( node ) + node['dest']
+      url = refNode.relpath_to_node( node )
       "<a href=\"#{url}\">#{title}</a>"
     end
 

@@ -48,10 +48,7 @@ module Tags
     def process_tag( tag, node, refNode )
       unless get_param( 'item' ).nil?
         destNode = refNode.node_for_string( get_param( 'item' ) )
-        if !destNode.nil? && destNode.kind_of?( FileHandlers::PagePlugin::PageNode )
-          destNode = destNode['processor'].get_lang_node( destNode, node['lang'] )
-        end
-        return ( destNode.nil? ? '' :  node.relpath_to_node( destNode ) + destNode['dest'] )
+        return ( destNode.nil? ? '' :  node.relpath_to_node( destNode['processor'].get_lang_node( destNode, node['lang'] ) ) )
       else
         return ''
       end

@@ -33,16 +33,20 @@ module Tags
     summary "Executes the given command and includes its standard output"
     depends_on 'Tags'
     add_param 'command', nil, 'The command which should be executed'
+    add_param 'processOutput', true, 'The output of the command will be processed if true'
+    add_param 'escapeHTML', true, 'Special HTML characters in the output will be escaped if true'
     set_mandatory 'command', true
 
     def initialize
       super
       register_tag( 'execute' )
-      @processOutput = false
     end
 
     def process_tag( tag, node, refNode )
-      CGI::escapeHTML( `#{get_param( 'command' )}` ) if get_param( 'command' )
+      @processOutput = get_param( 'processOutput' )
+      output = ( get_param( 'command' ) ? `#{get_param( 'command' )}` : '' )
+      output = CGI::escapeHTML( output ) if get_param( 'escapeHTML' )
+      output
     end
 
   end

@@ -41,6 +41,9 @@ module ContentHandlers
 
     def format_content( txt )
       @processor.convert( txt, @formatter )
+    rescue
+      self.logger.error { "Error converting RDOC text to HTML" }
+      ''
     end
 
   end

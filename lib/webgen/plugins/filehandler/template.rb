@@ -41,7 +41,7 @@ module FileHandlers
       node['title'] = 'Template'
       node['src'] = node['dest'] = File.basename( srcName )
       File.open( srcName ) { |file| node['content'] = file.read }
-      return node
+      node
     end
 
     def write_node( node )
@@ -58,11 +58,12 @@ module FileHandlers
     #######
 
     def get_template( node )
-      if node.metainfo.has_key?( "template" ) && node['template'].kind_of?( String )
+      if node['template'].kind_of?( String )
         templateNode = node.node_for_string( node['template'] )
         if templateNode.nil?
           self.logger.warn { "Specified template for file <#{node.recursive_value('src')}> not found, using default template!" }
         end
+        node['template'] = templateNode unless templateNode.nil?
         return templateNode
       end
     end
@@ -74,14 +75,25 @@ module FileHandlers
       templateNode = node.find { |child| child['src'] == get_param( 'defaultTemplate' ) }
       if templateNode.nil?
         if node.parent.nil?
-          self.logger.error { "Template file #{get_param( 'defaultTemplate' )} in root directory not found, aborting!" }
-          raise
+          self.logger.error { "Template file #{get_param( 'defaultTemplate' )} in root directory not found, creating dummy!" }
+          templateNode = DummyTemplateNode.new( node )
+          node.add_child( templateNode )
         else
-          return get_default_template( node.parent )
+          templateNode = get_default_template( node.parent )
         end
-      else
-        return templateNode
       end
+      templateNode
+    end
+
+  end
+
+  class DummyTemplateNode < Node
+
+    def initialize( parent )
+      super( parent )
+      self['src'] = self['dest'] = self['title'] = Webgen::Plugin['TemplateFileHandler']['defaultTemplate']
+      self['processor'] = Webgen::Plugin['TemplateFileHandler']
+      self['content'] = ''
     end
 
   end

@@ -47,7 +47,7 @@ module Tags
     # tree node the content of which is used. The +refNode+ parameter specifies relative to which
     # all references should be resolved.
     def substitute_tags( content, node, refNode )
-      if !content.kind_of? String
+      if !content.kind_of?( String )
         self.logger.error { "The content in <#{refNode.recursive_value( 'src' )}> is not a string, but a #{content.class.name}" }
         content = content.to_s
       end
@@ -149,6 +149,7 @@ module Tags
     # Register +tag+ at the Tags plugin.
     def register_tag( tag )
       Webgen::Plugin['Tags'].tags[tag] = self
+      Webgen::Plugin.config[self.class.name].tag = tag
     end
 
     # Set the configuration parameters for the next #process_tag call. The configuration, if
@@ -170,6 +171,7 @@ module Tags
       else
         self.logger.error { "Invalid parameter for tag '#{self.class.name}' in <#{node.recursive_value( 'src' )}>" }
       end
+
       unless all_mandatory_params_set?
         self.logger.error { "Not all mandatory parameters for tag '#{self.class.name}' in <#{node.recursive_value( 'src' )}> set" }
       end
