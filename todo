@@ -1,4 +1,5 @@
-W define format of config.xml
+* FileCopyPlugin: check if file has changed and only then copy
+* define format of config.xml
 * think about how to print out warnings uniformly
 * think about configureable list of files patterns which should always be ignored when reading src dir
 * design Thaumature logo

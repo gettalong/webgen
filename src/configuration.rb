@@ -10,7 +10,6 @@ class Configuration
 	attr_reader :srcDirectory
 	attr_reader :templateFile
 	attr_reader :directoryIndexFile
-
 	attr_reader :pluginData
 
 	def initialize

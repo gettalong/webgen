@@ -6,6 +6,10 @@ class Tags < UPS::Controller
 		super('tags')
 	end
 
+	def describe
+		"Provides standard methods for tag plugins"
+	end
+
 end
 
 
@@ -15,9 +19,12 @@ class TitleTag < UPS::StandardPlugin
 		super('tags', 'title')
 	end
 
-	def execute(element, node)
-		element.parent.insert_after(element, REXML::Text.new(node.title, true))
-		element.parent.delete(element)
+	def execute(content, node)
+		node.title
+	end
+
+	def describe
+		"Replaces <title> tag with title of node"
 	end
 
 end
@@ -28,19 +35,12 @@ class ContentTag < UPS::StandardPlugin
 		super('tags', 'content')
 	end
 
-	def execute(element, node)
-		pre = element
-		node.content.elements['content'].each_child { |child|
-			if child.kind_of? REXML::Parent
-				child = child.deep_clone
-			else
-				child = child.clone
-			end
-			
-			element.parent.insert_after(pre, child)
-			pre = child
-		}
-		element.parent.delete(element)
+	def execute(content, node)
+		node.content
+	end
+
+	def describe
+		"Replaces <content> with the actual content of the file"
 	end
 
 end

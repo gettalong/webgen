@@ -8,7 +8,7 @@
 	<plugins>
 		<fileHandler>
 			<outputDir>output</outputDir>
-			<filenameGenerator>hierarchicFilenameGenerator</filenameGenerator>
 		</fileHandler>
+		<fileCopy>css,jpg,png,gif</fileCopy>
 	</plugins>
 </configuration>

@@ -2,32 +2,20 @@
 $:.push File.dirname($0)
 
 require 'ups'
+require 'optparse'
 
 require 'configuration'
 require 'tree'
 require 'thgexception'
 
-class Main < UPS::StandardPlugin
+class ConvertMain < UPS::StandardPlugin
 
 	def initialize
 		super('main', 'thaumaturge')
 	end
 
-	def after_register
-		UPS::PluginRegistry.instance['main'].set_plugin('thaumaturge')
-	end
-
 	def run(*arg)
 		begin
-			# initialise the configuration
-			cfg = Configuration.instance
-			#print "Config: #{cfg.inspect}\n"
-
-			# load the plugins
-			cfg.loadPlugins
-			#UPS::PluginRegistry.instance['listRegistry'].list
-			#print UPS::PluginRegistry.instance['fileWriter'].inspect
-			
 			# load all the files in src dir and build tree
 			tree = UPS::PluginRegistry.instance['fileHandler'].build_tree
 			#print "Tree: #{tree.inspect}\n"
@@ -45,7 +33,92 @@ class Main < UPS::StandardPlugin
 		end
 	end
 
+	def describe
+		"Executes the main branch of the progam. The main branch does the actual work, " <<
+			"i.e. it reads in all the files, transforms them and then produces the output "<<
+			"files."
+	end
+
 end
 
-UPS::PluginRegistry.instance.register_plugin(Main.new)
+class THGListPlugin < UPS::StandardPlugin
+	
+	def initialize
+		super('listRegistry', 'thgPluginList')
+	end
+
+	def after_register
+		UPS::PluginRegistry.instance['listRegistry'].set_plugin('thgPluginList')
+	end
+
+	def processController(order, controller)
+		if order == UPS::ListController::BEFORE
+			print "Controller group '#{controller.id}':\n"
+		else
+			print "\n"
+		end
+	end
+
+	def processPlugin(plugin)
+		if plugin.respond_to? :describe
+			print "Plugin '#{plugin.id}:'\n"
+			width = 0;
+			print "    "+plugin.describe.split(' ').collect {|s|
+				width += s.length
+				ret = ""
+				if width > 60
+					ret << "\n    "
+					width = 0 
+				end
+				ret << s << ' '
+			}.join('') + "\n\n"
+		end
+	end
+
+	def describe
+		"Pretty prints the controller and plugin describtions"
+	end
+
+end
+
+class ListPluginMain < UPS::StandardPlugin
+	
+	def initialize
+		super('main', 'listPlugins')
+	end
+
+	def run(*arg)
+		UPS::PluginRegistry.instance['listRegistry'].list		
+	end
+
+	def describe
+		"Prints out a description of all plugins which have a describe method"
+	end
+
+end
+
+UPS::PluginRegistry.instance.register_plugin(ConvertMain.new)
+UPS::PluginRegistry.instance.register_plugin(ListPluginMain.new)
+UPS::PluginRegistry.instance.register_plugin(THGListPlugin.new)
+
+# load the plugins
+Configuration.instance.loadPlugins
+
+
+# specify which main plugin to execute
+main = 'thaumaturge'
+
+# parse options
+ARGV.options do |opts|
+	opts.summary_width = 20
+	opts.program_name = 'ruby thg.rb'
+	opts.banner << "\nThaumaturge is a template based web page generator for offline page generation.\n\n"
+
+	opts.on_tail("--help", "-h", "Display this help screen") { puts opts; exit }
+	opts.on("--list-plugins", "-l", "List all the plugins and information about them") { main = 'listPlugins' }
+	
+	opts.parse!
+end
+
+UPS::PluginRegistry.instance['main'].set_plugin(main)
 UPS::PluginRegistry.instance['main'].run(ARGV)

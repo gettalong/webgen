@@ -34,8 +34,7 @@ class DirectoryNode < Node
 				"directory index file does not exist for #{dir == '' ? 'root directory' : dir}", caller
 		end
 
-		urlName = (dir+'/'+cfg.directoryIndexFile).gsub(/\.xml$/, '.html')
-		super(title, urlName, dir+'/'+cfg.directoryIndexFile, true)
+		super(title, dir, dir, true)
 		
 		@templateFile = File.join(cfg.srcDirectory, dir, cfg.templateFile)
 		if !File.exists?(@templateFile)

@@ -2,11 +2,15 @@ require 'ups'
 require 'configuration'
 require 'thgexception'
 require 'rexml/document'
+require 'fileutils'
 
 class FileHandler < UPS::Controller
 	
+	attr_accessor :extensions
+
 	def initialize
 		super('fileHandler')
+		@extensions = Hash.new
 
 		config = Configuration.instance.pluginData['fileHandler']
 		if config.nil?
@@ -15,45 +19,28 @@ class FileHandler < UPS::Controller
 		end
 
 		@outputDir = config.text('outputDir')
-		@filenameGenerator = config.text('filenameGenerator')
 	end
 
 	def write_tree(tree)
-		if !@plugins.has_key?(@filenameGenerator)
-			raise ThaumaturgeException.new('select an exisiting filename generator'),
-				'The chosen filename generator does not exist', caller
-		end
-		
 		tree.each { |child|
 			write_node(child, tree)
 		}
 	end
 
 	def build_tree
-		return build_entry(Configuration.instance.srcDirectory, '', nil)
+		build_entry(Configuration.instance.srcDirectory, '', nil)
 	end
 
-	def createDirs(filename)
-		dir = File.dirname(filename)
-		rootdir = ''
-		dir.split('/').each {|subdir|
-			rootdir = rootdir + subdir + File::SEPARATOR
-			begin
-				Dir.mkdir(rootdir)
-			rescue
-			end
-		}
-	end
 
-	def substituteTags(root, node)
+	def substituteTags(content, node)
 		plugins = UPS::PluginRegistry.instance['tags'].plugins
-		root.each_element("//*") { |element|
-			next if !(/^thg$/ =~ element.namespace)
-			if !plugins.has_key?(element.name)
+		content.gsub!(/<thg:(\w+)\s*?.*?(\/>|<\/\1>)/) { |match|
+			if !plugins.has_key?($1)
 				raise ThaumaturgeException.new('remove the invalid thg tag'),
-					"thg tag found for which no plugin exists (#{element.name})", caller
+					"thg tag found for which no plugin exists (#{$1})", caller
 			end
-			plugins[element.name].execute(element, node)
+			
+			plugins[$1].execute(match, node)
 		}
 	end
 
@@ -68,57 +55,53 @@ class FileHandler < UPS::Controller
 			}
 		end
 		if !node.virtual
-			filename = File.join(@outputDir, @plugins[@filenameGenerator].build_name(node.url))
-			extension = 'ext_' + node.srcName[/\.(.*)$/][1..-1]
-			@plugins[extension].write_node(node, parent, filename)
+			filename = File.join(@outputDir, node.url)
+			print "Writing #{filename}\n"
+			
+			extension = node.srcName[/\.(.*)$/][1..-1]
+			@extensions[extension].write_node(node, parent, filename)
 		end
 	end
 
 	def build_entry(absName, relName, parent)
-		print "Processing #{absName}\n"
+		print "Processing #{absName}"
 
 		if FileTest.file?(absName)
-			extension = 'ext_' + absName[/\..*$/][1..-1]
+			extension = absName[/\..*$/][1..-1]
 
-			if !@plugins.has_key?(extension)
-				if !@plugins.has_key?('otherExtensions')
-					raise ThaumaturgeException.new('add a new plugin for this file type'),
-						"file extension found for which no plugin exists (#{extension[4..-1]})", caller
-				end
-				extension = 'otherExtensions'
+			if !@extensions.has_key?(extension)
+				print " -> ignored\n"
+				node = nil;
+			else
+				print "\n"
+				node = @extensions[extension].build_node(absName, relName)
 			end
-			node = @plugins[extension].build_node(absName, relName)
 		elsif FileTest.directory?(absName)
-			node = DirectoryNode.new(relName, relName, (parent.nil? ? '' : parent.templateFile))
+			print "\n"
+			node = DirectoryNode.new("Directory #{relName}", relName, (parent.nil? ? '' : parent.templateFile))
 
 			Dir[File.join(absName, '*')].each { |filename|
-				name = (parent.nil? ? '' : relName + '/') + File.basename(filename)
+				name = (parent.nil? ? '' : relName) + File.basename(filename)
+				name << '/' if FileTest.directory? filename
 				child = build_entry(filename, name, node)
 				node.add_child(child) if !child.nil?
 			}
 		end
+
 		return node
 	end
 
 
 end	
 
-class OtherExtensionsPlugin < UPS::StandardPlugin
-	
-	def initialize
-		super('fileHandler', 'otherExtensions')
-	end
-
-	def build_node(absName, relName)
-		nil
-	end
-	
-end
-
 class XMLPagePlugin < UPS::StandardPlugin
 	
 	def initialize
-		super('fileHandler', 'ext_xml')
+		super('fileHandler', 'xmlPagePlugin')
+	end
+
+	def after_register
+		UPS::PluginRegistry.instance['fileHandler'].extensions['xml'] = self
 	end
 
 	def build_node(absName, relName)
@@ -131,41 +114,55 @@ class XMLPagePlugin < UPS::StandardPlugin
 		urlName = relName.gsub(/\.xml$/, '.html')
 
 		node = Node.new(title, urlName, relName, false)
-		node.content = root
+		node.content = ''
+		root.elements['content'].each { |child| child.write(node.content) }
 
 		return node
 	end
 
 	def write_node(node, parent, filename)
-		doc = REXML::Document.new(File.new(parent.templateFile))
+		doc = ''
+		File.open(parent.templateFile) { |file|
+			doc = file.read
+		}
 
-		UPS::PluginRegistry.instance['fileHandler'].substituteTags(node.content.elements['content'], node)
-		UPS::PluginRegistry.instance['fileHandler'].substituteTags(doc.root, node)
-		UPS::PluginRegistry.instance['fileHandler'].createDirs(filename)
+		UPS::PluginRegistry.instance['fileHandler'].substituteTags(node.content, node)
+		UPS::PluginRegistry.instance['fileHandler'].substituteTags(doc, node)
+		FileUtils.makedirs(File.dirname(filename))
 
-		print "Writing #{filename}\n"
 		File.open(filename, File::CREAT|File::TRUNC|File::RDWR) {|file|
-			doc.write(file)
+			file.write(doc)
 		}
 	end
-	
+
 end
 
-class HierarchicFilenameGenerator < UPS::StandardPlugin
-	
+class FileCopyPlugin < UPS::StandardPlugin
+
 	def initialize
-		super('fileHandler', 'hierarchicFilenameGenerator')
+		super('fileHandler', 'fileCopyPlugin')
 	end
-	
-	def build_name(name)
-		name
+
+	def after_register
+		types = Configuration.instance.pluginData['fileCopy'].text
+		if !types.nil?
+			types.split(',').each {|type|
+				UPS::PluginRegistry.instance['fileHandler'].extensions[type] = self
+			}
+		end
 	end
-	
+
+	def build_node(absName, relName)
+		Node.new('<File>', relName, relName, false)
+	end
+
+	def write_node(node, parent, filename)
+		srcFile = File.join(Configuration.instance.srcDirectory, node.srcName)
+		FileUtils.cp(srcFile, filename)
+	end
+
 end
 
 UPS::PluginRegistry.instance.register_plugin(FileHandler.new)
-
-UPS::PluginRegistry.instance.register_plugin(OtherExtensionsPlugin.new)
 UPS::PluginRegistry.instance.register_plugin(XMLPagePlugin.new)
-
-UPS::PluginRegistry.instance.register_plugin(HierarchicFilenameGenerator.new)
+UPS::PluginRegistry.instance.register_plugin(FileCopyPlugin.new)
