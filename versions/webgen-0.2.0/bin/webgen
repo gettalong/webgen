@@ -1,5 +1,0 @@
-#!/usr/bin/env ruby
-
-require 'webgen/webgen'
-
-Webgen::WebgenMain.new.main ARGV

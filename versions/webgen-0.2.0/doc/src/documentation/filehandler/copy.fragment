@@ -1,7 +1,0 @@
-<div class="section">
-<h2 class="section_header">Information</h2>
-
-<p>The file copy handler copies files without modification from the source to the target directory.
-This is useful, for example, for CSS stylesheets and images.</p>
-
-</div>
