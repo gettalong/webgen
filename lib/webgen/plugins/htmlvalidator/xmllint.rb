@@ -56,8 +56,12 @@ module HTMLValidators
 
     def validate_file( filename )
       cmd = ExtendedCommand.new( "xmllint #{get_param( 'args' )} #{filename}" )
-      if cmd.ret_code != 0
+      case cmd.ret_code
+      when 0
+      when 1..10
         self.logger.warn { "xmllint was run on <#{filename}>, exited with the return code #{cmd.ret_code} and the error message: \n#{cmd.err_text}" }
+      else
+        self.logger.error { "Error running xmllint:\n#{cmd.err_text}" }
       end
     end
 
