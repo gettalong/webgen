@@ -14,6 +14,5 @@ h2. Examples
 
 table{border:1px solid black}.
 |_.Command|_.Output|
-|\{execute: date}|<pre class="webgen-file">{execute: date}</pre>|
 |\{execute: ls}|<pre class="webgen-file">{execute: ls}</pre>|
 |\{execute: uname -p}|<pre class="webgen-file">{execute: uname -p}</pre>|
