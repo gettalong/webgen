@@ -10,13 +10,14 @@ class NavbarTag < UPS::Plugin
         UPS::Registry['Tags'].tags['navbar'] = self
     end
 
+
 	def process_tag( tag, content, srcNode, templateNode )
         out = []
         node = srcNode
 
         until node.nil?
             if node.instance_of? DirNode
-                tempNode = UPS::Registry['Page Plugin'].get_correct_lang_node( node['indexFile'], srcNode['lang'] )
+                tempNode = node['processor'].get_lang_node( node, srcNode['lang'] )
                 title = tempNode['directoryName']
             else
                 tempNode = node

@@ -12,13 +12,16 @@ class Node
 		@metainfo = Hash.new
 	end
 
+
     def []( name )
         @metainfo[name]
     end
 
+
     def []=( name, value )
         @metainfo[name] = value
     end
+
 
     def recursive_value( name )
         if @parent.nil?
@@ -27,6 +30,7 @@ class Node
 			@parent.recursive_value( name ) + @metainfo[name]
 		end
 	end
+
 
     def Node.root( node )
         node = node.parent until node.parent.nil?

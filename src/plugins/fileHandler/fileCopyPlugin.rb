@@ -6,6 +6,8 @@ require 'plugins/fileHandler/fileHandler'
 
 class FileCopyPlugin < UPS::Plugin
 
+    include NodeProcessor
+
     NAME = "Copy Files"
     SHORT_DESC = "Copies files from source to destination without modification"
     DESCRIPTION = <<-EOF.gsub( /^\s*/, '' ).gsub( /\n/, ' ' )

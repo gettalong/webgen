@@ -1,4 +1,6 @@
 require 'node'
+require 'plugins/nodeProcessor'
+require 'plugins/fileHandler/pagePlugin'
 require 'plugins/fileHandler/fileHandler'
 
 class DirNode < Node
@@ -13,6 +15,8 @@ end
 
 
 class DirHandlerPlugin < UPS::Plugin
+
+    include NodeProcessor
 
     NAME = "Dir Handler"
     SHORT_DESC = "Handles directories"
@@ -34,6 +38,14 @@ class DirHandlerPlugin < UPS::Plugin
         FileUtils.makedirs( name ) unless File.exists? name
 	end
 
+    def get_lang_node( node, lang = node['lang'] )
+        if node['indexFile']
+            node['indexFile']['processor'].get_lang_node( node['indexFile'], lang )
+        else
+            node
+        end
+    end
+
     #######
     private
     #######
@@ -41,12 +53,12 @@ class DirHandlerPlugin < UPS::Plugin
     def process_dir_index( dirNode )
         node, created = UPS::Registry['Page Plugin'].get_page_node( @indexFile, dirNode )
         if created
-            self.logger.error { "No directory index file found for directory <#{dirNode.recursive_value( 'src' )}>" }
+            self.logger.warn { "No directory index file found for directory <#{dirNode.recursive_value( 'src' )}>" }
         else
-            self.logger.info { "Directory index file for <#{dirNode.recursive_value( 'src' )}> => <#{node['pageBasename']}>" }
+            self.logger.info { "Directory index file for <#{dirNode.recursive_value( 'src' )}> => <#{node['pagePlugin:basename']}>" }
+            dirNode['indexFile'] = node
+            node.each do |child| child['directoryName'] ||= dirNode['title'] end
         end
-        dirNode['indexFile'] = node
-        node.each do |child| child['directoryName'] ||= dirNode['title'] end
     end
 
 end

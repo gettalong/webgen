@@ -1,4 +1,5 @@
 require 'ups/ups'
+require 'node'
 require 'plugins/tags/tags'
 
 class MenuTag < UPS::Plugin
@@ -9,6 +10,7 @@ class MenuTag < UPS::Plugin
     def init
         UPS::Registry['Tags'].tags['menu'] = self
     end
+
 
 	def process_tag( tag, content, node, templateNode )
         if !defined? @menuTree
@@ -27,16 +29,16 @@ class MenuTag < UPS::Plugin
 
         out = '<ul>'
         node.each do |child|
-            if child['isDir']
-                menu = build_menu( srcNode, child, level - 1 )
-                before, after = menu_entry( srcNode, UPS::Registry['Page Plugin'].get_correct_lang_node( child['node']['indexFile'], srcNode['lang'] ), true )
+            if child.kind_of? MenuNode
+                submenu = child['isDir'] ? build_menu( srcNode, child, level - 1 ) : ''
+                before, after = menu_entry( srcNode, child['node']['processor'].get_lang_node( child['node'], srcNode['lang'] ), child['isDir'] )
             else
-                menu = ''
-                before, after = menu_entry( srcNode, UPS::Registry['Page Plugin'].get_correct_lang_node( child, srcNode['lang'] ) )
+                submenu = ''
+                before, after = menu_entry( srcNode, child['processor'].get_lang_node( child, srcNode['lang'] ) )
             end
 
             out << before
-            out << menu
+            out << submenu
             out << after
         end
         out << '</ul>'
@@ -70,23 +72,39 @@ class MenuTag < UPS::Plugin
     end
 
 
-    def create_menu_tree( node, parent )
-        treeNode = Node.new parent
-        treeNode['title'] = 'Menu: '+ node['title']
-        treeNode['isMenuNode'] = treeNode['virtual'] = true
-        treeNode['isDir'] = node.kind_of? DirNode
-        treeNode['node'] = node
+    class MenuNode < Node
 
-        useNode = node['inMenu'] && !node['virtual']
-
-        node.each do |child|
-            menu = create_menu_tree( child, treeNode )
-            treeNode.add_child menu unless menu.nil?
+        def initialize( node, parent )
+            super parent
+            self['title'] = 'Menu: '+ node['title']
+            self['isMenuNode'] = true
+            self['virtual'] = true
+            self['isDir'] = node.kind_of? DirNode
+            self['node'] = node
         end
 
-        return treeNode.has_children? ? treeNode : (useNode ? node : nil )
     end
 
+
+    def create_menu_tree( node, parent )
+        menuNode = MenuNode.new( node, parent)
+
+        node.each do |child|
+            menu = create_menu_tree( child, menuNode )
+            menuNode.add_child menu unless menu.nil?
+        end
+
+        return menuNode.has_children? ? menuNode : (put_node_in_menu?( node ) ? node : nil )
+    end
+
+
+    def put_node_in_menu?( node )
+        inMenu = node['inMenu']
+        inMenu ||=  node.parent != nil && node.parent['pagePlugin:basename'] != nil &&
+                    node['processor'].get_lang_node( node )['inMenu']
+        inMenu &&= !node['virtual']
+        inMenu
+    end
 
 end
 

@@ -5,6 +5,8 @@ require 'plugins/fileHandler/fileHandler'
 
 class PagePlugin < UPS::Plugin
 
+    include NodeProcessor
+
     NAME = "Page Plugin"
     SHORT_DESC = "Super class for all page plugins"
 
@@ -46,10 +48,10 @@ class PagePlugin < UPS::Plugin
 
 
     def get_page_node( basename, dirNode )
-        node = dirNode.find do |node| node['pageBasename'] == basename end
+        node = dirNode.find do |node| node['pagePlugin:basename'] == basename end
         if node.nil?
             node = Node.new dirNode
-            node['pageBasename'] = node['title'] = basename
+            node['pagePlugin:basename'] = node['title'] = basename
             node['src'] = node['dest'] = ''
             node['virtual'] = true
             created = true
@@ -58,7 +60,8 @@ class PagePlugin < UPS::Plugin
     end
 
 
-    def get_correct_lang_node( node, lang )
+    def get_lang_node( node, lang = node['lang'] )
+        node = node.parent unless node['pagePlugin:basename']
         langNode = node.find do |child| child['lang'] == lang end
         langNode = node.find do |child| child['lang'] == UPS::Registry['Configuration'].lang end if langNode.nil?
         langNode

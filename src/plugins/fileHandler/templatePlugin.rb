@@ -7,6 +7,8 @@ require 'configuration'
 
 class TemplatePlugin < UPS::Plugin
 
+    include NodeProcessor
+
     NAME = "Template File"
     SHORT_DESC = "Represents the template files for the page generation in the tree"
 
