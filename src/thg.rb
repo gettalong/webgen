@@ -2,110 +2,41 @@
 $:.push File.dirname($0)
 
 require 'thgexception'
+require 'ups'
+require 'optparse'
 
 # add exception entry for option parsing
 ThgException.add_entry :ARG_PARSE_ERROR,
 	"%0: %1 %2 %3 %4 %5",
 	"look at the online help to correct this error"
 
+
+def runMain
+	# load all the files in src dir and build tree
+	tree = UPS::PluginRegistry.instance['fileHandler'].build_tree
+	Configuration.instance.log(2, "Tree: #{tree.inspect}")
+	
+	# execute tree transformer plugins
+	UPS::PluginRegistry.instance['treeTransformer'].execute(tree)
+	
+	# generate output files
+	UPS::PluginRegistry.instance['fileHandler'].write_tree(tree)
+end
+
+
+def runListPlugins
+	UPS::PluginRegistry.instance['listRegistry'].list 
+end
+
+
 # everything is catched
 begin
 
-	require 'ups'
-	require 'optparse'
-	
 	require 'configuration'
 	require 'tree'
 
-	class ConvertMain < UPS::StandardPlugin
-
-		def initialize
-			super('main', 'thaumaturge')
-		end
-
-		def describe
-			"Executes the main branch of the progam. The main branch does the actual work, " <<
-				"i.e. it reads in all the files, transforms them and then produces the output "<<
-				"files."
-		end
-
-		def run(*arg)
-			# load all the files in src dir and build tree
-			tree = UPS::PluginRegistry.instance['fileHandler'].build_tree
-			Configuration.instance.log(2, "Tree: #{tree.inspect}")
-			
-			# execute tree transformer plugins
-			UPS::PluginRegistry.instance['treeTransformer'].execute(tree)
-			
-			# generate output files
-			UPS::PluginRegistry.instance['fileHandler'].write_tree(tree)
-		end
-
-	end
-
-	class THGListPlugin < UPS::StandardPlugin
-		
-		def initialize
-			super('listRegistry', 'thgPluginList')
-		end
-
-		def describe
-			"Pretty prints the controller and plugin describtions"
-		end
-
-		def after_register
-			UPS::PluginRegistry.instance['listRegistry'].set_plugin('thgPluginList')
-		end
-
-		def processController(order, controller)
-			if order == UPS::ListController::BEFORE
-				print "Controller group '#{controller.id}':\n"
-			else
-				print "\n"
-			end
-		end
-
-		def processPlugin(plugin)
-			if plugin.respond_to? :describe
-				print "  Plugin '#{plugin.id}:'\n"
-				width = 0;
-				print "    "+plugin.describe.split(' ').collect {|s|
-					width += s.length
-					ret = ""
-					if width > 60
-						ret << "\n    "
-						width = 0 
-					end
-					ret << s << ' '
-				}.join('') + "\n\n"
-			end
-		end
-
-	end
-
-	class ListPluginMain < UPS::StandardPlugin
-		
-		def initialize
-			super('main', 'listPlugins')
-		end
-
-		def describe
-			"Prints out a description of all plugins which have a describe method"
-		end
-
-		def run(*arg)
-			UPS::PluginRegistry.instance['listRegistry'].list		
-		end
-
-	end
-
-	UPS::PluginRegistry.instance.register_plugin(ConvertMain.new)
-	UPS::PluginRegistry.instance.register_plugin(ListPluginMain.new)
-	UPS::PluginRegistry.instance.register_plugin(THGListPlugin.new)
-
-
-	# specify which main plugin to execute
-	main = 'thaumaturge'
+	# specify which main method to execute
+	main = method(:runMain)
 	
 	# parse options
 	ARGV.options do |opts|
@@ -117,7 +48,7 @@ begin
 
 		opts.on_tail("--help", "-h", "Display this help screen") { puts opts; exit }
 		opts.on("--config-file FILE", "-c", String, "The config.xml which should be used") { |Configuration.instance.configFile| }
-		opts.on("--list-plugins", "-l", "List all the plugins and information about them") { main = 'listPlugins' }
+		opts.on("--list-plugins", "-l", "List all the plugins and information about them") { require 'listplugins'; main = method(:runListPlugins) }
 		opts.on("--verbosity LEVEL", "-v", Integer, "The verbosity level (0, 1, or 2)") { |Configuration.instance.verbosityLevel| }
 
 		begin
@@ -133,13 +64,11 @@ begin
 	# load the plugins
 	Configuration.instance.load_plugins
 	
-
-	UPS::PluginRegistry.instance['main'].set_plugin(main)
-	UPS::PluginRegistry.instance['main'].run(ARGV)
-	
+	# run the selected routine
+	main.call
 
 rescue ThgException => e
 	print "An error occured:\n\t #{e.message}\n\n"
 	print "Possible solution:\n\t #{e.solution}\n\n"
-	#print "Stack trace: #{e.backtrace.join("\n")}\n"
+	print "Stack trace: #{e.backtrace.join("\n")}\n" if Configuration.instance.verbosityLevel >= 2
 end
