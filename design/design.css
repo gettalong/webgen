@@ -1,9 +1,9 @@
 body {
-  margin: 0px 10%;
+  margin: 0px 5%;
   padding: 5px;
   background-color: #fff;
   font-size: 12px;
-  font-family: Verdana;
+  font-family: Verdana, Arial, Helvetica;
 }
 
 /* Hack for IE */
@@ -13,10 +13,43 @@ table {
 }
 
 div#header {
-  padding: 0px;
-  margin-bottom: 5px;
+  float: right;
+  width: 75%;
+  margin-bottom: 10px;
   border: solid 1px #C8C8C8;
-  background-color: #F8F8F8;
+}
+
+div#navbar {
+  width: 100%;
+  border-bottom: 1px solid #0C0;
+  background-color: #F0F0F0;
+
+  font-size: 90%;
+}
+
+span#navtree, span#languages {
+  padding: 3px;
+}
+
+span#navtree {
+  float: left;
+  text-align: left;
+}
+
+span#languages {
+  float: right;
+  text-align: right;
+}
+
+
+div#header h1 {
+  margin: 0px;
+  padding: 0.5em 2em;
+
+  font-size: 200%;
+  font-style: italic;
+  font-weight: normal;
+  color: #35648A;
 }
 
 div#menu {
@@ -24,7 +57,6 @@ div#menu {
   width: 20%;
 
   border: solid 1px #C8C8C8;
-  background-color: #F8F8F8;
 }
 
 
@@ -58,17 +90,12 @@ div#menu li.sub > a:after {
 
 div#menu li:hover {
   background-color: #F0F0F0;
-  border-bottom: 1px solid #35648A;
-  border-top: 1px solid #35648A;
-}
-
-div#menu li:hover > a {
+  border-bottom: 1px solid #C00;
 }
 
 div#menu li.sub:hover {
   width: 200%;
   background-color: #F0F0F0;
-  border: 1px solid #C8C8C8;
   z-index: 1;
 }
 
@@ -78,11 +105,10 @@ div#menu li.sub:hover > ul {
   left: 51%;
   width: 49%;
   top: 95%;
-  background-color: #F8F8F8;
+  background-color: #FFF;
   border: solid 1px #C8C8C8;
   z-index: 1;
 }
-
 
 
 div#body {
@@ -91,6 +117,7 @@ div#body {
 }
 
 div.section {
+  margin-left: -2px;
   margin-bottom: 20px;
   border: 1px solid #C8C8C8;
   padding: 5px;
@@ -98,13 +125,12 @@ div.section {
 
 h2.section_header {
   margin: 0px;
-  padding: 3px;
-  border-bottom: 1px solid #35648A;
+  padding: 0px 3px;
+  border-bottom: 1px solid #C00;
 
-  letter-spacing: 2px;
-  font-size: 150%;
+  letter-spacing: 0.2em;
+  font-size: 125%;
   font-weight: bold;
-  font-variant: small-caps;
   text-transform: capitalize;
   
   background-color: #F0F0F0; 
@@ -113,6 +139,7 @@ h2.section_header {
 
 div.section h2.section_header {
   margin: -5px -5px 5px;
+  border-bottom: 1px solid #00C;
 }
 
 div#footer {
