@@ -30,10 +30,14 @@ module Webgen
 
     summary "Loads extensions from a configuration file"
     depends_on 'Tags', 'FileHandler'
-    add_param 'extconfig', 'extension.config', 'Configuration file for extensions'
+
+    def initialize
+      super
+      parse_config_file
+    end
 
     def parse_config_file
-      file = get_param( 'extconfig' )
+      file = "extension.config"
       if File.exists?( file )
         begin
           instance_eval( File.read( file ), file )

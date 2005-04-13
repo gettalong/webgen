@@ -21,19 +21,16 @@
 #
 
 require 'logger'
+require 'webgen/plugin'
 
 module Webgen
 
   class Logger < ::Logger
 
-    def initialize( dev )
-      super( dev )
+    def initialize( dev, files, size )
+      super( dev, files, size )
       self.datetime_format = "%Y-%m-%d %H:%M:%S"
       self.level = Logger::ERROR
-    end
-
-    def set_log_dev( dev )
-      @logdev = LogDevice.new( dev )
     end
 
     def format_message( severity, timestamp, msg, progname )
@@ -56,10 +53,14 @@ end
 
 class Object
 
-  LOGGER = Webgen::Logger.new( STDERR )
+  @@logger = Webgen::Logger.new( STDERR, 0, 0 )
+
+  def self.set_logger( logger )
+    @@logger = logger
+  end
 
   def logger
-    LOGGER
+    @@logger
   end
 
 end
@@ -69,5 +70,30 @@ class Module
   def self.logger
     Object::LOGGER
   end
+
+end
+
+module Webgen
+
+  class Logging < Plugin
+
+    summary "Plugin for configuring the logger"
+
+    add_param 'maxLogFiles', 10, 'The maximum number of log files'
+    add_param 'maxLogSize', 1024*1024, 'The maximum size of the log files'
+    add_param 'logToFile', false, 'Specifies if the log messages should be put to the logfile',
+       (lambda do |p, o, n|
+          dev = STDERR
+          if n
+            Dir.mkdir( 'log' ) unless File.exists?( 'log' )
+            dev = 'log/webgen.log'
+          end
+          Object.set_logger( Webgen::Logger.new( dev, get_param( 'maxLogFiles' ), get_param( 'maxLogSize' ) ) )
+        end)
+
+  end
+
+  # Initialize single logging instance
+  Plugin.config[Logging].obj = Logging.new
 
 end

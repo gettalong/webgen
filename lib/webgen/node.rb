@@ -20,7 +20,6 @@
 #++
 #
 
-require 'webgen/logging'
 require 'util/composite'
 
 class Node
