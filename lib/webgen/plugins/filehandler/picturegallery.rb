@@ -26,7 +26,7 @@ require 'webgen/plugins/filehandler/page'
 
 module FileHandlers
 
-  class PictureGalleryFileHandler < DefaultHandler
+  class PictureGalleryFileHandler < DefaultFileHandler
 
     summary "Handles picture gallery files for page file"
     extension 'gallery'
@@ -182,7 +182,7 @@ module FileHandlers
 
     end
 
-    class ThumbnailWriter < DefaultHandler
+    class ThumbnailWriter < DefaultFileHandler
 
       summary "Writes out thumbnails with RMagick"
       add_param "thumbnailSize", "100x100", "The size of the thumbnails"

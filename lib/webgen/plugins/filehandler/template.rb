@@ -25,7 +25,7 @@ require 'webgen/plugins/filehandler/filehandler'
 module FileHandlers
 
   # Handles template files. Template files are generic files which specify the layout.
-  class TemplateFileHandler < DefaultHandler
+  class TemplateFileHandler < DefaultFileHandler
 
     summary "Represents the template files for the page generation in the tree"
     extension 'template'

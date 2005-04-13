@@ -156,7 +156,7 @@ module FileHandlers
   end
 
   # The default handler which is the super class of all file handlers.
-  class DefaultHandler < Webgen::Plugin
+  class DefaultFileHandler < Webgen::Plugin
 
     VIRTUAL = true
 
@@ -165,6 +165,9 @@ module FileHandlers
     def initialize
       extension( Webgen::Plugin.config[self.class].extension ) if Webgen::Plugin.config[self.class].extension
     end
+
+    # Specify the extension which should be handled by the class.
+    def self.extension( ext ); @@config[self].extension = ext; end
 
     # Register the file extension specified by a subclass.
     def extension( ext )

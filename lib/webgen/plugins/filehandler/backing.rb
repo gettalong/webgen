@@ -55,7 +55,7 @@ module FileHandlers
   # items to the menu. You need to specify the +dest+ meta information which points to the actual
   # location of the referenced page. If the virtual page references an external page, you have to
   # add the +external+ meta information (i.e. set +external+ to +true+).
-  class BackingFileHandler < DefaultHandler
+  class BackingFileHandler < DefaultFileHandler
 
     summary "Handles backing files for page file"
     extension 'info'

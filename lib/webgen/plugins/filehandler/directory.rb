@@ -25,7 +25,7 @@ require 'webgen/plugins/filehandler/filehandler'
 module FileHandlers
 
   # Handles directories.
-  class DirHandler < DefaultHandler
+  class DirHandler < DefaultFileHandler
 
     # Specialized node describing a directory.
     class DirNode < Node

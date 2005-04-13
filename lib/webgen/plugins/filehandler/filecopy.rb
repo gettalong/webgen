@@ -27,7 +27,7 @@ module FileHandlers
 
   # A simple file handler which copies files with a specific extension from the source to the output
   # directory. The extensions of the files to copy are customizable.
-  class FileCopyHandler < DefaultHandler
+  class FileCopyHandler < DefaultFileHandler
 
     summary "Copies files from source to destination without modification"
     add_param 'types', ['css', 'jpg', 'png', 'gif'], \

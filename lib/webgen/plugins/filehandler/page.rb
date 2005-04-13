@@ -27,7 +27,7 @@ module FileHandlers
 
   # Super class for all page description files. Provides helper methods so that writing new plugins
   # for page description files is easy.
-  class PageHandler < DefaultHandler
+  class PageHandler < DefaultFileHandler
 
     # Specialized node describing a page. A page node itself is virtual, it has sub nodes which
     # describe the page files in all available languages.
