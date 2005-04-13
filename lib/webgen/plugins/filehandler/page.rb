@@ -205,17 +205,3 @@ module FileHandlers
   end
 
 end
-
-module HTMLValidators
-
-  class HTMLValidator < Webgen::Plugin
-
-    summary "Base class for all HTML validators"
-
-    # Should be overridden in subclass!
-    def validate_file( filename )
-    end
-
-  end
-
-end

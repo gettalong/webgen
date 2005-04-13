@@ -125,20 +125,18 @@ module FileHandlers
       dirNode = create_path( dirname, dirNode )
 
       data.each do |language, filedata|
-        self.logger.debug { "Trying to create virtual node for '#{filename}'..." }
+        self.logger.debug { "Trying to create virtual node for '#{filename}' (#{language})..." }
         filedata['lang'] = language
 
-        handler = VirtualPageHandler.new
-        pageNode = handler.create_node_from_data( '', filename, dirNode )
+        pageNode = Webgen::Plugin['VirtualPageHandler'].create_node_from_data( '', filename, dirNode )
         unless pageNode.nil?
-          pageNode['processor'] = Webgen::Plugin['VirtualPageHandler']
           self.logger.debug { "Adding virtual page node <#{pageNode.recursive_value( 'src', false )}> to directory <#{dirNode.recursive_value( 'src' )}>" }
           dirNode.add_child( pageNode )
         end
         pageNode ||= Webgen::Plugin['VirtualPageHandler'].get_page_node( filename, dirNode ) #TODO
         node = Webgen::Plugin['VirtualPageHandler'].get_lang_node( pageNode, language )
         node.metainfo.update( filedata )
-        self.logger.info { "Created virtual node <#{node.recursive_value( 'src' )}> (#{language}) in <#{dirNode.recursive_value( 'dest' )}> " \
+        self.logger.info { "Created virtual node <#{node.recursive_value( 'src' )}> (#{node['lang']}) in <#{dirNode.recursive_value( 'dest' )}> " \
           "referencing '#{node['dest']}'" }
       end
     end
