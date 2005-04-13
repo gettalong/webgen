@@ -32,7 +32,8 @@ module Tags
     add_param 'rootURL', '/wiki/wiki.pl?', 'The root URL for the wiki link, ie. the path to the wiki CGI.'
     add_param 'relURL', nil, 'The relativ URL for the wiki link (the varying part that is appended to rootURL). ' \
     'If it is not specified, the title of the current page is used.'
-    add_param 'convertSpaces', true, 'True if spaces in the relative URL should be converted to underscores.'
+    add_param 'invalidChars', ' &;', 'The characters which are invalid as wiki URLs.'
+    add_param 'replacementChar', '_', 'The character(s) which should be used instead of the invalid characters.'
 
     def initialize
       super
@@ -50,7 +51,7 @@ module Tags
     def get_link( node )
       link = get_param( 'rootURL' )
       relURL = get_param( 'relURL' ) || node['title']
-      link + (get_param( 'convertSpaces' ) ? relURL.tr( ' ', '_' ) : relURL )
+      link + relURL.tr( get_param( 'invalidChars' ), get_param( 'replacementChar' ) )
     end
 
   end
