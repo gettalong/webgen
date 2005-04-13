@@ -21,6 +21,8 @@
 #
 
 require 'optparse'
+require 'rbconfig'
+require 'cmdparse'
 require 'webgen/configuration'
 
 module Webgen
@@ -45,62 +47,16 @@ module Webgen
 
   end
 
-  class WebgenMain
 
-    def main( cmdOptions )
-      Color.colorify if $stdout.isatty
-      main, data = parse_options( cmdOptions )
+  class RunWebgenCommand < CommandParser::Command
 
-      Plugin['Configuration'].init_all( data )
-      main.call
-    end
+    def initialize; super( 'run' ); end
 
+    def description; "Runs webgen"; end
 
-    def parse_options( cmdOptions )
-      config = Plugin['Configuration']
-      data = {}
-      main = method( :runMain )
+    def usage; "Usage: #{@options.program_name} [global options] run"; end
 
-      opts = OptionParser.new do |opts|
-        opts.summary_width = 25
-        opts.summary_indent = '  '
-
-        opts.banner = "Usage: webgen [options]\n#{Webgen::SUMMARY}"
-
-        opts.separator ""
-        opts.separator "Configuration options:"
-
-        opts.on( "--config-file FILE", "-C", String, "The configuration file which should be used" ) { |data['configfile']| }
-        opts.on( "--source-dir DIR", "-S", String, "The directory from where the files are read" ) { |data['srcDirectory']| }
-        opts.on( "--output-dir DIR", "-O", String, "The directory where the output should go" ) { |data['outDirectory']| }
-        opts.on( "--verbosity LEVEL", "-V", Integer, "The verbosity level" ) { |data['verbosityLevel']| }
-        opts.on( "--[no-]logfile", "-L", "Log to file webgen.log" ) { |logfile| config.set_log_dev_to_logfile if logfile }
-
-        opts.separator ""
-        opts.separator "Other options:"
-
-        opts.on( "--list-plugins", "-p", "List all the plugins and information about them" ) { main = method( :runListPlugins ) }
-        opts.on( "--list-configuration", "-c", "List all plugin configuration parameters" ) { main = method( :runListConfiguration ) }
-        opts.on_tail( "--help", "Display this help screen" ) { puts opts; exit }
-        opts.on_tail( "--version", "-v", "Show version" ) do
-          puts "Webgen #{Webgen::VERSION.join('.')}"
-          exit
-        end
-      end
-
-      begin
-        opts.parse!( cmdOptions )
-      rescue RuntimeError => e
-        print "Error:\n" << e.reason << ": " << e.args.join(", ") << "\n\n"
-        puts opts
-        exit
-      end
-
-      [main, data]
-    end
-
-
-    def runMain
+    def execute( commandParser, args )
       logger.info "Starting Webgen..."
 
       # load all the files in src dir and build tree
@@ -114,12 +70,32 @@ module Webgen
 
       logger.info "Webgen finished"
     end
+  end
 
 
-    def runListPlugins
+  class ShowCommand < CommandParser::Command
+
+    def initialize; super( 'show' ); end
+
+    def description; "Shows information"; end
+
+    def usage; "Usage: #{@options.program_name} [global options] show plugins|config"; end
+
+    def execute( commandParser, args )
+      case args[0]
+      when 'plugins' then showPlugins
+      when 'config' then showConfiguration
+      else raise OptionParser::InvalidArgument, args[0]
+      end
+      exit
+    end
+
+    private
+
+    def showPlugins
       print "List of loaded plugins:\n"
 
-      headers = Hash.new {|h,k| h[k] = k.gsub(/([A-Z])/, ' \1').strip}
+      headers = Hash.new {|h,k| h[k] = k.gsub(/([A-Z][a-z])/, ' \1').strip}
 
       ljustlength = 30 + Color.green.length + Color.reset.length
       header = ''
@@ -134,7 +110,7 @@ module Webgen
     end
 
 
-    def runListConfiguration
+    def showConfiguration
       print "List of configuration parameters:\n\n"
       ljustlength = 20 + Color.green.length + Color.reset.length
       Plugin.config.sort { |a, b| a[0].name <=> b[0].name }.each do |klass, data|
@@ -147,6 +123,90 @@ module Webgen
           print "\n"
         end
         print "\n"
+      end
+    end
+
+  end
+
+
+  class CreateCommand < CommandParser::Command
+
+    def initialize; super( 'create' ); end
+
+    def description; "Creates the basic directories and files for webgen"; end
+
+    def usage; "Usage: #{@options.program_name} [global options] create DIR"; end
+
+    def execute( commandParser, args )
+      if args.length == 0
+        raise OptionParser::MissingArgument.new( 'DIR' )
+      else
+        create_dir( args[0] )
+        create_dir( File.join( args[0], 'src' ) )
+        create_dir( File.join( args[0], 'output' ) )
+        File.open( File.join( args[0], 'config.yaml' ), 'w') do |f|
+          f.puts( "# Configuration file for webgen\n# Used to set the parameters of the plugins" )
+        end unless File.exists?( File.join( args[0], 'config.yaml' ) )
+        File.open( File.join( args[0], 'extension.config' ), 'w') do |f|
+          f.puts( "# Extension file for adding site specific tags and other plugins" )
+        end unless File.exists?( File.join( args[0], 'extension.config' ) )
+      end
+    end
+
+    def create_dir( dir )
+      Dir.mkdir( dir ) unless File.exists?( dir )
+    end
+
+  end
+
+
+  class WebgenCommandParser < CommandParser
+
+    def initialize
+      super
+      self.options do |opts|
+        opts.program_name = "webgen"
+        opts.version = Webgen::VERSION
+        opts.summary_width = 25
+        opts.summary_indent = '  '
+
+        opts.banner = "Usage: webgen [global options] COMMAND [command options]\n#{Webgen::SUMMARY}"
+
+        opts.separator ""
+        opts.separator "Global options:"
+
+        opts.on( "--verbosity LEVEL", "-V", Integer, "The verbosity level" ) { |verbosity| Plugin['Configuration']['verbosityLevel'] = verbosity }
+        opts.on( "--[no-]logfile", "-L", "Log to file" ) { |logfile| Plugin['Configuration'].set_log_dev_to_logfile if logfile }
+
+        opts.separator ""
+      end
+
+      self.add_command( RunWebgenCommand.new, true )
+      self.add_command( ShowCommand.new )
+      self.add_command( CreateCommand.new )
+      self.add_command( CommandParser::HelpCommand.new )
+      self.add_command( CommandParser::VersionCommand.new )
+    end
+
+    def parse!( args )
+      Plugin['Configuration'].init_all
+      super
+    end
+
+  end
+
+
+  class WebgenMain
+
+    def main( cmdOptions )
+      Color.colorify if $stdout.isatty && !Config::CONFIG['arch'].include?( 'mswin32' )
+      begin
+        wcp = WebgenCommandParser.new
+        wcp.parse!( ARGV )
+      rescue CommandParser::InvalidCommandError => e
+        puts "Error: invalid command given"
+        puts
+        wcp.commands['help'].execute( wcp, {} )
       end
     end
 

@@ -43,7 +43,7 @@ end
 
 module Webgen
 
-  VERSION = [0, 3, 2]
+  VERSION = [0, 3, 3]
   SUMMARY = "Webgen is a templated based static website generator."
   DESCRIPTION = "Webgen is a web page generator implemented in Ruby. " \
   "It is used to generate static web pages from templates and page " \
@@ -88,9 +88,11 @@ module Webgen
     # +name+:: the name of the parameter
     # +default+:: the default value of the parameter
     # +description+:: a small description of the parameter
-    def self.add_param( name, default, description )
+    # +changeHandler+:: optional, method/proc which is invoked every time the parameter is changed.
+    #                   Handler signature: changeHandler( paramName, oldValue, newValue )
+    def self.add_param( name, default, description, changeHandler = nil )
       self.logger.debug { "Adding parameter '#{name}' for plugin class '#{self.name}'" }
-      data = OpenStruct.new( :name => name, :value => default, :default => default, :description => description )
+      data = OpenStruct.new( :name => name, :value => default, :default => default, :description => description, :changeHandler => changeHandler )
       (@@config[self].params ||= {})[name] = data
     end
 
@@ -101,8 +103,10 @@ module Webgen
         item.klass.ancestor_classes.each do |k|
           item = @@config[k]
           if !item.nil? && !item.params.nil? && item.params.has_key?( name )
-            item.params[name].value = value
             logger.debug { "Setting parameter '#{name}' for plugin '#{plugin}' to #{value.inspect}" }
+            oldvalue = item.params[name].value
+            item.params[name].value = value
+            item.params[name].changeHandler.call( name, oldvalue, value ) if item.params[name].changeHandler
             throw :found, true
           end
         end
@@ -172,32 +176,27 @@ module Webgen
 
     add_param 'srcDirectory', 'src', 'The directory from which the source files are read.'
     add_param 'outDirectory', 'output', 'The directory to which the output files are written.'
-    add_param 'verbosityLevel', 2, 'The level of verbosity for the output of messages on the standard output.'
+    add_param 'verbosityLevel', 2, 'The level of verbosity for the output of messages on the standard output.', lambda {|p,o,n| logger.level = n }
     add_param 'lang', 'en', 'The default language.'
-    add_param 'configfile', 'config.yaml', 'The file from which extra configuration data is taken.'
     add_param 'logfile', 'webgen.log', 'The name of the log file if the log should be written to a file.'
 
     # Does all the initialisation stuff
-    def init_all( data )
-      data.each {|k,v| Plugin['Configuration'][k] = v}
-      logger.level = get_param( 'verbosityLevel' )
-
+    def init_all
+      verbosity = Plugin['Configuration']['verbosityLevel']
       load_plugins( File.dirname( __FILE__) + '/plugins', File.dirname( __FILE__).sub(/webgen$/, '') )
       parse_config_file
-
-      data.each {|k,v| Plugin['Configuration'][k] = v}
-      logger.level = get_param( 'verbosityLevel' )
+      Plugin['Configuration']['verbosityLevel'] = verbosity
       init_plugins
       Plugin['ExtensionLoader'].parse_config_file
     end
 
     # Parse config file and load the configuration values.
     def parse_config_file
-      if File.exists?( get_param( 'configfile' ) )
-        @pluginData = YAML::load( File.new( get_param( 'configfile' ) ) )
+      if File.exists?( 'config.yaml' )
+        @pluginData = YAML::load( File.new( 'config.yaml' ) )
         @pluginData.each {|plugin, params| params.each {|name,value| Plugin.set_param( plugin, name, value ) } }
       else
-        logger.info { "Config file <#{get_param( 'configfile' )}> does not exist, not extra configuration data read." }
+        logger.info { "Config file does not exist, no extra configuration data read." }
       end
     end
 

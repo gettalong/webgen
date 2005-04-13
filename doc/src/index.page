@@ -1,5 +1,5 @@
 ---
-title: Home
+title: HomePage
 inMenu: true
 directoryName: Webgen
 ---
@@ -12,11 +12,15 @@ Choose from the menu what you want to see from or know about webgen!
 
 h2. News
 
+*Webgen 0.3.3 released!!!*
+
+Major changes:
+
+* New command line interface based on "CommandParser":http://cmdparse.rubyforge.org
+
 *Webgen 0.3.2 released!!!*
 
 Bug fix release for bug #1637 and other bugs
-
-h2. News
 
 *Webgen 0.3.1 released!!!*
 
@@ -30,8 +34,6 @@ Major changes:
 * New parameters for @menu@ tag
 * Automatic checking of HTML files on their validness
 * Fixed bugs
-
-h2. News
 
 *Webgen 0.3.0 released!!!*
 

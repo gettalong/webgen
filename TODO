@@ -1,5 +1,8 @@
 ---- CURRENT ----
 
+* implement feature request 1642
+* refactor backing file structure: reference files directly, not via basename/language
+* remove PageNode nodes from tree and put ***.page nodes directly in dir??? (see directory/backing/page handler)
 * have a look at wiki
 * Bug in wikilink: & not supported
 * create tests for methods in webgen.rb

@@ -12,6 +12,7 @@ Download: "http://rubyforge.org/frs/?group_id=296":http://rubyforge.org/frs/?gro
 
 h2. Dependencies
 
+* "cmdparse":http://cmdparse.rubyforge.org version 1.0.1 or higher
 * "RedCloth":http://redcloth.rubyforge.org version 2.0.10 or higher if you want Textile support
 * "BlueCloth":http://www.deveiate.org version 1.0.0 or higher if you want Markdown support
 * "RMagick":http://rmagick.rubyforge.org/ version 1.7.1 or higher if you want automatic thumbnail

@@ -1,4 +1,4 @@
-title: Design Gallery
+title: Design Gallery (example for Gallery File Handler)
 files: designs/*.png
 
 mainPage:
