@@ -4,7 +4,7 @@ require 'setup'
 
 class PageHandlerTest < Test::Unit::TestCase
 
-  Webgen::Plugin['Configuration'].init_all( {} )
+  Webgen::Plugin['Configuration'].init_all
 
   class TestPageHandler < ::FileHandlers::PageHandler
     def test_analyse_file_name( name)

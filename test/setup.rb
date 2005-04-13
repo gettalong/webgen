@@ -1,3 +1,5 @@
+require 'webgen/plugin'
+
 class MockLogger
 
   attr_accessor :level
@@ -23,7 +25,6 @@ end
 
 class Object
 
-  remove_const :LOGGER
-  LOGGER = MockLogger.new
+  @@logger = MockLogger.new
 
 end
