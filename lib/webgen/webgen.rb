@@ -23,7 +23,7 @@
 require 'optparse'
 require 'rbconfig'
 require 'cmdparse'
-require 'webgen/configuration'
+require 'webgen/plugin'
 
 module Webgen
 
@@ -85,7 +85,7 @@ module Webgen
       case args[0]
       when 'plugins' then showPlugins
       when 'config' then showConfiguration
-      else raise OptionParser::InvalidArgument, args[0]
+      else puts "You have to specify either 'plugins' or 'config'"
       end
       exit
     end
@@ -144,6 +144,8 @@ module Webgen
         create_dir( args[0] )
         create_dir( File.join( args[0], 'src' ) )
         create_dir( File.join( args[0], 'output' ) )
+        create_dir( File.join( args[0], 'log' ) )
+        create_dir( File.join( args[0], 'plugin' ) )
         File.open( File.join( args[0], 'config.yaml' ), 'w') do |f|
           f.puts( "# Configuration file for webgen\n# Used to set the parameters of the plugins" )
         end unless File.exists?( File.join( args[0], 'config.yaml' ) )
@@ -175,8 +177,8 @@ module Webgen
         opts.separator ""
         opts.separator "Global options:"
 
-        opts.on( "--verbosity LEVEL", "-V", Integer, "The verbosity level" ) { |verbosity| Plugin['Configuration']['verbosityLevel'] = verbosity }
-        opts.on( "--[no-]logfile", "-L", "Log to file" ) { |logfile| Plugin['Configuration'].set_log_dev_to_logfile if logfile }
+        opts.on( "--verbosity LEVEL", "-V", Integer, "The verbosity level" ) { |verbosity| Plugin.set_param( 'Configuration', 'verbosityLevel', verbosity ) }
+        opts.on( "--[no-]logfile", "-L", "Log to file" ) { |logfile| Plugin.set_param( 'Logging', 'logToFile', logfile ) }
 
         opts.separator ""
       end
@@ -188,11 +190,6 @@ module Webgen
       self.add_command( CommandParser::VersionCommand.new )
     end
 
-    def parse!( args )
-      Plugin['Configuration'].init_all
-      super
-    end
-
   end
 
 
@@ -202,7 +199,9 @@ module Webgen
       Color.colorify if $stdout.isatty && !Config::CONFIG['arch'].include?( 'mswin32' )
       begin
         wcp = WebgenCommandParser.new
-        wcp.parse!( ARGV )
+        wcp.parse!( ARGV, false )
+        Plugin['Configuration'].init_all
+        wcp.execute
       rescue CommandParser::InvalidCommandError => e
         puts "Error: invalid command given"
         puts
