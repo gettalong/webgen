@@ -1,0 +1,11 @@
+---
+title: Textile
+inMenu: true
+---
+h2. Information
+
+<notextile>{describe: TextileContentHandler}</notextile>
+
+h2. Description
+
+Handles content written using Textile markup ("Reference":http://hobix.com/textile/).

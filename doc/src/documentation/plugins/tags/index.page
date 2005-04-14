@@ -19,9 +19,9 @@ Tags are defined by a special markup code. A tag has the following structure:
 
 Every time a tag is found in a source file, the registered plugin for the tag is called. The plugin
 returns a string which is put into the output file instead of the tag. The output a tag plugin can
-produce ranges from something simple to something complex. For example, the <a href="{relocatable: meta.page}">
+produce ranges from something simple to something complex. For example, the <a href="{relocatable: meta.html}">
 Meta Tag</a> plugin copies any additional info specified in the source file verbatim
-into the correct place in the output file. And in contrast, the <a href="{relocatable: menu.page}">
+into the correct place in the output file. And in contrast, the <a href="{relocatable: menu.html}">
 Menu Tag</a> plugin generates a whole menu tree.
 
 h2. Tag Parameters

@@ -1,10 +1,10 @@
 ---
-title: Language Bar
+title: Language
 inMenu: true
 ---
 h2. Information
 
-<notextile>{describe: LanguageBarTag}</notextile>
+<notextile>{describe: LanguageTag}</notextile>
 
 h2. Description
 
@@ -15,13 +15,13 @@ item.
 
 h2. Examples
 
-Here is a <a href="{relocatable: multilang.page}">link</a> to a page which is translated to several
+Here is a <a href="{relocatable: multilang.html}">link</a> to a page which is translated to several
 languages (more or less ;-). Have a look at it and don't forget to view the page in the other
 languages!
 
 table{border:1px solid black}.
 |_.Command|_.Output|
-|<notextile>\{langbar: }</notextile>|<notextile>{langbar: }</notextile>|
-|\{langbar: {separator: Hallo}}|{langbar: {separator: Hallo}}|
-|\{langbar: {showSingleLang: false}}|{langbar: {showSingleLang: false}}|
+|<notextile>\{lang: }</notextile>|<notextile>{lang: }</notextile>|
+|\{lang: {separator: Hallo}}|{lang: {separator: Hallo}}|
+|\{lang: {showSingleLang: false}}|{lang: {showSingleLang: false}}|
 

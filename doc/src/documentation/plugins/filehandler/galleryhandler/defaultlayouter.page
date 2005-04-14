@@ -1,0 +1,12 @@
+---
+title: Default Gallery Layouter
+inMenu: true
+---
+h2. Information
+
+<notextile>{describe: DefaultGalleryLayouter}</notextile>
+
+h2. Description
+
+This plugin serves as base class for all picture gallery layouters and provides a default
+implementation.

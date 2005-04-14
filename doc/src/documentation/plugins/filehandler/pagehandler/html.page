@@ -1,0 +1,11 @@
+---
+title: HTML
+inMenu: true
+---
+h2. Information
+
+<notextile>{describe: HTMLContentHandler}</notextile>
+
+h2. Description
+
+Handles content written in plain HTML.

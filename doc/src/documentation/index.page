@@ -57,7 +57,7 @@ in the current directory for the configuration file.
 
 If you want to get the configuration values you can run webgen like this
 <pre>
-  $ webgen -c
+  $ webgen show config
 </pre>
 
 The list shows sorted by the plugin name the current values and the default values for each
@@ -70,5 +70,9 @@ looks like this:
 h2. Plugins
 
 Webgen is written with extensibility in mind; therefore most of its features are implemented with
-plugins, only the core functions are not plugins. Use the menu to view the documentation for
-individual plugins.
+plugins, only the core functions are not plugins. Use the menu to view the documentation for the
+plugins which come with the distribution.
+
+Writing your own plugins is not difficult, too! If you need a specific functionality, implement a
+plugin and put it under the site specific @plugin@ directory - then the plugin gets loaded with the
+others. It's so easy!
