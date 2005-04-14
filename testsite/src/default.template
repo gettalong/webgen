@@ -10,7 +10,7 @@
       <h1>{title: }</h1>
       <div id="navbar">
         <span id="navtree">{navbar: }</span>
-        <span id="languages">{lang: }</span>
+        <span id="languages">{langbar: }</span>
         <div style="clear: both; border-bottom: 1px solid #8ad"></div>
       </div>
     </div>
