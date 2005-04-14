@@ -85,7 +85,7 @@ class Node
   def node_for_string( destString )
     node = get_node_for_string( destString )
     if node.nil?
-      self.logger.warn { "Could not get destination node '#{destString}' for <#{metainfo['src']}>" }
+      self.logger.warn { "Could not get destination node '#{destString}' for <#{recursive_value( 'src' )}>" }
     end
     node
   end

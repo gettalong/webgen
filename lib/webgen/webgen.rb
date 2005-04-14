@@ -95,7 +95,7 @@ module Webgen
     def showPlugins
       print "List of loaded plugins:\n"
 
-      headers = Hash.new {|h,k| h[k] = k.gsub(/([A-Z][a-z])/, ' \1').strip}
+      headers = Hash.new {|h,k| h[k] = (k.nil? ? "Other Plugins" : k.gsub(/([A-Z][a-z])/, ' \1').strip) }
 
       ljustlength = 30 + Color.green.length + Color.reset.length
       header = ''
@@ -108,7 +108,6 @@ module Webgen
         print "    - #{Color.green}#{data.plugin}#{Color.reset}:".ljust(ljustlength) +"#{data.summary}\n"
       end
     end
-
 
     def showConfiguration
       print "List of configuration parameters:\n\n"
