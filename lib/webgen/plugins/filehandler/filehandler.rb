@@ -190,13 +190,6 @@ module FileHandlers
       raise "Not implemented"
     end
 
-    # Returns the language node for the given +node+. The default implementation returns the node
-    # itself. You can optionally specify the language of the node which should be returned. If not
-    # specified the language of the node is used.
-    def get_lang_node( node, lang = node['lang'] )
-      node
-    end
-
     # Returns a HTML link for the given +node+ relative to +refNode+. You can optionally specify the
     # title for the link. If not specified, the title of the node is used.
     def get_html_link( node, refNode, title = node['title'] )

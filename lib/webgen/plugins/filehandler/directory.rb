@@ -43,7 +43,7 @@ module FileHandlers
       end
 
       def process_dir_index
-        node = Webgen::Plugin['PageHandler'].get_page_node( Webgen::Plugin['DirHandler']['indexFile'], self )
+        node = Webgen::Plugin['PageHandler'].get_page_node_by_name( self, Webgen::Plugin['DirHandler']['indexFile'] )
         if node
           self.logger.info { "Directory index file for <#{self.recursive_value( 'src' )}> => <#{node.recursive_value( 'src', false )}>" }
           self['indexFile'] = node
@@ -58,7 +58,7 @@ module FileHandlers
 
     summary "Handles directories"
     extension :dir
-    add_param 'indexFile', 'index.page', 'The default file name for the directory index file.'
+    add_param 'indexFile', 'index.html', 'The default file name for the directory index file.'
     depends_on 'FileHandler'
 
 
@@ -76,12 +76,12 @@ module FileHandlers
       FileUtils.makedirs( name ) unless File.exists?( name )
     end
 
-    # Return the language node for the directory +node+ using the specified language +lang+. If an
+    # Return the page node for the directory +node+ using the specified language +lang+. If an
     # index file is specified, then the its correct language node is returned, else +node+ is
     # returned.
-    def get_lang_node( node, lang = node['lang'] )
+    def get_page_node_for_lang( node, lang )
       if node['indexFile']
-        node['indexFile']['processor'].get_lang_node( node['indexFile'], lang )
+        node['indexFile']['processor'].get_page_node_for_lang( node['indexFile'], lang )
       else
         node
       end
@@ -89,7 +89,7 @@ module FileHandlers
 
     # Get the HTML link for the directory +node+.
     def get_html_link( node, refNode, title = nil )
-      lang_node = get_lang_node( node, refNode['lang'] )
+      lang_node = get_page_node_for_lang( node, refNode['lang'] )
       title ||=  lang_node['directoryName'] || node['directoryName']
       super( lang_node, refNode, title )
     end

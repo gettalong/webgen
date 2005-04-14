@@ -67,7 +67,7 @@ module Tags
 
         # find the first menuOrder entry in the page files
         node = node['indexFile'] if node.kind_of?( FileHandlers::DirHandler::DirNode )
-        node = node.find {|child| child['menuOrder'].to_s.to_i != 0} if node.kind_of?( FileHandlers::PageHandler::PageNode )
+        node = node.parent.find {|child| child['page:name'] == node['page:name'] && child['menuOrder'].to_s.to_i != 0} if !node.nil? && node['page:name']
         value ||= node['menuOrder'].to_s.to_i unless node.nil?
 
         # fallback value
@@ -151,7 +151,7 @@ module Tags
 
 
     def menu_entry( srcNode, node )
-      langNode = node['processor'].get_lang_node( node, srcNode['lang'] )
+      langNode = node['processor'].get_page_node_for_lang( node, srcNode['lang'] )
       isDir = node.kind_of?( FileHandlers::DirHandler::DirNode )
 
       styles = []
@@ -173,20 +173,12 @@ module Tags
       menuNode = MenuNode.new( parent, node )
 
       node.each do |child|
+        next if menuNode.find {|n| n['page:name'] == child['page:name'] && !n['page:name'].nil? }
         menu = create_menu_tree( child, menuNode )
         menuNode.add_child( menu ) unless menu.nil?
       end
 
-      return menuNode.has_children? ? menuNode : ( put_node_in_menu?( node ) ? node : nil )
-    end
-
-
-    def put_node_in_menu?( node )
-      inMenu = node['inMenu']
-      inMenu ||=  node.parent && node.parent.kind_of?( FileHandlers::PageHandler::PageNode ) &&
-                  node.parent.find do |child| child['inMenu'] end
-      inMenu &&= !node['virtual']
-      inMenu
+      return menuNode.has_children? ? menuNode : ( node['inMenu'] && !node['virtual'] ? node : nil )
     end
 
   end

@@ -29,19 +29,7 @@ module FileHandlers
   # for page description files is easy.
   class PageHandler < DefaultFileHandler
 
-    # Specialized node describing a page. A page node itself is virtual, it has sub nodes which
-    # describe the page files in all available languages.
-    class PageNode < Node
-
-      def initialize( parent, basename )
-        super( parent )
-        self['page:basename'] = self['title'] = basename
-        self['src'] = self['dest'] = basename
-        self['virtual'] = true
-        self['processor'] = Webgen::Plugin['PageHandler']
-      end
-
-    end
+    class PageNode < Node; end;
 
     summary "Class for processing page files"
     extension 'page'
@@ -65,7 +53,6 @@ module FileHandlers
 
     def write_node( node )
       # do nothing if page base node
-      return unless node['virtual'].nil?
       templateNode = Webgen::Plugin['TemplateFileHandler'].get_template_for_node( node )
 
       outstring = templateNode['content'].dup
@@ -82,28 +69,26 @@ module FileHandlers
       end
     end
 
-    def page_node_exists?( basename, dirNode )
-      dirNode.find {|node| node['page:basename'] == basename}
-    end
-    alias :get_page_node :page_node_exists?
-
-    def lang_node_exists?( pageNode, lang )
-      langNode = pageNode.find {|child| child['lang'] == lang }
-      return !langNode.nil?
+    def get_page_node_by_name( dirNode, name )
+      dirNode.find {|node| node['page:name'] == name}
     end
 
-    def get_lang_node( node, lang = node['lang'] )
-      node = node.parent unless node['page:basename']
-      langNode = node.find {|child| child['lang'] == lang} ||
-                 node.find {|child| child['lang'] == Webgen::Plugin['Configuration']['lang']}
-      if langNode.nil?
-        langNode = node.children[0]
-        self.logger.warn do
-          "No input file in language '#{lang}' nor the default language (#{Webgen::Plugin['Configuration']['lang']}) found," +
-          "using first available input file for <#{node['title']}>"
+    # Returns the page node for the given language. +node+ has to be a page node!
+    def get_page_node_for_lang( node, lang )
+      dirNode = node.parent
+      pageNode = dirNode.find {|child| child['page:name'] == node['page:name'] && child['lang'] == lang}
+      if pageNode.nil?
+        self.logger.info { "No page node in language '#{lang}' for page '#{node['title']}' found, trying default language" }
+        pageNode = dirNode.find {|child| child['page:name'] == node['page:name'] && child['lang'] == Webgen::Plugin['Configuration']['lang']}
+        if pageNode.nil?
+          self.logger.warn do
+            "No page node in default language (#{Webgen::Plugin['Configuration']['lang']}) " + \
+            "for page '#{node['title']}' found, using supplied page node"
+          end
+          pageNode = node
         end
       end
-      langNode
+      pageNode
     end
 
     #######
@@ -111,32 +96,26 @@ module FileHandlers
     #######
 
     def create_node_internally( data, analysed, parent )
-      pageNodeExisted = get_page_node( analysed.baseName, parent )
-      pageNode = pageNodeExisted || PageNode.new( parent, analysed.baseName )
-
       lang = data['lang'] || analysed.lang
 
-      if lang_node_exists?( pageNode, lang )
-        pageNodeExisted = false
+      if node = parent.find {|node| node['page:commonName'] == analysed.name && node['lang'] == lang }
         logger.warn do
           "Two input files in the same language for one page, " + \
-          "using <#{get_lang_node( pageNode, lang ).recursive_value( 'src' )}> " + \
-          "instead of <#{analysed.srcName}>"
+          "using <#{node.recursive_value( 'src' )}> instead of <#{analysed.srcName}>"
         end
       else
-        node = Node.new( pageNode )
+        node = PageNode.new( parent )
         node.metainfo = data
-        node['node:isLangNode'] = true
         node['lang'] ||= analysed.lang
         node['title'] ||= analysed.title
         node['menuOrder'] ||= analysed.menuOrder
         node['src'] = analysed.srcName
-        node['dest'] = create_output_name( analysed, node.metainfo )
+        node['dest'] = create_output_name( analysed, node['outputNameStyle'] || get_param( 'outputNameStyle' ) )
+        node['page:name'] = create_output_name( analysed, node['outputNameStyle'] || get_param( 'outputNameStyle' ), true )
         node['processor'] = self
-        pageNode.add_child( node )
       end
 
-      return ( pageNodeExisted ? nil : pageNode )
+      return node
     end
 
     def parse_data( data, srcName )
@@ -170,7 +149,6 @@ module FileHandlers
 
       self.logger.info { "Using default language for file <#{srcName}>" } if matchData[3].nil?
       analysed.lang      = matchData[3] || Webgen::Plugin['Configuration']['lang']
-      analysed.baseName  = matchData[2] + '.page'
       analysed.srcName   = srcName
       analysed.useLangPart  = ( !get_param( 'defaultLangInFilename' ) && Webgen::Plugin['Configuration']['lang'] == analysed.lang ? false : true )
       analysed.name      = matchData[2]
@@ -182,24 +160,21 @@ module FileHandlers
       analysed
     end
 
-    def create_output_name( analysed, data )
-      def process_array( array, analysed )
-        array.collect do |part|
-          case part
-          when String
-            part
-          when :name
-            analysed.name
-          when :lang
-            analysed.useLangPart ? analysed.lang : ''
-          when Array
-            part.include?( :lang ) && !analysed.useLangPart ? '' : process_array( part, analysed )
-          else
-            ''
-          end
-        end.join( '' )
-      end
-      process_array( data['outputNameStyle'] || get_param( 'outputNameStyle' ), analysed )
+    def create_output_name( analysed, data, omitLangPart = false )
+      data.collect do |part|
+        case part
+        when String
+          part
+        when :name
+          analysed.name
+        when :lang
+          analysed.useLangPart && !omitLangPart ? analysed.lang : ''
+        when Array
+          part.include?( :lang ) && (!analysed.useLangPart || omitLangPart) ? '' : create_output_name( analysed, part, omitLangPart )
+        else
+          ''
+        end
+      end.join( '' )
     end
 
   end

@@ -26,35 +26,6 @@ require 'webgen/plugins/filehandler/page'
 
 module FileHandlers
 
-  # Handles page description backing files. Backing files are files that specify meta information
-  # for other files. They are written in YAML and have a very easy structure:
-  #
-  #    filename1.html:
-  #      lang1:
-  #        metainfo1: value1
-  #        metainfo2: value2
-  #      lang2:
-  #        metainfo21: value21
-  #
-  #    dir1/../dir1/filenam2.html:
-  #      lang1:
-  #        title: New titel by backing file
-  #
-  #    /index.html:
-  #      lang1:
-  #        title: YES!!!
-  #
-  # As you can see, you can use relative and absoulte paths in the filenames. However, you cannot
-  # specify meta information for files which are in one of the parent directories of the backing
-  # file. These backing files are very useful if you are using page description files which do not
-  # support meta information, e.g. HTML fragment files.
-  #
-  # Using backing files you can add virtual files and directories. If the file specified in the
-  # entry does not exist, a virtual page node for that entry will be created. This will also create
-  # the whole directory tree this virtual node is in. This allows you, for example, to add external
-  # items to the menu. You need to specify the +dest+ meta information which points to the actual
-  # location of the referenced page. If the virtual page references an external page, you have to
-  # add the +external+ meta information (i.e. set +external+ to +true+).
   class BackingFileHandler < DefaultFileHandler
 
     summary "Handles backing files for page file"
@@ -94,7 +65,7 @@ module FileHandlers
 
     def valid_content( data )
       data.kind_of?( Hash ) \
-      && data.all? {|k,v| v.kind_of?( Hash ) && v.all? {|k1,v1| v1.kind_of?( Hash )} }
+      && data.all? {|k,v| v.kind_of?( Hash ) }
     end
 
     def process_backing_file( dirNode )
@@ -104,13 +75,8 @@ module FileHandlers
         backingFile['content'].each do |filename, data|
           if dirNode.node_for_string?( filename )
             backedFile = dirNode.node_for_string( filename )
-            data.each do |language, fileData|
-              langFile = Webgen::Plugin['PageHandler'].get_lang_node( backedFile, language )
-              next unless langFile['lang'] == language
-
-              self.logger.info { "Setting meta info data on file <#{langFile.recursive_value( 'dest' )}>" }
-              langFile.metainfo.update( fileData )
-            end
+            self.logger.info { "Setting meta info data on file <#{backedFile.recursive_value( 'dest' )}>" }
+            backedFile.metainfo.update( data )
           else
             add_virtual_node( dirNode, filename, data )
           end
@@ -124,21 +90,12 @@ module FileHandlers
       filename = File.basename( path )
       dirNode = create_path( dirname, dirNode )
 
-      data.each do |language, filedata|
-        self.logger.debug { "Trying to create virtual node for '#{filename}' (#{language})..." }
-        filedata['lang'] = language
-
-        pageNode = Webgen::Plugin['VirtualPageHandler'].create_node_from_data( '', filename, dirNode )
-        unless pageNode.nil?
-          self.logger.debug { "Adding virtual page node <#{pageNode.recursive_value( 'src', false )}> to directory <#{dirNode.recursive_value( 'src' )}>" }
-          dirNode.add_child( pageNode )
-        end
-        pageNode ||= Webgen::Plugin['VirtualPageHandler'].get_page_node( filename, dirNode ) #TODO
-        node = Webgen::Plugin['VirtualPageHandler'].get_lang_node( pageNode, language )
-        node.metainfo.update( filedata )
-        self.logger.info { "Created virtual node <#{node.recursive_value( 'src' )}> (#{node['lang']}) in <#{dirNode.recursive_value( 'dest' )}> " \
-          "referencing '#{node['dest']}'" }
-      end
+      self.logger.debug { "Trying to create virtual node for '#{filename}'..." }
+      pageNode = Webgen::Plugin['VirtualPageHandler'].create_node_from_data( '', filename, dirNode )
+      dirNode.add_child( pageNode )
+      pageNode.metainfo.update( data )
+      self.logger.info { "Created virtual node <#{pageNode.recursive_value( 'src' )}> (#{pageNode['lang']}) in <#{dirNode.recursive_value( 'dest' )}> " \
+        "referencing '#{pageNode['dest']}'" }
     end
 
 
