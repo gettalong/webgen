@@ -27,10 +27,10 @@ module Webgen
 
   class Logger < ::Logger
 
-    def initialize( dev, files, size )
+    def initialize( dev, files, size, level )
       super( dev, files, size )
       self.datetime_format = "%Y-%m-%d %H:%M:%S"
-      self.level = Logger::ERROR
+      self.level = level
     end
 
     def format_message( severity, timestamp, msg, progname )
@@ -53,7 +53,7 @@ end
 
 class Object
 
-  @@logger = Webgen::Logger.new( STDERR, 0, 0 )
+  @@logger = Webgen::Logger.new( STDERR, 0, 0, Logger::ERROR )
 
   def self.set_logger( logger )
     @@logger = logger
@@ -81,6 +81,8 @@ module Webgen
 
     add_param 'maxLogFiles', 10, 'The maximum number of log files'
     add_param 'maxLogSize', 1024*1024, 'The maximum size of the log files'
+    add_param 'verbosityLevel', 2, 'The level of verbosity for the output of logging messages (0=DEBUG, 1=INFO, 2=WARNING 3=ERROR).',
+       lambda {|p,o,n| logger.level = n }
     add_param 'logToFile', false, 'Specifies if the log messages should be put to the logfile',
        (lambda do |p, o, n|
           dev = STDERR
@@ -88,7 +90,7 @@ module Webgen
             Dir.mkdir( 'log' ) unless File.exists?( 'log' )
             dev = 'log/webgen.log'
           end
-          Object.set_logger( Webgen::Logger.new( dev, get_param( 'maxLogFiles' ), get_param( 'maxLogSize' ) ) )
+          Object.set_logger( Webgen::Logger.new( dev, get_param( 'maxLogFiles' ), get_param( 'maxLogSize' ), get_param( 'verbosityLevel') ) )
         end)
 
   end

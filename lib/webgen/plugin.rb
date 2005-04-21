@@ -73,7 +73,7 @@ module Webgen
     #                   Handler signature: changeHandler( paramName, oldValue, newValue )
     def self.add_param( name, default, description, changeHandler = nil )
       self.logger.debug { "Adding parameter '#{name}' for plugin class '#{self.name}'" }
-      if @@configFileData.has_key?( @@config[self].plugin ) \
+      if @@configFileData.kind_of?( Hash ) && @@configFileData.has_key?( @@config[self].plugin ) \
         && @@configFileData[@@config[self].plugin].has_key?( name )
         curval = @@configFileData[@@config[self].plugin][name]
       else

@@ -52,7 +52,7 @@ module Webgen
 
     def initialize; super( 'run' ); end
 
-    def description; "Runs webgen"; end
+    def description; "Runs webgen. This command is used as default command when no command was issued."; end
 
     def usage; "Usage: #{@options.program_name} [global options] run"; end
 
@@ -77,7 +77,7 @@ module Webgen
 
     def initialize; super( 'show' ); end
 
-    def description; "Shows information"; end
+    def description; "Shows all available plugins or their configuration items."; end
 
     def usage; "Usage: #{@options.program_name} [global options] show plugins|config"; end
 
@@ -132,7 +132,10 @@ module Webgen
 
     def initialize; super( 'create' ); end
 
-    def description; "Creates the basic directories and files for webgen"; end
+    def description;
+      "Creates the basic directories and files for webgen. This includes the source and output directories, " \
+      "the log and the plugin directory. Also, a basic template plus a CSS and an index file are created."
+    end
 
     def usage; "Usage: #{@options.program_name} [global options] create DIR"; end
 
@@ -145,17 +148,161 @@ module Webgen
         create_dir( File.join( args[0], 'output' ) )
         create_dir( File.join( args[0], 'log' ) )
         create_dir( File.join( args[0], 'plugin' ) )
-        File.open( File.join( args[0], 'config.yaml' ), 'w') do |f|
-          f.puts( "# Configuration file for webgen\n# Used to set the parameters of the plugins" )
-        end unless File.exists?( File.join( args[0], 'config.yaml' ) )
-        File.open( File.join( args[0], 'extension.config' ), 'w') do |f|
-          f.puts( "# Extension file for adding site specific tags and other plugins" )
-        end unless File.exists?( File.join( args[0], 'extension.config' ) )
+        create_file( File.join( args[0], 'config.yaml' ), content_config_yaml )
+        create_file( File.join( args[0], 'src', 'default.template' ), content_default_template )
+        create_file( File.join( args[0], 'src', 'default.css' ), content_default_css )
+        create_file( File.join( args[0], 'src', 'index.page' ), content_index_page )
       end
     end
 
     def create_dir( dir )
       Dir.mkdir( dir ) unless File.exists?( dir )
+    end
+
+    def create_file( file, content )
+      File.open( file, 'w') do |f|
+        f.puts( content )
+      end unless File.exists?( file )
+    end
+
+    def content_config_yaml
+      "# Configuration file for webgen\n# Used to set the parameters of the plugins"
+    end
+
+    def content_default_template
+      "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\" \"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">
+<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"{lang:}\">
+  <head>
+    <title>{title: }</title>
+    <link href=\"{relocatable: default.css}\" rel=\"stylesheet\" />
+    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />
+  </head>
+  <body>
+    <div id=\"header\">
+      <h1>{title: }</h1>
+    </div>
+
+    <div id=\"headerbar\" class=\"bar\">
+      <span class=\"left\">Navbar: {navbar: }</span>
+      <span class=\"right\">Language: {langbar: }</span>
+      <div style=\"clear:both\"></div>
+    </div>
+
+    <div id=\"menu\">
+      {menu: {subtreeLevel: 4}}
+    </div>
+
+    <div id=\"body\">
+      {content: }
+    </div>
+
+    <div id=\"footer\" class=\"bar\">
+      generated with <a href=\"http://webgen.rubyforge.org\"><em><b>webgen</b></em></a> on <b>{date: }</b>
+    </div>
+  </body>
+</html>
+"
+    end
+
+    def content_default_css
+      "
+  #all { background-color: #CCCCCC; }
+
+  #header {
+    border-bottom: 1px solid black;
+    padding: 1ex;
+    background-color: #888888;
+  }
+  #header h1 {
+    margin: 0ex;
+	font-size: 300%;
+	font-style: italic;
+	font-weight: normal;
+  }
+
+, #headerbar { border-bottom: 1px solid black; }
+  #footer { border-top: 1px solid black; }
+
+  #body {
+    margin-left: 250px;
+    margin-right: 20px;
+    padding: 10px;
+  }
+
+  #menu {
+	float: left;
+	width: 230px;
+    padding: 20px 0px 0px 2px;
+  }
+
+  .bar {
+	clear: both;
+	padding: 3px;
+	text-align: center;
+	font-size: 90%;
+    background-color: #AAAAAA;
+  }
+
+  .left, .right {
+    padding: 0px 1em;
+  }
+
+  .left {
+	float: left;
+	text-align: left;
+  }
+
+  .right {
+	float: right;
+	text-align: right;
+  }
+
+  /* styling the menu */
+
+  #menu a {
+	text-decoration: none;
+	font-weight: bold;
+	font-size: 130%;
+  }
+
+  #menu a:hover {
+	text-decoration: underline;
+  }
+
+  #menu .webgen-menuitem-selected {
+	border-left: 3px solid black;
+  }
+
+  #menu ul {
+	list-style-type: none;
+	padding: 0px;
+	margin-left: 10px;
+  }
+
+  #menu li > ul {
+	font-size: 95%;
+  }
+
+  #menu li {
+    margin: 0.0em 0px;
+    padding: 2px 0px;
+    padding-left: 5px;
+    border-left: 3px solid #CCCCCC;
+  }
+"
+    end
+
+    def content_index_page
+      "---
+title: Empty index page
+inMenu: true
+directoryName: New Website
+---
+h2. Empty index file
+
+Fill this file with your own data!!!
+"
     end
 
   end
@@ -176,7 +323,7 @@ module Webgen
         opts.separator ""
         opts.separator "Global options:"
 
-        opts.on( "--verbosity LEVEL", "-V", Integer, "The verbosity level" ) { |verbosity| Plugin.set_param( 'Configuration', 'verbosityLevel', verbosity ) }
+        opts.on( "--verbosity LEVEL", "-V", Integer, "The verbosity level" ) { |verbosity| Plugin.set_param( 'Logging', 'verbosityLevel', verbosity ) }
         opts.on( "--[no-]logfile", "-L", "Log to file" ) { |logfile| Plugin.set_param( 'Logging', 'logToFile', logfile ) }
 
         opts.separator ""

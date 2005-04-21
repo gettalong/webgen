@@ -50,7 +50,6 @@ module Webgen
 
     add_param 'srcDirectory', 'src', 'The directory from which the source files are read.'
     add_param 'outDirectory', 'output', 'The directory to which the output files are written.'
-    add_param 'verbosityLevel', 2, 'The level of verbosity for the output of messages on the standard output.', lambda {|p,o,n| logger.level = n }
     add_param 'lang', 'en', 'The default language.'
 
     # Does all the initialisation stuff
