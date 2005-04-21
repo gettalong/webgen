@@ -73,7 +73,7 @@ desc "Builds the documentation"
 task :doc => [:rdoc] do
   chdir 'doc' do
     puts "\nGenerating online documentation..."
-    ruby %{-I../lib ../bin/webgen -V 3 }
+    ruby %{-I../lib ../bin/webgen -V 2 }
   end
 end
 
