@@ -20,7 +20,6 @@ class NodeTest < Test::Unit::TestCase
     @n['root/file1']['otherdest'] = 'file1o'
     @n['root/file11'] = create_node( @n['root'] )
     @n['root/file11']['dest'] = 'rdoc/file11'
-    @n['root/file11']['otherdest'] = 'file1o'
     @n['root/virtdir1'] = create_node( @n['root'] )
     @n['root/virtdir1']['virtual'] = true
     @n['root/virtdir1']['dest'] = 'virtdir1/'
@@ -32,10 +31,14 @@ class NodeTest < Test::Unit::TestCase
     @n['root/dir2/file3']['dest'] = 'file3'
     @n['root/dir2/file4'] = create_node( @n['root/dir2'] )
     @n['root/dir2/file4']['dest'] = 'file4'
+    @n['root/dir2/file5'] = create_node( @n['root/dir2'] )
+    @n['root/dir2/file5']['dest'] = 'otherdest/file5'
     @n['root/dir2/dir3'] = create_node( @n['root/dir2'] )
     @n['root/dir2/dir3']['dest'] = 'dir3/'
     @n['root/dir4'] = create_node( @n['root'] )
     @n['root/dir4']['dest'] = 'dir4/'
+    @n['root/rdoc'] = create_node( @n['root'] )
+    @n['root/rdoc']['dest'] = 'rdoc/'
   end
 
   def create_node( parent )
@@ -96,6 +99,8 @@ class NodeTest < Test::Unit::TestCase
     assert_equal( @n['root/virtdir1/file2'], @n['root'].node_for_string( 'virtdir1/file2' ) )
     assert_equal( @n['root/file1'], @n['root/virtdir1/file2'].node_for_string( 'file1' ) )
     assert_equal( @n['root/dir2/file3'], @n['root/virtdir1/file2'].node_for_string( '/dir2/file3' ) )
+    assert_equal( @n['root/file11'], @n['root/virtdir1/file2'].node_for_string( '/rdoc/file11' ) )
+    assert_equal( @n['root/dir2/file5'], @n['root/dir2/file4'].node_for_string( '/dir2/otherdest/file5' ) )
   end
 
   def test_node_for_string_question

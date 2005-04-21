@@ -138,11 +138,32 @@ class Node
       node = self.parent_dir || self
     end
 
-    destString.split( '/' ).each do |element|
-      return nil if node.nil?
+    startElement = node
+    elements = destString.split( '/' )
+
+    elements.each do |element|
+      break if node.nil?
       case element
       when '..' then node = node.parent
-      else node = node.find do |child| /^#{element}\/?$/ =~ child['dest'] end
+      else node = node.find {|child| /^#{element}\/?$/ =~ child['dest'] }
+      end
+    end
+
+    # try extended search where child['dest'] can have slashes
+    if node.nil?
+      node = startElement
+      elements.each_with_index do |element, index|
+        break if node.nil?
+        temp = node.find {|child| /^#{elements[index..-1].join( '/' )}\/?$/ =~ child['dest']}
+        if temp.nil?
+          case element
+          when '..' then node = node.parent
+          else node = node.find {|child| /^#{element}\/?$/ =~ child['dest'] }
+          end
+        else
+          node = temp
+          break
+        end
       end
     end
 
