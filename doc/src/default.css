@@ -118,10 +118,14 @@
     border-bottom: 1px solid #405080;
   }
 
-  .webgen-file {
+  pre {
     padding-left: 10px;
     margin: 0px 10px;
     border-left: 3px solid #5C73B8;
+  }
+
+  dt {
+    font-weight: bold;
   }
 
   .webgen-picture {

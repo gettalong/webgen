@@ -3,6 +3,7 @@ module OtherPlugins
   class VersionTag < Tags::DefaultTag
 
     summary "Shows the version number of webgen"
+    depends_on 'Tags'
 
     def initialize
       super
@@ -20,6 +21,7 @@ module OtherPlugins
     summary "Shows options for the specified file handler"
     add_param 'plugin', nil, 'The plugin which should be described'
     set_mandatory 'plugin', true
+    depends_on 'Tags'
 
     def initialize
       super

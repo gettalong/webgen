@@ -1,0 +1,20 @@
+---
+title: Plugins
+menuOrder: 30
+directoryName: Plugins
+---
+h2. About
+
+All available plugins in the distribution are described in this section. Choose a plugin category
+to get more information!
+
+h2. Plugins
+
+Webgen is written with extensibility in mind; therefore most of its features are implemented with
+plugins, only the core functions are not plugins.
+
+Writing your own plugins is not difficult, too! If you need a specific functionality, implement a
+plugin and put it under the site specific @plugin@ directory - then the plugin gets loaded with the
+others. It's so easy!
+
+For more information have a look at the <a href="{relocatable: /rdoc/index.html}">API documentation</a>!

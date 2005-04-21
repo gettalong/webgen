@@ -36,18 +36,6 @@ works and what you can expect when you start webgen.
   important. Developers who extend webgen by writing a new plugin can use the informational and
   debug messages to see what is going on and to help them develop the plugin.
 
-h2. Usage
-
-Webgen uses two directories: one to read the source files from and an other to write the output
-files to. The default source directory is @src@ and the default output directory is @output@. The
-source directory can be structured in any way you like, there is no restriction in respect of the
-number of directories or files.
-
-To build the website you simple need to change to the parent directoy of the source directory and
-type @webgen@. If everything is okay, no output will appear and you can point your browser to the
-output directory and view your website. If not, webgen tries to give detailed information about what
-happened and why something could not be done correctly.
-
 h2. Configuration
 
 Webgen provides a default configuration out of the box. If you can live with that, you do not need
@@ -66,13 +54,3 @@ plugin name as top level key and each configuration option as a key/value pair. 
 looks like this:
 
 <pre class="webgen-file">{includeFile: /../../../testsite/config.yaml}</pre>
-
-h2. Plugins
-
-Webgen is written with extensibility in mind; therefore most of its features are implemented with
-plugins, only the core functions are not plugins. Use the menu to view the documentation for the
-plugins which come with the distribution.
-
-Writing your own plugins is not difficult, too! If you need a specific functionality, implement a
-plugin and put it under the site specific @plugin@ directory - then the plugin gets loaded with the
-others. It's so easy!

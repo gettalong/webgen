@@ -11,7 +11,8 @@ that you can create page description files in which you only define the content.
 
 When webgen is run it combines the template with each of the page description files and generates
 the HTML output files. During this process special tags are substituted so that, for example, a menu
-is generated.
+is generated. Actually, this page was generated with webgen and, for example, the menu that you can
+see was created dynamically. For more information look at the documentation!
 
 h2. Author
 

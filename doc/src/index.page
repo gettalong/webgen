@@ -10,6 +10,12 @@ h2. Welcome
 This whole site was generated with webgen and provides an online demonstration of its features.
 Choose from the menu what you want to see from or know about webgen!
 
+If you have an idea for a new feature, "request
+it!":http://rubyforge.org/tracker/?atid=1210&group_id=296&func=browse. If you have found a bug, you
+can "report it here!":http://rubyforge.org/tracker/?atid=1207&group_id=296&func=browse Also, there
+are "forums":http://rubyforge.org/forum/?group_id=296 and a "mailing
+list":http://rubyforge.org/mail/?group_id=296 available if you have any questions!
+
 h2. News
 
 *Webgen 0.3.3 released!!!*
@@ -17,30 +23,40 @@ h2. News
 Major changes:
 
 * New command line interface based on "CommandParser":http://cmdparse.rubyforge.org
+* Now you can let webgen create the basic directories and files by executing @webgen create my_site@
+* New logging plugin lets you have more control over logging and log files
+* Now each website can have a plugin directory
+* New parameters for: <a href="{relocatable: documentation/plugins/tags/wikilink.html}">wikilink</a>
+* Changed format of backing files -> have a look at the <a href="{relocatable: documentation/plugins/filehandler/backing.html}">documentation</a>!
+* Removed obsolete Extension Loader plugin
+* Fixed bugs
+
 
 *Webgen 0.3.2 released!!!*
 
 Bug fix release for bug #1637 and other bugs
 
+
 *Webgen 0.3.1 released!!!*
 
 Major changes:
 
-* Better DefaultLayouter for picture galleries (<a href="{relocatable: Design_Gallery_1.page}">online demo</a>)
-* Output names for page files now customizable (see <a href="{relocatable: documentation/filehandler/pagehandler.page}">PageHandler</a>)
+* Better DefaultLayouter for picture galleries (<a href="{relocatable: Design_Gallery_1.html}">online demo</a>)
+* Output names for page files now customizable (see <a href="{relocatable: documentation/plugins/filehandler/pagehandler.html}">PageHandler</a>)
 * On-the-fly creation of thumbnails for pictures with RMagick
-* New tags: <a href="{relocatable: documentation/tags/sitemap.page}">sitemap</a>
+* New tags: <a href="{relocatable: documentation/plugins/tags/sitemap.html}">sitemap</a>
 * Tag @lang@ renamed, new name @langbar@!
 * New parameters for @menu@ tag
 * Automatic checking of HTML files on their validness
 * Fixed bugs
+
 
 *Webgen 0.3.0 released!!!*
 
 Major changes:
 
 * Textile, Markdown, RDOC and HTML as content format supported!!!
-* New tags: <a href="{relocatable: documentation/tags/wikilink.page}">wikilink</a>
+* New tags: <a href="{relocatable: documentation/plugins/tags/wikilink.html}">wikilink</a>
 * Improved plugin system
 * On-the-fly creation of new tags
 * Fixed bugs

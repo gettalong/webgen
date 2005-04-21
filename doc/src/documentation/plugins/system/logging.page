@@ -1,0 +1,13 @@
+---
+title: Logging
+inMenu: true
+---
+h2. Information
+
+<notextile>{describe: Logging}</notextile>
+
+h2. Description
+
+The logging plugin provides a logging mechanism which can be used to analyse errors of the website.
+If the parameter @logToFile@ is true, then the log messags will not appear on the error console but
+they are written to log files which reside in the @log@ directory.

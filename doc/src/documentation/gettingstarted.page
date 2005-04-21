@@ -1,0 +1,149 @@
+---
+title: Getting Started
+inMenu: true
+menuOrder: 10
+---
+h1. Getting Started with webgen
+
+h2. The Needed Directories
+
+Webgen utilizes the following directories. These directories are in the direcctory in which the
+webgen command is issued.
+
+* @src@: The source directory in which all the source files for the website are.
+
+* @output@: This directory is created, if it does not exist, when webgen is run. All the output
+            files are put into this directory
+
+* @log@: If the logging mechanism is configured to write the log messages to files, this is the
+         directory where the log files will be. It will be created if it does not exist.
+
+* @plugin@: The extension directory. You can put self-written plugins into this directory so that
+            they can be used by webgen. All <tt>*.rb</tt> files in this directory and its
+            subdirectories are loaded as plugins.
+
+h2. Create basic website structure
+
+And now, let's make a website!
+
+First, you need to create the basic directories. You can let webgen do this:
+
+<pre>
+~ > webgen create sample_site
+</pre>
+
+Webgen created the @sample_site@ directory which holds all directories necessary for running webgen.
+So you can run webgen to create your website. Just change into the @sample_site@ directory and run
+webgen
+
+<pre>
+~ > cd sample_site
+~/sample_site > webgen
+</pre>
+
+Easy! Webgen has parsed the @src@ directory and has created the HTML output. However, as we did not
+write any content yet, there is not much to see (only the default page). So let's do that now!
+
+h2. Add Content to the Website
+
+When using the @create@ command, webgen does not only create the needed directories but it also
+provides you with some default files:
+
+* @src/default.template@: The default template for the new website.
+* @src/default.css@: The default css file for the new website.
+* @src/index.page@: The index page for the root directory of the website.
+
+The basic scaffolding is already in place, we only have to change @index.page@ and add other page
+files. Just open the file @index.page@ in your favorite text editor and change its content. After
+that we create a new file, @hello.page@, with the following content:
+
+<pre>
+\---
+title: Sample hello page
+inMenu: true
+\---
+This is a sample page with the title "{title:}" and it is in the menu!!!
+</pre>
+
+After that, run webgen in the @sample_site@ directory and then open @output/index.html@ to view your
+website.
+
+Just add page files and other content to your website and let it grow!
+
+h2. Using Meta Information in Pages
+
+Meta information is specified at the beginning of a page file. Have a look at the
+"documentation":plugins/filehandler/page.html to see how that is done in detail!
+
+We are now going to use meta information to customize our website! Open the file @default.template@
+and add this before the &lt;/body&gt; tag:
+
+<pre>
+  <div class="bar">
+    File last changed on \{filemdate: }!
+  </div>
+</pre>
+
+The part @\{filemdate: }@ is called a tag. Tags are implemented using plugins and they can be used to
+insert dynamic content when webgen is run. For example, the menu on the page is generated with the
+@\{menu: }@ tag! If webgen sees a tag during the processing of a page for which no tag plugin
+exists, it looks at the meta information of the page. If there is a meta information entry with the
+tag name, it uses that content instead. We will use that now!
+
+Open the file @hello.page@ and add the following meta information:
+
+<pre>
+filemdate: 10.4.2005
+</pre>
+
+so that @hello.page@ looks like this:
+
+<pre>
+\---
+title: Sample hello page
+inMenu: true
+filemdate: 10.4.2005
+\---
+This is a sample page with the title "{title:}" and it is in the menu!!!
+</pre>
+
+Run webgen and view the output! The tag @\{filemdate: }@ got substituted by the value specified in
+the meta information. As we have not put any meta information in the @index.page@ file, a warning is
+issued when webgen is run and no date is shown on the page!
+
+h2. Write a Simple Plugin
+
+Because we are not quite happy with our basic file modification time tag, we are going to write a
+simple tag plugin.
+
+Create the file @plugin/filemdate.rb@ with the following content:
+
+<pre>
+require 'webgen/plugins/tags/tags'
+
+module Tags
+
+  class FileMDateTag < DefaultTag
+
+    summary "Puts the modification time of the file on the page"
+    depends_on 'Tags'
+
+    def initialize
+      super
+      register_tag( 'filemdate' )
+    end
+
+    def process_tag( tag, node, refNode )
+      return File.mtime( node.recursive_value( 'src' ) ).to_s
+    end
+
+  end
+
+end
+</pre>
+
+That's all! The new plugin gets loaded when webgen starts and it is used when the tag @filemdate@ is
+encountered. We can now safely remove the @filemdate@ meta info from the file @hello.page@ although
+you can leave it there - it won't do any harm.
+
+Again, just run webgen and view the output!

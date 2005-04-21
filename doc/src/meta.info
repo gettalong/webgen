@@ -1,22 +1,17 @@
-index.page:
-  en:
-    menuOrder: 1
+index.html:
+  menuOrder: 1
 
-download.page:
-  en:
-    menuOrder: 3
+download.html:
+  menuOrder: 3
 
-features.page:
-  en:
-    menuOrder: 5
+features.html:
+  menuOrder: 5
 
-api.page:
-  en:
-    dest: rdoc/index.html
-    title: API Reference
-    menuOrder: 7
-    inMenu: true
+api.html:
+  dest: rdoc/index.html
+  title: API Reference
+  menuOrder: 7
+  inMenu: true
 
-documentation/index.page:
-  en:
-    menuOrder: 9
+documentation/index.html:
+  menuOrder: 9

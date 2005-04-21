@@ -1,22 +1,20 @@
 ---- CURRENT ----
 
-* implement feature request 1642
-* refactor backing file structure: reference files directly, not via basename/language
-* remove PageNode nodes from tree and put ***.page nodes directly in dir??? (see directory/backing/page handler)
-* have a look at wiki
-* Bug in wikilink: & not supported
+* implement plugin which creates nodes for fragment identifiers (#info) in html
+* modify tags system sothat tags can be specified via a tag directive (like extension with file handlers)
 * create tests for methods in webgen.rb
 * webgen -c => output same info as on docu pages
 * reloctable tag: correct output for complex URLS???
 * check if duplicate nodes are created??? by using a tag in a template
 * allow a template to use another template (templates as page description files?) (template2 uses template1)
-* create webgen 0.2.0 to 0.3.0 converter
 * security concerns (setting different $SAFE level???)
 * use code generator to create test file with all tags and all tag parameter configurations
 
 ---- DOCU ----
 
 * DEV: self.logger.warn/error/info/debug can be used for messages
+* document the various meta info entries that the plugins use (inMenu, menuOrdering, ...)
+  --> define: Plugin.used_meta_info( name, desc )
 
 ---- FUTURE ----
 
@@ -155,3 +153,17 @@ W do not allow two or more page files in the same language, print warn
 * tag 'mrplot' -> generate a plot with mrplot --> tag not very useable
 * ordering of picture/gallery files for menu
 * add params to menu for style classes (webgen-submenu, webgen-menuitem-selected) -> see menu feedback on wiki
+* add parameters for controlling log files
+* implement feature request #1642
+* create webgen 0.2.0 to 0.3.0 converter -> No
+* Bug in wikilink: & not supported
+* have a look at wiki -> done
+* remove PageNode nodes from tree and put ***.page nodes directly in dir??? (see directory/backing/page handler)
+* refactor backing file structure: reference files directly, not via basename/language
+* site specific plugins in plugin directory
+* add a getting started section
+* describe new CLI on extra page (documentation/cli.page)
+* log files goto log directory
+* create file for logging plugin
+* document the existence of the mailing list
+* webgen create -> create basic template/css + index.page
