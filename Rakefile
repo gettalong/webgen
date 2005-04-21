@@ -74,8 +74,6 @@ task :doc => [:rdoc] do
   chdir 'doc' do
     puts "\nGenerating online documentation..."
     ruby %{-I../lib ../bin/webgen -V 3 }
-    puts "\nValidating all generated documentation..."
-    sh 'find output/ -name "*.html" -exec xmllint --valid {} --catalogs --noout \;'
   end
 end
 
