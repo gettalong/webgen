@@ -74,8 +74,9 @@ module Webgen
     def self.add_param( name, default, description, changeHandler = nil )
       self.logger.debug { "Adding parameter '#{name}' for plugin class '#{self.name}'" }
       if @@configFileData.kind_of?( Hash ) && @@configFileData.has_key?( @@config[self].plugin ) \
-        && @@configFileData[@@config[self].plugin].has_key?( name )
+        && @@configFileData[@@config[self].plugin].kind_of?( Hash ) && @@configFileData[@@config[self].plugin].has_key?( name )
         curval = @@configFileData[@@config[self].plugin][name]
+        self.logger.debug { "Using configured value for parameter #{@@config[self].plugin} -> #{name}" }
       else
         curval = default
       end
