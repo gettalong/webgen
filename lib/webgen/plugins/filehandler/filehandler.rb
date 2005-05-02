@@ -180,21 +180,20 @@ module FileHandlers
     #
     # Has to be overridden by the subclass!!!
     def create_node( path, parent )
-      raise "Not implemented"
+      raise NotImplementedError
     end
 
     # Asks the plugin to write out the node.
     #
     # Has to be overridden by the subclass!!!
     def write_node( node )
-      raise "Not implemented"
+      raise NotImplementedError
     end
 
     # Returns a HTML link for the given +node+ relative to +refNode+. You can optionally specify the
     # title for the link. If not specified, the title of the node is used.
     def get_html_link( node, refNode, title = node['title'] )
-      url = refNode.relpath_to_node( node )
-      "<a href=\"#{url}\">#{title}</a>"
+      "<a href=\"#{refNode.relpath_to_node( node )}\">#{title}</a>"
     end
 
   end

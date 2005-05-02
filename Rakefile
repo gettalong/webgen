@@ -181,7 +181,7 @@ else
     #### Dependencies, requirements and files
 
     s.files = PKG_FILES.to_a
-    s.add_dependency( 'cmdparse', '>= 1.0.1' )
+    s.add_dependency( 'cmdparse', '>= 1.0.2' )
 
     s.require_path = 'lib'
     s.autorequire = nil
