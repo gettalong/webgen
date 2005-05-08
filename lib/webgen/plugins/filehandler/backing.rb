@@ -34,12 +34,13 @@ module FileHandlers
 
     def initialize
       super
-      Webgen::Plugin['FileHandler'].add_msg_listener( :AFTER_DIR_READ, method( :process_backing_file ) )
+      Webgen::Plugin['FileHandler'].add_msg_listener( :AFTER_ALL_READ, method( :process_backing_files ) )
     end
 
     def create_node( path, parent )
       node = Node.new( parent )
       node['src'] = node['dest'] = node['title'] = File.basename( path )
+      node['backingFile'] = true
       begin
         node['content'] = YAML::load( File.new( path ) )
         if !valid_content( node['content'] )
@@ -68,8 +69,8 @@ module FileHandlers
       && data.all? {|k,v| v.kind_of?( Hash ) }
     end
 
-    def process_backing_file( dirNode )
-      backingFiles = dirNode.find_all {|child| /\.#{Webgen::Plugin.config[self.class].extension}$/ =~ child['src'] }
+    def process_backing_files( dirNode )
+      backingFiles = dirNode.find_all {|child| child['backingFile'] }
 
       backingFiles.each do |backingFile|
         backingFile['content'].each do |filename, data|
@@ -82,6 +83,8 @@ module FileHandlers
           end
         end
       end
+
+      dirNode.each {|child| process_backing_files( child ) if child['directory']}
     end
 
 

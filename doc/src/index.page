@@ -22,7 +22,8 @@ h2. News
 
 Major changes:
 
-
+* FileHandler now uses path patterns and/or extensions for determining which files to process !
+* Changed parameters: FileHandler:ignorePaths, FileCopyHandler:paths
 * Fixed bugs
 
 <b>Webgen 0.3.3 released!!!</b>

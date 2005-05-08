@@ -30,15 +30,14 @@ module FileHandlers
   class FileCopyHandler < DefaultFileHandler
 
     summary "Copies files from source to destination without modification"
-    add_param 'types', ['css', 'jpg', 'png', 'gif'], \
-    'The extension that will be registered by this handler. All files with ' \
-    'these extensions will be copied from the source to the destination folder.'
+    add_param 'paths', ['**/*.css', '**/*.jpg', '**/*.png', '**/*.gif'], \
+    'The path patterns which should match the files that should get copied by this handler.'
     depends_on 'FileHandler'
 
     def initialize
       super
-      get_param( 'types' ).each do |type|
-        extension( type )
+      get_param( 'paths' ).each do |path|
+        self.class.handle_path( path )
       end
     end
 

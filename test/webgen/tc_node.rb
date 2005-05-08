@@ -15,6 +15,7 @@ class NodeTest < Test::Unit::TestCase
 
     @n['root'] = Node.new( nil )
     @n['root']['dest'] = 'root/'
+    @n['root']['otherdest'] = 'root/'
     @n['root/file1'] = create_node( @n['root'] )
     @n['root/file1']['dest'] = 'file1'
     @n['root/file1']['otherdest'] = 'file1o'
@@ -27,8 +28,10 @@ class NodeTest < Test::Unit::TestCase
     @n['root/virtdir1/file2']['dest'] = 'file2'
     @n['root/dir2'] = create_node( @n['root'] )
     @n['root/dir2']['dest'] = 'dir2/'
+    @n['root/dir2']['otherdest'] = 'dir2/'
     @n['root/dir2/file3'] = create_node( @n['root/dir2'] )
     @n['root/dir2/file3']['dest'] = 'file3'
+    @n['root/dir2/file3']['otherdest'] = 'file3o'
     @n['root/dir2/file4'] = create_node( @n['root/dir2'] )
     @n['root/dir2/file4']['dest'] = 'file4'
     @n['root/dir2/file5'] = create_node( @n['root/dir2'] )
@@ -71,7 +74,7 @@ class NodeTest < Test::Unit::TestCase
     assert_equal( 'root/file2', @n['root/virtdir1/file2'].recursive_value( 'dest' ) )
     assert_equal( 'root/virtdir1/file2', @n['root/virtdir1/file2'].recursive_value( 'dest', false ) )
 
-    assert_equal( 'file1o', @n['root/file1'].recursive_value( 'otherdest' ) )
+    assert_equal( 'root/file1o', @n['root/file1'].recursive_value( 'otherdest' ) )
   end
 
   def test_relpath_to_node
@@ -101,6 +104,9 @@ class NodeTest < Test::Unit::TestCase
     assert_equal( @n['root/dir2/file3'], @n['root/virtdir1/file2'].node_for_string( '/dir2/file3' ) )
     assert_equal( @n['root/file11'], @n['root/virtdir1/file2'].node_for_string( '/rdoc/file11' ) )
     assert_equal( @n['root/dir2/file5'], @n['root/dir2/file4'].node_for_string( '/dir2/otherdest/file5' ) )
+
+    assert_equal( @n['root/dir2'], @n['root'].node_for_string( '/dir2', 'otherdest' ) )
+    assert_equal( @n['root/dir2/file3'], @n['root'].node_for_string( '/dir2/file3o', 'otherdest' ) )
   end
 
   def test_node_for_string_question

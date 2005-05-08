@@ -82,8 +82,8 @@ class Node
 
 
   # Return the node identified by +destString+ relative to the current node.
-  def node_for_string( destString )
-    node = get_node_for_string( destString )
+  def node_for_string( destString, metainfo='dest' )
+    node = get_node_for_string( destString, metainfo )
     if node.nil?
       self.logger.warn { "Could not get destination node '#{destString}' for <#{recursive_value( 'src' )}>" }
     end
@@ -91,8 +91,8 @@ class Node
   end
 
   # Check if there is a node for +destString+.
-  def node_for_string?( destString )
-    get_node_for_string( destString ) != nil
+  def node_for_string?( destString, metainfo='dest' )
+    get_node_for_string( destString, metainfo )
   end
 
   # Return the level of the node. The level specifies how deep the node is in the hierarchy.
@@ -130,7 +130,7 @@ class Node
   private
   #######
 
-  def get_node_for_string( destString )
+  def get_node_for_string( destString, metainfo='dest' )
     if /^\// =~ destString
       node = Node.root( self )
       destString = destString[1..-1]
@@ -145,7 +145,7 @@ class Node
       break if node.nil?
       case element
       when '..' then node = node.parent
-      else node = node.find {|child| /^#{element}\/?$/ =~ child['dest'] }
+      else node = node.find {|child| /^#{element}\/?$/ =~ child[metainfo] }
       end
     end
 
@@ -154,11 +154,11 @@ class Node
       node = startElement
       elements.each_with_index do |element, index|
         break if node.nil?
-        temp = node.find {|child| /^#{elements[index..-1].join( '/' )}\/?$/ =~ child['dest']}
+        temp = node.find {|child| /^#{elements[index..-1].join( '/' )}\/?$/ =~ child[metainfo]}
         if temp.nil?
           case element
           when '..' then node = node.parent
-          else node = node.find {|child| /^#{element}\/?$/ =~ child['dest'] }
+          else node = node.find {|child| /^#{element}\/?$/ =~ child[metainfo] }
           end
         else
           node = temp

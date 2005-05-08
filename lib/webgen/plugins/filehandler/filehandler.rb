@@ -20,13 +20,11 @@
 #++
 #
 
+require 'set'
 require 'util/listener'
 
 module FileHandlers
 
-  # Super plugin for handling files. File handler plugins can register themselves by adding a new
-  # key:value pair to +extensions+. The key has to be the extension in lowercase and the value is
-  # the plugin object itself.
   class FileHandler < Webgen::Plugin
 
     summary "Super plugin for handling files"
@@ -35,31 +33,50 @@ module FileHandlers
         builds the tree. When all approriate transformations on the tree have
         been performed the FileHandler is used to write the output files.
       ".gsub( /^\s+/, '' ).gsub( /\n/, ' ' )
-
-    add_param 'ignored', ['.svn', 'CVS'], 'Specifies path names via regular expresssions which should be ignored.'
-
+    add_param 'ignorePaths', ['**/.svn{/**/**,/}', '**/CVS{/**/**,/}'], 'An array of path patterns which match files that should ' \
+    'be excluded from the list of \'to be processed\' files.'
 
     include Listener
 
-    attr_reader :extensions
-
     def initialize
-      @extensions = Hash.new
-
-      add_msg_name( :DIR_NODE_CREATED )
-      add_msg_name( :FILE_NODE_CREATED )
-      add_msg_name( :AFTER_DIR_READ )
+      add_msg_name( :AFTER_ALL_READ )
     end
 
-
-    # Recursively builds the tree with all the nodes and returns it.
+    # Builds the tree with all the nodes and returns it.
     def build_tree
-      root = build_entry( Webgen::Plugin['Configuration']['srcDirectory'], nil )
-      unless root.nil?
-        root['title'] = '/'
-        root['dest'] = Webgen::Plugin['Configuration']['outDirectory'] + '/'
-        root['src'] = Webgen::Plugin['Configuration']['srcDirectory'] + '/'
+      allFiles = get_files_for_pattern( File.join( '**', '{.[^.]**/**/**,**}' ) )
+      get_param( 'ignorePaths' ).each do |pattern|
+        allFiles.subtract( get_files_for_pattern( pattern ) )
       end
+
+      handlerFiles = sort_file_handlers( Webgen::Plugin['DefaultFileHandler'].get_file_handlers ).collect do |pattern, handler|
+        [get_files_for_pattern( pattern ), Webgen::Plugin.config[handler].obj]
+      end
+
+      rootPath = Webgen::Plugin['Configuration']['srcDirectory'] + File::SEPARATOR
+      rootHandler = handler_for_path( rootPath, handlerFiles )
+      if rootHandler.nil? || allFiles.empty?
+        logger.error { "No file handler for root directory <#{rootPath}> found" } if rootHandler.nil?
+        logger.error { "No files found in directory <#{rootPath}>" } if allFiles.empty?
+        return nil
+      end
+
+      logger.debug { "Using plugin #{rootHandler.class.name} for handling the root node" }
+      root = create_root_node( rootPath, rootHandler )
+      allFiles.subtract( [rootPath] )
+      handlerFiles.find {|files, handler| handler == rootHandler}[0].subtract( [rootPath] )
+
+      handlerFiles.each do |files, handler|
+        commonFiles = allFiles & files
+        allFiles.subtract( commonFiles )
+        diffFiles = files - commonFiles
+        logger.info { "Not handling files for #{handler.class.name} as they do not exist or are excluded:  #{diffFiles.inspect}" } if diffFiles.length > 0
+        commonFiles.each {|file| build_entry( file, root, handler, handlerFiles ) }
+      end
+
+      dispatch_msg( :AFTER_ALL_READ, root )
+      logger.info { "No handlers found for files: #{allFiles.inspect}" } if allFiles.length > 0
+
       root
     end
 
@@ -71,7 +88,7 @@ module FileHandlers
       node['processor'].write_node( node )
 
       node.each do |child|
-        write_tree child
+        write_tree( child )
       end
     end
 
@@ -87,70 +104,60 @@ module FileHandlers
       end
     end
 
-
     #######
     private
     #######
 
-    def build_entry( path, parent )
-      self.logger.info { "Processing <#{path}> ..." }
-
-      if FileTest.file?( path )
-        node = handle_file( path, parent )
-      elsif FileTest.directory?( path )
-        node = handle_directory( path, parent )
-      else
-        type = File.lstat( path ).ftype if File.exists?( path )
-        self.logger.warn { "Path <#{path}> (type: #{type || 'non existing file/dir'}) cannot be handled as it is neither a file nor a directory" }
-        node = nil
+    def get_files_for_pattern( pattern )
+      files = Dir[File.join( Webgen::Plugin['Configuration']['srcDirectory'], pattern )].to_set
+      files.collect!  do |f|
+        f = f.sub( /([^.])\.{1,2}$/, '\1' ) # remove '.' and '..' from end of paths
+        f += File::SEPARATOR if File.directory?( f ) && ( f[-1] != ?/ )
+        f
       end
-
-      return node
+      files
     end
 
-
-    def handle_file( path, parent )
-      extension = File.extname( path ).sub( /^./, '' )
-
-      if @extensions.has_key?( extension )
-        node = @extensions[extension].create_node( path, parent )
-        dispatch_msg( :FILE_NODE_CREATED, node ) unless node.nil?
-      else
-        self.logger.warn { "No plugin for <#{path}> (extension: #{extension}) -> ignored" }
-      end
-
-      return node
+    def create_root_node( path, handler )
+      root = handler.create_node( path, nil )
+      root['title'] = '/'
+      root['dest'] = Webgen::Plugin['Configuration']['outDirectory'] + '/'
+      root['src'] = Webgen::Plugin['Configuration']['srcDirectory'] + '/'
+      root
     end
 
+    def build_entry( file, root, handler, handlerFiles )
+      pathname, filename = File.split( file )
+      pathname = pathname + '/'
+      treeFile = file.sub( /^#{root['src']}/, '' )
+      treePath = pathname.sub( /^#{root['src']}/, '' )
 
-    def handle_directory( path, parent )
-      node = nil
+      node = root.node_for_string?( treeFile, 'src' )
+      return node unless node.nil?
+      logger.info { "Processing <#{file}> with #{handler.class.name} ..." }
 
-      if @extensions.has_key?( :dir )
-        node = @extensions[:dir].create_node( path, parent )
-
-        dispatch_msg( :DIR_NODE_CREATED, node )
-
-        Dir[path + File::SEPARATOR + '{.*,*}'].delete_if do |name|
-          name =~ /#{File::SEPARATOR}\.{1,2}$/ || \
-          File.basename( name ) =~ Regexp.new( get_param( 'ignored' ).join( '|' ) )
-        end.sort! do |a, b|
-          if File.file?( a ) && File.directory?( b )
-            -1
-          elsif ( File.file?( a ) && File.file?( b ) ) || ( File.directory?( a ) && File.directory?( b ) )
-            a <=> b
-          else
-            1
-          end
-        end.each do |filename|
-          child = build_entry( filename, node )
-          node.add_child( child ) unless child.nil?
+      parentNode = root.node_for_string?( treePath )
+      if parentNode.nil?
+        if pathname == root['src']
+          parentNode = root
+        else
+          logger.debug { "Parent node for <#{file}> does not exist, create node for path <#{pathname}>" }
+          parentNode = build_entry( pathname, root, handler_for_path( pathname, handlerFiles ), handlerFiles )
         end
-
-        dispatch_msg( :AFTER_DIR_READ, node )
       end
+      raise "Parent node is nil" if parentNode.nil?
+      logger.info { "Creating node for <#{file}>..." }
+      n = handler.create_node( file, parentNode )
+      parentNode.add_child( n ) unless n.nil?
+      n
+    end
 
-      return node
+    def handler_for_path( path, handlerFiles )
+      handlerFiles.find {|p, handler| p.include?( path )}[1]
+    end
+
+    def sort_file_handlers( handlers )
+      handlers.sort {|a,b| a[0].count( "?*" ) <=> b[0].count( "?*" )}
     end
 
   end
@@ -158,21 +165,25 @@ module FileHandlers
   # The default handler which is the super class of all file handlers.
   class DefaultFileHandler < Webgen::Plugin
 
-    VIRTUAL = true
-
     summary "Base class of all file handler plugins"
 
-    def initialize
-      extension( Webgen::Plugin.config[self.class].extension ) if Webgen::Plugin.config[self.class].extension
+    # Specify the extension which should be handled by the class.
+    def self.handle_path( path )
+      logger.info { "Registering class #{self.name} for handling the path pattern: #{path.inspect}" }
+      (@@config[self].path ||= []) << path
+      handlers = (@@config[DefaultFileHandler].file_handler ||= {})
+      logger.warn { "Path pattern #{path} already associated with class #{handlers[path].name}, not using class #{self.name} for it!" } if handlers[path]
+      handlers[path] ||= self
     end
 
-    # Specify the extension which should be handled by the class.
-    def self.extension( ext ); @@config[self].extension = ext; end
+    # Specify the files handled by the class via the extension.
+    def self.extension( ext )
+      handle_path( "**/{.[^.]**/**/*.#{ext},*.#{ext}}" )
+    end
 
-    # Register the file extension specified by a subclass.
-    def extension( ext )
-      self.logger.info { "Registering file handler #{self.class.name} (#{self.object_id}) with extension '#{ext}'" }
-      Webgen::Plugin['FileHandler'].extensions[ext] = self
+    # Return the registered file handler plugins.
+    def get_file_handlers
+      @@config[self.class].file_handler
     end
 
     # Supplies the +path+ to a file and the +parent+ node sothat the plugin can create a node for this

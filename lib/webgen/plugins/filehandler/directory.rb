@@ -33,6 +33,7 @@ module FileHandlers
       def initialize( parent, name )
         super( parent )
         self['title'] = self['directoryName'] = name
+        self['directory'] = true
         self['src'] = self['dest'] = name + '/'
         self['processor'] = Webgen::Plugin['DirHandler']
       end
@@ -57,7 +58,7 @@ module FileHandlers
 
 
     summary "Handles directories"
-    extension :dir
+    handle_path '**/'
     add_param 'indexFile', 'index.html', 'The default file name for the directory index file.'
     depends_on 'FileHandler'
 

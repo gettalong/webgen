@@ -172,6 +172,7 @@ module FileHandlers
 
     class PictureGalleryFileHandler
 
+      remove_method :get_thumbnail
       def get_thumbnail( imageData, parent )
         p_node = Webgen::Plugin['DirHandler'].recursive_create_path( File.dirname( imageData['imageFilename'] ), parent )
         node = Webgen::Plugin['ThumbnailWriter'].create_node( File.join( @path, imageData['imageFilename'] ), p_node )

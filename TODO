@@ -167,3 +167,4 @@ W do not allow two or more page files in the same language, print warn
 * create file for logging plugin
 * document the existence of the mailing list
 * webgen create -> create basic template/css + index.page
+* update FileCopyHandler
