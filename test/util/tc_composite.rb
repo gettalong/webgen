@@ -1,5 +1,5 @@
 require 'test/unit'
-require 'util/composite'
+require 'webgen/composite'
 
 
 class CompositeTest < Test::Unit::TestCase

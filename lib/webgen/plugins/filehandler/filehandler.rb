@@ -21,7 +21,7 @@
 #
 
 require 'set'
-require 'util/listener'
+require 'webgen/listener'
 
 module FileHandlers
 

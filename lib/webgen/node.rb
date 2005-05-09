@@ -20,7 +20,7 @@
 #++
 #
 
-require 'util/composite'
+require 'webgen/composite'
 
 class Node
 

@@ -1,5 +1,5 @@
 require 'test/unit'
-require 'util/listener'
+require 'webgen/listener'
 
 
 class ListenerTest < Test::Unit::TestCase
