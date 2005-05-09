@@ -56,7 +56,7 @@ module Tags
         isDir = child.kind_of?( FileHandlers::DirHandler::DirNode )
         subout = output_node( child, srcNode )
         if subout != '' || !isDir
-          langNode = child['processor'].get_page_node_for_lang( child, srcNode['lang'] )
+          langNode = child['processor'].get_node_for_lang( child, srcNode['lang'] )
           link = langNode['processor'].get_html_link( langNode, srcNode, ( isDir ? langNode['directoryName'] || child['directoryName'] : langNode['title'] ) )
         end
 

@@ -22,6 +22,7 @@
 
 require 'webgen/plugins/filehandler/filehandler'
 require 'yaml'
+require 'erb'
 
 module FileHandlers
 
@@ -41,6 +42,7 @@ module FileHandlers
     'the :name part and the file language will be used for the :lang part. If <defaultLangInFilename> is true, the :lang part or the subarray in which '\
     'the :lang part was defined, will be omitted.'
     add_param 'validator', 'xmllint', 'The validator for checking HTML files on their validness. Set to "" or nil to prevent checking.'
+    add_param 'useERB', true, 'Specifies if the content blocks of the page file should be processed with ERB before they are formatted.'
     depends_on 'FileHandler', 'DefaultContentHandler'
 
     def create_node( srcName, parent )
@@ -52,12 +54,25 @@ module FileHandlers
     end
 
     def write_node( node )
-      # do nothing if page base node
       templateNode = Webgen::Plugin['TemplateFileHandler'].get_template_for_node( node )
 
-      outstring = templateNode['content'].dup
-
-      Webgen::Plugin['Tags'].substitute_tags( outstring, node, templateNode )
+      useERB = node['useERB'] || ( node['useERB'].nil? && get_param( 'useERB' ) )
+      node['blocks'].each do |blockdata|
+        begin
+          content = ( useERB ? ERB.new( blockdata['data'] ).result( binding ) : blockdata['data'] )
+        rescue Exception => e
+          logger.error { "ERB threw an error while processing an ERB template (<#{node.recursive_value('src')}>, block #{blockdata['name']}): #{e.message}" }
+          content = blockdata['data']
+        end
+        node[blockdata['name']] = Webgen::Plugin['DefaultContentHandler'].get_format( blockdata['format'] ).format_content( content )
+      end
+      begin
+        outstring = ERB.new( templateNode['content'] ).result( binding )
+      rescue Exception => e
+        logger.error { "ERB threw an error while processing an ERB template (<#{templateNode.recursive_value('src')}>: #{e.message}" }
+        outstring = templateNode['content'].dup
+      end
+      outstring = Webgen::Plugin['Tags'].substitute_tags( outstring, node, templateNode )
 
       File.open( node.recursive_value( 'dest' ), File::CREAT|File::TRUNC|File::RDWR ) do |file|
         file.write( outstring )
@@ -69,12 +84,13 @@ module FileHandlers
       end
     end
 
+    # Returns a page node in +dirNode+ which has the name +name+.
     def get_page_node_by_name( dirNode, name )
       dirNode.find {|node| node['page:name'] == name}
     end
 
-    # Returns the page node for the given language. +node+ has to be a page node!
-    def get_page_node_for_lang( node, lang )
+    # Returns the page node for the given language.
+    def get_node_for_lang( node, lang )
       dirNode = node.parent
       pageNode = dirNode.find {|child| child['page:name'] == node['page:name'] && child['lang'] == lang}
       if pageNode.nil?
@@ -137,7 +153,7 @@ module FileHandlers
             next
           end
           self.logger.debug { "Block '#{blockdata['name']}' formatted using '#{blockdata['format']}'" }
-          options[blockdata['name']] = Webgen::Plugin['DefaultContentHandler'].get_format( blockdata['format'] ).format_content( blocks.shift || '' )
+          blockdata['data'] = blocks.shift || ''
         end
       end
       options

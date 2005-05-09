@@ -201,6 +201,11 @@ module FileHandlers
       raise NotImplementedError
     end
 
+    # Returns the node for the language +lang+ which is equal to this +node+.
+    def get_node_for_lang( node, lang )
+      node
+    end
+
     # Returns a HTML link for the given +node+ relative to +refNode+. You can optionally specify the
     # title for the link. If not specified, the title of the node is used.
     def get_html_link( node, refNode, title = node['title'] )

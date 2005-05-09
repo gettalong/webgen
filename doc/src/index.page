@@ -23,6 +23,8 @@ h2. News
 Major changes:
 
 * FileHandler now uses path patterns and/or extensions for determining which files to process !
+* ERB (embedded ruby) can now be used in templates and page files (see <a href="{relocatable: documentation/plugins/filehandler/pagehandler.html}">PageHandler</a>)!
+* New parameters: <a href="{relocatable: documentation/plugins/filehandler/pagehandler.html}">PageHandler:useERB</a>
 * Changed parameters: FileHandler:ignorePaths, FileCopyHandler:paths
 * Fixed bugs
 

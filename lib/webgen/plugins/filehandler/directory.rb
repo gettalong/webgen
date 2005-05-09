@@ -80,9 +80,9 @@ module FileHandlers
     # Return the page node for the directory +node+ using the specified language +lang+. If an
     # index file is specified, then the its correct language node is returned, else +node+ is
     # returned.
-    def get_page_node_for_lang( node, lang )
+    def get_node_for_lang( node, lang )
       if node['indexFile']
-        node['indexFile']['processor'].get_page_node_for_lang( node['indexFile'], lang )
+        node['indexFile']['processor'].get_node_for_lang( node['indexFile'], lang )
       else
         node
       end
@@ -90,7 +90,7 @@ module FileHandlers
 
     # Get the HTML link for the directory +node+.
     def get_html_link( node, refNode, title = nil )
-      lang_node = get_page_node_for_lang( node, refNode['lang'] )
+      lang_node = get_node_for_lang( node, refNode['lang'] )
       title ||=  lang_node['directoryName'] || node['directoryName']
       super( lang_node, refNode, title )
     end

@@ -151,7 +151,7 @@ module Tags
 
 
     def menu_entry( srcNode, node )
-      langNode = node['processor'].get_page_node_for_lang( node, srcNode['lang'] )
+      langNode = node['processor'].get_node_for_lang( node, srcNode['lang'] )
       isDir = node.kind_of?( FileHandlers::DirHandler::DirNode )
 
       styles = []

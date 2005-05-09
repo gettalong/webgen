@@ -73,8 +73,34 @@ named @sidebar@ and formatted using @markdown@.
 
 h2. Content format
 
-The content of page description can be written in different formats. Have a look at the sub menu
-entries to get an overview of the existing formats.
+h3. Embedded Ruby (ERB)
+
+Before the content is converted to HTML with a specific content handler, ERB is run over the
+content. This allows one to add dynamic content to the web pages without using tags. Following is an
+example of a page file which uses ERB:
+
+<pre>
+\---
+title: Test page with ERB
+\---
+This page has the following meta info items:
+<% node.metainfo.each do |key, value| %>
+    * <%=key %>: <%=value %>
+<% end %>
+</pre>
+
+This would output all meta information for the current page. As one can see in the example, the node
+for the current page can be accessed by using @node@. The parameter @useERB@ specifies if ERB should
+be used. To provide more control, one can enable or disable ERB for a page file by setting the meta
+information @useERB@ to @true@ or @false@.
+
+The template will always be processed with ERB!
+
+h3. Format
+
+The content of page description can be written in different formats. Have a look at the
+<a href="{relocatable: ../contenthandler}">Content Handlers</a> to get an overview of the existing
+formats.
 
 h2. Default settings
 
@@ -85,7 +111,7 @@ The following defaults are used:
 
 * Content format
 
-  If there is only content in a page description file, its formatting defaults to the parameter
+  If there is only one content in a page description file, its formatting defaults to the parameter
   value @defaultContentFormat@.
 
 * Title, ordering and language
