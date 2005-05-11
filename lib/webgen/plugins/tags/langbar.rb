@@ -39,7 +39,7 @@ module Tags
     end
 
     def process_tag( tag, node, refNode )
-      output = node.parent.find_all {|a| a['page:name'] == node['page:name']}.sort {|a, b| a['lang'] <=> b['lang']}.collect do |n|
+      output = node.parent.find_all {|a| a['int:pagename'] == node['int:pagename']}.sort {|a, b| a['lang'] <=> b['lang']}.collect do |n|
         n['processor'].get_html_link( n, n, n['lang'] )
       end.join( get_param( 'separator' ) )
       return ( get_param( 'showSingleLang' ) || node.parent.children.length > 1 ? output : "" )

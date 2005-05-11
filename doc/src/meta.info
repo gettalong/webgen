@@ -1,17 +1,20 @@
 index.html:
-  menuOrder: 1
+  orderInfo: 1
 
 download.html:
-  menuOrder: 3
+  orderInfo: 3
 
 features.html:
-  menuOrder: 5
+  orderInfo: 5
 
 api.html:
   dest: rdoc/index.html
   title: API Reference
-  menuOrder: 7
+  orderInfo: 7
   inMenu: true
 
 documentation/index.html:
-  menuOrder: 9
+  orderInfo: 9
+
+designs:
+  indexFile: ~

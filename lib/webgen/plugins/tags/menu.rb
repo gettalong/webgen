@@ -30,7 +30,7 @@ module Tags
   # one page file.
   #
   # The order in which the menu items are listed can be controlled via the meta information
-  # +menuOrder+. By default the menu items are sorted by the file names.
+  # +orderInfo+. By default the menu items are sorted by the file names.
   #
   # Tag parameters:
   # [<b>level</b>]
@@ -38,6 +38,40 @@ module Tags
   #   also displays the menu files in the direct subdirectories and so on.
   class MenuTag < DefaultTag
 
+
+    class ::Node
+
+      # Retrieves the meta information +orderInfo+.
+      def order_info
+        # be optimistic and try metainfo field first
+        node = self
+        value = node['orderInfo'].to_s.to_i unless node['orderInfo'].nil?
+
+        # get index file for directory
+        if node['int:directory?']
+          node = node['indexFile']
+          value ||= node['orderInfo'].to_s.to_i unless node.nil? || node['orderInfo'].nil?
+        end
+
+        # find the first orderInfo entry in the page files if node is a page file
+        if !node.nil? && node['int:pagename']
+          node = node.parent.find {|child| child['int:pagename'] == node['int:pagename'] && child['orderInfo'].to_s.to_i != 0}
+          value ||= node['orderInfo'].to_s.to_i unless node.nil?
+        end
+
+        # fallback value
+        value ||= 0
+
+        value
+      end
+
+      SORT_PROC = Proc.new do |a,b|
+        aoi = a.order_info
+        boi = b.order_info
+        (aoi == boi ? a['title'] <=> b['title'] : aoi <=> boi)
+      end
+
+    end
 
     # Specialised node class for the menu.
     class MenuNode < Node
@@ -52,28 +86,11 @@ module Tags
       end
 
 
-      # Sorts recursively all children of the node depending on their order value.
+      # Sorts recursively all children of the node depending on their order value. If two order
+      # values are equal, sort the items using their title.
       def sort!
-        self.children.sort! {|a,b| get_order_value( a ) <=> get_order_value( b )}
-        self.children.each {|child| child.sort! if child.kind_of?( MenuNode ) && child['node'].kind_of?( FileHandlers::DirHandler::DirNode )}
-      end
-
-
-      # Retrieves the order value for the specific node.
-      def get_order_value( node )
-        # be optimistic and try metainfo field first
-        node = node['node'] if node.kind_of?( MenuNode )
-        value = node['menuOrder'].to_s.to_i unless node['menuOrder'].nil?
-
-        # find the first menuOrder entry in the page files
-        node = node['indexFile'] if node.kind_of?( FileHandlers::DirHandler::DirNode )
-        node = node.parent.find {|child| child['page:name'] == node['page:name'] && child['menuOrder'].to_s.to_i != 0} if !node.nil? && node['page:name']
-        value ||= node['menuOrder'].to_s.to_i unless node.nil?
-
-        # fallback value
-        value ||= 0
-
-        value
+        self.children.sort! {|a,b| SORT_PROC.call( a['node'], b['node'] ) }
+        self.children.each {|child| child.sort! if child['node']['int:directory?'] }
       end
 
     end
@@ -132,13 +149,8 @@ module Tags
 
       out = "<#{get_param( 'menuTag' )}>"
       node.each do |child|
-        if child.kind_of?( MenuNode )
-          menu = child['node'].kind_of?( FileHandlers::DirHandler::DirNode ) ? build_menu( srcNode, child, level + 1 ) : ''
-          before, after = menu_entry( srcNode, child['node'] )
-        else
-          menu = ''
-          before, after = menu_entry( srcNode, child )
-        end
+        menu = child['node']['int:directory?'] ? build_menu( srcNode, child, level + 1 ) : ''
+        before, after = menu_entry( srcNode, child['node'] )
 
         out << before
         out << menu
@@ -152,7 +164,7 @@ module Tags
 
     def menu_entry( srcNode, node )
       langNode = node['processor'].get_node_for_lang( node, srcNode['lang'] )
-      isDir = node.kind_of?( FileHandlers::DirHandler::DirNode )
+      isDir = node['int:directory?']
 
       styles = []
       styles << get_param( 'submenuClass' ) if isDir
@@ -173,12 +185,12 @@ module Tags
       menuNode = MenuNode.new( parent, node )
 
       node.each do |child|
-        next if menuNode.find {|n| n['page:name'] == child['page:name'] && !n['page:name'].nil? }
+        next if menuNode.find {|n| n['int:pagename'] == child['int:pagename'] && !n['int:pagename'].nil? }
         menu = create_menu_tree( child, menuNode )
         menuNode.add_child( menu ) unless menu.nil?
       end
 
-      return menuNode.has_children? ? menuNode : ( node['inMenu'] && !node['virtual'] ? node : nil )
+      return menuNode.has_children? ? menuNode : ( node['inMenu'] && !node['virtual'] ? menuNode : nil )
     end
 
   end

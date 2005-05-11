@@ -1,7 +1,6 @@
 ---- CURRENT ----
 
 * RF bug: sitemap displays multilingual sites more times, sitemap should respect menuOrder
-* menu order: if order number equal, sort alphabetically
 * implement plugin which creates nodes for fragment identifiers (#info) in html
 * modify tags system sothat tags can be specified via a tag directive (like extension with file handlers)
 * create tests for methods in webgen.rb
@@ -170,3 +169,4 @@ W do not allow two or more page files in the same language, print warn
 * document the existence of the mailing list
 * webgen create -> create basic template/css + index.page
 * update FileCopyHandler
+* menu order: if order number equal, sort alphabetically

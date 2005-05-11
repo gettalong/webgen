@@ -25,6 +25,7 @@ Major changes:
 * FileHandler now uses path patterns and/or extensions for determining which files to process !
 * ERB (embedded ruby) can now be used in templates and page files (see <a href="{relocatable: documentation/plugins/filehandler/pagehandler.html}">PageHandler</a>)!
 * Relocatable tag now accepts complex URIs (URIs with query and fragment part, absolute URIs)
+* Changed meta info name *menuOrder* to *orderInfo* (e.g. used for specifying order information for menus) -- you have to adapt your page and backing files!!!
 * New parameters: <a href="{relocatable: documentation/plugins/filehandler/pagehandler.html}">PageHandler:useERB</a>
 * Changed parameters: <a href="{relocatable: documentation/plugins/filehandler}">FileHandler:ignorePaths</a>, <a href="{relocatable: documentation/plugins/filehandler/copy.html}">FileCopyHandler:paths</a>
 * Fixed bugs

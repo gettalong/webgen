@@ -2,7 +2,7 @@
 title: Project index
 directoryName: Projects
 inMenu: true
-menuOrder: 4
+orderInfo: 4
 blocks:
   - {name: content, format: html}
 ---

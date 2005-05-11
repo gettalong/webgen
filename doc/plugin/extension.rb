@@ -48,7 +48,7 @@ module OtherPlugins
       s += row['Dependencies', CGI::escapeHTML( data.dependencies.join( ', ') )] if data.dependencies
 
       unless data.params.nil?
-        params = data.params.collect do |k,v|
+        params = data.params.sort.collect do |k,v|
           "<span style='color: red'>#{v.name}</span>" + \
           ( v.mandatory.nil? \
             ? "&nbsp;=&nbsp;<span style='color: blue'>#{CGI::escapeHTML( v.default.inspect )}</span>" \

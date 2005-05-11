@@ -33,13 +33,13 @@ module FileHandlers
       def initialize( parent, name )
         super( parent )
         self['title'] = self['directoryName'] = name
-        self['directory'] = true
         self['src'] = self['dest'] = name + '/'
         self['processor'] = Webgen::Plugin['DirHandler']
+        self['int:directory?'] = true
       end
 
       def []( name )
-        process_dir_index if super('indexFile').nil? && name == 'indexFile'
+        process_dir_index if !self.metainfo.has_key?( 'indexFile' ) && name == 'indexFile'
         super
       end
 

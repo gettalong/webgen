@@ -68,7 +68,7 @@ module FileHandlers
     # Return the default template for +node+. If the template node is not found in the directory of
     # the node, the parent directories are searched.
     def get_default_template( node )
-      node = node.parent until node.kind_of?( FileHandlers::DirHandler::DirNode )
+      node = node.parent until node['int:directory?']
       templateNode = node.find { |child| child['src'] == get_param( 'defaultTemplate' ) }
       if templateNode.nil?
         if node.parent.nil?

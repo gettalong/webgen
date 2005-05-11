@@ -86,16 +86,16 @@ module FileHandlers
 
     # Returns a page node in +dirNode+ which has the name +name+.
     def get_page_node_by_name( dirNode, name )
-      dirNode.find {|node| node['page:name'] == name}
+      dirNode.find {|node| node['int:pagename'] == name}
     end
 
     # Returns the page node for the given language.
     def get_node_for_lang( node, lang )
       dirNode = node.parent
-      pageNode = dirNode.find {|child| child['page:name'] == node['page:name'] && child['lang'] == lang}
+      pageNode = dirNode.find {|child| child['int:pagename'] == node['int:pagename'] && child['lang'] == lang}
       if pageNode.nil?
         self.logger.info { "No page node in language '#{lang}' for page '#{node['title']}' found, trying default language" }
-        pageNode = dirNode.find {|child| child['page:name'] == node['page:name'] && child['lang'] == Webgen::Plugin['Configuration']['lang']}
+        pageNode = dirNode.find {|child| child['int:pagename'] == node['int:pagename'] && child['lang'] == Webgen::Plugin['Configuration']['lang']}
         if pageNode.nil?
           self.logger.warn do
             "No page node in default language (#{Webgen::Plugin['Configuration']['lang']}) " + \
@@ -124,10 +124,10 @@ module FileHandlers
         node.metainfo = data
         node['lang'] ||= analysed.lang
         node['title'] ||= analysed.title
-        node['menuOrder'] ||= analysed.menuOrder
+        node['orderInfo'] ||= analysed.orderInfo
         node['src'] = analysed.srcName
         node['dest'] = create_output_name( analysed, node['outputNameStyle'] || get_param( 'outputNameStyle' ) )
-        node['page:name'] = create_output_name( analysed, node['outputNameStyle'] || get_param( 'outputNameStyle' ), true )
+        node['int:pagename'] = create_output_name( analysed, node['outputNameStyle'] || get_param( 'outputNameStyle' ), true )
         node['processor'] = self
       end
 
@@ -168,7 +168,7 @@ module FileHandlers
       analysed.srcName   = srcName
       analysed.useLangPart  = ( !get_param( 'defaultLangInFilename' ) && Webgen::Plugin['Configuration']['lang'] == analysed.lang ? false : true )
       analysed.name      = matchData[2]
-      analysed.menuOrder = matchData[1].to_i
+      analysed.orderInfo = matchData[1].to_i
       analysed.title     = matchData[2].tr('_-', ' ').capitalize
 
       self.logger.debug { analysed.inspect }

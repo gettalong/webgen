@@ -15,7 +15,7 @@ h2. Usage
 
 Tags are defined by a special markup code. A tag has the following structure:
 
-<pre class="webgen-file">\{tagname: {parameters}}</pre>
+<pre>\{tagname: {parameters}}</pre>
 
 Every time a tag is found in a source file, the registered plugin for the tag is called. The plugin
 returns a string which is put into the output file instead of the tag. The output a tag plugin can
@@ -23,6 +23,11 @@ produce ranges from something simple to something complex. For example, the <a h
 Meta Tag</a> plugin copies any additional info specified in the source file verbatim
 into the correct place in the output file. And in contrast, the <a href="{relocatable: menu.html}">
 Menu Tag</a> plugin generates a whole menu tree.
+
+If you want to use the markup code used for tags, you need to escape the tag, like this:
+
+<pre>\\\{tagname: {parameters}}</pre>
+
 
 h2. Tag Parameters
 

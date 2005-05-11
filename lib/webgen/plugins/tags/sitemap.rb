@@ -47,13 +47,15 @@ module Tags
     #######
 
     def output_node( node, srcNode )
-      return '' if not node.find {|c| c.kind_of?( FileHandlers::DirHandler::DirNode ) || c.kind_of?( FileHandlers::PageHandler::PageNode ) }
+      return '' if not node.find {|c| c['int:directory?'] || c['int:pagename'] }
 
+      processed_pagenodes = []
       out = "<#{get_param( 'levelTag' )}>"
-      node.each do |child|
-        next unless child.kind_of?( FileHandlers::DirHandler::DirNode ) || child.kind_of?( FileHandlers::PageHandler::PageNode )
+      node.sort( &Node::SORT_PROC ).each do |child|
+        next unless (child['int:directory?'] || child['int:pagename']) && !processed_pagenodes.include?( child['int:pagename'] )
+        processed_pagenodes << child['int:pagename'] if child['int:pagename']
 
-        isDir = child.kind_of?( FileHandlers::DirHandler::DirNode )
+        isDir = child['int:directory?']
         subout = output_node( child, srcNode )
         if subout != '' || !isDir
           langNode = child['processor'].get_node_for_lang( child, srcNode['lang'] )
