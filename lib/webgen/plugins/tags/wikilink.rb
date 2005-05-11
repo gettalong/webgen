@@ -35,6 +35,8 @@ module Tags
     add_param 'invalidChars', ' &;', 'The characters which are invalid as wiki URLs.'
     add_param 'replacementChar', '_', 'The character(s) which should be used instead of the invalid characters.'
 
+    used_meta_info 'title'
+
     def initialize
       super
       register_tag( 'wikilink' )

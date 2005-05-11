@@ -33,7 +33,9 @@ module FileHandlers
     class PageNode < Node; end;
 
     summary "Class for processing page files"
+    depends_on 'FileHandler', 'DefaultContentHandler'
     extension 'page'
+
     add_param 'defaultLangInFilename', false, \
     'If true, the output files for the default language will have the ' \
     'language in the file name like all other page files. If false, they won''t.'
@@ -43,7 +45,8 @@ module FileHandlers
     'the :lang part was defined, will be omitted.'
     add_param 'validator', 'xmllint', 'The validator for checking HTML files on their validness. Set to "" or nil to prevent checking.'
     add_param 'useERB', true, 'Specifies if the content blocks of the page file should be processed with ERB before they are formatted.'
-    depends_on 'FileHandler', 'DefaultContentHandler'
+
+    used_meta_info 'title', 'orderInfo', 'lang', 'blocks', 'useERB'
 
     def create_node( srcName, parent )
       create_node_internally( parse_data( File.read( srcName ), srcName ), analyse_file_name( File.basename( srcName ) ), parent )
@@ -107,6 +110,14 @@ module FileHandlers
       pageNode
     end
 
+    # Get the HTML link for the page +node+.
+    def get_html_link( node, refNode, title = nil )
+      lang_node = get_node_for_lang( node, refNode['lang'] )
+      title ||=  lang_node['title']
+      super( lang_node, refNode, title )
+    end
+
+
     #######
     private
     #######
@@ -114,7 +125,7 @@ module FileHandlers
     def create_node_internally( data, analysed, parent )
       lang = data['lang'] || analysed.lang
 
-      if node = parent.find {|node| node['page:commonName'] == analysed.name && node['lang'] == lang }
+      if node = parent.find {|node| node['int:pagename'] == analysed.name && node['lang'] == lang }
         logger.warn do
           "Two input files in the same language for one page, " + \
           "using <#{node.recursive_value( 'src' )}> instead of <#{analysed.srcName}>"

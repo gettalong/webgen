@@ -40,7 +40,7 @@ module FileHandlers
     def create_node( path, parent )
       node = Node.new( parent )
       node['src'] = node['dest'] = node['title'] = File.basename( path )
-      node['backingFile'] = true
+      node['int:backingFile?'] = true
       begin
         node['content'] = YAML::load( File.new( path ) )
         if !valid_content( node['content'] )
@@ -70,7 +70,7 @@ module FileHandlers
     end
 
     def process_backing_files( dirNode )
-      backingFiles = dirNode.find_all {|child| child['backingFile'] }
+      backingFiles = dirNode.find_all {|child| child['int:backingFile?'] }
 
       backingFiles.each do |backingFile|
         backingFile['content'].each do |filename, data|

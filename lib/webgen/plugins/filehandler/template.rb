@@ -32,6 +32,8 @@ module FileHandlers
     add_param 'defaultTemplate', 'default.template', 'The default file name for the template file.'
     depends_on 'FileHandler'
 
+    used_meta_info 'template'
+
     def create_node( srcName, parent )
       node = Node.new( parent )
       node['title'] = 'Template'

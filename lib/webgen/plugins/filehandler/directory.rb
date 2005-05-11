@@ -32,7 +32,7 @@ module FileHandlers
 
       def initialize( parent, name )
         super( parent )
-        self['title'] = self['directoryName'] = name
+        self['title'] = name
         self['src'] = self['dest'] = name + '/'
         self['processor'] = Webgen::Plugin['DirHandler']
         self['int:directory?'] = true
@@ -61,7 +61,7 @@ module FileHandlers
     handle_path '**/'
     add_param 'indexFile', 'index.html', 'The default file name for the directory index file.'
     depends_on 'FileHandler'
-
+    used_meta_info 'indexFile', 'directoryName'
 
     # Return a new DirNode.
     def create_node( path, parent )
@@ -91,7 +91,7 @@ module FileHandlers
     # Get the HTML link for the directory +node+.
     def get_html_link( node, refNode, title = nil )
       lang_node = get_node_for_lang( node, refNode['lang'] )
-      title ||=  lang_node['directoryName'] || node['directoryName']
+      title ||=  lang_node['directoryName'] || node['title']
       super( lang_node, refNode, title )
     end
 

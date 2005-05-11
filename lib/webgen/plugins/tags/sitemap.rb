@@ -32,6 +32,8 @@ module Tags
     add_param 'itemTag', 'li', 'The tag used for pages.'
     depends_on 'Tags'
 
+    used_meta_info 'orderInfo'
+
     def initialize
       super
       register_tag( 'sitemap' )
@@ -57,10 +59,7 @@ module Tags
 
         isDir = child['int:directory?']
         subout = output_node( child, srcNode )
-        if subout != '' || !isDir
-          langNode = child['processor'].get_node_for_lang( child, srcNode['lang'] )
-          link = langNode['processor'].get_html_link( langNode, srcNode, ( isDir ? langNode['directoryName'] || child['directoryName'] : langNode['title'] ) )
-        end
+        link = child['processor'].get_html_link( child, srcNode ) if subout != '' || !isDir
 
         out += "<#{get_param( 'itemTag' )}>#{link}" if !isDir || subout != ''
         out += subout if isDir

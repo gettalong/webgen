@@ -36,6 +36,19 @@ module Webgen
     @@config = {}
     @@configFileData = ( File.exists?( 'config.yaml' ) ? YAML::load( File.new( 'config.yaml' ) ) : {} )
 
+    # Return plugin data
+    def self.config
+      @@config
+    end
+
+    # Shortcut for getting the plugin with the name +name+.
+    def self.[]( name )
+      pair = @@config.find {|k,v| v.plugin == name }
+      self.logger.warn { "Could not retrieve plugin '#{name}' as such a plugin does not exist!" } if pair.nil?
+      pair[1].obj unless pair.nil?
+    end
+
+    # Add subclass to plugin data.
     def self.inherited( klass )
       (@@config[klass] = OpenStruct.new).klass = klass
       @@config[klass].plugin = klass.name.split( /::/ ).last
@@ -45,22 +58,15 @@ module Webgen
       self.module_eval "def self.#{name}( obj ); @@config[self].#{name} = obj; end"
     end
 
-    # Return plugin data
-    def self.config
-      @@config
-    end
-
     # Add a dependency to the plugin. Dependencies are instantiated before the plugin gets
     # instantiated.
     def self.depends_on( *dep )
       dep.each {|d| (@@config[self].dependencies ||= []) << d}
     end
 
-    # Shortcut for getting the plugin with the name +name+.
-    def self.[]( name )
-      pair = @@config.find {|k,v| v.plugin == name }
-      self.logger.warn { "Could not retrieve plugin '#{name}' as such a plugin does not exist!" } if pair.nil?
-      pair[1].obj unless pair.nil?
+    # Specify which meta information entries are used by the plugin.
+    def self.used_meta_info( *names )
+      names.each {|n| (@@config[self].used_meta_info ||= []) << n }
     end
 
     # Add a parameter for the current class. Has to be used by subclasses to define their parameters!

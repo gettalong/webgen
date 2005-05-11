@@ -1,0 +1,21 @@
+---
+title: Meta Info Reference
+inMenu: true
+orderInfo: 25
+---
+h2. Meta Information Reference
+
+Following is a list of all the meta information items that are used in one way or another by a
+plugin, be it a file handler plugin, a tag plugin...
+
+table{border: 1px solid black}.
+|_. Name         |_. Type  |_. Example    |_. Valid for   |_. Description|
+|*blocks*        |Hash     |\{format: markdown, name: sidebar}|Page file|Sets the name and format of content blocks.|
+|*directoryName* |String   |Img Directory |Page file      |Only used if set on a directory index page file; specifies the title of the directory for which it is the index file. If it is not specified, the title of the directory  will be used.|
+|*indexFile*     |String   |getting.page  |Directory      |Sets the directory index file for the directory overriding the default value.|
+|*inMenu*        |Boolean  |true          |Any            |Specifies if the file/directory should appear in menus.|
+|*lang*          |String   |de            |Page file      |Sets the language for the page file. Has to be the two character code for the language.|
+|*orderInfo*     |Integer  |15            |Any            |Sets the orderering information for the file/directory.|
+|*template*      |String   |my.template   |Page file      |Sets the template for the page file overriding the default value.|
+|*title*         |String   |New Title     |Any            |Sets the title for the file/directory.|
+|*useERB*        |Boolean  |false         |Page file      |Specifies if the content blocks of the page file should be processed with ERB overriding the default value.|

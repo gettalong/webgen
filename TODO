@@ -1,11 +1,9 @@
 ---- CURRENT ----
 
-* RF bug: sitemap displays multilingual sites more times, sitemap should respect menuOrder
 * implement plugin which creates nodes for fragment identifiers (#info) in html
 * modify tags system sothat tags can be specified via a tag directive (like extension with file handlers)
 * create tests for methods in webgen.rb
 * webgen -c => output same info as on docu pages
-* reloctable tag: correct output for complex URLS???
 * check if duplicate nodes are created??? by using a tag in a template
 * allow a template to use another template (templates as page description files?) (template2 uses template1)
 * security concerns (setting different $SAFE level???)
@@ -14,8 +12,6 @@
 ---- DOCU ----
 
 * DEV: self.logger.warn/error/info/debug can be used for messages
-* document the various meta info entries that the plugins use (inMenu, menuOrdering, ...)
-  --> define: Plugin.used_meta_info( name, desc )
 
 ---- FUTURE ----
 
@@ -170,3 +166,6 @@ W do not allow two or more page files in the same language, print warn
 * webgen create -> create basic template/css + index.page
 * update FileCopyHandler
 * menu order: if order number equal, sort alphabetically
+* RF bug: sitemap displays multilingual sites more times, sitemap should respect menuOrder
+* reloctable tag: correct output for complex URLS???
+* document the various meta info entries that the plugins use (inMenu, menuOrdering, ...) --> define: Plugin.used_meta_info( name, desc )

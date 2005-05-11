@@ -38,7 +38,6 @@ module Tags
   #   also displays the menu files in the direct subdirectories and so on.
   class MenuTag < DefaultTag
 
-
     class ::Node
 
       # Retrieves the meta information +orderInfo+.
@@ -113,6 +112,8 @@ module Tags
     'True if only the current subtree should be shown in the menu. If set to false, ' \
     'each subtree will be shown.'
 
+    used_meta_info 'orderInfo', 'inMenu'
+
     def initialize
       super
       register_tag( 'menu' )
@@ -171,7 +172,7 @@ module Tags
       styles << get_param( 'selectedMenuitemClass' ) if langNode.recursive_value( 'dest' ) == srcNode.recursive_value( 'dest' )
 
       style = " class=\"#{styles.join(' ')}\"" if styles.length > 0
-      link = langNode['processor'].get_html_link( langNode, srcNode, ( isDir ? langNode['directoryName'] || node['directoryName'] : langNode['title'] ) )
+      link = node['processor'].get_html_link( node, srcNode )
 
       before = "<#{get_param( 'itemTag' )}#{style}>#{link}"
       after = "</#{get_param( 'itemTag' )}>"
@@ -185,7 +186,7 @@ module Tags
       menuNode = MenuNode.new( parent, node )
 
       node.each do |child|
-        next if menuNode.find {|n| n['int:pagename'] == child['int:pagename'] && !n['int:pagename'].nil? }
+        next if menuNode.find {|n| n['node']['int:pagename'] == child['int:pagename'] && !n['node']['int:pagename'].nil? }
         menu = create_menu_tree( child, menuNode )
         menuNode.add_child( menu ) unless menu.nil?
       end

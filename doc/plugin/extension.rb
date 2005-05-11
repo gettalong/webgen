@@ -41,12 +41,15 @@ module OtherPlugins
       s = "<table>"
       row = lambda {|desc, value| "<tr style='vertical-align: top'><td style='font-weight:bold'>#{CGI::escapeHTML( desc )}:</td><td>#{value}</td></tr>" }
 
+      # plugin, summary, description
       [['Plugin Name', 'plugin'], ['Summary', 'summary'], ['Description', 'description']].each do |desc, name|
         s += row[desc, CGI::escapeHTML( data.send( name ) )] if eval( "data.#{name}" )
       end
 
+      # dependencies
       s += row['Dependencies', CGI::escapeHTML( data.dependencies.join( ', ') )] if data.dependencies
 
+      # parameters
       unless data.params.nil?
         params = data.params.sort.collect do |k,v|
           "<span style='color: red'>#{v.name}</span>" + \
@@ -57,6 +60,11 @@ module OtherPlugins
         end
         s += row['Parameters', params.join( "<br />\n" )]
       end
+
+      # used meta info
+      s += row['Used meta information', CGI::escapeHTML( data.used_meta_info.join( ', ') )] if data.used_meta_info
+
+      # tag name, file ext
       s += row['Name of tag', (data.tag == :default ? "Default tag" : data.tag)] if data.tag
       s += row['File extension', data.extension.inspect.gsub(/"/, '')] if data.extension
 
