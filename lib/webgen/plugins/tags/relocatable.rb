@@ -21,6 +21,7 @@
 #
 
 require 'webgen/plugins/tags/tags'
+require 'uri'
 
 module Tags
 
@@ -45,12 +46,23 @@ module Tags
     end
 
     def process_tag( tag, node, refNode )
-      unless get_param( 'item' ).nil?
-        destNode = refNode.node_for_string( get_param( 'item' ) )
-        return ( destNode.nil? ? '' :  node.relpath_to_node( destNode['processor'].get_node_for_lang( destNode, node['lang'] ) ) )
-      else
-        return ''
+      uri_string = get_param( 'item' )
+      result = ''
+      unless uri_string.nil?
+        begin
+          uri = URI.parse( uri_string )
+          if uri.absolute?
+            result = uri_string
+          else
+            destNode = refNode.node_for_string( uri.path )
+            qf = (uri.query.nil? ? '' : '?'+ uri.query ) + (uri.fragment.nil? ? '' : '#' + uri.fragment)
+            result = ( destNode.nil? ? '' :  node.relpath_to_node( destNode['processor'].get_node_for_lang( destNode, node['lang'] ) ) + qf )
+          end
+        rescue URI::InvalidURIError => e
+          logger.error { "Error while parsing URI for relocatable tag: #{e.message}" }
+        end
       end
+      return result
     end
 
   end

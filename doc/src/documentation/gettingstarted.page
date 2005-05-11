@@ -7,7 +7,7 @@ h1. Getting Started with webgen
 
 h2. The Needed Directories
 
-Webgen utilizes the following directories. These directories are in the direcctory in which the
+webgen utilizes the following directories. These directories are in the direcctory in which the
 webgen command is issued.
 
 * @src@: The source directory in which all the source files for the website are.
@@ -32,7 +32,7 @@ First, you need to create the basic directories. You can let webgen do this:
 ~ > webgen create sample_site
 </pre>
 
-Webgen created the @sample_site@ directory which holds all directories necessary for running webgen.
+webgen created the @sample_site@ directory which holds all directories necessary for running webgen.
 So you can run webgen to create your website. Just change into the @sample_site@ directory and run
 webgen
 
@@ -41,7 +41,7 @@ webgen
 ~/sample_site > webgen
 </pre>
 
-Easy! Webgen has parsed the @src@ directory and has created the HTML output. However, as we did not
+Easy! webgen has parsed the @src@ directory and has created the HTML output. However, as we did not
 write any content yet, there is not much to see (only the default page). So let's do that now!
 
 h2. Add Content to the Website

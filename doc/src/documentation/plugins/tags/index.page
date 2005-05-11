@@ -8,7 +8,7 @@ are substituted. For example, the menu you see to left was generated. This makes
 remove menu items. If the menu was not generated, you would have to change every file which uses the
 menu.
 
-Webgen comes bundled with some default tag plugins. All currently available tags are exercised in
+webgen comes bundled with some default tag plugins. All currently available tags are exercised in
 this online demo. Choose a tag from the menu to get a detailed description of the tag.
 
 h2. Usage

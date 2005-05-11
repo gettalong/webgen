@@ -1,7 +1,7 @@
 ---
 title: HomePage
 inMenu: true
-directoryName: Webgen
+directoryName: webgen
 ---
 h2. Welcome
 
@@ -18,17 +18,18 @@ list":http://rubyforge.org/mail/?group_id=296 available if you have any question
 
 h2. News
 
-<b>Webgen 0.3.4 released!!!</b>
+<b>??.??.2005 - webgen 0.3.4 released!!!</b>
 
 Major changes:
 
 * FileHandler now uses path patterns and/or extensions for determining which files to process !
 * ERB (embedded ruby) can now be used in templates and page files (see <a href="{relocatable: documentation/plugins/filehandler/pagehandler.html}">PageHandler</a>)!
+* Relocatable tag now accepts complex URIs (URIs with query and fragment part, absolute URIs)
 * New parameters: <a href="{relocatable: documentation/plugins/filehandler/pagehandler.html}">PageHandler:useERB</a>
-* Changed parameters: FileHandler:ignorePaths, FileCopyHandler:paths
+* Changed parameters: <a href="{relocatable: documentation/plugins/filehandler}">FileHandler:ignorePaths</a>, <a href="{relocatable: documentation/plugins/filehandler/copy.html}">FileCopyHandler:paths</a>
 * Fixed bugs
 
-<b>Webgen 0.3.3 released!!!</b>
+<b>webgen 0.3.3 released!!!</b>
 
 Major changes:
 
@@ -42,12 +43,12 @@ Major changes:
 * Fixed bugs
 
 
-<b>Webgen 0.3.2 released!!!</b>
+<b>webgen 0.3.2 released!!!</b>
 
 Bug fix release for bug #1637 and other bugs
 
 
-*Webgen 0.3.1 released!!!*
+<b>webgen 0.3.1 released!!!</b>
 
 Major changes:
 
@@ -61,7 +62,7 @@ Major changes:
 * Fixed bugs
 
 
-*Webgen 0.3.0 released!!!*
+<b>webgen 0.3.0 released!!!</b>
 
 Major changes:
 

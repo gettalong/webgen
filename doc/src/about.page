@@ -5,7 +5,7 @@ menuOrder: 2
 ---
 h2. About _webgen_
 
-Webgen is used to generate web pages from page description and template files. You create one
+webgen is used to generate web pages from page description and template files. You create one
 template file in which you define the layout of your page and where the content should go. After
 that you can create page description files in which you only define the content.
 

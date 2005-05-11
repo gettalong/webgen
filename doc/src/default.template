@@ -13,7 +13,7 @@
         <table>
           <tr>
             <td><img src="{relocatable: logo.png}" alt="Logo" title="Logo" /></td>
-            <td><h1>Webgen<span style="font-size: 60%"> - template based static website generator</span></h1>
+            <td><h1>webgen<span style="font-size: 60%"> - template based static website generator</span></h1>
             <p>The solution for your static website generation needs!</p></td>
           </tr>
         </table>

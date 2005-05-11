@@ -79,15 +79,17 @@ Before the content is converted to HTML with a specific content handler, ERB is 
 content. This allows one to add dynamic content to the web pages without using tags. Following is an
 example of a page file which uses ERB:
 
+<notextile>
 <pre>
 \---
 title: Test page with ERB
 \---
 This page has the following meta info items:
-<% node.metainfo.each do |key, value| %>
-    * <%=key %>: <%=value %>
-<% end %>
+&lt;% node.metainfo.each do |key, value| %&gt;
+    * &lt;%=key %&gt;: &lt;%=value %&gt;
+&lt;% end %&gt;
 </pre>
+</notextile>
 
 This would output all meta information for the current page. As one can see in the example, the node
 for the current page can be accessed by using @node@. The parameter @useERB@ specifies if ERB should

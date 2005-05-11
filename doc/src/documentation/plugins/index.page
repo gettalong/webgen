@@ -10,7 +10,7 @@ to get more information!
 
 h2. Plugins
 
-Webgen is written with extensibility in mind; therefore most of its features are implemented with
+webgen is written with extensibility in mind; therefore most of its features are implemented with
 plugins, only the core functions are not plugins.
 
 Writing your own plugins is not difficult, too! If you need a specific functionality, implement a

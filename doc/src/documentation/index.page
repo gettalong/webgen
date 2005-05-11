@@ -3,7 +3,7 @@ directoryName: Documentation
 ---
 h2. Information
 
-p={font-size: 150%; color: red}. *!!! This documentation is for Webgen {version: } !!!*
+p={font-size: 150%; color: red}. *!!! This documentation is for webgen {version: } !!!*
 
 The source files for this website are in the @doc/src@ directory of the webgen package. Have a look
 at them to see a real world example on how to use webgen!
@@ -13,7 +13,7 @@ h2. Philosophy
 There are some things about webgen which I think are important to mention. It's about how webgen
 works and what you can expect when you start webgen.
 
-* <b>Webgen runs till the end and does not stop on errors!</b>
+* <b>webgen runs till the end and does not stop on errors!</b>
 
   I did not like it when webgen stopped because there was an error in the configuration file or an
   error in a page description file. So if something exceptional happens it is logged so that the
@@ -26,7 +26,7 @@ works and what you can expect when you start webgen.
 
 * <b>Useful default values for everything!</b>
 
-  You _do not need_ to configure webgen if you are happy with the default values. Webgen provides
+  You _do not need_ to configure webgen if you are happy with the default values. webgen provides
   default values for every configuration option.
 
 * <b>Every important thing gets logged!</b>
@@ -38,9 +38,9 @@ works and what you can expect when you start webgen.
 
 h2. Configuration
 
-Webgen provides a default configuration out of the box. If you can live with that, you do not need
+webgen provides a default configuration out of the box. If you can live with that, you do not need
 to write any configuration files. Because most people cannot, you can use your own configuration
-file. The configuration file has to be written in YAML and is called @config.yaml@. Webgen searches
+file. The configuration file has to be written in YAML and is called @config.yaml@. webgen searches
 in the current directory for the configuration file.
 
 If you want to get the configuration values you can run webgen like this
