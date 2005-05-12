@@ -125,7 +125,9 @@ module FileHandlers
     def create_node_internally( data, analysed, parent )
       lang = data['lang'] || analysed.lang
 
-      if node = parent.find {|node| node['int:pagename'] == analysed.name && node['lang'] == lang }
+      pagename = create_output_name( analysed, data['outputNameStyle'] || get_param( 'outputNameStyle' ), true )
+
+      if node = parent.find {|node| node['int:pagename'] == pagename && node['lang'] == lang }
         logger.warn do
           "Two input files in the same language for one page, " + \
           "using <#{node.recursive_value( 'src' )}> instead of <#{analysed.srcName}>"
@@ -138,7 +140,7 @@ module FileHandlers
         node['orderInfo'] ||= analysed.orderInfo
         node['src'] = analysed.srcName
         node['dest'] = create_output_name( analysed, node['outputNameStyle'] || get_param( 'outputNameStyle' ) )
-        node['int:pagename'] = create_output_name( analysed, node['outputNameStyle'] || get_param( 'outputNameStyle' ), true )
+        node['int:pagename'] = pagename
         node['processor'] = self
       end
 
