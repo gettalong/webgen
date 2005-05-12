@@ -8,7 +8,7 @@
   body {
 	margin: 0px 2em;
 	font-size: 12px;
-	font-family: Verdana, Arial, Helvetica;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
     border: 1px solid black;
     color: black;
   }
@@ -38,7 +38,7 @@
     color: white;
   }
 
-, #headerbar { border-bottom: 1px solid black; }
+  #headerbar { border-bottom: 1px solid black; }
   #footer { border-top: 1px solid black; }
 
   #body {

@@ -1,5 +1,6 @@
 ---- CURRENT ----
 
+* implement command "webgen clean" (options -f (force) -a (all files in dir, not only generated ones)
 * implement plugin which creates nodes for fragment identifiers (#info) in html
 * modify tags system sothat tags can be specified via a tag directive (like extension with file handlers)
 * create tests for methods in webgen.rb
@@ -17,7 +18,6 @@
 
 * tag 'resume', uses xmlresume2x to provide HTML version of xml resume
 * multi-lingual picture/gallery files
-* create logo "Created with webgen"
 * refactor menu: abstract menu generator+parser, concrete impls (vert. menu, horz. menu, ...)
 * include exif info for pictures
 
@@ -169,3 +169,4 @@ W do not allow two or more page files in the same language, print warn
 * RF bug: sitemap displays multilingual sites more times, sitemap should respect menuOrder
 * reloctable tag: correct output for complex URLS???
 * document the various meta info entries that the plugins use (inMenu, menuOrdering, ...) --> define: Plugin.used_meta_info( name, desc )
+* create logo "Created with webgen"
