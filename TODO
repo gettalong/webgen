@@ -1,5 +1,6 @@
 ---- CURRENT ----
 
+* BUG: relocatable should work if defaultLangInFilename is true (eg. copy.html -> not found because of copy.en.html)
 * implement command "webgen clean" (options -f (force) -a (all files in dir, not only generated ones)
 * implement plugin which creates nodes for fragment identifiers (#info) in html
 * modify tags system sothat tags can be specified via a tag directive (like extension with file handlers)
