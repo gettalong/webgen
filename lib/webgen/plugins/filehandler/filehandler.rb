@@ -56,7 +56,7 @@ module FileHandlers
       rootPath = Webgen::Plugin['Configuration']['srcDirectory'] + File::SEPARATOR
       rootHandler = handler_for_path( rootPath, handlerFiles )
       if rootHandler.nil? || allFiles.empty?
-        logger.error { "No file handler for root directory <#{rootPath}> found" } if rootHandler.nil?
+        logger.error { "No file handler for root directory <#{rootPath}> found" } if rootHandler.nil? && !allFiles.empty?
         logger.error { "No files found in directory <#{rootPath}>" } if allFiles.empty?
         return nil
       end
@@ -153,7 +153,8 @@ module FileHandlers
     end
 
     def handler_for_path( path, handlerFiles )
-      handlerFiles.find {|p, handler| p.include?( path )}[1]
+      temp, handler = handlerFiles.find {|p, handler| p.include?( path )}
+      handler
     end
 
     def sort_file_handlers( handlers )
