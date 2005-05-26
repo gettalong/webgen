@@ -38,10 +38,10 @@ module TreeWalkers
 
     # Uses either all registered walkers or the specified +walker+. Walks the +tree+ for each walker
     # separately.
-    def execute( tree, walker = nil )
+    def execute( tree, walker = nil, direction = :forward )
       walkers = ( walker.nil? ? @walkers : [walker] )
       walkers.each do |walker|
-        walk_tree( tree, walker, 0 )
+        walk_tree( tree, walker, 0, direction )
       end
     end
 
@@ -50,11 +50,12 @@ module TreeWalkers
     #######
 
     # Walks the tree and calls the plugin +walker+ for each and every node.
-    def walk_tree( node, walker, level )
-      walker.handle_node( node, level )
+    def walk_tree( node, walker, level, direction = :forward )
+      walker.handle_node( node, level ) if direction == :forward
       node.each do |child|
-        walk_tree( child, walker, level + 1 )
+        walk_tree( child, walker, level + 1, direction )
       end
+      walker.handle_node( node, level ) if direction == :backward
     end
 
   end

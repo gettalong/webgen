@@ -22,6 +22,7 @@
 
 require 'optparse'
 require 'rbconfig'
+require 'fileutils'
 require 'cmdparse'
 require 'webgen/plugin'
 
@@ -308,6 +309,79 @@ Fill this file with your own data!!!
   end
 
 
+  class CleanCommand < CommandParser::Command
+
+    module ::FileUtils
+
+      def fu_output_message( msg )
+        logger.info { msg }
+      end
+
+      def ask_before_delete( ask, func, list, options = {} )
+        newlist = [*list].collect {|e| "'" + e + "'"}.join(', ')
+        if ask
+          print "Really delete #{newlist}? "
+          return unless /y|Y/ =~ gets.strip
+        end
+        self.send( func, list, options.merge( :verbose => true ) )
+      end
+
+    end
+
+    class CleanWalker < Webgen::Plugin
+
+      summary "Deletes the output file for each node."
+      depends_on 'TreeWalker'
+
+      attr_writer :ask
+
+      def handle_node( node, level )
+        file = node.recursive_value( 'dest' )
+        return if !File.exists?( file ) || node['int:virtualNode']
+        if File.directory?( file )
+          begin
+            FileUtils.ask_before_delete( @ask, :rmdir, file )
+          rescue Errno::ENOTEMPTY => e
+            logger.info "Cannot delete directory #{file}, as it is not empty!"
+          end
+        else
+          FileUtils.ask_before_delete( @ask, :rm, file, :force => true )
+        end
+      end
+
+    end
+
+    def initialize;
+      super( 'clean' )
+      @all = false
+      @ask = false
+      options.separator( "Options" )
+      options.on( '--all', '-a', "Removes ALL files from the output directory" ) { @all = true }
+      options.on( '--interactive', '-i', "Ask for each file" ) { @ask = true }
+    end
+
+    def description; "Removes the generated or all files from the output directory"; end
+
+    def usage; "Usage: #{@options.program_name} [global options] clean [options]"; end
+
+    def execute( commandParser, args )
+      if @all
+        logger.info( "Deleting all files from output directory..." )
+        outDir = Plugin['Configuration']['outDirectory']
+        FileUtils.ask_before_delete( @ask, :rm_rf, outDir ) if File.exists?( outDir )
+      else
+        tree = Plugin['FileHandler'].build_tree
+        logger.info( "Deleting generated files from output directory..." )
+        Plugin['CleanWalker'].ask = @ask
+        Plugin['TreeWalker'].execute( tree, Plugin['CleanWalker'], :backward )
+      end
+      logger.info( "Webgen finished 'clean' command" )
+    end
+
+    private
+
+  end
+
   class WebgenCommandParser < CommandParser
 
     def initialize
@@ -332,6 +406,7 @@ Fill this file with your own data!!!
       self.add_command( RunWebgenCommand.new, true )
       self.add_command( ShowCommand.new )
       self.add_command( CreateCommand.new )
+      self.add_command( CleanCommand.new )
       self.add_command( CommandParser::HelpCommand.new )
       self.add_command( CommandParser::VersionCommand.new )
     end

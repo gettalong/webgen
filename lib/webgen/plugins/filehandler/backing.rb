@@ -97,6 +97,7 @@ module FileHandlers
       pageNode = Webgen::Plugin['VirtualPageHandler'].create_node_from_data( '', filename, dirNode )
       dirNode.add_child( pageNode )
       pageNode.metainfo.update( data )
+      pageNode['int:virtualNode'] = true
       self.logger.info { "Created virtual node <#{pageNode.recursive_value( 'src' )}> (#{pageNode['lang']}) in <#{dirNode.recursive_value( 'dest' )}> " \
         "referencing '#{pageNode['dest']}'" }
     end
