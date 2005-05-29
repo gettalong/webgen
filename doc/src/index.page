@@ -18,10 +18,13 @@ list":http://rubyforge.org/mail/?group_id=296 available if you have any question
 
 h2. News
 
-<b>12.05.2005 - webgen 0.3.5 released!!!</b>
+<b>??.??.2005 - webgen 0.3.5 released!!!</b>
 
 Major changes:
 
+* New CLI command "clean" for deleting the generated or all files from the output directory
+* Pages files can now be referenced in @relocatable@ tag and backing files with a standardified name (see <a href="{relocatable: documentation/plugins/filehandler/pagehandler.page#naming}">here</a>), despite an eventually self defined naming scheme
+* Changed paramters: <a href="{relocatable: documentation/plugins/filehandler/pagehandler.page}">PageHandler:validator</a> (now deactivated by default)
 
 
 <b>12.05.2005 - webgen 0.3.4 released!!!</b>
@@ -29,11 +32,11 @@ Major changes:
 Major changes:
 
 * FileHandler now uses path patterns and/or extensions for determining which files to process !
-* ERB (embedded ruby) can now be used in templates and page files (see <a href="{relocatable: documentation/plugins/filehandler/pagehandler.html}">PageHandler</a>)!
+* ERB (embedded ruby) can now be used in templates and page files (see <a href="{relocatable: documentation/plugins/filehandler/pagehandler.page}">PageHandler</a>)!
 * Relocatable tag now accepts complex URIs (URIs with query and fragment part, absolute URIs)
 * Changed meta info name *menuOrder* to *orderInfo* (e.g. used for specifying order information for menus) -- you have to adapt your page and backing files!!!
-* New parameters: <a href="{relocatable: documentation/plugins/filehandler/pagehandler.html}">PageHandler:useERB</a>
-* Changed parameters: <a href="{relocatable: documentation/plugins/filehandler}">FileHandler:ignorePaths</a>, <a href="{relocatable: documentation/plugins/filehandler/copy.html}">FileCopyHandler:paths</a>
+* New parameters: <a href="{relocatable: documentation/plugins/filehandler/pagehandler.page}">PageHandler:useERB</a>
+* Changed parameters: <a href="{relocatable: documentation/plugins/filehandler}">FileHandler:ignorePaths</a>, <a href="{relocatable: documentation/plugins/filehandler/copy.page}">FileCopyHandler:paths</a>
 * New page describing meta information items used by plugins
 * Fixed bugs
 
@@ -45,8 +48,8 @@ Major changes:
 * Now you can let webgen create the basic directories and files by executing @webgen create my_site@
 * New logging plugin lets you have more control over logging and log files
 * Now each website can have a plugin directory
-* New parameters for: <a href="{relocatable: documentation/plugins/tags/wikilink.html}">wikilink</a>
-* Changed format of backing files -> have a look at the <a href="{relocatable: documentation/plugins/filehandler/backing.html}">documentation</a>!
+* New parameters for: <a href="{relocatable: documentation/plugins/tags/wikilink.page}">wikilink</a>
+* Changed format of backing files -> have a look at the <a href="{relocatable: documentation/plugins/filehandler/backing.page}">documentation</a>!
 * Removed obsolete Extension Loader plugin
 * Fixed bugs
 
@@ -60,10 +63,10 @@ Bug fix release for bug #1637 and other bugs
 
 Major changes:
 
-* Better DefaultLayouter for picture galleries (<a href="{relocatable: Design_Gallery_1.html}">online demo</a>)
-* Output names for page files now customizable (see <a href="{relocatable: documentation/plugins/filehandler/pagehandler.html}">PageHandler</a>)
+* Better DefaultLayouter for picture galleries (<a href="{relocatable: Design_Gallery_1.page}">online demo</a>)
+* Output names for page files now customizable (see <a href="{relocatable: documentation/plugins/filehandler/pagehandler.page}">PageHandler</a>)
 * On-the-fly creation of thumbnails for pictures with RMagick
-* New tags: <a href="{relocatable: documentation/plugins/tags/sitemap.html}">sitemap</a>
+* New tags: <a href="{relocatable: documentation/plugins/tags/sitemap.page}">sitemap</a>
 * Tag @lang@ renamed, new name @langbar@!
 * New parameters for @menu@ tag
 * Automatic checking of HTML files on their validness
@@ -75,7 +78,7 @@ Major changes:
 Major changes:
 
 * Textile, Markdown, RDOC and HTML as content format supported!!!
-* New tags: <a href="{relocatable: documentation/plugins/tags/wikilink.html}">wikilink</a>
+* New tags: <a href="{relocatable: documentation/plugins/tags/wikilink.page}">wikilink</a>
 * Improved plugin system
 * On-the-fly creation of new tags
 * Fixed bugs

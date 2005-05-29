@@ -126,6 +126,11 @@ class Node
     node
   end
 
+  # Returns an informative representation of the node.
+  def to_s
+    "<##{self.class.name}: src=#{@metainfo['src']}, dest=#{@metainfo['dest']}, title=#{@metainfo['title']}>"
+  end
+
   #######
   private
   #######
@@ -135,7 +140,7 @@ class Node
       node = Node.root( self )
       destString = destString[1..-1]
     else
-      node = self.parent_dir || self
+      node = @metainfo['int:directory?'] ? self : self.parent_dir || self
     end
 
     startElement = node
@@ -145,7 +150,7 @@ class Node
       break if node.nil?
       case element
       when '..' then node = node.parent
-      else node = node.find {|child| /^#{element}\/?$/ =~ child[metainfo] }
+      else node = node.find {|child| /^#{element}\/?$/ =~ child[metainfo]  || (metainfo=='dest' && child['int:pagename'] == element) }
       end
     end
 

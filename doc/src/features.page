@@ -9,6 +9,7 @@ h2. Feature list
 * Uses templates for separating layout from content
 * Supports several different content formats (Textile, Markdown, RDOC, plain HTML), new ones are easy to add
 * Uses 'tags' to add generated, ie. dynamic, content to the web pages -- standard distribution provides often used tags
+* Support for ERB (embedded Ruby) in templates and page description files
 * Supports 'virtual files' via meta information backing files
 * Automatically checks generated files if they are standard conform
 * Easy to configure if one needs to (no need if you are happy with the default values)

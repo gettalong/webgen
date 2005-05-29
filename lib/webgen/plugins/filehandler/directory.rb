@@ -44,7 +44,7 @@ module FileHandlers
       end
 
       def process_dir_index
-        node = Webgen::Plugin['PageHandler'].get_page_node_by_name( self, Webgen::Plugin['DirHandler']['indexFile'] )
+        node = node_for_string( Webgen::Plugin['DirHandler']['indexFile'] )
         if node
           self.logger.info { "Directory index file for <#{self.recursive_value( 'src' )}> => <#{node.recursive_value( 'src', false )}>" }
           self['indexFile'] = node
@@ -59,7 +59,7 @@ module FileHandlers
 
     summary "Handles directories"
     handle_path '**/'
-    add_param 'indexFile', 'index.html', 'The default file name for the directory index file.'
+    add_param 'indexFile', 'index.page', 'The default file name for the directory index page file.'
     depends_on 'FileHandler'
     used_meta_info 'indexFile', 'directoryName'
 

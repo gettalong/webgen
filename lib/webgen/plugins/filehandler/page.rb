@@ -43,7 +43,7 @@ module FileHandlers
     add_param 'outputNameStyle', [:name, ['.', :lang], '.html'], 'Defines how the output name should be built. The correct name will be used for ' \
     'the :name part and the file language will be used for the :lang part. If <defaultLangInFilename> is true, the :lang part or the subarray in which '\
     'the :lang part was defined, will be omitted.'
-    add_param 'validator', 'xmllint', 'The validator for checking HTML files on their validness. Set to "" or nil to prevent checking.'
+    add_param 'validator', nil, 'The validator for checking HTML files on their validness. Set to "" or nil to prevent checking.'
     add_param 'useERB', true, 'Specifies if the content blocks of the page file should be processed with ERB before they are formatted.'
 
     used_meta_info 'title', 'orderInfo', 'lang', 'blocks', 'useERB'
@@ -125,7 +125,7 @@ module FileHandlers
     def create_node_internally( data, analysed, parent )
       lang = data['lang'] || analysed.lang
 
-      pagename = create_output_name( analysed, data['outputNameStyle'] || get_param( 'outputNameStyle' ), true )
+      pagename = analysed.name + '.page'
 
       if node = parent.find {|node| node['int:pagename'] == pagename && node['lang'] == lang }
         logger.warn do

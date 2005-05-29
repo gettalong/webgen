@@ -73,7 +73,7 @@ Just add page files and other content to your website and let it grow!
 h2. Using Meta Information in Pages
 
 Meta information is specified at the beginning of a page file. Have a look at the
-<a href="{relocatable: plugins/filehandler/pagehandler.html}">documentation</a> to see how that is done
+<a href="{relocatable: plugins/filehandler/pagehandler.page}">documentation</a> to see how that is done
 in detail!
 
 We are now going to use meta information to customize our website! Open the file @default.template@

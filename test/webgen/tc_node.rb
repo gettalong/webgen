@@ -29,6 +29,7 @@ class NodeTest < Test::Unit::TestCase
     @n['root/dir2'] = create_node( @n['root'] )
     @n['root/dir2']['dest'] = 'dir2/'
     @n['root/dir2']['otherdest'] = 'dir2/'
+    @n['root/dir2']['int:directory?'] = true
     @n['root/dir2/file3'] = create_node( @n['root/dir2'] )
     @n['root/dir2/file3']['dest'] = 'file3'
     @n['root/dir2/file3']['otherdest'] = 'file3o'
@@ -104,6 +105,7 @@ class NodeTest < Test::Unit::TestCase
     assert_equal( @n['root/dir2/file3'], @n['root/virtdir1/file2'].node_for_string( '/dir2/file3' ) )
     assert_equal( @n['root/file11'], @n['root/virtdir1/file2'].node_for_string( '/rdoc/file11' ) )
     assert_equal( @n['root/dir2/file5'], @n['root/dir2/file4'].node_for_string( '/dir2/otherdest/file5' ) )
+    assert_equal( @n['root/dir2/file4'], @n['root/dir2'].node_for_string( 'file4' ) )
 
     assert_equal( @n['root/dir2'], @n['root'].node_for_string( '/dir2', 'otherdest' ) )
     assert_equal( @n['root/dir2/file3'], @n['root'].node_for_string( '/dir2/file3o', 'otherdest' ) )

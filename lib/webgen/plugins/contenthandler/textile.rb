@@ -35,8 +35,8 @@ begin
 
       def format_content( txt )
         RedCloth.new( txt ).to_html
-      rescue
-        self.logger.error { "Error converting Textile text to HTML" }
+      rescue Exception => e
+        self.logger.error { "Error converting Textile text to HTML: #{e.message}" }
         ''
       end
 

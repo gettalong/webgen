@@ -1,7 +1,6 @@
 ---- CURRENT ----
 
 * MAYBE: ONE page node for all pages, metainfo 'en' => all info about english, 'de' => same, ...???
-* BUG: relocatable should work if defaultLangInFilename is true (eg. copy.html -> not found because of copy.en.html)
 * implement plugin which creates nodes for fragment identifiers (#info) in html
 * modify tags system sothat tags can be specified via a tag directive (like extension with file handlers)
 * create tests for methods in webgen.rb
@@ -172,3 +171,4 @@ W do not allow two or more page files in the same language, print warn
 * document the various meta info entries that the plugins use (inMenu, menuOrdering, ...) --> define: Plugin.used_meta_info( name, desc )
 * create logo "Created with webgen"
 * implement command "webgen clean" (options -f (force) -a (all files in dir, not only generated ones)
+* BUG: relocatable should work if defaultLangInFilename is true (eg. copy.html -> not found because of copy.en.html)

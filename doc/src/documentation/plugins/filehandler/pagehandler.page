@@ -8,7 +8,7 @@ h2. Information
 
 h2. Description
 
-Page description files are used to specify the actual content for the website. The contain the
+Page description files are used to specify the actual content for the website. They contain the
 content for the webpage and, optionally, meta information.
 
 h2(#structure). File format
@@ -35,7 +35,8 @@ This is the content of the file
 In this example, meta information is specified ("more info":#meta). Note the three dashes at the
 beginning of the file. This indicates that the following 'block' is used for meta information. If
 the three dashes at the beginning are omitted, then the parser won't know that the following block
-contains meta information and thinks it is content.
+contains meta information and thinks it is content. If not specified, the default name for the
+content block is @content@.
 
 If you want to include a line in your file which only has three dashes, you have to write this:
 <pre>
@@ -111,28 +112,44 @@ If meta information is specified in a page description file, the default values 
 
 The following defaults are used:
 
-* Content format
+* Content format and name
 
   If there is only one content in a page description file, its formatting defaults to the parameter
-  value @defaultContentFormat@.
+  value @defaultContentFormat@ and it is named @content@.
 
 * Title, ordering and language
 
   These values are taken from the filename, so the filename of a page description file has to be
-  formatted like this: @[ordering.]title[.language].page@ (the values in square brackets are
+  formatted like this: @[ordering.]name[.language].page@ (the values in square brackets are
   optional). In detail:
   * ordering: The ordering is a number which is used for menu generation and the like, where it is
     necessary to order the items. If not specified, defaults to @0@.
-  * title: This is the title of the page. Hyphens and underscores are replaced with spaces and the
-    title must not contain any dots.
+  * name: This is used for the title of the page. Hyphens and underscores are replaced with spaces
+    and @name@ must not contain any dots. Also: if two page descriptions files have the same
+    @name@ part, they should define the same content for different languages as webgen consideres
+    them as "one" page file in two languages.
   * language: This is the language code for this file. It is the international two letter acronym
     and if it is not specified, it defaults to @en@.
 
   Consider the following examples:
-  * @name.page@ -> title: Name, language: en, ordering: 0
-  * @name.de.page@ -> title: Name, language: de, ordering: 0
-  * @01.name_of-file.de.page@ -> Title: Name of file, language: de, ordering: 01
+    * @name.page@ -> title: Name, language: en, ordering: 0
+    * @name.de.page@ -> title: Name, language: de, ordering: 0
+    * @01.name_of-file.de.page@ -> Title: Name of file, language: de, ordering: 01
 
+  Notice: The first two examples define content for two different languages (en and de) as they have
+  the same @name@ part.
+
+
+h2(#naming). Referencing page description files
+
+The output name of page description files can be specified using the parameter @outputNameStyle@. If
+you want to reference a page description file, you can use this output name (e.g. @name.de.html@).
+However, if you want to change this parameter later or set the parameter @defaultLangInFilename@,
+this link will not work anymore. Therefore, each page description file (i.e. it does not matter
+which language it is written for) can be referenced by specifing the name
+<code>[name_of_page_desc_file].page</code>. I could have used the extension @html@ instead of
+@page@, but I think the latter is better because the output files need not have to have the
+extension @html@.
 
 h2(#meta). Meta Information
 

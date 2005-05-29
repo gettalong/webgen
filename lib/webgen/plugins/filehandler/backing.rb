@@ -74,8 +74,8 @@ module FileHandlers
 
       backingFiles.each do |backingFile|
         backingFile['content'].each do |filename, data|
-          if dirNode.node_for_string?( filename )
-            backedFile = dirNode.node_for_string( filename )
+          backedFile = dirNode.node_for_string?( filename )
+          if backedFile
             self.logger.info { "Setting meta info data on file <#{backedFile.recursive_value( 'dest' )}>" }
             backedFile.metainfo.update( data )
           else
