@@ -29,8 +29,10 @@ module Tags
 
     summary 'Provides links to translations of the page'
     add_param 'separator', ' | ', 'Separates the languages from each other.'
-    add_param 'showSingleLang', true, 'True if the language link should be shown '\
-    'although the page is only available in one language.'
+    add_param 'showSingleLang', true, 'Should the link be shown '\
+    'although the page is only available in one language?'
+    add_param 'showOwnLang', true, 'Should the link to the currently displayed '\
+    'language page be shown? '
     depends_on 'Tags'
 
     def initialize
@@ -39,7 +41,9 @@ module Tags
     end
 
     def process_tag( tag, node, refNode )
-      output = node.parent.find_all {|a| a['int:pagename'] == node['int:pagename']}.sort {|a, b| a['lang'] <=> b['lang']}.collect do |n|
+      output = node.parent.find_all do |a|
+        a['int:pagename'] == node['int:pagename'] && (node['lang'] != a['lang'] || get_param( 'showOwnLang' ))
+      end.sort {|a, b| a['lang'] <=> b['lang']}.collect do |n|
         n['processor'].get_html_link( n, n, n['lang'] )
       end.join( get_param( 'separator' ) )
       return ( get_param( 'showSingleLang' ) || node.parent.children.length > 1 ? output : "" )
