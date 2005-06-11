@@ -15,5 +15,6 @@ h2. Examples
 
 table{border:1px solid black}.
 |_.Command|_.Output|
-|<notextile>\{navbar: {separator: " HALLO "}}</notextile>|<notextile>{navbar: {separator: " HALLO "}}</notextile>|
 |\{navbar:}|{navbar:}|
+|<notextile>\{navbar: {separator: " HALLO "}}</notextile>|<notextile>{navbar: {separator: " HALLO "}}</notextile>|
+

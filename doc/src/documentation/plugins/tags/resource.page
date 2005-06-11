@@ -1,0 +1,22 @@
+---
+title: Resource
+inMenu: true
+---
+h2. Information
+
+<notextile>{describe: ResourceTag}</notextile>
+
+h2. Description
+
+The resource tag is used to include a resource either verbatim (i.e. its content is copied) or by
+path. For more information about resources have a look at the
+<a href="{relocatable: ../resourcemanager.page}">Resource Manager</a>.
+
+h2. Examples
+
+table{border:1px solid black}.
+|_{width: 30%}.Command|_.Output|
+|\{resource: webgen-logo}|{resource: webgen-logo}|
+|\{resource: w3c-valid-xhtml11}|{resource: w3c-valid-xhtml11}|
+|\{resource: {name: webgen-css, insert: data}}|{resource: {name: webgen-css, insert: data}}|
+

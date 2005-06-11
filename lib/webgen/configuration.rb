@@ -52,6 +52,28 @@ module Webgen
     add_param 'outDirectory', 'output', 'The directory to which the output files are written.'
     add_param 'lang', 'en', 'The default language.'
 
+    # Returns the data directory of webgen.
+    def self.data_dir
+      unless defined?( @@data_dir )
+        @@data_dir = File.join( Config::CONFIG["datadir"], "webgen" )
+
+        if defined?( Gem::Cache )
+          gem = Gem::Cache.from_installed_gems.search( "webgen", "=#{Webgen::VERSION.join('.')}" ).last
+          @@data_dir = File.join( gem.full_gem_path, "data", "webgen" ) if gem
+        end
+
+        @@data_dir =  $0.sub( /webgen$/, '' ) + '../data/webgen' if !File.exists?( @@data_dir )
+
+        if File.exists?( @@data_dir )
+          logger.info { "Webgen data directory found at #{@@data_dir}" }
+        else
+          logger.error { "Could not locate webgen data directory!!!" }
+          @@data_dir = ''
+        end
+      end
+      @@data_dir
+    end
+
     # Does all the initialisation stuff
     def init_all
       load_plugins( File.dirname( __FILE__) + '/plugins', File.dirname( __FILE__).sub(/webgen$/, '') )

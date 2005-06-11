@@ -156,10 +156,6 @@ module Webgen
       module_eval s
     end
 
-    #######
-    private
-    #######
-
     # Return the ancestor classes for the object's class which are sub classes from Plugin.
     def self.ancestor_classes
       self.ancestors.delete_if {|c| c.instance_of?( Module ) }[0..-3]

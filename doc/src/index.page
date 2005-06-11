@@ -22,8 +22,13 @@ h2. News
 
 Major changes:
 
+* Now using cmdparse version 1.0.3!
 * New CLI command "clean" for deleting the generated or all files from the output directory
+* Restructured menu tag -> five different menu styles now available (see <a href="{relocatable: documentation/plugins/menustyles}">Menu Styles</a>)
+* New plugin <a href="{relocatable: documentation/plugins/resourcemanager.page}">ResourceManager</a> for defining resources
+* New plugin <a href="{relocatable: documentation/plugins/tags/resource.page}">Resource Tag</a> for accessing resources
 * Pages files can now be referenced in @relocatable@ tag and backing files with a standardified name (see <a href="{relocatable: documentation/plugins/filehandler/pagehandler.page#naming}">here</a>), despite an eventually self defined naming scheme
+* New parameters: <a href="{relocatable: documentation/plugins/tags/langbar.page}">LangbarTag:showOwnLang</a>
 * Changed paramters: <a href="{relocatable: documentation/plugins/filehandler/pagehandler.page}">PageHandler:validator</a> (now deactivated by default)
 
 

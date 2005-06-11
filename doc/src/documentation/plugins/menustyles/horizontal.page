@@ -1,0 +1,21 @@
+---
+title: Horizontal
+inMenu: true
+---
+h2. Information
+
+<notextile>{describe: HorizontalMenuStyle}</notextile>
+
+h2. Description
+
+Builds a horizontal menu; each menu level gets its own menu bar.
+
+h2. Example
+
+Basic menu as it appears by default, nothing styled additionally with CSS:
+
+<notextile>{menu: {menuStyle: horizontal}}</notextile>
+
+The same menu with a little CSS magic:
+
+<notextile>{menu: {menuStyle: horizontal, options: {divClass: horiz-menu}}}</notextile>

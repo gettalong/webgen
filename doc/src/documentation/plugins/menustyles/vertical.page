@@ -1,0 +1,32 @@
+---
+title: Vertical
+inMenu: true
+---
+h2. Information
+
+<notextile>{describe: VerticalMenuStyle}</notextile>
+
+h2. Description
+
+Builds a simple vertical menu. This is the most basic of all menus. Use the various parameters to
+change how many menu levels should be shown.
+
+h2. Style Advice
+
+The menu is constructed using HTML lists with @ul@ and @li@ tags. However, the menu looks better if
+no discs are shown for the menu items (using <code>list-style-type: none</code>).
+
+h2. Examples
+
+Basic menu as it appears by default, nothing styled additionally with CSS:
+
+<notextile>{menu: {menuStyle: vertical}}</notextile>
+
+The same menu with a little CSS magic:
+
+<notextile>{menu: {menuStyle: vertical, options: {divClass: vert-menu}}}</notextile>
+
+Examples of the menu with other parameter settings
+
+table{border: 1px solid black}.
+|^. \{menu: {menuStyle: vertical, options: {subtreeLevel: 1}}}{menu: {menuStyle: vertical, options: {subtreeLevel: 1}}}|^. \{menu: {menuStyle: vertical, options: {subtreeLevel: 4, showCurrentSubtreeOnly: false}}} {menu: {menuStyle: vertical, options: {subtreeLevel: 4, showCurrentSubtreeOnly: false}}}|

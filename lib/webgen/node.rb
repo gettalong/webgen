@@ -20,6 +20,7 @@
 #++
 #
 
+require 'uri'
 require 'webgen/composite'
 
 class Node
@@ -56,13 +57,25 @@ class Node
   end
 
 
+  # Returns the relative path from this node to +dest+.
+  def relpath_to_string( dest )
+    if dest[0] == ?/
+      from = recursive_value( 'dest' ).sub( /#{self['dest']}$/, '' ).split( '/' )[1..-1] || []
+      from.fill( '..' )
+      from.concat( dest.split( '/' )[1..-1] ).join( '/' )
+    else
+      from = recursive_value( 'dest' ).sub( /#{self['dest']}$/, '' ).split( '/' )[1..-1] || []
+      from.concat( dest.split( '/' ) ).join( '/' )
+    end
+  end
+
   # Return the relative path from this node to the destNode, virtual nodes are not used in the
   # calculation. The destNode can be any non virtual node. If +destNode+ starts with http://, the
   # relative path to it is the empty string. If +includeDestNode+ is true, then the path of the
   # destination node is appended to the calculated path.
   def relpath_to_node( destNode, includeDestNode = true)
-    if destNode['dest'] =~ /^http:\/\//
-      path = ''
+    if URI::parse( destNode['dest'] ).absolute?
+      path = destNode['dest']
     else
       from = recursive_value( 'dest' ).sub( /#{self['dest']}$/, '' ).split( '/' )[1..-1] || []
       to = destNode.recursive_value( 'dest' ).sub( /#{destNode['dest']}$/, '' ).split( '/' )[1..-1] || []

@@ -40,6 +40,7 @@ module FileHandlers
 
     def initialize
       add_msg_name( :AFTER_ALL_READ )
+      add_msg_name( :AFTER_ALL_WRITTEN )
     end
 
     # Builds the tree with all the nodes and returns it.
@@ -90,6 +91,8 @@ module FileHandlers
       node.each do |child|
         write_tree( child )
       end
+
+      dispatch_msg( :AFTER_ALL_WRITTEN ) if node.parent.nil?
     end
 
 
@@ -210,7 +213,7 @@ module FileHandlers
     # Returns a HTML link for the given +node+ relative to +refNode+. You can optionally specify the
     # title for the link. If not specified, the title of the node is used.
     def get_html_link( node, refNode, title = node['title'] )
-      "<a href=\"#{refNode.relpath_to_node( node )}\">#{title}</a>"
+      "<a href=\"#{refNode.relpath_to_node( node )}\" title=\"#{title}\">#{title}</a>"
     end
 
   end

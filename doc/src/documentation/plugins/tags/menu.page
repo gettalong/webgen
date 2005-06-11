@@ -9,22 +9,11 @@ h2. Information
 h2. Description
 
 The menu tag is used to generate a menu for the website. You can see such a menu on the left of this
-page. To get a list of all supported parameters for the menu tag, have a look at its API
-documentation.
+page.
 
-This page is available in <a href="menu.de.html">German</a>. Try and go to
-the german version of this page. You will see that the menu items for which translations exist
-change their names.
+This page is available in <a href="menu.de.html">German</a>. Try and go to the german version of
+this page. You will see that the menu items for which translations exist change their names.
 
-The menu to the left is generated with the default settings:
-
-* level = 1
-* subtreeLevel = 3
-* showCurrentSubtreeOnly = true
-
-h2. Examples
-
-Below are some other menus generated from the same source but with different settings:
-
-table{border: 1px solid black}.
-|^. \{menu: {subtreeLevel: 1}}{menu: {subtreeLevel: 1}}|^. \{menu: {showCurrentSubtreeOnly: false}} {menu: {showCurrentSubtreeOnly: false}}|
+There exist serveral different predefined styles of menus (vertical, horizontal, ...). Have a look
+at the <a href="{relocatable: ../menustyles}">Menu Styles</a> section to see which menu styles are
+available.

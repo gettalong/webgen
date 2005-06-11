@@ -16,6 +16,7 @@ class NodeTest < Test::Unit::TestCase
     @n['root'] = Node.new( nil )
     @n['root']['dest'] = 'root/'
     @n['root']['otherdest'] = 'root/'
+    @n['root']['int:directory?'] = true
     @n['root/file1'] = create_node( @n['root'] )
     @n['root/file1']['dest'] = 'file1'
     @n['root/file1']['otherdest'] = 'file1o'
@@ -24,6 +25,7 @@ class NodeTest < Test::Unit::TestCase
     @n['root/virtdir1'] = create_node( @n['root'] )
     @n['root/virtdir1']['virtual'] = true
     @n['root/virtdir1']['dest'] = 'virtdir1/'
+    @n['root/virtdir1']['int:directory?'] = true
     @n['root/virtdir1/file2'] = create_node( @n['root/virtdir1'] )
     @n['root/virtdir1/file2']['dest'] = 'file2'
     @n['root/dir2'] = create_node( @n['root'] )
@@ -39,8 +41,10 @@ class NodeTest < Test::Unit::TestCase
     @n['root/dir2/file5']['dest'] = 'otherdest/file5'
     @n['root/dir2/dir3'] = create_node( @n['root/dir2'] )
     @n['root/dir2/dir3']['dest'] = 'dir3/'
+    @n['root/dir2/dir3']['int:directory?'] = true
     @n['root/dir4'] = create_node( @n['root'] )
     @n['root/dir4']['dest'] = 'dir4/'
+    @n['root/dir4']['int:directory?'] = true
     @n['root/rdoc'] = create_node( @n['root'] )
     @n['root/rdoc']['dest'] = 'rdoc/'
   end
@@ -78,6 +82,15 @@ class NodeTest < Test::Unit::TestCase
     assert_equal( 'root/file1o', @n['root/file1'].recursive_value( 'otherdest' ) )
   end
 
+  def test_relpath_to_string
+    assert_equal( 'file2', @n['root/file1'].relpath_to_string( 'file2' ) )
+    assert_equal( 'file2', @n['root/file1'].relpath_to_string( '/file2' ) )
+    assert_equal( 'document/file2', @n['root/file1'].relpath_to_string( 'document/file2' ) )
+    assert_equal( 'dir2/document/file2', @n['root/dir2/file3'].relpath_to_string( 'document/file2' ) )
+    assert_equal( '../document/file2', @n['root/dir2/file3'].relpath_to_string( '/document/file2' ) )
+    assert_equal( 'dir2/../document/file2', @n['root/dir2/file3'].relpath_to_string( '../document/file2' ) )
+  end
+
   def test_relpath_to_node
     assert_raise( NoMethodError ) { @n['root/file1'].relpath_to_node( nil ) }
 
@@ -94,7 +107,8 @@ class NodeTest < Test::Unit::TestCase
     assert_equal( '../virtdir1/', @n['root/dir2/file3'].relpath_to_node( @n['root/virtdir1'] ) )
     assert_equal( '.', @n['root/dir2/file3'].relpath_to_node( @n['root/dir2/file4'], false ) )
 
-    assert_equal( '', @n['root/file1'].relpath_to_node( @n['external'] ) )
+    assert_equal( @n['external']['dest'], @n['root/file1'].relpath_to_node( @n['external'] ) )
+    assert_equal( @n['external']['dest'], @n['root/file1'].relpath_to_node( @n['external'], false ) )
   end
 
   def test_node_for_string

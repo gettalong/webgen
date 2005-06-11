@@ -1,150 +1,246 @@
 /*
-#5C73B8 -> background
-#405080 -> headings
-#CFD4E6 -> code
-#3054BF -> other
- */
+   #5C73B8 -> background
+   #405080 -> headings
+   #CFD4E6 -> code
+   #3054BF -> other
+   */
 
-  body {
-	margin: 0px 2em;
-	font-size: 12px;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
-    border: 1px solid black;
-    color: black;
-  }
+body {
+  margin: 0px 2em;
+  font-size: 12px;
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+  border: 1px solid black;
+  color: black;
+}
 
-  h1, h2, h3, h4, h5 { color: #405080}
+h1, h2, h3, h4, h5 { color: #405080}
 
-  a:visited { color: #405080; }
-  a { color: #5C73B8; }
-  .bar a { color: white }
-  .bar a:visited { color: white }
+a:visited { color: #405080; }
+a { color: #5C73B8; }
+.bar a { color: white }
+.bar a:visited { color: white }
 
-  #all { background-color: #CFD4E6; }
+#all { background-color: #CFD4E6; }
 
-  #header {
-    border-bottom: 1px solid black;
-    padding: 1ex;
-    background-color: #5C73B8;
-  }
-  #header img {
-    padding-right: 5em;
-  }
-  #header h1 {
-    margin: 0ex;
-	font-size: 300%;
-	font-style: italic;
-	font-weight: normal;
-    color: white;
-  }
+#header {
+  border-bottom: 1px solid black;
+  padding: 1ex;
+  background-color: #5C73B8;
+}
+#header img {
+  padding-right: 5em;
+}
+#header h1 {
+  margin: 0ex;
+  font-size: 300%;
+  font-style: italic;
+  font-weight: normal;
+  color: white;
+}
 
-  #headerbar { border-bottom: 1px solid black; }
-  #footer { border-top: 1px solid black; }
+#headerbar { border-bottom: 1px solid black; }
+#footer { border-top: 1px solid black; }
 
-  #body {
-    margin-left: 250px;
-    margin-right: 20px;
-    padding: 10px;
-  }
+#body {
+  margin-left: 20px;
+  margin-right: 20px;
+  padding: 10px;
+}
 
-  #menu {
-	float: left;
-	width: 230px;
-    padding: 20px 0px 0px 2px;
-  }
+.bar {
+  clear: both;
+  padding: 3px;
+  text-align: center;
+  font-size: 90%;
+  background-color: #3054BF;
+}
 
-  .bar {
-	clear: both;
-	padding: 3px;
-	text-align: center;
-	font-size: 90%;
-    background-color: #3054BF;
-  }
+.left, .right {
+  padding: 3px 1em;
+}
 
-  .left, .right {
-    padding: 0px 1em;
-  }
+.left {
+  float: left;
+  text-align: left;
+}
 
-  .left {
-	float: left;
-	text-align: left;
-  }
+.right {
+  float: right;
+  text-align: right;
+}
 
-  .right {
-	float: right;
-	text-align: right;
-  }
+/** styling the sample menus **/
 
-  /* styling the menu */
+/* horizontal menu */
 
-  #menu a {
-	text-decoration: none;
-	font-weight: bold;
-	font-size: 130%;
-  }
+.horiz-menu a { color: white }
+.horiz-menu a:visited { color: white }
 
-  #menu a:hover {
-	text-decoration: underline;
-  }
+.horiz-menu {
+  padding: 3px;
+}
 
-  #menu .webgen-menuitem-selected {
-	border-left: 3px solid #405080;
-  }
+.horiz-menu ul {
+  background-color: #3054BF;
+}
 
-  #menu ul {
-	list-style-type: none;
-	padding: 0px;
-	margin-left: 10px;
-  }
+/* vertical menu */
 
-  #menu li > ul {
-	font-size: 95%;
-  }
+.vert-menu ul {
+  list-style-type: none;
+}
 
-  #menu li {
-    margin: 0.0em 0px;
-    padding: 2px 0px;
-    padding-left: 5px;
-    border-left: 3px solid #CCCCCC;
-  }
+.vert-menu li {
+  border-left: 3px solid #ccc;
+}
 
-  /* styling the content */
+.vert-menu .webgen-menu-item-selected {
+  border-left: 3px solid #405080;
+}
 
-  h2 {
-	padding: 0px;
-	letter-spacing: 0.2em;
-	font-size: 150%;
-	font-weight: bold;
-    border-bottom: 1px solid #405080;
-  }
+.vert-menu .webgen-menu-submenu > a {
+  background-color: #ccc;
+}
 
-  pre {
-    padding-left: 10px;
-    margin: 0px 10px;
-    border-left: 3px solid #5C73B8;
-  }
+.vert-menu .webgen-menu-submenu-inhierarchy > a {
+  background-color: #aaa;
+}
 
-  dt {
-    font-weight: bold;
-  }
+/* partial menu */
 
-  .webgen-picture {
-    text-align: center;
-  }
+#quickmenu {
+  border: 1px solid black;
+  background: #3054bf;
+  float: right;
+  text-align: center;
+  margin-left: 5px;
+  z-index: 500;
+}
 
-  .webgen-picture img {
-    border: 1px solid black;
-  }
+#quickmenu > div > a { border-bottom: 3px double black; }
 
-  .webgen-gallery {
-    text-align: center;
-  }
+.partial-menu ul {
+  background: #3054bf;
+  margin: 0px;
+  padding: 0px;
+  list-style-type: none;
+}
 
-  .webgen-gallery table {
-    width: 100%;
-  }
+.partial-menu ul ul { text-align: left; }
 
-  .webgen-gallery table td{
-    text-align: center;
-    border: 1px solid black;
-  }
+.partial-menu li {
+  margin: 0px;
+  padding: 3px;
+}
+
+.partial-menu .webgen-menu-item-selected {
+  font-weight: bold;
+}
+
+.partial-menu a {
+  color: white;
+  display: block;
+}
+
+.partial-menu a:visited { color: white; }
+
+.partial-menu ul ul li:hover a, .partial-menu ul ul li:hover a:visited { color: #3054bf; }
+
+.partial-menu ul ul li:hover {
+  background: #fff;
+  color: #3054bf;
+}
+
+/* horizontal dd menu */
+
+.horiz-dd-menu {
+  background: #3054bf;
+  float: left;
+}
+
+.horiz-dd-menu a { color: white }
+.horiz-dd-menu a:visited { color: white }
+
+.horiz-dd-menu a {
+  display: block;
+  margin: 0px;
+  padding: 3px 1em;
+  text-align: left;
+  background: #3054bf;
+}
+
+.horiz-dd-menu li.webgen-menu-submenu > a {
+  background: #405080;
+}
+
+.horiz-dd-menu li:hover > a {
+  background: #fff;
+  color: #3054bf;
+}
+
+/* vertical dd menu */
+
+.vert-dd-menu ul {
+  background: #3054bf;
+}
+
+.vert-dd-menu a { color: white }
+.vert-dd-menu a:visited { color: white }
+
+.vert-dd-menu a {
+  display: block;
+  margin: 0px;
+  padding: 3px 1em;
+  text-align: left;
+  background: #3054bf;
+}
+
+.vert-dd-menu li.webgen-menu-submenu > a {
+  background: #405080;
+}
+
+.vert-dd-menu li:hover > a {
+  background: #fff;
+  color: #3054bf;
+}
+
+/** styling the content **/
+
+h2 {
+  padding: 0px;
+  letter-spacing: 0.2em;
+  font-size: 150%;
+  font-weight: bold;
+  border-bottom: 1px solid #405080;
+}
+
+pre {
+  padding-left: 10px;
+  margin: 0px 10px;
+  border-left: 3px solid #5C73B8;
+}
+
+dt {
+  font-weight: bold;
+}
+
+.webgen-picture {
+  text-align: center;
+}
+
+.webgen-picture img {
+  border: 1px solid black;
+}
+
+.webgen-gallery {
+  text-align: center;
+}
+
+.webgen-gallery table {
+  width: 100%;
+}
+
+.webgen-gallery table td{
+  text-align: center;
+  border: 1px solid black;
+}

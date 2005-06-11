@@ -1,0 +1,12 @@
+---
+directoryName: Menu Styles
+---
+h2. Information
+
+<notextile>{describe: DefaultMenuStyle}</notextile>
+
+h2. Description
+
+Menu Styles are used to build different types of menus. Some web sites use vertical menus on the
+left or right side, some horizontal menus at the top. It's up to you to chose the best suited
+menu style for your website!

@@ -31,11 +31,6 @@ module Tags
   #
   # The order in which the menu items are listed can be controlled via the meta information
   # +orderInfo+. By default the menu items are sorted by the file names.
-  #
-  # Tag parameters:
-  # [<b>level</b>]
-  #   The depth of the menu. A level of one only displays the top level menu files. A level of two
-  #   also displays the menu files in the direct subdirectories and so on.
   class MenuTag < DefaultTag
 
     class ::Node
@@ -98,19 +93,8 @@ module Tags
     summary 'Builds a menu'
     depends_on 'Tags'
 
-    add_param 'menuTag', 'ul', 'The tag used for submenus.'
-    add_param 'itemTag', 'li', 'The tag used for menu items.'
-    add_param 'submenuClass', 'webgen-submenu', 'Specifies the class of a submenu'
-    add_param 'selectedMenuitemClass', 'webgen-menuitem-selected', 'Specifies the class of the selected menu item'
-    add_param 'level', 1, \
-    'Specifies how many levels the menu should have by default, ie. how deep it is. ' \
-    'For example, if level = 3, then three levels are always shown at least.'
-    add_param 'subtreeLevel', 3, \
-    'Specifies how many levels should be shown for subtrees. The number specifies ' \
-    'the maximum depth the menu will have.'
-    add_param 'showCurrentSubtreeOnly', true, \
-    'True if only the current subtree should be shown in the menu. If set to false, ' \
-    'each subtree will be shown.'
+    add_param 'menuStyle', 'vertical', 'Specifies the style of the menu.'
+    add_param 'options', {}, 'Optional options that are passed on to the plugin which is layouts the menu.'
 
     used_meta_info 'orderInfo', 'inMenu'
 
@@ -128,59 +112,13 @@ module Tags
           Webgen::Plugin['TreeWalker'].execute( @menuTree, Webgen::Plugin['DebugTreePrinter'] )
         end
       end
-      build_menu( node, @menuTree, 1 )
+      Webgen::Plugin['DefaultMenuStyle'].get_menu_style( get_param( 'menuStyle' ) ).build_menu( node, @menuTree, get_param( 'options' ) )
     end
 
 
     #######
     private
     #######
-
-
-    def build_menu( srcNode, node, level )
-      if node.nil? \
-        || level > get_param( 'subtreeLevel' ) \
-        || ( level > get_param( 'level' ) \
-             && ( node['node'].level > srcNode.level \
-                  || ( get_param( 'showCurrentSubtreeOnly' ) && !srcNode.in_subtree?( node['node'] ) )
-                  )
-             )
-        return ''
-      end
-
-      out = "<#{get_param( 'menuTag' )}>"
-      node.each do |child|
-        menu = child['node']['int:directory?'] ? build_menu( srcNode, child, level + 1 ) : ''
-        before, after = menu_entry( srcNode, child['node'] )
-
-        out << before
-        out << menu
-        out << after
-      end
-      out << "</#{get_param( 'menuTag' )}>"
-
-      return out
-    end
-
-
-    def menu_entry( srcNode, node )
-      langNode = node['processor'].get_node_for_lang( node, srcNode['lang'] )
-      isDir = node['int:directory?']
-
-      styles = []
-      styles << get_param( 'submenuClass' ) if isDir
-      styles << get_param( 'selectedMenuitemClass' ) if langNode.recursive_value( 'dest' ) == srcNode.recursive_value( 'dest' )
-
-      style = " class=\"#{styles.join(' ')}\"" if styles.length > 0
-      link = node['processor'].get_html_link( node, srcNode )
-
-      before = "<#{get_param( 'itemTag' )}#{style}>#{link}"
-      after = "</#{get_param( 'itemTag' )}>"
-
-      self.logger.debug { [before, after] }
-      return before, after
-    end
-
 
     def create_menu_tree( node, parent )
       menuNode = MenuNode.new( parent, node )

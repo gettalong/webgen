@@ -1,13 +1,11 @@
 ---- CURRENT ----
 
-* MAYBE: ONE page node for all pages, metainfo 'en' => all info about english, 'de' => same, ...???
-* implement plugin which creates nodes for fragment identifiers (#info) in html
+* make menu generation faster (for webgen: 5.2 without menus in template, 9.2 with menus!)
 * modify tags system sothat tags can be specified via a tag directive (like extension with file handlers)
 * create tests for methods in webgen.rb
 * webgen -c => output same info as on docu pages
 * check if duplicate nodes are created??? by using a tag in a template
 * allow a template to use another template (templates as page description files?) (template2 uses template1)
-* security concerns (setting different $SAFE level???)
 * use code generator to create test file with all tags and all tag parameter configurations
 
 ---- DOCU ----
@@ -16,9 +14,12 @@
 
 ---- FUTURE ----
 
+* implement plugin which creates nodes for fragment identifiers (#info) in html
+* convert smiley characters to smileys
+* include spell checker (ispell, aspell, MS Word OLE on Win32,...)
+* tag 'download' which links to a download file and appends its size and ev. an image (PDF, ...)
 * tag 'resume', uses xmlresume2x to provide HTML version of xml resume
 * multi-lingual picture/gallery files
-* refactor menu: abstract menu generator+parser, concrete impls (vert. menu, horz. menu, ...)
 * include exif info for pictures
 
 ---- DONE ----
@@ -172,3 +173,19 @@ W do not allow two or more page files in the same language, print warn
 * create logo "Created with webgen"
 * implement command "webgen clean" (options -f (force) -a (all files in dir, not only generated ones)
 * BUG: relocatable should work if defaultLangInFilename is true (eg. copy.html -> not found because of copy.en.html)
+* refactor menu: abstract menu generator+parser, concrete impls (vert. menu, horz. menu, ...)
+* change langbar like in mail from Thomas Werschleinvn
+* mention which extension the file handlers work on (backing file handler, template file handler, ...)
+* add doku for new menu builder plugins, adjust menu.page
+* test Node#relpath_to_string
+* add possibility to add user-defined resources via config.yaml
+* MAYBE: ONE page node for all pages, metainfo 'en' => all info about english, 'de' => same, ...??? --> better not
+* add style advices for menu styles
+* resources should be saved in Webgen::Plugin.config
+* make tag plugin for predefinedResources work
+* document ResourceManager
+* specify on menu style pages in which browsers the menus work
+* document super classes of plugins because plugins can use parameters of super classes
+* create partialMenu style which only shows a partial menu
+* security concerns (setting different $SAFE level???) --> No
+* create vertical-dropdown menu

@@ -17,7 +17,11 @@ and builds the internal representation of the source directory.
 h2. Path Patterns
 
 Path patterns are more like shell globs than regular expressions. One can use any path pattern that
-the @Dir.glob@ method understands. Here are some examples:
+the @Dir.glob@ method understands. If two path patterns would match the same path, the one with
+fewer asterisks and question marks is used because that one "seems" to be more specific.
+
+
+Here are some examples:
 
 table{border: 1px solid black}.
 |^. <notextile><code>*/*.html</code></notextile>|^. All files with the extension @html@ in the subdirectories of the root source directory|

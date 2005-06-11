@@ -48,9 +48,13 @@ If you want to get the configuration values you can run webgen like this
   $ webgen show config
 </pre>
 
+(This information is also provided on this website, have a look at the
+<a href="{relocatable: plugins}">plugins section</a>!)
+
 The list shows sorted by the plugin name the current values and the default values for each
-configuration option. Each option can be overridden in the configuration file by specifing the
-plugin name as top level key and each configuration option as a key/value pair. A configuration file
+parameter. Each parameter can be overridden in the configuration file by specifing the
+plugin name as top level key and each parameter and value as a key/value pair. A configuration file
 looks like this:
 
 <pre class="webgen-file">{includeFile: /../../../testsite/config.yaml}</pre>
+

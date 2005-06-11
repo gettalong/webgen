@@ -1,0 +1,27 @@
+---
+title: Partial
+inMenu: true
+---
+h2. Information
+
+<notextile>{describe: PartialMenuStyle}</notextile>
+
+h2. Description
+
+Builds a simple menu showing only the menu levels under the current page. This means that if you are
+in the third level of the hierarchy, the first two menu levels are not shown.
+
+h2. Style Advice
+
+The menu is constructed using HTML lists with @ul@ and @li@ tags. However, the menu looks better if
+no discs are shown for the menu items (using <code>list-style-type: none</code>).
+
+h2. Examples
+
+Basic menu as it appears by default, nothing styled additionally with CSS:
+
+<notextile>{menu: {menuStyle: partial}}</notextile>
+
+The same menu with a little CSS magic:
+
+<notextile>{menu: {menuStyle: partial, options: {divClass: partial-menu}}}</notextile>

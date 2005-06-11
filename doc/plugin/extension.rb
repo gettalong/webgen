@@ -41,8 +41,12 @@ module OtherPlugins
       s = "<table>"
       row = lambda {|desc, value| "<tr style='vertical-align: top'><td style='font-weight:bold'>#{CGI::escapeHTML( desc )}:</td><td>#{value}</td></tr>" }
 
-      # plugin, summary, description
-      [['Plugin Name', 'plugin'], ['Summary', 'summary'], ['Description', 'description']].each do |desc, name|
+      # Plugin and ancestors
+      ancestors = data.klass.ancestor_classes[1..-1].collect {|k| Webgen::Plugin.config[k].plugin}.join(', ')
+      s += row['Plugin name', CGI::escapeHTML( data.plugin + (ancestors.empty? ? '' : " (#{ancestors})" ) )]
+
+      # summary, description
+      [['Summary', 'summary'], ['Description', 'description']].each do |desc, name|
         s += row[desc, CGI::escapeHTML( data.send( name ) )] if eval( "data.#{name}" )
       end
 
@@ -66,11 +70,11 @@ module OtherPlugins
 
       # tag name, file ext
       s += row['Name of tag', (data.tag == :default ? "Default tag" : data.tag)] if data.tag
-      s += row['File extension', data.extension.inspect.gsub(/"/, '')] if data.extension
+      s += row['Handled paths', data.path.collect {|p| CGI::escapeHTML( p )}.join('<br />')] if data.path
 
       # Show all registered handlers
       data.table.keys.find_all {|k| /^registered_/ =~ k.to_s }.each do |k|
-        s += row[k.to_s.sub( /^registered_/, '' ).capitalize + " name", data.send( k )]
+        s += row[k.to_s.sub( /^registered_/, '' ).tr('_', ' ').capitalize + " name", data.send( k )]
       end
 
       s += "</table>"

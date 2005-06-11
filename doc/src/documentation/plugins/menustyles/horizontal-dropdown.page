@@ -1,0 +1,42 @@
+---
+title: Horizontal Dropdown
+inMenu: true
+---
+h2. Information
+
+<notextile>{describe: HorizontalDropdownMenuStyle}</notextile>
+
+h2. Description
+
+Builds a horizontal menu with CSS drop down menus. This menu should work fine in any browser
+supporting CSS and the @:hover@ selector (Mozilla based browsers like Firefox, Opera and Konqueror
+are fine, newer IE browsers should also be fine).
+
+h2. Style Advice
+
+The menu works by only using CSS, not DHTML or anything else. Here is a list of CSS selectors and
+descriptions how these selectors can be used to style various parts of the menu. You have to pay
+attention to the last element in the selector (@ul@, @li@, or @a@). When you want to style menu
+items, you normally want to use @a@. You should also be aware of the use of the @>@ sign, there is a
+dramatic difference between writing @li a@ and @li > a@ (the former selecting ALL @a@ elements of
+the list item, i.e. all @a@ elements in submenus too; and the latter only selecting the direct
+descendant)!
+
+table{border: 1px solid black}.
+|<code>.webgen-menu-horiz-dd ul > li > a</code>|Style the top level menu items (the ones that are always shown)|
+|<code>.webgen-menu-horiz-dd ul ul</code>|Style the drop down menus|
+|<code>.webgen-menu-horiz-dd ul ul > li > a</code>|Style the drop down menu items|
+|<code>.webgen-menu-horiz-dd li:hover > a</code>|Style the hovered-over menu item|
+
+h2. Example
+
+Basic menu as it appears by default, nothing styled additionally with CSS:
+
+<notextile>{menu: {menuStyle: horizontal-dropdown}}</notextile>
+
+<br />
+The same menu with a little CSS magic:
+
+<notextile>{menu: {menuStyle: horizontal-dropdown, options: {divClass: horiz-dd-menu}}}</notextile>
+
+<br/>

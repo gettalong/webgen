@@ -1,0 +1,30 @@
+---
+title: Resource Manager
+inMenu: true
+---
+h2. Information
+
+<notextile>{describe: ResourceManager}</notextile>
+
+h2. Description
+
+The ResourceManager plugin is used to define and access various resources. A resource is identified
+via the resource name and is written to a certain output path (relative to the output directory).
+There are two different types of resources: file resources and memory resources.
+
+*   A *file* resources references a certain file which gets copied to its output path when webgen is
+    writing out all files. These files resources can refernce any kind of file (images, videos,
+    audio files, HTML files,...).
+
+*   A *memory* resource only exists during a run of webgen. Plugins can use such resources to provide
+    additional information, such as CSS formatting rules or Javascript.
+
+Resources are only written to the output path if they are referenced (i.e. their output path is
+included in a page file) at least once by the <a href="{relocatable: tags/resource.page}">resource
+tag</a>.
+
+h2. Predefined Resources
+
+Webgen provides some predefined resources which can be used by any website created with webgen.
+
+<notextile>{predefinedResources:}</notextile>

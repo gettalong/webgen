@@ -18,3 +18,11 @@ plugin and put it under the site specific @plugin@ directory - then the plugin g
 others. It's so easy!
 
 For more information have a look at the <a href="{relocatable: /rdoc/index.html}">API documentation</a>!
+
+h2. Parameters
+
+Each plugin can define parameters which can be used to configure the plugin. These parameters are
+listed in the "Information" section of each plugin page. Also note that plugins can use the
+parameters from their "super plugins" - this allows a group of plugins which have similar
+functionality (e.g. the menu style plugins) to share common configuration values. The names of the
+"super plugins" are enclosed in parentheses after the plugin name in the "Information" section.

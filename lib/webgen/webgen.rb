@@ -144,166 +144,8 @@ module Webgen
       if args.length == 0
         raise OptionParser::MissingArgument.new( 'DIR' )
       else
-        create_dir( args[0] )
-        create_dir( File.join( args[0], 'src' ) )
-        create_dir( File.join( args[0], 'output' ) )
-        create_dir( File.join( args[0], 'log' ) )
-        create_dir( File.join( args[0], 'plugin' ) )
-        create_file( File.join( args[0], 'config.yaml' ), content_config_yaml )
-        create_file( File.join( args[0], 'src', 'default.template' ), content_default_template )
-        create_file( File.join( args[0], 'src', 'default.css' ), content_default_css )
-        create_file( File.join( args[0], 'src', 'index.page' ), content_index_page )
+        FileUtils.cp_r( File.join( Webgen::Configuration.data_dir, 'example' ), args[0] )
       end
-    end
-
-    def create_dir( dir )
-      Dir.mkdir( dir ) unless File.exists?( dir )
-    end
-
-    def create_file( file, content )
-      File.open( file, 'w') do |f|
-        f.puts( content )
-      end unless File.exists?( file )
-    end
-
-    def content_config_yaml
-      "# Configuration file for webgen\n# Used to set the parameters of the plugins"
-    end
-
-    def content_default_template
-      "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
-<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\" \"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">
-<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"{lang:}\">
-  <head>
-    <title>{title: }</title>
-    <link href=\"{relocatable: default.css}\" rel=\"stylesheet\" />
-    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />
-  </head>
-  <body>
-    <div id=\"header\">
-      <h1>{title: }</h1>
-    </div>
-
-    <div id=\"headerbar\" class=\"bar\">
-      <span class=\"left\">Navbar: {navbar: }</span>
-      <span class=\"right\">Language: {langbar: }</span>
-      <div style=\"clear:both\"></div>
-    </div>
-
-    <div id=\"menu\">
-      {menu: {subtreeLevel: 4}}
-    </div>
-
-    <div id=\"body\">
-      {content: }
-    </div>
-
-    <div id=\"footer\" class=\"bar\">
-      generated with <a href=\"http://webgen.rubyforge.org\"><em><b>webgen</b></em></a> on <b>{date: }</b>
-    </div>
-  </body>
-</html>
-"
-    end
-
-    def content_default_css
-      "
-  #all { background-color: #CCCCCC; }
-
-  #header {
-    border-bottom: 1px solid black;
-    padding: 1ex;
-    background-color: #888888;
-  }
-  #header h1 {
-    margin: 0ex;
-	font-size: 300%;
-	font-style: italic;
-	font-weight: normal;
-  }
-
-, #headerbar { border-bottom: 1px solid black; }
-  #footer { border-top: 1px solid black; }
-
-  #body {
-    margin-left: 250px;
-    margin-right: 20px;
-    padding: 10px;
-  }
-
-  #menu {
-	float: left;
-	width: 230px;
-    padding: 20px 0px 0px 2px;
-  }
-
-  .bar {
-	clear: both;
-	padding: 3px;
-	text-align: center;
-	font-size: 90%;
-    background-color: #AAAAAA;
-  }
-
-  .left, .right {
-    padding: 0px 1em;
-  }
-
-  .left {
-	float: left;
-	text-align: left;
-  }
-
-  .right {
-	float: right;
-	text-align: right;
-  }
-
-  /* styling the menu */
-
-  #menu a {
-	text-decoration: none;
-	font-weight: bold;
-	font-size: 130%;
-  }
-
-  #menu a:hover {
-	text-decoration: underline;
-  }
-
-  #menu .webgen-menuitem-selected {
-	border-left: 3px solid black;
-  }
-
-  #menu ul {
-	list-style-type: none;
-	padding: 0px;
-	margin-left: 10px;
-  }
-
-  #menu li > ul {
-	font-size: 95%;
-  }
-
-  #menu li {
-    margin: 0.0em 0px;
-    padding: 2px 0px;
-    padding-left: 5px;
-    border-left: 3px solid #CCCCCC;
-  }
-"
-    end
-
-    def content_index_page
-      "---
-title: Empty index page
-inMenu: true
-directoryName: New Website
----
-h2. Empty index file
-
-Fill this file with your own data!!!
-"
     end
 
   end
@@ -385,7 +227,7 @@ Fill this file with your own data!!!
   class WebgenCommandParser < CommandParser
 
     def initialize
-      super
+      super( true )
       self.options do |opts|
         opts.program_name = "webgen"
         opts.version = Webgen::VERSION
@@ -418,16 +260,10 @@ Fill this file with your own data!!!
 
     def main( cmdOptions )
       Color.colorify if $stdout.isatty && !Config::CONFIG['arch'].include?( 'mswin32' )
-      begin
-        wcp = WebgenCommandParser.new
-        wcp.parse!( ARGV, false )
-        Plugin['Configuration'].init_all
-        wcp.execute
-      rescue CommandParser::InvalidCommandError => e
-        puts "Error: invalid command given"
-        puts
-        wcp.commands['help'].execute( wcp, {} )
-      end
+      wcp = WebgenCommandParser.new
+      wcp.parse!( ARGV, false )
+      Plugin['Configuration'].init_all
+      wcp.execute
     end
 
   end

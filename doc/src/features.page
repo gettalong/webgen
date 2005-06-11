@@ -4,13 +4,35 @@ inMenu: true
 ---
 h2. Feature list
 
-* Easily extendable through plugins
-* Easy to install and use
-* Uses templates for separating layout from content
-* Supports several different content formats (Textile, Markdown, RDOC, plain HTML), new ones are easy to add
-* Uses 'tags' to add generated, ie. dynamic, content to the web pages -- standard distribution provides often used tags
-* Support for ERB (embedded Ruby) in templates and page description files
-* Supports 'virtual files' via meta information backing files
-* Automatically checks generated files if they are standard conform
-* Easy to configure if one needs to (no need if you are happy with the default values)
-* Relatively fast: processes ~1000 files in ~25 seconds on an {execute: uname -p}
+* <h3>webgen core</h3>
+
+  * Easily extendable through plugins
+  * Easy to install and use
+  * Uses templates for separating layout from content
+  * Easy to configure if one needs to (no need if you are happy with the default values)
+  * Command line interface uses command style syntax (like Subversion's @svn@ command)
+  * Fast
+
+* <h3>File Handler (for handling the files in the source directory)</h3>
+
+  * Powerful file copy handler for copying single files or entire directories to the output directory
+  * Support for gallery definition files -> generates entire picture gallery, automatic thumbnail creation
+
+* <h3>Page Description Files (for define web pages)</h3>
+
+  * Support for ERB (embedded Ruby) in page description files and in templates
+  * Supports several different content formats (Textile, Markdown, RDOC, plain HTML), new ones are easy to add
+  * Support for specifying meta information (e.g. title, menu ordering information, ...)
+
+* <h3>Tags (used for easily adding dynamic content to web pages)</h3>
+
+  * Standard distribution provides often used tags
+  * Menu tag can generate different types of menus (simple menus and ones with CSS drop downs)
+  * Navbar tag generates a navigation bar so that one always knows where he is in the hierarchy
+  * Relocatable tag for automatically generating correct relative paths to files
+  * ... and much more!
+
+* <h3>Other Features</h3>
+
+  * Automatically checks generated files if they are standard conform
+  * Supports 'virtual files' via meta information backing files

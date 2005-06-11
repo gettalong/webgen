@@ -4,14 +4,13 @@ inMenu: true
 ---
 h2. Information
 
-<notextile>{describe: LanguageBarTag}</notextile>
+<notextile>{describe: LangbarTag}</notextile>
 
 h2. Description
 
 The language tag is used to display a list of languages for a page. Take a look at the lower right
 corner of the header. There you will find a link titled 'en'. This is the link to the english (=en)
-version of this page. As this page is not translated into any other language, there is only this one
-item.
+version of this page.
 
 h2. Examples
 
@@ -24,4 +23,5 @@ table{border:1px solid black}.
 |<notextile>\{langbar: }</notextile>|<notextile>{langbar: }</notextile>|
 |\{langbar: {separator: Hallo}}|{langbar: {separator: Hallo}}|
 |\{langbar: {showSingleLang: false}}|{langbar: {showSingleLang: false}}|
+|\{langbar: {showOwnLang: false}}|{langbar: {showOwnLang: false}}|
 
