@@ -56,26 +56,39 @@ module FileHandlers
       create_node_internally( parse_data( data, srcName ), analyse_file_name( File.basename( srcName ) ), parent )
     end
 
-    def write_node( node )
-      templateNode = Webgen::Plugin['TemplateFileHandler'].get_template_for_node( node )
-
-      useERB = node['useERB'] || ( node['useERB'].nil? && get_param( 'useERB' ) )
-      node['blocks'].each do |blockdata|
-        begin
-          content = ( useERB ? ERB.new( blockdata['data'] ).result( binding ) : blockdata['data'] )
-        rescue Exception => e
-          logger.error { "ERB threw an error while processing an ERB template (<#{node.recursive_value('src')}>, block #{blockdata['name']}): #{e.message}" }
-          content = blockdata['data']
+    def render_node( node, with_template = true, block_name = 'content' )
+      unless node['int:content-formatted']
+        useERB = node['useERB'] || ( node['useERB'].nil? && get_param( 'useERB' ) )
+        node['blocks'].each do |blockdata|
+          begin
+            content = ( useERB ? ERB.new( blockdata['data'] ).result( binding ) : blockdata['data'] )
+          rescue Exception => e
+            logger.error { "ERB threw an error while processing an ERB template (<#{node.recursive_value('src')}>, block #{blockdata['name']}): #{e.message}" }
+            content = blockdata['data']
+          end
+          node[blockdata['name']] = Webgen::Plugin['DefaultContentHandler'].get_format( blockdata['format'] ).format_content( content )
         end
-        node[blockdata['name']] = Webgen::Plugin['DefaultContentHandler'].get_format( blockdata['format'] ).format_content( content )
+        node['int:content-formatted'] = true
       end
-      begin
-        outstring = ERB.new( templateNode['content'] ).result( binding )
-      rescue Exception => e
-        logger.error { "ERB threw an error while processing an ERB template (<#{templateNode.recursive_value('src')}>: #{e.message}" }
-        outstring = templateNode['content'].dup
+
+      if with_template
+        templateNode = Webgen::Plugin['TemplateFileHandler'].get_template_for_node( node )
+        begin
+          outstring = ERB.new( templateNode['content'] ).result( binding )
+        rescue Exception => e
+          logger.error { "ERB threw an error while processing an ERB template (<#{templateNode.recursive_value('src')}>: #{e.message}" }
+          outstring = templateNode['content'].dup
+        end
+      else
+        templateNode = node
+        outstring = node[block_name].to_s.dup
       end
-      outstring = Webgen::Plugin['Tags'].substitute_tags( outstring, node, templateNode )
+
+      Webgen::Plugin['Tags'].substitute_tags( outstring, node, templateNode )
+    end
+
+    def write_node( node )
+      outstring = render_node( node )
 
       File.open( node.recursive_value( 'dest' ), File::CREAT|File::TRUNC|File::RDWR ) do |file|
         file.write( outstring )
