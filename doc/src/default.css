@@ -42,7 +42,7 @@ a { color: #5C73B8; }
 #footer { border-top: 1px solid black; }
 
 #body {
-  margin-left: 20px;
+  margin-left: 17em;
   margin-right: 20px;
   padding: 10px;
 }
@@ -68,6 +68,23 @@ a { color: #5C73B8; }
   float: right;
   text-align: right;
 }
+
+/** styling the website menus **/
+
+#menu, #quickmenu {
+  float: left;
+  margin: 1em;
+  border: 1px solid black;
+  width: 15em;
+  text-align: center;
+  background: #3054bf;
+}
+
+#quickmenu {
+  clear: both;
+}
+
+#quickmenu > div > a { border-bottom: 3px double black; }
 
 /** styling the sample menus **/
 
@@ -108,17 +125,6 @@ a { color: #5C73B8; }
 
 /* partial menu */
 
-#quickmenu {
-  border: 1px solid black;
-  background: #3054bf;
-  float: right;
-  text-align: center;
-  margin-left: 5px;
-  z-index: 500;
-}
-
-#quickmenu > div > a { border-bottom: 3px double black; }
-
 .partial-menu ul {
   background: #3054bf;
   margin: 0px;
@@ -126,11 +132,11 @@ a { color: #5C73B8; }
   list-style-type: none;
 }
 
-.partial-menu ul ul { text-align: left; }
+.partial-menu ul { text-align: left; }
 
 .partial-menu li {
   margin: 0px;
-  padding: 3px;
+  padding: 3px 1em;
 }
 
 .partial-menu .webgen-menu-item-selected {
@@ -144,9 +150,9 @@ a { color: #5C73B8; }
 
 .partial-menu a:visited { color: white; }
 
-.partial-menu ul ul li:hover a, .partial-menu ul ul li:hover a:visited { color: #3054bf; }
+.partial-menu ul li:hover a, .partial-menu ul li:hover a:visited { color: #3054bf; }
 
-.partial-menu ul ul li:hover {
+.partial-menu ul li:hover {
   background: #fff;
   color: #3054bf;
 }

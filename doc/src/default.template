@@ -27,12 +27,9 @@
         <div style="clear:both"></div>
       </div>
 
-      <div id="menu" class="bar">
-        <span style="float:left; padding: 3px 0em 3px 1em;">Menu: </span>{menu: {menuStyle: horizontal-dropdown, options: {divClass: horiz-dd-menu}}}
-        <div style="clear:both"></div>
-      </div>
+      <div id="menu">Menu: {menu: {menuStyle: vertical-dropdown, options: {divClass: vert-dd-menu}}}</div>
+      <div id="quickmenu">Directory quick menu: {menu: {menuStyle: partial, options: {divClass: partial-menu}}}</div>
 
-      <div id="quickmenu">Quick menu: {menu: {menuStyle: partial, options: {divClass: partial-menu, dropdown: true}}}</div>
       <div id="body">
         {content: }
       </div>
