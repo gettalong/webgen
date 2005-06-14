@@ -84,7 +84,7 @@ module FileHandlers
         end
       end
 
-      dirNode.each {|child| process_backing_files( child ) if child['directory']}
+      dirNode.each {|child| process_backing_files( child ) if child['int:directory?']}
     end
 
 

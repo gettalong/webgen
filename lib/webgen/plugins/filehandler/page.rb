@@ -126,6 +126,7 @@ module FileHandlers
       lang = data['lang'] || analysed.lang
 
       pagename = analysed.name + '.page'
+      localizedPagename = analysed.name + '.' + lang + '.page'
 
       if node = parent.find {|node| node['int:pagename'] == pagename && node['lang'] == lang }
         logger.warn do
@@ -141,6 +142,7 @@ module FileHandlers
         node['src'] = analysed.srcName
         node['dest'] = create_output_name( analysed, node['outputNameStyle'] || get_param( 'outputNameStyle' ) )
         node['int:pagename'] = pagename
+        node['int:local-pagename'] = localizedPagename
         node['processor'] = self
       end
 

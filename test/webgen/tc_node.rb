@@ -47,6 +47,18 @@ class NodeTest < Test::Unit::TestCase
     @n['root/dir4']['int:directory?'] = true
     @n['root/rdoc'] = create_node( @n['root'] )
     @n['root/rdoc']['dest'] = 'rdoc/'
+    @n['root/pagefile-de'] = create_node( @n['root'] )
+    @n['root/pagefile-de']['dest'] = 'pagefile.de.html'
+    @n['root/pagefile-de']['src'] = 'pagefile.de.page'
+    @n['root/pagefile-de']['int:pagename'] = 'pagefile.page'
+    @n['root/pagefile-de']['int:local-pagename'] = 'pagefile.de.page'
+    @n['root/pagefile-de']['lang'] = 'de'
+    @n['root/pagefile-en'] = create_node( @n['root'] )
+    @n['root/pagefile-en']['dest'] = 'pagefile.html'
+    @n['root/pagefile-en']['src'] = 'pagefile.page'
+    @n['root/pagefile-en']['int:pagename'] = 'pagefile.page'
+    @n['root/pagefile-en']['int:local-pagename'] = 'pagefile.en.page'
+    @n['root/pagefile-en']['lang'] = 'en'
   end
 
   def create_node( parent )
@@ -123,6 +135,10 @@ class NodeTest < Test::Unit::TestCase
 
     assert_equal( @n['root/dir2'], @n['root'].node_for_string( '/dir2', 'otherdest' ) )
     assert_equal( @n['root/dir2/file3'], @n['root'].node_for_string( '/dir2/file3o', 'otherdest' ) )
+
+    assert_equal( @n['root/pagefile-de'], @n['root'].node_for_string( 'pagefile.de.page' ) )
+    assert_equal( @n['root/pagefile-en'], @n['root'].node_for_string( 'pagefile.page' ) )
+    assert_equal( @n['root/pagefile-en'], @n['root'].node_for_string( 'pagefile.en.page' ) )
   end
 
   def test_node_for_string_question

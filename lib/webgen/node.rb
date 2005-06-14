@@ -158,12 +158,18 @@ class Node
 
     startElement = node
     elements = destString.split( '/' )
+    pagelang = (/\.(\w\w)\.page$/ =~ destString ? $1 : Webgen::Plugin['Configuration']['lang'])
 
     elements.each do |element|
       break if node.nil?
       case element
       when '..' then node = node.parent
-      else node = node.find {|child| /^#{element}\/?$/ =~ child[metainfo]  || (metainfo=='dest' && child['int:pagename'] == element) }
+      else
+        node = node.find do |child|
+          /^#{element}\/?$/ =~ child[metainfo] || \
+          (metainfo == 'dest' && (child['int:pagename'] == element || child['int:local-pagename'] == element) && \
+           child['lang'] == pagelang)
+        end
       end
     end
 
