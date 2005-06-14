@@ -144,12 +144,18 @@ h2(#naming). Referencing page description files
 
 The output name of page description files can be specified using the parameter @outputNameStyle@. If
 you want to reference a page description file, you can use this output name (e.g. @name.de.html@).
-However, if you want to change this parameter later or set the parameter @defaultLangInFilename@,
-this link will not work anymore. Therefore, each page description file (i.e. it does not matter
-which language it is written for) can be referenced by specifing the name
-<code>[name_of_page_desc_file].page</code>. I could have used the extension @html@ instead of
-@page@, but I think the latter is better because the output files need not have to have the
-extension @html@.
+However, if you want to change the @outputNameStyle@ parameter later or set the parameter
+@defaultLangInFilename@, this link (@name.de.html@) will not work anymore.
+
+Therefore, each page description file can be referenced by specifing the name
+<code>[name_of_page_desc_file].[language].page</code> (e.g. @name.de.page@ instead of
+@name.de.html@). However, most of the time, you do not want to explicitly specify the @lang@ part in
+this standardified name because you want to reference the page description file and display it in
+the currently used language. Thus you can also use <code>[name_of_page_desc_file].page</code> (e.g.
+@name.page@). This will always reference the page description file in the correct language!
+
+I could have used the extension @html@ instead of @page@, but I think the latter is better because
+the output files need not have to have the extension @html@.
 
 h2(#meta). Meta Information
 

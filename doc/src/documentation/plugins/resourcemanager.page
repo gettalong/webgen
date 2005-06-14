@@ -25,6 +25,6 @@ tag</a>.
 
 h2. Predefined Resources
 
-Webgen provides some predefined resources which can be used by any website created with webgen.
+webgen provides some predefined resources which can be used by any website created with it.
 
 <notextile>{predefinedResources:}</notextile>

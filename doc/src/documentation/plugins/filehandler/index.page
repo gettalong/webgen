@@ -10,9 +10,10 @@ h2. Description
 File handlers are used to handle different types of input files. You can see the currently exisiting
 file handlers in the menu. Choose one to get a description for it!
 
-Each file handler specifies path patterns or extensions for the files he handles. During the
-processing of the website, the FileHandler instance calls the approriate file handler for each file
-and builds the internal representation of the source directory.
+Each file handler specifies path patterns for the files he handles (you can see which paths are
+handled by a file handler in its information section). During the processing of the website, the
+FileHandler instance calls the approriate file handler for each file and builds the internal
+representation of the source directory.
 
 h2. Path Patterns
 

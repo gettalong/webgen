@@ -30,7 +30,7 @@ Major changes:
 * Pages files can now be referenced in @relocatable@ tag and backing files with a standardified name (see <a href="{relocatable: documentation/plugins/filehandler/pagehandler.page#naming}">here</a>), despite an eventually self defined naming scheme
 * New parameters: <a href="{relocatable: documentation/plugins/tags/langbar.page}">LangbarTag:showOwnLang</a>
 * Changed paramters: <a href="{relocatable: documentation/plugins/filehandler/pagehandler.page}">PageHandler:validator</a> (now deactivated by default)
-
+* Fixed bugs
 
 <b>12.05.2005 - webgen 0.3.4 released!!!</b>
 
