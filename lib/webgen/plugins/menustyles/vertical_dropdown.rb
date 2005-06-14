@@ -58,7 +58,11 @@ module MenuStyles
   position: relative;
 }
 
-.webgen-menu-vert-dd ul ul, .webgen-menu-vert-dd ul li:hover > ul > ul {
+.webgen-menu-vert-dd ul ul {
+  display: none;
+}
+
+.webgen-menu-vert-dd ul li:hover > ul > ul {
   display: none;
 }
 

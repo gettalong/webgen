@@ -1,5 +1,7 @@
 ---- CURRENT ----
 
+* make dropdown menus work in IE
+* simplify menu style plugins
 * make menu generation faster (for webgen: 5.2 without menus in template, 9.2 with menus!)
 * modify tags system sothat tags can be specified via a tag directive (like extension with file handlers)
 * create tests for methods in webgen.rb
@@ -14,6 +16,8 @@
 
 ---- FUTURE ----
 
+* parameter for setting the orderInfo of index pages so that they always appear as first entry
+* custom commands provided by plugins
 * implement plugin which creates nodes for fragment identifiers (#info) in html
 * convert smiley characters to smileys
 * include spell checker (ispell, aspell, MS Word OLE on Win32,...)
@@ -189,3 +193,5 @@ W do not allow two or more page files in the same language, print warn
 * create partialMenu style which only shows a partial menu
 * security concerns (setting different $SAFE level???) --> No
 * create vertical-dropdown menu
+* better docu for backing file handler
+* make dropdown menus "look" nice in IE

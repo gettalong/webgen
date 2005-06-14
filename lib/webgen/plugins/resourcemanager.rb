@@ -63,14 +63,14 @@ module Webgen
         @referenced
       end
 
-      # The data defined by the resource.
-      def data
-        raise NoMethodError
-      end
-
       # Can the resource be written to the output directory?
       def write_resource?
         @referenced
+      end
+
+      # Write the resource to the output directory.
+      def write_resource
+        raise NotImplementedError
       end
 
     end
@@ -92,6 +92,10 @@ module Webgen
         referenced? && Webgen::Plugin['FileHandler'].file_modified?( @res_path, dest_path )
       end
 
+      def write_resource
+        FileUtils.cp( res_path, dest_path ) if write_resource?
+      end
+
     end
 
     class MemoryResource < Resource
@@ -107,6 +111,10 @@ module Webgen
 
       def append_data( data )
         @data << data
+      end
+
+      def write_resource
+        File.open( dest_path, 'w' ) {|file| file.write( data )} if write_resource?
       end
 
     end
@@ -207,7 +215,7 @@ module Webgen
         if res.write_resource?
           begin
             FileUtils.makedirs( File.dirname( res.dest_path ) )
-            File.open( res.dest_path, 'w' ) {|file| file.write( res.data )}
+            res.write_resource
             logger.info { "Resource #{name} written to <#{res.dest_path}>" }
           rescue Exception => e
             logger.error { "Error while writing resource #{name}: #{e.message}" }

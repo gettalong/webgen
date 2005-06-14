@@ -64,7 +64,11 @@ top: 0;
 left: 100%;
 }
 
-.webgen-menu-horiz-dd ul ul, .webgen-menu-horiz-dd ul li:hover > ul > ul {
+.webgen-menu-horiz-dd ul ul {
+  display: none;
+}
+
+.webgen-menu-horiz-dd ul li:hover > ul > ul {
   display: none;
 }
 

@@ -10,7 +10,7 @@ h2. Description
 
 Builds a horizontal menu with CSS drop down menus. This menu should work fine in any browser
 supporting CSS and the @:hover@ selector (Mozilla based browsers like Firefox, Opera and Konqueror
-are fine, newer IE browsers should also be fine).
+are fine, does NOT work in IE 6 on Windows XP).
 
 h2. Style Advice
 
