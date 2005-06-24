@@ -106,6 +106,7 @@ PKG_FILES = FileList.new( [
                             'install.rb',
                             'bin/**/*',
                             'lib/**/*.rb',
+                            'data/**/*',
                             'testsite/**/*',
                             'tests/**/*',
                             'doc/**/*'
