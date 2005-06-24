@@ -1,8 +1,7 @@
 ---- CURRENT ----
 
-* make dropdown menus work in IE
 * simplify menu style plugins
-* make menu generation faster (for webgen: 5.2 without menus in template, 9.2 with menus!)
+* make menu generation faster (for webgen: 5.2s without menus in template, 9.2s with menus!)
 * modify tags system sothat tags can be specified via a tag directive (like extension with file handlers)
 * create tests for methods in webgen.rb
 * webgen -c => output same info as on docu pages
@@ -13,6 +12,8 @@
 ---- DOCU ----
 
 * DEV: self.logger.warn/error/info/debug can be used for messages
+* add keywords to default.template
+* document which meta info can be used in gallery file for gallery itself, gallery pages and picture pages
 
 ---- FUTURE ----
 
@@ -195,3 +196,4 @@ W do not allow two or more page files in the same language, print warn
 * create vertical-dropdown menu
 * better docu for backing file handler
 * make dropdown menus "look" nice in IE
+* make dropdown menus work in IE -> rather hard to do in a general way

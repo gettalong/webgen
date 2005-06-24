@@ -154,6 +154,7 @@ module FileHandlers
         imageData['imageFilename'] = image
         imageData['srcName'] = File.basename( image ).tr( ' .', '_' ) + '.html'
         imageData['thumbnail'] ||= get_thumbnail( imageData, parent )
+        imageData['thumbnailSize'] ||= @filedata['thumbnailSize']
 
         imageList << imageData
       end
@@ -175,7 +176,7 @@ module FileHandlers
       remove_method :get_thumbnail
       def get_thumbnail( imageData, parent )
         p_node = Webgen::Plugin['DirHandler'].recursive_create_path( File.dirname( imageData['imageFilename'] ), parent )
-        node = Webgen::Plugin['ThumbnailWriter'].create_node( File.join( @path, imageData['imageFilename'] ), p_node )
+        node = Webgen::Plugin['ThumbnailWriter'].create_node( File.join( @path, imageData['imageFilename'] ), p_node, imageData['thumbnailSize'] )
         p_node.add_child( node )
 
         File.dirname( imageData['imageFilename'] ) + '/' + node['dest']
@@ -188,19 +189,20 @@ module FileHandlers
       summary "Writes out thumbnails with RMagick"
       add_param "thumbnailSize", "100x100", "The size of the thumbnails"
 
-      def create_node( file, parent )
+      def create_node( file, parent, thumbnailSize = nil )
         node = Node.new( parent )
         node['title'] = node['src'] = node['dest'] = 'tn_' + File.basename( file )
-        node['tn:imageFile'] = file
+        node['int:thumbnailFile'] = file
+        node['int:thumbnailSize'] = thumbnailSize
         node['processor'] = self
         node
       end
 
       def write_node( node )
-        if Webgen::Plugin['FileHandler'].file_modified?( node['tn:imageFile'], node.recursive_value( 'dest' ) )
-          self.logger.info {"Creating thumbnail <#{node.recursive_value('dest')}> from <#{node['tn:imageFile']}>"}
-          image = Magick::ImageList.new( node['tn:imageFile'] )
-          image.change_geometry( get_param( 'thumbnailSize' ) ) {|c,r,i| i.resize!( c, r )}
+        if Webgen::Plugin['FileHandler'].file_modified?( node['int:thumbnailFile'], node.recursive_value( 'dest' ) )
+          self.logger.info {"Creating thumbnail <#{node.recursive_value('dest')}> from <#{node['int:thumbnailFile']}>"}
+          image = Magick::ImageList.new( node['int:thumbnailFile'] )
+          image.change_geometry( node['int:thumbnailSize'] || get_param( 'thumbnailSize' ) ) {|c,r,i| i.resize!( c, r )}
           image.write( node.recursive_value( 'dest' ) )
         end
       end

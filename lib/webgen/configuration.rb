@@ -62,7 +62,7 @@ module Webgen
           @@data_dir = File.join( gem.full_gem_path, "data", "webgen" ) if gem
         end
 
-        @@data_dir =  $0.sub( /webgen$/, '' ) + '../data/webgen' if !File.exists?( @@data_dir )
+        @@data_dir =  File.dirname( $0 ) + '/../data/webgen' if !File.exists?( @@data_dir )
 
         if File.exists?( @@data_dir )
           logger.info { "Webgen data directory found at #{@@data_dir}" }

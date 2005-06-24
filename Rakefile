@@ -199,7 +199,7 @@ else
 
     s.author = "Thomas Leitner"
     s.email = "t_leitner@gmx.at"
-    s.homepage = "webgen.rubyforge.org"
+    s.homepage = "http://webgen.rubyforge.org"
     s.rubyforge_project = "webgen"
   end
 
