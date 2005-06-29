@@ -16,6 +16,7 @@ class Gallery
 
   def initialize
     set_default_values
+    @relpath = '.'
   end
 
   def []( name )
@@ -46,6 +47,7 @@ class Gallery
 
   def write_file( filename )
     File.open( filename, 'w+' ) {|file| file.write( @meta.to_yaml ) }
+    @relpath= File.dirname( filename )
   end
 
 end
@@ -56,10 +58,11 @@ class ImageViewer < Qt::Frame
   def initialize( p )
     super( p )
     setFrameStyle( Qt::Frame::StyledPanel | Qt::Frame::Sunken )
-    @image = nil
+    set_image
   end
 
-  def set_image( filename )
+  def set_image( filename = nil)
+    filename = File.join( Webgen::Configuration.data_dir, 'images/webgen_logo.png' ) if filename.nil?
     @image = Qt::Image.new( filename )
     update
   end
@@ -73,7 +76,7 @@ class ImageViewer < Qt::Frame
   end
 
   def sizeHint
-    Qt::Size.new( 640, 480 )
+    Qt::Size.new( 320, 200 )
   end
 
 end
@@ -82,7 +85,8 @@ end
 class MetaTableNameItem < Qt::TableItem
 
   def initialize( table, text = '' )
-    super( table, Qt::TableItem::WhenCurrent )
+    super( table, Qt::TableItem::OnTyping )
+    setReplaceable( false )
     setText( text )
     add_text_to_list( text )
   end
@@ -92,7 +96,6 @@ class MetaTableNameItem < Qt::TableItem
     cb.setEditable( true )
     cb.setAutoCompletion( true )
     cb.insertStringList( table.meta_items )
-    #Qt::Object.connect( cb, SIGNAL('activated(int)'), table, SLOT('doValueChanged()') )
     cb.setCurrentText( text )
     cb
   end
@@ -123,17 +126,12 @@ class MetaTableValueItem < Qt::TableItem
   end
 
   def getContent
-    content = text
-    if content == 'true'
-      true
-    elsif content == 'false'
-      false
-    elsif content == 'nil'
-      nil
-    elsif content =~ /\d+/
-      content.to_i
-    else
-      content
+    case text
+    when 'true' then true
+    when 'false' then false
+    when 'nil' then nil
+    when /\d+/ then text.to_i
+    else text
     end
   end
 
@@ -153,9 +151,12 @@ class MetaDataTable < Qt::Table
     horizontalHeader.setLabel( 0, 'Name' )
     horizontalHeader.setLabel( 1, 'Value' )
     setSelectionMode( Qt::Table::Single )
-    connect( self, SIGNAL('valueChanged(int, int)'), self, SLOT('value_changed( int, int )') )
     setItem( 0, 0, MetaTableNameItem.new( self ) )
     setItem( 0, 1, MetaTableValueItem.new( self ) )
+
+    connect( horizontalHeader, SIGNAL('clicked(int)'), self, SLOT('setFocus()') )
+    connect( verticalHeader, SIGNAL('clicked(int)'), self, SLOT('setFocus()') )
+    connect( self, SIGNAL('valueChanged(int, int)'), self, SLOT('value_changed( int, int )') )
   end
 
   def activateNextCell
@@ -225,13 +226,47 @@ class MetaDataTable < Qt::Table
     end
   end
 
+  def keyReleaseEvent( event )
+    if event.key == Qt::Key_Delete
+      if currentSelection == -1
+        setText( currentRow, currentColumn, '' )
+        emit valueChanged( currentRow, currentColumn )
+      else
+        sel = selection( currentSelection )
+        sel.topRow.upto( sel.bottomRow ) do |row|
+          sel.leftCol.upto( sel.rightCol) do |col|
+            setText( row, col, '' )
+            emit valueChanged( row, col )
+          end
+        end
+      end
+    else
+      event.ignore
+    end
+  end
+
+end
+
+
+class MyTextEdit < Qt::TextEdit
+
+  signals 'myReturnPressed()'
+
+  def keyPressEvent( event )
+    if (event.key == Qt::Key_Return || event.key == Qt::Key_Enter) && (event.state & Qt::ControlButton == Qt::ControlButton)
+      emit myReturnPressed()
+    else
+      super
+    end
+  end
+
 end
 
 
 class GalleryWindow < Qt::MainWindow
 
   slots 'new()', 'open()', 'save()', 'save_as()', 'image_selected(const QString &)',
-        'init_image_list()'
+        'init_image_list()', 'select_next_image()', "assign_pic_names()"
 
   def initialize
     super
@@ -243,16 +278,17 @@ class GalleryWindow < Qt::MainWindow
     @curfile = nil
     setup_menus
     setup_window
-    new
+    centralWidget.setEnabled( false )
   end
 
   def new
     @gallery = Gallery.new
+    save_as
     init_widgets
   end
 
   def open
-    openDialog = Qt::FileDialog.new( '.', 'Gallery files (*.gallery)', self, 'Open File Dialog', true )
+    openDialog = Qt::FileDialog.new( '.', 'Gallery files (*.gallery)', self, 'Open file...', true )
     openDialog.setMode( Qt::FileDialog::ExistingFile )
     open_file( openDialog.selectedFile ) if openDialog.exec == Qt::Dialog::Accepted
   end
@@ -270,21 +306,43 @@ class GalleryWindow < Qt::MainWindow
   end
 
   def save_as
-    saveDialog = Qt::FileDialog.new( '.', 'Gallery files (*.gallery)', self, 'Open File Dialog', true )
+    saveDialog = Qt::FileDialog.new( '.', 'Gallery files (*.gallery)', self, 'Select new file...', true )
     saveDialog.setMode( Qt::FileDialog::AnyFile )
     if saveDialog.exec == Qt::Dialog::Accepted
       fname = saveDialog.selectedFile
       fname += '.gallery' if File.extname( fname ) == ''
-      #TODO update rel path of images
       @gallery.write_file( fname )
+      @curfile = fname
     end
   end
 
   def image_selected( name )
-    @gallery[@last_selected_image] = @picMetaTable.meta_info if @last_selected_image
+    save_image_meta_info
     @last_selected_image = name
-    @picMetaTable.fill( @gallery[name] ) if @gallery[name]
+
+    if @gallery[name]
+      @imageTitle.setText( @gallery[name].delete( 'title' ) )
+      @imageDescription.setText( @gallery[name].delete( 'description' ) )
+      @picMetaTable.fill( @gallery[name] )
+    end
     @image.set_image( File.join( @gallery.relpath, name ) )
+  end
+
+  def select_next_image
+    if @imageList.currentItem == @imageList.count - 1
+      @imageList.setCurrentItem( 0 ) if @imageList.count > 0
+    else
+      @imageList.setCurrentItem( @imageList.currentItem + 1 )
+    end
+  end
+
+  def assign_pic_names
+    0.upto( @imageList.count - 1 ) do |i|
+      @gallery[@imageList.text( i )] ||= {}
+      if @gallery[@imageList.text( i )]['title'].nil? || @gallery[@imageList.text( i )]['title'] == ''
+        @gallery[@imageList.text( i )]['title'] = @imageList.text( i )
+      end
+    end
   end
 
   #######
@@ -306,15 +364,18 @@ class GalleryWindow < Qt::MainWindow
     return if @gallery.nil?
 
     gallery_items.each do |t|
-      case @gallery[t]
-      when String then @widgets[t].setText( @gallery[t] )
-      when Integer then @widgets[t].setValue( @gallery[t] )
-      when TrueClass, FalseClass then @widgets[t].setChecked( @gallery[t] )
-      when Hash then @widgets[t].fill( @gallery[t] )
+      case @widgets[t]
+      when Qt::LineEdit then @widgets[t].setText( @gallery[t] )
+      when Qt::SpinBox then @widgets[t].setValue( @gallery[t] )
+      when Qt::CheckBox then @widgets[t].setChecked( @gallery[t] )
+      when Qt::ComboBox then @widgets[t].setCurrentText( @gallery[t] )
+      when MetaDataTable then @widgets[t].fill( @gallery[t] )
       end
     end
     @picMetaTable.fill( [] )
     init_image_list
+    @image.set_image
+    centralWidget.setEnabled( true )
   end
 
   def update_gallery
@@ -324,14 +385,24 @@ class GalleryWindow < Qt::MainWindow
       when Qt::LineEdit then @gallery[t] = @widgets[t].text
       when Qt::SpinBox then @gallery[t] = @widgets[t].value
       when Qt::CheckBox then @gallery[t] = @widgets[t].checked?
+      when Qt::ComboBox then @gallery[t] = @widgets[t].currentText
       when MetaDataTable then @gallery[t] = @widgets[t].meta_info
       end
     end
     images = []
     0.upto( @imageList.numRows ) {|i| images << @imageList.text( i ) }
-    @gallery[@imageList.currentText] = @picMetaTable.meta_info
+
+    save_image_meta_info
     @gallery.meta.delete_if do |name, data|
       !images.include?( name ) && !items.include?( name )
+    end
+  end
+
+  def save_image_meta_info
+    if @last_selected_image
+      @gallery[@last_selected_image] = @picMetaTable.meta_info
+      @gallery[@last_selected_image]['title'] = @imageTitle.text
+      @gallery[@last_selected_image]['description'] = @imageDescription.text
     end
   end
 
@@ -350,65 +421,61 @@ class GalleryWindow < Qt::MainWindow
     filemenu.insertItem( "&Save as...", self, SLOT("save_as()") )
     filemenu.insertItem( "&Quit", $app, SLOT("quit()"), Qt::KeySequence.new( CTRL+Key_Q ) )
 
+    picmenu = Qt::PopupMenu.new( self )
+    picmenu.insertItem( "&Assign default names", self, SLOT("assign_pic_names()") )
+
     menubar = Qt::MenuBar.new( self )
     menubar.insertItem( "&File", filemenu )
+    menubar.insertItem( "&Pictures", picmenu )
   end
 
   def setup_window
-    tabwidget = Qt::TabWidget.new( self )
-    setCentralWidget( tabwidget )
-
-    # setup image frame
-    imageFrame = Qt::Widget.new( tabwidget )
-
-    @image = ImageViewer.new( imageFrame )
-    @image.setSizePolicy( Qt::SizePolicy::Expanding, Qt::SizePolicy::Expanding )
-    @image.setMinimumSize( Qt::Size.new( 640, 480 ) )
-    @image.set_image( File.join( Webgen::Configuration.data_dir, 'images/webgen_logo.png' ) )
-
-    @imageList = Qt::ListBox.new( imageFrame )
-    @imageList.setMaximumWidth( 300 )
-    @imageList.setMinimumWidth( 300 )
-    connect( @imageList, SIGNAL('highlighted(const QString &)'), self, SLOT('image_selected( const QString &)') )
-    @picMetaTable = MetaDataTable.new( imageFrame, page_meta_items )
-
-    mainLayout = Qt::GridLayout.new( imageFrame, 2, 2 )
-    mainLayout.setMargin( 11 )
-    mainLayout.setSpacing( 6 )
-    mainLayout.addMultiCellWidget( @image, 0, 1, 0, 0 )
-    mainLayout.addWidget( @imageList, 0, 1 )
-    mainLayout.addWidget( @picMetaTable, 1, 1 )
-
-    # setup gallery frame
-    galleryFrame = Qt::Widget.new( tabwidget )
+    mainFrame = Qt::Widget.new( self )
 
     @widgets = {}
     labels = {}
-    @widgets['title'] = Qt::LineEdit.new( galleryFrame )
-    labels['title'] = [0, Qt::Label.new( @widgets['title'], "Gallery title:", galleryFrame )]
-    @widgets['files'] = Qt::LineEdit.new( galleryFrame )
+    @widgets['title'] = Qt::LineEdit.new( mainFrame )
+    labels['title'] = [0, Qt::Label.new( @widgets['title'], "Gallery title:", mainFrame )]
+
+    @widgets['files'] = Qt::LineEdit.new( mainFrame )
     connect( @widgets['files'], SIGNAL('textChanged(const QString&)'), self, SLOT('init_image_list()') )
-    labels['files'] = [1, Qt::Label.new( @widgets['files'], "File pattern:", galleryFrame )]
-    @widgets['layout'] = Qt::LineEdit.new( galleryFrame )
-    labels['layout'] = [2, Qt::Label.new( @widgets['layout'], "Gallery layout:", galleryFrame )]
-    @widgets['picturesPerPage'] = Qt::SpinBox.new( 0, 1000, 1, galleryFrame )
-    labels['picturesPerPage'] = [3, Qt::Label.new( @widgets['picturesPerPage'], "Pictures per page:", galleryFrame )]
-    @widgets['galleryOrderInfo'] = Qt::SpinBox.new( 0, 1000, 1, galleryFrame )
-    labels['galleryOrderInfo'] = [4, Qt::Label.new( @widgets['galleryOrderInfo'], "Meta info <orderInfo> for first gallery page:", galleryFrame )]
-    @widgets['thumbnailSize'] = Qt::LineEdit.new( galleryFrame )
-    @widgets['thumbnailSize'].setValidator( Qt::RegExpValidator.new( Qt::RegExp.new( "\\d+x\\d+" ), galleryFrame ) )
-    labels['thumbnailSize'] = [5, Qt::Label.new( @widgets['thumbnailSize'], "Thumbnail size:", galleryFrame )]
-    @widgets['mainPageTemplate'] = Qt::LineEdit.new( galleryFrame )
-    labels['mainPageTemplate'] = [6, Qt::Label.new( @widgets['mainPageTemplate'], "Template for main page:", galleryFrame )]
-    @widgets['galleryPageTemplate'] = Qt::LineEdit.new( galleryFrame )
-    labels['galleryPageTemplate'] = [7, Qt::Label.new( @widgets['galleryPageTemplate'], "Template for gallery pages:", galleryFrame )]
-    @widgets['picturePageTemplate'] = Qt::LineEdit.new( galleryFrame )
-    labels['picturePageTemplate'] = [8, Qt::Label.new( @widgets['picturePageTemplate'], "Template for picture pages:", galleryFrame )]
-    @widgets['mainPageInMenu'] = Qt::CheckBox.new( "Main page in menu?", galleryFrame )
+    labels['files'] = [1, Qt::Label.new( @widgets['files'], "File pattern:", mainFrame )]
+
+    @widgets['layout'] = Qt::ComboBox.new( true, mainFrame )
+    @widgets['layout'].setMaximumWidth( 200 )
+    Webgen::Plugin.config[PictureGalleryLayouter::DefaultGalleryLayouter].layouts.keys.each do |name|
+      @widgets['layout'].insertItem( Qt::Pixmap.new( File.join( Webgen::Configuration.data_dir, 'gallery-creator', "#{name}.png" ) ), \
+                                     name )
+    end
+    @widgets['layout'].listBox.setMinimumWidth( @widgets['layout'].listBox.maxItemWidth + 20 )
+    labels['layout'] = [2, Qt::Label.new( @widgets['layout'], "Gallery layout:", mainFrame )]
+
+    @widgets['picturesPerPage'] = Qt::SpinBox.new( 0, 1000, 1, mainFrame )
+    labels['picturesPerPage'] = [3, Qt::Label.new( @widgets['picturesPerPage'], "Pictures per page:", mainFrame )]
+
+    @widgets['galleryOrderInfo'] = Qt::SpinBox.new( 0, 1000, 1, mainFrame )
+    labels['galleryOrderInfo'] = [4, Qt::Label.new( @widgets['galleryOrderInfo'], "Start <orderInfo> for gallery pages:", mainFrame )]
+
+    @widgets['thumbnailSize'] = Qt::LineEdit.new( mainFrame )
+    @widgets['thumbnailSize'].setValidator( Qt::RegExpValidator.new( Qt::RegExp.new( "\\d+x\\d+" ), mainFrame ) )
+    labels['thumbnailSize'] = [5, Qt::Label.new( @widgets['thumbnailSize'], "Thumbnail size:", mainFrame )]
+
+    @widgets['mainPageTemplate'] = Qt::LineEdit.new( mainFrame )
+    labels['mainPageTemplate'] = [6, Qt::Label.new( @widgets['mainPageTemplate'], "Template for main page:", mainFrame )]
+
+    @widgets['galleryPageTemplate'] = Qt::LineEdit.new( mainFrame )
+    labels['galleryPageTemplate'] = [7, Qt::Label.new( @widgets['galleryPageTemplate'], "Template for gallery pages:", mainFrame )]
+
+    @widgets['picturePageTemplate'] = Qt::LineEdit.new( mainFrame )
+    labels['picturePageTemplate'] = [8, Qt::Label.new( @widgets['picturePageTemplate'], "Template for picture pages:", mainFrame )]
+
+    @widgets['mainPageInMenu'] = Qt::CheckBox.new( "Main page in menu?", mainFrame )
     labels['mainPageInMenu'] = [9, nil]
-    @widgets['galleryPageInMenu'] = Qt::CheckBox.new( "Gallery pages in menu?", galleryFrame )
+
+    @widgets['galleryPageInMenu'] = Qt::CheckBox.new( "Gallery pages in menu?", mainFrame )
     labels['galleryPageInMenu'] = [10, nil]
-    @widgets['picturePageInMenu'] = Qt::CheckBox.new( "Picture pages in menu?", galleryFrame )
+
+    @widgets['picturePageInMenu'] = Qt::CheckBox.new( "Picture pages in menu?", mainFrame )
     labels['picturePageInMenu'] = [11, nil]
 
     layout = Qt::GridLayout.new( @widgets.length, 2 )
@@ -423,33 +490,73 @@ class GalleryWindow < Qt::MainWindow
     leftLayout.addLayout( layout )
     leftLayout.addStretch
 
-    @widgets['mainPage'] = MetaDataTable.new( galleryFrame, page_meta_items )
-    @widgets['mainPage'].setColumnWidth( 0, 200 )
-    @widgets['mainPage'].setColumnWidth( 1, 200 )
-    @widgets['galleryPages'] = MetaDataTable.new( galleryFrame, page_meta_items )
-    @widgets['galleryPages'].setColumnWidth( 0, 200 )
-    @widgets['galleryPages'].setColumnWidth( 1, 200 )
+    @widgets['mainPage'] = MetaDataTable.new( mainFrame, page_meta_items )
+    @widgets['mainPage'].setColumnWidth( 0, 150 )
+    @widgets['mainPage'].setColumnWidth( 1, 150 )
+    @widgets['mainPage'].setMinimumWidth( 350 )
+    @widgets['galleryPages'] = MetaDataTable.new( mainFrame, page_meta_items )
+    @widgets['galleryPages'].setColumnWidth( 0, 150 )
+    @widgets['galleryPages'].setColumnWidth( 1, 150 )
 
     rightLayout = Qt::VBoxLayout.new
     rightLayout.setSpacing( 5 )
-    rightLayout.addWidget( Qt::Label.new( 'Meta information for main page:', galleryFrame ) )
+    rightLayout.addWidget( Qt::Label.new( 'Meta information for main page:', mainFrame ) )
     rightLayout.addWidget( @widgets['mainPage'] )
-    rightLayout.addWidget( Qt::Label.new( 'Meta information for gallery pages:', galleryFrame ) )
+    rightLayout.addWidget( Qt::Label.new( 'Meta information for gallery pages:', mainFrame ) )
     rightLayout.addWidget( @widgets['galleryPages'] )
 
-    mainLayout = Qt::HBoxLayout.new( galleryFrame )
+    galLayout = Qt::HBoxLayout.new
+    galLayout.setSpacing( 20 )
+    galLayout.addLayout( leftLayout )
+    galLayout.addLayout( rightLayout )
+    galLayout.setStretchFactor( rightLayout, 1 )
+
+
+    @image = ImageViewer.new( mainFrame )
+    @image.setSizePolicy( Qt::SizePolicy::Expanding, Qt::SizePolicy::Expanding )
+    @image.setMinimumSize( 320, 200 )
+
+    @imageTitle = Qt::LineEdit.new( mainFrame )
+    imageTitle = Qt::Label.new( @imageTitle, "Title:", mainFrame )
+    @imageDescription = MyTextEdit.new( mainFrame )
+    @imageDescription.setTextFormat( Qt::PlainText )
+    imageDescription = Qt::Label.new( @imageDescription, "Description:", mainFrame )
+    connect( @imageTitle, SIGNAL('returnPressed()'), @imageDescription, SLOT('setFocus()') )
+    connect( @imageDescription, SIGNAL('myReturnPressed()'), self, SLOT('select_next_image()') )
+    connect( @imageDescription, SIGNAL('myReturnPressed()'), @imageTitle, SLOT('setFocus()') )
+
+    @imageList = Qt::ListBox.new( mainFrame )
+    @imageList.setMaximumWidth( 300 )
+    connect( @imageList, SIGNAL('highlighted(const QString &)'), self, SLOT('image_selected( const QString &)') )
+    @picMetaTable = MetaDataTable.new( mainFrame, page_meta_items - ['title', 'description'], ['title', 'description'] )
+    @picMetaTable.setColumnWidth( 0, 100 )
+    @picMetaTable.setColumnWidth( 1, 100 )
+    @picMetaTable.setMaximumWidth( 300 )
+
+    imageLayout = Qt::GridLayout.new( 3, 3 )
+    imageLayout.setSpacing( 6 )
+    imageLayout.addWidget( @imageList, 0, 0 )
+    imageLayout.addMultiCellWidget( @picMetaTable, 1, 2, 0, 0 )
+    imageLayout.addMultiCellWidget( @image, 0, 0, 1, 2 )
+    imageLayout.addWidget( imageTitle, 1, 1 )
+    imageLayout.addWidget( @imageTitle, 1, 2 )
+    imageLayout.addWidget( imageDescription, 2, 1, Qt::AlignTop )
+    imageLayout.addWidget( @imageDescription, 2, 2 )
+    imageLayout.setRowStretch( 0, 1 )
+
+    mainLayout = Qt::VBoxLayout.new( mainFrame )
     mainLayout.setMargin( 10 )
     mainLayout.setSpacing( 20 )
-    mainLayout.addLayout( leftLayout )
-    mainLayout.addLayout( rightLayout )
+    mainLayout.addLayout( galLayout )
+    mainLayout.addLayout( imageLayout )
+    mainLayout.setStretchFactor( imageLayout, 1 )
 
-    # setup tabwidget
-    tabwidget.addTab( galleryFrame, "Gallery Meta Information" )
-    tabwidget.addTab( imageFrame, "Images" )
+    setCentralWidget( mainFrame )
   end
 
 end
 
+Webgen::Plugin['Configuration'].init_all
 
 $app = Qt::Application.new( ARGV )
 mainWindow = GalleryWindow.new
