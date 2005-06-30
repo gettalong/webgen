@@ -13,6 +13,7 @@
 ---- DOCU ----
 
 * DEV: self.logger.warn/error/info/debug can be used for messages
+* summary page of all parameters
 * add keywords to default.template
 * document which meta info can be used in gallery file for gallery itself, gallery pages and picture pages
 

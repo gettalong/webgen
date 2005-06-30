@@ -44,13 +44,18 @@ module FileHandlers
       end
 
       def process_dir_index
-        node = node_for_string( Webgen::Plugin['DirHandler']['indexFile'] )
-        if node
-          self.logger.info { "Directory index file for <#{self.recursive_value( 'src' )}> => <#{node.recursive_value( 'src', false )}>" }
-          self['indexFile'] = node
-        else
-          self.logger.warn { "No directory index file found for directory <#{self.recursive_value( 'src' )}>" }
+        indexFile = Webgen::Plugin['DirHandler']['indexFile']
+        if indexFile.nil?
           self['indexFile'] = nil
+        else
+          node = node_for_string( indexFile )
+          if node
+            self.logger.info { "Directory index file for <#{self.recursive_value( 'src' )}> => <#{node.recursive_value( 'src', false )}>" }
+            self['indexFile'] = node
+          else
+            self.logger.warn { "No directory index file found for directory <#{self.recursive_value( 'src' )}>" }
+            self['indexFile'] = nil
+          end
         end
       end
 
