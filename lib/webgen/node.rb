@@ -149,6 +149,8 @@ class Node
   #######
 
   def get_node_for_string( destString, metainfo='dest' )
+    return self if destString == ''
+
     if /^\// =~ destString
       node = Node.root( self )
       destString = destString[1..-1]

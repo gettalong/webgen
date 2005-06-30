@@ -44,7 +44,7 @@ module Tags
       @processOutput = get_param( 'processOutput' )
       content = ''
       begin
-        filename = refNode.parent.recursive_value( 'src' ) + get_param( 'filename' )
+        filename = refNode.parent_dir.recursive_value( 'src' ) + get_param( 'filename' )
         self.logger.debug { "File location: <#{filename}>" }
         content = File.read( filename )
       rescue

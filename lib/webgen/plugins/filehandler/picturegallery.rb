@@ -152,9 +152,9 @@ module FileHandlers
         imageData['inMenu'] ||= get_param( 'picturePageInMenu' )
         imageData['template'] ||= get_param( 'picturePageTemplate' )
         imageData['imageFilename'] = image
-        imageData['srcName'] = File.basename( image ).tr( ' .', '_' ) + '.html'
-        imageData['thumbnail'] ||= get_thumbnail( imageData, parent )
+        imageData['srcName'] = gallery_file_name( get_param( 'title' ) + ' ' + File.basename( image ) )
         imageData['thumbnailSize'] ||= @filedata['thumbnailSize']
+        imageData['thumbnail'] ||= get_thumbnail( imageData, parent )
 
         imageList << imageData
       end
@@ -193,7 +193,7 @@ module FileHandlers
         node = Node.new( parent )
         node['title'] = node['src'] = node['dest'] = 'tn_' + File.basename( file )
         node['int:thumbnailFile'] = file
-        node['int:thumbnailSize'] = thumbnailSize
+        node['int:thumbnailSize'] = thumbnailSize unless thumbnailSize.nil? || thumbnailSize !~ /\d+x\d+/
         node['processor'] = self
         node
       end

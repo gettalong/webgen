@@ -76,7 +76,7 @@ module FileHandlers
         begin
           outstring = ERB.new( templateNode['content'] ).result( binding )
         rescue Exception => e
-          logger.error { "ERB threw an error while processing an ERB template (<#{templateNode.recursive_value('src')}>: #{e.message}" }
+          logger.error { "ERB threw an error while processing an ERB template (<#{templateNode.recursive_value('src')}>): #{e.message}" }
           outstring = templateNode['content'].dup
         end
       else
