@@ -117,9 +117,15 @@ PKG_FILES = FileList.new( [
   fl.exclude( 'doc/output' )
 end
 
-task :package => [:gen_files] do
+task :package => [:gen_files, :create_gal_layout_pics] do
   chdir 'pkg' do
     sh "rpaadmin packport #{PKG_NAME}-#{PKG_VERSION}"
+  end
+end
+
+task :create_gal_layout_pics do
+  chdir 'otherdata/web-for-gallery-pics' do
+    ruby "create_pictures.rb"
   end
 end
 

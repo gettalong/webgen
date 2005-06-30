@@ -126,6 +126,7 @@ class NodeTest < Test::Unit::TestCase
   def test_node_for_string
     assert_equal( @n['root/file1'], @n['root'].node_for_string( 'file1' ) )
     assert_nil( @n['root'].node_for_string( 'file2' ) )
+    assert_equal( @n['root'], @n['root'].node_for_string( '' ) )
     assert_equal( @n['root/virtdir1/file2'], @n['root'].node_for_string( 'virtdir1/file2' ) )
     assert_equal( @n['root/file1'], @n['root/virtdir1/file2'].node_for_string( 'file1' ) )
     assert_equal( @n['root/dir2/file3'], @n['root/virtdir1/file2'].node_for_string( '/dir2/file3' ) )

@@ -1,5 +1,6 @@
 ---- CURRENT ----
 
+* BUG: update example dir in data/webgen (menu does not work anymore)
 * simplify menu style plugins
 * make menu generation faster (for webgen: 5.2s without menus in template, 9.2s with menus!)
 * modify tags system sothat tags can be specified via a tag directive (like extension with file handlers)

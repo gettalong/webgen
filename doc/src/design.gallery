@@ -1,18 +1,25 @@
-title: Design Gallery
+--- 
+designs/old.png: 
+  title: Old Design
+  description: The old design of the homepage.
+mainPage: {}
+picturesPerPage: 20
 files: designs/*.png
-
-mainPage:
-    menuOrder: 8
-
-designs/curdesign.png:
-    title: Default Design
-    description: This is the default and the current design for the webgen homepage.
-
-designs/nostyle.png:
-    title: Without Stylesheet
-    description: The default homepage with the stylesheet disabled. Not very nice, but
-        still useable.
-
-designs/old.png:
-    title: Old Design
-    description: The old design of the homepage.
+thumbnailSize: ''
+mainPageTemplate: ''
+title: Design Gallery
+galleryOrderInfo: 50
+galleryPageInMenu: false
+mainPageInMenu: true
+galleryPageTemplate: ''
+designs/nostyle.png: 
+  title: Without Stylesheet
+  description: "The default homepage with the stylesheet disabled. Not very nice, but still
+    useable."
+galleryPages: {}
+picturePageTemplate: ''
+designs/curdesign.png: 
+  title: Default Design
+  description: This is the default and the current design for the webgen homepage.
+picturePageInMenu: false
+layout: default

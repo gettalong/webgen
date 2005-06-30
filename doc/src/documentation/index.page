@@ -56,5 +56,5 @@ parameter. Each parameter can be overridden in the configuration file by specifi
 plugin name as top level key and each parameter and value as a key/value pair. A configuration file
 looks like this:
 
-<pre class="webgen-file">{includeFile: /../../../testsite/config.yaml}</pre>
+<pre class="webgen-file">{includeFile: ../../config.yaml}</pre>
 
