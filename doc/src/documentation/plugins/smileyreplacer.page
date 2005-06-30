@@ -1,0 +1,29 @@
+---
+title: Smiley Replacer
+inMenu: true
+emoticonPack: ~
+---
+h2. Information
+
+<notextile>{describe: SmileyReplacer}</notextile>
+
+h2. Description
+
+This plugin replaces smiley (ie. such sequences as <notextile>;-), :-)</notextile>, ...) with
+emoticons - graphics which express the same emotion as the smiley.
+
+You can enable or disable the replacement of smileys globally by setting the parameter @emoticonPack@
+to an existing smiley package or @nil@. However, if a page has the meta information @emoticonPack@,
+this meta info takes precedence over the global value. So, if the replacement is globally enabled,
+you can disable it for a specifc page by setting the meta information @emoticonPack@ to @nil@ (this
+was done for this page so that you can see the character representation of the smileys). You can
+also change the used emoticon package for one page only by setting @emoticonPack@ to another
+package name.
+
+h2. Available Emoticon Packs
+
+Here is a table showing the available smileys and their representation with various emoticons
+packages. The header shows the smiley you have to use so that you get one of the emoticons below it,
+depending on the used emoticon package.
+
+<notextile>{showEmoticonPacks:}</notextile>

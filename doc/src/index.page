@@ -23,7 +23,8 @@ h2. News
 Major changes:
 
 * *New* application for managing picture galleries
-* The use of directory index files is now optional by setting the parameter  <a href="{relocatable: documentation/plugins/filehandler/dirhandler.page}">DirHandler:indexFile</a> to nil
+* Smileys are now optionally replaced with emoticons (<notextile>:-);-):'-(8-)</notextile>, several different emoticon packs available) -> see <a href="{relocatable: documentation/plugins/smileyreplacer.page}">SmileyReplacer</a>
+* The use of directory index files is now optional by setting the parameter  <a href="{relocatable: documentation/plugins/filehandler/directory.page}">DirHandler:indexFile</a> to nil
 
 <b>24.06.2005 - webgen 0.3.5 released!!!</b>
 

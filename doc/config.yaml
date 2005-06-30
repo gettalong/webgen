@@ -1,2 +1,5 @@
 PageHandler:
   validator: xmllint
+
+SmileyReplacer:
+  emoticonPack: glass

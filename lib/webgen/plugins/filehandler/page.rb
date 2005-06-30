@@ -21,6 +21,7 @@
 #
 
 require 'webgen/plugins/filehandler/filehandler'
+require 'webgen/listener'
 require 'yaml'
 require 'erb'
 
@@ -47,6 +48,13 @@ module FileHandlers
     add_param 'useERB', true, 'Specifies if the content blocks of the page file should be processed with ERB before they are formatted.'
 
     used_meta_info 'title', 'orderInfo', 'lang', 'blocks', 'useERB'
+
+
+    include Listener
+
+    def initialize
+      add_msg_name( :AFTER_CONTENT_RENDERED )
+    end
 
     def create_node( srcName, parent )
       create_node_internally( parse_data( File.read( srcName ), srcName ), analyse_file_name( File.basename( srcName ) ), parent )
@@ -84,7 +92,9 @@ module FileHandlers
         outstring = node[block_name].to_s.dup
       end
 
-      Webgen::Plugin['Tags'].substitute_tags( outstring, node, templateNode )
+      outstring = Webgen::Plugin['Tags'].substitute_tags( outstring, node, templateNode )
+      dispatch_msg( :AFTER_CONTENT_RENDERED, outstring, node )
+      outstring
     end
 
     def write_node( node )

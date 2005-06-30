@@ -19,3 +19,4 @@ table{border: 1px solid black}.
 |*template*      |String   |my.template   |Page file      |Sets the template for the page file overriding the default value.|
 |*title*         |String   |New Title     |Any            |Sets the title for the file/directory.|
 |*useERB*        |Boolean  |false         |Page file      |Specifies if the content blocks of the page file should be processed with ERB overriding the default value.|
+|*emoticonPack*  |String   |bigeyes       |Page file      |Sets the emoticon package which should be used for the page.|

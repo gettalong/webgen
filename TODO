@@ -1,6 +1,5 @@
 ---- CURRENT ----
 
-* BUG: update example dir in data/webgen (menu does not work anymore)
 * simplify menu style plugins
 * make menu generation faster (for webgen: 5.2s without menus in template, 9.2s with menus!)
 * modify tags system sothat tags can be specified via a tag directive (like extension with file handlers)
@@ -22,7 +21,6 @@
 * parameter for setting the orderInfo of index pages so that they always appear as first entry
 * custom commands provided by plugins
 * implement plugin which creates nodes for fragment identifiers (#info) in html
-* convert smiley characters to smileys
 * include spell checker (ispell, aspell, MS Word OLE on Win32,...)
 * tag 'download' which links to a download file and appends its size and ev. an image (PDF, ...)
 * tag 'resume', uses xmlresume2x to provide HTML version of xml resume
@@ -199,3 +197,4 @@ W do not allow two or more page files in the same language, print warn
 * better docu for backing file handler
 * make dropdown menus "look" nice in IE
 * make dropdown menus work in IE -> rather hard to do in a general way
+* convert smiley characters to smileys

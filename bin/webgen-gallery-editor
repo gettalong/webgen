@@ -1,3 +1,6 @@
+#!/usr/bin/env ruby
+# -*- ruby -*-
+
 require 'yaml'
 require 'ostruct'
 require 'webgen/plugin'
@@ -6,8 +9,6 @@ require 'webgen/plugins/filehandler/picturegallery'
 require 'Qt'
 # Error when loading Qt before RMagick -> error in RMagick undefined method `display' for class `Magick::Image'
 # report that to qtruby team and RMagick team
-
-#TODO
 
 class Gallery
 
@@ -62,7 +63,7 @@ class ImageViewer < Qt::Frame
   end
 
   def set_image( filename = nil)
-    filename = File.join( Webgen::Configuration.data_dir, 'images/webgen_logo.png' ) if filename.nil?
+    filename = File.join( Webgen::Configuration.data_dir, 'resources/images/webgen_logo.png' ) if filename.nil?
     @image = Qt::Image.new( filename )
     update
   end
@@ -271,8 +272,6 @@ class GalleryWindow < Qt::MainWindow
   def initialize
     super
     setCaption( "Webgen Gallery Editor" )
-    setIcon( Qt::Pixmap.new( File.join( Webgen::Configuration.data_dir, 'images/webgen_logo.png' ) ) )
-    setIconText( "Webgen Gallery Editor" )
 
     @gallery = nil
     @curfile = nil
@@ -560,8 +559,8 @@ Webgen::Plugin['Configuration'].init_all
 
 $app = Qt::Application.new( ARGV )
 mainWindow = GalleryWindow.new
-mainWindow.setIcon( Qt::Pixmap.new( File.join( Webgen::Configuration.data_dir, 'images/webgen_logo.png' ) ) )
 $app.setMainWidget( mainWindow )
 mainWindow.show
 mainWindow.open_file( ARGV[0] ) if ARGV.length > 0
 $app.exec
+
