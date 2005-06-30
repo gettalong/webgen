@@ -14,6 +14,7 @@ Webgen::Plugin['Configuration'].init_all
 layouts = Webgen::Plugin.config[PictureGalleryLayouter::DefaultGalleryLayouter].layouts
 
 system('ruby -I../../lib ../../bin/webgen')
+system('killall opera')
 system('opera -geometry 1024x768+0+0 -newpage `pwd`/output/ &')
 sleep( 10 )
 
