@@ -1,6 +1,6 @@
 require 'cgi'
 
-module OtherPlugins
+module WebgenDocuPlugins
 
   class CliDescTag < Tags::DefaultTag
 

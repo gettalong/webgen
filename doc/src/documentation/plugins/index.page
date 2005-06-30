@@ -26,3 +26,7 @@ listed in the "Information" section of each plugin page. Also note that plugins 
 parameters from their "super plugins" - this allows a group of plugins which have similar
 functionality (e.g. the menu style plugins) to share common configuration values. The names of the
 "super plugins" are enclosed in parentheses after the plugin name in the "Information" section.
+
+Parameters can have various types: String, Number, Boolean, Array... When setting a parameter via
+the configuration file, you need to ensure that it has the proper type. Have a look at
+"www.yaml.org":http://www.yaml.org for more information about supported types!

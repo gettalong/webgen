@@ -1,4 +1,4 @@
-module OtherPlugins
+module WebgenDocuPlugins
 
   class PredefinedResourcesTag < Tags::DefaultTag
 

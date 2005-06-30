@@ -12,9 +12,6 @@
 ---- DOCU ----
 
 * DEV: self.logger.warn/error/info/debug can be used for messages
-* summary page of all parameters
-* add keywords to default.template
-* document which meta info can be used in gallery file for gallery itself, gallery pages and picture pages
 
 ---- FUTURE ----
 
@@ -198,3 +195,6 @@ W do not allow two or more page files in the same language, print warn
 * make dropdown menus "look" nice in IE
 * make dropdown menus work in IE -> rather hard to do in a general way
 * convert smiley characters to smileys
+* add keywords to default.template
+* document which meta info can be used in gallery file for gallery itself, gallery pages and picture pages
+* summary page of all parameters

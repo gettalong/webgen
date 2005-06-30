@@ -1,4 +1,4 @@
-module OtherPlugins
+module WebgenDocuPlugins
 
   class VersionTag < Tags::DefaultTag
 
@@ -55,14 +55,7 @@ module OtherPlugins
 
       # parameters
       unless data.params.nil?
-        params = data.params.sort.collect do |k,v|
-          "<span style='color: red'>#{v.name}</span>" + \
-          ( v.mandatory.nil? \
-            ? "&nbsp;=&nbsp;<span style='color: blue'>#{CGI::escapeHTML( v.default.inspect )}</span>" \
-            : " (=" + ( v.mandatoryDefault ? "default " : "" ) + "mandatory parameter)" ) + \
-          ": #{CGI::escapeHTML( v.description )}"
-        end
-        s += row['Parameters', params.join( "<br />\n" )]
+        s += row['Parameters', format_params( data.params )]
       end
 
       # used meta info
@@ -78,6 +71,16 @@ module OtherPlugins
       end
 
       s += "</table>"
+    end
+
+    def format_params( params )
+      params.sort.collect do |k,v|
+        "<span style='color: red'>#{v.name}</span>" + \
+        ( v.mandatory.nil? \
+          ? "&nbsp;=&nbsp;<span style='color: blue'>#{CGI::escapeHTML( v.default.inspect )}</span>" \
+          : " (=" + ( v.mandatoryDefault ? "default " : "" ) + "mandatory parameter)" ) + \
+        ": #{CGI::escapeHTML( v.description )}"
+      end.join( "<br />\n" )
     end
 
   end

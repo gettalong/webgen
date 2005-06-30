@@ -1,4 +1,4 @@
-module OtherPlugins
+module WebgenDocuPlugins
 
   class ShowEmoticonsTag < Tags::DefaultTag
 
@@ -13,7 +13,7 @@ module OtherPlugins
 
     def process_tag( tag, node, refNode )
       res = Webgen::Plugin.config[Webgen::ResourceManager].resources
-      packs = Dir[File.join( Webgen::Configuration.data_dir, 'resources', 'smileys', '*/')].collect {|p| File.basename( p )}.sort
+      packs = Dir[File.join( Webgen::Configuration.data_dir, 'resources', 'emoticons', '*/')].collect {|p| File.basename( p )}.sort
 
       map = OtherPlugins::SmileyReplacer::SMILEY_MAP
       output = '<table style="width: 100%; border: 1px solid black" summary="List of emoticon packs" rules="groups" frame="border">'

@@ -6,6 +6,7 @@
     <link href="{resource: webgen-css}" rel="stylesheet" />
     <link href="{relocatable: default.css}" rel="stylesheet" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="Keywords" content="webgen, static web site generator, ruby, HTML, dynamic tags, plugin based, static web, web generator, site generator" />
   </head>
   <body>
     <div id="all">
