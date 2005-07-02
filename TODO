@@ -11,14 +11,11 @@
 
 ---- DOCU ----
 
-* DEV: self.logger.warn/error/info/debug can be used for messages
-* docu on how to extend webgen
 * get web address of qtruby package
 
 ---- FUTURE ----
 
 * parameter for setting the orderInfo of index pages so that they always appear as first entry
-* custom commands provided by plugins
 * implement plugin which creates nodes for fragment identifiers (#info) in html
 * include spell checker (ispell, aspell, MS Word OLE on Win32,...)
 * tag 'download' which links to a download file and appends its size and ev. an image (PDF, ...)
@@ -202,3 +199,5 @@ W do not allow two or more page files in the same language, print warn
 * summary page of all parameters
 * add note that smellies emoticon pack is from ... -> see temp/smileys dir
 * docu for webgen-gallery-editor
+* docu on how to extend webgen
+* custom commands provided by plugins

@@ -5,7 +5,7 @@ orderInfo: 22
 ---
 h2. Plugin Parameter Reference
 
-Each plugin can specify <a href="{relocatable: plugins}">parameters</a>. Here is a list of all
+Each plugin can specify <a href="{relocatable: ../plugins}">parameters</a>. Here is a list of all
 available parameters for a quick lookup, ordered by category and then name (only plugins with
 parameters are shown!):
 

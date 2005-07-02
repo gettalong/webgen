@@ -2,7 +2,7 @@ index.page:
   orderInfo: 1
 
 download.page:
-  orderInfo: 11
+  orderInfo: 8
 
 features.page:
   orderInfo: 5
@@ -11,17 +11,17 @@ api.html:
   dest: rdoc/index.html
   title: API Reference
 
-documentation/api.html:
-  dest: ../rdoc/index.html
+documentation/references/api.html:
+  dest: ../../rdoc/index.html
   title: API Reference
   inMenu: true
   orderInfo: 60
 
-documentation/wiki.html:
+wiki.html:
   dest: http://webgen.rubyforge.org/wiki/wiki.pl
-  title: Wiki Web
+  title: WikiWiki Web
   inMenu: true
-  orderInfo: 50
+  orderInfo: 10
 
 documentation/index.page:
   orderInfo: 9

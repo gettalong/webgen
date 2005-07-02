@@ -1,0 +1,59 @@
+---
+title: Extending webgen
+inMenu: true
+orderInfo: 21
+---
+h2. Extending webgen
+
+h3. General
+
+There is a logging mechanism available for informational and debugging purposes. Four different log
+levels are available:
+
+* debug
+* info
+* warn
+* error
+
+The methods are named after the log levels and can be invoked by using
+@logger.{debug|info|warn|error}@. You need to provide a string as argument or a block which returns
+a string.
+
+h3. Normal plugins (new tags, file handlers, etc)
+
+As webgen is plugin-based, it can be extended very easily. A simple example is shown in the
+<a href="{relocatable: gettingstarted.page#simple-plugin}">Getting Started</a> guide.
+
+If you want more sophisticated examples of plugins, have a look at webgen itself and the plugins
+that get shipped with it. They can be found in the directory @lib/webgen/plugins/@!
+
+h3. Adding a site specific command
+
+For this you need to write a new command class and put its file into the @plugin@ folder of the
+website. Have a look at the "cmdparse API reference":http://cmdparse.rubyforge.org/rdoc/index.html
+for information about how to write a command class.
+
+After that you only need to add that command to the used @CommandParser@ class. This can be done by
+calling the @add_cmdparser_command@ of the configuration plugin. Here is a complete example:
+
+<pre>
+class MyCommand < CommandParser::Command
+
+  def initialize; super( 'testit' ); end
+
+  def description; "This is a custom site specific command."; end
+
+  def usage; "Usage: #{@options.program_name} [global options] testit"; end
+
+  def execute( commandParser, args )
+    logger.info "Starting Webgen with my new command..."
+
+    puts "Doing something important..."
+    sleep(5)
+
+    logger.info "Webgen finished"
+  end
+end
+
+Webgen::Plugin['Configuration'].add_cmdparser_command( MyCommand.new )
+</pre>

@@ -112,7 +112,7 @@ Run webgen and view the output! The tag @\{filemdate: }@ got substituted by the 
 the meta information. As we have not put any meta information in the @index.page@ file, a warning is
 issued when webgen is run and no date is shown on the page!
 
-h2. Write a Simple Plugin
+h2(#simple-plugin). Write a Simple Plugin
 
 Because we are not quite happy with our basic file modification time tag, we are going to write a
 simple tag plugin.

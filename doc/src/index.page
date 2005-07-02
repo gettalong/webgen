@@ -22,11 +22,11 @@ h2. News
 
 Major changes:
 
-* *New* <a href="{relocatable: /documentation/webgen_gallery_editor.page}">application</a> for managing image galleries
+* <b>New <a href="{relocatable: /documentation/webgen_gallery_editor.page}">application</a></b> for managing image galleries
 * Smileys are now optionally replaced with emoticons (<notextile>:-) ;-) :'-( 8-)</notextile>, several different emoticon packs available) -> see <a href="{relocatable: documentation/plugins/smileyreplacer.page}">SmileyReplacer</a>
-* Site specific commands (used in command line processing) can now be used
+* <a href="{relocatable: documentation/extending_webgen.page}">Site specific commands</a> (used in command line processing) can now be used
 * Images in image galleries can now be ordered by specifying the @orderInfo@ meta information
-* %{color:red}Attention%: For unified naming in reference to image galleries, I have removed all occurences of the word "picture" from the code and documentation. Therefore you may need to adapt your code, especially custom gallery layouters!
+* %{color:red}Attention%: For unified naming in reference to image galleries, I have removed all occurences of the word "picture" from the code and documentation and replaced it with "image". Therefore you may need to adapt your code, especially custom gallery layouters!
 * The use of directory index files is now optional: by setting the parameter  <a href="{relocatable: documentation/plugins/filehandler/directory.page}">DirHandler:indexFile</a> to nil directory index files are not used
 
 <b>24.06.2005 - webgen 0.3.5 released!!!</b>
