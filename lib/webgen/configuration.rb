@@ -22,6 +22,7 @@
 
 require 'find'
 require 'tsort'
+require 'cmdparse'
 require 'webgen/node'
 require 'webgen/plugin'
 
@@ -52,6 +53,10 @@ module Webgen
     add_param 'outDirectory', 'output', 'The directory to which the output files are written.'
     add_param 'lang', 'en', 'The default language.'
 
+    # Returns the +CommandParser+ object used for parsing the command line. You can add site
+    # specific commands to it by calling the Configuration#add_cmdparser_command method!
+    attr_accessor :cmdparser
+
     # Returns the data directory of webgen.
     def self.data_dir
       unless defined?( @@data_dir )
@@ -72,6 +77,10 @@ module Webgen
         end
       end
       @@data_dir
+    end
+
+    def add_cmdparser_command( command )
+      @cmdparser.add_command( command ) if @cmdparser
     end
 
     # Does all the initialisation stuff

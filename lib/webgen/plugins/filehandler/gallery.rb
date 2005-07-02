@@ -26,19 +26,19 @@ require 'webgen/plugins/filehandler/page'
 
 module FileHandlers
 
-  class PictureGalleryFileHandler < DefaultFileHandler
+  class GalleryFileHandler < DefaultFileHandler
 
-    summary "Handles picture gallery files for page file"
+    summary "Handles images gallery files"
     extension 'gallery'
-    add_param "picturesPerPage", 20, 'Number of picture per gallery page'
-    add_param "picturePageInMenu", false, 'True if the picture pages should be in the menu'
+    add_param "imagesPerPage", 20, 'Number of images per gallery page'
+    add_param "imagePageInMenu", false, 'True if the image pages should be in the menu'
     add_param "galleryPageInMenu", false, 'True if the gallery pages should be in the menu'
     add_param "galleryOrderInfo", 50, 'The <orderInfo> metainfo for the first gallery page. The second gallery page gets this value plus one, and so on.'
-    add_param "mainPageInMenu", true, 'True if the main page of the picture gallery should be in the menu'
+    add_param "mainPageInMenu", true, 'True if the main page of the image gallery should be in the menu'
     add_param "galleryPageTemplate", nil, 'The template for gallery pages. If nil or a not existing file is specified, the default template is used.'
-    add_param "picturePageTemplate", nil, 'The template for picture pages. If nil or a not existing file is specified, the default template is used.'
+    add_param "imagePageTemplate", nil, 'The template for image pages. If nil or a not existing file is specified, the default template is used.'
     add_param "mainPageTemplate", nil, 'The template for the main page. If nil or a not existing file is specified, the default template is used.'
-    add_param "files", 'images/**/*.jpg', 'The Dir glob for specifying the picture files'
+    add_param "files", 'images/**/*.jpg', 'The Dir glob for specifying the image files'
     add_param "title", 'Gallery', 'The title of the gallery'
     add_param "layout", 'default', 'The layout used'
 
@@ -53,7 +53,14 @@ module FileHandlers
       end
       @path = File.dirname( file )
       images = Dir[File.join( @path, get_param( 'files' ))].collect {|i| i.sub( /#{@path + File::SEPARATOR}/, '' ) }
-      self.logger.info { "Creating gallery for file <#{file}> with #{images.length} pictures" }
+      images.sort! do |a,b|
+        aoi = @filedata[a].nil? ? 0 : @filedata[a]['orderInfo'] || 0
+        boi = @filedata[b].nil? ? 0 : @filedata[b]['orderInfo'] || 0
+        atitle = @filedata[a].nil? ? a : @filedata[a]['title'] || a
+        btitle = @filedata[b].nil? ? b : @filedata[b]['title'] || b
+        (aoi == boi ? atitle <=> btitle : aoi <=> boi)
+      end
+      self.logger.info { "Creating gallery for file <#{file}> with #{images.length} images" }
 
       create_gallery( images, parent )
 
@@ -96,7 +103,7 @@ module FileHandlers
         node = Webgen::Plugin['PageHandler'].create_node_from_data( call_layouter( :gallery, gallery, main, gIndex ), gallery['srcName'], parent )
         parent.add_child( node )
         gallery['imageList'].each_with_index do |image, iIndex|
-          node = Webgen::Plugin['PageHandler'].create_node_from_data( call_layouter( :picture, image, main, gIndex, iIndex ), image['srcName'], parent )
+          node = Webgen::Plugin['PageHandler'].create_node_from_data( call_layouter( :image, image, main, gIndex, iIndex ), image['srcName'], parent )
           parent.add_child( node )
         end
       end
@@ -115,7 +122,7 @@ module FileHandlers
 
     def create_gallery_pages( images, parent )
       galleries = []
-      picsPerPage = get_param( 'picturesPerPage' )
+      picsPerPage = get_param( 'imagesPerPage' )
       0.step( images.length - 1, picsPerPage ) do |i|
         data = (@filedata['galleryPages'] || {}).dup
 
@@ -126,7 +133,7 @@ module FileHandlers
         data['orderInfo'] = get_param( 'galleryOrderInfo' ) + data['number']
         data['title'] = gallery_title( data['number'] )
         data['srcName'] = gallery_file_name( data['title'] )
-        data['imageList'] = create_picture_pages( images[i..(i + picsPerPage - 1)], parent )
+        data['imageList'] = create_image_pages( images[i..(i + picsPerPage - 1)], parent )
 
         galleries << data
       end
@@ -141,16 +148,16 @@ module FileHandlers
       ( title.nil? ? nil : title.tr( ' .', '_' ) + '.html' )
     end
 
-    def create_picture_pages( images, parent )
+    def create_image_pages( images, parent )
       imageList = []
       images.each do |image|
         imageData = (@filedata[image] || {}).dup
 
         imageData['blocks'] ||= [{'name'=>'content', 'format'=>'html'}]
-        imageData['title'] ||= "Picture #{File.basename( image )}"
+        imageData['title'] ||= "Image #{File.basename( image )}"
         imageData['description'] ||= ''
-        imageData['inMenu'] ||= get_param( 'picturePageInMenu' )
-        imageData['template'] ||= get_param( 'picturePageTemplate' )
+        imageData['inMenu'] ||= get_param( 'imagePageInMenu' )
+        imageData['template'] ||= get_param( 'imagePageTemplate' )
         imageData['imageFilename'] = image
         imageData['srcName'] = gallery_file_name( get_param( 'title' ) + ' ' + File.basename( image ) )
         imageData['thumbnailSize'] ||= @filedata['thumbnailSize']
@@ -171,7 +178,7 @@ module FileHandlers
   begin
     require 'RMagick'
 
-    class PictureGalleryFileHandler
+    class GalleryFileHandler
 
       remove_method :get_thumbnail
       def get_thumbnail( imageData, parent )

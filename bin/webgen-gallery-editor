@@ -5,7 +5,7 @@ require 'yaml'
 require 'ostruct'
 require 'webgen/plugin'
 require 'webgen/configuration'
-require 'webgen/plugins/filehandler/picturegallery'
+require 'webgen/plugins/filehandler/gallery'
 require 'Qt'
 # Error when loading Qt before RMagick -> error in RMagick undefined method `display' for class `Magick::Image'
 # report that to qtruby team and RMagick team
@@ -30,7 +30,7 @@ class Gallery
 
   def set_default_values
     @meta = {}
-    Webgen::Plugin.config[FileHandlers::PictureGalleryFileHandler].params.each do |name, data|
+    Webgen::Plugin.config[FileHandlers::GalleryFileHandler].params.each do |name, data|
       @meta[name] = data.value
     end
     @meta['mainPage'] = nil
@@ -353,9 +353,9 @@ class GalleryWindow < Qt::MainWindow
   end
 
   def gallery_items
-    ['title', 'layout', 'files', 'picturesPerPage',
-     'picturePageInMenu', 'galleryPageInMenu', 'mainPageInMenu',
-     'picturePageTemplate', 'galleryPageTemplate', 'mainPageTemplate',
+    ['title', 'layout', 'files', 'imagesPerPage',
+     'imagePageInMenu', 'galleryPageInMenu', 'mainPageInMenu',
+     'imagePageTemplate', 'galleryPageTemplate', 'mainPageTemplate',
      'galleryPages', 'mainPage', 'galleryOrderInfo', 'thumbnailSize' ]
   end
 
@@ -368,7 +368,7 @@ class GalleryWindow < Qt::MainWindow
       when Qt::SpinBox then @widgets[t].setValue( @gallery[t] )
       when Qt::CheckBox then @widgets[t].setChecked( @gallery[t] )
       when Qt::ComboBox then @widgets[t].setCurrentText( @gallery[t] )
-      when MetaDataTable then @widgets[t].fill( @gallery[t] )
+      when MetaDataTable then @widgets[t].fill( @gallery[t] ) if @gallery[t]
       end
     end
     @picMetaTable.fill( [] )
@@ -425,7 +425,7 @@ class GalleryWindow < Qt::MainWindow
 
     menubar = Qt::MenuBar.new( self )
     menubar.insertItem( "&File", filemenu )
-    menubar.insertItem( "&Pictures", picmenu )
+    menubar.insertItem( "&Images", picmenu )
   end
 
   def setup_window
@@ -442,15 +442,15 @@ class GalleryWindow < Qt::MainWindow
 
     @widgets['layout'] = Qt::ComboBox.new( true, mainFrame )
     @widgets['layout'].setMaximumWidth( 200 )
-    Webgen::Plugin.config[PictureGalleryLayouter::DefaultGalleryLayouter].layouts.keys.each do |name|
+    Webgen::Plugin.config[GalleryLayouter::DefaultGalleryLayouter].layouts.keys.each do |name|
       @widgets['layout'].insertItem( Qt::Pixmap.new( File.join( Webgen::Configuration.data_dir, 'gallery-creator', "#{name}.png" ) ), \
                                      name )
     end
     @widgets['layout'].listBox.setMinimumWidth( @widgets['layout'].listBox.maxItemWidth + 20 )
     labels['layout'] = [2, Qt::Label.new( @widgets['layout'], "Gallery layout:", mainFrame )]
 
-    @widgets['picturesPerPage'] = Qt::SpinBox.new( 0, 1000, 1, mainFrame )
-    labels['picturesPerPage'] = [3, Qt::Label.new( @widgets['picturesPerPage'], "Pictures per page:", mainFrame )]
+    @widgets['imagesPerPage'] = Qt::SpinBox.new( 0, 1000, 1, mainFrame )
+    labels['imagesPerPage'] = [3, Qt::Label.new( @widgets['imagesPerPage'], "Images per page:", mainFrame )]
 
     @widgets['galleryOrderInfo'] = Qt::SpinBox.new( 0, 1000, 1, mainFrame )
     labels['galleryOrderInfo'] = [4, Qt::Label.new( @widgets['galleryOrderInfo'], "Start <orderInfo> for gallery pages:", mainFrame )]
@@ -465,8 +465,8 @@ class GalleryWindow < Qt::MainWindow
     @widgets['galleryPageTemplate'] = Qt::LineEdit.new( mainFrame )
     labels['galleryPageTemplate'] = [7, Qt::Label.new( @widgets['galleryPageTemplate'], "Template for gallery pages:", mainFrame )]
 
-    @widgets['picturePageTemplate'] = Qt::LineEdit.new( mainFrame )
-    labels['picturePageTemplate'] = [8, Qt::Label.new( @widgets['picturePageTemplate'], "Template for picture pages:", mainFrame )]
+    @widgets['imagePageTemplate'] = Qt::LineEdit.new( mainFrame )
+    labels['imagePageTemplate'] = [8, Qt::Label.new( @widgets['imagePageTemplate'], "Template for image pages:", mainFrame )]
 
     @widgets['mainPageInMenu'] = Qt::CheckBox.new( "Main page in menu?", mainFrame )
     labels['mainPageInMenu'] = [9, nil]
@@ -474,8 +474,8 @@ class GalleryWindow < Qt::MainWindow
     @widgets['galleryPageInMenu'] = Qt::CheckBox.new( "Gallery pages in menu?", mainFrame )
     labels['galleryPageInMenu'] = [10, nil]
 
-    @widgets['picturePageInMenu'] = Qt::CheckBox.new( "Picture pages in menu?", mainFrame )
-    labels['picturePageInMenu'] = [11, nil]
+    @widgets['imagePageInMenu'] = Qt::CheckBox.new( "Image pages in menu?", mainFrame )
+    labels['imagePageInMenu'] = [11, nil]
 
     layout = Qt::GridLayout.new( @widgets.length, 2 )
     layout.setSpacing( 5 )

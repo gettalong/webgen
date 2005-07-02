@@ -53,6 +53,7 @@ module Tags
 
       processed_pagenodes = []
       out = "<#{get_param( 'levelTag' )}>"
+      temp = ''
       node.sort( &Node::SORT_PROC ).each do |child|
         next unless (child['int:directory?'] || child['int:pagename']) && !processed_pagenodes.include?( child['int:pagename'] )
         processed_pagenodes << child['int:pagename'] if child['int:pagename']
@@ -61,12 +62,15 @@ module Tags
         subout = output_node( child, srcNode )
         link = child['processor'].get_html_link( child, srcNode ) if subout != '' || !isDir
 
-        out += "<#{get_param( 'itemTag' )}>#{link}" if !isDir || subout != ''
-        out += subout if isDir
-        out += "</#{get_param( 'itemTag' )}>" if !isDir || subout != ''
+        temp += "<#{get_param( 'itemTag' )}>#{link}" if !isDir || subout != ''
+        temp += subout if isDir
+        temp += "</#{get_param( 'itemTag' )}>" if !isDir || subout != ''
       end
 
+      out += temp
       out += "</#{get_param( 'levelTag' )}>"
+
+      (temp == '' ? temp : out)
     end
 
   end

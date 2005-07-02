@@ -3,7 +3,7 @@ images/webgen5.png:
   title: images/webgen5.png
   description: ''
 mainPage: {}
-picturesPerPage: 5
+imagesPerPage: 5
 files: images/**/*
 images/webgen10.png: 
   title: images/webgen10.png
@@ -26,7 +26,7 @@ images/webgen9.png:
   description: ''
 images/webgen3.png: 
   title: images/webgen3.png
-  description: This is a description for this picture.
+  description: This is a description for this image.
 galleryPageInMenu: false
 mainPageInMenu: true
 galleryPageTemplate: ''
@@ -37,7 +37,7 @@ images/webgen1.png:
   title: images/webgen1.png
   description: ''
 galleryPages: {}
-picturePageTemplate: ''
+imagePageTemplate: ''
 images/webgen6.png: 
   title: images/webgen6.png
   description: ''
@@ -53,5 +53,5 @@ images/webgen13.png:
 images/webgen4.png: 
   title: images/webgen4.png
   description: ''
-picturePageInMenu: false
+imagePageInMenu: false
 layout: default

@@ -11,7 +11,7 @@ def capture_image
 end
 
 Webgen::Plugin['Configuration'].init_all
-layouts = Webgen::Plugin.config[PictureGalleryLayouter::DefaultGalleryLayouter].layouts
+layouts = Webgen::Plugin.config[GalleryLayouter::DefaultGalleryLayouter].layouts
 
 system('ruby -I../../lib ../../bin/webgen')
 system('killall opera')

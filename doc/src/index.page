@@ -22,9 +22,12 @@ h2. News
 
 Major changes:
 
-* *New* application for managing picture galleries
-* Smileys are now optionally replaced with emoticons (<notextile>:-);-):'-(8-)</notextile>, several different emoticon packs available) -> see <a href="{relocatable: documentation/plugins/smileyreplacer.page}">SmileyReplacer</a>
-* The use of directory index files is now optional by setting the parameter  <a href="{relocatable: documentation/plugins/filehandler/directory.page}">DirHandler:indexFile</a> to nil
+* *New* <a href="{relocatable: /documentation/webgen_gallery_editor.page}">application</a> for managing image galleries
+* Smileys are now optionally replaced with emoticons (<notextile>:-) ;-) :'-( 8-)</notextile>, several different emoticon packs available) -> see <a href="{relocatable: documentation/plugins/smileyreplacer.page}">SmileyReplacer</a>
+* Site specific commands (used in command line processing) can now be used
+* Images in image galleries can now be ordered by specifying the @orderInfo@ meta information
+* %{color:red}Attention%: For unified naming in reference to image galleries, I have removed all occurences of the word "picture" from the code and documentation. Therefore you may need to adapt your code, especially custom gallery layouters!
+* The use of directory index files is now optional: by setting the parameter  <a href="{relocatable: documentation/plugins/filehandler/directory.page}">DirHandler:indexFile</a> to nil directory index files are not used
 
 <b>24.06.2005 - webgen 0.3.5 released!!!</b>
 
@@ -76,9 +79,9 @@ Bug fix release for bug #1637 and other bugs
 
 Major changes:
 
-* Better DefaultLayouter for picture galleries (<a href="{relocatable: Design_Gallery_1.page}">online demo</a>)
+* Better DefaultLayouter for image galleries (<a href="{relocatable: Screenshots_1.page}">online demo</a>)
 * Output names for page files now customizable (see <a href="{relocatable: documentation/plugins/filehandler/pagehandler.page}">PageHandler</a>)
-* On-the-fly creation of thumbnails for pictures with RMagick
+* On-the-fly creation of thumbnails for images with RMagick
 * New tags: <a href="{relocatable: documentation/plugins/tags/sitemap.page}">sitemap</a>
 * Tag @lang@ renamed, new name @langbar@!
 * New parameters for @menu@ tag

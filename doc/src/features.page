@@ -16,7 +16,7 @@ h2. Feature list
 * <h3>File Handler (for handling the files in the source directory)</h3>
 
   * Powerful file copy handler for copying single files or entire directories to the output directory
-  * Support for gallery definition files -> generates entire picture gallery, automatic thumbnail creation
+  * Support for gallery definition files -> generates entire image galleries, with automatic thumbnail creation
 
 * <h3>Page Description Files (for define web pages)</h3>
 

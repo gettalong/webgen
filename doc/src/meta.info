@@ -26,5 +26,5 @@ documentation/wiki.html:
 documentation/index.page:
   orderInfo: 9
 
-designs:
+images:
   indexFile: ~

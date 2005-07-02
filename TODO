@@ -12,6 +12,8 @@
 ---- DOCU ----
 
 * DEV: self.logger.warn/error/info/debug can be used for messages
+* docu on how to extend webgen
+* get web address of qtruby package
 
 ---- FUTURE ----
 
@@ -198,3 +200,5 @@ W do not allow two or more page files in the same language, print warn
 * add keywords to default.template
 * document which meta info can be used in gallery file for gallery itself, gallery pages and picture pages
 * summary page of all parameters
+* add note that smellies emoticon pack is from ... -> see temp/smileys dir
+* docu for webgen-gallery-editor

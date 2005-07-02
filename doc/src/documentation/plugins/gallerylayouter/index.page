@@ -4,11 +4,11 @@ directoryName: Gallery Layouters
 h2. About
 
 Gallery layouters are used to define layouts for galleries. Each plugin defines how the main page,
-the gallery pages and the picture pages look like. To do this, each plugin has to define three methods:
+the gallery pages and the image pages look like. To do this, each plugin has to define three methods:
 
 * <tt>main( data )</tt>
 * <tt>gallery( data, gIndex )</tt>
-* <tt>picture( data, gIndex, iIndex )</tt>
+* <tt>image( data, gIndex, iIndex )</tt>
 
 The @data@ parameter is a @Hash@ with all the information available about the gallery. The @gIndex@
 and the @iIndex@ parameters are indices for the current gallery and the current image.

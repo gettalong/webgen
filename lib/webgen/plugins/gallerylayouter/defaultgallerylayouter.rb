@@ -20,11 +20,11 @@
 #++
 #
 
-module PictureGalleryLayouter
+module GalleryLayouter
 
   class DefaultGalleryLayouter < Webgen::Plugin
 
-    summary "Base class for all Picture Gallery Layouters and, at the same time, default layouter"
+    summary "Base class for all gallery layouters and, at the same time, default layouter"
 
     define_handler 'layout'
 
@@ -49,8 +49,8 @@ module PictureGalleryLayouter
       gIndex != data['galleries'].length - 1 ? gIndex + 1 : nil
     end
 
-    # Returns the gallery and image indices of the previous picture, if it exists, or +nil+ otherwise.
-    def prev_picture( data, gIndex, iIndex )
+    # Returns the gallery and image indices of the previous image, if it exists, or +nil+ otherwise.
+    def prev_image( data, gIndex, iIndex )
       result = nil
       if gIndex != 0 || iIndex != 0
         if iIndex == 0
@@ -64,8 +64,8 @@ module PictureGalleryLayouter
       return result
     end
 
-    # Returns the gallery and image indices of the next picture, if it exists, or +nil+ otherwise.
-    def next_picture( data, gIndex, iIndex )
+    # Returns the gallery and image indices of the next image, if it exists, or +nil+ otherwise.
+    def next_image( data, gIndex, iIndex )
       result = nil
       if gIndex != data['galleries'].length - 1 || iIndex != data['galleries'][gIndex]['imageList'].length - 1
         if iIndex == data['galleries'][gIndex]['imageList'].length - 1
@@ -124,14 +124,14 @@ module PictureGalleryLayouter
     # Should be overwritten by subclasses! +data+ is the data structure which holds all information
     # about the gallery. +gIndex+ is the index of the current gallery. +iIndex+ is the index of the
     # current image.
-    def picture( data, gIndex, iIndex )
+    def image( data, gIndex, iIndex )
       s = "
 <h2>#{data['galleries'][gIndex]['imageList'][iIndex]['title']}</h2>
-<div class=\"webgen-picture\">
+<div class=\"webgen-image\">
 "
       s += "<a href=\"#{data['galleries'][gIndex]['srcName']}\">^&nbsp;#{data['galleries'][gIndex]['title']}&nbsp;^</a><br />"
-      prevGIndex, prevIIndex = prev_picture( data, gIndex, iIndex )
-      nextGIndex, nextIIndex = next_picture( data, gIndex, iIndex )
+      prevGIndex, prevIIndex = prev_image( data, gIndex, iIndex )
+      nextGIndex, nextIIndex = next_image( data, gIndex, iIndex )
       s += "<a href=\"#{data['galleries'][prevGIndex]['imageList'][prevIIndex]['srcName']}\">" \
       "&lt;&nbsp;#{data['galleries'][prevGIndex]['imageList'][prevIIndex]['title']}</a>" unless prevGIndex.nil?
       s += "&nbsp;&mdash;&nbsp;" unless prevGIndex.nil? || nextGIndex.nil?

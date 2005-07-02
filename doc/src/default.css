@@ -84,8 +84,6 @@ a { color: #5C73B8; }
   clear: both;
 }
 
-#quickmenu > div > a { border-bottom: 3px double black; }
-
 /** styling the sample menus **/
 
 /* horizontal menu */
@@ -141,6 +139,10 @@ a { color: #5C73B8; }
 
 .partial-menu .webgen-menu-item-selected {
   font-weight: bold;
+}
+
+.partial-menu .webgen-menu-submenu {
+  background: #405080;
 }
 
 .partial-menu a {
@@ -230,11 +232,11 @@ dt {
   font-weight: bold;
 }
 
-.webgen-picture {
+.webgen-image {
   text-align: center;
 }
 
-.webgen-picture img {
+.webgen-image img {
   border: 1px solid black;
 }
 

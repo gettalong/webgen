@@ -8,5 +8,5 @@ h2. Information
 
 h2. Description
 
-This plugin serves as base class for all picture gallery layouters and provides a default
+This plugin serves as base class for all image gallery layouters and provides a default
 implementation.

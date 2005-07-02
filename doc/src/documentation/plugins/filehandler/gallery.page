@@ -1,20 +1,20 @@
 ---
-title: Picture Gallery File Handler
+title: Gallery File Handler
 inMenu: true
 ---
 h2. Information
 
-<notextile>{describe: PictureGalleryFileHandler}</notextile>
+<notextile>{describe: GalleryFileHandler}</notextile>
 
 h2. Description
 
-This file handler uses picture gallery description files to automatically build picture galleries.
-These picture galleries are highly configurable and themeable through the use of page templates.
+This file handler uses image gallery description files to automatically build image galleries.
+These image galleries are highly configurable and themeable through the use of page templates.
 
 h2. Gallery Description Files
 
 The gallery description files have YAML as file format and can either be written by hand or can be
-edited using the webgen-gallery-editor (TODO link to page describing editor).
+edited using the <a href="{relocatable: /documentation/webgen_gallery_editor.page}">webgen-gallery-editor</a>.
 
 A gallery description file specifies
 
@@ -28,12 +28,12 @@ The two most important things on this list are which images should be used and t
 images have to be in the website source directory! You can/should not specify images outside the
 source directory as these images are not automatically copied to the destination directory and
 automatice thumbnail creation may not work correctly. And the layout defines how the main, gallery
-and picture pages look like.
+and image pages look like.
 
 Here is an example gallery description file:
 <pre>
 title: Example Gallery
-picsPerPage: 32
+imagesPerPage: 32
 files: example/**/*.jpg
 
 mainPage:
@@ -55,8 +55,12 @@ example/img2.jpg
 So, we define the title of the gallery first and change the @picsPerPage@ setting. Every plugin
 parameter can be changed by using its name as key and assigning a new value to it. The key
 @mainPage@ can be used to set meta information for the main page. Likewise, the key @galleryPages@
-can be used to set meta information for the gallery pages and if the key is the name of a picture,
-its value is used as meta information for the picture.
+can be used to set meta information for the gallery pages and if the key is the name of an image,
+its value is used as meta information for the image.
+
+You can specify the order of the images by setting the @orderInfo@ meta information on the images.
+Normally, the images are sorted by their title or, if no title was entered, by their filename. By
+setting the @orderInfo@ meta information you can reorder them.
 
 h2. Types of Generated Pages
 
@@ -68,15 +72,15 @@ There are three different page types:
 * *gallery pages*: Each gallery page should have a list of all the images on it. The number of
   images per gallery page can be defined via a parameter.
 
-* *picture pages*: Each picture page should display its picture and, maybe, additional information.
+* *image pages*: Each image page should display its image and, maybe, additional information.
 
 h2. Layouter plugins
 
-Each layouter plugin defines a different "style" of picture gallery. Have a look at the available
-layouter plugins and choose one for your picture gallery. If you think they do not look good enough,
+Each layouter plugin defines a different "style" of image gallery. Have a look at the available
+layouter plugins and choose one for your image gallery. If you think they do not look good enough,
 you can define your own layouter in the extension file. You only need to derive a new class from
 DefaultGalleryLayouter and define the layout methods.
 
 h2. Examples
 
-You can view an example gallery <a href="{relocatable: /Design_Gallery_1.page}">here</a>!
+You can view an example gallery <a href="{relocatable: /Screenshots_1.page}">here</a>!
