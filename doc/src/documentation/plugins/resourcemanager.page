@@ -27,4 +27,6 @@ h2. Predefined Resources
 
 webgen provides some predefined resources which can be used by any website created with it.
 
+Credits: Some of the icons were taken from the "CrystalClear" package from TODO URL
+
 <notextile>{predefinedResources:}</notextile>

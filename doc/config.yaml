@@ -2,4 +2,4 @@ PageHandler:
   validator: xmllint
 
 SmileyReplacer:
-  emoticonPack: glass
+  emoticonPack: crystal

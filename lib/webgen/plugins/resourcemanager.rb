@@ -196,8 +196,36 @@ module Webgen
       define_file_resource( 'w3c-valid-xhtml11', File.join( Webgen::Configuration.data_dir, 'resources', 'images', 'valid-xhtml11.png' ),
                             '/images/w3c-valid-xhtml11.png' ).predefined = "The W3C image for valid XHTML1.1"
 
+      define_webgen_emoticons
+      define_webgen_icons
+
       define_memory_resource( 'webgen-css', '/css/webgen.css' ).predefined = "Plugins use this resource for their CSS styles."
       define_memory_resource( 'webgen-javascript', '/css/webgen.js' ).predefined = "Plugins use this resource for their Javascript fragments."
+    end
+
+    def define_webgen_emoticons
+      Dir[File.join( Webgen::Configuration.data_dir, 'resources', 'emoticons', '*/')].each do |pack_dir|
+        pack = File.basename( pack_dir )
+        Dir[File.join( pack_dir, '*' )].each do |smiley_file|
+          smiley = File.basename( smiley_file, '.*' )
+          res = define_file_resource( "webgen-emoticons-#{pack}-#{smiley}",
+                                      smiley_file,
+                                      "/images/emoticons/#{pack}-#{File.basename(smiley_file)}" )
+          res.predefined = "Emoticon from pack '#{pack}' for '#{smiley}'"
+        end
+      end
+    end
+
+    def define_webgen_icons
+      base_dir = File.join( Webgen::Configuration.data_dir, 'resources', 'icons' )
+      Dir[File.join( base_dir, '**/*')].each do |icon|
+        dirs = File.dirname( icon ).sub( /^#{base_dir}/, '' ).split( '/' ).join( '-' )
+        dirs += '-' if dirs.length > 0
+        res = define_file_resource( "webgen-icons-#{dirs}#{File.basename( icon, '.*' )}",
+                                    icon,
+                                    "/images/icons/#{dirs}#{File.basename(icon)}" )
+        res.predefined = "Icon named #{File.basename(icon)}"
+      end
     end
 
     def define_user_resources

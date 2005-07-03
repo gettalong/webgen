@@ -36,3 +36,4 @@ h2. Feature list
 
   * Automatically checks generated files if they are standard conform
   * Supports 'virtual files' via meta information backing files
+  * Support for automatic smiley replacement with emoticons(:-))

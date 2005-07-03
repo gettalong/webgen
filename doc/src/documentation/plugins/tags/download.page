@@ -1,0 +1,23 @@
+---
+title: Download
+inMenu: true
+---
+h2. Information
+
+<notextile>{describe: DownloadTag}</notextile>
+
+h2. Description
+
+This tag is used to provide a nice download link. The download link includes the following parts:
+
+* *download icon* [optional]: an icon which shows that the file can be downloaded
+* *file icon*: an icon showing the type of the file (PDF file, music file, video file,...)
+* *link to file*: the link to the file
+* *file size*: the size of the file if it can be calculated
+
+h2. Examples
+
+table{border:1px solid black}.
+|_.Command|_.Output|
+|<notextile>\{download: {url: /images/screenshots/wge-image.png, alwaysShowDownloadIcon: true}}</notextile>|<notextile>{download: {url: /images/screenshots/wge-image.png, alwaysShowDownloadIcon: true}}</notextile>|
+|<notextile>\{download: download.page}</notextile>|<notextile>{download: download.page}</notextile>|

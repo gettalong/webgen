@@ -52,21 +52,6 @@ module OtherPlugins
 
     def initialize
       Webgen::Plugin['PageHandler'].add_msg_listener( :AFTER_CONTENT_RENDERED, method( :replace_smileys ) )
-
-      Dir[File.join( Webgen::Configuration.data_dir, 'resources', 'emoticons', '*/')].each do |pack_dir|
-        pack = File.basename( pack_dir )
-        Dir[File.join( pack_dir, '*' )].each do |smiley_file|
-          smiley = File.basename( smiley_file, '.*' )
-          res = Webgen::Plugin['ResourceManager'].define_file_resource( emoticon_resource_name( pack, smiley ),
-                                                                        smiley_file,
-                                                                        "/images/emoticon/#{pack}-#{File.basename(smiley_file)}" )
-          res.predefined = "Emoticon from pack '#{pack}' for '#{smiley}'"
-        end
-      end
-    end
-
-    def emoticon_resource_name( pack, name )
-      "webgen-emoticon-#{pack}-#{name}"
     end
 
     #######
@@ -80,7 +65,7 @@ module OtherPlugins
       logger.info { "Replacing smileys in file <#{node.recursive_value('dest')}>..." }
       content.gsub!( SMILEY_REGEXP ) do |match|
         logger.info { "Found smiley #{match}, trying to replace it with emoticon..." }
-        if res = Webgen::Plugin['ResourceManager'].get_resource( emoticon_resource_name( pack, SMILEY_MAP[match] ) )
+        if res = Webgen::Plugin['ResourceManager'].get_resource( "webgen-emoticons-#{pack}-#{SMILEY_MAP[match]}" )
           res.referenced!
           "<img src=\"#{res.relpath_from_node( node )}\" alt=\"smiley #{match}\" />"
         else

@@ -25,7 +25,7 @@ module WebgenDocuPlugins
       output = "<dl>\n"
       mydata.sort.each do |cat, plugins|
         output << "<dt>#{cat}</dt><dd><dl>"
-        plugins.each do |data|
+        plugins.sort {|a,b| a.plugin <=> b.plugin}.each do |data|
           output << "<dt>#{data.plugin}</dt>\n"
           output << "<dd>#{Webgen::Plugin['DescribeTag'].format_params( data.params )}</dd>\n"
         end

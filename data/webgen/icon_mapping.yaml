@@ -1,0 +1,27 @@
+resource-mapping:
+    webgen-icons-compressed:
+        [.tar, .gz, .tgz, .zip, .bz2]
+    webgen-icons-document:
+        [.wpd, .doc, .sxw, .odt, .rtf]
+    webgen-icons-image:
+        [.png, .gif, .jpg, .jpeg, .tif, .tiff, ppm, .eps, .xbm, .xpm, .psd, .tga, .svg ]
+    webgen-icons-pdf:
+        [.pdf]
+    webgen-icons-quicktime:
+        [.mov]
+    webgen-icons-real:
+        [.ra, .ram]
+    webgen-icons-rpm:
+        [.rpm]
+    webgen-icons-sound:
+        [.wav, .mp3, .ogg, .wma]
+    webgen-icons-source:
+        [.c, .cc, .cpp, .h, .hpp, .py, .rb, .java, .s, .pl]
+    webgen-icons-spreadsheet:
+        [.xls, .sxc, .ods]
+    webgen-icons-text:
+        [.txt]
+    webgen-icons-vcard:
+        [.vcf]
+    webgen-icons-video:
+        [.avi, .mpg, .mpeg, .wmv]

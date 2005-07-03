@@ -12,13 +12,13 @@
 ---- DOCU ----
 
 * get web address of qtruby package
+* check credits for smileys, crystal clear icons
 
 ---- FUTURE ----
 
 * parameter for setting the orderInfo of index pages so that they always appear as first entry
 * implement plugin which creates nodes for fragment identifiers (#info) in html
 * include spell checker (ispell, aspell, MS Word OLE on Win32,...)
-* tag 'download' which links to a download file and appends its size and ev. an image (PDF, ...)
 * tag 'resume', uses xmlresume2x to provide HTML version of xml resume
 * multi-lingual picture/gallery files
 * include exif info for pictures
@@ -201,3 +201,4 @@ W do not allow two or more page files in the same language, print warn
 * docu for webgen-gallery-editor
 * docu on how to extend webgen
 * custom commands provided by plugins
+* tag 'download' which links to a download file and appends its size and ev. an image (PDF, ...)

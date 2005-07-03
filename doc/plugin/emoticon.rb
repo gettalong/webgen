@@ -22,8 +22,7 @@ module WebgenDocuPlugins
       packs.each do |pack|
         output << "<tr><th>#{pack}</th>"
         output << map.values.sort.collect do |v|
-          res_name = Webgen::Plugin['SmileyReplacer'].emoticon_resource_name( pack, v )
-          "<td align=\"center\"><img src=\"{resource: #{res_name}}\" alt=\"smiley\"/></td>"
+          "<td align=\"center\"><img src=\"{resource: webgen-emoticons-#{pack}-#{v}}\" alt=\"smiley\"/></td>"
         end.join('')
         output << "</tr>"
       end
