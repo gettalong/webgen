@@ -126,7 +126,7 @@ end
 CLOBBER << "otherdata/web-for-gallery-pics/output"
 task :create_gal_layout_pics do
   chdir 'otherdata/web-for-gallery-pics' do
-    ruby "create_pictures.rb"
+    ruby "-I../../lib create_pictures.rb"
   end
 end
 

@@ -10,6 +10,14 @@ def capture_image
   image
 end
 
+class Webgen::Configuration
+
+  def self.data_dir
+    "../../data/webgen"
+  end
+
+end
+
 Webgen::Plugin['Configuration'].init_all
 layouts = Webgen::Plugin.config[GalleryLayouter::DefaultGalleryLayouter].layouts
 
