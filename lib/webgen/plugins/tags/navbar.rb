@@ -36,12 +36,8 @@ module Tags
 
     summary 'Shows the hierarchy of current page'
     add_param 'separator', ' / ', 'Separates the hierachy entries from each other.'
-    depends_on 'Tags'
 
-    def initialize
-      super
-      register_tag( 'navbar' )
-    end
+    tag 'navbar'
 
     def process_tag( tag, srcNode, refNode )
       out = []

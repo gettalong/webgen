@@ -129,10 +129,7 @@ module Tags
     summary "Puts the modification time of the file on the page"
     depends_on 'Tags'
 
-    def initialize
-      super
-      register_tag( 'filemdate' )
-    end
+    tag 'filemdate'
 
     def process_tag( tag, node, refNode )
       return File.mtime( node.recursive_value( 'src' ) ).to_s

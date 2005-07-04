@@ -21,6 +21,7 @@
 #
 
 require 'webgen/plugins/tags/tags'
+require 'webgen/plugins/resourcemanager'
 require 'yaml'
 require 'uri'
 require 'open-uri'
@@ -37,7 +38,7 @@ module Tags
     add_param 'mappingFile', nil, 'An additional mapping file used for mapping extensions to icons.'
     set_mandatory 'url', true
 
-    depends_on 'Tags', 'ResourceManager'
+    depends_on 'ResourceManager'
 
     CSS = '
 .webgen-file-icon, .webgen-download-icon {
@@ -45,11 +46,10 @@ module Tags
 }
 '
 
+    tag 'download'
+
     def initialize
       super
-      @processOutput = true
-      register_tag( 'download' )
-
       Webgen::Plugin['ResourceManager'].append_data( 'webgen-css', CSS )
       @default_mapping = load_mapping( File.join( Webgen::Configuration.data_dir, 'icon_mapping.yaml' ) )
     end

@@ -3,12 +3,8 @@ module WebgenDocuPlugins
   class VersionTag < Tags::DefaultTag
 
     summary "Shows the version number of webgen"
-    depends_on 'Tags'
 
-    def initialize
-      super
-      register_tag( 'version' )
-    end
+    tag 'version'
 
     def process_tag( tag, node, refNode )
       Webgen::VERSION.join( '.' )
@@ -21,12 +17,12 @@ module WebgenDocuPlugins
     summary "Shows options for the specified file handler"
     add_param 'plugin', nil, 'The plugin which should be described'
     set_mandatory 'plugin', true
-    depends_on 'Tags'
+
+    tag 'describe'
 
     def initialize
       super
       @processOutput = false
-      register_tag( 'describe' )
     end
 
     def process_tag( tag, node, refNode )

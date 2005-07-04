@@ -5,12 +5,12 @@ module WebgenDocuPlugins
   class ListPluginParametersTag < Tags::DefaultTag
 
     summary "Lists all available plugin parameters"
-    depends_on 'Tags'
+
+    tag 'listPluginParameters'
 
     def initialize
       super
       @processOutput = false
-      register_tag( 'listPluginParameters' )
     end
 
     def process_tag( tag, node, refNode )

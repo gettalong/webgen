@@ -267,15 +267,9 @@ module Tags
     add_param 'name', nil, 'The name of the resource'
     add_param 'insert', :path, 'What should be returned by the tag: the path to the resource (value :path) ' \
     'or the data (value :data)'
-
     set_mandatory 'name', true
 
-    depends_on 'Tags'
-
-    def initialize
-      super
-      register_tag( 'resource' )
-    end
+    tag 'resource'
 
     def process_tag( tag, node, refNode )
       result = ''

@@ -30,14 +30,10 @@ module Tags
     summary 'Shows all pages of the website'
     add_param 'levelTag', 'ul', 'The tag used for creating a new hierarchy level.'
     add_param 'itemTag', 'li', 'The tag used for pages.'
-    depends_on 'Tags'
 
     used_meta_info 'orderInfo'
 
-    def initialize
-      super
-      register_tag( 'sitemap' )
-    end
+    tag 'sitemap'
 
     def process_tag( tag, srcNode, refNode )
       root = Node.root( srcNode )

@@ -3,13 +3,8 @@ module WebgenDocuPlugins
   class ShowEmoticonsTag < Tags::DefaultTag
 
     summary "Creates a table of the existing emoticon packs"
-    depends_on 'Tags'
 
-    def initialize
-      super
-      @processOutput = true
-      register_tag( 'showEmoticonPacks' )
-    end
+    tag 'showEmoticonPacks'
 
     def process_tag( tag, node, refNode )
       res = Webgen::Plugin.config[Webgen::ResourceManager].resources

@@ -27,7 +27,6 @@ module Tags
   class WikiLinkTag < DefaultTag
 
     summary 'Adds a link to wiki page'
-    depends_on 'Tags'
     add_param 'title', nil, 'The title of the link. If it is not specified, the title of the current page is used.'
     add_param 'rootURL', '/wiki/wiki.pl?', 'The root URL for the wiki link, ie. the path to the wiki CGI.'
     add_param 'relURL', nil, 'The relativ URL for the wiki link (the varying part that is appended to rootURL). ' \
@@ -37,10 +36,7 @@ module Tags
 
     used_meta_info 'title'
 
-    def initialize
-      super
-      register_tag( 'wikilink' )
-    end
+    tag 'wikilink'
 
     def process_tag( tag, node, refNode )
       "<a href=\"#{get_link( node )}\">#{get_param( 'title' ) || node['title']}</a>"

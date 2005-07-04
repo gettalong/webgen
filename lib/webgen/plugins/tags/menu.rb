@@ -91,17 +91,12 @@ module Tags
 
 
     summary 'Builds a menu'
-    depends_on 'Tags'
-
     add_param 'menuStyle', 'vertical', 'Specifies the style of the menu.'
     add_param 'options', {}, 'Optional options that are passed on to the plugin which is layouts the menu.'
 
     used_meta_info 'orderInfo', 'inMenu'
 
-    def initialize
-      super
-      register_tag( 'menu' )
-    end
+    tag 'menu'
 
     def process_tag( tag, node, refNode )
       unless defined?( @menuTree )

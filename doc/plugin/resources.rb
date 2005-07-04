@@ -3,12 +3,12 @@ module WebgenDocuPlugins
   class PredefinedResourcesTag < Tags::DefaultTag
 
     summary "Creates a table of all predefined resources"
-    depends_on 'Tags'
+
+    tag 'predefinedResources'
 
     def initialize
       super
       @processOutput = false
-      register_tag( 'predefinedResources' )
     end
 
     def process_tag( tag, node, refNode )

@@ -5,9 +5,10 @@ orderInfo: 20
 ---
 h2. About
 
-This application is based on Qt > 3.1 and therefore needs the qtruby package. It is basically an
-editor for editing webgen gallery description files. You can easily set all of the required
-parameters and assign a title and a description to each image.
+This application is based on Qt > 3.1 and therefore needs the
+"qtruby":http://rubyforge.org/projects/korundum/ package. It is basically an editor for editing
+webgen gallery description files. You can easily set all of the required parameters and assign a
+title and a description to each image.
 
 h2. How To Use
 

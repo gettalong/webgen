@@ -2,7 +2,6 @@
 
 * simplify menu style plugins
 * make menu generation faster (for webgen: 5.2s without menus in template, 9.2s with menus!)
-* modify tags system sothat tags can be specified via a tag directive (like extension with file handlers)
 * create tests for methods in webgen.rb
 * webgen -c => output same info as on docu pages
 * check if duplicate nodes are created??? by using a tag in a template
@@ -11,8 +10,7 @@
 
 ---- DOCU ----
 
-* get web address of qtruby package
-* check credits for smileys, crystal clear icons
+* check credits for crystal clear icons
 
 ---- FUTURE ----
 
@@ -202,3 +200,4 @@ W do not allow two or more page files in the same language, print warn
 * docu on how to extend webgen
 * custom commands provided by plugins
 * tag 'download' which links to a download file and appends its size and ev. an image (PDF, ...)
+* modify tags system sothat tags can be specified via a tag directive (like extension with file handlers)

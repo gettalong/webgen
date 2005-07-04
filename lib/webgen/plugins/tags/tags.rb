@@ -35,13 +35,6 @@ module Tags
 
     summary "Super plugin for handling tags"
 
-    # Tag plugins should add an entry to this hash.
-    attr_reader :tags
-
-    def initialize
-      @tags = Hash.new
-    end
-
     # Substitutes all references to tags in the string +content+. The +node+ parameter specifies the
     # tree node the content of which is used. The +refNode+ parameter specifies relative to which
     # all references should be resolved.
@@ -106,10 +99,11 @@ module Tags
 
     # Returns the tag processor for +tag+ or throws an error if +tag+ is unkown.
     def get_tag_processor( tag )
-      if @tags.has_key?( tag )
-        return @tags[tag]
-      elsif @tags.has_key?( :default )
-        return @tags[:default]
+      tags = DefaultTag.get_tag_plugins
+      if tags.has_key?( tag )
+        return Webgen::Plugin.config[tags[tag]].obj
+      elsif tags.has_key?( :default )
+        return Webgen::Plugin.config[tags[:default]].obj
       else
         self.logger.error { "No tag processor for tag '#{tag}' found" }
         return DefaultTag.new
@@ -140,18 +134,31 @@ module Tags
     # will be assigned to the default mandatory parameter. There *should* be only one default
     # mandatory parameter.
     def self.set_mandatory( param, default = false )
-      if Webgen::Plugin.config[self].params.nil? || !Webgen::Plugin.config[self].params.has_key?( param )
+      if @@config[self].params.nil? || !@@config[self].params.has_key?( param )
         self.logger.error { "Cannot set parameter #{param} as mandatory as this parameter does not exist for #{self.name}" }
       else
-        Webgen::Plugin.config[self].params[param].mandatory = true
-        Webgen::Plugin.config[self].params[param].mandatoryDefault = default
+        @@config[self].params[param].mandatory = true
+        @@config[self].params[param].mandatoryDefault = default
       end
     end
 
-    # Register +tag+ at the Tags plugin.
+    # Register +tag+ so that it gets handled by the current class.
+    def self.tag( tag )
+      logger.info { "Registering class #{self.name} for handling the tag '#{tag}'" }
+      tags = (@@config[DefaultTag].tag_plugins ||= {})
+      logger.warn { "Tag #{tag} already associated with class #{tags[tag].name}, not using class #{self.name} for it!" } if tags[tag]
+      tags[tag] ||= self
+      @@config[self].tag = tag
+    end
+
+    # Old style API
     def register_tag( tag )
-      Webgen::Plugin['Tags'].tags[tag] = self
-      Webgen::Plugin.config[self.class].tag = tag
+      self.class.tag( tag )
+    end
+
+    # Returns the registered tag plugins.
+    def self.get_tag_plugins
+      @@config[DefaultTag].tag_plugins
     end
 
     # Set the configuration parameters for the next #process_tag call. The configuration, if

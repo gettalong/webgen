@@ -30,16 +30,12 @@ module Tags
   class ExecuteCommandTag < DefaultTag
 
     summary "Executes the given command and includes its standard output"
-    depends_on 'Tags'
     add_param 'command', nil, 'The command which should be executed'
     add_param 'processOutput', true, 'The output of the command will be processed if true'
     add_param 'escapeHTML', true, 'Special HTML characters in the output will be escaped if true'
     set_mandatory 'command', true
 
-    def initialize
-      super
-      register_tag( 'execute' )
-    end
+    tag 'execute'
 
     def process_tag( tag, node, refNode )
       @processOutput = get_param( 'processOutput' )

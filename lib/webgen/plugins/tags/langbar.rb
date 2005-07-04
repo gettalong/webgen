@@ -33,12 +33,8 @@ module Tags
     'although the page is only available in one language?'
     add_param 'showOwnLang', true, 'Should the link to the currently displayed '\
     'language page be shown? '
-    depends_on 'Tags'
 
-    def initialize
-      super
-      register_tag( 'langbar' )
-    end
+    tag 'langbar'
 
     def process_tag( tag, node, refNode )
       output = node.parent.find_all do |a|

@@ -5,12 +5,12 @@ module WebgenDocuPlugins
   class CliDescTag < Tags::DefaultTag
 
     summary "Describes the CLI interface"
-    depends_on 'Tags'
+
+    tag 'clidesc'
 
     def initialize
       super
       @processOutput = false
-      register_tag( 'clidesc' )
     end
 
     def process_tag( tag, node, refNode )

@@ -50,7 +50,7 @@ module FileHandlers
         allFiles.subtract( get_files_for_pattern( pattern ) )
       end
 
-      handlerFiles = sort_file_handlers( Webgen::Plugin['DefaultFileHandler'].get_file_handlers ).collect do |pattern, handler|
+      handlerFiles = sort_file_handlers( FileHandlers::DefaultFileHandler.get_file_handlers ).collect do |pattern, handler|
         [get_files_for_pattern( pattern ), Webgen::Plugin.config[handler].obj]
       end
 
@@ -171,6 +171,8 @@ module FileHandlers
 
     summary "Base class of all file handler plugins"
 
+    VIRTUAL = true
+
     # Specify the extension which should be handled by the class.
     def self.handle_path( path )
       logger.info { "Registering class #{self.name} for handling the path pattern: #{path.inspect}" }
@@ -186,8 +188,8 @@ module FileHandlers
     end
 
     # Return the registered file handler plugins.
-    def get_file_handlers
-      @@config[self.class].file_handler
+    def self.get_file_handlers
+      @@config[self].file_handler
     end
 
     # Supplies the +path+ to a file and the +parent+ node sothat the plugin can create a node for this

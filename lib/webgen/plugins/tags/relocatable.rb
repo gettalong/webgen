@@ -36,14 +36,10 @@ module Tags
   class RelocatableTag < DefaultTag
 
     summary 'Adds a relative path to the specified name if necessary'
-    depends_on 'Tags'
     add_param 'item', nil, 'The item which should be relocatable'
     set_mandatory 'item', true
 
-    def initialize
-      super
-      register_tag( 'relocatable' )
-    end
+    tag 'relocatable'
 
     def process_tag( tag, node, refNode )
       uri_string = get_param( 'item' )

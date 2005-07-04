@@ -29,16 +29,12 @@ module Tags
   class IncludeFileTag < DefaultTag
 
     summary "Includes a file verbatim"
-    depends_on 'Tags'
     add_param 'filename', nil, 'The name of the file which should be included'
-    add_param 'processOutput', true, 'The file content will be processed if true'
+    add_param 'processOutput', true, 'The file content will be scanned for tags if true'
     add_param 'escapeHTML', true, 'Special HTML characters in the file content will be escaped if true'
     set_mandatory 'filename', true
 
-    def initialize
-      super
-      register_tag( 'includeFile' )
-    end
+    tag 'includeFile'
 
     def process_tag( tag, node, refNode )
       @processOutput = get_param( 'processOutput' )

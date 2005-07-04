@@ -32,12 +32,8 @@ module Tags
   class MetaTag < DefaultTag
 
     summary "Replaces all tags without tag plugin with their respective values from the node meta data"
-    depends_on 'Tags'
 
-    def initialize
-      super
-      register_tag( :default )
-    end
+    tag :default
 
     def process_tag( tag, node, refNode )
       output = ''
