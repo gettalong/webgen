@@ -176,8 +176,8 @@ module FileHandlers
     # Specify the extension which should be handled by the class.
     def self.handle_path( path )
       logger.info { "Registering class #{self.name} for handling the path pattern: #{path.inspect}" }
-      (@@config[self].path ||= []) << path
-      handlers = (@@config[DefaultFileHandler].file_handler ||= {})
+      (self.config[self].path ||= []) << path
+      handlers = (self.config[DefaultFileHandler].file_handler ||= {})
       logger.warn { "Path pattern #{path} already associated with class #{handlers[path].name}, not using class #{self.name} for it!" } if handlers[path]
       handlers[path] ||= self
     end
@@ -189,7 +189,7 @@ module FileHandlers
 
     # Return the registered file handler plugins.
     def self.get_file_handlers
-      @@config[self].file_handler
+      self.config[self].file_handler
     end
 
     # Supplies the +path+ to a file and the +parent+ node sothat the plugin can create a node for this

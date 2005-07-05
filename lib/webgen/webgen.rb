@@ -253,6 +253,13 @@ module Webgen
       self.add_command( CommandParser::VersionCommand.new )
     end
 
+    def parse!( *args )
+      Plugin.config.keys.find_all {|klass| klass.ancestors.include?( CommandPlugin )}.each do |cmdKlass|
+        add_command( Plugin.config[cmdKlass].obj )
+      end
+      super
+    end
+
   end
 
 

@@ -134,21 +134,21 @@ module Tags
     # will be assigned to the default mandatory parameter. There *should* be only one default
     # mandatory parameter.
     def self.set_mandatory( param, default = false )
-      if @@config[self].params.nil? || !@@config[self].params.has_key?( param )
+      if self.config[self].params.nil? || !self.config[self].params.has_key?( param )
         self.logger.error { "Cannot set parameter #{param} as mandatory as this parameter does not exist for #{self.name}" }
       else
-        @@config[self].params[param].mandatory = true
-        @@config[self].params[param].mandatoryDefault = default
+        self.config[self].params[param].mandatory = true
+        self.config[self].params[param].mandatoryDefault = default
       end
     end
 
     # Register +tag+ so that it gets handled by the current class.
     def self.tag( tag )
       logger.info { "Registering class #{self.name} for handling the tag '#{tag}'" }
-      tags = (@@config[DefaultTag].tag_plugins ||= {})
+      tags = (self.config[DefaultTag].tag_plugins ||= {})
       logger.warn { "Tag #{tag} already associated with class #{tags[tag].name}, not using class #{self.name} for it!" } if tags[tag]
       tags[tag] ||= self
-      @@config[self].tag = tag
+      self.config[self].tag = tag
     end
 
     # Old style API
@@ -158,7 +158,7 @@ module Tags
 
     # Returns the registered tag plugins.
     def self.get_tag_plugins
-      @@config[DefaultTag].tag_plugins
+      self.config[DefaultTag].tag_plugins
     end
 
     # Set the configuration parameters for the next #process_tag call. The configuration, if
