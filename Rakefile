@@ -189,7 +189,7 @@ else
     #### Dependencies, requirements and files
 
     s.files = PKG_FILES.to_a
-    s.add_dependency( 'cmdparse', '>= 1.0.3' )
+    s.add_dependency( 'cmdparse', '>= 1.0.5' )
 
     s.require_path = 'lib'
     s.autorequire = nil
@@ -269,24 +269,4 @@ task :statistics do
     total_code  += codelines
   end
   show_line( "Total", total_lines, total_code )
-end
-
-
-def run_testsite( arguments = '' )
-  Dir.chdir("testsite")
-  ruby %{-I../lib #{arguments} ../bin/webgen -V 3 }
-end
-
-
-CLOBBER << "testsite/output" << "testsite/webgen.log"
-desc "Build the test site"
-task :testsite do
-  run_testsite
-end
-
-
-CLOBBER  << "testsite/coverage"
-desc "Run the code coverage tool on the testsite"
-task :coverage do
-  run_testsite '-rcoverage'
 end

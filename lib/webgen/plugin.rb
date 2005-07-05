@@ -141,7 +141,7 @@ module Webgen
     # - object.get_[name]
     def self.define_handler( name )
       s = "def self.register_#{name}( param )
-        self.logger.info { \"Registering class \#{self.name} for handling '\#{param}'\" }
+        self.logger.info { \"Registering class \#{self.name} for handling #{name} '\#{param}'\" }
         (Webgen::Plugin.config[#{self.name}].#{name}s ||= {})[param] = self
         Webgen::Plugin.config[self].registered_#{name} = param
       end\n"

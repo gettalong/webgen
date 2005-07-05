@@ -22,6 +22,7 @@ h2. News
 
 Major changes:
 
+* Now using cmdparse version 1.0.5!
 * %{color:red}Attention%: For unified naming in reference to image galleries, I have removed all occurences of the word "picture" from the code and documentation and replaced it with "image". Therefore you may need to adapt your code, especially custom gallery layouters!
 * <b>New <a href="{relocatable: /documentation/webgen_gallery_editor.page}">application</a></b> for managing image galleries
 * Smileys are now optionally replaced with emoticons (<notextile>:-) ;-) :'-( 8-)</notextile>, several different emoticon packs available) -> see <a href="{relocatable: documentation/plugins/smileyreplacer.page}">SmileyReplacer</a>

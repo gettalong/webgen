@@ -261,8 +261,9 @@ module Webgen
     def main( cmdOptions )
       Color.colorify if $stdout.isatty && !Config::CONFIG['arch'].include?( 'mswin32' )
       Plugin['Configuration'].cmdparser = WebgenCommandParser.new
+      Plugin['Configuration'].cmdparser.parse_global_options!( ARGV )
       Plugin['Configuration'].init_all
-      Plugin['Configuration'].cmdparser.parse!( ARGV, false )
+      Plugin['Configuration'].cmdparser.parse!( ARGV, false, [:command, :local] )
       Plugin['Configuration'].cmdparser.execute
     end
 

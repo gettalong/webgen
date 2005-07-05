@@ -52,6 +52,7 @@ module MenuStyles
     protected
     #########
 
+    # Returns style information (node is selected, ...) and link for +node+ relative to +srcNode+.
     def menu_item_details( srcNode, node )
       langNode = node['processor'].get_node_for_lang( node, srcNode['lang'] )
       isDir = node['int:directory?']

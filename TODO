@@ -1,6 +1,5 @@
 ---- CURRENT ----
 
-* simplify menu style plugins
 * make menu generation faster (for webgen: 5.2s without menus in template, 9.2s with menus!)
 * create tests for methods in webgen.rb
 * webgen -c => output same info as on docu pages
@@ -10,7 +9,7 @@
 
 ---- DOCU ----
 
-* check credits for crystal clear icons
+* examples for each type of plugins in extending webgen section
 
 ---- FUTURE ----
 
