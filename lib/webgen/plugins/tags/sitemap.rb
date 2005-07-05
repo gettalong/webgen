@@ -54,6 +54,8 @@ module Tags
         next unless (child['int:directory?'] || child['int:pagename']) && !processed_pagenodes.include?( child['int:pagename'] )
         processed_pagenodes << child['int:pagename'] if child['int:pagename']
 
+        next if !node['indexFile'].nil? && node['indexFile']['int:pagename'] == child['int:pagename']
+
         isDir = child['int:directory?']
         subout = output_node( child, srcNode )
         link = child['processor'].get_html_link( child, srcNode ) if subout != '' || !isDir
