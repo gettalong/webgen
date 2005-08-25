@@ -10,6 +10,7 @@
 * allow a template to use another template (templates as page description files?) (template2 uses template1)
 * use code generator to create test file with all tags and all tag parameter configurations
 
+
 ---- DOCU ----
 
 * examples for each type of plugins in extending webgen section
