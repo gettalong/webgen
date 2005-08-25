@@ -1,5 +1,10 @@
 ---- CURRENT ----
 
+* think about plugin system, @@config etc - should work from within webgen-gui, not only once from webgen
+* make webgen source installation work with correct cmdparse version
+* FileCopyHandler#initialize not reentrant
+* test usage for en, deu, eng (ISO-639-2 codes)
+* adapt clidesc to cmdparse 2.0.0
 * make menu generation faster (for webgen: 5.2s without menus in template, 9.2s with menus!)
 * create tests for methods in webgen.rb
 * webgen -c => output same info as on docu pages

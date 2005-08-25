@@ -160,7 +160,7 @@ class Node
 
     startElement = node
     elements = destString.split( '/' )
-    pagelang = (/\.(\w\w)\.page$/ =~ destString ? $1 : Webgen::Plugin['Configuration']['lang'])
+    pagelang = (/\.(\w\w\w?)\.page$/ =~ destString ? $1 : Webgen::Plugin['Configuration']['lang'])
 
     elements.each do |element|
       break if node.nil?

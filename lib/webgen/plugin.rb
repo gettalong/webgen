@@ -40,7 +40,31 @@ module Webgen
 
       # Holds the plugin data from each and every plugin.
       @@config = {}
-      @@configFileData = ( File.exists?( 'config.yaml' ) ? YAML::load( File.new( 'config.yaml' ) ) : {} )
+      @@configFileData = {}
+
+      # Reloads the configuration file data.
+      def load_config_file
+        @@configFileData = ( File.exists?( 'config.yaml' ) ? YAML::load( File.new( 'config.yaml' ) ) : {} )
+        @@configFileData.each do |pluginName, params|
+          next if (pair = @@config.find {|pluginKlass, data| data.plugin == pluginName}).nil?
+          if params.kind_of?( Hash ) && !pair[1].params.nil?
+            pair[1].params.each do |name, value|
+              set_param( pluginName, name, params[name] ) if params.has_key?( name )
+            end
+          end
+        end
+      end
+
+      # Reset the configuration data. The configuration has to be initialized again.
+      def reset_config_data
+        @@config.each do |pluginKlass, data|
+          if pluginKlass != Logging && pluginKlass != Configuration
+            data.obj = nil
+          end
+          data.params.each {|name, p| set_param( data.plugin, name, p.default ) } if data.params
+        end
+        load_config_file
+      end
 
       # Return plugin data
       def config
@@ -102,7 +126,7 @@ module Webgen
         end
         data = OpenStruct.new( :name => name, :value => curval, :default => default, :description => description, :changeHandler => changeHandler )
         (@@config[self].params ||= {})[name] = data
-      changeHandler.call( name, default, curval ) if changeHandler
+        changeHandler.call( name, default, curval ) if changeHandler
       end
 
       # Set parameter +name+ for +plugin+ to +value+.
@@ -189,6 +213,8 @@ module Webgen
   # The base class for all plugins.
   class Plugin
     include PluginDefs
+
+    load_config_file
   end
 
   # This module should be included by classes derived from CommandParser::Command as it

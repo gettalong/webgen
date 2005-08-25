@@ -18,18 +18,22 @@ list":http://rubyforge.org/mail/?group_id=296 available if you have any question
 
 h2. News
 
-<b>??.??.2005 - webgen 0.3.6 released!!!</b>
+<b>??.??.2005 - webgen 0.3.7 released!!!</b>
 
 Major changes:
 
-* Now using cmdparse version 1.0.5!
+* Now using cmdparse version 2.0.0!
 * %{color:red}Attention%: For unified naming in reference to image galleries, I have removed all occurences of the word "picture" from the code and documentation and replaced it with "image". Therefore you may need to adapt your code, especially custom gallery layouters!
 * <b>New <a href="{relocatable: /documentation/webgen_gallery_editor.page}">application</a></b> for managing image galleries
 * Smileys are now optionally replaced with emoticons (<notextile>:-) ;-) :'-( 8-)</notextile>, several different emoticon packs available) -> see <a href="{relocatable: documentation/plugins/smileyreplacer.page}">SmileyReplacer</a>
 * <a href="{relocatable: documentation/extending_webgen.page}">Site specific commands</a> (used in command line processing) can now be used
 * New plugin <a href="{relocatable: documentation/plugins/tags/download.page}">Download Tag</a> for nice download links
+* New parameters: <a href="{relocatable: documentation/plugins/filehandler/pagehandler.page}">PageHandler:defaultPageMetaData</a>
+* Removed parameters: PageHandler:useERB, PageHandler:defaultContentFormat
 * Images in image galleries can now be ordered by specifying the @orderInfo@ meta information
-* The use of directory index files is now optional: by setting the parameter  <a href="{relocatable: documentation/plugins/filehandler/directory.page}">DirHandler:indexFile</a> to nil directory index files are not used
+* The use of directory index files is now optional: by setting the parameter <a href="{relocatable: documentation/plugins/filehandler/directory.page}">DirHandler:indexFile</a> to nil directory index files are not used
+* Languages can now be specified using 2-char ISO-639-1 codes or 3-char ISO-639-2 codes
+
 
 <b>24.06.2005 - webgen 0.3.5 released!!!</b>
 

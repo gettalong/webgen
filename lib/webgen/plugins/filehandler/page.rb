@@ -40,12 +40,17 @@ module FileHandlers
     add_param 'defaultLangInFilename', false, \
     'If true, the output files for the default language will have the ' \
     'language in the file name like all other page files. If false, they won''t.'
-    add_param 'defaultContentFormat', 'textile', 'The default content format used in page files.'
-    add_param 'outputNameStyle', [:name, ['.', :lang], '.html'], 'Defines how the output name should be built. The correct name will be used for ' \
-    'the :name part and the file language will be used for the :lang part. If <defaultLangInFilename> is true, the :lang part or the subarray in which '\
-    'the :lang part was defined, will be omitted.'
+
+    add_param 'outputNameStyle', [:name, ['.', :lang], '.html'], 'Defines how the output name should be built. ' \
+    'The correct name will be used for the :name part and the file language will be used for the :lang part. ' \
+    'If <defaultLangInFilename> is true, the :lang part or the subarray in which the :lang part was defined, will be omitted.'
+
     add_param 'validator', nil, 'The validator for checking HTML files on their validness. Set to "" or nil to prevent checking.'
-    add_param 'useERB', true, 'Specifies if the content blocks of the page file should be processed with ERB before they are formatted.'
+
+    add_param 'defaultPageMetaData', \
+    {'useERB' => true,
+     'blocks' => [{'name'=>'content', 'format'=>'textile'}]
+    },'Specifies the default meta data for page files.'
 
     used_meta_info 'title', 'orderInfo', 'lang', 'blocks', 'useERB'
 
@@ -66,7 +71,7 @@ module FileHandlers
 
     def render_node( node, with_template = true, block_name = 'content' )
       unless node['int:content-formatted']
-        useERB = node['useERB'] || ( node['useERB'].nil? && get_param( 'useERB' ) )
+        useERB = node['useERB']
         node['blocks'].each do |blockdata|
           begin
             content = ( useERB ? ERB.new( blockdata['data'] ).result( binding ) : blockdata['data'] )
@@ -173,19 +178,19 @@ module FileHandlers
     end
 
     def parse_data( data, srcName )
-      options = {}
+      options = Marshal.load( Marshal.dump( get_param( 'defaultPageMetaData' ) ) )
       blocks = data.split( /^---\s*$/ )
       if blocks.length > 0
         if blocks[0] == ''
           begin
-            options = YAML::load( blocks[1] )
+            options.update( YAML::load( blocks[1] ) )
           rescue ArgumentError => x
             self.logger.error { "Error parsing options for file <#{srcName}>: #{x.message}" }
           end
           blocks[0..1] = []
         end
         blocks.each {|b| b.gsub!( /^(\\+)(---\s*)$/ ) {|m| "\\" * ($1.length / 2) + $2 } }
-        (options['blocks'] ||= [{'name'=>'content', 'format'=>get_param( 'defaultContentFormat' )}]).each do |blockdata|
+        options['blocks'].each do |blockdata|
           if !blockdata.kind_of?( Hash ) || !blockdata['name'] || !blockdata['format']
             self.logger.error { "Block meta information in <#{srcName}> invalid (#{blockdata.inspect})" }
             next
@@ -198,7 +203,7 @@ module FileHandlers
     end
 
     def analyse_file_name( srcName )
-      matchData = /^(?:(\d+)\.)?([^.]*?)(?:\.(\w\w))?\.(.*)$/.match( srcName )
+      matchData = /^(?:(\d+)\.)?([^.]*?)(?:\.(\w\w\w?))?\.(.*)$/.match( srcName )
       analysed = OpenStruct.new
 
       self.logger.info { "Using default language for file <#{srcName}>" } if matchData[3].nil?

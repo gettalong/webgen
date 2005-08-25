@@ -38,7 +38,7 @@ end
 
 module Webgen
 
-  VERSION = [0, 3, 6]
+  VERSION = [0, 3, 7]
   SUMMARY = "Webgen is a templated based static website generator."
   DESCRIPTION = "Webgen is a web page generator implemented in Ruby. " \
   "It is used to generate static web pages from templates and page " \
@@ -94,22 +94,29 @@ module Webgen
     # trimmed: if +trimpath+ matches the beginning of the string, +trimpath+ is deleted from it.
     def load_plugins( path, trimpath )
       Find.find( path ) do |file|
-        Find.prune unless File.directory?( file ) || (/.rb$/ =~ file)
-        self.logger.debug { "Loading plugin file <#{file}>..." }
-        require file.gsub(/^#{trimpath}/, '') if File.file?( file )
+        trimmedFile = file.gsub(/^#{trimpath}/, '')
+        Find.prune unless File.directory?( file ) || ( (/.rb$/ =~ file) && !$".include?( trimmedFile ) )
+        if File.file?( file )
+          self.logger.debug { "Loading plugin file <#{file}>..." }
+          require trimmedFile
+        end
       end
     end
 
     # Instantiate the plugins in the correct order, except the classes which have a constant
-    # +VIRTUAL+.
+    # +VIRTUAL+, and add CommandPlugin instance to the global CommandParser.
     def init_plugins
       dep = Dependency.new
       Plugin.config.each {|k,data| dep[data.plugin] = data.dependencies || []}
-      self.logger.debug { "Dependencies: #{dep.inspect}" }
       dep.tsort.each do |plugin|
         data = Plugin.config.find {|k,v| v.plugin == plugin }[1]
-        self.logger.debug { "Creating plugin of class #{data.klass.name}" }
-        data.obj ||= data.klass.new unless data.klass.const_defined?( 'VIRTUAL' )
+        unless data.klass.const_defined?( 'VIRTUAL' ) || data.obj
+          self.logger.debug { "Creating plugin of class #{data.klass.name}" }
+          data.obj ||= data.klass.new
+        end
+      end
+      Plugin.config.keys.find_all {|klass| klass.ancestors.include?( CommandPlugin )}.each do |cmdKlass|
+        add_cmdparser_command( Plugin.config[cmdKlass].obj )
       end
     end
 

@@ -189,7 +189,7 @@ else
     #### Dependencies, requirements and files
 
     s.files = PKG_FILES.to_a
-    s.add_dependency( 'cmdparse', '>= 1.0.5' )
+    s.add_dependency( 'cmdparse', '~> 2.0.0' )
 
     s.require_path = 'lib'
     s.autorequire = nil
@@ -201,7 +201,7 @@ else
 
     s.has_rdoc = true
     s.extra_rdoc_files = rd.rdoc_files.reject do |fn| fn =~ /\.rb$/ end.to_a
-    s.rdoc_options = ['--line-numbers', '-m README']
+    s.rdoc_options = ['--line-numbers', '-m', 'README']
 
     #### Author and project details
 

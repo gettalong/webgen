@@ -49,7 +49,7 @@ module Tags
       end
 
       out = out.reverse.join( get_param( 'separator' ) )
-      self.logger.debug { "Navbar for #{srcNode.recursive_value( 'src' )}: #{out}" }
+      self.logger.debug { "Navbar for <#{srcNode.recursive_value( 'src' )}>: #{out}" }
       out
     end
 

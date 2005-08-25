@@ -14,6 +14,7 @@ module WebgenDocuPlugins
     end
 
     def process_tag( tag, node, refNode )
+=begin
       wcp = Webgen::WebgenCommandParser.new
       output = ''
       output << "<p><b>Global Options:</b></p>"
@@ -28,6 +29,8 @@ module WebgenDocuPlugins
         output << "</dd>"
       end
       output << "</dl>"
+=end
+      ""
     end
 
   end
