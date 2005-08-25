@@ -31,7 +31,7 @@ module Webgen
 
     @@colors = {:bold => [0, 1], :green => [0, 32], :lblue => [1, 34], :lred => [1, 31], :reset => [0, 0]}
 
-    def Color.colorify
+    def self.colorify
       @@colors.each do |color, values|
         module_eval <<-EOF
         def Color.#{color.to_s}
@@ -41,7 +41,7 @@ module Webgen
       end
     end
 
-    def Color.method_missing( id )
+    def self.method_missing( id )
       ''
     end
 
@@ -71,7 +71,7 @@ module Webgen
       if args.length == 0
         raise OptionParser::MissingArgument.new( 'DIR' )
       else
-        WebgenMain.create_website( args[0], @template, @style )
+        Webgen.create_website( args[0], @template, @style )
       end
     end
 
@@ -192,21 +192,35 @@ module Webgen
       show.add_command( showPlugins )
 
       # Show params command
-      showConfig = CmdParse::Command.new( 'params', false )
+      showConfig = CmdParse::Command.new( 'config', false )
       showConfig.short_desc = "Show the parameters of all plugins or of the specified one"
       showConfig.set_execution_block do |args|
-        print "List of plugin parameters:\n\n"
-        ljustlength = 20 + Color.green.length + Color.reset.length
-        Plugin.config.sort { |a, b| a[0].name <=> b[0].name }.each do |klass, data|
-          next if data.params.nil? || (args.length > 0 && args[0] != data.plugin)
-          print "  #{Color.bold}#{data.plugin}#{Color.reset}:\n"
-          data.params.sort.each do |key, item|
-            print "    #{Color.green}Parameter:#{Color.reset}".ljust(ljustlength)
-            puts Color.lred + item.name + Color.reset + " = " + Color.lblue +  item.value.inspect + Color.reset + " (" + item.default.inspect + ")"
-            puts "    #{Color.green}Description:#{Color.reset}".ljust(ljustlength) + item.description
-            print "\n"
+        puts "List of plugin parameters:"
+        puts
+        ljustlength = 25 + Color.green.length + Color.reset.length
+        Plugin.config.sort { |a, b| a[0].name[/::(.*)$/] <=> b[0].name[/::(.*)$/] }.each do |klass, data|
+          next if args.length > 0 && args[0] != data.plugin
+          puts "  #{Color.bold}#{data.plugin}#{Color.reset}:"
+          puts "    #{Color.green}Summary:#{Color.reset}".ljust(ljustlength) + data.summary if data.summary
+          puts "    #{Color.green}Description:#{Color.reset}".ljust(ljustlength) + data.description if data.description
+          puts "    #{Color.green}Tag name:#{Color.reset}".ljust(ljustlength) + (data.tag == :default ? "Default tag" : data.tag) if data.tag
+          puts "    #{Color.green}Handled paths:#{Color.reset}".ljust(ljustlength) + data.path.inspect if data.path
+
+          data.table.keys.find_all {|k| /^registered_/ =~ k.to_s }.each do |k|
+            name = k.to_s.sub( /^registered_/, '' ).tr('_', ' ').capitalize + " name"
+            puts "    #{Color.green}#{name}:#{Color.reset}".ljust(ljustlength) + data.send( k )
           end
-          print "\n"
+
+          if data.params
+            puts "\n    #{Color.green}Parameters:#{Color.reset}"
+            data.params.sort.each do |key, item|
+              print "      #{Color.green}Parameter:#{Color.reset}".ljust(ljustlength)
+              puts Color.lred + item.name + Color.reset + " = " + Color.lblue +  item.value.inspect + Color.reset + " (" + item.default.inspect + ")"
+              puts "      #{Color.green}Description:#{Color.reset}".ljust(ljustlength) + item.description
+              puts
+            end
+          end
+          puts
         end
       end
       show.add_command( showConfig )

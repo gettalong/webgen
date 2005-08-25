@@ -4,10 +4,8 @@
 * make webgen source installation work with correct cmdparse version
 * FileCopyHandler#initialize not reentrant
 * test usage for en, deu, eng (ISO-639-2 codes)
-* adapt clidesc to cmdparse 2.0.0
 * make menu generation faster (for webgen: 5.2s without menus in template, 9.2s with menus!)
 * create tests for methods in webgen.rb
-* webgen -c => output same info as on docu pages
 * check if duplicate nodes are created??? by using a tag in a template
 * allow a template to use another template (templates as page description files?) (template2 uses template1)
 * use code generator to create test file with all tags and all tag parameter configurations
@@ -205,3 +203,5 @@ W do not allow two or more page files in the same language, print warn
 * custom commands provided by plugins
 * tag 'download' which links to a download file and appends its size and ev. an image (PDF, ...)
 * modify tags system sothat tags can be specified via a tag directive (like extension with file handlers)
+* adapt clidesc to cmdparse 2.0.0
+* webgen show config => output same info as on docu pages

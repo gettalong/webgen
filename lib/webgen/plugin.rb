@@ -45,6 +45,7 @@ module Webgen
       # Reloads the configuration file data.
       def load_config_file
         @@configFileData = ( File.exists?( 'config.yaml' ) ? YAML::load( File.new( 'config.yaml' ) ) : {} )
+        @@configFileData = {} unless @@configFileData.kind_of?( Hash )
         @@configFileData.each do |pluginName, params|
           next if (pair = @@config.find {|pluginKlass, data| data.plugin == pluginName}).nil?
           if params.kind_of?( Hash ) && !pair[1].params.nil?
