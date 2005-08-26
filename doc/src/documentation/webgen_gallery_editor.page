@@ -10,6 +10,9 @@ This application is based on Qt > 3.1 and therefore needs the
 webgen gallery description files. You can easily set all of the required parameters and assign a
 title and a description to each image.
 
+<b>Be aware that this application is only alpha quality! Do not report any bugs concerning this
+application!</b>
+
 h2. How To Use
 
 h3. Starting the editor

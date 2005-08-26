@@ -236,10 +236,8 @@ module Webgen
   # Run webgen
   def self.run_webgen( directory = Dir.pwd )
     Dir.chdir( directory )
-    Plugin.reset_config_data
 
     logger.info "Starting Webgen..."
-    Plugin['Configuration'].init_all
     tree = Plugin['FileHandler'].build_tree
     Plugin['TreeWalker'].execute( tree ) unless tree.nil?
     Plugin['FileHandler'].write_tree( tree ) unless tree.nil?

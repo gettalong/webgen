@@ -128,8 +128,10 @@ The following defaults are used:
     and @name@ must not contain any dots. Also: if two page descriptions files have the same
     @name@ part, they should define the same content for different languages as webgen consideres
     them as "one" page file in two languages.
-  * language: This is the language code for this file. It is the international two letter acronym
-    and if it is not specified, it defaults to @en@.
+  * language: This is the language code for this file. The codes defined in ISO-639-1 (2 char codes)
+    and ISO-639-2 (3 char codes) can/should be used for defining the language. However, you should stick
+    to one code and do not use any other code for the same language (i.e. only use @en@ and not
+    additionally @eng@ or vice versa). If the language is not specified, it defaults to @en@.
 
   Consider the following examples:
     * @name.page@ -> title: Name, language: en, ordering: 0
