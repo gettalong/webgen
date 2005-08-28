@@ -264,10 +264,92 @@ class MyTextEdit < Qt::TextEdit
 end
 
 
+class ImageFileDrag < Qt::DragObject
+
+  def initialize( text, parent )
+    super( parent )
+    @text = text
+  end
+
+  def format( param )
+    if param == 0
+      "app/webgen-image-file" #how to define a user mime type correctly?
+    else
+      nil
+    end
+  end
+
+  def encodedData( format )
+    @text
+  end
+
+end
+
+class ImageFileList < Qt::ListBox
+
+  def initialize( parent, mainWindow )
+    super( parent )
+    setAcceptDrops( true )
+    @dragPos = nil
+    @mainWindow = mainWindow
+    Qt::ToolTip.add( self, "You can order the images by dragging and dropping the image names (sets the <b>orderInfo</b> meta information)" )
+  end
+
+  def fill_list( items )
+    items.sort do |a,b|
+      aoi = (@mainWindow.gallery[a].nil? ? 0 : @mainWindow.gallery[a]['orderInfo'].to_s.to_i)
+      boi = (@mainWindow.gallery[b].nil? ? 0 : @mainWindow.gallery[b]['orderInfo'].to_s.to_i)
+      aoi <=> boi
+    end.each {|image| insertItem( image )}
+  end
+
+  def dragEnterEvent( event )
+    event.accept if event.provides( "app/webgen-image-file" )
+  end
+
+  def dropEvent( event )
+    text = event.encodedData( "app/webgen-image-file" ).to_s
+    dropIndex = index( itemAt( event.pos ) )
+
+    blockSignals( true )
+    @mainWindow.save_image_meta_info
+    removeItem( currentItem )
+    insertItem( text, dropIndex )
+    @mainWindow.save_image_meta_info
+    blockSignals( false )
+
+    0.upto( count - 1 ) {|i| (@mainWindow.gallery[text( i )] ||= {})['orderInfo'] = i }
+
+    setCurrentItem( dropIndex )
+  end
+
+  def mousePressEvent( event )
+    super
+    @dragPos = event.pos
+  end
+
+  def mouseReleaseEvent( event )
+    super
+    @dragPos = nil
+  end
+
+  def mouseMoveEvent( event )
+    if @dragPos && (@dragPos - event.pos).manhattanLength > Qt::Application.startDragDistance
+      d = ImageFileDrag.new( currentText, self )
+      d.dragMove
+      @dragPos = nil
+    end
+  end
+
+end
+
+
 class GalleryWindow < Qt::MainWindow
 
   slots 'new()', 'open()', 'save()', 'save_as()', 'image_selected(const QString &)',
         'init_image_list()', 'select_next_image()', "assign_pic_names()"
+
+  attr_reader :gallery
 
   def initialize
     super
@@ -281,9 +363,11 @@ class GalleryWindow < Qt::MainWindow
   end
 
   def new
-    @gallery = Gallery.new
-    save_as
-    init_widgets
+    gallery = Gallery.new
+    if save_as( gallery )
+      @gallery = gallery
+      init_widgets
+    end
   end
 
   def open
@@ -304,15 +388,18 @@ class GalleryWindow < Qt::MainWindow
     @gallery.write_file( @curfile )
   end
 
-  def save_as
+  def save_as( gallery = @gallery )
+    ret_val = false
     saveDialog = Qt::FileDialog.new( '.', 'Gallery files (*.gallery)', self, 'Select new file...', true )
     saveDialog.setMode( Qt::FileDialog::AnyFile )
     if saveDialog.exec == Qt::Dialog::Accepted
       fname = saveDialog.selectedFile
       fname += '.gallery' if File.extname( fname ) == ''
-      @gallery.write_file( fname )
+      gallery.write_file( fname )
       @curfile = fname
+      ret_val = true
     end
+    ret_val
   end
 
   def image_selected( name )
@@ -338,9 +425,18 @@ class GalleryWindow < Qt::MainWindow
   def assign_pic_names
     0.upto( @imageList.count - 1 ) do |i|
       @gallery[@imageList.text( i )] ||= {}
-      if @gallery[@imageList.text( i )]['title'].nil? || @gallery[@imageList.text( i )]['title'] == ''
+      if @gallery[@imageList.text( i )]['title'].to_s.empty?
         @gallery[@imageList.text( i )]['title'] = @imageList.text( i )
       end
+    end
+  end
+
+  def save_image_meta_info
+    if @last_selected_image
+      @gallery[@last_selected_image] = @picMetaTable.meta_info
+      @gallery[@last_selected_image]['title'] = @imageTitle.text
+      @gallery[@last_selected_image]['description'] = @imageDescription.text
+      @last_selected_image = nil
     end
   end
 
@@ -397,18 +493,10 @@ class GalleryWindow < Qt::MainWindow
     end
   end
 
-  def save_image_meta_info
-    if @last_selected_image
-      @gallery[@last_selected_image] = @picMetaTable.meta_info
-      @gallery[@last_selected_image]['title'] = @imageTitle.text
-      @gallery[@last_selected_image]['description'] = @imageDescription.text
-    end
-  end
-
   def init_image_list
     @imageList.clear
     images = Dir[File.join( @gallery.relpath, @widgets['files'].text)].collect {|i| i.sub( /#{@gallery.relpath + File::SEPARATOR}/, '' ) }
-    images.each {|i| @imageList.insertItem( i ) }
+    @imageList.fill_list( images )
     @last_selected_image = nil
   end
 
@@ -524,7 +612,7 @@ class GalleryWindow < Qt::MainWindow
     connect( @imageDescription, SIGNAL('myReturnPressed()'), self, SLOT('select_next_image()') )
     connect( @imageDescription, SIGNAL('myReturnPressed()'), @imageTitle, SLOT('setFocus()') )
 
-    @imageList = Qt::ListBox.new( mainFrame )
+    @imageList = ImageFileList.new( mainFrame, self )
     @imageList.setMaximumWidth( 300 )
     connect( @imageList, SIGNAL('highlighted(const QString &)'), self, SLOT('image_selected( const QString &)') )
     @picMetaTable = MetaDataTable.new( mainFrame, page_meta_items - ['title', 'description'], ['title', 'description'] )
