@@ -230,8 +230,8 @@ module Webgen
     end
   end
 
-  require 'webgen/logging'
-  require 'webgen/configuration'
+  require 'webgen/plugins/coreplugins/logging'
+  require 'webgen/plugins/coreplugins/configuration'
 
 end
 

@@ -20,7 +20,7 @@ There are two different types of resources: file resources and memory resources.
     additional information, such as CSS formatting rules or Javascript.
 
 Resources are only written to the output path if they are referenced (i.e. their output path is
-included in a page file) at least once by the <a href="{relocatable: tags/resource.page}">resource
+included in a page file) at least once by the <a href="{relocatable: ../tags/resource.page}">resource
 tag</a>.
 
 h2. Predefined Resources

@@ -20,7 +20,7 @@
 #++
 #
 
-require 'webgen/plugins/menustyles/defaultmenustyle'
+require 'webgen/plugins/menustyles/default'
 
 module MenuStyles
 

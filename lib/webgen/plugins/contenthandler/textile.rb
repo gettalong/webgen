@@ -22,7 +22,7 @@
 
 begin
   require 'redcloth'
-  require 'webgen/plugins/contenthandler/defaultcontenthandler'
+  require 'webgen/plugins/contenthandler/default'
 
   module ContentHandlers
 

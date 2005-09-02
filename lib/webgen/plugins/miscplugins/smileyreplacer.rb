@@ -21,7 +21,7 @@
 #
 
 require 'webgen/plugins/filehandler/filehandler'
-require 'webgen/plugins/resourcemanager'
+require 'webgen/plugins/coreplugins/resourcemanager'
 
 module OtherPlugins
 

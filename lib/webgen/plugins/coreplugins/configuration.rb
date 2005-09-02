@@ -85,7 +85,7 @@ module Webgen
 
     # Does all the initialisation stuff
     def init_all
-      load_plugins( File.dirname( __FILE__) + '/plugins', File.dirname( __FILE__).sub(/webgen$/, '') )
+      load_plugins( File.dirname( __FILE__).sub( /coreplugins$/,'' ), File.dirname( __FILE__).sub(/webgen\/plugins\/coreplugins$/, '') )
       load_plugins( 'plugin', '' )
       init_plugins
     end

@@ -10,7 +10,7 @@ h2. Description
 
 The resource tag is used to include a resource either verbatim (i.e. its content is copied) or by
 path. For more information about resources have a look at the
-<a href="{relocatable: ../resourcemanager.page}">Resource Manager</a>.
+<a href="{relocatable: ../coreplugins/resourcemanager.page}">Resource Manager</a>.
 
 h2. Examples
 

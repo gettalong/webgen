@@ -20,7 +20,6 @@
 #++
 #
 
-
 module MenuStyles
 
   class DefaultMenuStyle < Webgen::Plugin

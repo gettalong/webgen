@@ -21,7 +21,7 @@
 #
 
 require 'webgen/plugins/tags/tags'
-require 'webgen/plugins/resourcemanager'
+require 'webgen/plugins/coreplugins/resourcemanager'
 require 'yaml'
 require 'uri'
 require 'open-uri'
