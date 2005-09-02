@@ -25,9 +25,9 @@ require 'fileutils'
 require 'webgen/plugins/tags/tags'
 require 'webgen/plugins/filehandlers/filehandler'
 
-module Webgen
+module CorePlugins
 
-  class ResourceManager < Plugin
+  class ResourceManager < Webgen::Plugin
 
     class Resource
 
@@ -131,8 +131,8 @@ module Webgen
     attr_reader :data_dir
 
     def initialize
-      Plugin.config[self.class].resources = {}
-      Plugin['FileHandler'].add_msg_listener( :AFTER_ALL_WRITTEN, method( :write_resources ) )
+      Webgen::Plugin.config[self.class].resources = {}
+      Webgen::Plugin['FileHandler'].add_msg_listener( :AFTER_ALL_WRITTEN, method( :write_resources ) )
       define_webgen_resources unless CorePlugins::Configuration.data_dir.empty?
       define_user_resources
     end
@@ -160,7 +160,7 @@ module Webgen
 
     # Returns the requested resource.
     def get_resource( name )
-      Plugin.config[self.class].resources[name]
+      Webgen::Plugin.config[self.class].resources[name]
     end
 
 
@@ -178,11 +178,11 @@ module Webgen
     #######
 
     def define_resource( name, res )
-      if Plugin.config[self.class].resources.has_key?( name )
+      if Webgen::Plugin.config[self.class].resources.has_key?( name )
         logger.error { "Resource #{name} already defined, not using new definition (#{res.inspect})" }
       else
         logger.info { "Adding resource #{name} to pool (#{res.inspect})" }
-        Plugin.config[self.class].resources[name] = res
+        Webgen::Plugin.config[self.class].resources[name] = res
       end
     end
 
@@ -239,7 +239,7 @@ module Webgen
 
 
     def write_resources
-      Plugin.config[self.class].resources.each do |name, res|
+      Webgen::Plugin.config[self.class].resources.each do |name, res|
         if res.write_resource?
           begin
             FileUtils.makedirs( File.dirname( res.dest_path ) )

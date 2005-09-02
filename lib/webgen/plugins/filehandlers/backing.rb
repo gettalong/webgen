@@ -94,7 +94,7 @@ module FileHandlers
       dirNode = create_path( dirname, dirNode )
 
       self.logger.debug { "Trying to create virtual node for '#{filename}'..." }
-      pageNode = Webgen::Plugin['VirtualPageHandler'].create_node_from_data( '', filename, dirNode )
+      pageNode = Webgen::Plugin['VirtualPageFileHandler'].create_node_from_data( '', filename, dirNode )
       dirNode.add_child( pageNode )
       pageNode.metainfo.update( data )
       pageNode['int:virtualNode'] = true
@@ -146,10 +146,10 @@ module FileHandlers
   end
 
   # Handles virtual pages, that is, pages that do not exist in the source tree.
-  class VirtualPageHandler < PageHandler
+  class VirtualPageFileHandler < PageFileHandler
 
     summary "Handles virtual pages"
-    depends_on "PageHandler"
+    depends_on "PageFileHandler"
 
     def write_node( node )
     end

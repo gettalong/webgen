@@ -1,7 +1,11 @@
 ---
 directoryName: Gallery Layouters
 ---
-h2. About
+h2. Information
+
+<notextile>{describe: DefaultGalleryLayouter}</notextile>
+
+h2. Description
 
 Gallery layouters are used to define layouts for galleries. Each plugin defines how the main page,
 the gallery pages and the image pages look like. To do this, each plugin has to define three methods:

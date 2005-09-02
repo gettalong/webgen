@@ -73,9 +73,9 @@ class Module
 
 end
 
-module Webgen
+module CorePlugins
 
-  class Logging < Plugin
+  class Logging < Webgen::Plugin
 
     summary "Plugin for configuring the logger"
 
@@ -96,6 +96,6 @@ module Webgen
   end
 
   # Initialize single logging instance
-  Plugin.config[Logging].obj = Logging.new
+  Webgen::Plugin.config[Logging].obj = Logging.new
 
 end

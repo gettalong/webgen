@@ -29,7 +29,7 @@ If you do not want to use directory index files, you can set the parameter @inde
 the configuration file, like this:
 
 <pre>
-DirHandler:
+DirectoryHandler:
   indexFile: ~
 </pre>
 

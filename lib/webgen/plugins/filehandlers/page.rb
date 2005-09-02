@@ -29,7 +29,7 @@ module FileHandlers
 
   # Super class for all page description files. Provides helper methods so that writing new plugins
   # for page description files is easy.
-  class PageHandler < DefaultFileHandler
+  class PageFileHandler < DefaultFileHandler
 
     class PageNode < Node; end;
 

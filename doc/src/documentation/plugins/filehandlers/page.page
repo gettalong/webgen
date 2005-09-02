@@ -4,7 +4,7 @@ inMenu: true
 ---
 h2. Information
 
-<notextile>{describe: PageHandler}</notextile>
+<notextile>{describe: PageFileHandler}</notextile>
 
 h2. Description
 

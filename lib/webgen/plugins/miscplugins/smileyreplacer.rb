@@ -51,7 +51,7 @@ module MiscPlugins
     SMILEY_REGEXP = Regexp.union( *SMILEY_MAP.keys.collect {|t| /#{Regexp.escape(t)}/ } )
 
     def initialize
-      Webgen::Plugin['PageHandler'].add_msg_listener( :AFTER_CONTENT_RENDERED, method( :replace_smileys ) )
+      Webgen::Plugin['PageFileHandler'].add_msg_listener( :AFTER_CONTENT_RENDERED, method( :replace_smileys ) )
     end
 
     #######

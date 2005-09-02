@@ -42,7 +42,7 @@ module FileHandlers
     add_param "title", 'Gallery', 'The title of the gallery'
     add_param "layout", 'default', 'The layout used'
 
-    depends_on 'FileHandler', 'PageHandler'
+    depends_on 'FileHandler', 'PageFileHandler'
 
     def create_node( file, parent )
       begin
@@ -90,7 +90,7 @@ module FileHandlers
       main['galleries'] = create_gallery_pages( images, parent )
 
       if main['galleries'].length != 1
-        mainNode = Webgen::Plugin['PageHandler'].create_node_from_data( call_layouter( :main, main, main ), main['srcName'], parent )
+        mainNode = Webgen::Plugin['PageFileHandler'].create_node_from_data( call_layouter( :main, main, main ), main['srcName'], parent )
         parent.add_child( mainNode )
       else
         main['galleries'][0]['title'] = main['title']
@@ -100,10 +100,10 @@ module FileHandlers
       end
 
       main['galleries'].each_with_index do |gallery, gIndex|
-        node = Webgen::Plugin['PageHandler'].create_node_from_data( call_layouter( :gallery, gallery, main, gIndex ), gallery['srcName'], parent )
+        node = Webgen::Plugin['PageFileHandler'].create_node_from_data( call_layouter( :gallery, gallery, main, gIndex ), gallery['srcName'], parent )
         parent.add_child( node )
         gallery['imageList'].each_with_index do |image, iIndex|
-          node = Webgen::Plugin['PageHandler'].create_node_from_data( call_layouter( :image, image, main, gIndex, iIndex ), image['srcName'], parent )
+          node = Webgen::Plugin['PageFileHandler'].create_node_from_data( call_layouter( :image, image, main, gIndex, iIndex ), image['srcName'], parent )
           parent.add_child( node )
         end
       end
