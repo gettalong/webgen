@@ -44,8 +44,12 @@ module Webgen
   "It is used to generate static web pages from templates and page " \
   "description files."
 
+end
+
+module CorePlugins
+
   # Responsible for loading the other plugin files and holds the basic configuration options.
-  class Configuration < Plugin
+  class Configuration < Webgen::Plugin
 
     summary "Responsible for loading plugins and holding general parameters"
 
@@ -107,23 +111,23 @@ module Webgen
     # +VIRTUAL+, and add CommandPlugin instance to the global CommandParser.
     def init_plugins
       dep = Dependency.new
-      Plugin.config.each {|k,data| dep[data.plugin] = data.dependencies || []}
+      Webgen::Plugin.config.each {|k,data| dep[data.plugin] = data.dependencies || []}
       dep.tsort.each do |plugin|
-        data = Plugin.config.find {|k,v| v.plugin == plugin }[1]
+        data = Webgen::Plugin.config.find {|k,v| v.plugin == plugin }[1]
         unless data.klass.const_defined?( 'VIRTUAL' ) || data.obj
           self.logger.debug { "Creating plugin of class #{data.klass.name}" }
           data.obj ||= data.klass.new
         end
       end
-      Plugin.config.keys.find_all {|klass| klass.ancestors.include?( CommandPlugin )}.each do |cmdKlass|
-        add_cmdparser_command( Plugin.config[cmdKlass].obj )
+      Webgen::Plugin.config.keys.find_all {|klass| klass.ancestors.include?( Webgen::CommandPlugin )}.each do |cmdKlass|
+        add_cmdparser_command( Webgen::Plugin.config[cmdKlass].obj )
       end
     end
 
   end
 
   # Initialize single configuration instance
-  Plugin.config[Configuration].obj = Configuration.new
+  Webgen::Plugin.config[Configuration].obj = Configuration.new
 
 end
 

@@ -51,7 +51,7 @@ module Tags
     def initialize
       super
       Webgen::Plugin['ResourceManager'].append_data( 'webgen-css', CSS )
-      @default_mapping = load_mapping( File.join( Webgen::Configuration.data_dir, 'icon_mapping.yaml' ) )
+      @default_mapping = load_mapping( File.join( CorePlugins::Configuration.data_dir, 'icon_mapping.yaml' ) )
     end
 
     def process_tag( tag, node, refNode )

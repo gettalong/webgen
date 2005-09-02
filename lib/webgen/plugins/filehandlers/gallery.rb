@@ -20,9 +20,9 @@
 #++
 #
 
-require 'webgen/plugins/filehandler/filehandler'
-require 'webgen/plugins/filehandler/directory'
-require 'webgen/plugins/filehandler/page'
+require 'webgen/plugins/filehandlers/filehandler'
+require 'webgen/plugins/filehandlers/directory'
+require 'webgen/plugins/filehandlers/page'
 
 module FileHandlers
 
@@ -182,7 +182,7 @@ module FileHandlers
 
       remove_method :get_thumbnail
       def get_thumbnail( imageData, parent )
-        p_node = Webgen::Plugin['DirHandler'].recursive_create_path( File.dirname( imageData['imageFilename'] ), parent )
+        p_node = Webgen::Plugin['DirectoryHandler'].recursive_create_path( File.dirname( imageData['imageFilename'] ), parent )
         node = Webgen::Plugin['ThumbnailWriter'].create_node( File.join( @path, imageData['imageFilename'] ), p_node, imageData['thumbnailSize'] )
         p_node.add_child( node )
 

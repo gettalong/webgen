@@ -23,7 +23,7 @@
 
 begin
   require 'bluecloth'
-  require 'webgen/plugins/contenthandler/default'
+  require 'webgen/plugins/contenthandlers/default'
 
   module ContentHandlers
 

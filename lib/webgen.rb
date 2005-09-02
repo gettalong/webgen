@@ -246,8 +246,8 @@ module Webgen
 
   # Create a website in the +directory+, using the +template+ and the +style+.
   def self.create_website( directory, template = 'default', style = 'default' )
-    templateFile = File.join( Webgen::Configuration.data_dir, 'website_templates', template )
-    styleFile = File.join( Webgen::Configuration.data_dir, 'website_styles', style )
+    templateFile = File.join( CorePlugins::Configuration.data_dir, 'website_templates', template )
+    styleFile = File.join( CorePlugins::Configuration.data_dir, 'website_styles', style )
     raise ArgumentError.new( "Invalid template <#{template}>" ) if !File.directory?( templateFile )
     raise ArgumentError.new( "Invalid style <#{style}>" ) if !File.directory?( styleFile )
 

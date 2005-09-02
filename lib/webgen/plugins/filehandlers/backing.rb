@@ -20,9 +20,9 @@
 #++
 #
 
-require 'webgen/plugins/filehandler/filehandler'
-require 'webgen/plugins/filehandler/directory'
-require 'webgen/plugins/filehandler/page'
+require 'webgen/plugins/filehandlers/filehandler'
+require 'webgen/plugins/filehandlers/directory'
+require 'webgen/plugins/filehandlers/page'
 
 module FileHandlers
 
@@ -120,8 +120,8 @@ module FileHandlers
           node = node.find {|child| /^#{element}\/?$/ =~ child['src'] }
         end
         if node.nil?
-          node = FileHandlers::DirHandler::DirNode.new( parent, element )
-          node['processor'] = Webgen::Plugin['VirtualDirHandler']
+          node = FileHandlers::DirectoryHandler::DirNode.new( parent, element )
+          node['processor'] = Webgen::Plugin['VirtualDirectoryHandler']
           parent.add_child( node )
           self.logger.info { "Created virtual directory <#{node.recursive_value( 'dest' )}>" }
         end
@@ -135,10 +135,10 @@ module FileHandlers
 
 
   # Handles virtual directories, that is, directories that do not exist in the source tree.
-  class VirtualDirHandler < DirHandler
+  class VirtualDirectoryHandler < DirectoryHandler
 
     summary "Handles virtual directories"
-    depends_on "DirHandler"
+    depends_on "DirectoryHandler"
 
     def write_node( node )
     end

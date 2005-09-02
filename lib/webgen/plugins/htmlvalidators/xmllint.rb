@@ -20,7 +20,7 @@
 #++
 #
 
-require 'webgen/plugins/htmlvalidator/default'
+require 'webgen/plugins/htmlvalidators/default'
 require "tempfile"
 
 # Allows one to get stdout and stderr from an executed command. Original version

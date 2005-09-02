@@ -20,10 +20,10 @@
 #++
 #
 
-require 'webgen/plugins/filehandler/filehandler'
+require 'webgen/plugins/filehandlers/filehandler'
 require 'webgen/plugins/coreplugins/resourcemanager'
 
-module OtherPlugins
+module MiscPlugins
 
   class SmileyReplacer < Webgen::Plugin
 

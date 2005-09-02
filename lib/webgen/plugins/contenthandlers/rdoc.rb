@@ -20,19 +20,29 @@
 #++
 #
 
-require 'webgen/plugins/contenthandler/default'
+require 'rdoc/markup/simple_markup'
+require 'rdoc/markup/simple_markup/to_html'
+require 'webgen/plugins/contenthandlers/default'
 
 module ContentHandlers
 
-  # Handles HTML content. Assumes that the content is already valid HTML.
-  class HTMLContentHandler < DefaultContentHandler
+  # Handles text in RDoc format.
+  class RDocContentHandler < DefaultContentHandler
 
-    summary "Handles HTML formatted content"
+    summary "Handles content in RDOC format"
 
-    register_format( 'html' )
+    register_format( 'rdoc' )
+
+    def initialize
+      @processor = SM::SimpleMarkup.new
+      @formatter = SM::ToHtml.new
+    end
 
     def format_content( txt )
-      txt
+      @processor.convert( txt, @formatter )
+    rescue
+      self.logger.error { "Error converting RDOC text to HTML" }
+      ''
     end
 
   end

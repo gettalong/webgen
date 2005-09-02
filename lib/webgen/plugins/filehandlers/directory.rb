@@ -20,12 +20,12 @@
 #++
 #
 
-require 'webgen/plugins/filehandler/filehandler'
+require 'webgen/plugins/filehandlers/filehandler'
 
 module FileHandlers
 
   # Handles directories.
-  class DirHandler < DefaultFileHandler
+  class DirectoryHandler < DefaultFileHandler
 
     # Specialized node describing a directory.
     class DirNode < Node
@@ -34,7 +34,7 @@ module FileHandlers
         super( parent )
         self['title'] = name
         self['src'] = self['dest'] = name + '/'
-        self['processor'] = Webgen::Plugin['DirHandler']
+        self['processor'] = Webgen::Plugin['DirectoryHandler']
         self['int:directory?'] = true
       end
 
@@ -44,7 +44,7 @@ module FileHandlers
       end
 
       def process_dir_index
-        indexFile = Webgen::Plugin['DirHandler']['indexFile']
+        indexFile = Webgen::Plugin['DirectoryHandler']['indexFile']
         if indexFile.nil?
           self['indexFile'] = nil
         else

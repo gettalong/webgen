@@ -20,31 +20,30 @@
 #++
 #
 
-require 'rdoc/markup/simple_markup'
-require 'rdoc/markup/simple_markup/to_html'
-require 'webgen/plugins/contenthandler/default'
+begin
+  require 'redcloth'
+  require 'webgen/plugins/contenthandlers/default'
 
-module ContentHandlers
+  module ContentHandlers
 
-  # Handles text in RDoc format.
-  class RDocContentHandler < DefaultContentHandler
+    # Handles content in Textile format using RedCloth.
+    class TextileContentHandler < DefaultContentHandler
 
-    summary "Handles content in RDOC format"
+      summary "Handles content in Textile format using RedCloth"
 
-    register_format( 'rdoc' )
+      register_format( 'textile' )
 
-    def initialize
-      @processor = SM::SimpleMarkup.new
-      @formatter = SM::ToHtml.new
-    end
+      def format_content( txt )
+        RedCloth.new( txt ).to_html
+      rescue Exception => e
+        self.logger.error { "Error converting Textile text to HTML: #{e.message}" }
+        ''
+      end
 
-    def format_content( txt )
-      @processor.convert( txt, @formatter )
-    rescue
-      self.logger.error { "Error converting RDOC text to HTML" }
-      ''
     end
 
   end
 
+rescue LoadError => e
+  self.logger.warn { "Textile not available as content format as RedCloth could not be loaded: #{e.message}" }
 end

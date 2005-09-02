@@ -20,30 +20,18 @@
 #++
 #
 
-begin
-  require 'redcloth'
-  require 'webgen/plugins/contenthandler/default'
+module HTMLValidators
 
-  module ContentHandlers
+  class DefaultHTMLValidator < Webgen::Plugin
 
-    # Handles content in Textile format using RedCloth.
-    class TextileContentHandler < DefaultContentHandler
+    summary "Base class for all HTML validators"
 
-      summary "Handles content in Textile format using RedCloth"
+    define_handler 'validator'
 
-      register_format( 'textile' )
-
-      def format_content( txt )
-        RedCloth.new( txt ).to_html
-      rescue Exception => e
-        self.logger.error { "Error converting Textile text to HTML: #{e.message}" }
-        ''
-      end
-
+    # Should be overridden in subclass!
+    def validate_file( filename )
     end
 
   end
 
-rescue LoadError => e
-  self.logger.warn { "Textile not available as content format as RedCloth could not be loaded: #{e.message}" }
 end

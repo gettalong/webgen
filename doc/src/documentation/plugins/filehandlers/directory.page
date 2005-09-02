@@ -4,7 +4,7 @@ inMenu: true
 ---
 h2. Information
 
-<notextile>{describe: DirHandler}</notextile>
+<notextile>{describe: DirectoryHandler}</notextile>
 
 h2. Description
 
