@@ -32,7 +32,7 @@ require 'rake/testtask'
 # General actions  ##############################################################
 
 $:.push 'lib'
-require 'webgen/configuration'
+require 'webgen/plugins/coreplugins/configuration'
 
 PKG_NAME = "webgen"
 PKG_VERSION = Webgen::VERSION.join( '.' )

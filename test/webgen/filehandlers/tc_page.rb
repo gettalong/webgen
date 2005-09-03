@@ -1,12 +1,12 @@
 require 'test/unit'
-require 'webgen/configuration'
+require 'webgen/plugins/coreplugins/configuration'
 require 'setup'
 
 class PageHandlerTest < Test::Unit::TestCase
 
   Webgen::Plugin['Configuration'].init_all
 
-  class TestPageHandler < ::FileHandlers::PageHandler
+  class TestPageHandler < ::FileHandlers::PageFileHandler
     def test_analyse_file_name( name)
       analyse_file_name( name )
     end

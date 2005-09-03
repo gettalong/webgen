@@ -24,6 +24,7 @@ Major changes:
 
 * Now using cmdparse version 2.0.0!
 * %{color:red}Attention%: For unified naming in reference to image galleries, I have removed all occurences of the word "picture" from the code and documentation and replaced it with "image". Therefore you may need to adapt your code, especially custom gallery layouters!
+* %{color:red}Attention%: Many documentation and library files have been renamed for better consistency! Custom plugins may have to be adapted!
 * <b>New <a href="{relocatable: /documentation/webgen_gallery_editor.page}">application</a></b> for managing image galleries (only alpha quality currently!)
 * Smileys are now optionally replaced with emoticons (<notextile>:-) ;-) :'-( 8-)</notextile>, several different emoticon packs available) -> see <a href="{relocatable: documentation/plugins/miscplugins/smileyreplacer.page}">SmileyReplacer</a>
 * <a href="{relocatable: documentation/extending_webgen.page}">Site specific commands</a> (used in command line processing) can now be used

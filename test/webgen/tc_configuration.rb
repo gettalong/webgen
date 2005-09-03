@@ -1,5 +1,5 @@
 require 'test/unit'
-require 'webgen/configuration'
+require 'webgen/plugins/coreplugins/configuration'
 require 'setup'
 
 class PluginTest < Test::Unit::TestCase
