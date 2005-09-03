@@ -35,7 +35,7 @@ information you want. You can use relative and absolute paths in the filenames. 
 specify meta information for files which are in one of the parent directories of the backing file.
 
 If you want to set meta information for an existing page description file, you have to use the
-<a href="{relocatable: pagehandler.page#naming}">standardified name</a> of that page description
+<a href="{relocatable: page.page#naming}">standardified name</a> of that page description
 file (e.g. @filename1.page@ or @filename1.de.page@).
 
 Using backing files you can add virtual files and directories. If the file specified in the entry

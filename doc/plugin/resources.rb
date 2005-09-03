@@ -12,7 +12,7 @@ module WebgenDocuPlugins
     end
 
     def process_tag( tag, node, refNode )
-      res = Webgen::Plugin.config[Webgen::ResourceManager].resources
+      res = Webgen::Plugin.config[CorePlugins::ResourceManager].resources
       output = '<table style="width: 100%; border: 1px solid black" summary="List of predefined resources" rules="cols" frame="border">'
       output << '<thead><tr><th>Name</th><th>Type</th><th>Output path</th><th>Description</th></tr></thead>'
       output << '<tbody>'

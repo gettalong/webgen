@@ -102,7 +102,7 @@ The template will always be processed with ERB!
 h3. Format
 
 The content of page description can be written in different formats. Have a look at the
-<a href="{relocatable: ../contenthandler}">Content Handlers</a> to get an overview of the existing
+<a href="{relocatable: ../contenthandlers}">Content Handlers</a> to get an overview of the existing
 formats.
 
 h2. Default settings

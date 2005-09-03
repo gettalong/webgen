@@ -7,7 +7,7 @@ module WebgenDocuPlugins
     tag 'showEmoticonPacks'
 
     def process_tag( tag, node, refNode )
-      res = Webgen::Plugin.config[Webgen::ResourceManager].resources
+      res = Webgen::Plugin.config[CorePlugins::ResourceManager].resources
       packs = Dir[File.join( CorePlugins::Configuration.data_dir, 'resources', 'emoticons', '*/')].collect {|p| File.basename( p )}.sort
 
       map = MiscPlugins::SmileyReplacer::SMILEY_MAP
