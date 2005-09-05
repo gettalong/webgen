@@ -22,7 +22,7 @@
       </div>
 
       <div id="headerbar" class="bar">
-        <span class="left">Location: {navbar: }</span>
+        <span class="left">Location: {breadcrumbTrail: }</span>
         <span class="right">Language: {langbar: }</span>
         <span class="right">Feedback: {wikilink: {rootURL: http://webgen.rubyforge.org/wiki/wiki.pl?, title: Click here}}</span>
         <span class="right">{source: }</span>

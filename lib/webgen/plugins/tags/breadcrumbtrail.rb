@@ -24,7 +24,7 @@ require 'webgen/plugins/tags/tags'
 
 module Tags
 
-  # Generates a navigation bar. A navigation bar consists of all pages in the hierarchy of the
+  # Generates a breadcrumb trail. It consists of all pages in the hierarchy of the
   # current page.
   #
   # For example, assuming we have the following branch
@@ -32,12 +32,12 @@ module Tags
   # this plugin will generate something like this:
   #   root / directory1 / directory2 / currentFile
   # where each listed name is linked to the corresponding file.
-  class NavbarTag < DefaultTag
+  class BreadcrumbTrailTag < DefaultTag
 
     summary 'Shows the hierarchy of current page'
     add_param 'separator', ' / ', 'Separates the hierachy entries from each other.'
 
-    tag 'navbar'
+    tag 'breadcrumbTrail'
 
     def process_tag( tag, srcNode, refNode )
       out = []
@@ -49,7 +49,7 @@ module Tags
       end
 
       out = out.reverse.join( get_param( 'separator' ) )
-      self.logger.debug { "Navbar for <#{srcNode.recursive_value( 'src' )}>: #{out}" }
+      self.logger.debug { "Breadcrumb trail for <#{srcNode.recursive_value( 'src' )}>: #{out}" }
       out
     end
 

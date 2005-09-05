@@ -8,7 +8,6 @@ module WebgenDocuPlugins
 
     def process_tag( tag, node, refNode )
       outpath = node.recursive_value( 'src' ).sub( /^#{Webgen::Plugin['Configuration']['srcDirectory']}/, Webgen::Plugin['Configuration']['outDirectory'] )
-      puts "Copying #{node['src']}"
       if File.exists?( node.recursive_value('src') )
         FileUtils.cp( node.recursive_value( 'src' ), outpath )
         "Source: <a href=\"#{node['src']}\">page source</a>"

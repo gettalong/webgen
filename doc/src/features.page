@@ -28,7 +28,7 @@ h2. Feature list
 
   * Standard distribution provides often used tags
   * Menu tag can generate different types of menus (simple menus and ones with CSS drop downs)
-  * Navbar tag generates a navigation bar so that one always knows where he is in the hierarchy
+  * Breadcrumb trail tag generates a breadcrumb trail so that one always knows where he is in the hierarchy
   * Relocatable tag for automatically generating correct relative paths to files
   * ... and much more!
 

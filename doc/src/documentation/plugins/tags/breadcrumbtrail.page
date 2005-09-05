@@ -1,0 +1,20 @@
+---
+title: Breadcrumb Trail
+inMenu: true
+---
+h2. Information
+
+<notextile>{describe: BreadcrumbTrailTag}</notextile>
+
+h2. Description
+
+The breadcrumb trail tag is used to display the hierarchy for the current page. You can see it in
+action on the left side of the header.
+
+h2. Examples
+
+table{border:1px solid black}.
+|_.Command|_.Output|
+|\{breadcrumbTrail:}|{breadcrumbTrail:}|
+|<notextile>\{breadcrumbTrail: {separator: " HALLO "}}</notextile>|<notextile>{breadcrumbTrail: {separator: " HALLO "}}</notextile>|
+
