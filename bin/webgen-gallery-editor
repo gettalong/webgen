@@ -4,8 +4,8 @@
 require 'yaml'
 require 'ostruct'
 require 'webgen/plugin'
-require 'webgen/configuration'
-require 'webgen/plugins/filehandler/gallery'
+require 'webgen/plugins/coreplugins/configuration'
+require 'webgen/plugins/filehandlers/gallery'
 require 'Qt'
 # Error when loading Qt before RMagick -> error in RMagick undefined method `display' for class `Magick::Image'
 # report that to qtruby team and RMagick team
@@ -63,7 +63,7 @@ class ImageViewer < Qt::Frame
   end
 
   def set_image( filename = nil)
-    filename = File.join( Webgen::Configuration.data_dir, 'resources/images/webgen_logo.png' ) if filename.nil?
+    filename = File.join( CorePlugins::Configuration.data_dir, 'resources/images/webgen_logo.png' ) if filename.nil?
     @image = Qt::Image.new( filename )
     update
   end
@@ -530,8 +530,8 @@ class GalleryWindow < Qt::MainWindow
 
     @widgets['layout'] = Qt::ComboBox.new( true, mainFrame )
     @widgets['layout'].setMaximumWidth( 200 )
-    Webgen::Plugin.config[GalleryLayouter::DefaultGalleryLayouter].layouts.keys.each do |name|
-      @widgets['layout'].insertItem( Qt::Pixmap.new( File.join( Webgen::Configuration.data_dir, 'gallery-creator', "#{name}.png" ) ), \
+    Webgen::Plugin.config[GalleryLayouters::DefaultGalleryLayouter].layouts.keys.each do |name|
+      @widgets['layout'].insertItem( Qt::Pixmap.new( File.join( CorePlugins::Configuration.data_dir, 'gallery-creator', "#{name}.png" ) ), \
                                      name )
     end
     @widgets['layout'].listBox.setMinimumWidth( @widgets['layout'].listBox.maxItemWidth + 20 )
