@@ -198,7 +198,7 @@ module Webgen
         puts "List of plugin parameters:"
         puts
         ljustlength = 25 + Color.green.length + Color.reset.length
-        Plugin.config.sort { |a, b| a[0].name[/::(.*)$/] <=> b[0].name[/::(.*)$/] }.each do |klass, data|
+        Plugin.config.sort { |a, b| a[0].name[/\w*$/] <=> b[0].name[/\w*$/] }.each do |klass, data|
           next if args.length > 0 && args[0] != data.plugin
           puts "  #{Color.bold}#{data.plugin}#{Color.reset}:"
           puts "    #{Color.green}Summary:#{Color.reset}".ljust(ljustlength) + data.summary if data.summary
