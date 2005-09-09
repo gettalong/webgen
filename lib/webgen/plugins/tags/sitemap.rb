@@ -30,6 +30,8 @@ module Tags
     summary 'Shows all pages of the website'
     add_param 'levelTag', 'ul', 'The tag used for creating a new hierarchy level.'
     add_param 'itemTag', 'li', 'The tag used for pages.'
+    add_param 'honorInMenu', true, 'Only pages for which the \'inMenu\' meta information is set are shown in ' \
+    'the sitemap if true'
 
     used_meta_info 'orderInfo'
 
@@ -51,7 +53,7 @@ module Tags
       out = "<#{get_param( 'levelTag' )}>"
       temp = ''
       node.sort( &Node::SORT_PROC ).each do |child|
-        next unless (child['int:directory?'] || child['int:pagename']) && !processed_pagenodes.include?( child['int:pagename'] )
+        next unless (child['int:directory?'] || (child['int:pagename'] && (!get_param( 'honorInMenu' ) || child['inMenu']))) && !processed_pagenodes.include?( child['int:pagename'] )
         processed_pagenodes << child['int:pagename'] if child['int:pagename']
 
         next if !node['indexFile'].nil? && node['indexFile']['int:pagename'] == child['int:pagename']
