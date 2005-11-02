@@ -24,6 +24,8 @@ require 'rbconfig'
 require 'fileutils'
 require 'cmdparse'
 require 'webgen/plugin'
+require 'webgen/gui/common'
+
 
 module Webgen
 
@@ -58,6 +60,10 @@ module Webgen
         opts.separator "Options:"
         opts.on( '-t', '--template TEMPLATE', 'Specify the template which should be used' ) {|@template|}
         opts.on( '-s', '--style STYLE', 'Specify the style which should be used' ) {|@style|}
+        opts.separator ""
+        opts.separator "Available templates and styles:"
+        opts.separator opts.summary_indent + "Templates: " + Webgen::Website.templates.join(', ')
+        opts.separator opts.summary_indent + "Styles: " + Webgen::Website.styles.join(', ')
       end
       @template = 'default'
       @style = 'default'
@@ -246,13 +252,15 @@ module Webgen
 
   # Create a website in the +directory+, using the +template+ and the +style+.
   def self.create_website( directory, template = 'default', style = 'default' )
-    templateFile = File.join( CorePlugins::Configuration.data_dir, 'website_templates', template )
-    styleFile = File.join( CorePlugins::Configuration.data_dir, 'website_styles', style )
-    raise ArgumentError.new( "Invalid template <#{template}>" ) if !File.directory?( templateFile )
-    raise ArgumentError.new( "Invalid style <#{style}>" ) if !File.directory?( styleFile )
+    templateDir = File.join( CorePlugins::Configuration.data_dir, 'website_templates', template )
+    styleDir = File.join( CorePlugins::Configuration.data_dir, 'website_styles', style )
+    raise ArgumentError.new( "Invalid template <#{template}>" ) if !File.directory?( templateDir )
+    raise ArgumentError.new( "Invalid style <#{style}>" ) if !File.directory?( styleDir )
 
-    FileUtils.cp_r( templateFile, directory )
-    FileUtils.cp( Dir[File.join( styleFile, '*' )], File.join( templateFile, 'src' ) )
+    raise ArgumentError.new( "Website directory <#{directory}> does already exist!") if File.exists?( directory )
+    FileUtils.mkdir( directory )
+    FileUtils.cp_r( Dir[File.join( templateDir, '*' )], directory )
+    FileUtils.cp_r( Dir[File.join( styleDir, '*' )], File.join( directory, 'src' ) )
   end
 
   # Main program for the webgen CLI command.

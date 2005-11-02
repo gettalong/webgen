@@ -1,5 +1,9 @@
 ---- CURRENT ----
 
+* show available styles and templates in docu and in online help (webgen help create)
+* think about plugin system, @@config etc - should work from within webgen-gui, not only once from webgen
+* make webgen source installation work with correct cmdparse version
+* FileCopyHandler#initialize not reentrant
 * make menu generation faster (for webgen: 5.2s without menus in template, 9.2s with menus!)
 * create tests for methods in webgen.rb
 * check if duplicate nodes are created??? by using a tag in a template
@@ -12,6 +16,9 @@
 
 ---- FUTURE ----
 
+* refactor code sothat one source file can be used by 0..n processors
+* tag 'link' which provides a link to the file optionally showing an icon
+* parameter for including page icons in menus
 * parameter for setting the orderInfo of index pages so that they always appear as first entry
 * implement plugin which creates nodes for fragment identifiers (#info) in html
 * include spell checker (ispell, aspell, MS Word OLE on Win32,...)

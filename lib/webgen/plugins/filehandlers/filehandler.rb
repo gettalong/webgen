@@ -123,7 +123,7 @@ module FileHandlers
 
     def create_root_node( path, handler )
       root = handler.create_node( path, nil )
-      root['title'] = '/'
+      root['title'] = ''
       root['dest'] = Webgen::Plugin['Configuration']['outDirectory'] + '/'
       root['src'] = Webgen::Plugin['Configuration']['srcDirectory'] + '/'
       root

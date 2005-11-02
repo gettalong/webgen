@@ -1,0 +1,10 @@
+#!/usr/bin/env ruby
+# -*- ruby -*-
+
+require 'webgen/gui/main'
+
+$app = Qt::Application.new( ARGV )
+main = Webgen::GUI::MainWindow.new
+$app.setMainWidget( main )
+main.show
+$app.exec
