@@ -16,6 +16,7 @@
 
 ---- FUTURE ----
 
+* Configuration:outDirectory should support FTP and SFTP protocols
 * refactor code sothat one source file can be used by 0..n processors
 * tag 'link' which provides a link to the file optionally showing an icon
 * parameter for including page icons in menus

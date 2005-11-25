@@ -82,7 +82,7 @@ module FileHandlers
 
     def call_layouter( type, metainfo, *args )
       content = Webgen::Plugin['DefaultGalleryLayouter'].get_layout( get_param( 'layout' ) ).send( type.to_s, *args )
-      "#{metainfo.to_yaml}\n---\n#{content}"
+      "---\n#{metainfo.to_yaml}\n---\n#{content}"
     end
 
     def create_gallery( images, parent )
