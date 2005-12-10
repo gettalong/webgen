@@ -1,6 +1,6 @@
 require 'yaml'
-require 'webgen/plugins/filehandler/filehandler'
-require 'webgen/plugins/filehandler/gallery'
+require 'webgen/plugins/filehandlers/filehandler'
+require 'webgen/plugins/filehandlers/gallery'
 
 module FileHandlers
 
@@ -12,7 +12,7 @@ module FileHandlers
 
 
     def create_node( path, parent )
-      layouts = Webgen::Plugin.config[GalleryLayouter::DefaultGalleryLayouter].layouts
+      layouts = Webgen::Plugin.config[GalleryLayouters::DefaultGalleryLayouter].layouts
       data = YAML::load( File.read( path ) )
       layouts.keys.each do |name|
         data['layout'] = name

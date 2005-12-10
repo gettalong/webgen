@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-require 'webgen/configuration'
+require 'webgen/plugins/coreplugins/configuration'
 require 'RMagick'
 
 def capture_image
@@ -10,7 +10,7 @@ def capture_image
   image
 end
 
-class Webgen::Configuration
+class CorePlugins::Configuration
 
   def self.data_dir
     "../../data/webgen"
@@ -19,7 +19,7 @@ class Webgen::Configuration
 end
 
 Webgen::Plugin['Configuration'].init_all
-layouts = Webgen::Plugin.config[GalleryLayouter::DefaultGalleryLayouter].layouts
+layouts = Webgen::Plugin.config[GalleryLayouters::DefaultGalleryLayouter].layouts
 
 system('ruby -I../../lib ../../bin/webgen')
 system('killall opera')
