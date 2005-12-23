@@ -70,7 +70,7 @@ module Webgen
     end
 
     def usage
-      "Usage: #{commandparser.program_name} [global options] create DIR"
+      "Usage: #{commandparser.program_name} [global options] create [options] DIR"
     end
 
     def execute( args )
@@ -99,6 +99,8 @@ module Webgen
         end
         self.send( func, list, options.merge( :verbose => true ) )
       end
+
+      module_function :ask_before_delete
 
     end
 
