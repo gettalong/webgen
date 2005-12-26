@@ -45,16 +45,16 @@ module Composite
 
   # Returns the array of children
   def children
-    @children = [] unless defined? @children
+    @children = [] unless defined?( @children )
     @children
   end
 
 
   # Adds all objects in the array
   def add_children( array )
-    if array.kind_of? Array
-      @children = [] unless defined? @children
-      @children.concat array
+    if array.kind_of?( Array )
+      @children = [] unless defined?( @children )
+      @children.concat( array )
     else
       raise ArgumentError, "Parameter must be array"
     end
@@ -69,8 +69,8 @@ module Composite
 
   # Adds the child
   def add_child( child )
-    @children = [] unless defined? @children
-    @children.push child unless @children.include? child
+    @children = [] unless defined?( @children )
+    @children.push( child ) unless @children.include?( child )
   end
 
 
@@ -79,17 +79,17 @@ module Composite
   # [+Numeric+] the child at the specified position is deleted
   # [+else+]    the specified child is deleted
   def del_child( child )
-    if child.kind_of? Numeric
-      @children.delete_at child if defined? @children
+    if child.kind_of?( Numeric )
+      @children.delete_at( child ) if defined?( @children )
     else
-      @children.delete child if defined? @children
+      @children.delete( child ) if defined?( @children )
     end
   end
 
 
   # Iterates over all childrenldren
   def each   # :yields: child
-    children.each do |child| yield child end if defined? @children
+    children.each {|child| yield child } if defined?( @children )
   end
 
 

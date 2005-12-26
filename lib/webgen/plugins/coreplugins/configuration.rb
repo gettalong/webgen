@@ -25,6 +25,7 @@ require 'tsort'
 require 'cmdparse'
 require 'webgen/node'
 require 'webgen/plugin'
+require 'webgen/version'
 
 # Helper class for calculating plugin dependencies.
 class Dependency < Hash
@@ -34,16 +35,6 @@ class Dependency < Hash
   def tsort_each_child(node, &block)
     fetch(node).each(&block)
   end
-end
-
-module Webgen
-
-  VERSION = [0, 3, 8]
-  SUMMARY = "Webgen is a templated based static website generator."
-  DESCRIPTION = "Webgen is a web page generator implemented in Ruby. " \
-  "It is used to generate static web pages from templates and page " \
-  "description files."
-
 end
 
 module CorePlugins
