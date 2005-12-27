@@ -57,12 +57,7 @@ module CorePlugins
       unless defined?( @@data_dir )
         @@data_dir = File.join( Config::CONFIG["datadir"], "webgen" )
 
-        if defined?( Gem::Cache )
-          gem = Gem::Cache.from_installed_gems.search( "webgen", "=#{Webgen::VERSION.join('.')}" ).last
-          @@data_dir = File.join( gem.full_gem_path, "data", "webgen" ) if gem
-        end
-
-        @@data_dir =  File.dirname( $0 ) + '/../data/webgen' if !File.exists?( @@data_dir )
+        @@data_dir =  File.join( File.dirname( __FILE__ ), '..', '..', '..', '..', 'data', 'webgen') if !File.exists?( @@data_dir )
 
         if File.exists?( @@data_dir )
           logger.info { "Webgen data directory found at #{@@data_dir}" }

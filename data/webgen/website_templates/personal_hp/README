@@ -1,6 +1,8 @@
-webgen Website Template 'personal_hp'
+description:
+  This template can be used for personal homepages. It provides the most
+  common pages found on personal homepages.
 
-This template can be used for personal homepages. It provides the most
-common pages found on personal homepages.
+note: This file can be deleted!
 
-This note can be deleted!
+creator:
+  Thomas Leitner

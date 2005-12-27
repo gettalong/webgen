@@ -23,9 +23,8 @@
 require 'rbconfig'
 require 'fileutils'
 require 'cmdparse'
+require 'webgen/website'
 require 'webgen/plugin'
-require 'webgen/gui/common'
-
 
 module Webgen
 
@@ -58,12 +57,23 @@ module Webgen
       "This allows you to create a good starting template for your website."
       self.options = CmdParse::OptionParserWrapper.new do |opts|
         opts.separator "Options:"
-        opts.on( '-t', '--template TEMPLATE', 'Specify the template which should be used' ) {|@template|}
+        opts.on( '-t', '--template TEMPLATE', Webgen::WebSiteTemplate.entries.keys, 'Specify the template which should be used' ) {|@template|}
         opts.on( '-s', '--style STYLE', 'Specify the style which should be used' ) {|@style|}
         opts.separator ""
         opts.separator "Available templates and styles:"
-        opts.separator opts.summary_indent + "Templates: " + Webgen::Website.templates.join(', ')
-        opts.separator opts.summary_indent + "Styles: " + Webgen::Website.styles.join(', ')
+        opts.separator ""
+        opts.separator opts.summary_indent + "#{Color.bold}Templates#{Color.reset}"
+        Webgen::WebSiteTemplate.entries.sort.each do |name, entry|
+          opts.separator opts.summary_indent + "  #{Color.green}Name:#{Color.reset}        #{Color.lred}#{name}#{Color.reset}"
+          opts.separator opts.summary_indent + "  #{Color.green}Description:#{Color.reset} #{entry.infos['description']}"
+          opts.separator ""
+        end
+        opts.separator opts.summary_indent + "#{Color.bold}Styles#{Color.reset}"
+        Webgen::WebSiteStyle.entries.sort.each do |name, entry|
+          opts.separator opts.summary_indent + "  #{Color.green}Name:#{Color.reset}        #{Color.lred}#{name}#{Color.reset}"
+          opts.separator opts.summary_indent + "  #{Color.green}Description:#{Color.reset} #{entry.infos['description']}"
+          opts.separator ""
+        end
       end
       @template = 'default'
       @style = 'default'
@@ -252,17 +262,17 @@ module Webgen
     logger.info "Webgen finished"
   end
 
-  # Create a website in the +directory+, using the +template+ and the +style+.
-  def self.create_website( directory, template = 'default', style = 'default' )
-    templateDir = File.join( CorePlugins::Configuration.data_dir, 'website_templates', template )
-    styleDir = File.join( CorePlugins::Configuration.data_dir, 'website_styles', style )
-    raise ArgumentError.new( "Invalid template <#{template}>" ) if !File.directory?( templateDir )
-    raise ArgumentError.new( "Invalid style <#{style}>" ) if !File.directory?( styleDir )
+  # Create a website in the +directory+, using the template +templateName+ and the style +styleName+.
+  def self.create_website( directory, templateName = 'default', styleName = 'default' )
+    template = Webgen::WebSiteTemplate.entries[templateName]
+    style = Webgen::WebSiteStyle.entries[styleName]
+    raise ArgumentError.new( "Invalid template <#{template}>" ) if template.nil?
+    raise ArgumentError.new( "Invalid style <#{style}>" ) if style.nil?
 
-    raise ArgumentError.new( "Website directory <#{directory}> does already exist!") if File.exists?( directory )
+    raise ArgumentError.new( "Directory <#{directory}> does already exist!") if File.exists?( directory )
     FileUtils.mkdir( directory )
-    FileUtils.cp_r( Dir[File.join( templateDir, '*' )], directory )
-    FileUtils.cp_r( Dir[File.join( styleDir, '*' )], File.join( directory, 'src' ) )
+    template.copy_to( directory )
+    style.copy_to( File.join( directory, 'src' ) )
   end
 
   # Main program for the webgen CLI command.
