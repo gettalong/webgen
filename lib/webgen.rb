@@ -251,30 +251,6 @@ module Webgen
 
   end
 
-  # Run webgen
-  def self.run_webgen( directory = Dir.pwd )
-    Dir.chdir( directory )
-
-    logger.info "Starting Webgen..."
-    tree = Plugin['FileHandler'].build_tree
-    Plugin['TreeWalker'].execute( tree ) unless tree.nil?
-    Plugin['FileHandler'].write_tree( tree ) unless tree.nil?
-    logger.info "Webgen finished"
-  end
-
-  # Create a website in the +directory+, using the template +templateName+ and the style +styleName+.
-  def self.create_website( directory, templateName = 'default', styleName = 'default' )
-    template = Webgen::WebSiteTemplate.entries[templateName]
-    style = Webgen::WebSiteStyle.entries[styleName]
-    raise ArgumentError.new( "Invalid template <#{template}>" ) if template.nil?
-    raise ArgumentError.new( "Invalid style <#{style}>" ) if style.nil?
-
-    raise ArgumentError.new( "Directory <#{directory}> does already exist!") if File.exists?( directory )
-    FileUtils.mkdir( directory )
-    template.copy_to( directory )
-    style.copy_to( File.join( directory, 'src' ) )
-  end
-
   # Main program for the webgen CLI command.
   def self.cli_main
     Color.colorify if $stdout.isatty && !Config::CONFIG['arch'].include?( 'mswin32' )

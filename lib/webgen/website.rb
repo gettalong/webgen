@@ -114,12 +114,33 @@ module Webgen
 
     attr_reader :directory
 
-    def initialize( directory )
+    def initialize( directory = Dir.pwd )
       @directory = directory
     end
 
-    def self.styles
-      Dir[File.join( CorePlugins::Configuration.data_dir, 'website_styles', '*' )].collect {|f| File.basename( f )}
+    # Run webgen
+    def render
+      Dir.chdir( @directory ) # TODO make this step unnecessary, prevents from concurrency
+
+      logger.info "Starting Webgen..."
+      tree = Plugin['FileHandler'].build_tree
+      Plugin['TreeWalker'].execute( tree ) unless tree.nil?
+      Plugin['FileHandler'].write_tree( tree ) unless tree.nil?
+      logger.info "Webgen finished"
+    end
+
+
+    # Create a website in the +directory+, using the template +templateName+ and the style +styleName+.
+    def self.create_website( directory, templateName = 'default', styleName = 'default' )
+      template = WebSiteTemplate.entries[templateName]
+      style = WebSiteStyle.entries[styleName]
+      raise ArgumentError.new( "Invalid template <#{template}>" ) if template.nil?
+      raise ArgumentError.new( "Invalid style <#{style}>" ) if style.nil?
+
+      raise ArgumentError.new( "Directory <#{directory}> does already exist!") if File.exists?( directory )
+      FileUtils.mkdir( directory )
+      template.copy_to( directory )
+      style.copy_to( File.join( directory, 'src' ) )
     end
 
   end
