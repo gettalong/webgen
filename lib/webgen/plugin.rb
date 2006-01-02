@@ -20,14 +20,43 @@
 #++
 #
 
+require 'find'
 require 'yaml'
 require 'ostruct'
+require 'logger'
+require 'tsort'
 
 class OpenStruct
   public :table #:nodoc:#
 end
 
+
 module Webgen
+
+  class Logger < ::Logger
+
+    def initialize( dev, files, size, level )
+      super( dev, files, size )
+      self.datetime_format = "%Y-%m-%d %H:%M:%S"
+      self.level = level
+    end
+
+    def format_message( severity, timestamp, msg, progname )
+      "%s %5s -- %s: %s\n" % [timestamp, severity, progname, msg ]
+    end
+
+    def warn( progname = nil, &block )
+      super
+      self.debug { "Call stack for last warning: #{caller[3..-1].join("\n")}" }
+    end
+
+    def error( progname = nil, &block )
+      super
+      self.debug { "Call stack for last error: #{caller[3..-1].join("\n")}" }
+    end
+
+  end
+
 
   # Base module for all plugins. This module should be included by classes which need to derive from
   # an existing class but also need the power of the plugin system. If a class does not have any
@@ -38,47 +67,6 @@ module Webgen
     # PluginDefs module.
     module ClassMethods
 
-      # Holds the plugin data from each and every plugin.
-      @@config = {}
-      @@configFileData = {}
-
-      # Reloads the configuration file data.
-      def load_config_file
-        @@configFileData = ( File.exists?( 'config.yaml' ) ? YAML::load( File.new( 'config.yaml' ) ) : {} )
-        @@configFileData = {} unless @@configFileData.kind_of?( Hash )
-        @@configFileData.each do |pluginName, params|
-          next if (pair = @@config.find {|pluginKlass, data| data.plugin == pluginName}).nil?
-          if params.kind_of?( Hash ) && !pair[1].params.nil?
-            pair[1].params.each do |name, value|
-              set_param( pluginName, name, params[name] ) if params.has_key?( name )
-            end
-          end
-        end
-      end
-
-      # Reset the configuration data. The configuration has to be initialized again.
-      def reset_config_data
-        @@config.each do |pluginKlass, data|
-          if pluginKlass != Logging && pluginKlass != Configuration
-            data.obj = nil
-          end
-          data.params.each {|name, p| set_param( data.plugin, name, p.default ) } if data.params
-        end
-        load_config_file
-      end
-
-      # Return plugin data
-      def config
-        @@config
-      end
-
-      # Shortcut for getting the plugin with the name +name+.
-      def []( name )
-        pair = @@config.find {|k,v| v.plugin == name }
-        self.logger.warn { "Could not retrieve plugin '#{name}' as such a plugin does not exist!" } if pair.nil?
-        pair[1].obj unless pair.nil?
-      end
-
       # Add subclass to plugin data.
       def inherited( klass )
         ClassMethods.extended( klass )
@@ -86,29 +74,39 @@ module Webgen
 
       # Called when PluginDefs is included in another class. Add this class to plugin data.
       def self.extended( klass )
-        if (klass != Webgen::Plugin) && (klass != Webgen::CommandPlugin)
-          (@@config[klass] = OpenStruct.new).klass = klass
-          @@config[klass].plugin = klass.name.split( /::/ ).last
-        end
+        callcc {|cont| throw :plugin_class_found, [cont, klass]}
+        klass.init_config
+      rescue NameError => e
+        raise "Plugin '#{klass}' managed by no PluginManager"
       end
 
-      ['summary', 'description'].each do |name|
-        module_eval "def #{name}( obj ); @@config[self].#{name} = obj; end"
+      # Initializes the plugin configuration structure.
+      def init_config
+        @config = OpenStruct.new
+        @config.plugin_klass = self
+        @config.params = {}
+        @config.infos = {}
+        @config.dependencies = []
       end
 
+      # Returns the configuration structure for the plugin.
+      def config
+        @config
+      end
+
+      # Sets general information about the plugin (summary text, description, ...). The parameter
+      # has to be a Hash.
+      def infos( param )
+        self.config.infos = param
+      end
 
       # Add a dependency to the plugin. Dependencies are instantiated before the plugin gets
       # instantiated.
       def depends_on( *dep )
-        dep.each {|d| (@@config[self].dependencies ||= []) << d}
+        dep.each {|d| self.config.dependencies << ( Class === d && d.ancestors.include?( PluginDefs ) ? d.name : d )}
       end
 
-      # Specify which meta information entries are used by the plugin.
-      def used_meta_info( *names )
-        names.each {|n| (@@config[self].used_meta_info ||= []) << n }
-      end
-
-      # Add a parameter for the current class. Has to be used by subclasses to define their parameters!
+      # Defines a parameter.The parameter can be changed in the configuration file later.
       #
       # Arguments:
       # +name+:: the name of the parameter
@@ -116,48 +114,19 @@ module Webgen
       # +description+:: a small description of the parameter
       # +changeHandler+:: optional, method/proc which is invoked every time the parameter is changed.
       #                   Handler signature: changeHandler( paramName, oldValue, newValue )
-      def add_param( name, default, description, changeHandler = nil )
-        self.logger.debug { "Adding parameter '#{name}' for plugin class '#{self.name}'" }
-        if @@configFileData.kind_of?( Hash ) && @@configFileData.has_key?( @@config[self].plugin ) \
-          && @@configFileData[@@config[self].plugin].kind_of?( Hash ) && @@configFileData[@@config[self].plugin].has_key?( name )
-          curval = @@configFileData[@@config[self].plugin][name]
-          self.logger.debug { "Using configured value for parameter #{@@config[self].plugin} -> #{name}" }
-        else
-          curval = default
-        end
-        data = OpenStruct.new( :name => name, :value => curval, :default => default, :description => description, :changeHandler => changeHandler )
-        (@@config[self].params ||= {})[name] = data
-        changeHandler.call( name, default, curval ) if changeHandler
+      def param( name, default, description, changeHandler = nil )
+        logger.debug { "Adding parameter '#{name}' for plugin class '#{self.config.name}'" }
+        data = OpenStruct.new( :name => name, :default => default,
+                               :description => description, :changeHandler => changeHandler )
+        self.config.params[name] = data
       end
 
-      # Set parameter +name+ for +plugin+ to +value+.
-      def set_param( plugin, name, value )
-        found = catch( :found ) do
-          item = @@config.find {|k,v| v.plugin == plugin }[1]
-          item.klass.ancestor_classes.each do |k|
-            item = @@config[k]
-            if !item.nil? && !item.params.nil? && item.params.has_key?( name )
-              oldvalue = item.params[name].value
-              item.params[name].value = value
-              item.params[name].changeHandler.call( name, oldvalue, value ) if item.params[name].changeHandler
-              logger.debug { "Set parameter '#{name}' for plugin '#{plugin}' to #{value.inspect}" }
-              throw :found, true
-            end
-          end
-        end
-        logger.error { "Cannot set undefined parameter '#{name}' for plugin '#{plugin}'" } unless found
+      # Returns the ancestor classes for the object's class which are sub classes from Plugin.
+      def ancestor_classes
+        ancestors.delete_if {|c| c.instance_of?( Module ) }[0..-3]
       end
 
-      def get_param( name )
-        ancestor_classes.each do |klass|
-          data = @@config[klass]
-          return data.params[name].value unless data.params.nil? || data.params[name].nil?
-        end
-        logger.error { "Referencing invalid configuration value '#{name}' in class #{self.name}" }
-        return nil
-      end
-
-      # Defines a new *handler class. The methods creates two methods based on the parameter +name+:
+      # TODO(remove?) Defines a new *handler class. The methods creates two methods based on the parameter +name+:
       # - klass.register_[name]
       # - object.get_[name]
       def define_handler( name )
@@ -177,61 +146,349 @@ module Webgen
         module_eval s
       end
 
-      # Return the ancestor classes for the object's class which are sub classes from Plugin.
-      def ancestor_classes
-        ancestors.delete_if {|c| c.instance_of?( Module ) }[0..-3]
-      end
-
     end
 
+    # Appends the methods of this module as object methods to the including class and the methods
+    # defined in the module ClassMethods as class methods.
     def self.append_features( klass )
       super
       klass.extend( ClassMethods )
     end
 
-    # Return parameter +name+.
+    # Assigns the PluginManager used for the plugin instance.
+    def initialize( plugin_manager )
+      @plugin_manager = plugin_manager
+    end
+
+    # Returns parameter +name+.
     def []( name )
-      self.class.get_param( name )
+      @plugin_manager.get_param( self.class, name )
     end
     alias get_param []
 
-    # Set parameter +name+.
-    def []=( name, value )
-      self.class.set_param( self.class.config[self.class].plugin, name, value )
+  end
+
+
+  # Responsible for loading plugins. Each PluginLoader has an array of plugins which it loaded.
+  # Several methods for loading plugins are available.
+  class PluginLoader
+
+    # The plugins loaded by this PluginLoader instance.
+    attr_reader :plugins
+
+    # Creates a new PluginLoader instance.
+    def initialize
+      @plugins = []
     end
 
-    # Checks if the plugin has a parameter +name+.
-    def has_param?( name )
-      self.class.ancestor_classes.any? do |klass|
-        !self.class.config[klass].params.nil? && self.class.config[klass].params.has_key?( name )
+    # Loads all plugins in the given +dir+ and in its subdirectories. Before +require+ is actually
+    # called the path is trimmed: if +trimpath+ matches the beginning of the string, +trimpath+ is
+    # deleted from it.
+    def load_from_dir( dir, trimpath = '')
+      Find.find( dir ) do |file|
+        trimmedFile = file.gsub(/^#{trimpath}/, '')
+        Find.prune unless File.directory?( file ) || ( (/\.rb$/ =~ file) && !$".include?( trimmedFile ) )
+        load_from_file( trimmedFile ) if File.file?( file ) && /\.rb$/ =~ file
+      end
+    end
+
+    # Loads all plugins specified in the +file+.
+    def load_from_file( file )
+      logger.debug { "Loading plugin file <#{file}>..." }
+      cont, klass = catch( :plugin_class_found ) do
+        require file
+        nil # return value for catch, means: all classes processed
+      end
+      add_plugin_class( klass ) unless klass.nil?
+      cont.call if cont
+    end
+
+    # Loads all plugins which get declared in the given block.
+    def load_from_block
+      cont, klass = catch( :plugin_class_found ) do
+        yield
+        nil # return value for catch, means: all classes processed
+      end
+      add_plugin_class( klass ) unless klass.nil?
+      cont.call if cont
+    end
+
+    # Checks if this PluginLoader has loaded a plugin called +name+.
+    def has_plugin?( name )
+      plugin_for_name( name ) != nil
+    end
+
+    # Returns the plugin called +name+ or +nil+ if it is not found.
+    def plugin_for_name( name )
+      @plugins.find {|p| p.name == name}
+    end
+
+    #######
+    private
+    #######
+
+    def add_plugin_class( klass )
+      @plugins << klass if klass != Webgen::Plugin && klass != Webgen::CommandPlugin
+    end
+
+  end
+
+
+  # Raised when a plugin which should have been loaded was not loaded.
+  class PluginNotFound < RuntimeError
+
+    attr_reader :name
+
+    def initialize( name )
+      @name = name
+    end
+
+    def message
+      "Plugin '#{@name}' needed, but it was not loaded"
+    end
+
+  end
+
+
+  # Raised when a parameter for a plugin does not exist.
+  class PluginParamNotFound < RuntimeError
+
+    def initialize( plugin, param )
+      @plugin = plugin
+      @param = param
+    end
+
+    def message
+      "Could not find parameter '#{@param}' for plugin '#{@plugin}'"
+    end
+
+  end
+
+
+  # Helper class for calculating plugin dependencies.
+  class DependencyHash < Hash
+    include TSort
+
+    alias tsort_each_node each_key
+    def tsort_each_child(node, &block)
+      fetch(node).each(&block)
+    end
+  end
+
+
+  # Once plugin classes are loaded, they are ready to get used. This class is used for instantiating
+  # plugins and their dependencies in the correct order and provide the plugins the facility for
+  # retrieving current parameter values.
+  class PluginManager
+
+    # Define which plugins should get instantiated.
+    attr_reader :plugin_classes
+
+    # Used for plugin dependency resolution.
+    attr_reader :plugin_loaders
+
+    # Used for retrieving current plugin parameter values.
+    attr_accessor :plugin_config
+
+    # Creates a new PluginManager instance.
+    def initialize( plugin_loaders = [], plugin_classes = [] )
+      @plugins = {}
+      @plugin_classes = []
+      @plugin_loaders = plugin_loaders
+      @plugin_config = nil
+      add_plugin_classes( plugin_classes )
+    end
+
+    # Adds all Plugin classes in the array +plugins+ and their dependencies.
+    def add_plugin_classes( plugins )
+      deps = dependent_plugins( plugins )
+      @plugin_classes += plugins + deps
+      @plugin_classes.uniq!
+    end
+
+    # Instantiates the plugins in the correct order, except the classes which have a constant
+    # +VIRTUAL+. TODO(should be done somewhere else) add CommandPlugin instance to the global CommandParser.
+    def init
+      @plugins = {} #TODO anything else needed to reset state?
+      dep = DependencyHash.new
+      @plugin_classes.each {|plugin| dep[plugin.name] = plugin.config.dependencies }
+      dep.tsort.each do |plugin_name|
+        config = plugin_class_by_name( plugin_name ).config
+        unless config.plugin_klass.const_defined?( 'VIRTUAL' )
+          self.logger.debug { "Creating plugin of class #{config.plugin_klass.name}" }
+          @plugins[config.plugin_klass.name] = config.plugin_klass.new( self )
+        end
+      end
+
+      # TODO(make command parser work - special PluginManager (only used in CLI))
+      #Webgen::Plugin.config.keys.find_all {|klass| klass.ancestors.include?( Webgen::CommandPlugin )}.each do |cmdKlass|
+      #  add_cmdparser_command( Webgen::Plugin.config[cmdKlass].obj )
+      #end
+    end
+
+    # Returns the plugin instance for +plugin+. +plugin+ can either be a plugin class or the name of
+    # a plugin.
+    def []( plugin )
+      ( plugin.kind_of?( Class ) ? @plugins[plugin.name] : @plugins[plugin] )
+    end
+
+    # Returns the parameter +param+ for the +plugin+.
+    def get_param( plugin, param )
+      plugin = ( plugin.kind_of?( String ) ? plugin_class_by_name( plugin ) : plugin )
+
+      value_found = false
+      value = nil
+      plugin.ancestor_classes.each do |plugin_klass|
+        begin
+          value = get_param_for_plugin( plugin_klass, param )
+          value_found = true
+          break
+        rescue PluginParamNotFound
+        end
+      end
+
+      if value_found
+        value
+      else
+        raise PluginParamNotFound.new( plugin.name, param )
+      end
+    end
+
+    # TODO Reloads the configuration file data.
+    def load_config_file
+      @@configFileData = ( File.exists?( 'config.yaml' ) ? YAML::load( File.new( 'config.yaml' ) ) : {} )
+      @@configFileData = {} unless @@configFileData.kind_of?( Hash )
+      @@configFileData.each do |pluginName, params|
+        next if (pair = @@config.find {|pluginKlass, data| data.plugin == pluginName}).nil?
+        if params.kind_of?( Hash ) && !pair[1].params.nil?
+          pair[1].params.each do |name, value|
+            set_param( pluginName, name, params[name] ) if params.has_key?( name )
+          end
+        end
+      end
+    end
+
+    # TODO Reset the configuration data. The configuration has to be initialized again.
+    def reset_config_data
+      @@config.each do |pluginKlass, data|
+        if pluginKlass != Logging && pluginKlass != Configuration
+          data.obj = nil
+        end
+        data.params.each {|name, p| set_param( data.plugin, name, p.default ) } if data.params
+      end
+      load_config_file
+    end
+
+    #######
+    private
+    #######
+
+    def plugin_class_by_name( name )
+      @plugin_classes.find {|p| p.name == name}
+    end
+
+    def dependent_plugins( classes )
+      deps = []
+      classes.each do |plugin|
+        plugin.config.dependencies.each do |dep|
+          p = nil
+          @plugin_loaders.each {|loader| p = loader.plugin_for_name( dep ); break unless p.nil? }
+          if p.nil?
+            raise PluginNotFound.new( dep )
+          else
+            deps << p unless deps.include?( p )
+          end
+        end
+      end
+      deps
+    end
+
+    def get_param_for_plugin( plugin_klass, param )
+      value_found = false
+      if @plugin_config
+        begin
+          value = @plugin_config.get_param( plugin_klass, param )
+          value_found = true
+        rescue PluginParamNotFound
+        end
+      end
+
+      value = get_param_default( plugin_klass, param ) unless value_found
+      value
+    end
+
+    def get_param_default( plugin, param )
+      if plugin.config.params.has_key?( param )
+        plugin.config.params[param].default
+      else
+        raise PluginParamNotFound.new( plugin.name, param )
       end
     end
 
   end
 
-  module CommandPlugin; end
+end
 
-  # The base class for all plugins.
-  class Plugin
-    include PluginDefs
 
-    load_config_file
+class Object
+
+  @@logger = Webgen::Logger.new( STDERR, 0, 0, Logger::ERROR )
+
+  def self.set_logger( logger )
+    @@logger = logger
   end
 
-  # This module should be included by classes derived from CommandParser::Command as it
-  # automatically adds an object of the class to the main CommandParser object.
-  module CommandPlugin
-    include PluginDefs
+  def logger
+    @@logger
+  end
 
-    def self.append_features( klass )
-      super
-      PluginDefs.append_features( klass )
-      klass.extend( ClassMethods )
+end
+
+
+class Module
+
+  def self.logger
+    Object::LOGGER
+  end
+
+end
+
+
+module Webgen
+
+  # Default PluginLoader instance responsible for loading all plugins shipped with webgen.
+  DEFAULT_PLUGIN_LOADER = PluginLoader.new
+
+  DEFAULT_PLUGIN_LOADER.load_from_block do
+
+    module CommandPlugin; end
+
+    # The base class for all plugins.
+    class Plugin
+
+      include PluginDefs
+
+      # load_config_file
     end
+
+
+    # This module should be included by classes derived from CommandParser::Command as it
+    # automatically adds an object of the class to the main CommandParser object.
+    module CommandPlugin
+
+      include PluginDefs
+
+      def self.append_features( klass )
+        super
+        PluginDefs.append_features( klass )
+        klass.extend( ClassMethods ) #TODO necessary? -> already called in PluginDefs.append_features
+      end
+    end
+
   end
 
-  require 'webgen/plugins/coreplugins/logging'
-  require 'webgen/plugins/coreplugins/configuration'
+  #require 'webgen/plugins/coreplugins/logging'
+  #require 'webgen/plugins/coreplugins/configuration'
 
 end
 
