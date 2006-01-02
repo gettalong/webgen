@@ -20,12 +20,8 @@
 #++
 #
 
-require 'find'
-require 'tsort'
 require 'cmdparse'
 require 'webgen/node'
-require 'webgen/plugin'
-require 'webgen/version'
 
 module CorePlugins
 
@@ -42,45 +38,8 @@ module CorePlugins
     # specific commands to it by calling the Configuration#add_cmdparser_command method!
     attr_accessor :cmdparser
 
-    # Returns the data directory of webgen.
-    def self.data_dir
-      unless defined?( @@data_dir )
-        @@data_dir = File.join( Config::CONFIG["datadir"], "webgen" )
-
-        @@data_dir =  File.join( File.dirname( __FILE__ ), '..', '..', '..', '..', 'data', 'webgen') if !File.exists?( @@data_dir )
-
-        if File.exists?( @@data_dir )
-          logger.info { "Webgen data directory found at #{@@data_dir}" }
-        else
-          logger.error { "Could not locate webgen data directory!!!" }
-          @@data_dir = ''
-        end
-      end
-      @@data_dir
-    end
-
     def add_cmdparser_command( command )
       @cmdparser.add_command( command ) if @cmdparser
-    end
-
-    # Does all the initialisation stuff
-    def init_all
-      load_plugins( File.dirname( __FILE__).sub( /coreplugins$/,'' ), File.dirname( __FILE__).sub(/webgen\/plugins\/coreplugins$/, '') )
-      load_plugins( 'plugin', '' )
-      init_plugins
-    end
-
-    # Load all plugins in the given +path+. Before +require+ is actually called the path is
-    # trimmed: if +trimpath+ matches the beginning of the string, +trimpath+ is deleted from it.
-    def load_plugins( path, trimpath )
-      Find.find( path ) do |file|
-        trimmedFile = file.gsub(/^#{trimpath}/, '')
-        Find.prune unless File.directory?( file ) || ( (/.rb$/ =~ file) && !$".include?( trimmedFile ) )
-        if File.file?( file )
-          self.logger.debug { "Loading plugin file <#{file}>..." }
-          require trimmedFile
-        end
-      end
     end
 
   end

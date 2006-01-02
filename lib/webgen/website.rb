@@ -23,7 +23,7 @@
 require 'pathname'
 require 'yaml'
 require 'fileutils'
-require 'webgen/plugins/coreplugins/configuration'
+require 'webgen/config'
 
 module Webgen
 
@@ -90,7 +90,7 @@ module Webgen
   class WebSiteTemplate < DirectoryInfo
 
     # Base path for the templates.
-    BASE_PATH = File.join( CorePlugins::Configuration.data_dir, 'website_templates' )
+    BASE_PATH = File.join( Webgen.data_dir, 'website_templates' )
 
   end
 
@@ -100,7 +100,7 @@ module Webgen
   class WebSiteStyle < DirectoryInfo
 
     # Base path for the styles.
-    BASE_PATH = File.join( CorePlugins::Configuration.data_dir, 'website_styles' )
+    BASE_PATH = File.join( Webgen.data_dir, 'website_styles' )
 
     # See WebSiteDirectoryInfo#files
     def files

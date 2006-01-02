@@ -1,3 +1,4 @@
+=begin
 require 'test/unit'
 require 'webgen/plugins/coreplugins/configuration'
 require 'setup'
@@ -44,3 +45,4 @@ class PageHandlerTest < Test::Unit::TestCase
   end
 
 end
+=end

@@ -21,7 +21,7 @@
 #
 
 require 'csv'
-require 'webgen/plugins/coreplugins/configuration'
+require 'webgen/config'
 
 module Webgen
 
@@ -91,7 +91,7 @@ module Webgen
     def self.languages
       unless defined?( @@languages )
         @@languages = {}
-        code_file = File.join( CorePlugins::Configuration.data_dir, 'data', 'ISO-639-2_values_8bits.txt' )
+        code_file = File.join( Webgen.data_dir, 'data', 'ISO-639-2_values_8bits.txt' )
         CSV::Reader.parse( File.open( code_file, 'r' ), ?| ) do |row|
           lang = Language.new( [(row[0].data if row[0]), (row[1].data if row[1]), (row[2].data if row[2])], row[3].data )
           @@languages[lang.code2chars] ||= lang
