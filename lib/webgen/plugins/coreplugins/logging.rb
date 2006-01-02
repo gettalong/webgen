@@ -20,70 +20,18 @@
 #++
 #
 
-require 'logger'
-require 'webgen/plugin'
-
-module Webgen
-
-  class Logger < ::Logger
-
-    def initialize( dev, files, size, level )
-      super( dev, files, size )
-      self.datetime_format = "%Y-%m-%d %H:%M:%S"
-      self.level = level
-    end
-
-    def format_message( severity, timestamp, msg, progname )
-      "%s %5s -- %s: %s\n" % [timestamp, severity, progname, msg ]
-    end
-
-    def warn( progname = nil, &block )
-      super
-      self.debug { "Call stack for last warning: #{caller[3..-1].join("\n")}" }
-    end
-
-    def error( progname = nil, &block )
-      super
-      self.debug { "Call stack for last error: #{caller[3..-1].join("\n")}" }
-    end
-
-  end
-
-end
-
-class Object
-
-  @@logger = Webgen::Logger.new( STDERR, 0, 0, Logger::ERROR )
-
-  def self.set_logger( logger )
-    @@logger = logger
-  end
-
-  def logger
-    @@logger
-  end
-
-end
-
-class Module
-
-  def self.logger
-    Object::LOGGER
-  end
-
-end
-
 module CorePlugins
 
+  # TODO put these configuration datas into Configuratin Plugin
   class Logging < Webgen::Plugin
 
-    summary "Plugin for configuring the logger"
+    infos :summary => 'Plugin for configuring the logger'
 
-    add_param 'maxLogFiles', 10, 'The maximum number of log files'
-    add_param 'maxLogSize', 1024*1024, 'The maximum size of the log files'
-    add_param 'verbosityLevel', 2, 'The level of verbosity for the output of logging messages (0=DEBUG, 1=INFO, 2=WARNING 3=ERROR).',
+    param 'maxLogFiles', 10, 'The maximum number of log files'
+    param 'maxLogSize', 1024*1024, 'The maximum size of the log files'
+    param 'verbosityLevel', 2, 'The level of verbosity for the output of logging messages (0=DEBUG, 1=INFO, 2=WARNING 3=ERROR).',
        lambda {|p,o,n| logger.level = n }
-    add_param 'logToFile', false, 'Specifies if the log messages should be put to the logfile',
+    param 'logToFile', false, 'Specifies if the log messages should be put to the logfile',
        (lambda do |p, o, n|
           dev = STDERR
           if n
@@ -95,7 +43,7 @@ module CorePlugins
 
   end
 
-  # Initialize single logging instance
-  Webgen::Plugin.config[Logging].obj = Logging.new
+  #TODO Initialize single logging instance
+  #Webgen::Plugin.config[Logging].obj = Logging.new
 
 end

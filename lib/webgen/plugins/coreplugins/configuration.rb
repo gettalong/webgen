@@ -27,26 +27,16 @@ require 'webgen/node'
 require 'webgen/plugin'
 require 'webgen/version'
 
-# Helper class for calculating plugin dependencies.
-class Dependency < Hash
-  include TSort
-
-  alias tsort_each_node each_key
-  def tsort_each_child(node, &block)
-    fetch(node).each(&block)
-  end
-end
-
 module CorePlugins
 
   # Responsible for loading the other plugin files and holds the basic configuration options.
   class Configuration < Webgen::Plugin
 
-    summary "Responsible for loading plugins and holding general parameters"
+    infos :summary => "Responsible for loading plugins and holding general parameters"
 
-    add_param 'srcDirectory', 'src', 'The directory from which the source files are read.'
-    add_param 'outDirectory', 'output', 'The directory to which the output files are written.'
-    add_param 'lang', 'en', 'The default language.'
+    param 'srcDirectory', 'src', 'The directory from which the source files are read.'
+    param 'outDirectory', 'output', 'The directory to which the output files are written.'
+    param 'lang', 'en', 'The default language.'
 
     # Returns the +CommandParser+ object used for parsing the command line. You can add site
     # specific commands to it by calling the Configuration#add_cmdparser_command method!
@@ -93,27 +83,10 @@ module CorePlugins
       end
     end
 
-    # Instantiate the plugins in the correct order, except the classes which have a constant
-    # +VIRTUAL+, and add CommandPlugin instance to the global CommandParser.
-    def init_plugins
-      dep = Dependency.new
-      Webgen::Plugin.config.each {|k,data| dep[data.plugin] = data.dependencies || []}
-      dep.tsort.each do |plugin|
-        data = Webgen::Plugin.config.find {|k,v| v.plugin == plugin }[1]
-        unless data.klass.const_defined?( 'VIRTUAL' ) || data.obj
-          self.logger.debug { "Creating plugin of class #{data.klass.name}" }
-          data.obj ||= data.klass.new
-        end
-      end
-      Webgen::Plugin.config.keys.find_all {|klass| klass.ancestors.include?( Webgen::CommandPlugin )}.each do |cmdKlass|
-        add_cmdparser_command( Webgen::Plugin.config[cmdKlass].obj )
-      end
-    end
-
   end
 
   # Initialize single configuration instance
-  Webgen::Plugin.config[Configuration].obj = Configuration.new
+  #Webgen::Plugin.config[Configuration].obj = Configuration.new
 
 end
 

@@ -1,5 +1,6 @@
 ---- CURRENT ----
 
+* rename dir coreplugins to core
 * use Text::Format or something similar for formatting CLI output (e.g. webgen help create)
 * new option for create command: -u --update-style-only (for only updating the style info)
 * rename Plugin.add_param to Plugin.param
