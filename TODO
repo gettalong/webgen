@@ -1,5 +1,6 @@
 ---- CURRENT ----
 
+* tests for logging
 * rename dir coreplugins to core
 * use Text::Format or something similar for formatting CLI output (e.g. webgen help create)
 * new option for create command: -u --update-style-only (for only updating the style info)
@@ -17,7 +18,7 @@
 
 ---- DOCU ----
 
-* examples for each type of plugins in extending webgen section
+* examples for each type of plugins in extending webgen section -> better into API docs
 
 ---- FUTURE ----
 

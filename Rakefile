@@ -32,7 +32,7 @@ require 'rake/testtask'
 # General actions  ##############################################################
 
 $:.push 'lib'
-require 'webgen/version'
+require 'webgen/config'
 
 PKG_NAME = "webgen"
 PKG_VERSION = Webgen::VERSION.join( '.' )
@@ -86,10 +86,8 @@ rd = Rake::RDocTask.new do |rdoc|
 end
 
 CLOBBER << "test/webgen.log"
-task :test do |t|
-  chdir 'test' do
-    ruby "-I../lib -I. runtests.rb"
-  end
+task :test do
+  ruby "-Ilib -Itest test/runtests.rb"
 end
 
 # Developer tasks ##############################################################

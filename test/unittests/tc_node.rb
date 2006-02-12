@@ -1,182 +1,125 @@
 require 'test/unit'
 require 'webgen/node'
-require 'setup'
+require 'yaml'
+
 
 class NodeTest < Test::Unit::TestCase
 
+  FIXTURE_PATH = File.join( File.dirname(__FILE__), '../fixtures/tc_node' ) + '/'
+
+
   def setup
-    @n = Hash.new
-    @n['external'] = Node.new( nil )
-    @n['external']['dest'] = 'http://webgen.rubyforge.org'
-
-    @simpleHash = { 'test' => 'hello', 'test1' => 'hello1' }
-    @n['simple'] = Node.new( nil )
-    @n['simple'].metainfo.update( @simpleHash )
-
-    @n['root'] = Node.new( nil )
-    @n['root']['dest'] = 'root/'
-    @n['root']['otherdest'] = 'root/'
-    @n['root']['int:directory?'] = true
-    @n['root/file1'] = create_node( @n['root'] )
-    @n['root/file1']['dest'] = 'file1'
-    @n['root/file1']['otherdest'] = 'file1o'
-    @n['root/file11'] = create_node( @n['root'] )
-    @n['root/file11']['dest'] = 'rdoc/file11'
-    @n['root/virtdir1'] = create_node( @n['root'] )
-    @n['root/virtdir1']['virtual'] = true
-    @n['root/virtdir1']['dest'] = 'virtdir1/'
-    @n['root/virtdir1']['int:directory?'] = true
-    @n['root/virtdir1/file2'] = create_node( @n['root/virtdir1'] )
-    @n['root/virtdir1/file2']['dest'] = 'file2'
-    @n['root/dir2'] = create_node( @n['root'] )
-    @n['root/dir2']['dest'] = 'dir2/'
-    @n['root/dir2']['otherdest'] = 'dir2/'
-    @n['root/dir2']['int:directory?'] = true
-    @n['root/dir2/file3'] = create_node( @n['root/dir2'] )
-    @n['root/dir2/file3']['dest'] = 'file3'
-    @n['root/dir2/file3']['otherdest'] = 'file3o'
-    @n['root/dir2/file4'] = create_node( @n['root/dir2'] )
-    @n['root/dir2/file4']['dest'] = 'file4'
-    @n['root/dir2/file5'] = create_node( @n['root/dir2'] )
-    @n['root/dir2/file5']['dest'] = 'otherdest/file5'
-    @n['root/dir2/dir3'] = create_node( @n['root/dir2'] )
-    @n['root/dir2/dir3']['dest'] = 'dir3/'
-    @n['root/dir2/dir3']['int:directory?'] = true
-    @n['root/dir4'] = create_node( @n['root'] )
-    @n['root/dir4']['dest'] = 'dir4/'
-    @n['root/dir4']['int:directory?'] = true
-    @n['root/rdoc'] = create_node( @n['root'] )
-    @n['root/rdoc']['dest'] = 'rdoc/'
-    @n['root/pagefile-de'] = create_node( @n['root'] )
-    @n['root/pagefile-de']['dest'] = 'pagefile.de.html'
-    @n['root/pagefile-de']['src'] = 'pagefile.de.page'
-    @n['root/pagefile-de']['int:pagename'] = 'pagefile.page'
-    @n['root/pagefile-de']['int:local-pagename'] = 'pagefile.de.page'
-    @n['root/pagefile-de']['lang'] = 'de'
-    @n['root/pagefile-en'] = create_node( @n['root'] )
-    @n['root/pagefile-en']['dest'] = 'pagefile.html'
-    @n['root/pagefile-en']['src'] = 'pagefile.page'
-    @n['root/pagefile-en']['int:pagename'] = 'pagefile.page'
-    @n['root/pagefile-en']['int:local-pagename'] = 'pagefile.en.page'
-    @n['root/pagefile-en']['lang'] = 'en'
+    @ni = YAML::load( File.read( File.join( FIXTURE_PATH, 'nodes.yaml' ) ) )
+    @n = {}
+    @ni.each do |info|
+      @n[info['ref'] || info['url']] = Node.new( @n[info['parent']], info['url'] )
+      @n[info['parent']].add_child( @n[info['ref'] || info['url']] ) unless @n[info['parent']].nil?
+      @n[info['ref'] || info['url']].meta_info.update( info['meta_info'] ) if info['meta_info']
+      @n[info['ref'] || info['url']].node_info.update( info['node_info'] ) if info['node_info']
+    end
   end
 
-  def create_node( parent )
-    node = Node.new( parent )
-    parent.add_child( node )
-    node
+
+  def test_root
+    assert_equal( @n['/'], Node.root( @n['file_aa'] ) )
   end
 
-  def teardown
-  end
+  def test_accessors
+    assert_equal( nil, @n['/'].parent )
+    assert_equal( '/', @n['/'].path )
 
-  def test_initialize
-    assert_equal( nil, Node.new( nil ).parent )
-    assert_equal( 'test', Node.new( 'test' ).parent )
-    assert_equal( {}, Node.new( nil ).metainfo )
-  end
+    assert_equal( @n['dir_a/'], @n['file_aa'].parent )
 
-  def test_brackets
-    @simpleHash.each {|k,v| assert_equal( v, @n['simple'][k] )}
-    assert_nil( @n['simple']['notinhash'] )
-  end
+    assert_equal( {}, @n['file_a'].meta_info )
+    assert_equal( {}, @n['file_a'].node_info )
 
-  def test_brackets_assign
-    @n['simple']['notinhash'] = 50
-    assert_equal( 50, @n['simple']['notinhash'] )
-  end
+    assert_equal( 'test', @n['/']['test'] )
+    @n['/']['test'] = 'notest'
+    assert_equal( 'notest', @n['/']['test'] )
+    assert_equal( @n['/'].meta_info['test'], @n['/']['test'] )
 
-  def test_recursive_value
-    assert_equal( 'root/file1', @n['root/file1'].recursive_value( 'dest' ) )
-    assert_equal( 'root/file2', @n['root/virtdir1/file2'].recursive_value( 'dest' ) )
-    assert_equal( 'root/virtdir1/file2', @n['root/virtdir1/file2'].recursive_value( 'dest', false ) )
-
-    assert_equal( 'root/file1o', @n['root/file1'].recursive_value( 'otherdest' ) )
-  end
-
-  def test_relpath_to_string
-    assert_equal( 'file2', @n['root/file1'].relpath_to_string( 'file2' ) )
-    assert_equal( 'file2', @n['root/file1'].relpath_to_string( '/file2' ) )
-    assert_equal( 'document/file2', @n['root/file1'].relpath_to_string( 'document/file2' ) )
-    assert_equal( 'dir2/document/file2', @n['root/dir2/file3'].relpath_to_string( 'document/file2' ) )
-    assert_equal( '../document/file2', @n['root/dir2/file3'].relpath_to_string( '/document/file2' ) )
-    assert_equal( 'dir2/../document/file2', @n['root/dir2/file3'].relpath_to_string( '../document/file2' ) )
-  end
-
-  def test_relpath_to_node
-    assert_raise( NoMethodError ) { @n['root/file1'].relpath_to_node( nil ) }
-
-    assert_equal( '.', @n['root/file1'].relpath_to_node( @n['root'] ) )
-    assert_equal( '.', @n['root/file1'].relpath_to_node( @n['root'], false ) )
-    assert_equal( '../rdoc/file11', @n['root/dir2/file3'].relpath_to_node( @n['root/file11'] ) )
-    assert_equal( '.', @n['root/dir2'].relpath_to_node( @n['root'] ) )
-    assert_equal( '.', @n['root/virtdir1/file2'].relpath_to_node( @n['root'] ) )
-    assert_equal( '..', @n['root/dir2/file3'].relpath_to_node( @n['root'] ) )
-    assert_equal( '..', @n['root/dir2/file3'].relpath_to_node( @n['root/file1'], false ) )
-    assert_equal( '../file1', @n['root/dir2/file3'].relpath_to_node( @n['root/file1'] ) )
-    assert_equal( '..', @n['root/dir2/file3'].relpath_to_node( @n['root/dir2'], false ) )
-    assert_equal( '../dir2/', @n['root/dir2/file3'].relpath_to_node( @n['root/dir2'] ) )
-    assert_equal( '../virtdir1/', @n['root/dir2/file3'].relpath_to_node( @n['root/virtdir1'] ) )
-    assert_equal( '.', @n['root/dir2/file3'].relpath_to_node( @n['root/dir2/file4'], false ) )
-
-    assert_equal( @n['external']['dest'], @n['root/file1'].relpath_to_node( @n['external'] ) )
-    assert_equal( @n['external']['dest'], @n['root/file1'].relpath_to_node( @n['external'], false ) )
-  end
-
-  def test_node_for_string
-    assert_equal( @n['root/file1'], @n['root'].node_for_string( 'file1' ) )
-    assert_nil( @n['root'].node_for_string( 'file2' ) )
-    assert_equal( @n['root'], @n['root'].node_for_string( '' ) )
-    assert_equal( @n['root/virtdir1/file2'], @n['root'].node_for_string( 'virtdir1/file2' ) )
-    assert_equal( @n['root/file1'], @n['root/virtdir1/file2'].node_for_string( 'file1' ) )
-    assert_equal( @n['root/dir2/file3'], @n['root/virtdir1/file2'].node_for_string( '/dir2/file3' ) )
-    assert_equal( @n['root/file11'], @n['root/virtdir1/file2'].node_for_string( '/rdoc/file11' ) )
-    assert_equal( @n['root/dir2/file5'], @n['root/dir2/file4'].node_for_string( '/dir2/otherdest/file5' ) )
-    assert_equal( @n['root/dir2/file4'], @n['root/dir2'].node_for_string( 'file4' ) )
-
-    assert_equal( @n['root/dir2'], @n['root'].node_for_string( '/dir2', 'otherdest' ) )
-    assert_equal( @n['root/dir2/file3'], @n['root'].node_for_string( '/dir2/file3o', 'otherdest' ) )
-
-    assert_equal( @n['root/pagefile-de'], @n['root'].node_for_string( 'pagefile.de.page' ) )
-    assert_equal( @n['root/pagefile-en'], @n['root'].node_for_string( 'pagefile.page' ) )
-    assert_equal( @n['root/pagefile-en'], @n['root'].node_for_string( 'pagefile.en.page' ) )
-  end
-
-  def test_node_for_string_question
-    assert( @n['root'].node_for_string?( 'file1' ) )
-    assert( !@n['root'].node_for_string?( 'file2' ) )
+    assert( @n['/'].is_directory? )
+    assert( @n['dir_a/'].is_directory? )
+    assert( @n['file_aa'].is_file? )
+    assert( @n['file_aa#'].is_fragment? )
   end
 
   def test_level
-    assert_equal( 1, @n['root'].level )
-    assert_equal( 2, @n['root/dir2'].level )
-    assert_equal( 1, @n['root/file1'].level )
-    assert_equal( 1, @n['root/virtdir1/file2'].level )
-    assert_equal( 2, @n['root/virtdir1/file2'].level( false ) )
-    assert_equal( 2, @n['root/dir2/file3'].level )
+    assert_equal( 0, @n['/'].level )
+    assert_equal( 1, @n['dir_a/'].level )
+    assert_equal( 2, @n['file_aa'].level )
   end
 
-  def test_in_subtree_question
-    assert( !@n['root/file1'].in_subtree?( @n['root/dir2/file3'] ) )
-    assert( @n['root/dir2/file3'].in_subtree?( @n['root/dir2'] ) )
-    assert( @n['root/dir2/file3'].in_subtree?( @n['root/dir2/file4'] ) )
-    assert( @n['root/file1'].in_subtree?( @n['root/virtdir1/file2'] ) )
-    assert( @n['root/dir2/dir3'].in_subtree?( @n['root/dir2'] ) )
-    assert( !@n['root/dir2/dir3'].in_subtree?( @n['root/dir4'] ) )
-    assert( !@n['root/dir2'].in_subtree?( @n['root/dir4'] ) )
-    assert( !@n['root/dir2/file3'].in_subtree?( @n['root/dir4'] ) )
+  def test_full_path
+    assert_equal( '/', @n['/'].full_path )
+    assert_equal( '/dir_a/file_aa', @n['file_aa'].full_path )
+    assert_equal( 'http://localhost/file_ah#doit', @n['file_ah#'].full_path )
   end
 
-  def test_root
-    assert_equal( @n['root'], Node.root( @n['root/dir2/file3'] ) )
+  def test_route_to
+    #to Node
+    assert_equal( '', @n['file_a'].route_to( @n['file_a'] ) )
+    assert_equal( '', @n['file_aa#'].route_to( @n['file_aa'] ) )
+    assert_equal( 'file_aa#doit', @n['dir_a/'].route_to( @n['file_aa#'] ) )
+    assert_equal( '#doit', @n['file_aa'].route_to( @n['file_aa#'] ) )
+    assert_equal( '../dir_b/file_ba', @n['file_aa#'].route_to( @n['file_ba'] ) )
+    assert_equal( '../dir_b/file_bb', @n['file_aa'].route_to( @n['file_bb'] ) )
+    assert_equal( 'http://localhost/file_ah', @n['dir_a/'].route_to( @n['file_ah'] ) )
+
+    assert_equal( './', @n['file_a'].route_to( @n['/'] ) )
+    assert_equal( '../', @n['dir_a/'].route_to( @n['/'] ) )
+    assert_equal( 'dir_a/', @n['file_a'].route_to( @n['dir_a/'] ) )
+
+    #to String
+    assert_equal( '../other', @n['file_aa'].route_to( '/other' ) )
+    assert_equal( '../other', @n['file_aa'].route_to( '../other' ) )
+    assert_equal( 'document/file2', @n['file_aa#'].route_to( 'document/file2' ) )
+    assert_equal( 'ftp://test', @n['dir_a/'].route_to( 'ftp://test' ) )
+
+    assert_equal( './', @n['file_a'].route_to( '/' ) )
+    assert_equal( './', @n['dir_a/'].route_to( '/dir_a' ) )
   end
 
-  def test_parent_dir
-    assert_equal( @n['root'], @n['root/file1'].parent_dir )
-    assert_equal( @n['root/dir2'], @n['root/dir2/file4'].parent_dir )
-    assert_equal( @n['root'], @n['root/dir2'].parent_dir )
-    assert_equal( @n['root'], @n['root/virtdir1/file2'].parent_dir )
-    assert_equal( nil, @n['root'].parent_dir )
+  def test_in_subtree_of
+    assert( @n['file_a'].in_subtree_of?( @n['/'] ) )
+    assert( @n['dir_a/'].in_subtree_of?( @n['/'] ) )
+
+    assert( @n['file_aa'].in_subtree_of?( @n['dir_a/'] ) )
+
+    assert( @n['file_aa#'].in_subtree_of?( @n['/'] ) )
+    assert( @n['file_aa#'].in_subtree_of?( @n['dir_a/'] ) )
+    assert( @n['file_aa#'].in_subtree_of?( @n['file_aa'] ) )
+
+    assert( @n['file_ah#'].in_subtree_of?( @n['file_ah'] ) )
+    assert( @n['file_ah#'].in_subtree_of?( @n['/'] ) )
+
+    assert( !@n['file_ba'].in_subtree_of?( @n['dir_a/'] ) )
+    assert( !@n['file_a'].in_subtree_of?( @n['dir_a/'] ) )
+    assert( !@n['file_a'].in_subtree_of?( @n['file_aa'] ) )
+    assert( !@n['file_aa'].in_subtree_of?( @n['file_ab'] ) )
+  end
+
+  def test_resolve_node
+    assert_equal( @n['file_aa#'], @n['file_aa#'].resolve_node( '' ) )
+    assert_equal( @n['file_aa#'], @n['file_aa#'].resolve_node( 'file_aa#doit' ) )
+    assert_equal( @n['file_aa#'], @n['file_aa#'].resolve_node( '#doit' ) )
+    assert_equal( @n['file_aa#2'], @n['file_aa#'].resolve_node( '#doelse' ) )
+    assert_equal( @n['file_aa'], @n['file_aa#'].resolve_node( 'file_aa' ) )
+    assert_equal( @n['dir_a/'], @n['file_aa#'].resolve_node( '../dir_a/' ) )
+    assert_equal( @n['dir_a/'], @n['file_aa#'].resolve_node( '../dir_a' ) )
+    assert_equal( @n['/'], @n['file_aa#'].resolve_node( '..' ) )
+    assert_equal( @n['file_ba'], @n['file_aa'].resolve_node( '../dir_b/file_ba' ) )
+    assert_equal( @n['file_ba#'], @n['file_aa'].resolve_node( '../dir_b/file_ba#doit' ) )
+    assert_equal( @n['file_zb'], @n['file_aa'].resolve_node( '../dir_z/file_zb' ) )
+
+    assert_equal( @n['file_aa#2'], @n['file_ba'].resolve_node( '/dir_a/file_aa#doelse' ) )
+    assert_equal( @n['file_zb'], @n['file_aa'].resolve_node( '/dir_z/file_zb' ) )
+
+    assert_nil( @n['file_aa'].resolve_node( '../dir_b/file_bb' ) )
+    assert_nil( @n['dir_a/'].resolve_node( 'invalid_file' ) )
+    assert_nil( @n['file_a'].resolve_node( '../invalid' ) )
+
+    assert_raise( ArgumentError ) { @n['file_aa'].resolve_node( 5456 ) }
   end
 
 end

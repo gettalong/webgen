@@ -29,7 +29,7 @@ module Webgen
 
 
   # Base class for directories which have a README file with information stored in YAML format.
-  # Should not be used directly, use its child classes.
+  # Should not be used directly, use its child classes!
   class DirectoryInfo
 
     # The unique name.
@@ -110,8 +110,10 @@ module Webgen
   end
 
 
+  # A WebSite object represents a webgen website directory and is used for manipulating it.
   class WebSite
 
+    # The website directory.
     attr_reader :directory
 
     def initialize( directory = Dir.pwd )
@@ -134,13 +136,13 @@ module Webgen
     def self.create_website( directory, templateName = 'default', styleName = 'default' )
       template = WebSiteTemplate.entries[templateName]
       style = WebSiteStyle.entries[styleName]
-      raise ArgumentError.new( "Invalid template <#{template}>" ) if template.nil?
-      raise ArgumentError.new( "Invalid style <#{style}>" ) if style.nil?
+      raise ArgumentError.new( "Invalid template '#{template}'" ) if template.nil?
+      raise ArgumentError.new( "Invalid style '#{style}'" ) if style.nil?
 
       raise ArgumentError.new( "Directory <#{directory}> does already exist!") if File.exists?( directory )
       FileUtils.mkdir( directory )
       template.copy_to( directory )
-      style.copy_to( File.join( directory, 'src' ) )
+      style.copy_to( File.join( directory, 'src' ) ) #TODO is using 'src' safe here?
     end
 
   end

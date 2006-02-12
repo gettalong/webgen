@@ -23,114 +23,41 @@
 require 'uri'
 require 'webgen/composite'
 
+# The Node class is used for building the internal data structure which represents the output tree.
 class Node
 
   include Composite
 
-  attr_reader   :parent
-  attr_accessor :metainfo
+  # The parent node.
+  attr_accessor :parent
 
-  def initialize( parent )
+  # The path of this node.
+  attr_reader   :path
+
+  # Information used for processing the node.
+  attr_accessor :node_info
+
+  # Meta information associated with the node.
+  attr_accessor :meta_info
+
+  # Initializes a new Node instance.
+  #
+  # +parent+::
+  #    if this parameter is +nil+, then the new node acts as root. Otherwise, +parent+ has to
+  #    be a valid node instance.
+  # +path+::
+  #    The path for this node. If this node is a directory, the path must have a trailing
+  #    slash ('dir/'). If it is a fragment, the hash sign must be the first character of the
+  #    path ('#fragment'). A compound path like 'dir/file#fragment' is also allowed as are
+  #    absolute paths like 'http://myhost.com/'.
+  #
+  #    Note: a compound path like 'dir/file' is invalid if the parent node already has a child
+  #    with path 'dir/'!!! (solution: just create a node with path 'file' and node 'dir/' as parent!)
+  def initialize( parent, path )
     @parent = parent
-    @metainfo = Hash.new
-  end
-
-  # Get object +name+ from +metainfo+.
-  def []( name )
-    @metainfo[name]
-  end
-
-  # Assign +value+ to +metainfo+ called +name.
-  def []=( name, value )
-    @metainfo[name] = value
-  end
-
-  # Get the recursive value for metainfo +name+. +ignoreVirtual+ specifies if virtual nodes should
-  # not be appended, but they are traversed nonetheless.
-  def recursive_value( name, ignoreVirtual = true )
-    value = ignoreVirtual && @metainfo['virtual'] ? '' : @metainfo[name]
-    if value.nil?
-      value = ''
-      self.logger.warn { "No meta information called '#{name}' for <#{metainfo['src']}>" }
-    end
-    @parent.nil? ? value : @parent.recursive_value( name, ignoreVirtual ) + value
-  end
-
-
-  # Returns the relative path from this node to +dest+.
-  def relpath_to_string( dest )
-    if dest[0] == ?/
-      from = recursive_value( 'dest' ).sub( /#{self['dest']}$/, '' ).split( '/' )[1..-1] || []
-      from.fill( '..' )
-      from.concat( dest.split( '/' )[1..-1] ).join( '/' )
-    else
-      from = recursive_value( 'dest' ).sub( /#{self['dest']}$/, '' ).split( '/' )[1..-1] || []
-      from.concat( dest.split( '/' ) ).join( '/' )
-    end
-  end
-
-  # Return the relative path from this node to the destNode, virtual nodes are not used in the
-  # calculation. The destNode can be any non virtual node. If +destNode+ starts with http://, the
-  # relative path to it is the empty string. If +includeDestNode+ is true, then the path of the
-  # destination node is appended to the calculated path.
-  def relpath_to_node( destNode, includeDestNode = true)
-    if URI::parse( destNode['dest'] ).absolute?
-      path = destNode['dest']
-    else
-      from = recursive_value( 'dest' ).sub( /#{self['dest']}$/, '' ).split( '/' )[1..-1] || []
-      to = destNode.recursive_value( 'dest' ).sub( /#{destNode['dest']}$/, '' ).split( '/' )[1..-1] || []
-
-      while from.size > 0 and to.size > 0 and from[0] == to[0]
-        from.shift
-        to.shift
-      end
-
-      from.fill( '..' )
-      from.concat( to )
-      path = ( from.length == 0 ? '.' : from.join( '/' ) )
-      path += '/' + destNode['dest'] if includeDestNode && !destNode.parent.nil?
-    end
-    path
-  end
-
-
-  # Return the node identified by +destString+ relative to the current node.
-  def node_for_string( destString, metainfo='dest' )
-    node = get_node_for_string( destString, metainfo )
-    if node.nil?
-      self.logger.warn { "Could not get destination node '#{destString}' for <#{recursive_value( 'src' )}>" }
-    end
-    node
-  end
-
-  # Check if there is a node for +destString+.
-  def node_for_string?( destString, metainfo='dest' )
-    get_node_for_string( destString, metainfo )
-  end
-
-  # Return the level of the node. The level specifies how deep the node is in the hierarchy.
-  def level( ignoreVirtual = true )
-    if self.parent.nil?
-      1
-    else
-      self.parent.level( ignoreVirtual ) \
-      + ( (@metainfo['virtual'] && ignoreVirtual) || (@metainfo['dest'] !~ /\/$/) ? 0 : 1 )
-    end
-  end
-
-  # Checks if the current node is in the subtree in which the supplied node is. This is done by
-  # analyzing the paths of the two nodes.
-  def in_subtree?( node )
-    node = node.parent if node.metainfo['dest'] !~ /\/$/
-    node = node.parent while node['virtual']
-    /^#{node.recursive_value( 'dest' )}/ =~ recursive_value( 'dest' )
-  end
-
-  # Returns the parent directory for this node. This function ignores virtual directories.
-  def parent_dir
-    node = self.parent
-    node = node.parent while !node.nil? && node['virtual']
-    node
+    @path = path
+    @node_info = Hash.new
+    @meta_info = Hash.new
   end
 
   # Returns the root node for +node+.
@@ -139,61 +66,96 @@ class Node
     node
   end
 
-  # Returns an informative representation of the node.
-  def to_s
-    "<##{self.class.name}: src=#{@metainfo['src']}, dest=#{@metainfo['dest']}, title=#{@metainfo['title']}>"
+  # Gets object +name+ from +meta_info+.
+  def []( name )
+    @meta_info[name]
   end
 
-  #######
-  private
-  #######
+  # Assigns +value+ to +meta_info+ called +name.
+  def []=( name, value )
+    @meta_info[name] = value
+  end
 
-  def get_node_for_string( destString, metainfo='dest' )
-    return self if destString == ''
-
-    if /^\// =~ destString
-      node = Node.root( self )
-      destString = destString[1..-1]
+  # Returns the full path for this node. This also includes the paths of virtual parent nodes.
+  def full_path
+    if URI::parse( @path ).absolute?
+      @path
     else
-      node = @metainfo['int:directory?'] ? self : self.parent_dir || self
+      (@parent.nil? ? @path : @parent.full_path + @path)
     end
+  end
 
-    startElement = node
-    elements = destString.split( '/' )
-    pagelang = (/\.(\w\w\w?)\.page$/ =~ destString ? $1 : Webgen::Plugin['Configuration']['lang'])
+  # Returns the level of the node. The level specifies how deep the node is in the hierarchy.
+  def level
+    (@parent.nil? ? 0 : @parent.level + 1)
+  end
 
-    elements.each do |element|
-      break if node.nil?
-      case element
-      when '..' then node = node.parent
-      else
-        node = node.find do |child|
-          /^#{element}\/?$/ =~ child[metainfo] || \
-          (metainfo == 'dest' && (child['int:pagename'] == element || child['int:local-pagename'] == element) && \
-           child['lang'] == pagelang)
-        end
-      end
-    end
+  # Checks if the node is a directory.
+  def is_directory?
+    path[-1] == ?/
+  end
 
-    # try extended search where child['dest'] can have slashes
-    if node.nil?
-      node = startElement
-      elements.each_with_index do |element, index|
-        break if node.nil?
-        temp = node.find {|child| /^#{elements[index..-1].join( '/' )}\/?$/ =~ child[metainfo]}
-        if temp.nil?
-          case element
-          when '..' then node = node.parent
-          else node = node.find {|child| /^#{element}\/?$/ =~ child[metainfo] }
+  # Checks if the node is a file.
+  def is_file?
+    !is_directory? && !is_fragment?
+  end
+
+  # Checks if the node is a fragment.
+  def is_fragment?
+    path[0] == ?#
+  end
+
+  # Returns the route to the given path. The parameter +path+ can be: a String, a Node or an URL.
+  def route_to( other )
+    url = case other
+          when String then self.to_url + other
+          when Node then other.to_url
+          else raise ArgumentError
           end
-        else
-          node = temp
-          break
-        end
-      end
+    self.to_url.route_to( url ).to_s
+  end
+
+  # Checks if the current node is in the subtree which is spanned by the supplied node. The check is
+  # performed using only the +parent+ information of the involved nodes.
+  def in_subtree_of?( node )
+    temp = self
+    temp = temp.parent while !temp.nil? && temp != node
+    !temp.nil?
+  end
+
+  # Returns the node representing the given +path+. The path can be absolute or relative to the
+  # current node. If no node exists for the given path or it would lie outside the node tree, +nil+
+  # is returned.
+  def resolve_node( path )
+    url = self.to_url + path
+
+    path = url.path[1..-1] + (url.fragment.nil? ? '' : '#' + url.fragment)
+
+    return nil if path =~ /^\.\./ # path outside dest dir
+
+    node = Node.root( self )
+
+    while !node.nil? && !path.empty?
+      node = node.find {|c| /^#{c.is_directory? ? c.path[0..-2] : c.path}/ =~ path}
+      path.sub!( (node.is_directory? ? /^#{node.path[0..-2]}\/?/ : /^#{node.path}/), '' ) unless node.nil?
+      break if path.empty?
     end
 
     node
   end
+
+  # Returns the full URL (including dummy scheme and host) for use with URI classes.
+  def to_url
+    url = URI::parse( full_path )
+    url = URI::parse( 'webgen://webgen.localhost/' ) + url unless url.absolute?
+    url
+  end
+
+  # Returns an informative representation of the node.
+  def inspect
+    "<##{self.class.name}: path=#{full_path}>"
+  end
+
+  alias_method :to_s, :full_path
 
 end

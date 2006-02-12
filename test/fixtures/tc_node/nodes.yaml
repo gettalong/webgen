@@ -1,0 +1,52 @@
+-   url: '/'
+    parent: ~
+    meta_info:
+      test: test
+    node_info:
+      test: test
+
+-   url: file_a
+    parent: /
+
+-   ref: file_ah
+    url: http://localhost/file_ah
+    parent: /
+
+-   ref: file_ah#
+    url: '#doit'
+    parent: file_ah
+
+-   url: dir_a/
+    parent: /
+
+-   url: file_aa
+    parent: dir_a/
+
+-   ref: file_aa#
+    url: '#doit'
+    parent: file_aa
+
+-   ref: file_aa#2
+    url: '#doelse'
+    parent: file_aa
+
+-   url: file_ab
+    parent: dir_a/
+
+-   url: dir_b/
+    parent: /
+
+-   url: file_ba
+    parent: dir_b/
+
+-   ref: file_ba#
+    url: '#doit'
+    parent: file_ba
+
+-   ref: file_bb
+    url: dir_b/file_bb
+    parent: /
+
+-   ref: file_zb
+    url: dir_z/file_zb
+    parent: /

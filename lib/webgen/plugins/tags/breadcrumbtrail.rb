@@ -45,7 +45,7 @@ module Tags
 
       until node.nil?
         out.push( node['processor'].get_html_link( node, srcNode ) )
-        begin node = node.parent end while !node.nil? && node['virtual']
+        node = node.parent while !node.nil? && node['virtual']
       end
 
       out = out.reverse.join( get_param( 'separator' ) )
