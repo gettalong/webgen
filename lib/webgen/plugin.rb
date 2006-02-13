@@ -162,7 +162,7 @@ module Webgen
 
     # Returns parameter +name+.
     def []( name )
-      @plugin_manager.get_param( self.class, name )
+      @plugin_manager.param_for_plugin( self.class, name )
     end
     alias get_param []
 
@@ -307,7 +307,7 @@ module Webgen
     end
 
     # Instantiates the plugins in the correct order, except the classes which have a constant
-    # +VIRTUAL+. TODO(should be done somewhere else) add CommandPlugin instance to the global CommandParser.
+    # +VIRTUAL+.
     def init
       @plugins = {} #TODO anything else needed to reset state?
       dep = DependencyHash.new
@@ -319,11 +319,6 @@ module Webgen
           @plugins[config.plugin_klass.name] = config.plugin_klass.new( self )
         end
       end
-
-      # TODO(make command parser work - special PluginManager (only used in CLI))
-      #Webgen::Plugin.config.keys.find_all {|klass| klass.ancestors.include?( Webgen::CommandPlugin )}.each do |cmdKlass|
-      #  add_cmdparser_command( Webgen::Plugin.config[cmdKlass].obj )
-      #end
     end
 
     # Returns the plugin instance for +plugin+. +plugin+ can either be a plugin class or the name of
@@ -333,14 +328,14 @@ module Webgen
     end
 
     # Returns the parameter +param+ for the +plugin+.
-    def get_param( plugin, param )
+    def param_for_plugin( plugin, param )
       plugin = ( plugin.kind_of?( String ) ? plugin_class_by_name( plugin ) : plugin )
 
       value_found = false
       value = nil
       plugin.ancestor_classes.each do |plugin_klass|
         begin
-          value = get_param_for_plugin( plugin_klass, param )
+          value = get_plugin_param_value( plugin_klass, param )
           value_found = true
           break
         rescue PluginParamNotFound
@@ -354,6 +349,7 @@ module Webgen
       end
     end
 
+=begin
     # TODO Reloads the configuration file data.
     def load_config_file
       @@configFileData = ( File.exists?( 'config.yaml' ) ? YAML::load( File.new( 'config.yaml' ) ) : {} )
@@ -367,17 +363,7 @@ module Webgen
         end
       end
     end
-
-    # TODO Reset the configuration data. The configuration has to be initialized again.
-    def reset_config_data
-      @@config.each do |pluginKlass, data|
-        if pluginKlass != Logging && pluginKlass != Configuration
-          data.obj = nil
-        end
-        data.params.each {|name, p| set_param( data.plugin, name, p.default ) } if data.params
-      end
-      load_config_file
-    end
+=end
 
     #######
     private
@@ -403,26 +389,20 @@ module Webgen
       deps
     end
 
-    def get_param_for_plugin( plugin_klass, param )
+    def get_plugin_param_value( plugin, param )
+      raise PluginParamNotFound.new( plugin.name, param ) unless plugin.config.params.has_key?( param )
+
       value_found = false
       if @plugin_config
         begin
-          value = @plugin_config.get_param( plugin_klass, param )
+          value = @plugin_config.param_for_plugin( plugin, param )
           value_found = true
         rescue PluginParamNotFound
         end
       end
 
-      value = get_param_default( plugin_klass, param ) unless value_found
+      value = plugin.config.params[param].default unless value_found
       value
-    end
-
-    def get_param_default( plugin, param )
-      if plugin.config.params.has_key?( param )
-        plugin.config.params[param].default
-      else
-        raise PluginParamNotFound.new( plugin.name, param )
-      end
     end
 
   end

@@ -115,6 +115,23 @@ class PluginTest < Test::Unit::TestCase
 end
 
 
+class DummyConfig
+
+  def initialize
+    @config = {
+      Testing::BasicPlugin => { 'param' => 'value' },
+      Testing::PluginWithData => { 'test' => [6,7] },
+      Testing::DerivedPlugin => { 'test' => [7,8] }
+    }
+  end
+
+  def param_for_plugin( plugin, param )
+    @config[plugin][param]
+  end
+
+end
+
+
 class PluginManagerTest < Test::Unit::TestCase
 
   def setup
@@ -148,7 +165,7 @@ class PluginManagerTest < Test::Unit::TestCase
     assert_kind_of( Testing::PluginWithData, manager['Testing::PluginWithData'] )
   end
 
-  def test_get_param
+  def test_param_for_plugin
     loader = Webgen::PluginLoader.new
     loader.load_from_dir( FIXTURE_PATH, '' )
     manager = Webgen::PluginManager.new( [loader] )
@@ -159,15 +176,14 @@ class PluginManagerTest < Test::Unit::TestCase
     assert_equal( Testing::PARAM_ARRAY[1], manager[Testing::PluginWithData].get_param( Testing::PARAM_ARRAY[0] ) )
     assert_equal( Testing::PARAM_ARRAY[1], manager[Testing::DerivedPlugin].get_param( Testing::PARAM_ARRAY[0] ) )
     assert_equal( manager[Testing::PluginWithData].get_param( Testing::PARAM_ARRAY[0] ),
-                  manager.get_param( Testing::PluginWithData, Testing::PARAM_ARRAY[0] ) )
+                  manager.param_for_plugin( Testing::PluginWithData, Testing::PARAM_ARRAY[0] ) )
     assert_equal( manager[Testing::PluginWithData].get_param( Testing::PARAM_ARRAY[0] ),
-                  manager.get_param( 'Testing::PluginWithData', Testing::PARAM_ARRAY[0] ) )
+                  manager.param_for_plugin( 'Testing::PluginWithData', Testing::PARAM_ARRAY[0] ) )
 
-    #TODO assign plugin configuration to manager, test get changed value
-  end
-
-  def test_reset_config
-    #TODO
+    manager.plugin_config = DummyConfig.new
+    assert_raise( Webgen::PluginParamNotFound ) { manager.param_for_plugin( 'Testing::BasicPlugin', 'param' ) }
+    assert_equal( [6,7], manager[Testing::PluginWithData].get_param( Testing::PARAM_ARRAY[0] ) )
+    assert_equal( [6,7], manager[Testing::DerivedPlugin].get_param( Testing::PARAM_ARRAY[0] ) )
   end
 
 end
