@@ -1,7 +1,7 @@
-require 'test/unit'
+require 'webgen/test'
 require 'webgen/languages'
 
-class LanguageTest < Test::Unit::TestCase
+class LanguageTest < Webgen::TestCase
 
   def test_get_language
     lang1 = lang2 = lang3 = lang4 = nil

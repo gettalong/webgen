@@ -1,8 +1,8 @@
-require 'test/unit'
+require 'webgen/test'
 require 'webgen/composite'
 
 
-class CompositeTest < Test::Unit::TestCase
+class CompositeTest < Webgen::TestCase
 
   class CompositeTestclass
     include Composite

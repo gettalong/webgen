@@ -1,9 +1,9 @@
-require 'test/unit'
+require 'webgen/test'
 require 'webgen/node'
 require 'yaml'
 
 
-class NodeTest < Test::Unit::TestCase
+class NodeTest < Webgen::TestCase
 
   FIXTURE_PATH = File.join( File.dirname(__FILE__), '../fixtures/tc_node' ) + '/'
 

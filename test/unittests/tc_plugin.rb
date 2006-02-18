@@ -1,4 +1,4 @@
-require 'test/unit'
+require 'webgen/test'
 require 'webgen/plugin'
 
 class Module
@@ -8,17 +8,15 @@ class Module
 end
 
 
-FIXTURE_PATH = File.join( File.dirname(__FILE__), '../fixtures/tc_plugin' ) + '/'
-
 def undo_all
   Testing.constants.each {|c| Testing.remove_const(c)} if Object.const_defined?( :Testing )
-  $".delete( File.join( FIXTURE_PATH, 'plugin1.rb' ) )
-  $".delete( File.join( FIXTURE_PATH, 'plugin2.rb' ) )
+  $".delete( PluginLoaderTest.fixture_path( 'plugin1.rb' ) )
+  $".delete( PluginLoaderTest.fixture_path( 'plugin2.rb' ) )
 end
 
 
 
-class PluginLoaderTest < Test::Unit::TestCase
+class PluginLoaderTest < Webgen::TestCase
 
   def setup
     @l = Webgen::PluginLoader.new
@@ -32,7 +30,7 @@ class PluginLoaderTest < Test::Unit::TestCase
 
   def test_load_from_dir
     assert_nothing_thrown do
-      @l.load_from_dir( FIXTURE_PATH, '' )
+      @l.load_from_dir( fixture_path, '' )
     end
     check_loaded_plugin( @l, Testing::BasicPlugin )
     check_loaded_plugin( @l, Testing::PluginWithData )
@@ -41,7 +39,7 @@ class PluginLoaderTest < Test::Unit::TestCase
 
   def test_load_from_file
     assert_nothing_thrown do
-      @l.load_from_file( File.join( FIXTURE_PATH, 'plugin1') )
+      @l.load_from_file( fixture_path( 'plugin1') )
     end
     check_loaded_plugin( @l, Testing::BasicPlugin )
     check_loaded_plugin( @l, Testing::PluginWithData )
@@ -76,11 +74,11 @@ class PluginLoaderTest < Test::Unit::TestCase
 end
 
 
-class PluginTest < Test::Unit::TestCase
+class PluginTest < Webgen::TestCase
 
   def setup
     @l = Webgen::PluginLoader.new
-    @l.load_from_dir( FIXTURE_PATH, '' )
+    @l.load_from_dir( fixture_path, '' )
   end
 
   def teardown
@@ -119,9 +117,9 @@ class DummyConfig
 
   def initialize
     @config = {
-      Testing::BasicPlugin => { 'param' => 'value' },
-      Testing::PluginWithData => { 'test' => [6,7] },
-      Testing::DerivedPlugin => { 'test' => [7,8] }
+      'Testing::BasicPlugin' => { 'param' => 'value' },
+      'Testing::PluginWithData' => { 'test' => [6,7] },
+      'Testing::DerivedPlugin' => { 'test' => [7,8] }
     }
   end
 
@@ -132,7 +130,7 @@ class DummyConfig
 end
 
 
-class PluginManagerTest < Test::Unit::TestCase
+class PluginManagerTest < Webgen::TestCase
 
   def setup
   end
@@ -143,31 +141,33 @@ class PluginManagerTest < Test::Unit::TestCase
 
   def test_add_plugin_classes
     loader = Webgen::PluginLoader.new
-    loader.load_from_file( File.join( FIXTURE_PATH, 'plugin1.rb' ) )
+    loader.load_from_file( fixture_path( 'plugin1.rb' ) )
     manager = Webgen::PluginManager.new( [loader] )
 
     assert_raise( Webgen::PluginNotFound ) { manager.add_plugin_classes( loader.plugins) }
     assert_equal( [], manager.plugin_classes )
 
-    loader.load_from_file( File.join( FIXTURE_PATH, 'plugin2.rb' ) )
+    loader.load_from_file( fixture_path( 'plugin2.rb' ) )
     assert_nothing_raised { manager.add_plugin_classes( loader.plugins) }
     assert_equal( loader.plugins, manager.plugin_classes )
   end
 
   def test_init
     loader = Webgen::PluginLoader.new
-    loader.load_from_dir( FIXTURE_PATH, '' )
+    loader.load_from_dir( fixture_path, '' )
 
     manager = Webgen::PluginManager.new( [loader] )
     manager.add_plugin_classes( loader.plugins )
     manager.init
     assert_kind_of( Testing::BasicPlugin, manager[Testing::BasicPlugin] )
     assert_kind_of( Testing::PluginWithData, manager['Testing::PluginWithData'] )
+
+    #TODO test classes with VIRTUAL constant
   end
 
   def test_param_for_plugin
     loader = Webgen::PluginLoader.new
-    loader.load_from_dir( FIXTURE_PATH, '' )
+    loader.load_from_dir( fixture_path, '' )
     manager = Webgen::PluginManager.new( [loader] )
 
     manager.add_plugin_classes( loader.plugins )

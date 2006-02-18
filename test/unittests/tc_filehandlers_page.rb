@@ -1,9 +1,9 @@
 =begin
-require 'test/unit'
+require 'webgen/test'
 require 'webgen/plugins/coreplugins/configuration'
 require 'setup'
 
-class PageHandlerTest < Test::Unit::TestCase
+class PageHandlerTest < Webgen::TestCase
 
   Webgen::Plugin['Configuration'].init_all
 

@@ -1,4 +1,4 @@
-require File.join( FIXTURE_PATH, 'plugin1.rb' )
+require File.join( File.dirname( __FILE__ ), 'plugin1.rb' )
 
 module Testing
 

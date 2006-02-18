@@ -33,31 +33,6 @@ end
 
 module Webgen
 
-  class Logger < ::Logger
-
-    def initialize( dev, files, size, level )
-      super( dev, files, size )
-      self.datetime_format = "%Y-%m-%d %H:%M:%S"
-      self.level = level
-    end
-
-    def format_message( severity, timestamp, msg, progname )
-      "%s %5s -- %s: %s\n" % [timestamp, severity, progname, msg ]
-    end
-
-    def warn( progname = nil, &block )
-      super
-      self.debug { "Call stack for last warning: #{caller[3..-1].join("\n")}" }
-    end
-
-    def error( progname = nil, &block )
-      super
-      self.debug { "Call stack for last error: #{caller[3..-1].join("\n")}" }
-    end
-
-  end
-
-
   # Base module for all plugins. This module should be included by classes which need to derive from
   # an existing class but also need the power of the plugin system. If a class does not have any
   # base class, it is better to derive it from Webgen::Plugin instead of including this module.
@@ -115,7 +90,6 @@ module Webgen
       # +changeHandler+:: optional, method/proc which is invoked every time the parameter is changed.
       #                   Handler signature: changeHandler( paramName, oldValue, newValue )
       def param( name, default, description, changeHandler = nil )
-        logger.debug { "Adding parameter '#{name}' for plugin class '#{self.config.name}'" }
         data = OpenStruct.new( :name => name, :default => default,
                                :description => description, :changeHandler => changeHandler )
         self.config.params[name] = data
@@ -131,7 +105,6 @@ module Webgen
       # - object.get_[name]
       def define_handler( name )
         s = "def self.register_#{name}( param )
-        self.logger.info { \"Registering class \#{self.name} for handling #{name} '\#{param}'\" }
         (Webgen::Plugin.config[#{self.name}].#{name}s ||= {})[param] = self
         Webgen::Plugin.config[self].registered_#{name} = param
       end\n"
@@ -139,7 +112,6 @@ module Webgen
         if Webgen::Plugin.config[#{self.name}].#{name}s.has_key?( param )
           Webgen::Plugin.config[Webgen::Plugin.config[#{self.name}].#{name}s[param]].obj
         else
-          self.logger.error { \"Invalid #{name} specified: \#{param}! Using #{self.name}!\" }
            Webgen::Plugin.config[#{self.name}].obj
         end
       end"
@@ -165,6 +137,12 @@ module Webgen
       @plugin_manager.param_for_plugin( self.class, name )
     end
     alias get_param []
+
+    # Logs the the result of +block+ using the severity level +sev_level+.
+    def log( sev_level, &block )
+      source = self.class.name + '#' + caller[0][Regexp.new("`.*'")][1..-2]
+      @plugin_manager.log_msg( sev_level, source, &block )
+    end
 
   end
 
@@ -194,7 +172,6 @@ module Webgen
 
     # Loads all plugins specified in the +file+.
     def load_from_file( file )
-      logger.debug { "Loading plugin file <#{file}>..." }
       cont, klass = catch( :plugin_class_found ) do
         require file
         nil # return value for catch, means: all classes processed
@@ -292,6 +269,7 @@ module Webgen
 
     # Creates a new PluginManager instance.
     def initialize( plugin_loaders = [], plugin_classes = [] )
+      @logger = Logger.new #TODO how to configure the logger (level, output to files), should be assigned by WebSite
       @plugins = {}
       @plugin_classes = []
       @plugin_loaders = plugin_loaders
@@ -314,8 +292,8 @@ module Webgen
       @plugin_classes.each {|plugin| dep[plugin.name] = plugin.config.dependencies }
       dep.tsort.each do |plugin_name|
         config = plugin_class_by_name( plugin_name ).config
-        unless config.plugin_klass.const_defined?( 'VIRTUAL' )
-          self.logger.debug { "Creating plugin of class #{config.plugin_klass.name}" }
+        unless config.plugin_klass.const_defined?( 'VIRTUAL' ) #TODO is VIRTUAL still needed?
+          log_msg( :debug, 'PluginManager#init') { 'Creating plugin of class #{config.plugin_klass.name}' }
           @plugins[config.plugin_klass.name] = config.plugin_klass.new( self )
         end
       end
@@ -349,21 +327,11 @@ module Webgen
       end
     end
 
-=begin
-    # TODO Reloads the configuration file data.
-    def load_config_file
-      @@configFileData = ( File.exists?( 'config.yaml' ) ? YAML::load( File.new( 'config.yaml' ) ) : {} )
-      @@configFileData = {} unless @@configFileData.kind_of?( Hash )
-      @@configFileData.each do |pluginName, params|
-        next if (pair = @@config.find {|pluginKlass, data| data.plugin == pluginName}).nil?
-        if params.kind_of?( Hash ) && !pair[1].params.nil?
-          pair[1].params.each do |name, value|
-            set_param( pluginName, name, params[name] ) if params.has_key?( name )
-          end
-        end
-      end
+    # Logs the result of executing +block+ under the severity level +sev_level+. The parameter
+    # +source+ identifies the source of the log message.
+    def log_msg( sev_level, source, &block )
+      @logger.send( sev_level, source, &block )
     end
-=end
 
     #######
     private
@@ -395,7 +363,7 @@ module Webgen
       value_found = false
       if @plugin_config
         begin
-          value = @plugin_config.param_for_plugin( plugin, param )
+          value = @plugin_config.param_for_plugin( plugin.name, param )
           value_found = true
         rescue PluginParamNotFound
         end
@@ -407,31 +375,22 @@ module Webgen
 
   end
 
-end
 
+  # Used for logging the messages of plugin instances.
+  class Logger < ::Logger
 
-class Object
+    def initialize( logdev = STDERR )
+      super( logdev, 0, 0 )
+      self.level = ::Logger::ERROR
+      self.formatter = Proc.new do |severity, timestamp, progname, msg|
+        "%s %5s -- %s: %s\n" % [timestamp, severity, progname, msg ]
+      end
+    end
 
-  @@logger = Webgen::Logger.new( STDERR, 0, 0, Logger::ERROR )
-
-  def self.set_logger( logger )
-    @@logger = logger
-  end
-
-  def logger
-    @@logger
-  end
-
-end
-
-
-class Module
-
-  def self.logger
-    Object::LOGGER
   end
 
 end
+
 
 
 module Webgen
@@ -448,7 +407,6 @@ module Webgen
 
       include PluginDefs
 
-      # load_config_file
     end
 
 
@@ -467,9 +425,5 @@ module Webgen
 
   end
 
-  #require 'webgen/plugins/coreplugins/logging'
-  #require 'webgen/plugins/coreplugins/configuration'
-
+  #TODO load all webgen plugins here into DEFAULT_PLUGIN_LOADER
 end
-
-

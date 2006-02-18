@@ -1,7 +1,7 @@
-require 'test/unit'
+require 'webgen/test'
 require 'webgen/config'
 
-class ConfigTest < Test::Unit::TestCase
+class ConfigTest < Webgen::TestCase
 
   def test_constants
     assert_not_nil( Webgen::SUMMARY )

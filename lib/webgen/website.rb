@@ -102,7 +102,7 @@ module Webgen
     # Base path for the styles.
     BASE_PATH = File.join( Webgen.data_dir, 'website_styles' )
 
-    # See WebSiteDirectoryInfo#files
+    # See DirectoryInfo#files
     def files
       super.select {|f| f != File.join( path, 'README' )}
     end
@@ -143,6 +143,47 @@ module Webgen
       FileUtils.mkdir( directory )
       template.copy_to( directory )
       style.copy_to( File.join( directory, 'src' ) ) #TODO is using 'src' safe here?
+    end
+
+  end
+
+
+  # Raised when a configuration file has an invalid structure
+  class ConfigurationFileInvalid < RuntimeError; end
+
+  # Represents the configuration file of a website.
+  class ConfigurationFile
+
+    # Returns the whole configuration.
+    attr_reader :config
+
+    # Reads the content of the given configuration file and initialize a new object with it.
+    def initialize( config_file )
+      if File.exists?( config_file )
+        begin
+          @config = YAML::load( File.read( config_file ) )
+        rescue ArgumentError => e
+          raise ConfigurationFileInvalid, e.message
+        end
+      else
+        @config = {}
+      end
+      check_config
+    end
+
+    # See PluginManager#param_for_plugin .
+    def param_for_plugin( plugin, param )
+      @config[plugin][param] if @config.has_key?( plugin )
+    end
+
+    #######
+    private
+    #######
+
+    def check_config
+      if !@config.kind_of?( Hash ) || !@config.all? {|k,v| v.kind_of?( Hash )}
+        raise ConfigurationFileInvalid.new( 'Structure of config file is not valid, has to be a Hash of Hashes' )
+      end
     end
 
   end

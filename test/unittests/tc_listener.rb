@@ -1,8 +1,8 @@
-require 'test/unit'
+require 'webgen/test'
 require 'webgen/listener'
 
 
-class ListenerTest < Test::Unit::TestCase
+class ListenerTest < Webgen::TestCase
 
   class ListenerTestclass
     include Listener
