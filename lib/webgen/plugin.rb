@@ -60,7 +60,7 @@ module Webgen
         @config = OpenStruct.new
         @config.plugin_klass = self
         @config.params = {}
-        @config.infos = {}
+        @config.infos = {:instantiate => true}
         @config.dependencies = []
       end
 
@@ -72,7 +72,7 @@ module Webgen
       # Sets general information about the plugin (summary text, description, ...). The parameter
       # has to be a Hash.
       def infos( param )
-        self.config.infos = param
+        self.config.infos.update( param )
       end
 
       # Add a dependency to the plugin. Dependencies are instantiated before the plugin gets
@@ -258,6 +258,9 @@ module Webgen
   # retrieving current parameter values.
   class PluginManager
 
+    # A list of all instantiated plugins.
+    attr_reader :plugins
+
     # Define which plugins should get instantiated.
     attr_reader :plugin_classes
 
@@ -284,19 +287,23 @@ module Webgen
       @plugin_classes.uniq!
     end
 
-    # Instantiates the plugins in the correct order, except the classes which have a constant
-    # +VIRTUAL+.
+    # Instantiates the plugins in the correct order, except the classes which have the plugin info
+    # +:instantiate+ set to +false+.
     def init
-      @plugins = {} #TODO anything else needed to reset state?
       dep = DependencyHash.new
       @plugin_classes.each {|plugin| dep[plugin.name] = plugin.config.dependencies }
       dep.tsort.each do |plugin_name|
         config = plugin_class_by_name( plugin_name ).config
-        unless config.plugin_klass.const_defined?( 'VIRTUAL' ) #TODO is VIRTUAL still needed?
+        unless !config.infos[:instantiate]
           log_msg( :debug, 'PluginManager#init') { 'Creating plugin of class #{config.plugin_klass.name}' }
           @plugins[config.plugin_klass.name] = config.plugin_klass.new( self )
         end
       end
+    end
+
+    # Resets the website by removing the instantiated plugins.
+    def reset
+      @plugins = {} #TODO anything else needed to reset state?
     end
 
     # Returns the plugin instance for +plugin+. +plugin+ can either be a plugin class or the name of
