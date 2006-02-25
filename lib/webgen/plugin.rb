@@ -265,9 +265,12 @@ module Webgen
     # Used for retrieving current plugin parameter values.
     attr_accessor :plugin_config
 
+    # The logger used by the instance and the plugin objects.
+    attr_accessor :logger
+
     # Creates a new PluginManager instance.
     def initialize( plugin_loaders = [], plugin_classes = [] )
-      @logger = Logger.new #TODO how to configure the logger (level, output to files), should be assigned by WebSite
+      @logger = nil
       @plugins = {}
       @plugin_classes = []
       @plugin_loaders = plugin_loaders
@@ -328,7 +331,7 @@ module Webgen
     # Logs the result of executing +block+ under the severity level +sev_level+. The parameter
     # +source+ identifies the source of the log message.
     def log_msg( sev_level, source, &block )
-      @logger.send( sev_level, source, &block )
+      @logger.send( sev_level, source, &block ) if @logger
     end
 
     #######

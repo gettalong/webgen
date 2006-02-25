@@ -116,21 +116,40 @@ module Webgen
     # The website directory.
     attr_reader :directory
 
-    def initialize( directory = Dir.pwd )
+    # The logger used for the website
+    attr_reader :logger
+
+    # Creates a new WebSite object for the given +directory+ and loads its plugins. If the
+    # +plugin_config+ parameter is given, it is used to resolve the values for plugin parameters.
+    # Otherwise, a ConfigurationFile instance is used as plugin configuration.
+    def initialize( directory = Dir.pwd, plugin_config = nil )
       @directory = directory
+      @logger = Webgen::Logger.new
+
+      @loader = PluginLoader.new
+      @loader.load_from_dir( File.join( @directory, 'plugin' ) )
+      @manager = PluginManager.new( [DEFAULT_PLUGIN_LOADER, @loader], DEFAULT_PLUGIN_LOADER.plugins + @loader.plugins )
+      @manager.logger = @logger
+      if plugin_config
+        @manager.plugin_config = plugin_config
+      else
+        begin
+          @manager.plugin_config = ConfigurationFile.new( File.join( @directory, 'config.yaml' ) )
+        rescue ConfigurationFileInvalid => e
+          @logger.error( 'WebSite#initialize' ) { e.message + ' -> Not using config file' }
+        end
+      end
     end
 
-    # Run webgen
+    # Initializes all plugins and renders the website.
     def render
-      Dir.chdir( @directory ) # TODO make this step unnecessary, prevents from concurrency
+      @logger.level = @manager.param_for_plugin( 'CorePlugins::Configuration', 'loggerLevel' )
+      @manager.init
 
-      logger.info "Starting Webgen..."
-      tree = Plugin['FileHandler'].build_tree
-      Plugin['TreeWalker'].execute( tree ) unless tree.nil?
-      Plugin['FileHandler'].write_tree( tree ) unless tree.nil?
-      logger.info "Webgen finished"
+      @logger.info( 'WebSite#render' ) { "Starting the rendering website #{directory}..." }
+      @manager['FileHandler::FileHandler'].render_site
+      @logger.info( 'WebSite#render' ) { "Rendering of #{directory} finished" }
     end
-
 
     # Create a website in the +directory+, using the template +templateName+ and the style +styleName+.
     def self.create_website( directory, templateName = 'default', styleName = 'default' )
@@ -142,7 +161,7 @@ module Webgen
       raise ArgumentError.new( "Directory <#{directory}> does already exist!") if File.exists?( directory )
       FileUtils.mkdir( directory )
       template.copy_to( directory )
-      style.copy_to( File.join( directory, 'src' ) ) #TODO is using 'src' safe here?
+      style.copy_to( File.join( directory, 'src' ) )
     end
 
   end

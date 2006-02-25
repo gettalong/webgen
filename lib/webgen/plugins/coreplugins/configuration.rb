@@ -20,32 +20,19 @@
 #++
 #
 
-require 'cmdparse'
-require 'webgen/node'
-
 module CorePlugins
 
-  # Responsible for loading the other plugin files and holds the basic configuration options.
+  # Used for storing the basic configuration options.
   class Configuration < Webgen::Plugin
 
-    infos :summary => "Responsible for loading plugins and holding general parameters"
+    infos :summary => "Responsible for storing general parameters"
 
-    param 'srcDirectory', 'src', 'The directory from which the source files are read.'
-    param 'outDirectory', 'output', 'The directory to which the output files are written.'
+    param 'srcDir', 'src', 'The directory from which the source files are read.'
+    param 'outDir', 'output', 'The directory to which the output files are written.'
     param 'lang', 'en', 'The default language.'
-
-    # Returns the +CommandParser+ object used for parsing the command line. You can add site
-    # specific commands to it by calling the Configuration#add_cmdparser_command method!
-    attr_accessor :cmdparser
-
-    def add_cmdparser_command( command )
-      @cmdparser.add_command( command ) if @cmdparser
-    end
+    param 'loggerLevel', 2, 'The logging level, ranges from 0 (debug, more verbose) to 3 (error, less verbose)'
 
   end
-
-  # Initialize single configuration instance
-  #Webgen::Plugin.config[Configuration].obj = Configuration.new
 
 end
 
