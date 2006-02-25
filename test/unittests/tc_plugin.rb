@@ -87,7 +87,7 @@ class PluginTest < Webgen::TestCase
   end
 
   def test_plugin_config
-    check_plugin_data( Testing::BasicPlugin, {:instantiate => true}, [], [] )
+    check_plugin_data( Testing::BasicPlugin, {}, [], [] )
     check_plugin_data( Testing::PluginWithData, Testing::INFOS_HASH, Testing::PARAM_ARRAY, Testing::DEPS_ARRAY_CHECK )
   end
 

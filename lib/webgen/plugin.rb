@@ -60,7 +60,7 @@ module Webgen
         @config = OpenStruct.new
         @config.plugin_klass = self
         @config.params = {}
-        @config.infos = {:instantiate => true}
+        @config.infos = {}
         @config.dependencies = []
       end
 
@@ -294,7 +294,7 @@ module Webgen
       @plugin_classes.each {|plugin| dep[plugin.name] = plugin.config.dependencies }
       dep.tsort.each do |plugin_name|
         config = plugin_class_by_name( plugin_name ).config
-        unless !config.infos[:instantiate]
+        unless config.infos[:no_instantiation]
           log_msg( :debug, 'PluginManager#init') { 'Creating plugin of class #{config.plugin_klass.name}' }
           @plugins[config.plugin_klass.name] = config.plugin_klass.new( self )
         end
