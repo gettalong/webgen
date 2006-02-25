@@ -67,6 +67,10 @@ class PluginLoaderTest < Webgen::TestCase
     assert( @l.has_plugin?( 'PluginLoaderTest::TestPlugin' ) )
   end
 
+  def test_default_plugin_loader
+    assert_equal( 0, Webgen::DEFAULT_PLUGIN_LOADER.plugins.length )
+  end
+
   def check_loaded_plugin( loader, plugin )
     assert( loader.plugins.include?( plugin ), "#{plugin} not loaded" )
   end
@@ -131,9 +135,6 @@ end
 
 
 class PluginManagerTest < Webgen::TestCase
-
-  def setup
-  end
 
   def teardown
     undo_all

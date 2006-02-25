@@ -172,12 +172,7 @@ module Webgen
 
     # Loads all plugins specified in the +file+.
     def load_from_file( file )
-      cont, klass = catch( :plugin_class_found ) do
-        require file
-        nil # return value for catch, means: all classes processed
-      end
-      add_plugin_class( klass ) unless klass.nil?
-      cont.call if cont
+      load_from_block { require file }
     end
 
     # Loads all plugins which get declared in the given block.
@@ -290,6 +285,7 @@ module Webgen
     # Instantiates the plugins in the correct order, except the classes which have the plugin info
     # +:instantiate+ set to +false+.
     def init
+      @plugins = {}
       dep = DependencyHash.new
       @plugin_classes.each {|plugin| dep[plugin.name] = plugin.config.dependencies }
       dep.tsort.each do |plugin_name|
@@ -299,11 +295,6 @@ module Webgen
           @plugins[config.plugin_klass.name] = config.plugin_klass.new( self )
         end
       end
-    end
-
-    # Resets the website by removing the instantiated plugins.
-    def reset
-      @plugins = {} #TODO anything else needed to reset state?
     end
 
     # Returns the plugin instance for +plugin+. +plugin+ can either be a plugin class or the name of

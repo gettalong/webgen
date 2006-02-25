@@ -15,7 +15,7 @@ module Webgen
                     File.join( parent_path, 'fixtures', File.basename( file, '.*' ) )
                   end
 
-      klass.class_eval( "@@fixture_path = '#{full_path}/'" )
+      klass.class_eval( "FIXTURE_PATH = '#{full_path}/'" )
     end
 
     def self.suite
@@ -27,7 +27,7 @@ module Webgen
     end
 
     def self.fixture_path( filename = nil )
-      (filename.nil? ? class_eval( '@@fixture_path' ) : File.join( class_eval( '@@fixture_path' ), filename ) )
+      (filename.nil? ? self::FIXTURE_PATH : File.join( self::FIXTURE_PATH, filename ) )
     end
 
     def fixture_path( filename = nil )

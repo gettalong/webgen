@@ -5,11 +5,8 @@ require 'yaml'
 
 class NodeTest < Webgen::TestCase
 
-  FIXTURE_PATH = File.join( File.dirname(__FILE__), '../fixtures/tc_node' ) + '/'
-
-
   def setup
-    @ni = YAML::load( File.read( File.join( FIXTURE_PATH, 'nodes.yaml' ) ) )
+    @ni = YAML::load( File.read( fixture_path( 'nodes.yaml' ) ) )
     @n = {}
     @ni.each do |info|
       @n[info['ref'] || info['url']] = Node.new( @n[info['parent']], info['url'] )

@@ -56,7 +56,7 @@ class ListenerTest < Webgen::TestCase
     assert_nothing_raised do
       @testclass.add_msg_listener( :testmsg, method(:msg_receiver) )
       @testclass.add_msg_listener( :testmsg ) do |*args|
-        msg_receiver *args
+        msg_receiver( *args )
       end
     end
     assert_equal( 0, @times )
