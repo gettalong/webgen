@@ -89,7 +89,7 @@ module Composite
 
   # Iterates over all childrenldren
   def each   # :yields: child
-    children.each {|child| yield child } if defined?( @children )
+    @children.each {|child| yield child } if defined?( @children )
   end
 
 
