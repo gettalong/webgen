@@ -47,11 +47,11 @@ end
 class WebSiteTest < Webgen::TestCase
 
   def test_render
-    #TODO
+
   end
 
   def test_create_website
-    #TODO
+
   end
 
 end
