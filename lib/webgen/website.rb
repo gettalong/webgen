@@ -146,7 +146,7 @@ module Webgen
       @logger.level = @manager.param_for_plugin( 'CorePlugins::Configuration', 'loggerLevel' )
       @manager.init
 
-      @logger.info( 'WebSite#render' ) { "Starting the rendering website #{directory}..." }
+      @logger.info( 'WebSite#render' ) { "Starting rendering of website #{directory}..." }
       @manager['FileHandler::FileHandler'].render_site
       @logger.info( 'WebSite#render' ) { "Rendering of #{directory} finished" }
     end

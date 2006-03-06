@@ -1,0 +1,27 @@
+# invalid meta info
+- |
+  ---
+  doit
+  ---
+  asdf kadsfakl
+
+# only meta info
+- |
+  ---
+  doit: now
+
+# two blocks without name
+- |
+  asdf adkfsdf
+  asddkfjsf
+  ---
+  asdkf adfjlksdf
+
+# two blocks with same name
+- |
+  aasdf
+  asdfdf
+  --- name
+  asdkf dsaf
+  --- name
+  asdf adsf
