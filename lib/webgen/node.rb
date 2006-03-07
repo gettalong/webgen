@@ -116,7 +116,7 @@ class Node
   end
 
   # Checks if the current node is in the subtree which is spanned by the supplied node. The check is
-  # performed using only the +parent+ information of the involved nodes.
+  # performed using only the +parent+ information of the involved nodes, NOT the actual path values!
   def in_subtree_of?( node )
     temp = self
     temp = temp.parent while !temp.nil? && temp != node
@@ -157,5 +157,19 @@ class Node
   end
 
   alias_method :to_s, :full_path
+
+  #######
+  private
+  #######
+
+  # Delegates missing methods to a processor. The current node is placed into the argument array as
+  # the first argument before the method +name+ is invoked on the processor.
+  def method_missing( name, *args, &block )
+    if @node_info[:processor]
+      @node_info[:processor].send( name, *([self] + args), &block )
+    else
+      super
+    end
+  end
 
 end

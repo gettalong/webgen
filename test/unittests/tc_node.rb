@@ -3,6 +3,18 @@ require 'webgen/node'
 require 'yaml'
 
 
+class TestProcessor
+
+  def return( node, str )
+    str + ' ' + node.path
+  end
+
+  def with_block( node, str )
+    yield( node, str )
+  end
+
+end
+
 class NodeTest < Webgen::TestCase
 
   def setup
@@ -117,6 +129,13 @@ class NodeTest < Webgen::TestCase
     assert_nil( @n['file_a'].resolve_node( '../invalid' ) )
 
     assert_raise( ArgumentError ) { @n['file_aa'].resolve_node( 5456 ) }
+  end
+
+  def test_processor_routing
+    assert_raise( NoMethodError ) { @n['/'].return( 'hello' ) }
+    @n['/'].node_info[:processor] = TestProcessor.new
+    assert_equal( 'hello /', @n['/'].return( 'hello' ) )
+    assert_throws( :found ) { @n['/'].with_block( 'hello' ) {|n,s| assert_equal( 'hello', s ); throw :found } }
   end
 
 end
