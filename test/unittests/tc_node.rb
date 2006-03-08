@@ -67,8 +67,8 @@ class NodeTest < Webgen::TestCase
 
   def test_route_to
     #to Node
-    assert_equal( '', @n['file_a'].route_to( @n['file_a'] ) )
-    assert_equal( '', @n['file_aa#'].route_to( @n['file_aa'] ) )
+    assert_equal( 'file_a', @n['file_a'].route_to( @n['file_a'] ) )
+    assert_equal( 'file_aa', @n['file_aa#'].route_to( @n['file_aa'] ) )
     assert_equal( 'file_aa#doit', @n['dir_a/'].route_to( @n['file_aa#'] ) )
     assert_equal( '#doit', @n['file_aa'].route_to( @n['file_aa#'] ) )
     assert_equal( '../dir_b/file_ba', @n['file_aa#'].route_to( @n['file_ba'] ) )

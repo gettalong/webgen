@@ -112,7 +112,8 @@ class Node
           when Node then other.to_url
           else raise ArgumentError
           end
-    self.to_url.route_to( url ).to_s
+    route = self.to_url.route_to( url ).to_s
+    (route == '' ? other.path : route )
   end
 
   # Checks if the current node is in the subtree which is spanned by the supplied node. The check is
