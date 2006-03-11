@@ -7,7 +7,7 @@ module Testing
   INFOS_HASH = {
     :summary => 'Summary',
     :description => 'Description',
-    :no_instantiation => true
+    :instantiate => false
   }
   PARAM_ARRAY = ['test', [5,6], 'Test description']
   DEPS_ARRAY = [BasicPlugin, 'Testing::DerivedPlugin']
@@ -18,6 +18,7 @@ module Testing
     infos INFOS_HASH
 
     param( *PARAM_ARRAY )
+    param 'otherparam', 'otherparam', 'tst'
 
     depends_on( *DEPS_ARRAY )
 

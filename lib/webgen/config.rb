@@ -20,6 +20,8 @@
 #++
 #
 
+require 'rbconfig'
+
 module Webgen
 
   VERSION = [0, 4, 0]

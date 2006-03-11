@@ -132,11 +132,12 @@ module Webgen
       @plugin_manager = plugin_manager
     end
 
-    # Returns parameter +name+.
-    def []( name )
-      @plugin_manager.param_for_plugin( self.class, name )
+    # Returns the parameter +name+ for the plugin. If +plugin+ is specified, the parameter +name+
+    # for the plugin +plugin+ is returned.
+    def []( name, plugin = nil)
+      @plugin_manager.param_for_plugin( plugin || self.class, name )
     end
-    alias get_param []
+    alias param []
 
     # Logs the the result of +block+ using the severity level +sev_level+.
     def log( sev_level, &block )
@@ -293,7 +294,7 @@ module Webgen
       @plugin_classes.each {|plugin| dep[plugin.name] = plugin.config.dependencies }
       dep.tsort.each do |plugin_name|
         config = plugin_class_by_name( plugin_name ).config
-        unless config.infos[:no_instantiation]
+        unless config.infos.has_key?(:instantiate) && !config.infos[:instantiate]
           log_msg( :debug, 'PluginManager#init') { 'Creating plugin of class #{config.plugin_klass.name}' }
           @plugins[config.plugin_klass.name] = config.plugin_klass.new( self )
         end
