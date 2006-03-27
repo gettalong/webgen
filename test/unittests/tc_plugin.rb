@@ -128,7 +128,7 @@ class DummyConfig
   end
 
   def param_for_plugin( plugin, param )
-    @config[plugin][param]
+    @config[plugin][param] || (raise Webgen::PluginParamNotFound.new( plugin, param ))
   end
 
 end
@@ -175,15 +175,24 @@ class PluginManagerTest < Webgen::TestCase
     manager.add_plugin_classes( loader.plugins )
     manager.init
 
+    other_loader = Webgen::PluginLoader.new
+    other_loader.load_from_block { self.class.module_eval "class FalsePlugin < Webgen::Plugin; end" }
+
+    assert_raise( Webgen::PluginParamNotFound ) { manager.param_for_plugin( FalsePlugin, 'param' ) }
+
     assert_equal( Testing::PARAM_ARRAY[1], manager.param_for_plugin( Testing::PluginWithData, Testing::PARAM_ARRAY[0] ) )
-    assert_equal( Testing::PARAM_ARRAY[1], manager[Testing::DerivedPlugin].get_param( Testing::PARAM_ARRAY[0] ) )
-    assert_equal( manager[Testing::DerivedPlugin].get_param( Testing::PARAM_ARRAY[0] ),
+    assert_equal( Testing::PARAM_ARRAY[1], manager[Testing::DerivedPlugin].param( Testing::PARAM_ARRAY[0] ) )
+    assert_equal( manager[Testing::DerivedPlugin].param( Testing::PARAM_ARRAY[0] ),
                   manager.param_for_plugin( 'Testing::PluginWithData', Testing::PARAM_ARRAY[0] ) )
+
+    assert_equal( Testing::PARAM_ARRAY[1], manager[Testing::BasicPlugin].param( Testing::PARAM_ARRAY[0], 'Testing::PluginWithData' ) )
 
     manager.plugin_config = DummyConfig.new
     assert_raise( Webgen::PluginParamNotFound ) { manager.param_for_plugin( 'Testing::BasicPlugin', 'param' ) }
     assert_equal( [6,7], manager.param_for_plugin( Testing::PluginWithData, Testing::PARAM_ARRAY[0] ) )
-    assert_equal( [6,7], manager[Testing::DerivedPlugin].get_param( Testing::PARAM_ARRAY[0] ) )
+    assert_equal( [6,7], manager[Testing::DerivedPlugin].param( Testing::PARAM_ARRAY[0] ) )
+
+    assert_equal( 'otherparam', manager.param_for_plugin( 'Testing::PluginWithData', 'otherparam' ) )
   end
 
 end

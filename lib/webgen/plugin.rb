@@ -307,9 +307,12 @@ module Webgen
       ( plugin.kind_of?( Class ) ? @plugins[plugin.name] : @plugins[plugin] )
     end
 
-    # Returns the parameter +param+ for the +plugin+.
-    def param_for_plugin( plugin, param )
-      plugin = ( plugin.kind_of?( String ) ? plugin_class_by_name( plugin ) : plugin )
+    # Returns the parameter +param+ for the +plugin_name+.
+    def param_for_plugin( plugin_name, param )
+      plugin = ( plugin_name.kind_of?( String ) ?
+                 plugin_class_by_name( plugin_name ) :
+                 plugin_class_by_name( plugin_name.name ) )
+      raise PluginParamNotFound.new( plugin_name, param ) if plugin.nil?
 
       value_found = false
       value = nil
