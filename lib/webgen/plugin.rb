@@ -52,7 +52,7 @@ module Webgen
         callcc {|cont| throw :plugin_class_found, [cont, klass]}
         klass.init_config
       rescue NameError => e
-        raise "Plugin '#{klass}' managed by no PluginManager"
+        raise "Plugin '#{klass}' managed by no PluginLoader"
       end
 
       # Initializes the plugin configuration structure.
