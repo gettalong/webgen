@@ -29,7 +29,7 @@ class Node
   include Composite
 
   # The parent node.
-  attr_accessor :parent
+  attr_reader :parent
 
   # The path of this node.
   attr_accessor :path
@@ -53,8 +53,9 @@ class Node
   #
   #    Note: a compound path like 'dir/file' is invalid if the parent node already has a child
   #    with path 'dir/'!!! (solution: just create a node with path 'file' and node 'dir/' as parent!)
-  def initialize( parent, path )
-    @parent = parent
+  def initialize( par, path )
+    @parent = nil
+    self.parent = par
     @path = path
     @node_info = Hash.new
     @meta_info = Hash.new
@@ -64,6 +65,13 @@ class Node
   def self.root( node )
     node = node.parent until node.parent.nil?
     node
+  end
+
+  # Sets a new parent for the node.
+  def parent=( var )
+    @parent.del_child( self ) unless @parent.nil?
+    @parent = var
+    @parent.add_child( self ) unless @parent.nil?
   end
 
   # Gets object +name+ from +meta_info+.

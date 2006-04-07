@@ -33,6 +33,15 @@ class NodeTest < Webgen::TestCase
     assert_equal( @n['/'], Node.root( @n['file_aa'] ) )
   end
 
+  def test_parent
+    x = Node.new( nil, 'test' )
+    assert( @n['/'].include?( @n['dir_a/'] ) )
+    @n['dir_a/'].parent = x
+    assert( @n['dir_a/'].parent = x )
+    assert( x.include?( @n['dir_a/'] ) )
+    assert( !@n['/'].include?( @n['dir_a/'] ) )
+  end
+
   def test_accessors
     assert_equal( nil, @n['/'].parent )
     assert_equal( '../out/../dir1/', @n['/'].path )
