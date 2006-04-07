@@ -32,7 +32,7 @@ class Node
   attr_accessor :parent
 
   # The path of this node.
-  attr_reader   :path
+  attr_accessor :path
 
   # Information used for processing the node.
   attr_accessor :node_info
@@ -76,7 +76,7 @@ class Node
     @meta_info[name] = value
   end
 
-  # Returns the full path for this node. This also includes the paths of virtual parent nodes.
+  # Returns the full path for this node.
   def full_path
     if URI::parse( @path ).absolute?
       @path
@@ -124,9 +124,9 @@ class Node
     !temp.nil?
   end
 
-  # Returns the node representing the given +path+. The path can be absolute or relative to the
-  # current node. If no node exists for the given path or it would lie outside the node tree, +nil+
-  # is returned.
+  # Returns the node representing the given +path+. The path can be absolute (i.e. starting with a
+  # slash) or relative to the current node. If no node exists for the given path or it would lie
+  # outside the node tree, +nil+ is returned.
   def resolve_node( path )
     url = self.to_url + path
 
@@ -145,9 +145,11 @@ class Node
     node
   end
 
-  # Returns the full URL (including dummy scheme and host) for use with URI classes.
+  # Returns the full URL (including dummy scheme and host) for use with URI classes. The returned
+  # URL does not include the real path of the root node but a slash instead. So if the full path of
+  # the node is 'a/b/c/d/file1' and the root node path is 'a/b/c', the URL path would be '/d/file1'.
   def to_url
-    url = URI::parse( full_path )
+    url = URI::parse( full_path.sub( /^#{Node.root( self ).path}/, '' ) )
     url = URI::parse( 'webgen://webgen.localhost/' ) + url unless url.absolute?
     url
   end

@@ -35,7 +35,7 @@ class NodeTest < Webgen::TestCase
 
   def test_accessors
     assert_equal( nil, @n['/'].parent )
-    assert_equal( '/', @n['/'].path )
+    assert_equal( '../out/../dir1/', @n['/'].path )
 
     assert_equal( @n['dir_a/'], @n['file_aa'].parent )
 
@@ -60,8 +60,8 @@ class NodeTest < Webgen::TestCase
   end
 
   def test_full_path
-    assert_equal( '/', @n['/'].full_path )
-    assert_equal( '/dir_a/file_aa', @n['file_aa'].full_path )
+    assert_equal( '../out/../dir1/', @n['/'].full_path )
+    assert_equal( '../out/../dir1/dir_a/file_aa', @n['file_aa'].full_path )
     assert_equal( 'http://localhost/file_ah#doit', @n['file_ah#'].full_path )
   end
 
@@ -134,7 +134,7 @@ class NodeTest < Webgen::TestCase
   def test_processor_routing
     assert_raise( NoMethodError ) { @n['/'].return( 'hello' ) }
     @n['/'].node_info[:processor] = TestProcessor.new
-    assert_equal( 'hello /', @n['/'].return( 'hello' ) )
+    assert_equal( 'hello ../out/../dir1/', @n['/'].return( 'hello' ) )
     assert_throws( :found ) { @n['/'].with_block( 'hello' ) {|n,s| assert_equal( 'hello', s ); throw :found } }
   end
 

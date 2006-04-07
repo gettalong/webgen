@@ -1,4 +1,5 @@
--   url: '/'
+-   ref: /
+    url: '../out/../dir1/'
     parent: ~
     meta_info:
       test: test
