@@ -54,7 +54,7 @@ module Composite
   def add_children( array )
     if array.kind_of?( Array )
       @children = [] unless defined?( @children )
-      @children.concat( array )
+      @children.concat( array.compact )
     else
       raise ArgumentError, "Parameter must be array"
     end
@@ -70,7 +70,7 @@ module Composite
   # Adds the child
   def add_child( child )
     @children = [] unless defined?( @children )
-    @children.push( child ) unless @children.include?( child )
+    @children.push( child ) unless child.nil? || @children.include?( child )
   end
 
 

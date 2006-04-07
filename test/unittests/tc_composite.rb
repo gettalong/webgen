@@ -27,6 +27,8 @@ class CompositeTest < Webgen::TestCase
       @testclass.add_children @children
     end
     assert_equal( @children, @testclass.children )
+    @testclass.add_children [nil]
+    assert_equal( @children, @testclass.children )
     assert_raise( ArgumentError ) do
       @testclass.add_children 'test'
     end
@@ -50,6 +52,9 @@ class CompositeTest < Webgen::TestCase
       assert_equal( child, @testclass.children[0] )
 
       @testclass.add_child child
+      assert_equal( 1, @testclass.children.length )
+
+      @testclass.add_child nil
       assert_equal( 1, @testclass.children.length )
     end
   end
