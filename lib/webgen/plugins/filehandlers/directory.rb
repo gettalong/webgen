@@ -30,16 +30,13 @@ module FileHandlers
     # Specialized node describing a directory.
     class DirNode < Node
 
-      def initialize( parent, name )
-        super( parent )
-        self['title'] = name
-        self['src'] = self['dest'] = name + '/'
-        self['processor'] = Webgen::Plugin['DirectoryHandler']
-        self['int:directory?'] = true
+      def initialize( parent, path )
+        super( parent, path )
+        self['title'] = path
       end
 
       def []( name )
-        process_dir_index if !self.metainfo.has_key?( 'indexFile' ) && name == 'indexFile'
+        process_dir_index if !self.meta_info.has_key?( 'indexFile' ) && name == 'indexFile'
         super
       end
 
@@ -62,16 +59,18 @@ module FileHandlers
     end
 
 
-    summary "Handles directories"
-    handle_path '**/'
-    add_param 'indexFile', 'index.page', 'The default file name for the directory index page file.'
-    depends_on 'FileHandler'
-    used_meta_info 'indexFile', 'directoryName'
+    infos :summary => "Handles directories"
+
+    param 'indexFile', 'index.page', 'The default file name for the directory index page file.'
+
+    handle_path_pattern '**/'
 
     # Return a new DirNode.
     def create_node( path, parent )
-      unless parent && node = parent.find {|child| /^#{File.basename( path )}\/$/ =~ child['src'] }
-        node = DirNode.new( parent, File.basename( path ) )
+      filename = File.basename( path )
+      if parent.nil? || (node = parent.find {|child| child.is_directory? && filename + '/' == child.path }).nil?
+        node = DirNode.new( parent, filename + '/' )
+        node.node_info[:processor] = self
       end
       node
     end
@@ -100,7 +99,7 @@ module FileHandlers
       super( lang_node, refNode, title )
     end
 
-    # Recursively create a given path
+    # Recursively create a given path starting from
     def recursive_create_path( path, parent )
       p = parent
       node = nil

@@ -22,85 +22,40 @@
 
 require 'set'
 require 'webgen/listener'
+require 'webgen/languages'
 
 module FileHandlers
 
   class FileHandler < Webgen::Plugin
 
-    summary "Super plugin for handling files"
-    description "Provides interface on file level. The FileHandler goes through the source
-        directory, reads in all files for which approriate plugins exist and
-        builds the tree. When all approriate transformations on the tree have
-        been performed the FileHandler is used to write the output files.
-      ".gsub( /^\s+/, '' ).gsub( /\n/, ' ' )
-    add_param 'ignorePaths', ['**/.svn{/**/**,/}', '**/CVS{/**/**,/}'], 'An array of path patterns which match files that should ' \
-    'be excluded from the list of \'to be processed\' files.'
+    infos :summary => "Main plugin for handling the files in the source directory"
+
+    param 'ignorePaths', ['**/CVS{/**/**,/}'], \
+    'An array of path patterns which match files that should be excluded from the list ' \
+    'of \'to be processed\' files.'
 
     include Listener
 
-    def initialize
+    def initialize( manager )
+      super
+      #TODO are this messages still necessary???
       add_msg_name( :AFTER_ALL_READ )
       add_msg_name( :AFTER_ALL_WRITTEN )
     end
 
-    # Builds the tree with all the nodes and returns it.
-    def build_tree
-      allFiles = get_files_for_pattern( File.join( '**', '{.[^.]**/**/**,**}' ) )
-      get_param( 'ignorePaths' ).each do |pattern|
-        allFiles.subtract( get_files_for_pattern( pattern ) )
-      end
-
-      handlerFiles = sort_file_handlers( FileHandlers::DefaultFileHandler.get_file_handlers ).collect do |pattern, handler|
-        [get_files_for_pattern( pattern ), Webgen::Plugin.config[handler].obj]
-      end
-
-      rootPath = Webgen::Plugin['Configuration']['srcDirectory'] + File::SEPARATOR
-      rootHandler = handler_for_path( rootPath, handlerFiles )
-      if rootHandler.nil? || allFiles.empty?
-        logger.error { "No file handler for root directory <#{rootPath}> found" } if rootHandler.nil? && !allFiles.empty?
-        logger.error { "No files found in directory <#{rootPath}>" } if allFiles.empty?
-        return nil
-      end
-
-      logger.debug { "Using plugin #{rootHandler.class.name} for handling the root node" }
-      root = create_root_node( rootPath, rootHandler )
-      allFiles.subtract( [rootPath] )
-      handlerFiles.find {|files, handler| handler == rootHandler}[0].subtract( [rootPath] )
-
-      handlerFiles.each do |files, handler|
-        commonFiles = allFiles & files
-        allFiles.subtract( commonFiles )
-        diffFiles = files - commonFiles
-        logger.info { "Not handling files for #{handler.class.name} as they do not exist or are excluded:  #{diffFiles.inspect}" } if diffFiles.length > 0
-        commonFiles.each {|file| build_entry( file, root, handler, handlerFiles ) }
-      end
-
-      dispatch_msg( :AFTER_ALL_READ, root )
-      logger.info { "No handlers found for files: #{allFiles.inspect}" } if allFiles.length > 0
-
-      root
+    def render_site
+      tree = build_tree
+      #TODO
+      #transform tree???
+      write_tree( tree ) unless tree.nil?
     end
 
-
-    # Recursively writes out the tree specified by +node+.
-    def write_tree( node )
-      self.logger.info { "Writing <#{node.recursive_value('dest')}>" }
-
-      node['processor'].write_node( node )
-
-      node.each do |child|
-        write_tree( child )
-      end
-
-      dispatch_msg( :AFTER_ALL_WRITTEN ) if node.parent.nil?
-    end
-
-
-    # Returns true if the file +src+ is newer than +dest+ and therefore has been modified since the last execution
-    # of webgen. The +mtime+ values for the source and destination files are used to find this out.
+    # Returns true if the file +src+ is newer than +dest+ and therefore has been modified since the
+    # last execution of webgen. The +mtime+ values for the source and destination files are used to
+    # find this out.
     def file_modified?( src, dest )
-      if File.exists?( dest ) && ( File.mtime( src ) < File.mtime( dest ) )
-        self.logger.info { "File is up to date: <#{dest}>" }
+      if File.exists?( dest ) && ( File.mtime( src ) <= File.mtime( dest ) )
+        log(:info) { "File is up to date: <#{dest}>" }
         return false
       else
         return true
@@ -111,89 +66,155 @@ module FileHandlers
     private
     #######
 
-    def get_files_for_pattern( pattern )
-      files = Dir[File.join( Webgen::Plugin['Configuration']['srcDirectory'], pattern )].to_set
+    def build_tree
+      all_files = find_all_files
+      return if all_files.empty?
+
+      files_for_handlers = find_files_for_handlers
+
+      root_node = create_root_node( all_files, files_for_handlers )
+
+      used_files = Set.new
+      files_for_handlers.each do |handler, files|
+        common = all_files & files
+        used_files << common
+        diff = files - common
+        log(:info) { "Not using these files for #{handler.class.name} as they do not exist or are excluded: #{diff.inspect}" } if diff.length > 0
+        common.each {|file| create_node( file, root_node, handler ) }
+      end
+      dispatch_msg( :AFTER_ALL_READ, root_node ) #TODO necessary?
+
+      unused_files = all_files - used_files
+      log(:info) { "No handlers found for: #{unused_files.inspect}" } if unused_files.length > 0
+
+      root_node
+    end
+
+    # Recursively writes out the tree specified by +node+.
+    def write_tree( node )
+      log(:info) { "Writing <#{node.absolute_path}>" }
+
+      node.write_node
+
+      node.each {|child| write_tree( child ) }
+
+      #TODO still used?
+      dispatch_msg( :AFTER_ALL_WRITTEN ) if node.parent.nil?
+    end
+
+    # Creates a set of all files in the source directory.
+    def find_all_files
+      all_files = files_for_pattern( '**/{**,**/}' ).to_set
+      param( 'ignorePaths' ).each {|pattern| all_files.subtract( files_for_pattern( pattern ) ) }
+      log(:error) { "No files found in the source directory <#{param('srcDir', 'CorePlugins::Configuration')}>" } if all_files.empty?
+      all_files
+    end
+
+    # Finds the files for each registered handler plugin and stores them in a Hash with the plugin
+    # as key.
+    def find_files_for_handlers
+      files_for_handlers = {}
+      @plugin_manager.plugins.each do |name, plugin|
+        if plugin.kind_of?( DefaultFileHandler )
+          files = Set.new
+          plugin.path_patterns.each {|pattern| files += files_for_pattern( pattern )}
+          files_for_handlers[plugin] = files
+        end
+      end
+      files_for_handlers
+    end
+
+    # Returns an array of files of the source directory matching +pattern+
+    def files_for_pattern( pattern )
+      files = Dir[File.join( param( 'srcDir', 'CorePlugins::Configuration' ), pattern )].to_set
       files.collect!  do |f|
         f = f.sub( /([^.])\.{1,2}$/, '\1' ) # remove '.' and '..' from end of paths
-        f += File::SEPARATOR if File.directory?( f ) && ( f[-1] != ?/ )
+        f += '/' if File.directory?( f ) && ( f[-1] != ?/ )
         f
       end
       files
     end
 
-    def create_root_node( path, handler )
-      root = handler.create_node( path, nil )
+    def create_root_node( all_files, files_for_handlers )
+      root_path = File.join( param( 'srcDir', 'CorePlugins::Configuration' ), '/' )
+      root_handler = @plugin_manager['FileHandlers::DirectoryHandler']
+      if root_handler.nil?
+        log(:error) { "No handler for root directory <#{root_path}> found" }
+        return nil
+      end
+
+      root = root_handler.create_node( root_path, nil )
       root['title'] = ''
-      root['dest'] = Webgen::Plugin['Configuration']['outDirectory'] + '/'
-      root['src'] = Webgen::Plugin['Configuration']['srcDirectory'] + '/'
+      root.path = File.join( param( 'outDir', 'CorePlugins::Configuration' ), '/' )
+      root.node_info[:src] = root_path
+
+      all_files.subtract( [root_path] )
+      files_for_handlers[root_handler].subtract( [root_path] )
       root
     end
 
-    def build_entry( file, root, handler, handlerFiles )
+    def create_node( file, root, handler )
+      dir_handler = @plugin_manager['FileHandlers::DirectoryHandler']
       pathname, filename = File.split( file )
-      pathname = pathname + '/'
-      treeFile = file.sub( /^#{root['src']}/, '' )
-      treePath = pathname.sub( /^#{root['src']}/, '' )
+      pathname.sub!( /^#{root.node_info[:src]}/, '' )
+      parent_node = dir_handler.recursive_create_path( pathname, root )
 
-      node = root.node_for_string?( treeFile, 'src' )
-      return node unless node.nil?
-      logger.info { "Processing <#{file}> with #{handler.class.name} ..." }
-
-      parentNode = root.node_for_string?( treePath )
-      if parentNode.nil?
-        if pathname == root['src']
-          parentNode = root
-        else
-          logger.debug { "Parent node for <#{file}> does not exist, create node for path <#{pathname}>" }
-          parentNode = build_entry( pathname, root, handler_for_path( pathname, handlerFiles ), handlerFiles )
-        end
-      end
-      raise "Parent node is nil" if parentNode.nil?
-      logger.info { "Creating node for <#{file}>..." }
-      n = handler.create_node( file, parentNode )
-      parentNode.add_child( n ) unless n.nil?
-      n
-    end
-
-    def handler_for_path( path, handlerFiles )
-      temp, handler = handlerFiles.find {|p, handler| p.include?( path )}
-      handler
-    end
-
-    def sort_file_handlers( handlers )
-      handlers.sort {|a,b| a[0].count( "?*" ) <=> b[0].count( "?*" )}
+      log(:info) { "Creating node for <#{file}>..." }
+      node = handler.create_node( file, parent_node )
+      parent_node.add_child( node ) unless node.nil?
+      #TODO check node for correct lang and other things
+      node
     end
 
   end
 
-  # The default handler which is the super class of all file handlers.
+  # The default handler which is the super class of all file handlers. It defines class methods
+  # which should be used by the subclasses to specify which files should be handled.
   class DefaultFileHandler < Webgen::Plugin
 
-    summary "Base class of all file handler plugins"
+    EXTENSION_PATH_PATTERN = "**/*.%s"
 
-    VIRTUAL = true
+    infos(
+          :summary => "Base class of all file handler plugins",
+          :instantiate => false
+          )
 
-    # Specify the extension which should be handled by the class.
-    def self.handle_path( path )
-      logger.info { "Registering class #{self.name} for handling the path pattern: #{path.inspect}" }
-      (self.config[self].path ||= []) << path
-      handlers = (self.config[DefaultFileHandler].file_handler ||= {})
-      logger.warn { "Path pattern #{path} already associated with class #{handlers[path].name}, not using class #{self.name} for it!" } if handlers[path]
-      handlers[path] ||= self
+    #TODO doc
+    #two types of paths: constant paths defined in class, dynamic ones defined when initializing
+    #FileHandler retrieves all plugins which derive from DefaultFileHandler, uses constant + dynamic
+    #paths
+
+    # TODO comment Specify the extension which should be handled by the class.
+    def self.handle_path_pattern( path )
+      (self.config.infos[:path_patterns] ||= []) << path
     end
 
-    # Specify the files handled by the class via the extension.
-    def self.extension( ext )
-      handle_path( "**/{.[^.]**/**/*.#{ext},*.#{ext}}" )
+    # Specify the files handled by the class via the extension. The parameter +ext+ should be the
+    # pure extension without the dot. Files in hidden directories (starting with a dot) are also
+    # searched.
+    def self.handle_extension( ext )
+      handle_path_pattern( EXTENSION_PATH_PATTERN % [ext] )
     end
 
-    # Return the registered file handler plugins.
-    def self.get_file_handlers
-      self.config[self].file_handler
+    # See DefaultFileHandler.handle_path_pattern
+    def handle_path_pattern( path )
+      (@path_patterns ||= []) << path
+    end
+    protected :handle_path_pattern
+
+    # See DefaultFileHandler.handle_extension
+    def handle_extension( ext )
+      handle_path_pattern( EXTENSION_PATH_PATTERN % [ext] )
+    end
+    protected :handle_extension
+
+    # Returns all (i.e. static and dynamic) path patterns defined for the file handler.
+    def path_patterns
+      (self.class.config.infos[:path_patterns] || []) + (@path_patterns ||= [])
     end
 
-    # Supplies the +path+ to a file and the +parent+ node sothat the plugin can create a node for this
-    # path. Should return the node for the path or nil if the node could not be created.
+    # Asks the plugin to create a node for the given +path+ and the +parent+. Should return the
+    # node for the path or nil if the node could not be created.
     #
     # Has to be overridden by the subclass!!!
     def create_node( path, parent )
@@ -207,15 +228,23 @@ module FileHandlers
       raise NotImplementedError
     end
 
-    # Returns the node for the language +lang+ which is equal to this +node+.
-    def get_node_for_lang( node, lang )
-      node
+    # Returns the node which has the same data as +node+ but in language +lang+; or +nil+ if such a
+    # node does not exist.
+    def node_for_lang( node, lang )
+      (node.meta_info['lang'] == Webgen::LanguageManager.language_for_code( lang ) ? node : nil)
     end
 
-    # Returns a HTML link for the given +node+ relative to +refNode+. You can optionally specify the
-    # title for the link. If not specified, the title of the node is used.
-    def get_html_link( node, refNode, title = node['title'] )
-      "<a href=\"#{refNode.relpath_to_node( node )}\" title=\"#{title}\">#{title}</a>"
+    # Returns a HTML link for the given +node+ relative to +refNode+. You can optionally specify
+    # additional attributes for the <a>-Element in the +attr+ Hash. If the special value
+    # +:link_text+ is present in +attr+, it will be used as the link text; otherwise the title of
+    # the +node+ will be used.
+    def link_from( node, refNode, attr = {} )
+      link_text = attr[:link_text] || node['title']
+      attr.delete( :link_text )
+      attr.delete( 'href' )
+      attr[:href] = refNode.route_to( node )
+      attrs = attr.collect {|name,value| "#{name.to_s}=\"#{value}\"" }.sort.join( ' ' )
+      "<a #{attrs}>#{link_text}</a>"
     end
 
   end
