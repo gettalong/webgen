@@ -100,7 +100,7 @@ class Node
 
   # Checks if the node is a directory.
   def is_directory?
-    path[-1] == ?/
+    @path[-1] == ?/
   end
 
   # Checks if the node is a file.
@@ -110,7 +110,19 @@ class Node
 
   # Checks if the node is a fragment.
   def is_fragment?
-    path[0] == ?#
+    @path[0] == ?#
+  end
+
+  # True if the path of the node matches the given path at the beginning. Used by #resolve_node.
+  def =~( path )
+    md = if is_directory?
+           /^#{@path.chomp('/')}(\/|$)/ =~ path                  #' #emacs hack
+         elsif is_fragment?
+           /^#{@path}$/ =~ path
+         else
+           /^#{@path}(?=#|$)/ =~ path
+         end
+    $& if md
   end
 
   # Returns the route to the given path. The parameter +path+ can be: a String, a Node or an URL.
@@ -144,9 +156,10 @@ class Node
 
     node = Node.root( self )
 
+    match = nil
     while !node.nil? && !path.empty?
-      node = node.find {|c| /^#{c.is_directory? ? c.path[0..-2] : c.path}/ =~ path}
-      path.sub!( (node.is_directory? ? /^#{node.path[0..-2]}\/?/ : /^#{node.path}/), '' ) unless node.nil?
+      node = node.find {|c| match = (c =~ path) }
+      path.sub!( match, '' ) unless node.nil?
       break if path.empty?
     end
 

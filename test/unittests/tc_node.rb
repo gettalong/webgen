@@ -22,7 +22,6 @@ class NodeTest < Webgen::TestCase
     @n = {}
     @ni.each do |info|
       @n[info['ref'] || info['url']] = Node.new( @n[info['parent']], info['url'] )
-      @n[info['parent']].add_child( @n[info['ref'] || info['url']] ) unless @n[info['parent']].nil?
       @n[info['ref'] || info['url']].meta_info.update( info['meta_info'] ) if info['meta_info']
       @n[info['ref'] || info['url']].node_info.update( info['node_info'] ) if info['node_info']
     end
@@ -145,6 +144,23 @@ class NodeTest < Webgen::TestCase
     @n['/'].node_info[:processor] = TestProcessor.new
     assert_equal( 'hello ../out/../dir1/', @n['/'].return( 'hello' ) )
     assert_throws( :found ) { @n['/'].with_block( 'hello' ) {|n,s| assert_equal( 'hello', s ); throw :found } }
+  end
+
+  def test_match_operator
+    assert_equal( 'dir_a/', @n['dir_a/'] =~ 'dir_a/' )
+    assert_equal( 'dir_a', @n['dir_a/'] =~ 'dir_a' )
+    assert_equal( 'dir_a/', @n['dir_a/'] =~ 'dir_a/something_else' )
+    assert( !( @n['dir_a/'] =~ 'dir_anot' ) )
+    assert( !( @n['dir_a/'] =~ 'not/dir_a' ) )
+
+    assert_equal( 'file_aa', @n['file_aa'] =~ 'file_aa' )
+    assert_equal( 'file_aa', @n['file_aa'] =~ 'file_aa#doit' )
+    assert( !( @n['file_aa'] =~ 'file_aab' ) )
+    assert( !( @n['file_aa'] =~ 'not_file_aab' ) )
+
+    assert_equal( '#doit', @n['file_aa#'] =~ '#doit' )
+    assert( !( @n['file_aa#'] =~ '#doit?sdf' ) )
+    assert( !( @n['file_aa#'] =~ 'dfs#doit' ) )
   end
 
 end
