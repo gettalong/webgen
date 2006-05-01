@@ -2,6 +2,7 @@ require 'find'
 require 'fileutils'
 require 'webgen/test'
 require 'webgen/node'
+require 'webgen/config'
 
 class FileHandlerTest < Webgen::PluginTestCase
 
@@ -9,7 +10,6 @@ class FileHandlerTest < Webgen::PluginTestCase
   #     ie. ones which are not required for initializing, but for running
   plugin_files [
     'webgen/plugins/filehandlers/filehandler.rb',
-    'webgen/plugins/coreplugins/configuration.rb',
     'webgen/plugins/filehandlers/directory.rb',
     fixture_path( 'sample_plugin.rb' ),
   ]
@@ -135,7 +135,7 @@ class FileHandlerTest < Webgen::PluginTestCase
     max_page = pages.max
     page = @plugin.create_node( max_page, root_node, page_handler )
     assert_not_nil( page )
-    assert_equal( File.basename( max_page ), page.path )
+    assert_equal( page_handler.class.out_name( max_page ), page.path )
     assert( page.is_file? )
 
     page1 = @plugin.create_node( max_page, root_node, page_handler )
@@ -148,7 +148,8 @@ class FileHandlerTest < Webgen::PluginTestCase
     tree = @plugin.build_tree
     assert_not_nil( tree )
     assert_equal( outDir, tree.full_path )
-    assert_not_nil( tree.resolve_node( 'dir1/dir11/file111.page' ) )
+    assert_equal( 4, tree.children.size )
+    assert_not_nil( tree.resolve_node( 'dir1/dir11/file111.html' ) )
 
     nr_paths_on_disc = find_in_sample_dir {|p| true }.length
 
@@ -206,13 +207,11 @@ class DefaultFileHandlerTest < Webgen::PluginTestCase
   end
 
   def test_node_for_lang
-    node = Node.new( 'path', nil )
-    node.meta_info['lang'] = ::Webgen::LanguageManager.language_for_code( 'de' )
-
-    assert_nil( @plugin1.node_for_lang( node, 'en' ) )
-    assert_equal( node, @plugin1.node_for_lang( node, 'de' ) )
-    assert_equal( node, @plugin1.node_for_lang( node, 'ger' ) )
-    assert_equal( node, @plugin1.node_for_lang( node, 'deu' ) )
+    node = Node.new( nil, 'path' )
+    de = Webgen::LanguageManager.language_for_code( 'de' )
+    en = Webgen::LanguageManager.language_for_code( 'en' )
+    assert_equal( node, @plugin1.node_for_lang( node, de ) )
+    assert_equal( node, @plugin1.node_for_lang( node, en ) )
   end
 
   def test_link_from

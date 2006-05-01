@@ -14,6 +14,40 @@ module DirectoryInfoUtils
 
 end
 
+class SampleDirectoryInfo < Webgen::DirectoryInfo; end
+
+class DirectoryInfoTest < Webgen::TestCase
+
+  SampleDirectoryInfo.const_set( :BASE_PATH, fixture_path )
+
+  def test_initialize
+    assert_raise( ArgumentError ) { SampleDirectoryInfo.new( __FILE__ ) }
+    assert_raise( Errno::ENOENT ) { SampleDirectoryInfo.new( './' ) }
+
+    SampleDirectoryInfo.remove_const( :BASE_PATH )
+    SampleDirectoryInfo.const_set( :BASE_PATH, fixture_path( 'testdir' ) )
+    assert_raise( ArgumentError ) { SampleDirectoryInfo.new( 'falsedir' ) }
+    SampleDirectoryInfo.remove_const( :BASE_PATH )
+    SampleDirectoryInfo.const_set( :BASE_PATH, fixture_path )
+
+    assert_nothing_raised { SampleDirectoryInfo.new( 'testdir' ) }
+    assert_equal( 'testdir', SampleDirectoryInfo.new('testdir').name )
+  end
+
+  def test_path
+    assert_equal( File.expand_path( File.join( fixture_path, 'testdir' ) ), SampleDirectoryInfo.new( 'testdir' ).path )
+  end
+
+  def test_entries
+    entries = SampleDirectoryInfo.entries
+    assert_kind_of( Hash, entries )
+    assert_equal( 1, entries.length )
+    assert( entries.has_key?( 'testdir' ) )
+    assert_kind_of( SampleDirectoryInfo, entries['testdir'] )
+  end
+
+end
+
 class WebSiteTemplateTest < Webgen::TestCase
 
   include DirectoryInfoUtils
@@ -46,12 +80,18 @@ end
 
 class WebSiteTest < Webgen::TestCase
 
-  def test_render
+  def test_param_for_plugin
+    # without plugin_config
+    # with plugin_config
+    flunk
+  end
 
+  def test_render
+    flunk
   end
 
   def test_create_website
-
+    flunk
   end
 
 end

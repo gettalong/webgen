@@ -43,11 +43,12 @@ module Webgen
       @name = name
       raise ArgumentError.new( "'#{name}' is not a directory!" ) if !File.directory?( path )
       @infos = YAML::load( File.read( File.join( path, 'README' ) ) )
+      raise ArgumentError.new( "'#{name}/README' does not contain key-value pairs in YAML format!" ) unless @infos.kind_of?( Hash )
     end
 
     # The absolute directory path. Requires that child classes have defined a constant +BASE_PATH+.
     def path
-      Pathname.new( File.join( self.class::BASE_PATH, name ) ).realpath
+      File.expand_path( File.join( self.class::BASE_PATH, name ) )
     end
 
     # The files under the directory.
@@ -59,7 +60,7 @@ module Webgen
     # hierarchy.
     def copy_to( dest )
       files.each do |file|
-        destpath = File.join( dest, File.dirname( Pathname.new( file ).relative_path_from( path ).to_s ) )
+        destpath = File.join( dest, file.sub( /^#{path}/, '' ) )
         FileUtils.mkdir_p( destpath )
         if File.directory?( file )
           FileUtils.mkdir( File.join( destpath, File.basename( file ) ) )
@@ -123,21 +124,22 @@ module Webgen
     # +plugin_config+ parameter is given, it is used to resolve the values for plugin parameters.
     # Otherwise, a ConfigurationFile instance is used as plugin configuration.
     def initialize( directory = Dir.pwd, plugin_config = nil )
-      @directory = directory
+      @directory = File.expand_path( directory )
       @logger = Webgen::Logger.new
 
       @loader = PluginLoader.new
       @loader.load_from_dir( File.join( @directory, 'plugin' ) )
       @manager = PluginManager.new( [DEFAULT_PLUGIN_LOADER, @loader], DEFAULT_PLUGIN_LOADER.plugins + @loader.plugins )
       @manager.logger = @logger
-      if plugin_config
-        @manager.plugin_config = plugin_config
-      else
-        begin
-          @manager.plugin_config = ConfigurationFile.new( File.join( @directory, 'config.yaml' ) )
-        rescue ConfigurationFileInvalid => e
-          @logger.error( 'WebSite#initialize' ) { e.message + ' -> Not using config file' }
-        end
+      set_plugin_config( plugin_config )
+    end
+
+    # Returns a modified value for Configuration:srcDir and Configuration:outDir.
+    def param_for_plugin( plugin_name, param )
+      case [plugin_name, param]
+      when ['CorePlugins::Configuration', 'srcDir'] then @srcDir
+      when ['CorePlugins::Configuration', 'outDir'] then @outDir
+      else @plugin_config.param_for_plugin( plugin_name, param )
       end
     end
 
@@ -149,6 +151,26 @@ module Webgen
       @logger.info( 'WebSite#render' ) { "Starting rendering of website #{directory}..." }
       @manager['FileHandler::FileHandler'].render_site
       @logger.info( 'WebSite#render' ) { "Rendering of #{directory} finished" }
+    end
+
+    #######
+    private
+    #######
+
+    def set_plugin_config( plugin_config )
+      if plugin_config
+        @manager.plugin_config = plugin_config
+      else
+        begin
+          @manager.plugin_config = ConfigurationFile.new( File.join( @directory, 'config.yaml' ) )
+        rescue ConfigurationFileInvalid => e
+          @logger.error( 'WebSite#initialize' ) { e.message + ' -> Not using config file' }
+        end
+      end
+      @srcdir = File.join( @directory, @manager.param_for_plugin(  'CorePlugins::Configuration', 'srcDir' ) ) #TODO change to allow absolute paths
+      @outdir = File.join( @directory, @manager.param_for_plugin(  'CorePlugins::Configuration', 'outDir' ) )
+      @plugin_config = @manager.plugin_config
+      @manager.plugin_config = self
     end
 
     # Create a website in the +directory+, using the template +templateName+ and the style +styleName+.

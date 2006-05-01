@@ -155,13 +155,11 @@ module FileHandlers
 
     def create_node( file, root, handler )
       dir_handler = @plugin_manager['FileHandlers::DirectoryHandler']
-      pathname, filename = File.split( file )
-      pathname.sub!( /^#{root.node_info[:src]}/, '' )
+      pathname, filename = File.split( file.sub( /^#{root.node_info[:src]}/, '' ) )
       parent_node = dir_handler.recursive_create_path( pathname, root )
 
       log(:info) { "Creating node for <#{file}>..." }
       node = handler.create_node( file, parent_node )
-      parent_node.add_child( node ) unless node.nil?
       #TODO check node for correct lang and other things
       node
     end
@@ -229,15 +227,15 @@ module FileHandlers
     end
 
     # Returns the node which has the same data as +node+ but in language +lang+; or +nil+ if such a
-    # node does not exist.
+    # node does not exist. The default behaviour assumes that +node+ has the data for all languages.
     def node_for_lang( node, lang )
-      (node.meta_info['lang'] == Webgen::LanguageManager.language_for_code( lang ) ? node : nil)
+      node
     end
 
-    # Returns a HTML link for the given +node+ relative to +refNode+. You can optionally specify
-    # additional attributes for the <a>-Element in the +attr+ Hash. If the special value
-    # +:link_text+ is present in +attr+, it will be used as the link text; otherwise the title of
-    # the +node+ will be used.
+    # Returns a HTML link to the +node+ from +refNode+. You can optionally specify additional
+    # attributes for the <a>-Element in the +attr+ Hash. If the special value +:link_text+ is
+    # present in +attr+, it will be used as the link text; otherwise the title of the +node+ will be
+    # used.
     def link_from( node, refNode, attr = {} )
       link_text = attr[:link_text] || node['title']
       attr.delete( :link_text )

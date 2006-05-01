@@ -254,7 +254,7 @@ module Webgen
   # retrieving current parameter values.
   class PluginManager
 
-    # A list of all instantiated plugins.
+    # A hash of all instantiated plugins.
     attr_reader :plugins
 
     # Define which plugins should get instantiated.

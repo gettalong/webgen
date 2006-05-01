@@ -53,9 +53,9 @@ class Node
   #
   #    Note: a compound path like 'dir/file' is invalid if the parent node already has a child
   #    with path 'dir/'!!! (solution: just create a node with path 'file' and node 'dir/' as parent!)
-  def initialize( par, path )
+  def initialize( parent, path )
     @parent = nil
-    self.parent = par
+    self.parent = parent
     @path = path
     @node_info = Hash.new
     @meta_info = Hash.new
@@ -113,7 +113,8 @@ class Node
     @path[0] == ?#
   end
 
-  # True if the path of the node matches the given path at the beginning. Used by #resolve_node.
+  # Matches the path of the node matches against the given path at the beginning. Returns the
+  # matched portion or +nil+. Used by #resolve_node.
   def =~( path )
     md = if is_directory?
            /^#{@path.chomp('/')}(\/|$)/ =~ path                  #' #emacs hack

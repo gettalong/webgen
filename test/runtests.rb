@@ -1,2 +1,2 @@
 #!/usr/bin/env ruby
-Dir['unittests/*'].each {|f| require f}
+Dir[File.join(File.dirname(__FILE__), 'unittests/*')].each {|f| require f}
