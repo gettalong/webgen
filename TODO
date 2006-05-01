@@ -1,5 +1,7 @@
 ---- CURRENT ----
 
+* ruby 1.8.2 (2004-11-06) [i386-mswin32]: bug in File.join: File.join('asdf', '/') -> 'asdf//' instead of 'asdf/'
+* test on windows after update to newest ruby version!
 * how to use Node#resolve_node to resolve page nodes given like index.page (tree uses output names)???
 * add tests in page files to check if used language code is correct (use LanguageManager)
 * partial menu: should only show menu level UNDER the current level (i.e. if a dir on top level selected, show pages in dir)

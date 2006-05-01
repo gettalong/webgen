@@ -12,7 +12,7 @@ class DirectoryHandlerTest < Webgen::FileHandlerTestCase
   ]
   plugin_to_test 'FileHandlers::DirectoryHandler'
 
-  SAMPLE_SITE = File.expand_path( fixture_path( '../sample_site/' ) ) + '/'
+  SAMPLE_SITE = BASE_FIXTURE_PATH + 'sample_site/'
 
   def setup
     super

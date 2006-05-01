@@ -25,33 +25,38 @@ require 'webgen/plugins/filehandlers/filehandler'
 
 module FileHandlers
 
-  # A simple file handler which copies files with a specific extension from the source to the output
-  # directory. The extensions of the files to copy are customizable.
-  class CopyFileHandler < DefaultFileHandler
+  # A simple file handler which copies files specified by a pattern from the source to the output
+  # directory.
+  class FileCopyHandler < DefaultFileHandler
 
-    summary "Copies files from source to destination without modification"
-    add_param 'paths', ['**/*.css', '**/*.jpg', '**/*.png', '**/*.gif'], \
-    'The path patterns which should match the files that should get copied by this handler.'
-    depends_on 'FileHandler'
+    infos :summary => "Copies files from source to destination without modification"
+    param 'paths', ['**/*.css', '**/*.jpg', '**/*.png', '**/*.gif'], \
+    'The path patterns which match the files that should get copied by this handler.'
 
-    def initialize
+    def initialize( plugin_manager )
       super
-      get_param( 'paths' ).each do |path|
-        self.class.handle_path( path )
-      end
+      param( 'paths' ).each {|path| handle_path_pattern( path ) }
     end
 
-    def create_node( srcName, parent )
-      node = Node.new( parent )
-      node['dest'] = node['src'] = node['title'] = File.basename( srcName )
-      node['processor'] = self
+    def create_node( path, parent )
+      name = File.basename( path )
+      node = parent.find {|c| c.path == name }
+      if node.nil?
+        node = Node.new( parent, name )
+        node.node_info[:src] = path
+        node.node_info[:processor] = self
+        node['title'] = name
+      else
+        log(:warn) { "Can't create node <#{node.full_path}> as it already exists! Using existing!" }
+      end
       node
     end
 
     # Copy the file to the destination directory if it has been modified.
     def write_node( node )
-      if Webgen::Plugin['FileHandler'].file_modified?( node.recursive_value( 'src' ), node.recursive_value( 'dest' ) )
-        FileUtils.cp( node.recursive_value( 'src' ), node.recursive_value( 'dest' ) )
+      if @plugin_manager['FileHandlers::FileHandler'].file_modified?( node.node_info[:src], node.full_path )
+        node.parent.write_node
+        FileUtils.cp( node.node_info[:src], node.full_path )
       end
     end
 
