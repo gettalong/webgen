@@ -1,0 +1,8 @@
+Plugins:
+    * don't throw exceptions, but use the logging facility to report exceptions and
+      correct them
+
+Other classes:
+    * throw exceptions, main webgen class (presumably WebSite) catches and handles them
+      (logs them and corrects them)
+
