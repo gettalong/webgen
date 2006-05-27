@@ -3,7 +3,6 @@
   meta_info: {}
   blocks:
     - name: content
-      format: ~
       content: "hallo"
 
 # with empty block
@@ -14,10 +13,9 @@
   meta_info: {key: value}
   blocks:
     - name: content
-      format: ~
       content: ''
 
-# with meta info
+# with more blocks
 - in: |
     ---
     key: value
@@ -25,14 +23,19 @@
     block1
     ---   block2   ,    textile  
       block2  
+    ---block3,textile
+    --- block4, textile
+    yes
   meta_info: {key: value}
   blocks:
     - name: content
-      format: ~
       content: "block1"
     - name: block2
-      format: textile
       content: "block2"
+    - name: block3
+      content: ''
+    - name: block4
+      content: 'yes'
 
 # block with escaped ---
 - in: |
@@ -42,5 +45,4 @@
   meta_info: {}
   blocks:
     - name: content
-      format: ~
       content: "before\n--- in\nafter"

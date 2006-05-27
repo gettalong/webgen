@@ -1,11 +1,19 @@
-# invalid meta info
+# invalid meta info: no hash
 - |
   ---
   doit
   ---
   asdf kadsfakl
 
-# only meta info
+# invalid meta info: not in yaml format
+- |
+  ---
+  - doit
+  : * [ }
+  ---
+  asdf kadsfakl
+
+# no block specified
 - |
   ---
   doit: now
@@ -25,3 +33,10 @@
   asdkf dsaf
   --- name
   asdf adsf
+
+# invalid format
+- |
+  asdfasd
+  dfdf
+  --- name, incorrect_format
+  lsldf
