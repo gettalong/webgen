@@ -104,9 +104,9 @@ class HtmlBlock
 end
 
 
-
 # Raised when during parsing of data in the WebPage Description Format if the data is invalid.
 class WebPageDataInvalid < RuntimeError; end
+
 
 # A WebPageData object contains the parsed data of a file/string in the WebPage Description Format.
 class WebPageData
@@ -117,18 +117,14 @@ class WebPageData
   # The contents of the meta information block.
   attr_reader :meta_info
 
-  # See WebPageData.parse.
-  def initialize( data, formatters = {} )
-    @meta_info = {}
-    @formatters = formatters
-    parse( data )
-  end
-
   # Parses the given String +data+ and initializes a new WebPageData object with the found values.
   # The blocks are converted to HTML by using the provided +formatters+ hash. A key in this hash has
-  # to be a format name and the value and object which responds to the +call(content)+ method.
-  def self.parse( data, formatters = {} )
-    self::new( data, formatters )
+  # to be a format name and the value and object which responds to the +call(content)+ method. You
+  # can set +default_meta_info+ to provide default entries for the meta information block.
+  def initialize( data, formatters = {}, default_meta_info = {} )
+    @meta_info = default_meta_info
+    @formatters = formatters
+    parse( data )
   end
 
   #######
@@ -140,8 +136,8 @@ TODO: MOVE TO DOC
 - format is called WebPage Description Format, a file using this format is called a page file
 - page file consists of optionally one meta info block at beginning, 1 to n content blocks
 - meta info block is YAML
-- default name for block if none specified is 'content'
-- default for block format called 'default'
+- default name for block if none specified (ie. no explicit name in --- line or in blocks meta info of correct index) is 'content' (precedence (low to high): default , --- line, blocks meta info)
+- default for block format (ie. if non in --- line or in blocks meta info of correct index) called 'default'
 - block names have to be unique
 - escaped block separators in blocks are unescaped and leading/trailing whitespace stripped off
 =end
@@ -152,8 +148,9 @@ TODO: MOVE TO DOC
     blocks = data.scan( /(?:(?:^--- *(?:(\w+) *(?:, *(\w+) *)?)?$)|\A)(.*?)(?:(?=^---.*?$)|\Z)/m )
     if data =~ /\A---/
       begin
-        @meta_info = YAML::load( blocks.shift[2] )
-        raise( WebPageDataInvalid, 'Invalid structure of meta information part') unless @meta_info.kind_of?( Hash )
+        meta = YAML::load( blocks.shift[2] )
+        raise( WebPageDataInvalid, 'Invalid structure of meta information part') unless meta.kind_of?( Hash )
+        @meta_info.update( meta )
       rescue ArgumentError => e
         raise WebPageDataInvalid, e.message
       end
@@ -163,12 +160,12 @@ TODO: MOVE TO DOC
 
     blocks.each_with_index do |block_data, index|
       name, format, content = *block_data
-      name = 'content' if name.nil?
+      name = (@meta_info['blocks'] && @meta_info['blocks'][index] && @meta_info['blocks'][index]['name']) || name || 'content'
       raise( WebPageDataInvalid, "Same name used for more than one block: #{name}" ) if @blocks.has_key?( name )
       content ||= ''
       content.gsub!( /^(\\+)(---.*?)$/ ) {|m| "\\" * ($1.length / 2) + $2 }
       content.strip!
-      format ||= 'default'
+      format = (@meta_info['blocks'] && @meta_info['blocks'][index] && @meta_info['blocks'][index]['format']) || format || 'default'
       @blocks[name] = @blocks[index] = HtmlBlock.new( name, convert( content, format ) )
     end
   end

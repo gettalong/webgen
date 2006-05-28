@@ -23,7 +23,7 @@
     block1
     ---   block2   ,    textile  
       block2  
-    ---block3,textile
+    ---block3
     --- block4, textile
     yes
   meta_info: {key: value}

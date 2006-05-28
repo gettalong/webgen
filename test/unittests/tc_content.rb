@@ -65,4 +65,14 @@ class WebPageDataTest < Webgen::TestCase
     end
   end
 
+  def test_default_values
+    d = WebPageData.new( @valid_files[2]['in'], @formatters, 'blocks' => [{'name'=>'other1'},{'name'=>'other2'}] )
+    assert_equal( 'other1', d.blocks[0].name )
+    assert_equal( 'other2', d.blocks[1].name )
+
+    assert_raise( WebPageDataInvalid ) do
+      d = WebPageData.new( @valid_files[2]['in'], @formatters, 'blocks' => [nil,nil,{'format'=>'other'}] )
+    end
+  end
+
 end
