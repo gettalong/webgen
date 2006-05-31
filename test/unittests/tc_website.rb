@@ -80,6 +80,8 @@ end
 
 class WebSiteTest < Webgen::TestCase
 
+  SAMPLE_SITE = fixture_path( '../sample_site/' )
+
   def test_param_for_plugin
     # without plugin_config
     # with plugin_config
@@ -91,7 +93,9 @@ class WebSiteTest < Webgen::TestCase
   end
 
   def test_create_website
-    flunk
+    assert_raise( ArgumentError ) { Webgen::WebSite.create_website( File.join( SAMPLE_SITE, test ), 'invalid_name' ) }
+    assert_raise( ArgumentError ) { Webgen::WebSite.create_website( File.join( SAMPLE_SITE, test ), 'default', 'invalid_name' ) }
+    assert_raise( ArgumentError ) { Webgen::WebSite.create_website( SAMPLE_SITE, 'default', 'default' ) }
   end
 
 end

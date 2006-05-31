@@ -295,7 +295,7 @@ module Webgen
       dep.tsort.each do |plugin_name|
         config = plugin_class_by_name( plugin_name ).config
         unless config.infos.has_key?(:instantiate) && !config.infos[:instantiate]
-          log_msg( :debug, 'PluginManager#init') { 'Creating plugin of class #{config.plugin_klass.name}' }
+          log_msg( :debug, 'PluginManager#init') { "Creating plugin of class #{config.plugin_klass.name}" }
           @plugins[config.plugin_klass.name] = config.plugin_klass.new( self )
         end
       end
@@ -388,7 +388,7 @@ module Webgen
       super( logdev, 0, 0 )
       self.level = ::Logger::ERROR
       self.formatter = Proc.new do |severity, timestamp, progname, msg|
-        "%s %5s -- %s: %s\n" % [timestamp, severity, progname, msg ]
+        "%5s -- %s: %s\n" % [severity, progname, msg ]
       end
     end
 

@@ -61,6 +61,8 @@ module Webgen
       code2chars || code3chars
     end
 
+    alias_method :to_str, :to_s
+
     def inspect
       "#<Language codes=#{codes.inspect} description=#{description.inspect}"
     end

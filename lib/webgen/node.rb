@@ -113,7 +113,7 @@ class Node
     @path[0] == ?#
   end
 
-  # Matches the path of the node matches against the given path at the beginning. Returns the
+  # Matches the path of the node against the given path at the beginning. Returns the
   # matched portion or +nil+. Used by #resolve_node.
   def =~( path )
     md = if is_directory?
@@ -126,7 +126,7 @@ class Node
     $& if md
   end
 
-  # Returns the route to the given path. The parameter +path+ can be: a String, a Node or an URL.
+  # Returns the route to the given path. The parameter +path+ can be a String or a Node.
   def route_to( other )
     url = case other
           when String then self.to_url + other

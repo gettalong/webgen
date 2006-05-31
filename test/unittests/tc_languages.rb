@@ -31,4 +31,13 @@ class LanguageTest < Webgen::TestCase
     assert_equal( 'de', lang.code2chars )
   end
 
+  def test_other_methods
+    de = Webgen::LanguageManager.language_for_code( 'ger' )
+    assert_nothing_raised do
+      assert_equal( "de", de.to_s )
+      assert_equal( "Implicitly de", "Implicitly " + de )
+    end
+    assert_kind_of( String, de.inspect )
+  end
+
 end

@@ -32,6 +32,10 @@ class NodeTest < Webgen::TestCase
     assert_equal( @n['/'], Node.root( @n['file_aa'] ) )
   end
 
+  def test_inspect
+    assert_kind_of( String, @n['file_aa'].inspect )
+  end
+
   def test_parent
     x = Node.new( nil, 'test' )
     assert( @n['/'].include?( @n['dir_a/'] ) )
@@ -74,7 +78,7 @@ class NodeTest < Webgen::TestCase
   end
 
   def test_route_to
-    #to Node
+    #arg is Node
     assert_equal( 'file_a', @n['file_a'].route_to( @n['file_a'] ) )
     assert_equal( 'file_aa', @n['file_aa#'].route_to( @n['file_aa'] ) )
     assert_equal( 'file_aa#doit', @n['dir_a/'].route_to( @n['file_aa#'] ) )
@@ -87,7 +91,7 @@ class NodeTest < Webgen::TestCase
     assert_equal( '../', @n['dir_a/'].route_to( @n['/'] ) )
     assert_equal( 'dir_a/', @n['file_a'].route_to( @n['dir_a/'] ) )
 
-    #to String
+    #arg is String
     assert_equal( '../other', @n['file_aa'].route_to( '/other' ) )
     assert_equal( '../other', @n['file_aa'].route_to( '../other' ) )
     assert_equal( 'document/file2', @n['file_aa#'].route_to( 'document/file2' ) )
@@ -95,6 +99,9 @@ class NodeTest < Webgen::TestCase
 
     assert_equal( './', @n['file_a'].route_to( '/' ) )
     assert_equal( './', @n['dir_a/'].route_to( '/dir_a' ) )
+
+    #arg is something else
+    assert_raise( ArgumentError ) { @n['file_a'].route_to( 5 ) }
   end
 
   def test_in_subtree_of
