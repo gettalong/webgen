@@ -21,7 +21,7 @@
 #
 
 require 'yaml'
-
+require 'erb'
 
 # A single block within a page file. The content of the block gets automatically parsed for HTML
 # headers with the id attribute set and converts them into sections for later use.
@@ -64,6 +64,11 @@ class HtmlBlock
   def initialize( name, content )
     @name, @content = name, content
     @sections = self.class.parse_sections( content )
+  end
+
+  # Renders the block using ERB and +context+ as the binding.
+  def render_with_erb( context )
+    ERB.new( content ).result( context )
   end
 
   #######
@@ -121,7 +126,7 @@ class WebPageData
   # The blocks are converted to HTML by using the provided +formatters+ hash. A key in this hash has
   # to be a format name and the value and object which responds to the +call(content)+ method. You
   # can set +default_meta_info+ to provide default entries for the meta information block.
-  def initialize( data, formatters = {}, default_meta_info = {} )
+  def initialize( data, formatters = {'default' => proc {|c| c} }, default_meta_info = {} )
     @meta_info = default_meta_info
     @formatters = formatters
     parse( data )

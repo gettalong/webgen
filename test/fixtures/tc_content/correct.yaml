@@ -1,20 +1,3 @@
-# without meta info
-- in: "hallo"
-  meta_info: {}
-  blocks:
-    - name: content
-      content: "hallo"
-
-# with empty block
-- in: |
-    ---
-    key: value
-    ---
-  meta_info: {key: value}
-  blocks:
-    - name: content
-      content: ''
-
 # with more blocks
 - in: |
     ---
@@ -36,6 +19,30 @@
       content: ''
     - name: block4
       content: 'yes'
+
+# empty file
+- in: ""
+  meta_info: {}
+  blocks:
+    - name: content
+      content: ''
+
+# without meta info
+- in: "hallo"
+  meta_info: {}
+  blocks:
+    - name: content
+      content: "hallo"
+
+# with empty block
+- in: |
+    ---
+    key: value
+    ---
+  meta_info: {key: value}
+  blocks:
+    - name: content
+      content: ''
 
 # block with escaped ---
 - in: |

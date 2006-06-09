@@ -44,6 +44,10 @@ class WebPageDataTest < Webgen::TestCase
     @formatters = {'default' => proc {|c| c}, 'textile' => proc {|c| c}}
   end
 
+  def test_initalize
+    assert_nothing_raised { WebPageData.new( '' ) }
+  end
+
   def test_invalid_pagefiles
     testdata = YAML::load( File.read( fixture_path( 'incorrect.yaml' ) ) )
     testdata.each_with_index do |data, index|
@@ -66,12 +70,12 @@ class WebPageDataTest < Webgen::TestCase
   end
 
   def test_default_values
-    d = WebPageData.new( @valid_files[2]['in'], @formatters, 'blocks' => [{'name'=>'other1'},{'name'=>'other2'}] )
+    d = WebPageData.new( @valid_files[0]['in'], @formatters, 'blocks' => [{'name'=>'other1'},{'name'=>'other2'}] )
     assert_equal( 'other1', d.blocks[0].name )
     assert_equal( 'other2', d.blocks[1].name )
 
     assert_raise( WebPageDataInvalid ) do
-      d = WebPageData.new( @valid_files[2]['in'], @formatters, 'blocks' => [nil,nil,{'format'=>'other'}] )
+      d = WebPageData.new( @valid_files[0]['in'], @formatters, 'blocks' => [nil,nil,{'format'=>'other'}] )
     end
   end
 
