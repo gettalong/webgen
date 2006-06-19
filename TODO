@@ -1,5 +1,11 @@
 ---- CURRENT ----
 
+* provide more hooks into system
+* better system for setting default page meta data like default content format/block names etc
+* new semantics for param changehandler: if set, use it to set the new value (useful for updating hashs instead of overwriting)
+* relocatable: path has to be changed so that it has correct lang in it if it is a page node path or split in path + fragment and search for path, then get correct lang node, then search fragment
+* rename ContentHandlers to ContentFormatters
+* ev. use change handler for not substituting PageHandler:defaultPageMetaData, but merging with old values
 * ruby 1.8.2 (2004-11-06) [i386-mswin32]: bug in File.join: File.join('asdf', '/') -> 'asdf//' instead of 'asdf/'
 * test on windows after update to newest ruby version!
 * how to use Node#resolve_node to resolve page nodes given like index.page (tree uses output names)???
@@ -21,6 +27,7 @@
 * use code generator to create test file with all tags and all tag parameter configurations
 
 ---- DOCU ----
+* Node#resolve_node: query part has to be removed from URL for this function to work correctly
 * DefaultFileHandler#node_for_lang
     - should return the node for the given lang if available
     - default behaviour is to return node itself (useful for pics, stylesheets, ...)

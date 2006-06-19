@@ -4,7 +4,9 @@ class SampleHandler < FileHandlers::DefaultFileHandler
 
     def =~( path )
       mypath = @path.sub( /de.html|en.html$/, 'html' )
-      /^(#{mypath}|#{@path})/ =~ path
+      mypath2 = @path.sub( /html$/, 'page' )
+      mypath3 = @path.sub( /de.html|en.html$/, 'page' )
+      /^(#{mypath}|#{mypath2}|#{mypath3}|#{@path})/ =~ path
       $&
     end
 
