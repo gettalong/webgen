@@ -37,10 +37,6 @@ class TemplateFileHandlerTest < Webgen::FileHandlerTestCase
     assert_equal( @plugin, node.node_info[:processor] )
   end
 
-  def test_write_node
-    flunk
-  end
-
   def test_templates_for_node
     root = @manager['FileHandlers::FileHandler'].instance_eval { build_tree }
 
@@ -61,5 +57,15 @@ class TemplateFileHandlerTest < Webgen::FileHandlerTestCase
     assert_equal( [default_t, test_t], chained_t.templates_for_node )
   end
 
+  def test_get_default_template
+    root = Node.new( nil, '/' )
+    template = Node.new( root, 'default.template' )
+    dir1 = Node.new( root, 'dir1/' )
+
+    assert_equal( template, @plugin.get_default_template( root ) )
+    assert_equal( template, @plugin.get_default_template( dir1 ) )
+    root.del_child( template )
+    assert_nil( @plugin.get_default_template( root ) )
+  end
 
 end
