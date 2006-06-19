@@ -1,45 +1,20 @@
 require 'fileutils'
 require 'webgen/test'
-require 'webgen/node'
-require 'webgen/config'
 
 class DirectoryHandlerTest < Webgen::FileHandlerTestCase
 
   plugin_files [
-    'webgen/plugins/filehandlers/filehandler.rb',
     'webgen/plugins/filehandlers/directory.rb',
-    BASE_FIXTURE_PATH + 'tc_filehandler_filehandler/sample_plugin.rb'
+    base_fixture_path( 'tc_filehandler_filehandler/sample_plugin.rb' )
   ]
   plugin_to_test 'FileHandlers::DirectoryHandler'
 
-  SAMPLE_SITE = BASE_FIXTURE_PATH + 'sample_site/'
-
   def setup
     super
-    @manager.plugin_config = self
-    @dirs = find_in_sample_dir {|path| path =~ /\/$/ }.collect {|p| p.sub(/^#{SAMPLE_SITE + 'src'}/, SAMPLE_SITE + 'out' )}
+    @dirs = find_in_sample_site {|path| path =~ /\/$/ }.collect {|p| p.sub(/^#{sample_site( 'src' )}/, sample_site( 'out' ) )}
     @root_dir = @dirs.min
     @max_dir = @dirs.max
   end
-
-  def param_for_plugin( plugin_name, param )
-    case [plugin_name, param]
-    when ['CorePlugins::Configuration', 'srcDir'] then SAMPLE_SITE + 'src'
-    when ['CorePlugins::Configuration', 'outDir'] then SAMPLE_SITE + 'out'
-    else raise Webgen::PluginParamNotFound.new( plugin_name, param )
-    end
-  end
-
-  def find_in_sample_dir
-    files = Set.new
-    Find.find( SAMPLE_SITE + 'src' ) do |path|
-      Find.prune if File.basename( path ) =~ /^\./
-      path += '/' if FileTest.directory?(path)
-      files << path if yield( path )
-    end
-    files
-  end
-
 
   def test_create_node
     root = @plugin.create_node( @root_dir, nil )

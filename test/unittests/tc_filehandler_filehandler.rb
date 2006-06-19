@@ -4,7 +4,7 @@ require 'webgen/test'
 require 'webgen/node'
 require 'webgen/config'
 
-class FileHandlerTest < Webgen::PluginTestCase
+class FileHandlerTest < Webgen::FileHandlerTestCase
 
   #TODO think about runtime depdencies  (e.g. CorePlugins::Configuration for FileHandlers::FileHandler)
   #     ie. ones which are not required for initializing, but for running
@@ -15,8 +15,6 @@ class FileHandlerTest < Webgen::PluginTestCase
   ]
   plugin_to_test 'FileHandlers::FileHandler'
 
-  SAMPLE_SITE = fixture_path( '../sample_site/' )
-
   def setup
     super
     self.class.class_eval "class ::FileHandlers::FileHandler
@@ -26,25 +24,6 @@ class FileHandlerTest < Webgen::PluginTestCase
            public :create_node
            public :build_tree
          end"
-    @manager.plugin_config = self
-  end
-
-  def param_for_plugin( plugin_name, param )
-    case [plugin_name, param]
-    when ['CorePlugins::Configuration', 'srcDir'] then SAMPLE_SITE + 'src'
-    when ['CorePlugins::Configuration', 'outDir'] then SAMPLE_SITE + 'out'
-    else raise Webgen::PluginParamNotFound.new( plugin_name, param )
-    end
-  end
-
-  def find_in_sample_dir
-    files = Set.new
-    Find.find( SAMPLE_SITE + 'src' ) do |path|
-      Find.prune if File.basename( path ) =~ /^\./
-      path += '/' if FileTest.directory?(path)
-      files << path if yield( path )
-    end
-    files
   end
 
 
@@ -63,13 +42,13 @@ class FileHandlerTest < Webgen::PluginTestCase
 
   def test_find_all_files
     found_files = @plugin.find_all_files
-    files = find_in_sample_dir {|p| true }
+    files = find_in_sample_site {|p| true }
     assert_equal( files, found_files )
   end
 
   def test_find_files_for_handlers
     found_files = @plugin.find_files_for_handlers
-    files = find_in_sample_dir {|path| path =~ /\.page$/}
+    files = find_in_sample_site {|path| path =~ /\.page$/}
 
     assert_equal( 2, found_files.length )
     assert( found_files.keys.include?( @manager['SampleHandler'] ) )
@@ -101,7 +80,7 @@ class FileHandlerTest < Webgen::PluginTestCase
   def test_create_node_dir
     all_files = @plugin.find_all_files
     files_for_handlers = @plugin.find_files_for_handlers
-    dirs = find_in_sample_dir {|path| File.directory?(path)}
+    dirs = find_in_sample_site {|path| File.directory?(path)}
 
     root_node = @plugin.create_root_node( all_files, files_for_handlers )
     dir_handler = @manager['FileHandlers::DirectoryHandler']
@@ -126,7 +105,7 @@ class FileHandlerTest < Webgen::PluginTestCase
   def test_create_node_file
     all_files = @plugin.find_all_files
     files_for_handlers = @plugin.find_files_for_handlers
-    pages = find_in_sample_dir {|path| path =~ /\.page$/}
+    pages = find_in_sample_site {|path| path =~ /\.page$/}
 
     root_node = @plugin.create_root_node( all_files, files_for_handlers )
     dir_handler = @manager['FileHandlers::DirectoryHandler']
@@ -151,7 +130,7 @@ class FileHandlerTest < Webgen::PluginTestCase
     assert_equal( 4, tree.children.size )
     assert_not_nil( tree.resolve_node( 'dir1/dir11/file111.html' ) )
 
-    nr_paths_on_disc = find_in_sample_dir {|p| true }.length
+    nr_paths_on_disc = find_in_sample_site {|p| true }.length
 
     def calc_length( tree ); tree.children.inject( 1 ) {|memo,c| memo += calc_length( c ) }; end
 

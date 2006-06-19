@@ -1,31 +1,13 @@
 require 'fileutils'
 require 'webgen/test'
-require 'webgen/node'
-require 'webgen/config'
 
 class FileCopyHandlerTest < Webgen::FileHandlerTestCase
 
   plugin_files [
-    'webgen/plugins/filehandlers/filehandler.rb',
     'webgen/plugins/filehandlers/directory.rb',
     'webgen/plugins/filehandlers/copy.rb'
   ]
   plugin_to_test 'FileHandlers::FileCopyHandler'
-
-  SAMPLE_SITE = BASE_FIXTURE_PATH + 'sample_site/'
-
-  def setup
-    super
-    @manager.plugin_config = self
-  end
-
-  def param_for_plugin( plugin_name, param )
-    case [plugin_name, param]
-    when ['CorePlugins::Configuration', 'srcDir'] then SAMPLE_SITE + 'src'
-    when ['CorePlugins::Configuration', 'outDir'] then SAMPLE_SITE + 'out'
-    else raise Webgen::PluginParamNotFound.new( plugin_name, param )
-    end
-  end
 
   def test_create_node
     root = @manager['FileHandlers::FileHandler'].instance_eval { build_tree }

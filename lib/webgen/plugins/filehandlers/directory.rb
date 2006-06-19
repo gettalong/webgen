@@ -21,6 +21,7 @@
 #
 
 require 'webgen/plugins/filehandlers/filehandler'
+require 'webgen/node'
 
 module FileHandlers
 
@@ -61,15 +62,15 @@ module FileHandlers
 
     infos :summary => "Handles directories"
 
-    param 'indexFile', 'index.html', 'The default file name for the directory index page file.'
+    param 'indexFile', 'index.page', 'The default file name for the directory index page file.'
 
     handle_path_pattern '**/'
 
     # Returns a new DirNode.
     def create_node( path, parent )
-      filename = File.basename( path )
-      if parent.nil? || (node = parent.find {|child| child.is_directory? && filename + '/' == child.path }).nil?
-        node = DirNode.new( parent, filename + '/' )
+      filename = File.basename( path ) + '/'
+      if parent.nil? || (node = parent.find {|child| child =~ filename }).nil?
+        node = DirNode.new( parent, filename )
         node.node_info[:processor] = self
       end
       node

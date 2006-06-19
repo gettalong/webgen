@@ -38,7 +38,7 @@ module FileHandlers
 
     def initialize( manager )
       super
-      #TODO are this messages still necessary???
+      #TODO are this messages still necessary??? -> yeah, used by link from Paul van Tilburg
       add_msg_name( :AFTER_ALL_READ )
       add_msg_name( :AFTER_ALL_WRITTEN )
     end
@@ -77,7 +77,7 @@ module FileHandlers
       used_files = Set.new
       files_for_handlers.each do |handler, files|
         common = all_files & files
-        used_files << common
+        used_files += common
         diff = files - common
         log(:info) { "Not using these files for #{handler.class.name} as they do not exist or are excluded: #{diff.inspect}" } if diff.length > 0
         common.each {|file| create_node( file, root_node, handler ) }
@@ -92,7 +92,7 @@ module FileHandlers
 
     # Recursively writes out the tree specified by +node+.
     def write_tree( node )
-      log(:info) { "Writing <#{node.absolute_path}>" }
+      log(:info) { "Writing <#{node.full_path}>" }
 
       node.write_node
 
@@ -158,8 +158,9 @@ module FileHandlers
       pathname, filename = File.split( file.sub( /^#{root.node_info[:src]}/, '' ) )
       parent_node = dir_handler.recursive_create_path( pathname, root )
 
-      log(:info) { "Creating node for <#{file}>..." }
+      log(:info) { "Trying to create node for <#{file}>..." }
       node = handler.create_node( file, parent_node )
+      log(:info) { "Node for <#{file}> created" } unless node.nil?
       #TODO check node for correct lang and other things
       node
     end

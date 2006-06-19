@@ -20,26 +20,44 @@
 #++
 #
 
-require 'webgen/plugins/filehandlers/filehandler'
+require 'webgen/plugins/filehandlers/page'
 
 module FileHandlers
 
-  # Handles template files. Template files are generic files which specify the layout.
+  # Handles template files. Template files are just page files with another extension.
   class TemplateFileHandler < DefaultFileHandler
 
-    summary "Represents the template files for the page generation in the tree"
-    extension 'template'
-    add_param 'defaultTemplate', 'default.template', 'The default file name for the template file.'
-    depends_on 'FileHandler'
+    infos :summary =>  "Handles the template files"
+    param 'defaultTemplate', 'default.template', 'The default file name for the template file.'
 
-    used_meta_info 'template'
+    handle_extension 'template'
+
+=begin
+TODO: MOVE TO DOC
+- use meta_info 'template'
+=end
 
     def create_node( srcName, parent )
-      node = Node.new( parent )
-      node['title'] = 'Template'
-      node['src'] = node['dest'] = File.basename( srcName )
-      node['processor'] = self
-      File.open( srcName ) { |file| node['content'] = file.read }
+      begin
+        data = WebPageData.new( File.read( srcName ), @plugin_manager['ContentFormatters::Default'].formatters,
+                                Marshal.load( Marshal.dump( param( 'defaultPageMetaData', 'FileHandlers::PageFileHandler' ) ) ) )
+      rescue WebPageDataInvalid => e
+        log(:error) { "Invalid template file <#{srcName}>: #{e.message}" }
+        return nil
+      end
+
+      if node = parent.find {|n| n =~ srcName }
+        log(:warn) { "Can't create node <#{node.full_path}> as it already exists! Using existing!" }
+      else
+        basename = File.basename( srcName )
+        node = FileHandlers::PageFileHandler::PageNode.new( parent, basename, data  )
+        node['title'] = 'template'
+        node.node_info[:src] = srcName
+        node.node_info[:processor] = self
+        node.node_info[:pagename] = basename
+        node.node_info[:local_pagename] = basename
+      end
+
       node
     end
 
@@ -47,52 +65,42 @@ module FileHandlers
       # do not write anything
     end
 
-    # Return the template for +node+.
-    def get_template_for_node( node )
-      return get_template( node ) || get_default_template( node )
+    # Returns the template chain for +node+.
+    def templates_for_node( node )
+      if node['template'].kind_of?( String )
+        template_node = node.resolve_node( node['template'] )
+        if template_node.nil?
+          log(:warn) { "Specified template '#{node['template']}' for file <#{node.node_info[:src]}> not found, using default template!" }
+          template_node = get_default_template( node.parent )
+        end
+        node['template'] = template_node
+      elsif node['template'].kind_of?( Node )
+        template_node = node['template']
+      end
+
+      if template_node.nil?
+        []
+      else
+        templates_for_node( template_node ) + [template_node]
+      end
     end
 
     #######
     private
     #######
 
-    def get_template( node )
-      if node['template'].kind_of?( String ) && node['template'] != ''
-        templateNode = node.node_for_string( node['template'] )
-        if templateNode.nil?
-          self.logger.warn { "Specified template for file <#{node.recursive_value('src')}> not found, using default template!" }
-        end
-        node['template'] = templateNode unless templateNode.nil?
-        return templateNode
-      end
-    end
-
-    # Return the default template for +node+. If the template node is not found in the directory of
-    # the node, the parent directories are searched.
-    def get_default_template( node )
-      node = node.parent until node['int:directory?']
-      templateNode = node.find { |child| child['src'] == get_param( 'defaultTemplate' ) }
-      if templateNode.nil?
-        if node.parent.nil?
-          self.logger.error { "Template file #{get_param( 'defaultTemplate' )} in root directory not found, creating dummy!" }
-          templateNode = DummyTemplateNode.new( node )
-          node.add_child( templateNode )
+    # Returns the default template of the directory node +dir+. If the template node is not found,
+    # the parent directories are searched.
+    def get_default_template( dir )
+      template_node = dir.find {|child| child =~ param( 'defaultTemplate' ) }
+      if template_node.nil?
+        if dir.parent.nil?
+          log(:warn) { "No default template '#{param( 'defaultTemplate' )}' in root directory found!" }
         else
-          templateNode = get_default_template( node.parent )
+          template_node = get_default_template( dir.parent )
         end
       end
-      templateNode
-    end
-
-  end
-
-  class DummyTemplateNode < Node
-
-    def initialize( parent )
-      super( parent )
-      self['src'] = self['dest'] = self['title'] = Webgen::Plugin['TemplateFileHandler']['defaultTemplate']
-      self['processor'] = Webgen::Plugin['TemplateFileHandler']
-      self['content'] = ''
+      template_node
     end
 
   end
