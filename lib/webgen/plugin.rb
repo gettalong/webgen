@@ -100,24 +100,6 @@ module Webgen
         ancestors.delete_if {|c| c.instance_of?( Module ) }[0..-3]
       end
 
-      # TODO(remove?) Defines a new *handler class. The methods creates two methods based on the parameter +name+:
-      # - klass.register_[name]
-      # - object.get_[name]
-      def define_handler( name )
-        s = "def self.register_#{name}( param )
-        (Webgen::Plugin.config[#{self.name}].#{name}s ||= {})[param] = self
-        Webgen::Plugin.config[self].registered_#{name} = param
-      end\n"
-        s += "def get_#{name}( param )
-        if Webgen::Plugin.config[#{self.name}].#{name}s.has_key?( param )
-          Webgen::Plugin.config[Webgen::Plugin.config[#{self.name}].#{name}s[param]].obj
-        else
-           Webgen::Plugin.config[#{self.name}].obj
-        end
-      end"
-        module_eval s
-      end
-
     end
 
     # Appends the methods of this module as object methods to the including class and the methods
@@ -184,6 +166,7 @@ module Webgen
       end
       add_plugin_class( klass ) unless klass.nil?
       cont.call if cont
+      sort_out_base_plugins
     end
 
     # Checks if this PluginLoader has loaded a plugin called +name+.
@@ -201,7 +184,11 @@ module Webgen
     #######
 
     def add_plugin_class( klass )
-      @plugins << klass if klass != Webgen::Plugin && klass != Webgen::CommandPlugin
+      @plugins << klass
+    end
+
+    def sort_out_base_plugins
+      @plugins.delete_if {|klass| klass.config.infos[:is_base_plugin] == true}
     end
 
   end
@@ -407,13 +394,42 @@ module Webgen
 
     module CommandPlugin; end
 
-    # The base class for all plugins.
+    # THE base class for all plugins.
     class Plugin
 
       include PluginDefs
 
+      infos :is_base_plugin => true
+
     end
 
+    #TODO better comment and document methods: Base class for plugins which are super classes of
+    #plugins that handle different types of a simliar kind. E.g. different markup to HTML
+    #converters.
+    class HandlerPlugin < Plugin
+
+      infos :is_base_plugin => true
+
+      def self.register_handler( name )
+        self.config.infos[:handler_for] = name
+      end
+
+      def self.registered_handler
+        self.config.infos[:handler_for]
+      end
+
+      def registered_handlers
+        # TODO could be made faster by storing the hash
+        handlers = {}
+        @plugin_manager.plugins.each do |name, plugin|
+          if plugin.kind_of?( self.class ) && plugin.class.registered_handler
+            handlers[plugin.class.registered_handler] = plugin
+          end
+        end
+        handlers
+      end
+
+    end
 
     # This module should be included by classes derived from CommandParser::Command as it
     # automatically adds an object of the class to the main CommandParser object.
@@ -421,10 +437,12 @@ module Webgen
 
       include PluginDefs
 
+      infos :is_base_plugin => true
+
       def self.append_features( klass )
         super
         PluginDefs.append_features( klass )
-        klass.extend( ClassMethods ) #TODO necessary? -> already called in PluginDefs.append_features
+        klass.extend( ClassMethods ) #TODO TEST necessary? -> already called in PluginDefs.append_features
       end
     end
 

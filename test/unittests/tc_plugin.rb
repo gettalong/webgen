@@ -12,6 +12,7 @@ def undo_all
   Testing.constants.each {|c| Testing.remove_const(c)} if Object.const_defined?( :Testing )
   $".delete( PluginLoaderTest.fixture_path( 'plugin1.rb' ) )
   $".delete( PluginLoaderTest.fixture_path( 'plugin2.rb' ) )
+  $".delete( PluginLoaderTest.fixture_path( 'handlerplugin.rb' ) )
 end
 
 
@@ -117,6 +118,36 @@ class PluginTest < Webgen::TestCase
 end
 
 
+class HandlerPluginTest < Webgen::TestCase
+
+  def setup
+    @l = Webgen::PluginLoader.new
+    @l.load_from_file( fixture_path( 'handlerplugin.rb' ) )
+  end
+
+  def teardown
+    undo_all
+    @l = nil
+  end
+
+  def test_registered_handler
+    assert_equal( 3, @l.plugins.length )
+    assert_equal( nil, Testing::BaseHandler.registered_handler )
+    assert_equal( 'handler1', Testing::Handler1.registered_handler )
+    assert_equal( nil, Testing::Handler2.registered_handler )
+  end
+
+  def test_registered_handlers
+    manager = Webgen::PluginManager.new( [@l] )
+    manager.add_plugin_classes( @l.plugins )
+    manager.init
+
+    assert_equal( {'handler1' => manager['Testing::Handler1']}, manager['Testing::BaseHandler'].registered_handlers )
+  end
+
+end
+
+
 class DummyConfig
 
   def initialize
@@ -160,7 +191,7 @@ class PluginManagerTest < Webgen::TestCase
     manager = Webgen::PluginManager.new( [loader] )
     manager.add_plugin_classes( loader.plugins )
     manager.init
-    assert_equal( 2, manager.plugins.length )
+    assert_equal( 5, manager.plugins.length )
 
     assert_kind_of( Testing::BasicPlugin, manager[Testing::BasicPlugin] )
     assert_kind_of( Testing::DerivedPlugin, manager['Testing::DerivedPlugin'] )
