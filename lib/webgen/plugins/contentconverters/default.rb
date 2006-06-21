@@ -21,17 +21,18 @@
 #
 
 
-module ContentHandlers
+module ContentConverters
 
-  class DefaultContentHandler < Webgen::Plugin
+  class DefaultContentConverter < Webgen::HandlerPlugin
 
-    summary "Base class for all content handlers"
+    infos(
+          :summary => "Base class for content to HTML converters",
+          :is_base_plugin => true
+          )
 
-    define_handler 'format'
-
-    # Format the given +content+. Should be overridden in subclass!
-    def format_content( content )
-      content
+    # Convert the given +content+ to HTML. Has to be overridden in subclasses!
+    def call( content )
+      raise NotImplementedError
     end
 
   end

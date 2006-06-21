@@ -22,27 +22,28 @@
 
 require 'rdoc/markup/simple_markup'
 require 'rdoc/markup/simple_markup/to_html'
-require 'webgen/plugins/contenthandlers/default'
+require 'webgen/plugins/contentconverters/default'
 
-module ContentHandlers
+module ContentConverters
 
   # Handles text in RDoc format.
-  class RDocContentHandler < DefaultContentHandler
+  class RDocConverter < DefaultContentConverter
 
-    summary "Handles content in RDOC format"
+    infos :summary => "Handles content in RDOC format"
 
-    register_format( 'rdoc' )
+    register_handler 'rdoc'
 
-    def initialize
+    def initialize( plugin_manager )
+      super
       @processor = SM::SimpleMarkup.new
       @formatter = SM::ToHtml.new
     end
 
-    def format_content( txt )
-      @processor.convert( txt, @formatter )
-    rescue
-      self.logger.error { "Error converting RDOC text to HTML" }
-      ''
+    def call( content )
+      @processor.convert( content, @formatter )
+    rescue Exception => e
+      log(:error) { "Error converting RDOC text to HTML: {e.message}" }
+      content
     end
 
   end

@@ -20,25 +20,24 @@
 #++
 #
 
-
 begin
   require 'bluecloth'
-  require 'webgen/plugins/contenthandlers/default'
+  require 'webgen/plugins/contentconverters/default'
 
-  module ContentHandlers
+  module ContentConverters
 
-    # Handles text formatted in Markdown format using BlueCloth.
-    class MarkdownContentHandler < DefaultContentHandler
+    # Converts text formatted in Markdown format using BlueCloth to HTML.
+    class MarkdownConverter < DefaultContentConverter
 
-      summary "Handles content formatted in Markdown format using BlueCloth"
+      infos :summary => "Handles content formatted in Markdown format using BlueCloth"
 
-      register_format( 'markdown' )
+      register_handler 'markdown'
 
-      def format_content( txt )
-        BlueCloth.new( txt ).to_html
-      rescue
-        self.logger.error { "Error converting Markdown text to HTML" }
-        ''
+      def call( content )
+        BlueCloth.new( content ).to_html
+      rescue Exception => e
+        log(:error) { "Error converting Markdown text to HTML: #{e.message}" }
+        content
       end
 
     end
@@ -46,5 +45,5 @@ begin
   end
 
 rescue LoadError => e
-  self.logger.warn { "Markdown not available as content format as BlueCloth could not be loaded: #{e.message}" }
+  $stderr.puts( "Markdown not available as content format as BlueCloth could not be loaded: #{e.message}" ) if $VERBOSE
 end

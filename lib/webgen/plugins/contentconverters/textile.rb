@@ -22,22 +22,22 @@
 
 begin
   require 'redcloth'
-  require 'webgen/plugins/contenthandlers/default'
+  require 'webgen/plugins/contentconverters/default'
 
-  module ContentHandlers
+  module ContentConverters
 
     # Handles content in Textile format using RedCloth.
-    class TextileContentHandler < DefaultContentHandler
+    class TextileConverter < DefaultContentConverter
 
-      summary "Handles content in Textile format using RedCloth"
+      infos :summary => "Handles content in Textile format using RedCloth"
 
-      register_format( 'textile' )
+      register_handler 'textile'
 
-      def format_content( txt )
-        RedCloth.new( txt ).to_html
+      def call( content )
+        RedCloth.new( content ).to_html
       rescue Exception => e
-        self.logger.error { "Error converting Textile text to HTML: #{e.message}" }
-        ''
+        log(:error) { "Error converting Textile text to HTML: #{e.message}" }
+        content
       end
 
     end
@@ -45,5 +45,5 @@ begin
   end
 
 rescue LoadError => e
-  self.logger.warn { "Textile not available as content format as RedCloth could not be loaded: #{e.message}" }
+  $stderr.puts( "Textile not available as content format as RedCloth could not be loaded: #{e.message}" ) if $VERBOSE
 end

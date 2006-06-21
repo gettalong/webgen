@@ -20,19 +20,19 @@
 #++
 #
 
-require 'webgen/plugins/contenthandlers/default'
+require 'webgen/plugins/contentconverters/default'
 
-module ContentHandlers
+module ContentConverters
 
   # Handles HTML content. Assumes that the content is already valid HTML.
-  class HTMLContentHandler < DefaultContentHandler
+  class HtmlConverter < DefaultContentConverter
 
-    summary "Handles HTML formatted content"
+    infos :summary => "Handles HTML formatted content"
 
-    register_format( 'html' )
+    register_handler 'html'
 
-    def format_content( txt )
-      txt
+    def call( content )
+      content
     end
 
   end
