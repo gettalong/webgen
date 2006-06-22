@@ -45,23 +45,26 @@ class ExtendedCommand
 end
 
 
-module HTMLValidators
+module HtmlValidators
 
-  class XmllintHTMLValidator < DefaultHTMLValidator
+  class XmllintHtmlValidator < DefaultHtmlValidator
 
-    summary "Uses xmllint to check if a file is valid and well-formed"
+    infos :summary => "Uses xmllint to check if a file is valid HTML and well-formed"
 
-    add_param "args", '--catalogs --noout --valid', 'Arguments passed to the xmllint command'
-    register_validator 'xmllint'
+    param "args", '--catalogs --noout --valid', 'Arguments passed to the xmllint command'
+
+    register_handler 'xmllint'
 
     def validate_file( filename )
-      cmd = ExtendedCommand.new( "xmllint #{get_param( 'args' )} #{filename}" )
+      cmd = ExtendedCommand.new( "xmllint #{param( 'args' )} #{filename}" )
       case cmd.ret_code
-      when 0
+      when 0 then true
       when 1..10
-        self.logger.warn { "xmllint was run on <#{filename}>, exited with the return code #{cmd.ret_code} and the error message: \n#{cmd.err_text}" }
+        log(:warn) { "xmllint was run on <#{filename}>, but exited with return code #{cmd.ret_code} and the error message: #{cmd.err_text}" }
+        false
       else
-        self.logger.error { "Error running xmllint:\n#{cmd.err_text}" }
+        log(:error) { "Error running xmllint:#{cmd.err_text}" }
+        false
       end
     end
 

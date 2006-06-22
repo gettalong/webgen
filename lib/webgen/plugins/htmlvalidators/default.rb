@@ -20,16 +20,18 @@
 #++
 #
 
-module HTMLValidators
+module HtmlValidators
 
-  class DefaultHTMLValidator < Webgen::Plugin
+  class DefaultHtmlValidator < Webgen::HandlerPlugin
 
-    summary "Base class for all HTML validators"
+    infos(
+          :summary => "Base class for all HTML validators",
+          :is_base_plugin => true
+          )
 
-    define_handler 'validator'
-
-    # Should be overridden in subclass!
+    # Validates the file +filename+. Has to be overridden in subclasses!
     def validate_file( filename )
+      raise NotImplementedError
     end
 
   end
