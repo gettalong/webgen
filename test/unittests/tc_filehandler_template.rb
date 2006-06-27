@@ -14,8 +14,8 @@ class TemplateFileHandlerTest < Webgen::FileHandlerTestCase
     self.class.class_eval "class ::FileHandlers::TemplateFileHandler
            public :get_default_template
          end"
-    @manager.plugins['ContentFormatters::Default'] = Object.new
-    def (@manager.plugins['ContentFormatters::Default']).formatters
+    @manager.plugins['ContentConverters::DefaultContentConverter'] = Object.new
+    def (@manager.plugins['ContentConverters::DefaultContentConverter']).registered_handlers
       {'default' => proc {|c| c}, 'textile' => proc {|c| c}}
     end
   end

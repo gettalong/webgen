@@ -65,8 +65,8 @@ class PageHandlerTest < Webgen::FileHandlerTestCase
            public :analyse_file_name
            public :create_output_name
          end"
-    @manager.plugins['ContentFormatters::Default'] = Object.new
-    def (@manager.plugins['ContentFormatters::Default']).formatters
+    @manager.plugins['ContentConverters::DefaultContentConverter'] = Object.new
+    def (@manager.plugins['ContentConverters::DefaultContentConverter']).registered_handlers
       {'default' => proc {|c| c}, 'textile' => proc {|c| c}}
     end
   end
@@ -119,11 +119,6 @@ class PageHandlerTest < Webgen::FileHandlerTestCase
     assert_equal( 'File1', @plugin.link_from( file1, index_de ) )
   end
 
-
-  def analyse_file_name( struct )
-    assert_equal( struct, @plugin.analyse_file_name( struct.filename ) )
-  end
-
   def test_analyse_file_name
     analyse_file_name( OpenStruct.new( {'lang' => @manager.param_for_plugin( 'CorePlugins::Configuration', 'lang' ),
                                         'filename' => 'default.page',
@@ -147,13 +142,8 @@ class PageHandlerTest < Webgen::FileHandlerTestCase
                                         'title' => 'Default', 'useLangPart' => false } ) )
   end
 
-
-  def check_output_name( expected, given, style, omitLang = false )
-    assert_equal( expected, @plugin.create_output_name( @plugin.analyse_file_name( given ), style, omitLang ) )
-  end
-
   def test_create_output_name
-    style = [:name, ['.', :lang], '.html']
+    style = [:name, ['.', :lang], 545, '.html']
     check_output_name( 'index.de.html', 'index.de.page', style )
     check_output_name( 'index.html', 'index.de.page', style, true )
     check_output_name( 'index.html', 'index.en.page', style )
@@ -162,6 +152,18 @@ class PageHandlerTest < Webgen::FileHandlerTestCase
     check_output_name( 'index.de.html', 'index.de.page', style )
     check_output_name( 'index..html', 'index.de.page', style, true )
     check_output_name( 'index..html', 'index.en.page', style )
+  end
+
+  #######
+  private
+  #######
+
+  def check_output_name( expected, given, style, omitLang = false )
+    assert_equal( expected, @plugin.create_output_name( @plugin.analyse_file_name( given ), style, omitLang ) )
+  end
+
+  def analyse_file_name( struct )
+    assert_equal( struct, @plugin.analyse_file_name( struct.filename ) )
   end
 
 end

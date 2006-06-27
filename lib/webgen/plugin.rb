@@ -323,6 +323,7 @@ module Webgen
     # +source+ identifies the source of the log message.
     def log_msg( sev_level, source, &block )
       @logger.send( sev_level, source, &block ) if @logger
+      nil
     end
 
     #######

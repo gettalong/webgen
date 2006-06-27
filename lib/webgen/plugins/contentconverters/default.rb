@@ -25,10 +25,7 @@ module ContentConverters
 
   class DefaultContentConverter < Webgen::HandlerPlugin
 
-    infos(
-          :summary => "Base class for content to HTML converters",
-          :is_base_plugin => true
-          )
+    infos :summary => "Base class for content to HTML converters"
 
     # Convert the given +content+ to HTML. Has to be overridden in subclasses!
     def call( content )

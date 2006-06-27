@@ -38,7 +38,6 @@ module FileHandlers
 
     def initialize( manager )
       super
-      #TODO are this messages still necessary??? -> yeah, used by link from Paul van Tilburg
       add_msg_name( :AFTER_ALL_READ )
       add_msg_name( :AFTER_ALL_WRITTEN )
     end
@@ -98,7 +97,6 @@ module FileHandlers
 
       node.each {|child| write_tree( child ) }
 
-      #TODO still used?
       dispatch_msg( :AFTER_ALL_WRITTEN ) if node.parent.nil?
     end
 

@@ -39,7 +39,7 @@ TODO: MOVE TO DOC
 
     def create_node( srcName, parent )
       begin
-        data = WebPageData.new( File.read( srcName ), @plugin_manager['ContentFormatters::Default'].formatters,
+        data = WebPageData.new( File.read( srcName ), @plugin_manager['ContentConverters::DefaultContentConverter'].registered_handlers,
                                 Marshal.load( Marshal.dump( param( 'defaultPageMetaData', 'FileHandlers::PageFileHandler' ) ) ) )
       rescue WebPageDataInvalid => e
         log(:error) { "Invalid template file <#{srcName}>: #{e.message}" }

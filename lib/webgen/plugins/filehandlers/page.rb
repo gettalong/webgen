@@ -127,7 +127,7 @@ TODO: move to doc
       analysed_name = analyse_file_name( filename )
 
       begin
-        data = WebPageData.new( data, @plugin_manager['ContentFormatters::Default'].formatters,
+        data = WebPageData.new( data, @plugin_manager['ContentConverters::DefaultContentConverter'].registered_handlers,
                                 Marshal.load( Marshal.dump( param( 'defaultPageMetaData' ) ) ) )
       rescue WebPageDataInvalid => e
         log(:error) { "Invalid page file <#{filename}>: #{e.message}" }
@@ -166,52 +166,21 @@ TODO: move to doc
       chain << node
 
       result = @plugin_manager['Tags::Tags'].substitute_tags( content, chain )
-      dispatch_msg( :AFTER_CONTENT_RENDERED, outstring, node )
+      dispatch_msg( :AFTER_CONTENT_RENDERED, result, node )
       result
-      return
-
-      #old code
-      unless node['int:content-formatted']
-        useERB = node['useERB']
-        node['blocks'].each do |blockdata|
-          begin
-            content = ( useERB ? ERB.new( blockdata['data'] ).result( binding ) : blockdata['data'] )
-          rescue Exception => e
-            logger.error { "ERB threw an error while processing an ERB template (<#{node.recursive_value('src')}>, block #{blockdata['name']}): #{e.message}" }
-            content = blockdata['data']
-          end
-          node[blockdata['name']] = Webgen::Plugin['DefaultContentHandler'].get_format( blockdata['format'] ).format_content( content )
-        end
-        node['int:content-formatted'] = true
-      end
-
-      if with_template
-        templateNode = Webgen::Plugin['TemplateFileHandler'].get_template_for_node( node )
-        begin
-          outstring = ERB.new( templateNode['content'] ).result( binding )
-        rescue Exception => e
-          logger.error { "ERB threw an error while processing an ERB template (<#{templateNode.recursive_value('src')}>): #{e.message}" }
-          outstring = templateNode['content'].dup
-        end
-      else
-        templateNode = node
-        outstring = node[block_name].to_s.dup
-      end
-
-      outstring = Webgen::Plugin['Tags'].substitute_tags( outstring, node, templateNode )
-      outstring
     end
 
     def write_node( node )
       outstring = render_node( node )
 
-      File.open( node.recursive_value( 'dest' ), File::CREAT|File::TRUNC|File::RDWR ) do |file|
+      File.open( node.full_path, File::CREAT|File::TRUNC|File::RDWR ) do |file|
         file.write( outstring )
       end
 
-      validator = get_param( 'validator' )
-      unless validator.nil? || validator == ''
-        Webgen::Plugin['DefaultHTMLValidator'].get_validator( validator ).validate_file( node.recursive_value( 'dest' ) )
+      validator = param( 'validator' )
+      validators = @plugin_manager['HtmlValidators::DefaultHtmlValidator'].registered_handlers
+      unless validator.nil? || validator == '' || validators[validator].nil?
+        validators[validator].validate_file( node.full_path )
       end
     end
 

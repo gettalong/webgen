@@ -24,10 +24,7 @@ module HtmlValidators
 
   class DefaultHtmlValidator < Webgen::HandlerPlugin
 
-    infos(
-          :summary => "Base class for all HTML validators",
-          :is_base_plugin => true
-          )
+    infos :summary => "Base class for all HTML validators"
 
     # Validates the file +filename+. Has to be overridden in subclasses!
     def validate_file( filename )
