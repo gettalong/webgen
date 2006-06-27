@@ -24,37 +24,40 @@ require 'yaml'
 
 module Tags
 
-  # This is the main class for tags. Tag plugins can register themselves by adding a new key:value
+  #TODO new comment: This is the main class for tags. Tag plugins can register themselves by adding a new key:value
   # pair to +tags+. The key has to be the name of the tag as specified in the page description files
   # and the value is the plugin object itself. When the content is parsed and a tag is
   # encountered, the registered plugin for the tag is called. If no plugin for a tag is registered
   # but a default plugin is, the default plugin is called. Otherwise an error is raised.
   #
   # The default plugin can be registered by using the special key <tt>:default</tt>.
-  class Tags < Webgen::Plugin
+  class TagProcessor < Webgen::Plugin
 
-    summary "Super plugin for handling tags"
+    infos :summary => "Plugin for processing tags"
 
-    # Substitutes all references to tags in the string +content+. The +node+ parameter specifies the
+    #TODO new comment: Substitutes all references to tags in the string +content+. The +node+ parameter specifies the
     # tree node the content of which is used. The +refNode+ parameter specifies relative to which
     # all references should be resolved.
-    def substitute_tags( content, node, refNode )
+    def process( content, chain )
       if !content.kind_of?( String )
-        self.logger.error { "The content in <#{refNode.recursive_value( 'src' )}> is not a string, but a #{content.class.name}" }
+        log(:error) { "The content in <#{chain.first.node_info[:src]}> is not a string, but a #{content.class.name}" }
         content = content.to_s
       end
-      return replace_tags( content ) do |tag, data|
-        self.logger.info { "Replacing tag #{tag} with data '#{data}' in <#{node.recursive_value( 'dest' )}>" }
-        processor = get_tag_processor( tag )
+
+      return replace_tags( content, chain.first ) do |tag, tag_data|
+        log(:info) { "Replacing tag #{tag} with data '#{tag_data}' in <#{chain.first.full_path}>" }
+
+        processor = processor_for_tag( tag )
         begin
-          processor.set_tag_config( YAML::load( "--- #{data}" ), refNode )
+          processor.set_tag_config( YAML::load( "--- #{tag_data}" ), chain.first )
         rescue ArgumentError => e
-          self.logger.error { "Could parse the data '#{data}' for tag #{tag} in <#{node.recursive_value( 'dest' )}>: #{e.message}" }
+          self.logger.error { "Could not parse the data '#{tag_data}' for tag #{tag} in <#{node.nod_info[:src]}>: #{e.message}" }
         end
-        output = processor.process_tag( tag, node, refNode )
+        result, tag_chain = processor.process_tag( tag, chain )
         processor.reset_tag_config
-        output = substitute_tags( output, node, node ) if processor.processOutput
-        output
+
+        result = process( result, tag_chain ) if processor.process_output? && !tag_chain.nil?
+        result
       end
     end
 
@@ -64,8 +67,9 @@ module Tags
 
     # Scans the +content+ for tags. If a tag is found, the block is called which needs to return the
     # value for the given tag. The changed content is returned.
-    def replace_tags( content ) # :yields: tag, data
+    def replace_tags( content, node ) # :yields: tag, data
       offset = 0;
+      content = content.dup
       while index = content.index( /(\\*)\{(\w+):/, offset )
         bracketCount = 1;
         length = $1.length + 1;
@@ -78,7 +82,7 @@ module Tags
         end
 
         if bracketCount > 0
-          self.logger.error { "Unbalanced curly brackets!!!" }
+          log(:error) { "Unbalanced curly brackets in <#{node.node_info[:src]}>!!!" }
           newContent = content[index, length]
         else
           newContent = "\\"* ( $1.length / 2 )
@@ -87,7 +91,7 @@ module Tags
           else
             tagHeaderLength = $1.length + tag.length + 2
             realContent = content[index + tagHeaderLength, length - tagHeaderLength - 1].lstrip
-            newContent += yield( tag, realContent )
+            newContent += yield( tag, realContent ).to_s
           end
           content[index, length] = newContent
         end
@@ -97,17 +101,28 @@ module Tags
     end
 
 
-    # Returns the tag processor for +tag+ or throws an error if +tag+ is unkown.
-    def get_tag_processor( tag )
-      tags = DefaultTag.get_tag_plugins
+    # Returns the tag processor for +tag+ or +nil+ if +tag+ is unknown.
+    def processor_for_tag( tag )
+      tags = registered_tags
       if tags.has_key?( tag )
-        return Webgen::Plugin.config[tags[tag]].obj
+        tags[tag]
       elsif tags.has_key?( :default )
-        return Webgen::Plugin.config[tags[:default]].obj
+        tags[:default]
       else
-        self.logger.error { "No tag processor for tag '#{tag}' found" }
-        return DefaultTag.new
+        log(:error) { "No tag processor for tag '#{tag}' found" }
       end
+    end
+
+    # Returns a hash of the registered tag plugins with the tag name as key.
+    def registered_tags
+      tags = {}
+      @plugin_manager.plugins.each do |name, plugin|
+        if plugin.kind_of?( DefaultTag )
+          #TOOD write log message if duplicate tag name
+          plugin.tags.each {|tag| tags[tag] = plugin }
+        end
+      end
+      tags
     end
 
   end
@@ -117,16 +132,21 @@ module Tags
   # configuration data from either the configuration file or the tag itself.
   class DefaultTag < Webgen::Plugin
 
-    VIRTUAL = true
+    infos(
+          :summary => "Base class for all tag plugins",
+          :instantiate => false
+          )
 
-    summary "Base class for all tag plugins"
-    depends_on "Tags"
+    def initialize( plugin_manager )
+      super
+      @process_output = true
+      @cur_config = {}
+      @tags = []
+    end
 
-    # +true+, if the output should be processed again
-    attr_reader :processOutput
-
-    def initialize
-      @processOutput = true
+    # Returns +true+ if the output should be processed again
+    def process_output?
+      @process_output
     end
 
     # Set the parameter +param+ as mandatory. The parameter +default+ specifies, if this parameter
@@ -134,70 +154,75 @@ module Tags
     # will be assigned to the default mandatory parameter. There *should* be only one default
     # mandatory parameter.
     def self.set_mandatory( param, default = false )
-      if self.config[self].params.nil? || !self.config[self].params.has_key?( param )
-        self.logger.error { "Cannot set parameter #{param} as mandatory as this parameter does not exist for #{self.name}" }
+      if self.config.params.nil? || !self.config.params.has_key?( param )
+        $stderr.puts( "Cannot set parameter #{param} as mandatory as this parameter does not exist for #{self.name}" ) if $VERBOSE
       else
-        self.config[self].params[param].mandatory = true
-        self.config[self].params[param].mandatoryDefault = default
+        self.config.params[param].mandatory = true
+        self.config.params[param].mandatory_default = default
       end
     end
 
-    # Register +tag+ so that it gets handled by the current class.
-    def self.tag( tag )
-      logger.info { "Registering class #{self.name} for handling the tag '#{tag}'" }
-      tags = (self.config[DefaultTag].tag_plugins ||= {})
-      logger.warn { "Tag #{tag} already associated with class #{tags[tag].name}, not using class #{self.name} for it!" } if tags[tag]
-      tags[tag] ||= self
-      self.config[self].tag = tag
+    # Register +tag+ so that it gets processed by the current class.
+    def self.register_tag( tag )
+      (self.config.infos[:tags] ||= [] ) << tag
     end
 
-    # Old style API
+    # See DefaultTag.tag
     def register_tag( tag )
-      self.class.tag( tag )
+      @tags << tag
     end
 
-    # Returns the registered tag plugins.
-    def self.get_tag_plugins
-      self.config[DefaultTag].tag_plugins
+    # Returns all registered tags for the plugin.
+    def tags
+      (self.class.config.infos[:tags] || []) + @tags
     end
 
     # Set the configuration parameters for the next #process_tag call. The configuration, if
     # specified, is taken from the tag itself.
     def set_tag_config( config, node )
-      @curConfig = {}
+      @cur_config = {}
       case config
       when Hash
         set_cur_config( config, node )
 
       when String
-        set_default_mandatory_param( config )
+        set_default_mandatory_param( config, node )
 
       when NilClass
         if has_mandatory_params?
-          self.logger.error { "Mandatory parameters for tag '#{self.class.name}' in <#{node.recursive_value( 'src' )}> not specified" }
+          log(:error) { "Mandatory parameters for tag '#{self.class.name}' in <#{node.node_info[:src]}> not specified" }
         end
 
       else
-        self.logger.error { "Invalid parameter for tag '#{self.class.name}' in <#{node.recursive_value( 'src' )}>" }
+        log(:error) { "Invalid parameter for tag '#{self.class.name}' in <#{node.node_info[:src]}>" }
       end
 
       unless all_mandatory_params_set?
-        self.logger.error { "Not all mandatory parameters for tag '#{self.class.name}' in <#{node.recursive_value( 'src' )}> set" }
+        log(:error) { "Not all mandatory parameters for tag '#{self.class.name}' in <#{node.node_info[:src]}> set" }
       end
     end
 
 
     # Resets the tag configuration data.
     def reset_tag_config
-      @curConfig = {}
+      @cur_config = {}
     end
 
+    # Retrieves the parameter value for +name+. The value is taken from the current tag if the
+    # parameter is specified there or the default value set in #register_config_value is used.
+    def param( name, plugin = nil )
+      if @cur_config.has_key?( name ) && plugin.nil?
+        return @cur_config[name]
+      else
+        super( name, plugin )
+      end
+    end
 
     # Default implementation for processing a tag.
     #
-    # Has to be overridden by the subclass!!!
-    def process_tag( tag, node, refNode )
-      ''
+    # Has to be overridden by subclasses!!!
+    def process_tag( tag, node_chain )
+      raise NotImplementedError
     end
 
     #######
@@ -207,46 +232,34 @@ module Tags
     # Set the current configuration taking values from +config+ which has to be a Hash.
     def set_cur_config( config, node )
       config.each do |key, value|
-        if has_param?( key )
-          @curConfig[key] = value
-          self.logger.debug { "Setting parameter '#{key}' for tag '#{self.class.name}' in <#{node.recursive_value( 'src' )}>" }
+        if self.class.config.params.has_key?( key )
+          @cur_config[key] = value
+          log(:debug) { "Setting parameter '#{key}' for tag '#{self.class.name}' in <#{node.node_info[:src]}>" }
         else
-          self.logger.warn { "Invalid parameter '#{key}' for tag '#{self.class.name}' in <#{node.recursive_value( 'src' )}>" }
+          log(:warn) { "Invalid parameter '#{key}' for tag '#{self.class.name}' in <#{node.node_info[:src]}>" }
         end
       end
     end
 
     # Set the default mandatory parameter.
-    def set_default_mandatory_param( value )
-      data = Webgen::Plugin.config[self.class]
-      key = data.params.detect {|k,v| v.mandatoryDefault} unless data.params.nil?
-      if key.nil?
-        self.logger.error { "Default mandatory parameter not specified for tag '#{self.class.name}'"}
+    def set_default_mandatory_param( value, node )
+      param_name, param_value = self.class.config.params.find {|k,v| v.mandatory_default} unless self.class.config.params.nil?
+      if param_name.nil?
+        log(:error) { "No default mandatory parameter specified for tag '#{self.class.name}' but set in <#{node.node_info[:src]}>"}
       else
-        @curConfig[key[0]] = value
+        @cur_config[param_name] = value
       end
     end
 
     # Check if this tag has mandatory parameters.
     def has_mandatory_params?
-      data = Webgen::Plugin.config[self.class]
-      !data.params.nil? && data.params.any? {|k,v| v.mandatory }
+      !self.class.config.params.nil? && self.class.config.params.any? {|k,v| v.mandatory }
     end
 
     # Check if all mandatory parameters have been set
     def all_mandatory_params_set?
-      params = Webgen::Plugin.config[self.class].params
-      ( params.nil? ? true : params.all? { |k,v| !v.mandatory || @curConfig.has_key?( k ) } )
-    end
-
-    # Retrieves the parameter value for +name+. The value is taken from the current tag if the
-    # parameter is specified there or the default value set in #register_config_value is used.
-    def get_param( name )
-      if !@curConfig.nil? && @curConfig.has_key?( name )
-        return @curConfig[name]
-      else
-        super( name )
-      end
+      params = self.class.config.params
+      ( params.nil? ? true : params.all? { |k,v| !v.mandatory || @cur_config.has_key?( k ) } )
     end
 
   end
