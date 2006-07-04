@@ -28,25 +28,25 @@ module Tags
   # Includes a file verbatim. All HTML special characters are escaped.
   class IncludeFileTag < DefaultTag
 
-    summary "Includes a file verbatim"
-    add_param 'filename', nil, 'The name of the file which should be included'
-    add_param 'processOutput', true, 'The file content will be scanned for tags if true'
-    add_param 'escapeHTML', true, 'Special HTML characters in the file content will be escaped if true'
+    infos :summary => "Includes a file verbatim"
+
+    param 'filename', nil, 'The name of the file which should be included'
+    param 'processOutput', true, 'The file content will be scanned for tags if true'
+    param 'escapeHTML', true, 'Special HTML characters in the file content will be escaped if true'
     set_mandatory 'filename', true
 
-    tag 'includeFile'
+    register_tag 'includeFile'
 
-    def process_tag( tag, node, refNode )
-      @processOutput = get_param( 'processOutput' )
+    def process_tag( tag, chain )
+      @processOutput = param( 'processOutput' )
       content = ''
       begin
-        filename = refNode.parent_dir.recursive_value( 'src' ) + get_param( 'filename' )
-        self.logger.debug { "File location: <#{filename}>" }
+        filename = File.join( chain.first.parent.node_info[:src], param( 'filename' ) )
         content = File.read( filename )
       rescue
-        self.logger.error { "Given file <#{filename}> does not exist (tag specified in <#{refNode.recursive_value( 'src' )}>" }
+        log(:error) { "Given file <#{filename}> specified in <#{chain.first.node_info[:src]}> does not exist or can't be read" }
       end
-      content = CGI::escapeHTML( content ) if get_param( 'escapeHTML' )
+      content = CGI::escapeHTML( content ) if param( 'escapeHTML' )
 
       content
     end
