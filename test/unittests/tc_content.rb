@@ -28,6 +28,12 @@ class HtmlBlockTest < Webgen::TestCase
     end
   end
 
+  def test_render_with_erb
+    block = HtmlBlock.new( 'test', "5 * 3 = <%= 5*3 + @fuzzy %>" )
+    @fuzzy = 5
+    assert_equal( '5 * 3 = 20', block.render_with_erb( binding ) )
+  end
+
   def compare_sections( section, data, tindex )
     assert_equal( data[0], section.level, "test item #{tindex}" )
     assert_equal( data[1], section.id, "test item #{tindex}" )

@@ -37,8 +37,7 @@ module Webgen
 
       @@data_dir =  File.join( File.dirname( __FILE__ ), '..', '..', 'data', 'webgen') if !File.exists?( @@data_dir )
 
-      raise "Could not find webgen data directory! This is a bug, report it please!" unless
-        File.exists?( @@data_dir ) && File.directory?( @@data_dir )
+      raise "Could not find webgen data directory! This is a bug, report it please!" unless File.directory?( @@data_dir )
     end
     @@data_dir
   end
