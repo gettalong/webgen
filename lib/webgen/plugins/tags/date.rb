@@ -28,13 +28,13 @@ module Tags
   # can use everything Time#strftime offers.
   class DateTag < DefaultTag
 
-    summary "Prints out the date"
-    add_param 'format', '%A, %B %d %H:%M:%S %Z %Y', 'The format of the date (same options as Time#strftime).'
+    infos :summary => "Prints out the current date/time in a customizable format"
+    param 'format', '%A, %B %d %H:%M:%S %Z %Y', 'The format of the date (same options as Ruby\'s Time#strftime).'
 
-    tag 'date'
+    register_tag 'date'
 
-    def process_tag( tag, node, refNode )
-      Time.now.strftime( get_param( 'format' ) )
+    def process_tag( tag, chain )
+      Time.now.strftime( param( 'format' ) )
     end
 
   end
