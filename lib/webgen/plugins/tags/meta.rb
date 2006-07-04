@@ -31,18 +31,18 @@ module Tags
   # simple copy the values to the output file.
   class MetaTag < DefaultTag
 
-    summary "Replaces all tags without tag plugin with their respective values from the node meta data"
+    infos :summary => "Replaces all tags without tag plugin with their respective values from the node meta data"
 
-    tag :default
+    register_tag :default
 
-    def process_tag( tag, node, refNode )
+    def process_tag( tag, chain )
       output = ''
-      if node[tag]
-        output = node[tag]
+      if chain.last[tag]
+        output = chain.last[tag].to_s
       else
-        self.logger.warn { "No value for tag '#{tag}' in <#{refNode.recursive_value( 'src' )}> found in <#{node.recursive_value( 'src' )}>" }
+        log(:warn) { "No value for tag '#{tag}' in <#{chain.first.node_info[:src]}> found in <#{chain.last.node_info['src']}>" }
       end
-      return output
+      output
     end
 
   end
