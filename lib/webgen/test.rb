@@ -169,6 +169,15 @@ module Webgen
 
   end
 
+
+  class Dummy
+
+    def method_missing( name, *args, &block )
+      Dummy.new
+    end
+
+  end
+
 end
 
 class Class

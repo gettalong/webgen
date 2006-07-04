@@ -40,7 +40,7 @@ class TagProcessorTest < Webgen::PluginTestCase
 
   def check_returned_tags( content, count )
     i = 0
-    @plugin.instance_eval { replace_tags( content, nil ) {|tag, data| i += 1} }
+    @plugin.instance_eval { replace_tags( content, Webgen::Dummy.new ) {|tag, data| i += 1} }
     assert_equal( count, i, content )
   end
 
@@ -57,14 +57,6 @@ end
 
 class DefaultTagTest < Webgen::PluginTestCase
 
-  class Dummy
-
-    def method_missing( name, *args, &block )
-      Dummy.new
-    end
-
-  end
-
   plugin_files [
                 'webgen/plugins/tags/tags.rb',
                 fixture_path( 'testtag.rb' )
@@ -76,16 +68,16 @@ class DefaultTagTest < Webgen::PluginTestCase
   end
 
   def test_set_tag_config
-    @manager['Testing::TestTag'].set_tag_config( nil, Dummy.new )
+    @manager['Testing::TestTag'].set_tag_config( nil, Webgen::Dummy.new )
     assert_equal( nil, @manager['Testing::TestTag'].param( 'test' ) )
 
-    @manager['Testing::TestTag'].set_tag_config( {}, Dummy.new )
+    @manager['Testing::TestTag'].set_tag_config( {}, Webgen::Dummy.new )
     assert_equal( nil, @manager['Testing::TestTag'].param( 'test' ) )
 
-    @manager['Testing::TestTag'].set_tag_config( 'test_value', Dummy.new )
+    @manager['Testing::TestTag'].set_tag_config( 'test_value', Webgen::Dummy.new )
     assert_equal( 'test_value', @manager['Testing::TestTag'].param( 'test' ) )
 
-    @manager['Testing::TestTag'].set_tag_config( {'test' => 'test_value'}, Dummy.new )
+    @manager['Testing::TestTag'].set_tag_config( {'test' => 'test_value'}, Webgen::Dummy.new )
     assert_equal( 'test_value', @manager['Testing::TestTag'].param( 'test' ) )
   end
 
