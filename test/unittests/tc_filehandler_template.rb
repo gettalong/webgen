@@ -1,6 +1,6 @@
 require 'webgen/test'
 
-class TemplateFileHandlerTest < Webgen::FileHandlerTestCase
+class TemplateFileHandlerTest < Webgen::PluginTestCase
 
   plugin_files [
     'webgen/plugins/filehandlers/filehandler.rb',

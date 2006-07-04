@@ -1,7 +1,7 @@
 require 'fileutils'
 require 'webgen/test'
 
-class FileCopyHandlerTest < Webgen::FileHandlerTestCase
+class FileCopyHandlerTest < Webgen::PluginTestCase
 
   plugin_files [
     'webgen/plugins/filehandlers/directory.rb',

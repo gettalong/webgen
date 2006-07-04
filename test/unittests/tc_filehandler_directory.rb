@@ -1,7 +1,7 @@
 require 'fileutils'
 require 'webgen/test'
 
-class DirectoryHandlerTest < Webgen::FileHandlerTestCase
+class DirectoryHandlerTest < Webgen::PluginTestCase
 
   plugin_files [
     'webgen/plugins/filehandlers/directory.rb',

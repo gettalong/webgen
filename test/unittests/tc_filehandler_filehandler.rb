@@ -4,7 +4,7 @@ require 'webgen/test'
 require 'webgen/node'
 require 'webgen/config'
 
-class FileHandlerTest < Webgen::FileHandlerTestCase
+class FileHandlerTest < Webgen::PluginTestCase
 
   #TODO think about runtime depdencies  (e.g. CorePlugins::Configuration for FileHandlers::FileHandler)
   #     ie. ones which are not required for initializing, but for running

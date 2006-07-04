@@ -96,6 +96,7 @@ module Webgen
         @manager.logger = Webgen::Logger.new
         @manager.logger.level = ::Logger::DEBUG
       end
+      @manager.plugin_config = self
       @manager.init
       @plugin = @manager[self.class.plugin_to_test] if self.class.plugin_to_test
     end
@@ -108,36 +109,12 @@ module Webgen
       @plugin_files = nil
     end
 
-    def remove_consts( obj, constants )
-      constants.each do |c|
-        obj.remove_const( c )
-      end
-    end
-
-    def self.suite
-      if self == PluginTestCase
-        return Test::Unit::TestSuite.new('Webgen::TestCase')
-      else
-        super
-      end
-    end
-
-  end
-
-
-  class FileHandlerTestCase < PluginTestCase
-
     def self.sample_site( filename = '' )
       path_helper( :@base_fixture_path, File.join( 'sample_site', filename ) )
     end
 
     def sample_site( filename = '' )
       self.class.sample_site( filename )
-    end
-
-    def setup
-      super
-      @manager.plugin_config = self
     end
 
     def param_for_plugin( plugin_name, param )
@@ -158,9 +135,14 @@ module Webgen
       files
     end
 
+    def remove_consts( obj, constants )
+      constants.each do |c|
+        obj.remove_const( c )
+      end
+    end
 
     def self.suite
-      if self == FileHandlerTestCase
+      if self == PluginTestCase
         return Test::Unit::TestSuite.new('Webgen::TestCase')
       else
         super

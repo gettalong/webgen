@@ -34,22 +34,22 @@ module Tags
   # where each listed name is linked to the corresponding file.
   class BreadcrumbTrailTag < DefaultTag
 
-    summary 'Shows the hierarchy of current page'
-    add_param 'separator', ' / ', 'Separates the hierachy entries from each other.'
+    infos :summary => 'Shows the hierarchy for the current page'
+    param 'separator', ' / ', 'Separates the hierachy entries from each other.'
 
-    tag 'breadcrumbTrail'
+    register_tag 'breadcrumbTrail'
 
-    def process_tag( tag, srcNode, refNode )
+    def process_tag( tag, chain )
       out = []
-      node = srcNode
+      node = chain.last
 
       until node.nil?
-        out.push( node['processor'].get_html_link( node, srcNode ) )
-        node = node.parent while !node.nil? && node['virtual']
+        out.push( node.link_from( chain.last ) )
+        node = node.parent
       end
 
-      out = out.reverse.join( get_param( 'separator' ) )
-      self.logger.debug { "Breadcrumb trail for <#{srcNode.recursive_value( 'src' )}>: #{out}" }
+      out = out.reverse.join( param( 'separator' ) )
+      log(:debug) { "Breadcrumb trail for <#{chain.last.node_info[:src]}>: #{out}" }
       out
     end
 

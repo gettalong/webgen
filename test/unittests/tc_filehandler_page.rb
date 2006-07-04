@@ -50,7 +50,7 @@ class PageNodeTest < Webgen::PluginTestCase
 end
 
 
-class PageHandlerTest < Webgen::FileHandlerTestCase
+class PageHandlerTest < Webgen::PluginTestCase
 
   plugin_files [
     'webgen/plugins/filehandlers/directory.rb',

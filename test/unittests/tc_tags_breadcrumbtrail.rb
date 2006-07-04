@@ -1,0 +1,23 @@
+require 'webgen/test'
+require 'webgen/node'
+
+class BreadcrumbTrailTagTest < Webgen::PluginTestCase
+
+  plugin_files [
+    'webgen/plugins/tags/breadcrumbtrail.rb',
+    'webgen/plugins/filehandlers/directory.rb',
+    'webgen/plugins/contentconverters/textile.rb',
+    'webgen/plugins/filehandlers/page.rb',
+  ]
+  plugin_to_test 'Tags::BreadcrumbTrailTag'
+
+
+  def test_process_tag
+    root = @manager['FileHandlers::FileHandler'].instance_eval { build_tree }
+    node = root.resolve_node( 'dir1/dir11/file111.page' )
+
+    assert_equal( '<a href="../../index.html"></a> / <a href="../">dir1</a> / <a href="./">dir11</a> / <a href="file111.html">File111</a>',
+                  @plugin.process_tag( 'breadcrumbTrail', [node] ) )
+  end
+
+end
