@@ -22,6 +22,7 @@
 
 require 'cgi'
 require 'webgen/plugins/tags/tags'
+require 'webgen/extcommand'
 
 module Tags
 
@@ -29,23 +30,25 @@ module Tags
   # characters are escaped.
   class ExecuteCommandTag < DefaultTag
 
-    summary "Executes the given command and includes its standard output"
-    add_param 'command', nil, 'The command which should be executed'
-    add_param 'processOutput', true, 'The output of the command will be processed if true'
-    add_param 'escapeHTML', true, 'Special HTML characters in the output will be escaped if true'
+    infos :summary => "Executes the given command and uses its standard output as the tag value"
+
+    param 'command', nil, 'The command which should be executed'
+    param 'processOutput', true, 'The output of the command will be further processed by the TagProcessor if true'
+    param 'escapeHTML', true, 'Special HTML characters in the output will be escaped if true'
     set_mandatory 'command', true
 
-    tag 'execute'
+    register_tag 'execute'
 
-    def process_tag( tag, node, refNode )
-      @processOutput = get_param( 'processOutput' )
-      begin
-        output = ( get_param( 'command' ) ? `#{get_param( 'command' )}` : '' )
-      rescue StandardError => e
-        output = ''
-        logger.error { "Could not execute command #{get_param( 'command' )}: #{e.message}" }
+    def process_tag( tag, chain )
+      @processOutput = param( 'processOutput' )
+      if param( 'command' )
+        cmd = ExtendedCommand.new( param( 'command' ) )
+        output = cmd.out_text
+        if cmd.ret_code != 0
+          log(:error) { "Command '#{param( 'command' )}' did not return with exit value 0: #{cmd.err_text}" }
+        end
+        output = CGI::escapeHTML( output ) if param( 'escapeHTML' )
       end
-      output = CGI::escapeHTML( output ) if get_param( 'escapeHTML' )
       output
     end
 
