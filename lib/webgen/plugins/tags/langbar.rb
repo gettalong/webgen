@@ -27,22 +27,23 @@ module Tags
   # Generates a list with all the languages for a page.
   class LangbarTag < DefaultTag
 
-    summary 'Provides links to translations of the page'
-    add_param 'separator', ' | ', 'Separates the languages from each other.'
-    add_param 'showSingleLang', true, 'Should the link be shown '\
-    'although the page is only available in one language?'
-    add_param 'showOwnLang', true, 'Should the link to the currently displayed '\
-    'language page be shown? '
+    infos :summary => 'Provides links to translations of the page'
 
-    tag 'langbar'
+    param 'separator', ' | ', 'Separates the languages from each other.'
+    param 'showSingleLang', true, 'Should the link be shown although the page is only available in one language?'
+    param 'showOwnLang', true, 'Should the link to the currently displayed language page be shown? '
 
-    def process_tag( tag, node, refNode )
-      output = node.parent.find_all do |a|
-        a['int:pagename'] == node['int:pagename'] && (node['lang'] != a['lang'] || get_param( 'showOwnLang' ))
-      end.sort {|a, b| a['lang'] <=> b['lang']}.collect do |n|
-        n['processor'].get_html_link( n, n, n['lang'] )
-      end.join( get_param( 'separator' ) )
-      return ( get_param( 'showSingleLang' ) || node.parent.children.length > 1 ? output : "" )
+    register_tag 'langbar'
+
+    def process_tag( tag, chain )
+      langs = chain.last.parent.find_all {|child| child.node_info[:pagename] == chain.last.node_info[:pagename] }
+      nr_langs = langs.length
+      langs = langs.
+        delete_if {|child| (chain.last['lang'] == child['lang'] && !param( 'showOwnLang' )) }.
+        sort {|a, b| a['lang'] <=> b['lang']}.
+        collect {|n| n.link_from( n, :link_text => n['lang'] )}.
+        join( param( 'separator' ) )
+      ( param( 'showSingleLang' ) || nr_langs > 1 ? langs : "" )
     end
 
   end
