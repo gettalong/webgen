@@ -68,7 +68,7 @@ module Webgen
     end
 
     def <=>( other )
-      code3chars <=> other.code3chars
+      self.to_s <=> other.to_s
     end
 
   end

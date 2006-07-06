@@ -20,8 +20,8 @@ class LanguageTest < Webgen::TestCase
   def test_find_language
     langs = Webgen::LanguageManager.find_language( 'greek' )
     assert_equal( 2, langs.length )
-    assert_equal( 'grc', langs[0].code3chars )
-    assert_equal( 'gre', langs[1].code3chars )
+    assert_equal( 'gre', langs[0].code3chars )
+    assert_equal( 'grc', langs[1].code3chars )
   end
 
   def test_language_accessors
@@ -38,6 +38,16 @@ class LanguageTest < Webgen::TestCase
       assert_equal( "Implicitly de", "Implicitly " + de )
     end
     assert_kind_of( String, de.inspect )
+  end
+
+  def test_sort_method
+    ger = Webgen::LanguageManager.language_for_code( 'ger' )
+    eng = Webgen::LanguageManager.language_for_code( 'en' )
+    ace = Webgen::LanguageManager.language_for_code( 'ace' )
+
+    assert_equal( -1, ger <=> eng )
+    assert_equal( -1, ace <=> ger )
+    assert_equal( -1, ace <=> eng )
   end
 
 end
