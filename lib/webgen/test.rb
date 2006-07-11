@@ -1,3 +1,4 @@
+require 'pp'
 require 'test/unit'
 require 'webgen/plugin'
 require 'webgen/config'

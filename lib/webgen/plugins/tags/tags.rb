@@ -234,7 +234,7 @@ module Tags
       config.each do |key, value|
         if self.class.config.params.has_key?( key )
           @cur_config[key] = value
-          log(:debug) { "Setting parameter '#{key}' for tag '#{self.class.name}' in <#{node.node_info[:src]}>" }
+          log(:debug) { "Setting parameter '#{key}' to '#{value}' for tag '#{self.class.name}' in <#{node.node_info[:src]}>" }
         else
           log(:warn) { "Invalid parameter '#{key}' for tag '#{self.class.name}' in <#{node.node_info[:src]}>" }
         end

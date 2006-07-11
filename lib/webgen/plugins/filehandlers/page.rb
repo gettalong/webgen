@@ -39,6 +39,8 @@ module FileHandlers
         self.node_info[:processor] = self
       end
 
+      #TODO: node_for_lang (eg. for menu tag), link_from
+
       def write_node
         #do nothing
       end
