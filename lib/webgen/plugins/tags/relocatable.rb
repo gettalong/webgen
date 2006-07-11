@@ -35,30 +35,77 @@ module Tags
   # Tag parameter: the name of the file which should be relocated
   class RelocatableTag < DefaultTag
 
-    summary 'Adds a relative path to the specified name if necessary'
-    add_param 'item', nil, 'The item which should be relocatable'
-    set_mandatory 'item', true
+    infos :summary => 'Adds a relative path to the specified name if necessary'
+    param 'path', nil, 'The path which should be relocatable'
+    param 'resolveFragment', true, 'Specifies if the fragment part (#something) in the path should also be resolved'
+    set_mandatory 'path', true
 
-    tag 'relocatable'
+    register_tag 'relocatable'
 
-    def process_tag( tag, node, refNode )
-      uri_string = get_param( 'item' )
+=begin
+TODO: move to doc
+- resolves absolute and relative URLs
+- basically, output names are searched for
+- extension: standardized page names can also be used
+  - without language part: searches for page in current language
+  - with language part: uses exact language file
+- extension: directory index files are resolved if only directory name specified
+=end
+
+    def process_tag( tag, chain )
+      uri_string = param( 'path' )
       result = ''
       unless uri_string.nil?
         begin
           uri = URI.parse( uri_string )
           if uri.absolute?
             result = uri_string
+          elsif param( 'resolveFragment' )
+            result = resolve_with_fragment( uri, chain )
           else
-            destNode = refNode.node_for_string( uri.path )
-            qf = (uri.query.nil? ? '' : '?'+ uri.query ) + (uri.fragment.nil? ? '' : '#' + uri.fragment)
-            result = ( destNode.nil? ? '' :  node.relpath_to_node( destNode['processor'].get_node_for_lang( destNode, node['lang'] ) ) + qf )
+            result = resolve_without_fragment( uri, chain )
           end
+          log(:error) { "Could not resolve path '#{uri_string}' in <#{chain.first.node_info[:src]}>" } if result.empty?
         rescue URI::InvalidURIError => e
-          logger.error { "Error while parsing URI for relocatable tag: #{e.message}" }
+          log(:error) { "Error while parsing path for tag relocatable in <#{chain.first.node_info[:src]}>: #{e.message}" }
         end
       end
-      return result
+      result
+    end
+
+    #######
+    private
+    #######
+
+    def resolve_path( path, chain )
+      dest_node = chain.first.resolve_node( path )
+      if !dest_node.nil? && (File.basename( path ) == dest_node.node_info[:pagename] || dest_node.is_directory?)
+        dest_node = dest_node.node_for_lang( chain.last['lang'] )
+      end
+      dest_node
+    end
+
+    def query_fragment( uri )
+      (uri.query.nil? ? '' : '?'+ uri.query ) + (uri.fragment.nil? ? '' : '#' + uri.fragment)
+    end
+
+    def resolve_with_fragment( uri, chain )
+      dest_node = resolve_path( uri.path, chain )
+      dest_node = dest_node.resolve_node( '#' + uri.fragment ) unless uri.fragment.nil? || dest_node.nil?
+      if dest_node.nil?
+        ''
+      else
+        chain.last.route_to( dest_node.is_fragment? ? dest_node.parent : dest_node ) + query_fragment( uri )
+      end
+    end
+
+    def resolve_without_fragment( uri, chain )
+      dest_node = resolve_path( uri.path, chain )
+      if dest_node.nil?
+        ''
+      else
+        chain.last.route_to( dest_node ) + query_fragment( uri )
+      end
     end
 
   end
