@@ -15,6 +15,7 @@ class RelocatableTagTest < Webgen::PluginTestCase
   def test_process_tag
     root = @manager['FileHandlers::FileHandler'].instance_eval { build_tree }
 
+    # basic node resolving
     node = root.resolve_node( 'file1.page' )
 
     set_config( 'path' => 'dir1/file11.page', 'resolveFragment' => false )
@@ -44,18 +45,23 @@ class RelocatableTagTest < Webgen::PluginTestCase
     set_config( 'path' => 'file2.de.page', 'resolveFragment' => true )
     assert_equal( 'file2.de.html', @plugin.process_tag( 'relocatable', [node] ) )
 
-
+    # absolute paths
     set_config( 'path' => 'http://test.com', 'resolveFragment' => false )
     assert_equal( 'http://test.com', @plugin.process_tag( 'relocatable', [node] ) )
     set_config( 'path' => 'http://test.com', 'resolveFragment' => true )
     assert_equal( 'http://test.com', @plugin.process_tag( 'relocatable', [node] ) )
 
 
+    # directory paths
     set_config( 'path' => 'dir1', 'resolveFragment' => true )
     assert_equal( 'dir1/', @plugin.process_tag( 'relocatable', [node] ) )
 
     set_config( 'path' => 'dir1/dir11', 'resolveFragment' => true )
     assert_equal( 'dir1/dir11/index.html', @plugin.process_tag( 'relocatable', [node] ) )
+
+    # invalid paths
+    set_config( 'path' => ':/asdf=-)', 'resolveFragment' => true )
+    assert_equal( '', @plugin.process_tag( 'relocatable', [node] ) )
   end
 
   #######
