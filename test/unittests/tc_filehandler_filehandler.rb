@@ -127,7 +127,7 @@ class FileHandlerTest < Webgen::PluginTestCase
     tree = @plugin.build_tree
     assert_not_nil( tree )
     assert_equal( outDir, tree.full_path )
-    assert_equal( 4, tree.children.size )
+    assert_equal( 5, tree.children.size )
     assert_not_nil( tree.resolve_node( 'dir1/dir11/file111.html' ) )
 
     nr_paths_on_disc = find_in_sample_site {|p| true }.length

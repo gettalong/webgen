@@ -49,6 +49,7 @@ class NodeTest < Webgen::TestCase
     assert_equal( nil, @n['/'].parent )
     assert_equal( '../out/../dir1/', @n['/'].path )
 
+
     assert_equal( @n['dir_a/'], @n['file_aa'].parent )
 
     assert_equal( {}, @n['file_a'].meta_info )
@@ -144,6 +145,10 @@ class NodeTest < Webgen::TestCase
     assert_nil( @n['file_a'].resolve_node( '../invalid' ) )
 
     assert_raise( ArgumentError ) { @n['file_aa'].resolve_node( 5456 ) }
+
+    assert_equal( @n['file_aa#'], @n['file_aa#'].resolve_node( 'file_aa?tst#doit' ) )
+    assert_equal( nil, @n['file_aa#'].resolve_node( 'file_aa#doit?tst' ) )
+    assert_equal( nil, @n['file_aa#'].resolve_node( 'file_aa#doit_invalid' ) )
   end
 
   def test_processor_routing
