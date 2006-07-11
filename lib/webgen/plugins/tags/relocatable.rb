@@ -60,10 +60,8 @@ TODO: move to doc
           uri = URI.parse( uri_string )
           if uri.absolute?
             result = uri_string
-          elsif param( 'resolveFragment' )
-            result = resolve_with_fragment( uri, chain )
           else
-            result = resolve_without_fragment( uri, chain )
+            result = resolve_path( uri, chain )
           end
           log(:error) { "Could not resolve path '#{uri_string}' in <#{chain.first.node_info[:src]}>" } if result.empty?
         rescue URI::InvalidURIError => e
@@ -77,34 +75,22 @@ TODO: move to doc
     private
     #######
 
-    def resolve_path( path, chain )
-      dest_node = chain.first.resolve_node( path )
-      if !dest_node.nil? && (File.basename( path ) == dest_node.node_info[:pagename] || dest_node.is_directory?)
-        dest_node = dest_node.node_for_lang( chain.last['lang'] )
-      end
-      dest_node
-    end
-
     def query_fragment( uri )
       (uri.query.nil? ? '' : '?'+ uri.query ) + (uri.fragment.nil? ? '' : '#' + uri.fragment)
     end
 
-    def resolve_with_fragment( uri, chain )
-      dest_node = resolve_path( uri.path, chain )
-      dest_node = dest_node.resolve_node( '#' + uri.fragment ) unless uri.fragment.nil? || dest_node.nil?
+    def resolve_path( uri, chain )
+      dest_node = chain.first.resolve_node( uri.path )
+      if !dest_node.nil? && (File.basename( uri.path ) == dest_node.node_info[:pagename] || dest_node.is_directory?)
+        dest_node = dest_node.node_for_lang( chain.last['lang'] )
+      end
+      if !dest_node.nil? && !uri.fragment.nil? && param( 'resolveFragment' )
+        dest_node = dest_node.resolve_node( '#' + uri.fragment )
+      end
       if dest_node.nil?
         ''
       else
         chain.last.route_to( dest_node.is_fragment? ? dest_node.parent : dest_node ) + query_fragment( uri )
-      end
-    end
-
-    def resolve_without_fragment( uri, chain )
-      dest_node = resolve_path( uri.path, chain )
-      if dest_node.nil?
-        ''
-      else
-        chain.last.route_to( dest_node ) + query_fragment( uri )
       end
     end
 
