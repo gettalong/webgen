@@ -1,7 +1,7 @@
 require 'webgen/test'
 require 'webgen/node'
 
-class MetaTagTest < Webgen::PluginTestCase
+class MetaTagTest < Webgen::TagTestCase
 
   plugin_files [
     'webgen/plugins/tags/meta.rb',

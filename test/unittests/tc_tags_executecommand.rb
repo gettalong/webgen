@@ -1,6 +1,6 @@
 require 'webgen/test'
 
-class ExecuteCommandTagTest < Webgen::PluginTestCase
+class ExecuteCommandTagTest < Webgen::TagTestCase
 
   plugin_files [
     'webgen/plugins/tags/executecommand.rb',
@@ -21,14 +21,6 @@ class ExecuteCommandTagTest < Webgen::PluginTestCase
 
     set_config( 'command'=>"invalid_echo_command -n '#{testtext}'", 'processOutput'=>true, 'escapeHTML'=>true )
     assert_equal( '', @plugin.process_tag( 'executecommand', nil ) )
-  end
-
-  #######
-  private
-  #######
-
-  def set_config( config )
-    @plugin.set_tag_config( config, Webgen::Dummy.new )
   end
 
 end

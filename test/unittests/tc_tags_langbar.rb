@@ -1,7 +1,7 @@
 require 'webgen/test'
 require 'webgen/node'
 
-class LangbarTagTest < Webgen::PluginTestCase
+class LangbarTagTest < Webgen::TagTestCase
 
   plugin_files [
     'webgen/plugins/tags/langbar.rb',
@@ -25,9 +25,6 @@ class LangbarTagTest < Webgen::PluginTestCase
     check_results( node, link, '', '', '' )
   end
 
-  #######
-  private
-  #######
 
   def check_results( node, both_true, both_false, first_false, second_false )
     set_config( 'showSingleLang'=>true, 'showOwnLang'=>true )
@@ -41,10 +38,6 @@ class LangbarTagTest < Webgen::PluginTestCase
 
     set_config( 'showSingleLang'=>true, 'showOwnLang'=>false )
     assert_equal( second_false, @plugin.process_tag( 'langbar', [node] ) )
-  end
-
-  def set_config( config )
-    @plugin.set_tag_config( config, Webgen::Dummy.new )
   end
 
 end

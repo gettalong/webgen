@@ -1,7 +1,7 @@
 require 'webgen/test'
 require 'webgen/node'
 
-class WikiLinkTagTest < Webgen::PluginTestCase
+class WikiLinkTagTest < Webgen::TagTestCase
 
   plugin_files [
     'webgen/plugins/tags/wikilink.rb',
@@ -17,14 +17,6 @@ class WikiLinkTagTest < Webgen::PluginTestCase
 
     set_config( 'linkText' => 'File2', 'relURL'=>'File3&;' )
     assert_equal( '<a href="/wiki/wiki.pl?File3__">File2</a>', @plugin.process_tag( 'wikilink', [node] ) )
-  end
-
-  #######
-  private
-  #######
-
-  def set_config( config )
-    @plugin.set_tag_config( config, Webgen::Dummy.new )
   end
 
 end

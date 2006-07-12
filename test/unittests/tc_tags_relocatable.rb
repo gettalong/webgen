@@ -1,7 +1,7 @@
 require 'webgen/test'
 require 'webgen/node'
 
-class RelocatableTagTest < Webgen::PluginTestCase
+class RelocatableTagTest < Webgen::TagTestCase
 
   plugin_files [
     'webgen/plugins/tags/relocatable.rb',
@@ -62,14 +62,6 @@ class RelocatableTagTest < Webgen::PluginTestCase
     # invalid paths
     set_config( 'path' => ':/asdf=-)', 'resolveFragment' => true )
     assert_equal( '', @plugin.process_tag( 'relocatable', [node] ) )
-  end
-
-  #######
-  private
-  #######
-
-  def set_config( config )
-    @plugin.set_tag_config( config, Webgen::Dummy.new )
   end
 
 end

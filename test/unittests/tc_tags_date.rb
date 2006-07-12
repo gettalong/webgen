@@ -1,6 +1,6 @@
 require 'webgen/test'
 
-class DateTagTest < Webgen::PluginTestCase
+class DateTagTest < Webgen::TagTestCase
 
   plugin_files [
     'webgen/plugins/tags/date.rb',

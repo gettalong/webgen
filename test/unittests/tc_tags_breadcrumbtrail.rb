@@ -1,7 +1,7 @@
 require 'webgen/test'
 require 'webgen/node'
 
-class BreadcrumbTrailTagTest < Webgen::PluginTestCase
+class BreadcrumbTrailTagTest < Webgen::TagTestCase
 
   plugin_files [
     'webgen/plugins/tags/breadcrumbtrail.rb',

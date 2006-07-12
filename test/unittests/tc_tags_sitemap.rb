@@ -1,7 +1,7 @@
 require 'webgen/test'
 require 'webgen/node'
 
-class SitemapTagTest < Webgen::PluginTestCase
+class SitemapTagTest < Webgen::TagTestCase
 
   plugin_files [
     'webgen/plugins/tags/sitemap.rb',
@@ -27,14 +27,6 @@ class SitemapTagTest < Webgen::PluginTestCase
                   '<li><a href="dir1/file11.html">File11</a></li></ul></li>' +
                   '<li><a href="file1.html">File1</a></li><li><a href="index.html">Index</a></li></ul>',
                   @plugin.process_tag( 'sitemap', [node] ) )
-  end
-
-  #######
-  private
-  #######
-
-  def set_config( config )
-    @plugin.set_tag_config( config, Webgen::Dummy.new )
   end
 
 end

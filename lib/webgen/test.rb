@@ -151,6 +151,24 @@ module Webgen
   end
 
 
+  # Base class for all plugin test cases. It ensures that all needed plugins are loaded and
+  # initalized before each test and that the original environment is restored afterwards.
+  class TagTestCase < PluginTestCase
+
+    def self.suite
+      if self == TagTestCase
+        return Test::Unit::TestSuite.new('Webgen::TestCase')
+      else
+        super
+      end
+    end
+
+    def set_config( config )
+      @plugin.set_tag_config( config, Dummy.new )
+    end
+
+  end
+
   class Dummy
 
     def method_missing( name, *args, &block )
