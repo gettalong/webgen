@@ -52,7 +52,7 @@ class NodeTest < Webgen::TestCase
 
     assert_equal( @n['dir_a/'], @n['file_aa'].parent )
 
-    assert_equal( {}, @n['file_a'].meta_info )
+    assert_equal( {'title'=>'file_a'}, @n['file_a'].meta_info )
     assert_equal( {}, @n['file_a'].node_info )
 
     assert_equal( 'test', @n['/']['test'] )
@@ -173,6 +173,15 @@ class NodeTest < Webgen::TestCase
     assert_equal( '#doit', @n['file_aa#'] =~ '#doit' )
     assert( !( @n['file_aa#'] =~ '#doit?sdf' ) )
     assert( !( @n['file_aa#'] =~ 'dfs#doit' ) )
+  end
+
+  def test_order_info
+    assert_equal( 0, @n['file_a'].order_info )
+    assert_equal( 0, @n['file_b'].order_info )
+    assert_equal( [@n['file_a'], @n['file_b']], [@n['file_b'], @n['file_a']].sort )
+    assert_equal( 1, @n['file_ab'].order_info )
+    assert_equal( 2, @n['file_aa'].order_info )
+    assert_equal( [@n['file_ab'], @n['file_aa']], [@n['file_aa'], @n['file_ab']].sort )
   end
 
 end

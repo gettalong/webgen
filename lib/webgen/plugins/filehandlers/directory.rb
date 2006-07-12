@@ -32,7 +32,7 @@ module FileHandlers
     class DirNode < Node
 
       def initialize( parent, path )
-        super( parent, path )
+        super
         self['title'] = File.basename( path )
       end
 
@@ -40,6 +40,14 @@ module FileHandlers
         process_dir_index if !self.meta_info.has_key?( 'indexFile' ) && name == 'indexFile'
         super
       end
+
+      def order_info
+        (super != 0 || self['indexFile'].nil?) ? super : self['indexFile'].order_info
+      end
+
+      #######
+      private
+      #######
 
       def process_dir_index
         indexFile = node_info[:processor]['indexFile']

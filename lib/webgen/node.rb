@@ -123,7 +123,20 @@ class Node
          else
            /^#{@path}(?=#|$)/ =~ path
          end
-    $& if md
+    if md then $& end
+  end
+
+  # Returns the value of the meta info +orderInfo+ or +0+ if it is not set.
+  def order_info
+    self['orderInfo'].to_s.to_i         # nil.to_s.to_i => 0
+  end
+
+  # Sorts nodes by using the meta info +orderInfo+ of both involved nodes or, if these values are
+  # equal, by the meta info +title+.
+  def <=>( other )
+    self_oi = self.order_info
+    other_oi = other.order_info
+    (self_oi == other_oi ? (self['title'] || '') <=> (other['title'] || '') : self_oi <=> other_oi)
   end
 
   # Returns the route to the given path. The parameter +path+ can be a String or a Node.
@@ -152,7 +165,6 @@ class Node
     url = self.to_url + path
 
     path = url.path[1..-1] + (url.fragment.nil? ? '' : '#' + url.fragment)
-
     return nil if path =~ /^\.\./ # path outside dest dir
 
     node = Node.root( self )
@@ -196,5 +208,14 @@ class Node
       super
     end
   end
+
+=begin
+TODO: move to doc
+- value 0 for orderInfo means that it is not set! Only use number greater than 0
+- orderInfo for directory: first tries to use orderInfo of dir node, if it fails, uses orderInfo of indexFile if available
+
+- stable sort which does not switch items that have the same order_info
+
+=end
 
 end

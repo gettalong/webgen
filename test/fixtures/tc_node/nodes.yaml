@@ -8,6 +8,13 @@
 
 -   url: file_a
     parent: /
+    meta_info:
+      title: file_a
+
+-   url: file_b
+    parent: /
+    meta_info:
+      title: file_b
 
 -   ref: file_ah
     url: http://localhost/file_ah
@@ -22,6 +29,8 @@
 
 -   url: file_aa
     parent: dir_a/
+    meta_info:
+      orderInfo: 2
 
 -   ref: file_aa#
     url: '#doit'
@@ -33,6 +42,8 @@
 
 -   url: file_ab
     parent: dir_a/
+    meta_info:
+      orderInfo: 1
 
 -   url: dir_b/
     parent: /

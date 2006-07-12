@@ -1,6 +1,32 @@
 require 'fileutils'
 require 'webgen/test'
 
+class DirNodeTest < Webgen::PluginTestCase
+
+  plugin_files [
+    'webgen/plugins/filehandlers/directory.rb',
+    base_fixture_path( 'tc_filehandler_filehandler/sample_plugin.rb' )
+  ]
+
+  def test_order_info
+    dir = FileHandlers::DirectoryHandler::DirNode.new( nil, 'dir/' )
+    dir.node_info[:processor] = @manager['FileHandlers::DirectoryHandler']
+
+    assert_equal( 0, dir.order_info )
+
+    index = Node.new( dir, 'index.page' )
+    dir.meta_info.delete( 'indexFile' )
+    assert_equal( 0, dir.order_info )
+
+    index['orderInfo'] = 1
+    assert_equal( 1, dir.order_info )
+
+    dir['orderInfo'] = 2
+    assert_equal( 2, dir.order_info )
+  end
+
+end
+
 class DirectoryHandlerTest < Webgen::PluginTestCase
 
   plugin_files [
