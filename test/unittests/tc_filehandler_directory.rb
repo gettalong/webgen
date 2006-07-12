@@ -8,6 +8,11 @@ class DirNodeTest < Webgen::PluginTestCase
     base_fixture_path( 'tc_filehandler_filehandler/sample_plugin.rb' )
   ]
 
+  def test_accessors
+    dir = FileHandlers::DirectoryHandler::DirNode.new( nil, 'dir/' )
+    assert_equal( 'Dir', dir['title'] )
+  end
+
   def test_order_info
     dir = FileHandlers::DirectoryHandler::DirNode.new( nil, 'dir/' )
     dir.node_info[:processor] = @manager['FileHandlers::DirectoryHandler']
@@ -47,7 +52,7 @@ class DirectoryHandlerTest < Webgen::PluginTestCase
     dir = @plugin.create_node( @max_dir, root )
     dir1 = @plugin.create_node( @max_dir, root )
     assert_same( dir, dir1 )
-    assert_equal( File.basename( @max_dir ), dir['title'] )
+    assert_equal( File.basename( @max_dir ).capitalize, dir['title'] )
   end
 
   def test_write_node
@@ -90,7 +95,7 @@ class DirectoryHandlerTest < Webgen::PluginTestCase
                   root.link_from( root.resolve_node( 'index.de.html' ), {:link_text => 'TestLink' } ) )
 
     dir1 = root.resolve_node( 'dir1' )
-    assert_equal( '<a href="./">dir1</a>', dir1.link_from( file11 ) )
+    assert_equal( '<a href="./">Dir1</a>', dir1.link_from( file11 ) )
     assert_equal( '<a href="dir1/">TestLink</a>', dir1.link_from( root, {:link_text => 'TestLink' } ) )
   end
 

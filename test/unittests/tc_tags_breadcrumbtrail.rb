@@ -16,7 +16,7 @@ class BreadcrumbTrailTagTest < Webgen::PluginTestCase
     root = @manager['FileHandlers::FileHandler'].instance_eval { build_tree }
     node = root.resolve_node( 'dir1/dir11/file111.page' )
 
-    assert_equal( '<a href="../../index.html"></a> / <a href="../">dir1</a> / <a href="index.html">dir11</a> / <a href="file111.html">File111</a>',
+    assert_equal( '<a href="../../index.html"></a> / <a href="../">Dir1</a> / <a href="index.html">Dir11</a> / <a href="file111.html">File111</a>',
                   @plugin.process_tag( 'breadcrumbTrail', [node] ) )
   end
 

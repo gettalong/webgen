@@ -33,7 +33,7 @@ module FileHandlers
 
       def initialize( parent, path )
         super
-        self['title'] = File.basename( path )
+        self['title'] = File.basename( path ).capitalize
       end
 
       def []( name )

@@ -20,8 +20,6 @@ module Webgen
                 File.join( parent_path, 'fixtures' )
               end
 
-      #klass.class_eval( "FIXTURE_PATH = '#{File.join( fpath, File.basename( file, '.*' ) )}/'" )
-      #klass.class_eval( "BASE_FIXTURE_PATH = '#{fpath}/'" )
       klass.instance_variable_set( :@fixture_path, File.join( fpath, File.basename( file, '.*' ) ) )
       klass.instance_variable_set( :@base_fixture_path, fpath + '/' )
     end
