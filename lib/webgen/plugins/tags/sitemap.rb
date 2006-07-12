@@ -21,54 +21,59 @@
 #
 
 require 'webgen/plugins/tags/tags'
+require 'webgen/plugins/filehandlers/page'
 
 module Tags
 
   # Generates a sitemap. The sitemap contains the hierarchy of all pages on the web site.
   class SitemapTag < DefaultTag
 
-    summary 'Shows all pages of the website'
-    add_param 'levelTag', 'ul', 'The tag used for creating a new hierarchy level.'
-    add_param 'itemTag', 'li', 'The tag used for pages.'
-    add_param 'honorInMenu', true, 'Only pages for which the \'inMenu\' meta information is set are shown in ' \
-    'the sitemap if true'
+    infos :summary => 'Shows all page files of the website'
+    param 'levelTag', 'ul', 'The tag used for creating a new hierarchy level.'
+    param 'itemTag', 'li', 'The tag used for hierarchy items.'
+    param 'honorInMenu', true, 'Only pages for which the \'inMenu\' meta information is set are shown in ' +
+      'the sitemap if true'
 
-    used_meta_info 'orderInfo'
+    register_tag 'sitemap'
 
-    tag 'sitemap'
+=begin
+TODO: move to doc
+- used meta info 'orderInfo' (orderInfo has to be an integer, not a float)
+- respects language (only shows pages in the current language)
+=end
 
-    def process_tag( tag, srcNode, refNode )
-      root = Node.root( srcNode )
-      output_node( root, srcNode )
+    def process_tag( tag, chain )
+      root = Node.root( chain.last )
+      output_node( root, chain.last )
     end
 
     #######
     private
     #######
 
-    def output_node( node, srcNode )
-      return '' if not node.find {|c| c['int:directory?'] || c['int:pagename'] }
+    def output_node( node, src_node )
+      nodes = node.select do |child|
+        child.is_directory? || (child.kind_of?( FileHandlers::PageFileHandler::PageNode ) && child['lang'] == src_node['lang'])
+      end
+      return '' if nodes.empty?
 
-      processed_pagenodes = []
-      out = "<#{get_param( 'levelTag' )}>"
+      out = "<#{param( 'levelTag' )}>"
       temp = ''
-      node.sort( &Node::SORT_PROC ).each do |child|
-        next unless (child['int:directory?'] || (child['int:pagename'] && (!get_param( 'honorInMenu' ) || child['inMenu']))) && !processed_pagenodes.include?( child['int:pagename'] )
-        processed_pagenodes << child['int:pagename'] if child['int:pagename']
+      nodes.sort.each do |child|
+        next if !child.is_directory? &&
+          ((param( 'honorInMenu' ) && !child['inMenu']) ||
+           (!node['indexFile'].nil? && node['indexFile'].node_info[:pagename] == child.node_info[:pagename] && !node.parent.nil?))
 
-        next if !node['indexFile'].nil? && node['indexFile']['int:pagename'] == child['int:pagename']
+        subout = output_node( child, src_node )
+        link = child.link_from( src_node ) if !child.is_directory? || subout != ''
 
-        isDir = child['int:directory?']
-        subout = output_node( child, srcNode )
-        link = child['processor'].get_html_link( child, srcNode ) if subout != '' || !isDir
-
-        temp += "<#{get_param( 'itemTag' )}>#{link}" if !isDir || subout != ''
-        temp += subout if isDir
-        temp += "</#{get_param( 'itemTag' )}>" if !isDir || subout != ''
+        temp += "<#{param( 'itemTag' )}>#{link}" if !child.is_directory? || subout != ''
+        temp += subout if child.is_directory?
+        temp += "</#{param( 'itemTag' )}>" if !child.is_directory? || subout != ''
       end
 
       out += temp
-      out += "</#{get_param( 'levelTag' )}>"
+      out += "</#{param( 'levelTag' )}>"
 
       (temp == '' ? temp : out)
     end
