@@ -26,30 +26,37 @@ module Tags
 
   class WikiLinkTag < DefaultTag
 
-    summary 'Adds a link to wiki page'
-    add_param 'title', nil, 'The title of the link. If it is not specified, the title of the current page is used.'
-    add_param 'rootURL', '/wiki/wiki.pl?', 'The root URL for the wiki link, ie. the path to the wiki CGI.'
-    add_param 'relURL', nil, 'The relativ URL for the wiki link (the varying part that is appended to rootURL). ' \
-    'If it is not specified, the title of the current page is used.'
-    add_param 'invalidChars', ' &;', 'The characters which are invalid as wiki URLs.'
-    add_param 'replacementChar', '_', 'The character(s) which should be used instead of the invalid characters.'
+    infos :summary => 'Adds a link to a wiki page'
 
-    used_meta_info 'title'
+    param 'linkText', nil, 'The text of the link. If it is not specified, the title of the current page is used.'
+    param 'rootURL', '/wiki/wiki.pl?', 'The root URL for the wiki link, ie. the path to the wiki CGI.'
+    param 'relURL', nil, 'The relativ URL for the wiki link (the varying part that is appended to rootURL). ' +
+      'If it is not specified, the title of the current page is used.'
+    param 'invalidChars', ' &;', 'The characters which are invalid in wiki URLs.'
+    param 'replacementChar', '_', 'The character(s) which should be used instead of the invalid characters.'
+    set_mandatory 'rootURL'
+    set_mandatory 'invalidChars'
+    set_mandatory 'replacementChar'
 
-    tag 'wikilink'
+=begin
+TODO: move to do
+- used_meta_info 'title'
+=end
 
-    def process_tag( tag, node, refNode )
-      "<a href=\"#{get_link( node )}\">#{get_param( 'title' ) || node['title']}</a>"
+    register_tag 'wikilink'
+
+    def process_tag( tag, chain )
+      "<a href=\"#{link( chain.last )}\">#{param( 'linkText' ) || chain.last['title']}</a>"
     end
 
     #######
     private
     #######
 
-    def get_link( node )
-      link = get_param( 'rootURL' )
-      relURL = get_param( 'relURL' ) || node['title']
-      link + relURL.tr( get_param( 'invalidChars' ), get_param( 'replacementChar' ) )
+    def link( node )
+      rootURL = param( 'rootURL' )
+      relURL = param( 'relURL' ) || node['title']
+      rootURL + relURL.tr( param( 'invalidChars' ), param( 'replacementChar' ) )
     end
 
   end
