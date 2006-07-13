@@ -22,28 +22,26 @@
 
 module MenuStyles
 
-  class DefaultMenuStyle < Webgen::Plugin
+  class DefaultMenuStyle < Webgen::HandlerPlugin
 
-    summary "Base class for all menu styles"
+    infos :summary => "Base class for all menu styles"
 
-    define_handler 'menu_style'
-
-    add_param 'divClass', '', 'Additional CSS class for the div-tag surrounding the menu'
-    add_param 'submenuClass', 'webgen-menu-submenu', 'Specifies the class of a submenu.'
-    add_param 'submenuInHierarchyClass', 'webgen-menu-submenu-inhierarchy', 'Specifies the class of the submenus which are ' \
+    param 'divClass', '', 'Additional CSS class for the div-tag surrounding the menu'
+    param 'submenuClass', 'webgen-menu-submenu', 'Specifies the class of a submenu.'
+    param 'submenuInHierarchyClass', 'webgen-menu-submenu-inhierarchy', 'Specifies the class of the submenus which are ' \
     'in the hierarchy of the selected menu item.'
-    add_param 'selectedMenuitemClass', 'webgen-menu-item-selected', 'Specifies the class of the selected menu item.'
+    param 'selectedMenuitemClass', 'webgen-menu-item-selected', 'Specifies the class of the selected menu item.'
 
-    def build_menu( srcNode, menuTree, options )
+    def build_menu( src_node, menu_tree, options )
       @options = options
-      internal_build_menu( srcNode, menuTree )
+      internal_build_menu( src_node, menu_tree )
     end
 
-    def internal_build_menu( srcNode, menuTree )
-      ""
+    def internal_build_menu( src_node, menu_tree )
+      raise NotImplementedErorr
     end
 
-    def get_param( name )
+    def param( name, plugin = nil )
       ( !@options.nil? && @options.kind_of?( Hash ) && @options.has_key?( name ) ? @options[name] : super )
     end
 
@@ -51,20 +49,17 @@ module MenuStyles
     protected
     #########
 
-    # Returns style information (node is selected, ...) and link for +node+ relative to +srcNode+.
-    def menu_item_details( srcNode, node )
-      langNode = node['processor'].get_node_for_lang( node, srcNode['lang'] )
-      isDir = node['int:directory?']
-
+    # Returns style information (node is selected, ...) and a link from +src_node+ to +node+.
+    def menu_item_details( src_node, node )
       styles = []
-      styles << get_param( 'submenuClass' ) if isDir
-      styles << get_param( 'submenuInHierarchyClass' ) if isDir && srcNode.in_subtree?( node )
-      styles << get_param( 'selectedMenuitemClass' ) if langNode.recursive_value( 'dest' ) == srcNode.recursive_value( 'dest' )
+      styles << param( 'submenuClass' ) if node.is_directory?
+      styles << param( 'submenuInHierarchyClass' ) if node.is_directory? && src_node.in_subtree_of?( node )
+      styles << param( 'selectedMenuitemClass' ) if node == src_node
 
       style = "class=\"#{styles.join(' ')}\"" if styles.length > 0
-      link = node['processor'].get_html_link( node, srcNode )
+      link = node.link_from( src_node )
 
-      self.logger.debug { [style, link] }
+      log(:debug) { [style, link] }
       return style, link
     end
 
