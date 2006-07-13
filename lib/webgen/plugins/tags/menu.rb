@@ -25,89 +25,50 @@ require 'webgen/plugins/tags/tags'
 
 module Tags
 
-  # Generates a menu. All page files for which the meta information +inMenu+ is set are displayed.
-  # If you have one page in several languages, it is sufficient to add this meta information to only
-  # one page file.
+  # Generates a menu. All page files for which the meta information +inMenu+ is set are used.
   #
   # The order in which the menu items are listed can be controlled via the meta information
-  # +orderInfo+. By default the menu items are sorted by the file names.
+  # +orderInfo+. By default the menu items are sorted by their titles.
   class MenuTag < DefaultTag
-
-    class ::Node
-
-      # Retrieves the meta information +orderInfo+.
-      def order_info
-        # be optimistic and try metainfo field first
-        node = self
-        value = node['orderInfo'].to_s.to_i unless node['orderInfo'].nil?
-
-        # get index file for directory
-        if node['int:directory?']
-          node = node['indexFile']
-          value ||= node['orderInfo'].to_s.to_i unless node.nil? || node['orderInfo'].nil?
-        end
-
-        # find the first orderInfo entry in the page files if node is a page file
-        if !node.nil? && node['int:pagename']
-          node = node.parent.find {|child| child['int:pagename'] == node['int:pagename'] && child['orderInfo'].to_s.to_i != 0}
-          value ||= node['orderInfo'].to_s.to_i unless node.nil?
-        end
-
-        # fallback value
-        value ||= 0
-
-        value
-      end
-
-      SORT_PROC = Proc.new do |a,b|
-        aoi = a.order_info
-        boi = b.order_info
-        (aoi == boi ? a['title'] <=> b['title'] : aoi <=> boi)
-      end
-
-    end
 
     # Specialised node class for the menu.
     class MenuNode < Node
 
       def initialize( parent, node )
-        super( parent )
-        self.logger.info { "Creating menu node for <#{node.recursive_value( 'src', false )}>" }
+        super( parent, '' )
         self['title'] = 'Menu: '+ node['title']
-        self['isMenuNode'] = true
-        self['virtual'] = true
-        self['node'] = node
+        self.node_info[:node] = node
       end
 
 
       # Sorts recursively all children of the node depending on their order value. If two order
       # values are equal, sort the items using their title.
       def sort!
-        self.children.sort! {|a,b| SORT_PROC.call( a['node'], b['node'] ) }
-        self.children.each {|child| child.sort! if child['node']['int:directory?'] }
+        self.children.sort! {|a,b| a.node_info[:node] <=> b.node_info[:node] }
+        self.children.each {|child| child.sort! }
       end
 
     end
 
 
-    summary 'Builds a menu'
-    add_param 'menuStyle', 'vertical', 'Specifies the style of the menu.'
-    add_param 'options', {}, 'Optional options that are passed on to the plugin which is layouts the menu.'
+    infos :summary => 'Builds a menu'
+    param 'menuStyle', nil, 'Specifies the style of the menu.'
+    param 'options', {}, 'Options that are passed on to the plugin which layouts the menu.'
+    set_mandatory 'menuStyle', true
 
-    used_meta_info 'orderInfo', 'inMenu'
+=begin
+TODO: move to doc
+- used_meta_info 'orderInfo', 'inMenu'
+=end
 
-    tag 'menu'
+    register_tag 'menu'
 
-    def process_tag( tag, node, refNode )
-      unless defined?( @menuTree )
-        @menuTree = create_menu_tree( Node.root( node ), nil )
-        unless @menuTree.nil?
-          Webgen::Plugin['TreeWalker'].execute( @menuTree, Webgen::Plugin['DebugTreePrinter'] )
-          @menuTree.sort!
-          Webgen::Plugin['TreeWalker'].execute( @menuTree, Webgen::Plugin['DebugTreePrinter'] )
-        end
+    def process_tag( tag, chain )
+      @menus ||= {}
+      unless @menus.has_key?( chain.last['lang'] )
+        @menus[chain.last['lang']] = create_menu_tree( Node.root( chain.last ), nil, chain.last['lang'] ).sort!
       end
-      Webgen::Plugin['DefaultMenuStyle'].get_menu_style( get_param( 'menuStyle' ) ).build_menu( node, @menuTree, get_param( 'options' ) )
+      Webgen::Plugin['DefaultMenuStyle'].get_menu_style( param( 'menuStyle' ) ).build_menu( node, @menus[chain.last['lang']], param( 'options' ) )
     end
 
 
@@ -115,16 +76,18 @@ module Tags
     private
     #######
 
-    def create_menu_tree( node, parent )
-      menuNode = MenuNode.new( parent, node )
+    def create_menu_tree( node, parent, lang )
+      menu_node = MenuNode.new( parent, node )
+      parent.del_child( menu_node ) if parent
 
-      node.each do |child|
-        next if menuNode.find {|n| n['node']['int:pagename'] == child['int:pagename'] && !n['node']['int:pagename'].nil? }
-        menu = create_menu_tree( child, menuNode )
-        menuNode.add_child( menu ) unless menu.nil?
-      end
+      node.select do |child|
+        child['lang'] == lang || child.is_directory?
+      end.each do |child|
+        sub_node = create_menu_tree( child, menu_node, lang )
+        menu_node.add_child( sub_node ) unless sub_node.nil?
+      end if node.is_directory?
 
-      return menuNode.has_children? ? menuNode : ( node['inMenu'] && !node['virtual'] ? menuNode : nil )
+      return menu_node.has_children? ? menu_node : ( node['inMenu'] ? menu_node : nil )
     end
 
   end

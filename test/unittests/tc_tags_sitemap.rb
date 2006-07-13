@@ -15,7 +15,7 @@ class SitemapTagTest < Webgen::TagTestCase
   def test_process_tag
     root = @manager['FileHandlers::FileHandler'].instance_eval { build_tree }
 
-    node = root.resolve_node( 'file1.page' )
+    node = root.resolve_node( 'file1.en.page' )
     assert_equal( '<ul><li><a href="dir1/">Dir1</a><ul><li><a href="dir1/dir11/index.html">Dir11</a>' +
                   '<ul><li><a href="dir1/dir11/file111.html">File111</a></li></ul></li>' +
                   '<li><a href="dir1/file11.html">File11</a></li></ul></li></ul>',
