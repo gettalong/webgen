@@ -250,7 +250,7 @@ module Webgen
     # Used for plugin dependency resolution.
     attr_reader :plugin_loaders
 
-    # Used for retrieving current plugin parameter values.
+    # Used for retrieving current plugin parameter values. Should be set before calling #init.
     attr_accessor :plugin_config
 
     # The logger used by the instance and the plugin objects.

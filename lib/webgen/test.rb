@@ -83,6 +83,7 @@ module Webgen
 
     # required stdlib files sothat no warnings etc. are shown when re-requiring files
     require 'set'
+    require 'fileutils'
 
     def setup
       @loader = PluginLoader.new

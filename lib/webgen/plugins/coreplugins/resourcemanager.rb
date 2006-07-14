@@ -44,13 +44,13 @@ module CorePlugins
       end
 
       # Returns the relative path from the node to the resource.
-      def relpath_from_node( node )
-        node.relpath_to_string( '/' + @output_path )
+      def route_from( node )
+        node.route_to( '/' + @output_path )
       end
 
       # Returns the complete destination path.
-      def dest_path
-        File.join( Webgen::Plugin['Configuration']['outDirectory'], @output_path )
+      def dest_path( root_dir )
+        File.join( root_dir, @output_path )
       end
 
       # Mark the resource as referenced. Only referenced resources are written to the output directory.
@@ -64,12 +64,12 @@ module CorePlugins
       end
 
       # Can the resource be written to the output directory?
-      def write_resource?
+      def write_resource?( root_dir )
         @referenced
       end
 
       # Write the resource to the output directory.
-      def write_resource
+      def write_resource( root_dir )
         raise NotImplementedError
       end
 
@@ -88,12 +88,12 @@ module CorePlugins
         File.read( @res_path )
       end
 
-      def write_resource?
-        referenced? && Webgen::Plugin['FileHandler'].file_modified?( @res_path, dest_path )
+      def write_resource?( root_dir )
+        referenced? && Webgen::Plugin['FileHandler'].file_modified?( @res_path, dest_path( root_dir ) )
       end
 
-      def write_resource
-        FileUtils.cp( res_path, dest_path ) if write_resource?
+      def write_resource( root_dir )
+        FileUtils.cp( res_path, dest_path( root_dir ) ) if write_resource?( root_dir )
       end
 
     end
@@ -113,27 +113,29 @@ module CorePlugins
         @data << data
       end
 
-      def write_resource
-        File.open( dest_path, 'w' ) {|file| file.write( data )} if write_resource?
+      def write_resource( root_dir )
+        File.open( dest_path, 'w' ) {|file| file.write( data )} if write_resource?( root_dir )
       end
 
     end
 
 
-    summary "Provides access to pre- and userdefined resources"
-    description "The resource manager manages a list of predefined and " \
-    "userdefined resources. These resources can be used in page files."
-    add_param 'resources', [], 'User defined file resources. Value has to be an array of arrays with three strings defining '\
-    'name, resource path and output path'
+    infos(
+          :summary => "Provides access to pre- and userdefined resources",
+          :description => "The resource manager manages a list of predefined and " +
+          "userdefined resources. These resources can be used, for example, in page files."
+          )
+    param 'resources', [], 'User defined file resources. Value has to be an array of ' +
+      'arrays with three strings defining name, resource path and output path'
 
-    depends_on 'FileHandler'
+    depends_on 'FileHandlers::FileHandler'
 
-    attr_reader :data_dir
 
-    def initialize
-      Webgen::Plugin.config[self.class].resources = {}
-      Webgen::Plugin['FileHandler'].add_msg_listener( :AFTER_ALL_WRITTEN, method( :write_resources ) )
-      define_webgen_resources unless CorePlugins::Configuration.data_dir.empty?
+    def initialize( plugin_manager )
+      super
+      @plugin_manager['FileHandlers::FileHandler'].add_msg_listener( :AFTER_ALL_WRITTEN, method( :write_resources ) )
+      @resources = {}
+      define_webgen_resources unless Webgen.data_dir.empty?
       define_user_resources
     end
 
@@ -142,13 +144,10 @@ module CorePlugins
     # should be an absolute path, like +/images/logo.png+. If not, it will be relative to the output
     # directory.
     def define_file_resource( name, resource_path, output_path )
-      if !File.exists?( resource_path )
-        logger.error { "Path <#{resource_path}> for resource #{name} is invalid!" }
-      else
+      if File.exists?( resource_path )
         define_resource( name, FileResource.new( name, output_path, resource_path ) )
       end
     end
-
 
     # Adds a new resource which can be referenced later by using +name+. The +output_path+
     # should be an absolute path, like +/images/logo.png+. If not, it will be relative to the output
@@ -157,19 +156,21 @@ module CorePlugins
       define_resource( name, MemoryResource.new( name, output_path ) )
     end
 
+    def define_resource( name, res )
+      @resources[name] = res unless @resources.has_key?( name )
+    end
 
     # Returns the requested resource.
     def get_resource( name )
-      Webgen::Plugin.config[self.class].resources[name]
+      @resources[name]
     end
-
 
     # Appends given +data+ to the resource +name+. Data can only be appended to memory resources!
     def append_data( name, data )
       if (res = get_resource( name )) && res.type == :memory
         res.append_data( data )
       else
-        logger.error {"Resource #{name} does not exist or data cannot be appended to it!" }
+        log(:error) {"Resource #{name} does not exist or data cannot be appended to it!" }
       end
     end
 
@@ -177,34 +178,31 @@ module CorePlugins
     private
     #######
 
-    def define_resource( name, res )
-      if Webgen::Plugin.config[self.class].resources.has_key?( name )
-        logger.error { "Resource #{name} already defined, not using new definition (#{res.inspect})" }
-      else
-        logger.info { "Adding resource #{name} to pool (#{res.inspect})" }
-        Webgen::Plugin.config[self.class].resources[name] = res
-      end
-    end
-
     def define_webgen_resources
-      define_file_resource( 'webgen-logo', File.join( CorePlugins::Configuration.data_dir, 'resources', 'images', 'webgen_logo.png' ),
-                            '/images/webgen-logo.png' ).predefined = "The logo of webgen as seen on the homepage."
-      define_file_resource( 'webgen-generated', File.join( CorePlugins::Configuration.data_dir, 'resources', 'images', 'generated_by_webgen.png' ),
-                            '/images/webgen-generated-by.png' ).predefined = "A 88x31 image for use on web sites that were generated by webgen."
-      define_file_resource( 'w3c-valid-css', File.join( CorePlugins::Configuration.data_dir, 'resources', 'images', 'valid-css.gif' ),
-                            '/images/w3c-valid-css.gif' ).predefined = 'The W3C image for valid css.'
-      define_file_resource( 'w3c-valid-xhtml11', File.join( CorePlugins::Configuration.data_dir, 'resources', 'images', 'valid-xhtml11.png' ),
-                            '/images/w3c-valid-xhtml11.png' ).predefined = "The W3C image for valid XHTML1.1"
+      define_file_resource( 'webgen-logo', File.join( Webgen.data_dir, 'resources', 'images', 'webgen_logo.png' ),
+                            '/images/webgen-logo.png'
+                            ).predefined = "The logo of webgen as seen on the homepage."
+      define_file_resource( 'webgen-generated', File.join( Webgen.data_dir, 'resources', 'images', 'generated_by_webgen.png' ),
+                            '/images/webgen-generated-by.png'
+                            ).predefined = "A 88x31 image for use on web sites that were generated by webgen."
+      define_file_resource( 'w3c-valid-css', File.join( Webgen.data_dir, 'resources', 'images', 'valid-css.gif' ),
+                            '/images/w3c-valid-css.gif'
+                            ).predefined = 'The W3C image for valid css.'
+      define_file_resource( 'w3c-valid-xhtml11', File.join( Webgen.data_dir, 'resources', 'images', 'valid-xhtml11.png' ),
+                            '/images/w3c-valid-xhtml11.png'
+                            ).predefined = "The W3C image for valid XHTML1.1"
 
       define_webgen_emoticons
       define_webgen_icons
 
-      define_memory_resource( 'webgen-css', '/css/webgen.css' ).predefined = "Plugins use this resource for their CSS styles."
-      define_memory_resource( 'webgen-javascript', '/css/webgen.js' ).predefined = "Plugins use this resource for their Javascript fragments."
+      define_memory_resource( 'webgen-css', '/css/webgen.css'
+                              ).predefined = "Plugins use this resource for their CSS styles."
+      define_memory_resource( 'webgen-javascript', '/css/webgen.js'
+                              ).predefined = "Plugins use this resource for their Javascript fragments."
     end
 
     def define_webgen_emoticons
-      Dir[File.join( CorePlugins::Configuration.data_dir, 'resources', 'emoticons', '*/')].each do |pack_dir|
+      Dir[File.join( Webgen.data_dir, 'resources', 'emoticons', '*/')].each do |pack_dir|
         pack = File.basename( pack_dir )
         Dir[File.join( pack_dir, '*' )].each do |smiley_file|
           smiley = File.basename( smiley_file, '.*' )
@@ -217,7 +215,7 @@ module CorePlugins
     end
 
     def define_webgen_icons
-      base_dir = File.join( CorePlugins::Configuration.data_dir, 'resources', 'icons' )
+      base_dir = File.join( Webgen.data_dir, 'resources', 'icons' )
       Dir[File.join( base_dir, '**/*')].each do |icon|
         dirs = File.dirname( icon ).sub( /^#{base_dir}/, '' ).split( '/' ).join( '-' )
         dirs += '-' if dirs.length > 0
@@ -229,9 +227,9 @@ module CorePlugins
     end
 
     def define_user_resources
-      p = get_param( 'resources' )
+      p = param( 'resources' )
       if !p.kind_of?( Array ) || p.find {|h| !h.kind_of?( Array ) || h.length != 3}
-        logger.error { "Parameter resources not correctly structured!" }
+        log(:error) { "Parameter 'resources' not correctly structured!" }
         return
       end
       p.each {|name, res_path, out_path| define_file_resource( name, res_path, out_path ) }
@@ -239,14 +237,19 @@ module CorePlugins
 
 
     def write_resources
-      Webgen::Plugin.config[self.class].resources.each do |name, res|
-        if res.write_resource?
+      temp = {}
+      temp.update( self.class.infos[:resources] )
+      temp.update( @resources )
+      outDir = @plugin_manager.param_for_plugin( 'CorePlugins::Configuration', 'outDir' )
+
+      temp.each do |name, res|
+        if res.write_resource?( outDir )
           begin
-            FileUtils.makedirs( File.dirname( res.dest_path ) )
-            res.write_resource
-            logger.info { "Resource #{name} written to <#{res.dest_path}>" }
+            FileUtils.makedirs( File.dirname( res.dest_path( outDir ) ) )
+            res.write_resource( outDir )
+            log(:info) { "Resource '#{name}' written to <#{res.dest_path( outDir )}>" }
           rescue Exception => e
-            logger.error { "Error while writing resource #{name}: #{e.message}" }
+            log(:error) { "Error while writing resource '#{name}': #{e.message}" }
           end
         end
       end
@@ -261,22 +264,24 @@ module Tags
 
   class ResourceTag < DefaultTag
 
-    summary "Used for referencing resources"
-    description "This tag should be used output the path to a resource or the resource itself."
+    infos(
+          :summary => "Used for referencing resources",
+          :description => "This tag can be used to output the path to a resource or the resource itself."
+          )
 
-    add_param 'name', nil, 'The name of the resource'
-    add_param 'insert', :path, 'What should be returned by the tag: the path to the resource (value :path) ' \
-    'or the data (value :data)'
+    param 'name', nil, 'The name of the resource'
+    param 'insert', :path, 'What should be returned by the tag: the path to the resource (value :path) ' +
+      'or the data (value :data)'
     set_mandatory 'name', true
 
-    tag 'resource'
+    register_tag 'resource'
 
-    def process_tag( tag, node, refNode )
+    def process_tag( tag, chain )
       result = ''
-      if res = Webgen::Plugin['ResourceManager'].get_resource( get_param( 'name' ) )
-        result = (get_param( 'insert' ) == :path ? res.referenced! && res.relpath_from_node( node ) : res.data )
+      if res = @plugin_manager['CorePlugins::ResourceManager'].get_resource( param( 'name' ) )
+        result = (param( 'insert' ) == :path ? res.referenced! && res.route_from( chain.last ) : res.data )
       else
-        logger.error { "Could not retrieve resource #{get_param( 'name' )} as it does not exist!" }
+        log(:error) { "Could not use resource #{param( 'name' )} as it does not exist!" }
       end
       result
     end
