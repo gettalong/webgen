@@ -39,19 +39,22 @@ module Tags
     param 'mappingFile', nil, 'An additional mapping file used for mapping extensions to icons.'
     set_mandatory 'url', true
 
+=begin
+TODO: move to doc
+- describe structure of mapping file
+=end
+
     depends_on 'CorePlugins::ResourceManager'
 
     register_tag 'download'
 
-    CSS = '
+    def initialize( plugin_manager )
+      super
+      @plugin_manager['CorePlugins::ResourceManager'].append_data( 'webgen-css', '
 /* START webgen download tag */
 .webgen-file-icon, .webgen-download-icon { vertical-align: middle; }
 /* STOP webgen download tag */
-'
-
-    def initialize( plugin_manager )
-      super
-      @plugin_manager['CorePlugins::ResourceManager'].append_data( 'webgen-css', CSS )
+' )
       @default_mapping = load_mapping( File.join( Webgen.data_dir, 'icon_mapping.yaml' ) )
     end
 

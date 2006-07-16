@@ -1,7 +1,7 @@
 require 'webgen/test'
 require 'webgen/node'
 
-class SitemapTagTest < Webgen::TagTestCase
+class DownloadTagTest < Webgen::TagTestCase
 
   plugin_files [
     'webgen/plugins/tags/download.rb',
