@@ -30,43 +30,44 @@ module Tags
 
   class DownloadTag < DefaultTag
 
-    summary "Provides a nice download link and, optional, image "
-    add_param 'url', nil, 'The URL to the file. Can be a local file or one referenced via HTTP/FTP.'
-    add_param 'icon', nil, 'The URL to an icon which will be shown next to the name.'
-    add_param 'alwaysShowDownloadIcon', false, 'Specifies if the download icon should always be shown, or only ' \
-    'when no icon is available for the file type.'
-    add_param 'mappingFile', nil, 'An additional mapping file used for mapping extensions to icons.'
+    infos :summary => "Provides a nice download link and, optional, image "
+
+    param 'url', nil, 'The URL to the file. Can be a local file or one referenced via HTTP/FTP.'
+    param 'icon', nil, 'The URL to an icon which will be shown next to the name.'
+    param 'alwaysShowDownloadIcon', false, 'Specifies if the download icon should always be shown, or only ' +
+      'when no icon is available for the file type.'
+    param 'mappingFile', nil, 'An additional mapping file used for mapping extensions to icons.'
     set_mandatory 'url', true
 
-    depends_on 'ResourceManager'
+    depends_on 'CorePlugins::ResourceManager'
+
+    register_tag 'download'
 
     CSS = '
-.webgen-file-icon, .webgen-download-icon {
-  vertical-align: middle;
-}
+/* START webgen download tag */
+.webgen-file-icon, .webgen-download-icon { vertical-align: middle; }
+/* STOP webgen download tag */
 '
 
-    tag 'download'
-
-    def initialize
+    def initialize( plugin_manager )
       super
-      Webgen::Plugin['ResourceManager'].append_data( 'webgen-css', CSS )
-      @default_mapping = load_mapping( File.join( CorePlugins::Configuration.data_dir, 'icon_mapping.yaml' ) )
+      @plugin_manager['CorePlugins::ResourceManager'].append_data( 'webgen-css', CSS )
+      @default_mapping = load_mapping( File.join( Webgen.data_dir, 'icon_mapping.yaml' ) )
     end
 
-    def process_tag( tag, node, refNode )
-      url = get_param( 'url' )
+    def process_tag( tag, chain )
+      url = param( 'url' )
       return '' if url.nil?
 
       mapping = @default_mapping.dup
-      mapping.update( load_mapping( get_param( 'mappingFile' ) ) ) if File.exists?( get_param( 'mappingFile' ) || '' )
+      mapping.update( load_mapping( param( 'mappingFile' ) ) ) if File.exists?( param( 'mappingFile' ) || '' )
 
-      icon = file_icon( File.extname( url ), mapping, node )
+      icon = file_icon( File.extname( url ), mapping, chain.last )
       output = ''
-      output << download_icon if get_param( 'alwaysShowDownloadIcon' ) || icon.nil?
+      output << download_icon if param( 'alwaysShowDownloadIcon' ) || icon.nil?
       output << icon unless icon.nil?
-      output << file_link( url, node, refNode )
-      output << file_size( url, refNode )
+      output << file_link( url, chain.last, chain.first )
+      output << file_size( url, chain.first )
     end
 
     #######
@@ -79,48 +80,46 @@ module Tags
 
     def file_icon( ext, mapping, node )
       data = mapping[ext]
-      src = get_param( 'icon' )
+      src = param( 'icon' )
       if src.nil? && !data.nil?
         if data[0] == :resource
           src = "{resource: #{data[1]}}"
         else
           icon_node = Node.root( node ).node_for_string( data[1] )
-          unless icon_node.nil?
-            src = node.relpath_to_node( icon_node )
-          end
+          src = node.route_to( icon_node ) unless icon_node.nil?
         end
       end
       (src.nil? ? nil : "<img class=\"webgen-file-icon\" src=\"#{src}\" alt=\"File icon\" />")
     end
 
-    def file_link( url, node, refNode )
+    def file_link( url, node, ref_node )
       link = if URI.parse( url ).absolute?
                url
              else
-               fileNode = refNode.node_for_string( url )
-               (fileNode.nil? ? '' : node.relpath_to_node( fileNode ))
+               file_node = ref_node.resolve_node( url )
+               (file_node.nil? ? '' : node.route_to( file_node ))
              end
       "<a href=\"#{link}\">#{File.basename( url )}</a>"
     end
 
     UNIT_NAMES = ['Byte', 'KiB', 'MiB', 'GiB', 'TiB']
 
-    def file_size( url, refNode )
+    def file_size( url, ref_node )
       size = nil
       catch :size do
         begin
           if URI.parse( url ).absolute?
             open( url, :content_length_proc => proc {|size| throw :size} ) {|f| }
           else
-            fileNode = refNode.node_for_string( url )
-            size = File.size( fileNode.recursive_value( 'src' ) )
+            file_node = ref_node.resolve_node( url )
+            size = File.size( file_node.node_info[:src] )
           end
         rescue
         end
       end
 
       if size.nil?
-        logger.warn { "Could not get file size information for file <#{url}>" }
+        log(:warn) { "Could not get file size information for file <#{url}>" }
         ''
       else
         size, unit = [size.to_f, 0]
