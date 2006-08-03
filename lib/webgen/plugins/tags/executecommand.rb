@@ -43,6 +43,7 @@ module Tags
       @processOutput = param( 'processOutput' )
       if param( 'command' )
         cmd = ExtendedCommand.new( param( 'command' ) )
+        log(:debug) { "Executed command '#{param('command')}', results: #{cmd.inspect}" }
         output = cmd.out_text
         if cmd.ret_code != 0
           log(:error) { "Command '#{param( 'command' )}' did not return with exit value 0: #{cmd.err_text}" }

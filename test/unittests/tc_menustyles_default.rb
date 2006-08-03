@@ -5,7 +5,6 @@ class DefaultMenuStyleTest < Webgen::PluginTestCase
   plugin_files [
                 'webgen/plugins/menustyles/default.rb',
                 'webgen/plugins/filehandlers/directory.rb',
-                'webgen/plugins/contentconverters/textile.rb',
                 'webgen/plugins/filehandlers/page.rb'
                ]
 

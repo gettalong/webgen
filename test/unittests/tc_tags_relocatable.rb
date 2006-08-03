@@ -6,7 +6,6 @@ class RelocatableTagTest < Webgen::TagTestCase
   plugin_files [
     'webgen/plugins/tags/relocatable.rb',
     'webgen/plugins/filehandlers/directory.rb',
-    'webgen/plugins/contentconverters/textile.rb',
     'webgen/plugins/filehandlers/page.rb',
   ]
   plugin_to_test 'Tags::RelocatableTag'

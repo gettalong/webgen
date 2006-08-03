@@ -58,18 +58,6 @@ class PageHandlerTest < Webgen::PluginTestCase
   ]
   plugin_to_test 'FileHandlers::PageFileHandler'
 
-  def setup
-    super
-    @testdata = YAML::load( File.read( fixture_path( 'testdata.yaml' ) ) )
-    self.class.class_eval "class ::FileHandlers::PageFileHandler
-           public :analyse_file_name
-           public :create_output_name
-         end"
-    @manager.plugins['ContentConverters::DefaultContentConverter'] = Object.new
-    def (@manager.plugins['ContentConverters::DefaultContentConverter']).registered_handlers
-      {'default' => proc {|c| c}, 'textile' => proc {|c| c}}
-    end
-  end
 
   def test_initialization
     assert_not_nil( @plugin )
@@ -77,7 +65,8 @@ class PageHandlerTest < Webgen::PluginTestCase
 
   def test_create_node_from_data
     root = @manager['FileHandlers::FileHandler'].instance_eval { create_root_node( find_all_files, find_files_for_handlers ) }
-    node = @plugin.create_node_from_data( 'index.page', root, @testdata['data'] )
+    testdata = YAML::load( File.read( fixture_path( 'testdata.yaml' ) ) )
+    node = @plugin.create_node_from_data( 'index.page', root, testdata['data'] )
 
     assert_equal( 'index.html', node.path )
     assert_equal( 'index.page', node.node_info[:pagename] )
@@ -88,7 +77,7 @@ class PageHandlerTest < Webgen::PluginTestCase
     assert_equal( 0, node['orderInfo'] )
     assert_equal( Webgen::LanguageManager.language_for_code( 'en' ), node['lang'] )
 
-    node1 = @plugin.create_node_from_data( 'index.page', root, @testdata['data'] )
+    node1 = @plugin.create_node_from_data( 'index.page', root, testdata['data'] )
     assert_same( node, node1 )
   end
 
@@ -159,11 +148,12 @@ class PageHandlerTest < Webgen::PluginTestCase
   #######
 
   def check_output_name( expected, given, style, omitLang = false )
-    assert_equal( expected, @plugin.create_output_name( @plugin.analyse_file_name( given ), style, omitLang ) )
+    analysed = @plugin.instance_eval { analyse_file_name( given ) }
+    assert_equal( expected, @plugin.instance_eval { create_output_name( analysed, style, omitLang ) })
   end
 
   def analyse_file_name( struct )
-    assert_equal( struct, @plugin.analyse_file_name( struct.filename ) )
+    assert_equal( struct, @plugin.instance_eval { analyse_file_name( struct.filename ) })
   end
 
 end

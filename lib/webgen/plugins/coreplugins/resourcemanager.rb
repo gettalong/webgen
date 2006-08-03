@@ -20,7 +20,6 @@
 #++
 #
 
-require 'rbconfig'
 require 'fileutils'
 require 'webgen/plugins/tags/tags'
 require 'webgen/plugins/filehandlers/filehandler'

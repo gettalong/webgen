@@ -9,17 +9,6 @@ class TemplateFileHandlerTest < Webgen::PluginTestCase
   ]
   plugin_to_test 'FileHandlers::TemplateFileHandler'
 
-  def setup
-    super
-    self.class.class_eval "class ::FileHandlers::TemplateFileHandler
-           public :get_default_template
-         end"
-    @manager.plugins['ContentConverters::DefaultContentConverter'] = Object.new
-    def (@manager.plugins['ContentConverters::DefaultContentConverter']).registered_handlers
-      {'default' => proc {|c| c}, 'textile' => proc {|c| c}}
-    end
-  end
-
   def test_initialization
     assert_not_nil( @plugin )
   end
@@ -62,10 +51,10 @@ class TemplateFileHandlerTest < Webgen::PluginTestCase
     template = Node.new( root, 'default.template' )
     dir1 = Node.new( root, 'dir1/' )
 
-    assert_equal( template, @plugin.get_default_template( root ) )
-    assert_equal( template, @plugin.get_default_template( dir1 ) )
+    assert_equal( template, @plugin.instance_eval { get_default_template( root ) })
+    assert_equal( template, @plugin.instance_eval { get_default_template( dir1 ) })
     root.del_child( template )
-    assert_nil( @plugin.get_default_template( root ) )
+    assert_nil( @plugin.instance_eval { get_default_template( root ) })
   end
 
 end

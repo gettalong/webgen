@@ -6,7 +6,6 @@ class SitemapTagTest < Webgen::TagTestCase
   plugin_files [
     'webgen/plugins/tags/sitemap.rb',
     'webgen/plugins/filehandlers/directory.rb',
-    'webgen/plugins/contentconverters/textile.rb',
     'webgen/plugins/filehandlers/page.rb',
   ]
   plugin_to_test 'Tags::SitemapTag'

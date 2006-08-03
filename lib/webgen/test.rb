@@ -87,10 +87,12 @@ module Webgen
 
     def setup
       @loader = PluginLoader.new
+
       before = $".dup
       @constants = Object.constants.dup
       self.class.plugin_files.each {|p| @loader.load_from_file( p ) }
       @required_files = $".dup - before
+
       @manager = PluginManager.new( [@loader], @loader.plugins )
       if $VERBOSE
         @manager.logger = Webgen::Logger.new
@@ -98,6 +100,14 @@ module Webgen
       end
       @manager.plugin_config = self
       @manager.init
+
+      if !@manager.plugins.has_key?( 'ContentConverters::DefaultContentConverter' )
+        @manager.plugins['ContentConverters::DefaultContentConverter'] = Object.new
+        def (@manager.plugins['ContentConverters::DefaultContentConverter']).registered_handlers
+          {'default' => proc {|c| c}, 'textile' => proc {|c| c}}
+        end
+      end
+
       @plugin = @manager[self.class.plugin_to_test] if self.class.plugin_to_test
     end
 
