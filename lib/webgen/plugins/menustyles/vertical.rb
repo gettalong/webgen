@@ -26,72 +26,57 @@ module MenuStyles
 
   class VerticalMenuStyle < MenuStyles::DefaultMenuStyle
 
-    summary "Builds a vertical menu"
+    infos :summary => "Builds a vertical menu"
 
-    register_menu_style 'vertical'
+    register_handler 'vertical'
 
-    add_param 'level', 1, \
-    'Specifies how many levels the menu should have by default, ie. how deep it is. ' \
-    'For example, if level = 3, then three levels are always shown at least.'
-    add_param 'subtreeLevel', 3, \
-    'Specifies how many levels should be shown for subtrees. The number specifies ' \
-    'the maximum depth the menu will have.'
-    add_param 'showCurrentSubtreeOnly', true, \
-    'True if only the current subtree should be shown in the menu. If set to false, ' \
-    'each subtree will be shown.'
+    param 'level', 1, 'Specifies how many levels the menu should have by default, ie. how deep it is. ' +
+      'For example, if level = 3, then three levels are always shown at least.'
+    param 'subtreeLevel', 3,  'Specifies how many levels should be shown for subtrees. The number ' +
+      'specifies the maximum depth the menu will have.'
+    param 'showCurrentSubtreeOnly', true, 'True if only the current subtree should be shown in the menu. ' +
+      'If set to false, each subtree will be shown.'
 
-    CSS = "
-/* START Webgen vertical menu style */
-.webgen-menu-vert li > ul {
-  font-size: 95%;
-}
+    def initialize( plugin_manager )
+      super
+      @css = "
+/* START webgen vertical menu style */
+.webgen-menu-vert li > ul { font-size: 95%%; }
+.webgen-menu-vert ul { padding: 0px; margin-left: 10px; }
+.webgen-menu-vert li { padding-left: 5px; }
+.webgen-menu-vert .%s > a { font-weight: bold; }
+.webgen-menu-vert .%s > a { font-weight: bold; }
+/* STOP webgen vertical menu style */
+" % [ param( 'submenuInHierarchyClass' ), param( 'selectedMenuitemClass' )]
+    end
 
-.webgen-menu-vert ul {
-  padding: 0px;
-  margin-left: 10px;
-}
-
-.webgen-menu-vert li {
-  padding-left: 5px;
-}
-
-.webgen-menu-vert .webgen-menu-submenu-inhierarchy > a {
-  font-weight: bold;
-}
-
-.webgen-menu-vert .webgen-menu-item-selected > a {
-  font-weight: bold;
-}
-/* STOP Webgen vertical menu style */
-"
-
-    def internal_build_menu( srcNode, menuTree )
+    def internal_build_menu( src_node, menu_tree )
       unless defined?( @css_added )
-        Webgen::Plugin['ResourceManager'].append_data( 'webgen-css', CSS )
+        @plugin_manager['CorePlugins::ResourceManager'].append_data( 'webgen-css', @css )
         @css_added = true
       end
-      "<div class=\"webgen-menu-vert #{get_param('divClass')}\">#{submenu( srcNode, menuTree, 1 )}</div>"
+      "<div class=\"webgen-menu-vert #{param('divClass')}\">#{submenu( src_node, menu_tree, 1 )}</div>"
     end
 
     #######
     private
     #######
 
-    def submenu( srcNode, node, level )
-      if node.nil? \
-        || level > get_param( 'subtreeLevel' ) \
-        || ( level > get_param( 'level' ) \
-             && ( node['node'].level > srcNode.level \
-                  || ( get_param( 'showCurrentSubtreeOnly' ) && !srcNode.in_subtree?( node['node'] ) )
+    def submenu( src_node, menu_node, level )
+      if menu_node.nil? \
+        || level > param( 'subtreeLevel' ) \
+        || ( level > param( 'level' ) \
+             && ( menu_node.node_info['node'].level > src_node.level \
+                  || ( param( 'showCurrentSubtreeOnly' ) && !src_node.in_subtree?( menu_node.node_info['node'] ) )
                   )
              )
         return ''
       end
 
       out = "<ul>"
-      node.each do |child|
-        menu = child['node']['int:directory?'] ? submenu( srcNode, child, level + 1 ) : ''
-        style, link = menu_item_details( srcNode, child['node'] )
+      menu_node.each do |child|
+        menu = child.node_info['node'].is_directory? ? submenu( src_node, child, level + 1 ) : ''
+        style, link = menu_item_details( src_node, child.node_info['node'] )
 
         out << "<li #{style}>#{link}"
         out << menu

@@ -26,60 +26,51 @@ module MenuStyles
 
   class HorizontalMenuStyle < MenuStyles::DefaultMenuStyle
 
-    summary "Builds a horizontal menu"
+    infos :summary => "Builds a horizontal menu"
 
-    register_menu_style 'horizontal'
+    register_handler 'horizontal'
 
-    CSS = "
-/* START Webgen horizontal menu style */
-.webgen-menu-horiz {
-  text-align: center;
-}
-
+    def initialize( plugin_manager )
+      super
+      @css = "
+/* START webgen horizontal menu style */
+.webgen-menu-horiz { text-align: center; }
 .webgen-menu-horiz ul {
   display: block;
   margin: 0px;
   padding-bottom: 3px;
   margin-bottom: 3px;
 }
+.webgen-menu-horiz li { display: inline; padding: 0px 5px; }
+.webgen-menu-horiz .%s { font-weight: bold; }
+.webgen-menu-horiz .%s { font-weight: bold; }
+/* STOP webgen horizontal menu style */
+" % [ param( 'submenuInHierarchyClass' ), param( 'selectedMenuitemClass' )]
+    end
 
-.webgen-menu-horiz li {
-  display: inline;
-  padding: 0px 5px;
-}
-
-.webgen-menu-horiz .webgen-menu-submenu-inhierarchy {
-  font-weight: bold;
-}
-
-.webgen-menu-horiz .webgen-menu-item-selected {
-  font-weight: bold;
-}
-/* STOP Webgen horizontal menu style */
-"
-
-    def internal_build_menu( srcNode, menuTree )
+    def internal_build_menu( src_node, menu_tree )
       unless defined?( @css_added )
-        Webgen::Plugin['ResourceManager'].append_data( 'webgen-css', CSS )
+        @plugin_manager['ResourceManager'].append_data( 'webgen-css', @css )
         @css_added = true
       end
-      "<div class=\"webgen-menu-horiz #{get_param('divClass')}\">#{submenu( srcNode, menuTree, 1 )}</div>"
+      "<div class=\"webgen-menu-horiz #{param('divClass')}\">#{submenu( src_node, menu_tree, 1 )}</div>"
     end
 
     #######
     private
     #######
 
-    def submenu( srcNode, node, level )
-      if node.nil? || node['node'].level > srcNode.level || !srcNode.in_subtree?( node['node'] )
+    def submenu( src_node, menu_node, level )
+      if menu_node.nil? || menu_node.node_info['node'].level > src_node.level \
+        || !src_node.in_subtree?( menu_node.node_info['node'] )
         return ''
       end
 
       submenu = ''
       out = "<ul>"
-      node.each do |child|
-        submenu << (child['node']['int:directory?'] ? submenu( srcNode, child, level + 1 ) : '')
-        style, link = menu_item_details( srcNode, child['node'] )
+      menu_node.each do |child|
+        submenu << (child.node_info['node'].is_directory? ? submenu( src_node, child, level + 1 ) : '')
+        style, link = menu_item_details( src_node, child.node_info['node'] )
         out << "<li #{style}>#{link}</li>"
       end
       out << "</ul>"

@@ -26,76 +26,59 @@ module MenuStyles
 
   class HorizontalDropdownMenuStyle < MenuStyles::DefaultMenuStyle
 
-    summary "Builds a horizontal menu with CSS drop down submenus"
+    infos :summary => "Builds a horizontal menu with CSS drop down submenus"
 
-    register_menu_style 'horizontal-dropdown'
+    register_handler 'horizontal-dropdown'
 
-    CSS = "
-/* START Webgen horizontal dropdown menu style */
+    def initialize( plugin_manager )
+      super
+      @css = "
+/* START webgen horizontal dropdown menu style */
 .webgen-menu-horiz-dd ul {
   list-style-type: none;
   margin: 0;
   padding: 0;
   float: left;
 }
-
 .webgen-menu-horiz-dd ul ul {
   width: 15em;
   border: 1px solid black;
   position: absolute;
   z-index: 500;
 }
-
-
 .webgen-menu-horiz-dd a {
   display: block;
   margin: 0px;
   padding: 3px 3px;
   background-color: white;
 }
-
-.webgen-menu-horiz-dd li {
-  position: relative;
-}
-
-.webgen-menu-horiz-dd ul ul ul {
-position: absolute;
-top: 0;
-left: 100%;
-}
-
-.webgen-menu-horiz-dd ul ul {
-  display: none;
-}
-
-.webgen-menu-horiz-dd ul li:hover > ul > ul {
-  display: none;
-}
-
-.webgen-menu-horiz-dd ul li:hover > ul {
-  display: block;
-}
-/* STOP Webgen horizontal dropdown menu style */
+.webgen-menu-horiz-dd li { position: relative; }
+.webgen-menu-horiz-dd ul ul ul { position: absolute; top: 0; left: 100%; }
+.webgen-menu-horiz-dd ul ul { display: none; }
+.webgen-menu-horiz-dd ul li:hover > ul > ul { display: none; }
+.webgen-menu-horiz-dd ul li:hover > ul { display: block; }
+/* STOP webgen horizontal dropdown menu style */
 "
+    end
 
-    def internal_build_menu( srcNode, menuTree )
+    def internal_build_menu( src_node, menu_tree )
       unless defined?( @css_added )
-        Webgen::Plugin['ResourceManager'].append_data( 'webgen-css', CSS )
+        @plugin_manager['CorePlugins::ResourceManager'].append_data( 'webgen-css', @css )
         @css_added = true
       end
-      "<div class=\"webgen-menu-horiz-dd #{get_param('divClass')}\">#{submenu( srcNode, menuTree, 1 )}</div>"
+      "<div class=\"webgen-menu-horiz-dd #{param('divClass')}\">#{submenu( src_node, menu_tree, 1 )}</div>"
     end
 
     #######
     private
     #######
 
-    def submenu( srcNode, node, level )
+    def submenu( src_node, menu_node, level )
       out = ''
       out = "<ul>" if level > 1
-      node.each do |child|
-        menu = child['node']['int:directory?'] ? submenu( srcNode, child, level + 1 ) : ''
-        style, link = menu_item_details( srcNode, child['node'] )
+      menu_node.each do |child|
+        menu = (child.node_info['node'].is_directory? ? submenu( src_node, child, level + 1 ) : '')
+        style, link = menu_item_details( src_node, child.node_info['node'] )
 
         out << "<ul>" if level == 1
         out << "<li #{style}>#{link}"

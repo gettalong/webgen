@@ -26,19 +26,20 @@ module MenuStyles
 
   class VerticalDropdownMenuStyle < MenuStyles::DefaultMenuStyle
 
-    summary "Builds a vertical menu with CSS drop down submenus"
+    infos :summary => "Builds a vertical menu with CSS drop down submenus"
 
-    register_menu_style 'vertical-dropdown'
+    register_handler 'vertical-dropdown'
 
-    CSS = "
-/* START Webgen vertical dropdown menu style */
+    def initialize( plugin_manager )
+      super
+      @css = "
+/* START webgen vertical dropdown menu style */
 .webgen-menu-vert-dd ul {
   list-style-type: none;
   margin: 0;
   padding: 0;
   width: 15em;
 }
-
 .webgen-menu-vert-dd ul ul {
   border: 1px solid black;
   position: absolute;
@@ -46,50 +47,38 @@ module MenuStyles
   left: 100%;
   top: 0;
 }
-
 .webgen-menu-vert-dd a {
   display: block;
   margin: 0px;
   padding: 3px 3px;
   background-color: white;
 }
-
-.webgen-menu-vert-dd li {
-  position: relative;
-}
-
-.webgen-menu-vert-dd ul ul {
-  display: none;
-}
-
-.webgen-menu-vert-dd ul li:hover > ul > ul {
-  display: none;
-}
-
-.webgen-menu-vert-dd ul li:hover > ul {
-  display: block;
-}
-/* STOP Webgen vertical dropdown menu style */
+.webgen-menu-vert-dd li { position: relative; }
+.webgen-menu-vert-dd ul ul { display: none; }
+.webgen-menu-vert-dd ul li:hover > ul > ul { display: none; }
+.webgen-menu-vert-dd ul li:hover > ul { display: block; }
+/* STOP webgen vertical dropdown menu style */
 "
+    end
 
-    def internal_build_menu( srcNode, menuTree )
+    def internal_build_menu( src_node, menu_tree )
       unless defined?( @css_added )
-        Webgen::Plugin['ResourceManager'].append_data( 'webgen-css', CSS )
+        @plugin_manager['CorePlugins::ResourceManager'].append_data( 'webgen-css', @css )
         @css_added = true
       end
-      "<div class=\"webgen-menu-vert-dd #{get_param('divClass')}\">#{submenu( srcNode, menuTree, 1 )}</div>"
+      "<div class=\"webgen-menu-vert-dd #{param('divClass')}\">#{submenu( src_node, menu_tree, 1 )}</div>"
     end
 
     #######
     private
     #######
 
-    def submenu( srcNode, node, level )
+    def submenu( src_node, menu_node, level )
       out = ''
       out = "<ul>" if level > 1
-      node.each do |child|
-        menu = child['node']['int:directory?'] ? submenu( srcNode, child, level + 1 ) : ''
-        style, link = menu_item_details( srcNode, child['node'] )
+      menu_node.each do |child|
+        menu = (child.node_info['node'].is_directory? ? submenu( src_node, child, level + 1 ) : '')
+        style, link = menu_item_details( src_node, child.node_info['node'] )
 
         out << "<ul>" if level == 1
         out << "<li #{style}>#{link}"
