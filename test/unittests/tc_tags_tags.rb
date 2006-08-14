@@ -1,14 +1,29 @@
 require 'webgen/test'
+require 'webgen/node'
 
 class TagProcessorTest < Webgen::PluginTestCase
 
   plugin_files [
-    'webgen/plugins/tags/tags.rb',
+    'webgen/plugins/tags/tags.rb'
   ]
   plugin_to_test 'Tags::TagProcessor'
 
   def test_process
-    flunk
+    parent = Node.new( nil, fixture_path )
+    parent.node_info[:src] = fixture_path
+    node = Node.new( parent, 'testtag.rb' )
+    node.meta_info['test'] = 'test'
+
+    content = "{includeFile: test_file1}"
+    assert_equal( '', @plugin.process( content, [node] ) )
+    add_tag( 'webgen/plugins/tags/includefile.rb' )
+    add_tag( 'webgen/plugins/tags/meta.rb' )
+
+    content = "{includeFile: {filename: test_file1, processOutput: true}}"
+    assert_equal( 'test', @plugin.process( content, [node] ) )
+
+    content = "{includeFile: {filename: test_file1, processOutput: false}}"
+    assert_equal( '{test:}', @plugin.process( content, [node] ) )
   end
 
   def test_replace_tags
@@ -44,13 +59,18 @@ class TagProcessorTest < Webgen::PluginTestCase
     assert_equal( count, i, content )
   end
 
-  def add_tag
-    @loader.load_from_block do
-      self.class.module_eval "class ::TestTag < Tags::DefaultTag; register_tag 'test'; end"
+  def add_tag( file = nil )
+    if file
+      @loader.load_from_file( file )
+    else
+      @loader.load_from_block do
+        self.class.module_eval "class ::TestTag < Tags::DefaultTag; register_tag 'test'; end"
+      end
     end
     @manager.add_plugin_classes( @loader.plugins )
     @manager.init
   end
+
 
 end
 

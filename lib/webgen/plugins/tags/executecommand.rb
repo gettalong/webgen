@@ -40,7 +40,7 @@ module Tags
     register_tag 'execute'
 
     def process_tag( tag, chain )
-      @processOutput = param( 'processOutput' )
+      @process_output = param( 'processOutput' )
       if param( 'command' )
         cmd = ExtendedCommand.new( param( 'command' ) )
         log(:debug) { "Executed command '#{param('command')}', results: #{cmd.inspect}" }

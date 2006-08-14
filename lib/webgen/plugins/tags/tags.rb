@@ -47,16 +47,20 @@ module Tags
       return replace_tags( content, chain.first ) do |tag, tag_data|
         log(:info) { "Replacing tag #{tag} with data '#{tag_data}' in <#{chain.first.full_path}>" }
 
+        result = ''
         processor = processor_for_tag( tag )
-        begin
-          processor.set_tag_config( YAML::load( "--- #{tag_data}" ), chain.first )
-        rescue ArgumentError => e
-          self.logger.error { "Could not parse the data '#{tag_data}' for tag #{tag} in <#{node.nod_info[:src]}>: #{e.message}" }
-        end
-        result, tag_chain = processor.process_tag( tag, chain )
-        processor.reset_tag_config
+        if !processor.nil?
+          begin
+            processor.set_tag_config( YAML::load( "--- #{tag_data}" ), chain.first )
+          rescue ArgumentError => e
+            self.logger.error { "Could not parse the data '#{tag_data}' for tag #{tag} in <#{node.nod_info[:src]}>: #{e.message}" }
+          end
+          result, tag_chain = processor.process_tag( tag, chain )
+          processor.reset_tag_config
 
-        result = process( result, tag_chain ) if processor.process_output? && !tag_chain.nil?
+          result = process( result, tag_chain || chain ) if processor.process_output?
+        end
+
         result
       end
     end

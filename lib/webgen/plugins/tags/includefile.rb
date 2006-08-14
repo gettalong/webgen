@@ -38,7 +38,7 @@ module Tags
     register_tag 'includeFile'
 
     def process_tag( tag, chain )
-      @processOutput = param( 'processOutput' )
+      @process_output = param( 'processOutput' )
       content = ''
       begin
         filename = File.join( chain.first.parent.node_info[:src], param( 'filename' ) )

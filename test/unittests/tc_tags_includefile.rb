@@ -18,9 +18,11 @@ class IncludeFileTagTest < Webgen::TagTestCase
 
     set_config( 'filename'=>"testfile", 'processOutput'=>false, 'escapeHTML'=>false )
     assert_equal( content, @plugin.process_tag( 'includeFile', [node] ) )
+    assert_equal( false, @plugin.process_output? )
 
     set_config( 'filename'=>"testfile", 'processOutput'=>true, 'escapeHTML'=>false )
     assert_equal( content, @plugin.process_tag( 'includeFile', [node] ) )
+    assert_equal( true, @plugin.process_output? )
 
     set_config( 'filename'=>"testfile", 'processOutput'=>true, 'escapeHTML'=>true )
     assert_equal( CGI::escapeHTML(content), @plugin.process_tag( 'includeFile', [node] ) )
