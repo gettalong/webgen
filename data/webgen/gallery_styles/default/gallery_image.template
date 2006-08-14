@@ -1,0 +1,15 @@
+<p>
+<% if ginfo.prev_image %>
+<a href="<%= ginfo.prev_image.pagename %>">^<%= ginfo.prev_image.title %>^</a>
+<% end %>
+
+<a href="<%= ginfo.cur_gallery.pagename %>">&lt; <%= ginfo.cur_gallery.title %></a>
+
+<% if ginfo.next_image %>
+<a href="<%= ginfo.next_image.pagename %>"><%= ginfo.next_image.title %> &gt;</a>
+<% end %>
+
+</p>
+
+<src href="<%= ginfo.cur_image.filename %>" alt="<%= ginfo.cur_image.title %>" />
+<p><%= ginfo.cur_image['description'] %></p>

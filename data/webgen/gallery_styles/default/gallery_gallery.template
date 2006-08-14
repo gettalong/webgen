@@ -1,0 +1,28 @@
+<p>
+<% if ginfo.prev_gallery %>
+<a href="<%= ginfo.prev_gallery.pagename %>">&lt; <%= ginfo.prev_gallery.title %></a>
+<% end %>
+
+<% if ginfo.prev_gallery || ginfo.next_gallery %>
+&nbsp;&mdash;&nbsp;
+<% end %>
+
+<% if ginfo.next_gallery %>
+<a href="<%= ginfo.next_gallery.pagename %>"><%= ginfo.prev_gallery.title %> &gt;</a>
+<% end %>
+</p>
+
+<table>
+<% 0.step( ginfo.cur_gallery.images.length - 1, 5 ) do |row_index| %>
+  <tr>
+  <% row_index.upto( row_index + 4 ) do |col_index|%>
+    <td>
+      <a href="<%= ginfo.cur_gallery.images[col_index].pagename %>">
+        <%= ginfo.cur_gallery.images[col_index].thumbnail %><br />
+        <%= ginfo.cur_gallery.images[col_index].title %>
+      </a>
+    </td>
+  <% end %>
+  </tr>
+<% end %>
+</table>

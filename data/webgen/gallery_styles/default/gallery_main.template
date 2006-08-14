@@ -1,0 +1,14 @@
+<table>
+<% 0.step( ginfo.galleries.length - 1, 5 ) do |row_index| %>
+  <tr>
+  <% row_index.upto( row_index + 4 ) do |col_index| %>
+    <td>
+      <a href="<%= ginfo.galleries[col_index].pagename %>">
+        <src href="<%= ginfo.galleries[col_index].thumbnail %>" alt="<%= ginfo.galleries[col_index].title %>" />
+        <%= ginfo.galleries[col_index].title %>
+      </a>
+    </td>
+  <% end %>
+  </tr>
+<% end %>
+</table>
