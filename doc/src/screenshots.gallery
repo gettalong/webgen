@@ -1,33 +1,25 @@
---- 
-mainPage: 
-  orderInfo: 20
-imagesPerPage: 20
-files: images/screenshots/*
-thumbnailSize: ''
-mainPageTemplate: ''
+---
 title: Screenshots
-galleryOrderInfo: 50
-images/screenshots/wge-image.png: 
+images: images/screenshots/*
+imagesPerPage: 20
+
+mainPageMetaData:
+  orderInfo: 20
+---
+images/screenshots/wge-main-disabled.png:
+  title: Gallery editor main window disabled
+  description: This screenshot show how the gallery editor appears when started.
+  orderInfo: 1
+images/screenshots/wge-main.png:
+  title: Gallery editor main window active
+  description: This screenshot shows the normal appearance of the gallery editor.
+  orderInfo: 2
+images/screenshots/wge-image.png:
   title: Gallery editor with image preview
   description: "When an image is selected in the image list, the pane right of it displays the
     image."
   orderInfo: 3
-galleryPageInMenu: false
-mainPageInMenu: true
-galleryPageTemplate: ''
-images/screenshots/wge-layout-preview.png: 
+images/screenshots/wge-layout-preview.png:
   title: Gallery editor with layout preview
   description: This shows the gallery editor with the layout preview open. You can see how a sample gallery looks with a specific layout.
   orderInfo: 4
-galleryPages: {}
-imagePageTemplate: ''
-images/screenshots/wge-main-disabled.png: 
-  title: Gallery editor main window disabled
-  description: This screenshot show how the gallery editor appears when started.
-  orderInfo: 1
-images/screenshots/wge-main.png: 
-  title: Gallery editor main window active
-  description: This screenshot shows the normal appearance of the gallery editor.
-  orderInfo: 2
-imagePageInMenu: false
-layout: default

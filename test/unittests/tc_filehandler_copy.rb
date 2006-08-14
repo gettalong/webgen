@@ -1,4 +1,3 @@
-require 'fileutils'
 require 'webgen/test'
 
 class FileCopyHandlerTest < Webgen::PluginTestCase
