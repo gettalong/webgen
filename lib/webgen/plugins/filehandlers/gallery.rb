@@ -28,40 +28,181 @@ module FileHandlers
 
   class GalleryFileHandler < DefaultFileHandler
 
-    summary "Handles images gallery files"
-    extension 'gallery'
-    add_param "imagesPerPage", 20, 'Number of images per gallery page'
-    add_param "imagePageInMenu", false, 'True if the image pages should be in the menu'
-    add_param "galleryPageInMenu", false, 'True if the gallery pages should be in the menu'
-    add_param "galleryOrderInfo", 50, 'The <orderInfo> metainfo for the first gallery page. The second gallery page gets this value plus one, and so on.'
-    add_param "mainPageInMenu", true, 'True if the main page of the image gallery should be in the menu'
-    add_param "galleryPageTemplate", nil, 'The template for gallery pages. If nil or a not existing file is specified, the default template is used.'
-    add_param "imagePageTemplate", nil, 'The template for image pages. If nil or a not existing file is specified, the default template is used.'
-    add_param "mainPageTemplate", nil, 'The template for the main page. If nil or a not existing file is specified, the default template is used.'
-    add_param "files", 'images/**/*.jpg', 'The Dir glob for specifying the image files'
-    add_param "title", 'Gallery', 'The title of the gallery'
-    add_param "layout", 'default', 'The layout used'
+    class GalleryInfo
 
-    depends_on 'FileHandler', 'PageFileHandler'
+      class Gallery
+
+        attr_accessor :pagename
+        attr_reader :title
+        attr_reader :data
+        attr_reader :images
+
+        def initialize( pagename, images, data )
+          @images = images
+          @pagename = pagename
+          @title = data['title']
+          @data = data
+        end
+
+        def []( key )
+          @data[key]
+        end
+
+        def []=( key, value )
+          @data[key] = value
+        end
+
+        def thumbnail
+          @images.first.thumbnail
+        end
+
+      end
+
+      class Image
+
+        attr_accessor :pagename
+        attr_reader :filename
+        attr_reader :title
+        attr_reader :data
+
+        def initialize( pagename, filename, data )
+          @pagename = pagename
+          @filename = filename
+          @title = data['title']
+          @data = data
+        end
+
+        def []( key )
+          @data[key]
+        end
+
+        def []=( key, value )
+          @data[key] = value
+        end
+
+        # Returns the thumbnail tag.
+        def thumbnail( attr = {} )
+          attr = attr.collect {|k,v| "#{k}='#{v}'"}.join( ' ' )
+          if !@data['thumbnail'].to_s.empty? && @data['thumbnail'] != @filename
+            "<img src=\"#{@data['thumbnail']}\" alt=\"#{@title}\" #{attr}/>"
+          else
+            width, height = (@data['thumbnailSize'] || '').split('x')
+            "<img src=\"#{@filename}\" width=\"#{width}\" height=\"#{height}\" alt=\"#{@title}\" #{attr}/>"
+          end
+        end
+
+      end
+
+      attr_reader :galleries
+      attr_reader :gIndex
+      attr_reader :iIndex
+
+      def initialize( galleries, gIndex = nil, iIndex = nil )
+        @galleries = galleries
+        @gIndex = gIndex
+        @iIndex = iIndex
+      end
+
+      # Returns the current image.
+      def cur_image
+        @galleries[@gIndex].images[@iIndex]
+      end
+
+      # Returns the previous image using the given +gIndex+ and +iIndex+, if it exists, or +nil+ otherwise.
+      def prev_image( gIndex = @gIndex, iIndex = @iIndex )
+        result = nil
+        if gIndex != 0 || iIndex != 0
+          if iIndex == 0
+            result = @galleries[gIndex - 1].images[@galleries[gIndex - 1].images.length - 1]
+          else
+            result = @galleries[gIndex].images[iIndex - 1]
+          end
+        end
+        return result
+      end
+
+      # Returns the next image using the given +gIndex+ and +iIndex+, if it exists, or +nil+ otherwise.
+      def next_image( gIndex = @gIndex, iIndex = @iIndex )
+        result = nil
+        if gIndex != @galleries.length - 1 || iIndex != @galleries[gIndex].images.length - 1
+          if iIndex == @galleries[gIndex].images.length - 1
+            result = @galleries[gIndex + 1].images[0]
+          else
+            result = @galleries[gIndex].images[iIndex + 1]
+          end
+        end
+        return result
+      end
+
+      def cur_gallery
+        galleries[@gIndex]
+      end
+
+      # Returns the previous gallery using the given +gIndex+, if it exists, or +nil+ otherwise.
+      def prev_gallery( gIndex = @gIndex )
+        gIndex != 0 ? @galleries[gIndex - 1] : nil
+      end
+
+      # Returns the next gallery using the given +gIndex+, if it exists, or +nil+ otherwise.
+      def next_gallery( gIndex = @gIndex )
+        gIndex != @galleries.length - 1 ? @galleries[gIndex + 1] : nil
+      end
+
+    end
+
+
+    infos :summary => "Handles images gallery files"
+
+    handle_extension 'gallery'
+
+    param "imagesPerPage", 20, 'Number of images per gallery page'
+    param "thumbnailSize", "100x100", "The size of the thumbnails"
+    param "galleryPageTemplate", 'gallery_gallery.template', 'The template for gallery pages. ' +
+      'If nil or a not existing file is specified, the default template is used.'
+    param "imagePageTemplate", 'gallery_image.template', 'The template for image pages. ' +
+      'If nil or a not existing file is specified, the default template is used.'
+    param "mainPageTemplate", 'gallery_main.template', 'The template for the main page. ' +
+      'If nil or a not existing file is specified, the default template is used.'
+    param "images", 'images/**/*.jpg', 'The Dir glob for specifying the image files'
+
+=begin
+TODO: move to doc
+- inMenu can be specified in the gallery, image, main templates and overrriden for the image templates by the pages
+- used keys for configuration section:
+  - all params
+  - title (if not specified, capitalized name of file will be used)
+  - mainPageMetaData
+  - galleryPagesMetaData (if orderInfo is specified, it will be used for the first gallery page, next one orderInfo + 1 and so on)
+- used keys for image meta data
+  - 
+
+=end
 
     def create_node( file, parent )
+      @filedata = {}
+      @imagedata = {}
       begin
-        @filedata = YAML::load( File.read( file ) )
+        filedata = []
+        YAML::load_documents( File.read( file ) ) {|d| filedata << d}
+        @filedata = filedata[0] if filedata[0].kind_of?( Hash )
+        @imagedata = filedata[1] if filedata[1].kind_of?( Hash )
       rescue
-        self.logger.error { "Could not parse gallery file <#{file}>, not creating gallery pages" }
+        log(:error) { "Could not parse gallery file <#{file}>, not creating gallery pages" }
         return
       end
+
       @path = File.dirname( file )
-      images = Dir[File.join( @path, get_param( 'files' ))].collect {|i| i.sub( /#{@path + File::SEPARATOR}/, '' ) }
+      images = Dir[File.join( @path, param( 'images' ))].collect {|i| i.sub( /#{@path + File::SEPARATOR}/, '' ) }
       images.sort! do |a,b|
-        aoi = @filedata[a].nil? ? 0 : @filedata[a]['orderInfo'] || 0
-        boi = @filedata[b].nil? ? 0 : @filedata[b]['orderInfo'] || 0
-        atitle = @filedata[a].nil? ? a : @filedata[a]['title'] || a
-        btitle = @filedata[b].nil? ? b : @filedata[b]['title'] || b
+        aoi = @imagedata[a].nil? ? 0 : @imagedata[a]['orderInfo'].to_s.to_i || 0
+        boi = @imagedata[b].nil? ? 0 : @imagedata[b]['orderInfo'].to_s.to_i || 0
+        atitle = @imagedata[a].nil? ? a : @imagedata[a]['title'] || a
+        btitle = @imagedata[b].nil? ? b : @imagedata[b]['title'] || b
         (aoi == boi ? atitle <=> btitle : aoi <=> boi)
       end
-      self.logger.info { "Creating gallery for file <#{file}> with #{images.length} images" }
 
+      @filedata['title'] ||= File.basename( file, '.*' ).capitalize
+      log(:info) { "Creating gallery for file <#{file}> with #{images.length} images" }
       create_gallery( images, parent )
 
       nil
@@ -76,102 +217,91 @@ module FileHandlers
     #######
 
     # Method overridden to lookup parameters specified in the gallery file first.
-    def get_param( name )
+    def param( name, plugin = nil )
       ( @filedata.has_key?( name ) ? @filedata[name] : super )
     end
 
-    def call_layouter( type, metainfo, *args )
-      content = Webgen::Plugin['DefaultGalleryLayouter'].get_layout( get_param( 'layout' ) ).send( type.to_s, *args )
+    def page_data( metainfo )
       temp = metainfo.to_yaml
       temp = "---\n" + temp unless /^---\s$/ =~ temp
-      "#{temp}\n---\n#{content}"
+      "#{temp}\n---\n"
     end
 
     def create_gallery( images, parent )
-      main = create_main_page( images, parent )
-      main['galleries'] = create_gallery_pages( images, parent )
+      mainData = main_page_data
+      galleries = create_gallery_pages( images, parent )
+      info_galleries = galleries.collect {|n,g,i| g}
 
-      if main['galleries'].length != 1
-        mainNode = Webgen::Plugin['PageFileHandler'].create_node_from_data( call_layouter( :main, main, main ), main['srcName'], parent )
-        parent.add_child( mainNode )
-      else
-        main['galleries'][0]['title'] = main['title']
-        main['galleries'][0]['inMenu'] = main['inMenu']
-        main['galleries'][0].update( @filedata['mainPage'] || {} )
-        main['pageNotUsed'] = true
+      if images.length > param( 'imagesPerPage' )
+        mainNode = @plugin_manager['FileHandlers::PageFileHandler'].create_node_from_data( gallery_file_name( mainData['title'] ), parent, page_data( mainData ) )
+        mainNode.node_info[:ginfo] = GalleryInfo.new( info_galleries )
       end
 
-      main['galleries'].each_with_index do |gallery, gIndex|
-        node = Webgen::Plugin['PageFileHandler'].create_node_from_data( call_layouter( :gallery, gallery, main, gIndex ), gallery['srcName'], parent )
-        parent.add_child( node )
-        gallery['imageList'].each_with_index do |image, iIndex|
-          node = Webgen::Plugin['PageFileHandler'].create_node_from_data( call_layouter( :image, image, main, gIndex, iIndex ), image['srcName'], parent )
-          parent.add_child( node )
+      galleries.each_with_index do |gData, gIndex|
+        gData[0].node_info[:ginfo] = GalleryInfo.new( info_galleries, gIndex )
+        gData[2].each_with_index do |iData, iIndex|
+          iData[0].node_info[:ginfo] = GalleryInfo.new( info_galleries, gIndex, iIndex )
         end
       end
+
     end
 
-    def create_main_page( images, parent )
+    def main_page_data
       main = {}
-      main['title'] = get_param( 'title' )
-      main['inMenu'] = get_param( 'mainPageInMenu' )
-      main['template'] = get_param( 'mainPageTemplate' )
-      main['srcName'] = gallery_file_name( main['title'] )
-      main['blocks'] = [{'name'=>'content', 'format'=>'html'}]
-      main.update( @filedata['mainPage'] || {} )
+      main['title'] = param( 'title' )
+      main['template'] = param( 'mainPageTemplate' )
+      main.update( @filedata['mainPageMetaData'] || {} )
       main
     end
 
     def create_gallery_pages( images, parent )
       galleries = []
-      picsPerPage = get_param( 'imagesPerPage' )
+      picsPerPage = param( 'imagesPerPage' )
       0.step( images.length - 1, picsPerPage ) do |i|
-        data = (@filedata['galleryPages'] || {}).dup
+        gIndex = i/picsPerPage + 1
 
-        data['blocks'] ||= [{'name'=>'content', 'format'=>'html'}]
-        data['template'] ||= get_param( 'galleryPageTemplate' )
-        data['inMenu'] ||= get_param( 'galleryPageInMenu' )
-        data['number'] = i/picsPerPage + 1
-        data['orderInfo'] = get_param( 'galleryOrderInfo' ) + data['number']
-        data['title'] = gallery_title( data['number'] )
-        data['srcName'] = gallery_file_name( data['title'] )
-        data['imageList'] = create_image_pages( images[i..(i + picsPerPage - 1)], parent )
+        data = (@filedata['galleryPagesMetaData'] || {}).dup
+        data['template'] ||= param( 'galleryPageTemplate' )
+        data['orderInfo'] += gIndex if data['orderInfo']
+        data['title'] = param( 'title' ) + ' ' + gIndex.to_s
 
-        galleries << data
+        if images.length <= param( 'imagesPerPage' ) && gIndex == 1
+          template = data['template']
+          data.update( main_page_data )
+          data['template'] = template
+        end
+
+        node = @plugin_manager['FileHandlers::PageFileHandler'].create_node_from_data( gallery_file_name( data['title'] ), parent, page_data( data ) )
+        gal_images = create_image_pages( images[i..(i + picsPerPage - 1)], parent )
+        gallery = GalleryInfo::Gallery.new( node.path, gal_images.collect {|n,i| i}, data )
+        galleries << [node, gallery, gal_images]
       end
       galleries
     end
 
-    def gallery_title( index )
-      ( index.nil? ? nil : get_param( 'title' ) + ' ' + index.to_s )
-    end
-
     def gallery_file_name( title )
-      ( title.nil? ? nil : title.tr( ' .', '_' ) + '.html' )
+      ( title.nil? ? nil : title.tr( ' .', '_' ) + '.page' )
     end
 
     def create_image_pages( images, parent )
       imageList = []
       images.each do |image|
-        imageData = (@filedata[image] || {}).dup
+        data = (@imagedata[image] || {}).dup
+        data['template'] ||= param( 'imagePageTemplate' )
+        data['title'] ||= "Image #{File.basename( image )}"
+        data['thumbnailSize'] ||= param( 'thumbnailSize' )
+        data['thumbnail'] ||= get_thumbnail( image, data, parent )
 
-        imageData['blocks'] ||= [{'name'=>'content', 'format'=>'html'}]
-        imageData['title'] ||= "Image #{File.basename( image )}"
-        imageData['description'] ||= ''
-        imageData['inMenu'] ||= get_param( 'imagePageInMenu' )
-        imageData['template'] ||= get_param( 'imagePageTemplate' )
-        imageData['imageFilename'] = image
-        imageData['srcName'] = gallery_file_name( get_param( 'title' ) + ' ' + File.basename( image ) )
-        imageData['thumbnailSize'] ||= @filedata['thumbnailSize']
-        imageData['thumbnail'] ||= get_thumbnail( imageData, parent )
-
-        imageList << imageData
+        filename = param( 'title' ) + ' ' + image.tr( '\\/', '_' )
+        node = @plugin_manager['FileHandlers::PageFileHandler'].create_node_from_data( gallery_file_name( filename ), parent, page_data( data ) )
+        image = GalleryInfo::Image.new( node.path, image, data )
+        imageList << [node, image]
       end
       imageList
     end
 
-    def get_thumbnail( imageData, parent )
-      imageData['imageFilename']
+    def get_thumbnail( image, data, parent )
+      image
     end
 
   end
@@ -183,43 +313,40 @@ module FileHandlers
     class GalleryFileHandler
 
       remove_method :get_thumbnail
-      def get_thumbnail( imageData, parent )
-        p_node = Webgen::Plugin['DirectoryHandler'].recursive_create_path( File.dirname( imageData['imageFilename'] ), parent )
-        node = Webgen::Plugin['ThumbnailWriter'].create_node( File.join( @path, imageData['imageFilename'] ), p_node, imageData['thumbnailSize'] )
-        p_node.add_child( node )
-
-        File.dirname( imageData['imageFilename'] ) + '/' + node['dest']
+      def get_thumbnail( image, data, parent )
+        parent_node = @plugin_manager['FileHandlers::DirectoryHandler'].recursive_create_path( File.dirname( image ), parent )
+        node = @plugin_manager['FileHandlers::ThumbnailWriter'].create_node( File.join( @path, image ), parent_node, data['thumbnailSize'] )
+        node.absolute_path
       end
 
     end
 
     class ThumbnailWriter < DefaultFileHandler
 
-      summary "Writes out thumbnails with RMagick"
-      add_param "thumbnailSize", "100x100", "The size of the thumbnails"
+      infos :summary => "Writes out thumbnails with RMagick"
 
       def create_node( file, parent, thumbnailSize = nil )
-        node = Node.new( parent )
-        node['title'] = node['src'] = node['dest'] = 'tn_' + File.basename( file )
-        node['int:thumbnailFile'] = file
-        node['int:thumbnailSize'] = thumbnailSize unless thumbnailSize.nil? || thumbnailSize !~ /\d+x\d+/
-        node['processor'] = self
+        node = Node.new( parent, 'tn_' + File.basename( file ) )
+        node['title'] = node.path
+        node.node_info[:thumbnail_size] = thumbnailSize
+        node.node_info[:thumbnail_file] = file
+        node.node_info[:processor] = self
         node
       end
 
       def write_node( node )
-        if Webgen::Plugin['FileHandler'].file_modified?( node['int:thumbnailFile'], node.recursive_value( 'dest' ) )
-          self.logger.info {"Creating thumbnail <#{node.recursive_value('dest')}> from <#{node['int:thumbnailFile']}>"}
-          image = Magick::ImageList.new( node['int:thumbnailFile'] )
-          image.change_geometry( node['int:thumbnailSize'] || get_param( 'thumbnailSize' ) ) {|c,r,i| i.resize!( c, r )}
-          image.write( node.recursive_value( 'dest' ) )
+        if @plugin_manager['FileHandlers::FileHandler'].file_modified?( node.node_info[:thumbnail_file], node.full_path )
+          log(:info) {"Creating thumbnail <#{node.full_path}> from <#{node.node_info[:thumbnail_file]}>"}
+          image = Magick::ImageList.new( node.node_info[:thumbnail_file] )
+          image.change_geometry( node.node_info[:thumbnail_size] ) {|c,r,i| i.resize!( c, r )}
+          image.write( node.full_path )
         end
       end
 
     end
 
   rescue LoadError => e
-    self.logger.warn { "Could not load RMagick, creation of thumbnails not available" }
+    $stderr.puts( "Could not load RMagick, creation of thumbnails not available: #{e.message}" ) if $VERBOSE
   end
 
 end
