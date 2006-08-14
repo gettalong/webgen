@@ -84,12 +84,29 @@ class Node
     @meta_info[name] = value
   end
 
-  # Returns the full path for this node.
+  # Returns the full path for this node. See also Node#absolute_path !
   def full_path
     if URI::parse( @path ).absolute?
       @path
     else
       (@parent.nil? ? @path : @parent.full_path + @path)
+    end
+  end
+
+  # Returns the absolute path, ie. starting with a slash for the root directory, for this node.
+  #
+  # Here is an example that shows the difference between +full_path+ and +absolute_path+:
+  #
+  #   root = Node.new( nil, '../output/' )
+  #   dir = Node.new( root, 'testdir/' )
+  #   node = Node.new( dir, 'testfile' )
+  #   node.full_path # => '../output/testdir/testfile'
+  #   node.absolute_path # => '/testdir/testfile'
+  def absolute_path
+    if URI::parse( @path ).absolute?
+      @path
+    else
+      full_path.sub( /^#{Node.root( self ).path}/, '/' )
     end
   end
 
@@ -183,7 +200,7 @@ class Node
   # URL does not include the real path of the root node but a slash instead. So if the full path of
   # the node is 'a/b/c/d/file1' and the root node path is 'a/b/c', the URL path would be '/d/file1'.
   def to_url
-    url = URI::parse( full_path.sub( /^#{Node.root( self ).path}/, '' ) )
+    url = URI::parse( absolute_path )
     url = URI::parse( 'webgen://webgen.localhost/' ) + url unless url.absolute?
     url
   end
