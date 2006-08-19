@@ -21,7 +21,7 @@
 #
 
 require 'fileutils'
-require 'webgen/plugins/tags/tags'
+require 'webgen/plugins/tags/tag_processor'
 require 'webgen/plugins/filehandlers/filehandler'
 
 module CorePlugins

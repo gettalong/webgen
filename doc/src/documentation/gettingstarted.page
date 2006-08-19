@@ -120,7 +120,7 @@ simple tag plugin.
 Create the file @plugin/filemdate.rb@ with the following content:
 
 <pre>
-require 'webgen/plugins/tags/tags'
+require 'webgen/plugins/tags/tag_processor'
 
 module Tags
 
