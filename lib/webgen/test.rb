@@ -90,7 +90,11 @@ module Webgen
 
       before = $".dup
       @constants = Object.constants.dup
-      self.class.plugin_files.each {|p| @loader.load_from_file( p ) }
+      begin
+        self.class.plugin_files.each {|p| @loader.load_from_file( p ) }
+      rescue Exception => e
+        puts "Caught exception during loading of plugins in #setup: #{e.message}"
+      end
       @required_files = $".dup - before
 
       @manager = PluginManager.new( [@loader], @loader.plugins )

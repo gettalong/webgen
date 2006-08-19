@@ -20,20 +20,23 @@
 #++
 #
 
-require 'webgen/plugins/filehandlers/filehandler'
+require 'webgen/plugins/filehandlers/page'
 require 'webgen/plugins/coreplugins/resourcemanager'
 
 module MiscPlugins
 
   class SmileyReplacer < Webgen::Plugin
 
-    summary "Replaces smiley characters with actual smileys"
-    depends_on 'FileHandler', 'ResourceManager'
+    infos :summary => "Replaces smiley characters with actual smileys"
+    depends_on 'FileHandlers::PageFileHandler'
 
-    add_param 'emoticonPack', nil, 'The name of the emoticon package which should be used. If set to nil, ' \
-    'smileys are not replaced.'
+    param 'emoticonPack', nil, 'The name of the emoticon package which should be used. If set to nil, ' +
+      'smileys are not replaced.'
 
-    used_meta_info 'emoticonPack'
+=begin
+TODO: move to doc
+- uses metainfo 'emoticonPack'
+=end
 
     SMILEY_MAP = {
       ':-@' => 'angry',
@@ -50,8 +53,9 @@ module MiscPlugins
     }
     SMILEY_REGEXP = Regexp.union( *SMILEY_MAP.keys.collect {|t| /#{Regexp.escape(t)}/ } )
 
-    def initialize
-      Webgen::Plugin['PageFileHandler'].add_msg_listener( :AFTER_CONTENT_RENDERED, method( :replace_smileys ) )
+    def initialize( plugin_manager )
+      super
+      @plugin_manager['FileHandlers::PageFileHandler'].add_msg_listener( :AFTER_CONTENT_RENDERED, method( :replace_smileys ) )
     end
 
     #######
@@ -60,23 +64,23 @@ module MiscPlugins
 
     def replace_smileys( content, node )
       pack = smiley_pack( node )
-      return if pack.nil?
+      return content if pack.nil?
 
-      logger.info { "Replacing smileys in file <#{node.recursive_value('dest')}>..." }
+      log(:info) { "Replacing smileys in file <#{node.full_path}>..." }
       content.gsub!( SMILEY_REGEXP ) do |match|
-        logger.info { "Found smiley #{match}, trying to replace it with emoticon..." }
-        if res = Webgen::Plugin['ResourceManager'].get_resource( "webgen-emoticons-#{pack}-#{SMILEY_MAP[match]}" )
+        log(:info) { "Found smiley #{match}, trying to replace it with emoticon..." }
+        if res = @plugin_manager['CorePlugins::ResourceManager'].get_resource( "webgen-emoticons-#{pack}-#{SMILEY_MAP[match]}" )
           res.referenced!
-          "<img src=\"#{res.relpath_from_node( node )}\" alt=\"smiley #{match}\" />"
+          "<img src=\"#{res.route_from( node )}\" alt=\"smiley #{match}\" />"
         else
-          logger.warn { "Could not replace smiley '#{match}'(#{SMILEY_MAP[match]}) in <#{node.recursive_value('src')}>: resource not found!" }
+          log(:warn) { "Could not replace smiley '#{match}'(name: #{SMILEY_MAP[match]}, pack: #{pack}) in <#{node.full_path}>: resource not found!" }
           match
         end
       end
     end
 
     def smiley_pack( node )
-      node.metainfo.has_key?( 'emoticonPack' ) && node['emoticonPack'].nil? ? nil : node['emoticonPack'] || get_param( 'emoticonPack' )
+      node.meta_info.has_key?( 'emoticonPack' ) && node['emoticonPack'].nil? ? nil : node['emoticonPack'] || param( 'emoticonPack' )
     end
 
   end
