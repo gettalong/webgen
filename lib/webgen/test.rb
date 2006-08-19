@@ -90,6 +90,7 @@ module Webgen
 
       before = $".dup
       @constants = Object.constants.dup
+      @webgen_constants = Webgen.constants.dup
       begin
         self.class.plugin_files.each {|p| @loader.load_from_file( p ) }
       rescue Exception => e
@@ -117,6 +118,7 @@ module Webgen
 
     def teardown
       remove_consts( Object, Object.constants - @constants )
+      remove_consts( Webgen, Webgen.constants - @webgen_constants )
       @required_files.each {|f| $".delete( f )}
       @manager = nil
       @loader = nil
@@ -194,6 +196,6 @@ module Webgen
 
 end
 
-class Class
+class Module
   public :remove_const
 end
