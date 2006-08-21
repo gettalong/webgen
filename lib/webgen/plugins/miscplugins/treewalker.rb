@@ -28,21 +28,11 @@ module TreeWalkers
   # so that it is called when the main class' #execute method is called.
   class TreeWalker < Webgen::Plugin
 
-    summary "Super plugin for traversing the data tree"
+    infos :summary => "Super plugin for traversing the node tree"
 
-    attr_reader :walkers
-
-    def initialize
-      @walkers = []
-    end
-
-    # Uses either all registered walkers or the specified +walker+. Walks the +tree+ for each walker
-    # separately.
-    def execute( tree, walker = nil, direction = :forward )
-      walkers = ( walker.nil? ? @walkers : [walker] )
-      walkers.each do |walker|
-        walk_tree( tree, walker, 0, direction )
-      end
+    # Walks the +tree+ for the +walker+ in the +direction+, either +:forward+ or +:backward+.
+    def execute( tree, walker, direction = :forward )
+      walk_tree( tree, walker, 0, direction )
     end
 
     #######
@@ -51,30 +41,11 @@ module TreeWalkers
 
     # Walks the tree and calls the plugin +walker+ for each and every node.
     def walk_tree( node, walker, level, direction = :forward )
-      walker.handle_node( node, level ) if direction == :forward
+      walker.call( node, level ) if direction == :forward
       node.each do |child|
         walk_tree( child, walker, level + 1, direction )
       end
-      walker.handle_node( node, level ) if direction == :backward
-    end
-
-  end
-
-
-  # Prints the whole tree of read files if the log level is at least DEBUG.
-  class DebugTreePrinter < Webgen::Plugin
-
-    summary "Prints out the information in the tree for debug purposes."
-    depends_on 'TreeWalker'
-
-    def initialize
-      Webgen::Plugin['TreeWalker'].walkers << self
-    end
-
-    def handle_node( node, level )
-      self.logger.debug do
-        "   "*level  << "\\_ "*(level > 0 ? 1 : 0) << (node['virtual'] ? "[V]" : "") << "#{node['title']}: #{node['src']} -> #{node['dest']}"
-      end
+      walker.call( node, level ) if direction == :backward
     end
 
   end
