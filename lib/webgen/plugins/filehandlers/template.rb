@@ -30,7 +30,7 @@ module FileHandlers
     infos :summary =>  "Handles the template files"
     param 'defaultTemplate', 'default.template', 'The default file name for the template file.'
 
-    handle_extension 'template'
+    register_extension 'template'
 
 =begin
 TODO: MOVE TO DOC

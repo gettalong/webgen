@@ -189,28 +189,28 @@ TODO move todoc
 =end
 
     # TODO comment Specify the extension which should be handled by the class.
-    def self.handle_path_pattern( path, rank = DEFAULT_RANK )
+    def self.register_path_pattern( path, rank = DEFAULT_RANK )
       (self.config.infos[:path_patterns] ||= []) << [rank, path]
     end
 
     # Specify the files handled by the class via the extension. The parameter +ext+ should be the
     # pure extension without the dot. Files in hidden directories (starting with a dot) are also
     # searched.
-    def self.handle_extension( ext, rank = DEFAULT_RANK )
-      handle_path_pattern( EXTENSION_PATH_PATTERN % [ext], rank )
+    def self.register_extension( ext, rank = DEFAULT_RANK )
+      register_path_pattern( EXTENSION_PATH_PATTERN % [ext], rank )
     end
 
-    # See DefaultFileHandler.handle_path_pattern
-    def handle_path_pattern( path, rank = DEFAULT_RANK )
+    # See DefaultFileHandler.register_path_pattern
+    def register_path_pattern( path, rank = DEFAULT_RANK )
       (@path_patterns ||= []) << [rank, path]
     end
-    protected :handle_path_pattern
+    protected :register_path_pattern
 
-    # See DefaultFileHandler.handle_extension
-    def handle_extension( ext, rank = DEFAULT_RANK )
-      handle_path_pattern( EXTENSION_PATH_PATTERN % [ext], rank )
+    # See DefaultFileHandler.register_extension
+    def register_extension( ext, rank = DEFAULT_RANK )
+      register_path_pattern( EXTENSION_PATH_PATTERN % [ext], rank )
     end
-    protected :handle_extension
+    protected :register_extension
 
     # Returns all (i.e. static and dynamic) path patterns defined for the file handler.
     def path_patterns

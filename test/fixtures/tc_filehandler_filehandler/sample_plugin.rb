@@ -12,13 +12,13 @@ class SampleHandler < FileHandlers::DefaultFileHandler
 
   end
 
-  handle_path_pattern '**/*.page'
-  handle_extension 'page'
+  register_path_pattern '**/*.page'
+  register_extension 'page'
 
   def initialize( plugin_manager )
     super
-    handle_extension 'page'
-    handle_path_pattern '**/*.page'
+    register_extension 'page'
+    register_path_pattern '**/*.page'
   end
 
   def self.out_name( name )

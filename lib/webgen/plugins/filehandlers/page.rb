@@ -106,7 +106,7 @@ TODO: MOVE TO DOC
       'blocks' => [{'name'=>'content', 'format'=>'textile'}]
     }, 'Specifies the default meta data for page files.'
 
-    handle_extension EXTENSION
+    register_extension EXTENSION
 
     include Listener
 

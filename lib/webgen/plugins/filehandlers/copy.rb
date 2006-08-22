@@ -35,7 +35,7 @@ module FileHandlers
 
     def initialize( plugin_manager )
       super
-      param( 'paths' ).each {|path| handle_path_pattern( path ) }
+      param( 'paths' ).each {|path| register_path_pattern( path ) }
     end
 
     def create_node( path, parent )

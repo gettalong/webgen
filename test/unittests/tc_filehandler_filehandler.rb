@@ -148,19 +148,19 @@ class DefaultFileHandlerTest < Webgen::PluginTestCase
   def test_accessors
     self.class.class_eval( <<-EVAL_END )
     class ::FileHandlers::DefaultFileHandler
-        handle_path_pattern 'first'
-        handle_path_pattern 'second', 10
-        handle_extension 'fff'
-        handle_extension 'ggg', 20
+        register_path_pattern 'first'
+        register_path_pattern 'second', 10
+        register_extension 'fff'
+        register_extension 'ggg', 20
 
-        public :handle_extension
-        public :handle_path_pattern
+        public :register_extension
+        public :register_path_pattern
     end
     EVAL_END
-    @plugin1.handle_path_pattern 'third'
-    @plugin1.handle_path_pattern 'fourth', 30
-    @plugin1.handle_extension 'hhh'
-    @plugin1.handle_extension 'iii', 40
+    @plugin1.register_path_pattern 'third'
+    @plugin1.register_path_pattern 'fourth', 30
+    @plugin1.register_extension 'hhh'
+    @plugin1.register_extension 'iii', 40
 
     patterns = @plugin1.path_patterns.sort
     [

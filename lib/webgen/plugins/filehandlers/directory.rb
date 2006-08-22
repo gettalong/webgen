@@ -72,7 +72,7 @@ module FileHandlers
 
     param 'indexFile', 'index.page', 'The default file name for the directory index page file.'
 
-    handle_path_pattern '**/'
+    register_path_pattern '**/', 0
 
     # Returns a new DirNode.
     def create_node( path, parent )

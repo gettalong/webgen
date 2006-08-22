@@ -153,7 +153,7 @@ module FileHandlers
 
     infos :summary => "Handles images gallery files"
 
-    handle_extension 'gallery'
+    register_extension 'gallery'
 
     param "imagesPerPage", 20, 'Number of images per gallery page'
     param "thumbnailSize", "100x100", "The size of the thumbnails"
