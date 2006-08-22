@@ -30,9 +30,8 @@ module FileHandlers
 
     infos :summary => "Main plugin for handling the files in the source directory"
 
-    param 'ignorePaths', ['**/CVS{/**/**,/}'], \
-    'An array of path patterns which match files that should be excluded from the list ' \
-    'of \'to be processed\' files.'
+    param 'ignorePaths', ['**/CVS{/**/**,/}'], 'An array of path patterns which match files ' +
+      'that should be excluded from the list of \'to be processed\' files.'
 
     include Listener
 
@@ -66,15 +65,16 @@ module FileHandlers
     #######
 
     def build_tree
-      all_files = find_all_files
+      all_files = find_all_files()
       return if all_files.empty?
 
-      files_for_handlers = find_files_for_handlers
+      files_for_handlers = find_files_for_handlers()
 
-      root_node = create_root_node( all_files, files_for_handlers )
+      root_node = create_root_node()
 
       used_files = Set.new
-      files_for_handlers.each do |handler, files|
+      files_for_handlers.sort {|a,b| a[0] <=> b[0]}.each do |rank, handler, files|
+        log(:debug) { "Creating nodes for #{handler.class.name} with rank #{rank}" }
         common = all_files & files
         used_files += common
         diff = files - common
@@ -100,7 +100,7 @@ module FileHandlers
       dispatch_msg( :AFTER_ALL_WRITTEN ) if node.parent.nil?
     end
 
-    # Creates a set of all files in the source directory.
+    # Creates a set of all files in the source directory, removing all files which should be ignored.
     def find_all_files
       all_files = files_for_pattern( '**/{**,**/}' ).to_set
       param( 'ignorePaths' ).each {|pattern| all_files.subtract( files_for_pattern( pattern ) ) }
@@ -111,12 +111,15 @@ module FileHandlers
     # Finds the files for each registered handler plugin and stores them in a Hash with the plugin
     # as key.
     def find_files_for_handlers
-      files_for_handlers = {}
+      files_for_handlers = []
       @plugin_manager.plugins.each do |name, plugin|
+        files_for_plugin = Set.new
         if plugin.kind_of?( DefaultFileHandler )
-          files = Set.new
-          plugin.path_patterns.each {|pattern| files += files_for_pattern( pattern )}
-          files_for_handlers[plugin] = files
+          plugin.path_patterns.each do |rank, pattern|
+            files = files_for_pattern( pattern ) - files_for_plugin
+            files_for_handlers << [rank, plugin, files ] unless files.empty?
+            files_for_plugin += files
+          end
         end
       end
       files_for_handlers
@@ -125,6 +128,7 @@ module FileHandlers
     # Returns an array of files of the source directory matching +pattern+
     def files_for_pattern( pattern )
       files = Dir[File.join( param( 'srcDir', 'CorePlugins::Configuration' ), pattern )].to_set
+      files.delete( File.join( param( 'srcDir', 'CorePlugins::Configuration' ), '/' ) )
       files.collect!  do |f|
         f = f.sub( /([^.])\.{1,2}$/, '\1' ) # remove '.' and '..' from end of paths
         f += '/' if File.directory?( f ) && ( f[-1] != ?/ )
@@ -133,7 +137,7 @@ module FileHandlers
       files
     end
 
-    def create_root_node( all_files, files_for_handlers )
+    def create_root_node
       root_path = File.join( param( 'srcDir', 'CorePlugins::Configuration' ), '/' )
       root_handler = @plugin_manager['FileHandlers::DirectoryHandler']
       if root_handler.nil?
@@ -146,8 +150,6 @@ module FileHandlers
       root.path = File.join( param( 'outDir', 'CorePlugins::Configuration' ), '/' )
       root.node_info[:src] = root_path
 
-      all_files.subtract( [root_path] )
-      files_for_handlers[root_handler].subtract( [root_path] )
       root
     end
 
@@ -170,38 +172,43 @@ module FileHandlers
   class DefaultFileHandler < Webgen::Plugin
 
     EXTENSION_PATH_PATTERN = "**/*.%s"
+    DEFAULT_RANK = 100
 
     infos(
           :summary => "Base class of all file handler plugins",
           :instantiate => false
           )
 
-    #TODO doc
-    #two types of paths: constant paths defined in class, dynamic ones defined when initializing
-    #FileHandler retrieves all plugins which derive from DefaultFileHandler, uses constant + dynamic
-    #paths
+=begin
+TODO move todoc
+- two types of paths: constant paths defined in class, dynamic ones defined when initializing
+  FileHandler retrieves all plugins which derive from DefaultFileHandler, uses constant + dynamic paths
+- if a file is matched by more than one pattern defined by a single file handler, it is only used once
+  for the first pattern
+- patterns are sorted ascending using their rank and nodes are then created in this order
+=end
 
     # TODO comment Specify the extension which should be handled by the class.
-    def self.handle_path_pattern( path )
-      (self.config.infos[:path_patterns] ||= []) << path
+    def self.handle_path_pattern( path, rank = DEFAULT_RANK )
+      (self.config.infos[:path_patterns] ||= []) << [rank, path]
     end
 
     # Specify the files handled by the class via the extension. The parameter +ext+ should be the
     # pure extension without the dot. Files in hidden directories (starting with a dot) are also
     # searched.
-    def self.handle_extension( ext )
-      handle_path_pattern( EXTENSION_PATH_PATTERN % [ext] )
+    def self.handle_extension( ext, rank = DEFAULT_RANK )
+      handle_path_pattern( EXTENSION_PATH_PATTERN % [ext], rank )
     end
 
     # See DefaultFileHandler.handle_path_pattern
-    def handle_path_pattern( path )
-      (@path_patterns ||= []) << path
+    def handle_path_pattern( path, rank = DEFAULT_RANK )
+      (@path_patterns ||= []) << [rank, path]
     end
     protected :handle_path_pattern
 
     # See DefaultFileHandler.handle_extension
-    def handle_extension( ext )
-      handle_path_pattern( EXTENSION_PATH_PATTERN % [ext] )
+    def handle_extension( ext, rank = DEFAULT_RANK )
+      handle_path_pattern( EXTENSION_PATH_PATTERN % [ext], rank )
     end
     protected :handle_extension
 

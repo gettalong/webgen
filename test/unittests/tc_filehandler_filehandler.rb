@@ -42,47 +42,41 @@ class FileHandlerTest < Webgen::PluginTestCase
 
   def test_find_all_files
     found_files = @plugin.find_all_files
-    files = find_in_sample_site {|p| true }
+    files = find_in_sample_site {|p| p != sample_site( 'src' ) + '/' }
     assert_equal( files, found_files )
   end
 
   def test_find_files_for_handlers
-    found_files = @plugin.find_files_for_handlers
+    files_for_handlers = @plugin.find_files_for_handlers
     files = find_in_sample_site {|path| path =~ /\.page$/}
 
-    assert_equal( 2, found_files.length )
-    assert( found_files.keys.include?( @manager['SampleHandler'] ) )
-    assert_equal( files, found_files[@manager['SampleHandler']] )
+    assert_equal( 2, files_for_handlers.length )
+    files_for_sample_handler = files_for_handlers.select {|r,p,f| p == @manager['SampleHandler']}
+    assert_not_nil( files_for_sample_handler )
+    assert_equal( files, files_for_sample_handler.first[2] )
   end
 
   def test_create_root_node
-    all_files = @plugin.find_all_files
-    files_for_handlers = @plugin.find_files_for_handlers
     srcDir = @manager.param_for_plugin( 'CorePlugins::Configuration', 'srcDir' ) + '/'
     outDir = @manager.param_for_plugin( 'CorePlugins::Configuration', 'outDir' ) + '/'
 
     dir_handler = @manager.plugins.delete( 'FileHandlers::DirectoryHandler' )
-    root = @plugin.create_root_node( all_files, files_for_handlers )
+    root = @plugin.create_root_node
     assert_nil( root )
 
     @manager.plugins['FileHandlers::DirectoryHandler'] = dir_handler
-    root = @plugin.create_root_node( all_files, files_for_handlers )
+    root = @plugin.create_root_node
     assert_kind_of( Node, root )
     assert_equal( '', root['title'] )
     assert_equal( outDir, root.path )
     assert_equal( root.path, root.full_path )
     assert_equal( srcDir, root.node_info[:src] )
-
-    assert( !all_files.include?( srcDir ) )
-    assert( !files_for_handlers[@manager['FileHandlers::DirectoryHandler']].include?( srcDir ) )
   end
 
   def test_create_node_dir
-    all_files = @plugin.find_all_files
-    files_for_handlers = @plugin.find_files_for_handlers
     dirs = find_in_sample_site {|path| File.directory?(path)}
 
-    root_node = @plugin.create_root_node( all_files, files_for_handlers )
+    root_node = @plugin.create_root_node
     dir_handler = @manager['FileHandlers::DirectoryHandler']
 
     max_dir = dirs.max
@@ -103,11 +97,9 @@ class FileHandlerTest < Webgen::PluginTestCase
   end
 
   def test_create_node_file
-    all_files = @plugin.find_all_files
-    files_for_handlers = @plugin.find_files_for_handlers
     pages = find_in_sample_site {|path| path =~ /\.page$/}
 
-    root_node = @plugin.create_root_node( all_files, files_for_handlers )
+    root_node = @plugin.create_root_node
     dir_handler = @manager['FileHandlers::DirectoryHandler']
     page_handler = @manager['SampleHandler']
 
@@ -157,26 +149,35 @@ class DefaultFileHandlerTest < Webgen::PluginTestCase
     self.class.class_eval( <<-EVAL_END )
     class ::FileHandlers::DefaultFileHandler
         handle_path_pattern 'first'
-        handle_path_pattern 'second'
+        handle_path_pattern 'second', 10
         handle_extension 'fff'
-        handle_extension 'ggg'
+        handle_extension 'ggg', 20
 
         public :handle_extension
         public :handle_path_pattern
     end
     EVAL_END
     @plugin1.handle_path_pattern 'third'
-    @plugin1.handle_path_pattern 'fourth'
+    @plugin1.handle_path_pattern 'fourth', 30
     @plugin1.handle_extension 'hhh'
-    @plugin1.handle_extension 'iii'
+    @plugin1.handle_extension 'iii', 40
 
-    ['first', 'second', 'third', 'fourth',
-      FileHandlers::DefaultFileHandler::EXTENSION_PATH_PATTERN % ['fff'],
-      FileHandlers::DefaultFileHandler::EXTENSION_PATH_PATTERN % ['ggg'],
-      FileHandlers::DefaultFileHandler::EXTENSION_PATH_PATTERN % ['hhh'],
-      FileHandlers::DefaultFileHandler::EXTENSION_PATH_PATTERN % ['iii']
-    ].each do |p|
-      assert( @plugin1.path_patterns.include?( p ), "#{p} missing" )
+    patterns = @plugin1.path_patterns.sort
+    [
+     [10, 'second'],
+     [20, FileHandlers::DefaultFileHandler::EXTENSION_PATH_PATTERN % ['ggg']],
+     [30, 'fourth'],
+     [40, FileHandlers::DefaultFileHandler::EXTENSION_PATH_PATTERN % ['iii']],
+     [FileHandlers::DefaultFileHandler::DEFAULT_RANK, 'first'],
+     [FileHandlers::DefaultFileHandler::DEFAULT_RANK, 'third'],
+     [FileHandlers::DefaultFileHandler::DEFAULT_RANK, FileHandlers::DefaultFileHandler::EXTENSION_PATH_PATTERN % ['fff']],
+     [FileHandlers::DefaultFileHandler::DEFAULT_RANK, FileHandlers::DefaultFileHandler::EXTENSION_PATH_PATTERN % ['hhh']]
+    ].each_with_index do |p, index|
+      if p[0] == FileHandlers::DefaultFileHandler::DEFAULT_RANK
+        assert( patterns.include?( p ), "#{p} missing" )
+      else
+        assert_equal( p, patterns[index] )
+      end
     end
   end
 
