@@ -14,7 +14,7 @@ class TemplateFileHandlerTest < Webgen::PluginTestCase
   end
 
   def test_create_node
-    root = @manager['FileHandlers::FileHandler'].instance_eval { create_root_node( find_all_files, find_files_for_handlers ) }
+    root = @manager['FileHandlers::FileHandler'].instance_eval { create_root_node }
     file = sample_site( 'src/default.template' )
     node = @plugin.create_node( file, root )
 

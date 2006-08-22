@@ -90,7 +90,7 @@ class GalleryFileHandlerTest < Webgen::PluginTestCase
     root = Node.new( nil, '/' )
 
     # with a main page
-    @plugin.create_node( fixture_path( 'test.gallery' ), root )
+    assert_nil( @plugin.create_node( fixture_path( 'test.gallery' ), root ) )
     assert_not_nil( root.resolve_node( 'Test.page' ) )
     assert_not_nil( root.resolve_node( 'Test_1.page' ) )
     assert_not_nil( root.resolve_node( 'Test_2.page' ) )

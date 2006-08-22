@@ -64,7 +64,7 @@ class PageHandlerTest < Webgen::PluginTestCase
   end
 
   def test_create_node_from_data
-    root = @manager['FileHandlers::FileHandler'].instance_eval { create_root_node( find_all_files, find_files_for_handlers ) }
+    root = @manager['FileHandlers::FileHandler'].instance_eval { create_root_node }
     testdata = YAML::load( File.read( fixture_path( 'testdata.yaml' ) ) )
     node = @plugin.create_node_from_data( 'index.page', root, testdata['data'] )
 
