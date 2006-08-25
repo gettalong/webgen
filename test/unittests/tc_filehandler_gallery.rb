@@ -90,7 +90,7 @@ class GalleryFileHandlerTest < Webgen::PluginTestCase
     root = Node.new( nil, '/' )
 
     # with a main page
-    assert_nil( @plugin.create_node( fixture_path( 'test.gallery' ), root ) )
+    assert_nil( @plugin.create_node( fixture_path( 'test.gallery' ), root, {} ) )
     assert_not_nil( root.resolve_node( 'Test.page' ) )
     assert_not_nil( root.resolve_node( 'Test_1.page' ) )
     assert_not_nil( root.resolve_node( 'Test_2.page' ) )
@@ -116,7 +116,7 @@ class GalleryFileHandlerTest < Webgen::PluginTestCase
 
     # without a main page
     root.del_children
-    @plugin.create_node( fixture_path( 'test1.gallery' ), root )
+    @plugin.create_node( fixture_path( 'test1.gallery' ), root, {} )
     assert_not_nil( root.resolve_node( 'Test1.page' ) )
     assert_nil( root.resolve_node( 'Test1_1.page' ) )
     assert_nil( root.resolve_node( 'Test1_2.page' ) )
@@ -130,4 +130,38 @@ class GalleryFileHandlerTest < Webgen::PluginTestCase
     assert_equal( 'gallery_gallery.template', node['template'] )
   end
 
+end
+
+begin
+
+  require 'RMagick'
+
+  class ThumbnailWriterTest < Webgen::PluginTestCase
+
+    plugin_files [
+                  'webgen/plugins/filehandlers/directory.rb',
+                  'webgen/plugins/filehandlers/gallery.rb'
+                 ]
+    plugin_to_test 'FileHandlers::ThumbnailWriter'
+
+    def test_create_node
+      node = @plugin.create_node( 'test.jpg', nil, '100x100' )
+      assert_equal( 'tn_test.jpg', node.path )
+      assert_equal( 'test.jpg', node.node_info[:thumbnail_file] )
+      assert_equal( '100x100', node.node_info[:thumbnail_size] )
+    end
+
+    def test_gallery_thumbnail_creation
+      root = Node.new( nil, '/' )
+
+      @manager['FileHandlers::GalleryFileHandler'].create_node( fixture_path( 'test.gallery' ), root, {} )
+      tn_node = root.resolve_node( 'tn_test1.jpg' )
+      assert_not_nil( tn_node )
+      assert_equal( 'test1.jpg', tn_node.node_info[:thumbnail_file] )
+      assert_equal( tn_node.absolute_path, root.resolve_node( 'Test_test1_jpg.page' ).node_info[:ginfo].cur_image.data['thumbnail'] )
+    end
+
+  end
+
+rescue LoadError
 end

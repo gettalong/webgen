@@ -100,11 +100,10 @@ TODO: MOVE TO DOC
     param 'validator', nil, 'The validator for checking HTML files on their validness. Set ' +
       'to an empty string or nil to prevent checking.'
 
-    param 'defaultPageMetaData',
-    {
-      'useERB' => true,
-      'blocks' => [{'name'=>'content', 'format'=>'textile'}]
-    }, 'Specifies the default meta data for page files.'
+    default_meta_info({
+                        'useERB' => true,
+                        'blocks' => [{'name'=>'content', 'format'=>'textile'}]
+                      })
 
     register_extension EXTENSION
 
@@ -115,8 +114,8 @@ TODO: MOVE TO DOC
       add_msg_name( :AFTER_CONTENT_RENDERED )
     end
 
-    def create_node( srcName, parent )
-      create_node_from_data( srcName, parent, File.read( srcName ) )
+    def create_node( srcName, parent, meta_info )
+      create_node_from_data( srcName, parent, File.read( srcName ), meta_info )
     end
 
 =begin
@@ -125,12 +124,11 @@ TODO: move to doc
 - meta info outputNameStyle overwrites parameter outputNameStyle
 =end
 
-    def create_node_from_data( filename, parent, data )
+    def create_node_from_data( filename, parent, data, meta_info )
       analysed_name = analyse_file_name( filename )
 
       begin
-        data = WebPageData.new( data, @plugin_manager['ContentConverters::DefaultContentConverter'].registered_handlers,
-                                Marshal.load( Marshal.dump( param( 'defaultPageMetaData' ) ) ) )
+        data = WebPageData.new( data, @plugin_manager['ContentConverters::DefaultContentConverter'].registered_handlers )
       rescue WebPageDataInvalid => e
         log(:error) { "Invalid page file <#{filename}>: #{e.message}" }
         return nil
@@ -140,6 +138,7 @@ TODO: move to doc
       data.meta_info['lang'] = Webgen::LanguageManager.language_for_code( data.meta_info['lang'] )
       data.meta_info['title'] ||= analysed_name.title
       data.meta_info['orderInfo'] ||= analysed_name.orderInfo
+      data.meta_info.update( meta_info.merge( data.meta_info ) )
 
       pagename = analysed_name.name + '.' + EXTENSION
       localizedPagename = analysed_name.name + '.' + data.meta_info['lang'] + '.' + EXTENSION

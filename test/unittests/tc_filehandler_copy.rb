@@ -11,19 +11,20 @@ class FileCopyHandlerTest < Webgen::PluginTestCase
   def test_create_node
     root = @manager['FileHandlers::FileHandler'].instance_eval { build_tree }
     src_file = File.join( param_for_plugin( 'CorePlugins::Configuration', 'srcDir' ), 'file1.page' )
-    file = @plugin.create_node( src_file, root )
+    file = @plugin.create_node( src_file, root, {'test'=>'hallo', 'title'=>'none'} )
     assert_equal( 'file1.page', file.path )
     assert_equal( 'file1.page', file['title'] )
+    assert_equal( 'hallo', file['test'] )
     assert_equal( src_file, file.node_info[:src] )
     assert_equal( @plugin, file.node_info[:processor] )
 
-    assert_same( file, @plugin.create_node( src_file, root ) )
+    assert_same( file, @plugin.create_node( src_file, root, {} ) )
   end
 
   def test_write_node
     root = @manager['FileHandlers::FileHandler'].instance_eval { build_tree }
     src_file = File.join( param_for_plugin( 'CorePlugins::Configuration', 'srcDir' ), 'file1.page' )
-    file = @plugin.create_node( src_file, root )
+    file = @plugin.create_node( src_file, root, {} )
 
     file.write_node
     assert( File.exists?( file.full_path ) )

@@ -38,11 +38,12 @@ module FileHandlers
       param( 'paths' ).each {|path| register_path_pattern( path ) }
     end
 
-    def create_node( path, parent )
+    def create_node( path, parent, meta_info )
       name = File.basename( path )
       node = parent.find {|c| c.path == name }
       if node.nil?
         node = Node.new( parent, name )
+        node.meta_info.update( meta_info )
         node.node_info[:src] = path
         node.node_info[:processor] = self
         node['title'] = name

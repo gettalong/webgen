@@ -66,7 +66,7 @@ class PageHandlerTest < Webgen::PluginTestCase
   def test_create_node_from_data
     root = @manager['FileHandlers::FileHandler'].instance_eval { create_root_node }
     testdata = YAML::load( File.read( fixture_path( 'testdata.yaml' ) ) )
-    node = @plugin.create_node_from_data( 'index.page', root, testdata['data'] )
+    node = @plugin.create_node_from_data( 'index.page', root, testdata['data'], {'lang'=>'eo', 'test'=>'yes'} )
 
     assert_equal( 'index.html', node.path )
     assert_equal( 'index.page', node.node_info[:pagename] )
@@ -74,10 +74,11 @@ class PageHandlerTest < Webgen::PluginTestCase
     assert_equal( 'index.page', node.node_info[:src] )
     assert_equal( @plugin, node.node_info[:processor] )
     assert_equal( 'Index', node['title'] )
+    assert_equal( 'yes', node['test'] )
     assert_equal( 0, node['orderInfo'] )
     assert_equal( Webgen::LanguageManager.language_for_code( 'en' ), node['lang'] )
 
-    node1 = @plugin.create_node_from_data( 'index.page', root, testdata['data'] )
+    node1 = @plugin.create_node_from_data( 'index.page', root, testdata['data'], {} )
     assert_same( node, node1 )
   end
 

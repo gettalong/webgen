@@ -3,9 +3,8 @@ require 'webgen/test'
 class TemplateFileHandlerTest < Webgen::PluginTestCase
 
   plugin_files [
-    'webgen/plugins/filehandlers/filehandler.rb',
     'webgen/plugins/filehandlers/template.rb',
-    'webgen/plugins/filehandlers/directory.rb',
+    'webgen/plugins/filehandlers/directory.rb'
   ]
   plugin_to_test 'FileHandlers::TemplateFileHandler'
 
@@ -16,9 +15,10 @@ class TemplateFileHandlerTest < Webgen::PluginTestCase
   def test_create_node
     root = @manager['FileHandlers::FileHandler'].instance_eval { create_root_node }
     file = sample_site( 'src/default.template' )
-    node = @plugin.create_node( file, root )
+    node = @plugin.create_node( file, root, {} )
 
     assert_not_nil( node )
+    assert_equal( true, node['useERB'] )
     assert_equal( File.basename( file ), node.path )
     assert_equal( file, node.node_info[:src] )
     assert_equal( File.basename( file ), node.node_info[:pagename] )

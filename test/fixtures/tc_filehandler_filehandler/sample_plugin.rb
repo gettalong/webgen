@@ -25,10 +25,11 @@ class SampleHandler < FileHandlers::DefaultFileHandler
     File.basename( name, '.page' ) + '.html'
   end
 
-  def create_node( path, parent )
+  def create_node( path, parent, meta_info )
     if (node = parent.find {|c| c.path == self.class.out_name( path )}).nil?
       node = PageNode.new( parent, self.class.out_name( path ) )
       node.node_info[:processor] = self
+      node.meta_info.update( meta_info )
       node.meta_info.update( YAML::load( File.read( path ) ) ) rescue ''
       if node['lang']
         node['lang'] = Webgen::LanguageManager.language_for_code( node['lang'] )

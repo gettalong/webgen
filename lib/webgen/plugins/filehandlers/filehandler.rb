@@ -33,6 +33,21 @@ module FileHandlers
     param 'ignorePaths', ['**/CVS{/**/**,/}'], 'An array of path patterns which match files ' +
       'that should be excluded from the list of \'to be processed\' files.'
 
+    param 'defaultMetaInfo', {}, 'The keys for this hash are the names of file handlers, the ' +
+      'values hashes with meta data.'
+
+=begin
+TODO move todoc
+- document how defaultMetaInfo is used, how to set it
+- how meta infos are used
+  - specified via default_meta_info (before node creation)
+  - overridden via defaultMetaInfo param (before node creation)
+  - overridden by file specific meta infos provided by meta info file (before node creation)
+  ----> now node is created using current meta info
+  - during node creation, meta info may be overridden by file specific settings (e.g. page handler,
+    some infos are taken from the filename and the meta info section of the page)
+=end
+
     include Listener
 
     def initialize( manager )
@@ -60,6 +75,32 @@ module FileHandlers
       end
     end
 
+    # Returns the meta info for nodes for the given +handler+.
+    def meta_info_for( handler )
+      (handler.class.config.infos[:default_meta_info] || {}).merge( param('defaultMetaInfo')[handler.class.name] || {} )
+    end
+
+    # Creates a node for +file+ (creating parent directories apropriately) under +parent_node+ using
+    # the given +handler+. If a block is given, then the block is used to create the node which is
+    # useful if you want a custom node creation method.
+    def create_node( file, parent_node, handler ) # :yields: file, parent_node, handler, meta_info
+      pathname, filename = File.split( file )
+      parent_node = @plugin_manager['FileHandlers::DirectoryHandler'].recursive_create_path( pathname, parent_node )
+
+      meta_info = meta_info_for( handler )
+      log(:info) { "Trying to create node for <#{file}>..." }
+      if block_given?
+        node = yield( file, parent_node, handler, meta_info )
+      else
+        src_path = File.join( Node.root( parent_node ).node_info[:src], parent_node.absolute_path, filename )
+        node = handler.create_node( src_path, parent_node, meta_info )
+      end
+      log(:info) { "Node for <#{file}> created" } unless node.nil?
+
+      #TODO check node for correct lang and other things
+      node
+    end
+
     #######
     private
     #######
@@ -79,7 +120,7 @@ module FileHandlers
         used_files += common
         diff = files - common
         log(:info) { "Not using these files for #{handler.class.name} as they do not exist or are excluded: #{diff.inspect}" } if diff.length > 0
-        common.each {|file| create_node( file, root_node, handler ) }
+        common.each  {|file| create_node( file.sub( /^#{root_node.node_info[:src]}/, '' ), root_node, handler ) }
       end
       dispatch_msg( :AFTER_ALL_READ, root_node ) #TODO necessary?
 
@@ -145,24 +186,12 @@ module FileHandlers
         return nil
       end
 
-      root = root_handler.create_node( root_path, nil )
+      root = root_handler.create_node( root_path, nil, meta_info_for( root_handler ) )
       root['title'] = ''
       root.path = File.join( param( 'outDir', 'CorePlugins::Configuration' ), '/' )
       root.node_info[:src] = root_path
 
       root
-    end
-
-    def create_node( file, root, handler )
-      dir_handler = @plugin_manager['FileHandlers::DirectoryHandler']
-      pathname, filename = File.split( file.sub( /^#{root.node_info[:src]}/, '' ) )
-      parent_node = dir_handler.recursive_create_path( pathname, root )
-
-      log(:info) { "Trying to create node for <#{file}>..." }
-      node = handler.create_node( file, parent_node )
-      log(:info) { "Node for <#{file}> created" } unless node.nil?
-      #TODO check node for correct lang and other things
-      node
     end
 
   end
@@ -186,6 +215,8 @@ TODO move todoc
 - if a file is matched by more than one pattern defined by a single file handler, it is only used once
   for the first pattern
 - patterns are sorted ascending using their rank and nodes are then created in this order
+- default meta information for nodes can be set via default_meta_info method and overridden with config
+  file by setting the param FileHandlers::FileHandler:defaultMetaInfo
 =end
 
     # TODO comment Specify the extension which should be handled by the class.
@@ -217,11 +248,17 @@ TODO move todoc
       (self.class.config.infos[:path_patterns] || []) + (@path_patterns ||= [])
     end
 
-    # Asks the plugin to create a node for the given +path+ and the +parent+. Should return the
-    # node for the path or nil if the node could not be created.
+    # Sets the default meta data for the file handler.
+    def self.default_meta_info( hash )
+      self.config.infos[:default_meta_info] = hash
+    end
+
+    # Asks the plugin to create a node for the given +path+ and the +parent+, using +meta_info+ as
+    # default meta data for the node. Should return the node for the path or nil if the node could
+    # not be created.
     #
     # Has to be overridden by the subclass!!!
-    def create_node( path, parent )
+    def create_node( path, parent, meta_info )
       raise NotImplementedError
     end
 

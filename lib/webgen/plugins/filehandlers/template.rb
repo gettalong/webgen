@@ -37,10 +37,11 @@ TODO: MOVE TO DOC
 - use meta_info 'template'
 =end
 
-    def create_node( srcName, parent )
+    def create_node( srcName, parent, meta_info )
       begin
+        page_meta_info = @plugin_manager['FileHandlers::FileHandler'].meta_info_for( @plugin_manager['FileHandlers::PageFileHandler'] )
         data = WebPageData.new( File.read( srcName ), @plugin_manager['ContentConverters::DefaultContentConverter'].registered_handlers,
-                                Marshal.load( Marshal.dump( param( 'defaultPageMetaData', 'FileHandlers::PageFileHandler' ) ) ) )
+                                page_meta_info.merge( meta_info ) )
       rescue WebPageDataInvalid => e
         log(:error) { "Invalid template file <#{srcName}>: #{e.message}" }
         return nil

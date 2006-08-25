@@ -21,7 +21,6 @@ class FileHandlerTest < Webgen::PluginTestCase
            public :find_all_files
            public :find_files_for_handlers
            public :create_root_node
-           public :create_node
            public :build_tree
          end"
   end
@@ -81,10 +80,12 @@ class FileHandlerTest < Webgen::PluginTestCase
 
     max_dir = dirs.max
 
-    dir = @plugin.create_node( max_dir, root_node, dir_handler )
+    dir = @plugin.create_node( max_dir.sub( /^#{root_node.node_info[:src]}/, ''), root_node, dir_handler )
     assert_not_nil( dir )
     assert_equal( File.join( File.basename( max_dir ), '/' ), dir.path )
+    assert_equal( max_dir.sub(/^#{root_node.node_info[:src]}/, root_node.path), dir.full_path )
     assert( dir.is_directory? )
+
     n = root_node
     while n.has_children?
       assert( n.is_directory? )
@@ -92,7 +93,7 @@ class FileHandlerTest < Webgen::PluginTestCase
       n = n.children[0]
     end
 
-    dir1 = @plugin.create_node( max_dir, root_node, dir_handler )
+    dir1 = @plugin.create_node( max_dir.sub( /^#{root_node.node_info[:src]}/, ''), root_node, dir_handler )
     assert_same( dir, dir1 )
   end
 
@@ -104,12 +105,14 @@ class FileHandlerTest < Webgen::PluginTestCase
     page_handler = @manager['SampleHandler']
 
     max_page = pages.max
-    page = @plugin.create_node( max_page, root_node, page_handler )
+    page = @plugin.create_node( max_page.sub( /^#{root_node.node_info[:src]}/, ''), root_node, page_handler )
     assert_not_nil( page )
-    assert_equal( page_handler.class.out_name( max_page ), page.path )
+    max_page_outpath = File.join( File.dirname( max_page.sub(/^#{root_node.node_info[:src]}/, root_node.path) ),
+                                  page_handler.class.out_name( max_page ) )
+    assert_equal( max_page_outpath, page.full_path )
     assert( page.is_file? )
 
-    page1 = @plugin.create_node( max_page, root_node, page_handler )
+    page1 = @plugin.create_node( max_page.sub( /^#{root_node.node_info[:src]}/, ''), root_node, page_handler )
     assert_same( page, page1 )
   end
 
@@ -182,7 +185,7 @@ class DefaultFileHandlerTest < Webgen::PluginTestCase
   end
 
   def test_methods_for_subclasses
-    assert_raise( NotImplementedError ) { @plugin1.create_node( nil, nil ) }
+    assert_raise( NotImplementedError ) { @plugin1.create_node( nil, nil, nil ) }
     assert_raise( NotImplementedError ) { @plugin1.write_node( nil ) }
   end
 

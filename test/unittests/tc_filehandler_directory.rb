@@ -4,13 +4,13 @@ require 'webgen/test'
 class DirNodeTest < Webgen::PluginTestCase
 
   plugin_files [
-    'webgen/plugins/filehandlers/directory.rb',
-    base_fixture_path( 'tc_filehandler_filehandler/sample_plugin.rb' )
+    'webgen/plugins/filehandlers/directory.rb'
   ]
 
   def test_accessors
-    dir = FileHandlers::DirectoryHandler::DirNode.new( nil, 'dir/' )
+    dir = FileHandlers::DirectoryHandler::DirNode.new( nil, 'dir/', {'test'=>'test'} )
     assert_equal( 'Dir', dir['title'] )
+    assert_equal( 'test', dir['test'] )
   end
 
   def test_order_info
@@ -23,11 +23,37 @@ class DirNodeTest < Webgen::PluginTestCase
     dir.meta_info.delete( 'indexFile' )
     assert_equal( 0, dir.order_info )
 
+    dir['indexFile'] = 'index.page'
     index['orderInfo'] = 1
     assert_equal( 1, dir.order_info )
 
     dir['orderInfo'] = 2
     assert_equal( 2, dir.order_info )
+  end
+
+  def test_index_file
+    dir = FileHandlers::DirectoryHandler::DirNode.new( nil, 'dir/' )
+    dir.node_info[:processor] = @manager['FileHandlers::DirectoryHandler']
+
+    assert_nil( dir['indexFile'] )
+
+    index = Node.new( dir, 'index.page' )
+
+    dir['indexFile'] = index
+    assert_equal( index, dir['indexFile'] )
+
+    dir['indexFile'] = 'index.page'
+    assert_equal( index, dir['indexFile'] )
+
+    dir['indexFile'] = 'index1.page'
+    assert_equal( nil, dir['indexFile'] )
+    dir['indexFile'] = 'index1.page'
+    index.path = 'index1.page'
+    assert_equal( index, dir['indexFile'] )
+
+    index.path = 'index.page'
+    dir['indexFile'] = nil
+    assert_equal( nil, dir['indexFile'] )
   end
 
 end
@@ -48,17 +74,19 @@ class DirectoryHandlerTest < Webgen::PluginTestCase
   end
 
   def test_create_node
-    root = @plugin.create_node( @root_dir, nil )
-    dir = @plugin.create_node( @max_dir, root )
-    dir1 = @plugin.create_node( @max_dir, root )
+    root = @plugin.create_node( @root_dir, nil, {} )
+    dir = @plugin.create_node( @max_dir, root, {'test'=>'yes'} )
+    assert_equal( 'yes', dir['test'] )
+    dir1 = @plugin.create_node( @max_dir, root, {'test'=>'no'} )
+    assert_equal( 'yes', dir1['test'] )
     assert_same( dir, dir1 )
     assert_equal( File.basename( @max_dir ).capitalize, dir['title'] )
   end
 
   def test_write_node
-    root = @plugin.create_node( @root_dir, nil )
+    root = @plugin.create_node( @root_dir, nil, {} )
     root.path = @root_dir
-    dir_node = @plugin.create_node( @max_dir, root )
+    dir_node = @plugin.create_node( @max_dir, root, {} )
     dir_node.write_node
     assert( File.directory?( dir_node.full_path ) )
   ensure
@@ -66,8 +94,9 @@ class DirectoryHandlerTest < Webgen::PluginTestCase
   end
 
   def test_recursive_create_path
-    root = @plugin.create_node( @root_dir, nil )
+    root = @plugin.create_node( @root_dir, nil, {} )
     root.path = @root_dir
+    root.node_info[:src] = @root_dir
     dir_node = @plugin.recursive_create_path( @max_dir.sub( /^#{@root_dir}/, '' ), root )
     dir_node.write_node
     assert( File.directory?( @max_dir ) )

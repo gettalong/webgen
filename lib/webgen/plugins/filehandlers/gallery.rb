@@ -178,7 +178,7 @@ TODO: move to doc
 
 =end
 
-    def create_node( file, parent )
+    def create_node( file, parent, meta_info )
       @filedata = {}
       @imagedata = {}
       begin
@@ -227,13 +227,21 @@ TODO: move to doc
       "#{temp}\n---\n"
     end
 
+    def create_page_node( filename, parent, data )
+      filehandler = @plugin_manager['FileHandlers::FileHandler']
+      pagehandler = @plugin_manager['FileHandlers::PageFileHandler']
+      filehandler.create_node( filename, parent, pagehandler ) do |filename, parent, handler, meta_info|
+        pagehandler.create_node_from_data( filename, parent, data, meta_info )
+      end
+    end
+
     def create_gallery( images, parent )
       mainData = main_page_data
       galleries = create_gallery_pages( images, parent )
       info_galleries = galleries.collect {|n,g,i| g}
 
       if images.length > param( 'imagesPerPage' )
-        mainNode = @plugin_manager['FileHandlers::PageFileHandler'].create_node_from_data( gallery_file_name( mainData['title'] ), parent, page_data( mainData ) )
+        mainNode = create_page_node( gallery_file_name( mainData['title'] ), parent, page_data( mainData ) )
         mainNode.node_info[:ginfo] = GalleryInfo.new( info_galleries )
       end
 
@@ -271,7 +279,7 @@ TODO: move to doc
           data['template'] = template
         end
 
-        node = @plugin_manager['FileHandlers::PageFileHandler'].create_node_from_data( gallery_file_name( data['title'] ), parent, page_data( data ) )
+        node = create_page_node( gallery_file_name( data['title'] ), parent, page_data( data ) )
         gal_images = create_image_pages( images[i..(i + picsPerPage - 1)], parent )
         gallery = GalleryInfo::Gallery.new( node.path, gal_images.collect {|n,i| i}, data )
         galleries << [node, gallery, gal_images]
@@ -293,7 +301,7 @@ TODO: move to doc
         data['thumbnail'] ||= get_thumbnail( image, data, parent )
 
         filename = param( 'title' ) + ' ' + image.tr( '\\/', '_' )
-        node = @plugin_manager['FileHandlers::PageFileHandler'].create_node_from_data( gallery_file_name( filename ), parent, page_data( data ) )
+        node = create_page_node( gallery_file_name( filename ), parent, page_data( data ) )
         image = GalleryInfo::Image.new( node.path, image, data )
         imageList << [node, image]
       end
@@ -315,7 +323,11 @@ TODO: move to doc
       remove_method :get_thumbnail
       def get_thumbnail( image, data, parent )
         parent_node = @plugin_manager['FileHandlers::DirectoryHandler'].recursive_create_path( File.dirname( image ), parent )
-        node = @plugin_manager['FileHandlers::ThumbnailWriter'].create_node( File.join( @path, image ), parent_node, data['thumbnailSize'] )
+        tn_handler = @plugin_manager['FileHandlers::ThumbnailWriter']
+        file_handler = @plugin_manager['FileHandlers::FileHandler']
+        node = file_handler.create_node( File.basename( image ), parent_node, tn_handler ) do |fn, parent, h, mi|
+          h.create_node( fn, parent, data['thumbnailSize'] )
+        end
         node.absolute_path
       end
 

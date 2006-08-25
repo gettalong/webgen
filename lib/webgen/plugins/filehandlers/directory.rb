@@ -31,13 +31,16 @@ module FileHandlers
     # Specialized node for a directory.
     class DirNode < Node
 
-      def initialize( parent, path )
-        super
+      def initialize( parent, path, meta_info = {} )
+        super( parent, path )
+        self.meta_info = meta_info
         self['title'] = File.basename( path ).capitalize
       end
 
       def []( name )
-        process_dir_index if !self.meta_info.has_key?( 'indexFile' ) && name == 'indexFile'
+        process_dir_index if name == 'indexFile' &&
+          (!self.meta_info.has_key?( 'indexFile' ) ||
+           (!self.meta_info['indexFile'].nil? && !self.meta_info['indexFile'].kind_of?( Node ) ) )
         super
       end
 
@@ -50,7 +53,7 @@ module FileHandlers
       #######
 
       def process_dir_index
-        indexFile = node_info[:processor]['indexFile']
+        indexFile = self.meta_info['indexFile']
         if indexFile.nil?
           self['indexFile'] = nil
         else
@@ -67,18 +70,22 @@ module FileHandlers
 
     end
 
+=begin
+TODO move to doc
+- orderInfo set on directory counts before orderInfo on index file
+=end
 
     infos :summary => "Handles directories"
 
-    param 'indexFile', 'index.page', 'The default file name for the directory index page file.'
+    default_meta_info( { 'indexFile' => 'index.page' } )
 
     register_path_pattern '**/', 0
 
     # Returns a new DirNode.
-    def create_node( path, parent )
+    def create_node( path, parent, meta_info )
       filename = File.basename( path ) + '/'
       if parent.nil? || (node = parent.find {|child| child =~ filename }).nil?
-        node = DirNode.new( parent, filename )
+        node = DirNode.new( parent, filename, meta_info )
         node.node_info[:processor] = self
       end
       node
@@ -110,7 +117,7 @@ module FileHandlers
         case pathname
         when '.' then  #do nothing
         when '..' then parent = parent.parent
-        else parent = create_node( pathname, parent )
+        else parent = @plugin_manager['FileHandlers::FileHandler'].create_node( pathname, parent, self )
         end
       end
       parent
