@@ -141,17 +141,19 @@ TODO: MOVE TO DOC
 - format is called WebPage Description Format, a file using this format is called a page file
 - page file consists of optionally one meta info block at beginning, 1 to n content blocks
 - meta info block is YAML
-- default name for block if none specified (ie. no explicit name in --- line or in blocks meta info of correct index) is 'content' (precedence (low to high): default , --- line, blocks meta info)
-- default for block format (ie. if non in --- line or in blocks meta info of correct index) called 'default'
+- default name for block if none specified (ie. no explicit name in --- line or in blocks meta info of correct index) is 'content' (precedence (low to high): default, blocks meta info, --- line)
+- default for block format (ie. if non in --- line or in blocks meta info of correct index) called 'default', precedence as above
 - block names have to be unique
 - escaped block separators in blocks are unescaped and leading/trailing whitespace stripped off
+- if first line contains only --- (with optional trailing space), then the first block is considered to be a meta information block
+  else it is a content block
 =end
 
 
   def parse( data )
     @blocks = {}
     blocks = data.scan( /(?:(?:^--- *(?:(\w+) *(?:, *(\w+) *)?)?$)|\A)(.*?)(?:(?=^---.*?$)|\Z)/m )
-    if data =~ /\A---/
+    if data =~ /\A---\s*$/
       begin
         meta = YAML::load( blocks.shift[2] )
         raise( WebPageDataInvalid, 'Invalid structure of meta information part') unless meta.kind_of?( Hash )
@@ -165,12 +167,12 @@ TODO: MOVE TO DOC
 
     blocks.each_with_index do |block_data, index|
       name, format, content = *block_data
-      name = (@meta_info['blocks'] && @meta_info['blocks'][index] && @meta_info['blocks'][index]['name']) || name || 'content'
+      name = name || (@meta_info['blocks'] && @meta_info['blocks'][index] && @meta_info['blocks'][index]['name']) || 'content'
       raise( WebPageDataInvalid, "Same name used for more than one block: #{name}" ) if @blocks.has_key?( name )
       content ||= ''
       content.gsub!( /^(\\+)(---.*?)$/ ) {|m| "\\" * ($1.length / 2) + $2 }
       content.strip!
-      format = (@meta_info['blocks'] && @meta_info['blocks'][index] && @meta_info['blocks'][index]['format']) || format || 'default'
+      format = format || (@meta_info['blocks'] && @meta_info['blocks'][index] && @meta_info['blocks'][index]['format']) || 'default'
       @blocks[name] = @blocks[index] = HtmlBlock.new( name, convert( content, format ) )
     end
   end

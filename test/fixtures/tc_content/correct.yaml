@@ -36,9 +36,11 @@
 
 # with empty block
 - in: |
-    ---
+    --- 
     key: value
+
     ---
+
   meta_info: {key: value}
   blocks:
     - name: content
@@ -53,3 +55,11 @@
   blocks:
     - name: content
       content: "before\n--- in\nafter"
+
+# no meta info, starting with block with name and format specified
+- in: |
+    --- block1, textile
+  meta_info: {}
+  blocks:
+    - name: block1
+      content: ''
