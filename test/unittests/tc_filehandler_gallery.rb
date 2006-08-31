@@ -11,15 +11,12 @@ class GalleryInfoTest < Webgen::PluginTestCase
     iclass = FileHandlers::GalleryFileHandler::GalleryInfo::Image
     gclass = FileHandlers::GalleryFileHandler::GalleryInfo::Gallery
     @galleries = []
-    @galleries << gclass.new( 'gal1.html',
-                              [iclass.new( 'test1.html', 'test1.jpg', {'thumbnail' => 'tn_test1.jpg'} ), iclass.new( 'test2.html', 'test2.jpg', {'thumbnailSize' => '100x50'} )],
-                              {} )
-    @galleries << gclass.new( 'gal2.html',
-                              [iclass.new( 'test3.html', 'test3.jpg', {} ), iclass.new( 'test4.html', 'test4.jpg', {} )],
-                              {} )
-    @galleries << gclass.new( 'gal3.html',
-                              [iclass.new( 'test5.html', 'test5.jpg', {} ), iclass.new( 'test6.html', 'test6.jpg', {} )],
-                              {} )
+    @galleries << gclass.new( 'gal1.html', {},
+                              [iclass.new( 'test1.html', {'thumbnail' => 'tn_test1.jpg'}, 'test1.jpg' ), iclass.new( 'test2.html', {'thumbnailSize' => '100x50'}, 'test2.jpg' )] )
+    @galleries << gclass.new( 'gal2.html', {},
+                              [iclass.new( 'test3.html', {}, 'test3.jpg' ), iclass.new( 'test4.html', {}, 'test4.jpg' )] )
+    @galleries << gclass.new( 'gal3.html', {},
+                              [iclass.new( 'test5.html', {}, 'test5.jpg' ), iclass.new( 'test6.html', {}, 'test6.jpg' )] )
   end
 
   def test_cur_image
@@ -66,14 +63,14 @@ class GalleryInfoTest < Webgen::PluginTestCase
 
   def test_image_accessors
     ginfo = FileHandlers::GalleryFileHandler::GalleryInfo.new( @galleries, 0, 0 )
-    assert_equal( '<img src="tn_test1.jpg" alt="" />', ginfo.cur_image.thumbnail )
-    assert_equal( '<img src="test2.jpg" width="100" height="50" alt="" />', ginfo.next_image.thumbnail )
+    assert_equal( '<img src="{relocatable: tn_test1.jpg}" alt="" />', ginfo.cur_image.thumbnail )
+    assert_equal( '<img src="{relocatable: test2.jpg}" width="100" height="50" alt="" />', ginfo.next_image.thumbnail )
   end
 
   def test_gallery_accessors
     ginfo = FileHandlers::GalleryFileHandler::GalleryInfo.new( @galleries, 0, 0 )
-    assert_equal( '<img src="tn_test1.jpg" alt="" />', ginfo.cur_gallery.thumbnail )
-    assert_equal( '<img src="test3.jpg" width="" height="" alt="" />', ginfo.next_gallery.thumbnail )
+    assert_equal( '<img src="{relocatable: tn_test1.jpg}" alt="" />', ginfo.cur_gallery.thumbnail )
+    assert_equal( '<img src="{relocatable: test3.jpg}" width="" height="" alt="" />', ginfo.next_gallery.thumbnail )
   end
 
 end
@@ -88,6 +85,7 @@ class GalleryFileHandlerTest < Webgen::PluginTestCase
 
   def test_create_node
     root = Node.new( nil, '/' )
+    root.node_info[:src] = ''
 
     # with a main page
     assert_nil( @plugin.create_node( fixture_path( 'test.gallery' ), root, {} ) )
@@ -145,19 +143,20 @@ begin
     plugin_to_test 'FileHandlers::ThumbnailWriter'
 
     def test_create_node
-      node = @plugin.create_node( 'test.jpg', nil, '100x100' )
-      assert_equal( 'tn_test.jpg', node.path )
-      assert_equal( 'test.jpg', node.node_info[:thumbnail_file] )
+      node = @plugin.create_node( 'testfor\\anddo.jpg', nil, '100x100' )
+      assert_equal( 'tn_testfor_anddo.jpg', node.path )
+      assert_equal( 'testfor\\anddo.jpg', node.node_info[:thumbnail_file] )
       assert_equal( '100x100', node.node_info[:thumbnail_size] )
     end
 
     def test_gallery_thumbnail_creation
       root = Node.new( nil, '/' )
+      root.node_info[:src] = ''
 
       @manager['FileHandlers::GalleryFileHandler'].create_node( fixture_path( 'test.gallery' ), root, {} )
       tn_node = root.resolve_node( 'tn_test1.jpg' )
       assert_not_nil( tn_node )
-      assert_equal( 'test1.jpg', tn_node.node_info[:thumbnail_file] )
+      assert_equal( '/test1.jpg', tn_node.node_info[:thumbnail_file] )
       assert_equal( tn_node.absolute_path, root.resolve_node( 'Test_test1_jpg.page' ).node_info[:ginfo].cur_image.data['thumbnail'] )
     end
 

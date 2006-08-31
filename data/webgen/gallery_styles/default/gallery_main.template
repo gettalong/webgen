@@ -1,10 +1,13 @@
-<table>
+--- content, html
+<div class="webgen-gallery webgen-gallery-main">
+<% ginfo = node.node_info[:ginfo] %>
+<table width="100%">
 <% 0.step( ginfo.galleries.length - 1, 5 ) do |row_index| %>
   <tr>
-  <% row_index.upto( row_index + 4 ) do |col_index| %>
-    <td>
-      <a href="<%= ginfo.galleries[col_index].pagename %>">
-        <src href="<%= ginfo.galleries[col_index].thumbnail %>" alt="<%= ginfo.galleries[col_index].title %>" />
+  <% row_index.upto( [row_index + 4, ginfo.galleries.length - 1].min ) do |col_index| %>
+    <td align="center">
+      <a href="{relocatable: <%= ginfo.galleries[col_index].pagename %>}">
+        <%= ginfo.galleries[col_index].thumbnail('class'=>'webgen-gallery-thumbnail') %><br />
         <%= ginfo.galleries[col_index].title %>
       </a>
     </td>
@@ -12,3 +15,4 @@
   </tr>
 <% end %>
 </table>
+</div>

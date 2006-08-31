@@ -30,15 +30,13 @@ module FileHandlers
 
     class GalleryInfo
 
-      class Gallery
+      class Object
 
         attr_accessor :pagename
         attr_reader :title
         attr_reader :data
-        attr_reader :images
 
-        def initialize( pagename, images, data )
-          @images = images
+        def initialize( pagename, data )
           @pagename = pagename
           @title = data['title']
           @data = data
@@ -50,44 +48,44 @@ module FileHandlers
 
         def []=( key, value )
           @data[key] = value
-        end
-
-        def thumbnail
-          @images.first.thumbnail
         end
 
       end
 
-      class Image
+      class MainPage < Object; end
 
-        attr_accessor :pagename
+      class Gallery < Object
+
+        attr_reader :images
+
+        def initialize( pagename, data, images )
+          super( pagename, data )
+          @images = images
+        end
+
+        def thumbnail( attr = {} )
+          @images.first.thumbnail( attr )
+        end
+
+      end
+
+      class Image < Object
+
         attr_reader :filename
-        attr_reader :title
-        attr_reader :data
 
-        def initialize( pagename, filename, data )
-          @pagename = pagename
+        def initialize( pagename, data, filename )
+          super( pagename, data )
           @filename = filename
-          @title = data['title']
-          @data = data
-        end
-
-        def []( key )
-          @data[key]
-        end
-
-        def []=( key, value )
-          @data[key] = value
         end
 
         # Returns the thumbnail tag.
         def thumbnail( attr = {} )
           attr = attr.collect {|k,v| "#{k}='#{v}'"}.join( ' ' )
           if !@data['thumbnail'].to_s.empty? && @data['thumbnail'] != @filename
-            "<img src=\"#{@data['thumbnail']}\" alt=\"#{@title}\" #{attr}/>"
+            "<img src=\"{relocatable: #{@data['thumbnail']}}\" alt=\"#{@title}\" #{attr}/>"
           else
             width, height = (@data['thumbnailSize'] || '').split('x')
-            "<img src=\"#{@filename}\" width=\"#{width}\" height=\"#{height}\" alt=\"#{@title}\" #{attr}/>"
+            "<img src=\"{relocatable: #{@filename}}\" width=\"#{width}\" height=\"#{height}\" alt=\"#{@title}\" #{attr}/>"
           end
         end
 
@@ -96,6 +94,7 @@ module FileHandlers
       attr_reader :galleries
       attr_reader :gIndex
       attr_reader :iIndex
+      attr_accessor :mainpage
 
       def initialize( galleries, gIndex = nil, iIndex = nil )
         @galleries = galleries
@@ -134,6 +133,7 @@ module FileHandlers
         return result
       end
 
+      # Returns the current gallery.
       def cur_gallery
         galleries[@gIndex]
       end
@@ -223,7 +223,7 @@ TODO: move to doc
 
     def page_data( metainfo )
       temp = metainfo.to_yaml
-      temp = "---\n" + temp unless /^---\s$/ =~ temp
+      temp = "---\n" + temp unless /^---\s*$/ =~ temp
       "#{temp}\n---\n"
     end
 
@@ -239,16 +239,21 @@ TODO: move to doc
       mainData = main_page_data
       galleries = create_gallery_pages( images, parent )
       info_galleries = galleries.collect {|n,g,i| g}
+      main_page_used = images.length > param( 'imagesPerPage' )
 
-      if images.length > param( 'imagesPerPage' )
+      if main_page_used
         mainNode = create_page_node( gallery_file_name( mainData['title'] ), parent, page_data( mainData ) )
+        mainPage = GalleryInfo::MainPage.new( mainNode.path, mainData )
         mainNode.node_info[:ginfo] = GalleryInfo.new( info_galleries )
+        mainNode.node_info[:ginfo].mainpage = mainPage
       end
 
       galleries.each_with_index do |gData, gIndex|
         gData[0].node_info[:ginfo] = GalleryInfo.new( info_galleries, gIndex )
+        gData[0].node_info[:ginfo].mainpage = mainPage if main_page_used
         gData[2].each_with_index do |iData, iIndex|
           iData[0].node_info[:ginfo] = GalleryInfo.new( info_galleries, gIndex, iIndex )
+          iData[0].node_info[:ginfo].mainpage = mainPage if main_page_used
         end
       end
 
@@ -281,14 +286,14 @@ TODO: move to doc
 
         node = create_page_node( gallery_file_name( data['title'] ), parent, page_data( data ) )
         gal_images = create_image_pages( images[i..(i + picsPerPage - 1)], parent )
-        gallery = GalleryInfo::Gallery.new( node.path, gal_images.collect {|n,i| i}, data )
+        gallery = GalleryInfo::Gallery.new( node.path, data, gal_images.collect {|n,i| i} )
         galleries << [node, gallery, gal_images]
       end
       galleries
     end
 
     def gallery_file_name( title )
-      ( title.nil? ? nil : title.tr( ' .', '_' ) + '.page' )
+      ( title.nil? ? nil : title.tr( '/ .\\', '_' ) + '.page' )
     end
 
     def create_image_pages( images, parent )
@@ -300,9 +305,9 @@ TODO: move to doc
         data['thumbnailSize'] ||= param( 'thumbnailSize' )
         data['thumbnail'] ||= get_thumbnail( image, data, parent )
 
-        filename = param( 'title' ) + ' ' + image.tr( '\\/', '_' )
+        filename = param( 'title' ) + ' ' + image
         node = create_page_node( gallery_file_name( filename ), parent, page_data( data ) )
-        image = GalleryInfo::Image.new( node.path, image, data )
+        image = GalleryInfo::Image.new( node.path, data, image )
         imageList << [node, image]
       end
       imageList
@@ -338,7 +343,7 @@ TODO: move to doc
       infos :summary => "Writes out thumbnails with RMagick"
 
       def create_node( file, parent, thumbnailSize = nil )
-        node = Node.new( parent, 'tn_' + File.basename( file ) )
+        node = Node.new( parent, 'tn_' + File.basename( file ).tr( '/ \\', '_' ) )
         node['title'] = node.path
         node.node_info[:thumbnail_size] = thumbnailSize
         node.node_info[:thumbnail_file] = file
