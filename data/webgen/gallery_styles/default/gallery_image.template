@@ -3,17 +3,17 @@
 <% ginfo = node.node_info[:ginfo] %>
 <table width="100%">
 <tr>
-  <td width="33%" align="left">
+  <td style="width: 33%" align="left">
     <% if ginfo.prev_image %>
     <a href="{relocatable: <%= ginfo.prev_image.pagename %>}">&lt;&lt;&nbsp;<%= ginfo.prev_image.thumbnail('style'=>'vertical-align: middle', 'class'=>'webgen-gallery-thumbnail') %></a>
     <% end %>
   </td>
-  <td width="34%" align="center">
+  <td style="width: 34%" align="center">
     <a href="{relocatable: <%= ginfo.cur_gallery.pagename %>}">
     <%= ginfo.cur_gallery.thumbnail('class'=>'webgen-gallery-thumbnail') %><br />^<%= ginfo.cur_gallery.title %>^
     </a>
   </td>
-  <td width="33%" align="right">
+  <td style="width: 33%" align="right">
     <% if ginfo.next_image %>
     <a href="{relocatable: <%= ginfo.next_image.pagename %>}"><%= ginfo.next_image.thumbnail('style'=>'vertical-align: middle', 'class'=>'webgen-gallery-thumbnail') %>&nbsp;&gt;&gt;</a>
     <% end %>
