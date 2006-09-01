@@ -75,10 +75,10 @@ module Webgen
         self.config.infos.update( param )
       end
 
-      # Add a dependency to the plugin. Dependencies are instantiated before the plugin gets
-      # instantiated.
+      # Add a dependency to the plugin, ie. the name of another plugin. Dependencies are
+      # instantiated before the plugin gets instantiated.
       def depends_on( *dep )
-        dep.each {|d| self.config.dependencies << ( Class === d && d.ancestors.include?( PluginDefs ) ? d.name : d )}
+        dep.each {|d| self.config.dependencies << d}
       end
 
       # Defines a parameter.The parameter can be changed in the configuration file later.
@@ -87,11 +87,8 @@ module Webgen
       # +name+:: the name of the parameter
       # +default+:: the default value of the parameter
       # +description+:: a small description of the parameter
-      # +changeHandler+:: optional, method/proc which is invoked every time the parameter is changed.
-      #                   Handler signature: changeHandler( paramName, oldValue, newValue )
-      def param( name, default, description, changeHandler = nil )
-        data = OpenStruct.new( :name => name, :default => default,
-                               :description => description, :changeHandler => changeHandler )
+      def param( name, default, description )
+        data = OpenStruct.new( :name => name, :default => default, :description => description )
         self.config.params[name] = data
       end
 
@@ -445,9 +442,12 @@ module Webgen
         PluginDefs.append_features( klass )
         klass.extend( ClassMethods ) #TODO TEST necessary? -> already called in PluginDefs.append_features
       end
+
     end
 
   end
 
-  #TODO load all webgen plugins here into DEFAULT_PLUGIN_LOADER
+  #DEFAULT_PLUGIN_LOADER.load_from_dir( File.join( File.dirname( __FILE__ ), 'plugins' ),
+  #                                     File.dirname( __FILE__ ).sub( /webgen$/, '' ) )
+
 end

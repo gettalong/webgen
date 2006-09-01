@@ -10,8 +10,7 @@ module Testing
     :instantiate => false
   }
   PARAM_ARRAY = ['test', [5,6], 'Test description']
-  DEPS_ARRAY = [BasicPlugin, 'Testing::DerivedPlugin']
-  DEPS_ARRAY_CHECK = ['Testing::BasicPlugin', 'Testing::DerivedPlugin']
+  DEPS_ARRAY = ['Testing::BasicPlugin', 'Testing::DerivedPlugin']
 
   class PluginWithData < Webgen::Plugin
 

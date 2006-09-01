@@ -93,7 +93,7 @@ class PluginTest < Webgen::TestCase
 
   def test_plugin_config
     check_plugin_data( Testing::BasicPlugin, {}, [], [] )
-    check_plugin_data( Testing::PluginWithData, Testing::INFOS_HASH, Testing::PARAM_ARRAY, Testing::DEPS_ARRAY_CHECK )
+    check_plugin_data( Testing::PluginWithData, Testing::INFOS_HASH, Testing::PARAM_ARRAY, Testing::DEPS_ARRAY )
   end
 
   def test_ancestor_classes
