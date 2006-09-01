@@ -63,7 +63,7 @@ module CorePlugins
       end
 
       # Can the resource be written to the output directory?
-      def write_resource?( root_dir )
+      def write_resource?( root_dir, file_handler )
         @referenced
       end
 
@@ -87,12 +87,12 @@ module CorePlugins
         File.read( @res_path )
       end
 
-      def write_resource?( root_dir )
-        referenced? && Webgen::Plugin['FileHandler'].file_modified?( @res_path, dest_path( root_dir ) )
+      def write_resource?( root_dir, file_handler )
+        referenced? && file_handler.file_modified?( @res_path, dest_path( root_dir ) )
       end
 
-      def write_resource( root_dir )
-        FileUtils.cp( res_path, dest_path( root_dir ) ) if write_resource?( root_dir )
+      def write_resource( root_dir, file_handler )
+        FileUtils.cp( res_path, dest_path( root_dir ) ) if write_resource?( root_dir, file_handler )
       end
 
     end
@@ -112,8 +112,8 @@ module CorePlugins
         @data << data
       end
 
-      def write_resource( root_dir )
-        File.open( dest_path, 'w' ) {|file| file.write( data )} if write_resource?( root_dir )
+      def write_resource( root_dir, file_handler )
+        File.open( dest_path, 'w' ) {|file| file.write( data )} if write_resource?( root_dir, file_handler )
       end
 
     end
@@ -132,7 +132,7 @@ module CorePlugins
 
     def initialize( plugin_manager )
       super
-      @plugin_manager['FileHandlers::FileHandler'].add_msg_listener( :AFTER_ALL_WRITTEN, method( :write_resources ) )
+      @plugin_manager['FileHandlers::FileHandler'].add_msg_listener( :after_all_written, method( :write_resources ) )
       @resources = {}
       define_webgen_resources unless Webgen.data_dir.empty?
       define_user_resources
@@ -236,16 +236,13 @@ module CorePlugins
 
 
     def write_resources
-      temp = {}
-      temp.update( self.class.infos[:resources] )
-      temp.update( @resources )
       outDir = @plugin_manager.param_for_plugin( 'CorePlugins::Configuration', 'outDir' )
 
-      temp.each do |name, res|
-        if res.write_resource?( outDir )
+      @resources.each do |name, res|
+        if res.write_resource?( outDir, @plugin_manager['FileHandlers::FileHandler'] )
           begin
             FileUtils.makedirs( File.dirname( res.dest_path( outDir ) ) )
-            res.write_resource( outDir )
+            res.write_resource( outDir, @plugin_manager['FileHandlers::FileHandler'] )
             log(:info) { "Resource '#{name}' written to <#{res.dest_path( outDir )}>" }
           rescue Exception => e
             log(:error) { "Error while writing resource '#{name}': #{e.message}" }
