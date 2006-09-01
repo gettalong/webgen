@@ -87,6 +87,7 @@ TODO move to doc
       if parent.nil? || (node = parent.find {|child| child =~ filename }).nil?
         node = DirNode.new( parent, filename, meta_info )
         node.node_info[:processor] = self
+        node.node_info[:src] = path
       end
       node
     end

@@ -75,6 +75,8 @@ class DirectoryHandlerTest < Webgen::PluginTestCase
 
   def test_create_node
     root = @plugin.create_node( @root_dir, nil, {} )
+    assert_equal( @plugin, root.node_info[:processor] )
+    assert_equal( @root_dir, root.node_info[:src] )
     dir = @plugin.create_node( @max_dir, root, {'test'=>'yes'} )
     assert_equal( 'yes', dir['test'] )
     dir1 = @plugin.create_node( @max_dir, root, {'test'=>'no'} )
