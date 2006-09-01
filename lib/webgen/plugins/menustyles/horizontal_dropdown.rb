@@ -77,8 +77,8 @@ module MenuStyles
       out = ''
       out = "<ul>" if level > 1
       menu_node.each do |child|
-        menu = (child.node_info['node'].is_directory? ? submenu( src_node, child, level + 1 ) : '')
-        style, link = menu_item_details( src_node, child.node_info['node'] )
+        menu = (child.node_info[:node].is_directory? ? submenu( src_node, child, level + 1 ) : '')
+        style, link = menu_item_details( src_node, child.node_info[:node] )
 
         out << "<ul>" if level == 1
         out << "<li #{style}>#{link}"

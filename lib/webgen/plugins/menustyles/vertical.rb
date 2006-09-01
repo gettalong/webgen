@@ -66,8 +66,8 @@ module MenuStyles
       if menu_node.nil? \
         || level > param( 'subtreeLevel' ) \
         || ( level > param( 'level' ) \
-             && ( menu_node.node_info['node'].level > src_node.level \
-                  || ( param( 'showCurrentSubtreeOnly' ) && !src_node.in_subtree?( menu_node.node_info['node'] ) )
+             && ( menu_node.node_info[:node].level > src_node.level \
+                  || ( param( 'showCurrentSubtreeOnly' ) && !src_node.in_subtree_of?( menu_node.node_info[:node] ) )
                   )
              )
         return ''
@@ -75,8 +75,8 @@ module MenuStyles
 
       out = "<ul>"
       menu_node.each do |child|
-        menu = child.node_info['node'].is_directory? ? submenu( src_node, child, level + 1 ) : ''
-        style, link = menu_item_details( src_node, child.node_info['node'] )
+        menu = child.node_info[:node].is_directory? ? submenu( src_node, child, level + 1 ) : ''
+        style, link = menu_item_details( src_node, child.node_info[:node] )
 
         out << "<li #{style}>#{link}"
         out << menu

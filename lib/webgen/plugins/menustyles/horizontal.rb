@@ -50,7 +50,7 @@ module MenuStyles
 
     def internal_build_menu( src_node, menu_tree )
       unless defined?( @css_added )
-        @plugin_manager['ResourceManager'].append_data( 'webgen-css', @css )
+        @plugin_manager['CorePlugins::ResourceManager'].append_data( 'webgen-css', @css )
         @css_added = true
       end
       "<div class=\"webgen-menu-horiz #{param('divClass')}\">#{submenu( src_node, menu_tree, 1 )}</div>"
@@ -61,16 +61,16 @@ module MenuStyles
     #######
 
     def submenu( src_node, menu_node, level )
-      if menu_node.nil? || menu_node.node_info['node'].level > src_node.level \
-        || !src_node.in_subtree?( menu_node.node_info['node'] )
+      if menu_node.nil? || menu_node.node_info[:node].level > src_node.level \
+        || !src_node.in_subtree_of?( menu_node.node_info[:node] )
         return ''
       end
 
       submenu = ''
       out = "<ul>"
       menu_node.each do |child|
-        submenu << (child.node_info['node'].is_directory? ? submenu( src_node, child, level + 1 ) : '')
-        style, link = menu_item_details( src_node, child.node_info['node'] )
+        submenu << (child.node_info[:node].is_directory? ? submenu( src_node, child, level + 1 ) : '')
+        style, link = menu_item_details( src_node, child.node_info[:node] )
         out << "<li #{style}>#{link}</li>"
       end
       out << "</ul>"
