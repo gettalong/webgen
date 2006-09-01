@@ -21,6 +21,7 @@
 #
 
 require 'set'
+require 'yaml'
 require 'webgen/listener'
 require 'webgen/languages'
 
@@ -46,14 +47,26 @@ TODO move todoc
   ----> now node is created using current meta info
   - during node creation, meta info may be overridden by file specific settings (e.g. page handler,
     some infos are taken from the filename and the meta info section of the page)
+- how to specify files in meta info backing file
+  two blocks separated with --- (like in page file)
+  - first block: input file matching
+    - for keys that can be matched to a source file, meta info is provided before node creation
+    - used for setting additional meta information for a node
+  - second block: output file matching (done after all files are read)
+    - for keys that can be matched to an output file, meta info is set after all files are read
+    - for keys that cannot be matched, virtual nodes are created with the supplied data
+      the special data key 'url' can be used to specify arbitrary URLs as destination (use example)
 =end
 
     include Listener
 
     def initialize( manager )
       super
-      add_msg_name( :AFTER_ALL_READ )
-      add_msg_name( :AFTER_ALL_WRITTEN )
+      add_msg_name( :before_node_created )
+      add_msg_name( :after_node_created )
+      add_msg_name( :after_all_read )
+      add_msg_name( :after_all_written )
+      load_meta_info_backing_file
     end
 
     def render_site
@@ -75,9 +88,21 @@ TODO move todoc
       end
     end
 
-    # Returns the meta info for nodes for the given +handler+.
-    def meta_info_for( handler )
-      (handler.class.config.infos[:default_meta_info] || {}).merge( param('defaultMetaInfo')[handler.class.name] || {} )
+    # Returns the meta info for nodes for the given +handler+. If +file+ is specified, meta
+    # information from the backing file is also used if available (using files specified in the
+    # source block of the backing file). The parameter +file+ has to be an absolute path, ie.
+    # starting with a slash.
+    def meta_info_for( handler, file = nil )
+      info = (handler.class.config.infos[:default_meta_info] || {}).dup
+      info.update( param('defaultMetaInfo')[handler.class.name] || {} )
+      if file
+        if @source_backing.has_key?( file )
+          info.update( @source_backing[file] )
+        elsif @source_backing.has_key?( file[1..-1] )
+          info.update( @source_backing[file[1..-1]] )
+        end
+      end
+      info
     end
 
     # Creates a node for +file+ (creating parent directories apropriately) under +parent_node+ using
@@ -87,15 +112,17 @@ TODO move todoc
       pathname, filename = File.split( file )
       parent_node = @plugin_manager['FileHandlers::DirectoryHandler'].recursive_create_path( pathname, parent_node )
 
-      meta_info = meta_info_for( handler )
+      meta_info = meta_info_for( handler, File.join( parent_node.absolute_path, filename ) )
       log(:info) { "Trying to create node for <#{file}>..." }
+      dispatch_msg( :before_node_created, parent_node, filename )
+      src_path = File.join( Node.root( parent_node ).node_info[:src], parent_node.absolute_path, filename )
       if block_given?
-        node = yield( file, parent_node, handler, meta_info )
+        node = yield( src_path, parent_node, handler, meta_info )
       else
-        src_path = File.join( Node.root( parent_node ).node_info[:src], parent_node.absolute_path, filename )
         node = handler.create_node( src_path, parent_node, meta_info )
       end
       log(:info) { "Node for <#{file}> created" } unless node.nil?
+      dispatch_msg( :after_node_created, node ) unless node.nil?
 
       #TODO check node for correct lang and other things
       node
@@ -104,6 +131,45 @@ TODO move todoc
     #######
     private
     #######
+
+    def load_meta_info_backing_file
+      file = File.join( param( 'websiteDir', 'CorePlugins::Configuration' ), 'metainfo.yaml' )
+      if File.exists?( file )
+        begin
+          index = 1
+          YAML::load_documents( File.read( file ) ) do |data|
+            if data.kind_of?( Hash ) && data.all? {|k,v| v.kind_of?( Hash ) }
+              if index == 1
+                @source_backing = data
+              elsif index == 2
+                @output_backing = data
+              else
+                log(:error) { "A backing file can only have two blocks: one for source and one for output backing!" }
+              end
+            else
+              log(:error) { "Content of backing file (#{index == 1 ? 'source' : 'output'} block) not correctcly structured" }
+            end
+            index += 1
+          end
+        rescue
+          log(:error) { "Backing file is not a valid YAML document: #{$!.message}" }
+        end
+      else
+        log(:info) { 'No meta information backing file found!' }
+      end
+      @source_backing ||= {}
+      @output_backing ||= {}
+    end
+
+    def handle_output_backing( root )
+      @output_backing.each do |path, data|
+        path = path[1..-1] if path =~ /^\//
+        node = create_node( path, root, @plugin_manager['FileHandlers::VirtualFileHandler'] ) do |src, parent, handler, meta_info|
+          meta_info = meta_info_for( handler ).update( data )
+          handler.create_node( src, parent, meta_info )
+        end
+      end
+    end
 
     def build_tree
       all_files = find_all_files()
@@ -122,23 +188,25 @@ TODO move todoc
         log(:info) { "Not using these files for #{handler.class.name} as they do not exist or are excluded: #{diff.inspect}" } if diff.length > 0
         common.each  {|file| create_node( file.sub( /^#{root_node.node_info[:src]}/, '' ), root_node, handler ) }
       end
-      dispatch_msg( :AFTER_ALL_READ, root_node ) #TODO necessary?
 
       unused_files = all_files - used_files
       log(:info) { "No handlers found for: #{unused_files.inspect}" } if unused_files.length > 0
+
+      handle_output_backing( root_node )
+      dispatch_msg( :after_all_read, root_node )
 
       root_node
     end
 
     # Recursively writes out the tree specified by +node+.
     def write_tree( node )
+      dispatch_msg( :before_all_written ) if node.parent.nil?
+
       log(:info) { "Writing <#{node.full_path}>" }
-
       node.write_node
-
       node.each {|child| write_tree( child ) }
 
-      dispatch_msg( :AFTER_ALL_WRITTEN ) if node.parent.nil?
+      dispatch_msg( :after_all_written ) if node.parent.nil?
     end
 
     # Creates a set of all files in the source directory, removing all files which should be ignored.
@@ -186,7 +254,7 @@ TODO move todoc
         return nil
       end
 
-      root = root_handler.create_node( root_path, nil, meta_info_for( root_handler ) )
+      root = root_handler.create_node( root_path, nil, meta_info_for( root_handler, '/' ) )
       root['title'] = ''
       root.path = File.join( param( 'outDir', 'CorePlugins::Configuration' ), '/' )
       root.node_info[:src] = root_path
@@ -286,6 +354,33 @@ TODO move todoc
       attr[:href] = refNode.route_to( node )
       attrs = attr.collect {|name,value| "#{name.to_s}=\"#{value}\"" }.sort.join( ' ' )
       "<a #{attrs}>#{link_text}</a>"
+    end
+
+  end
+
+
+  class VirtualFileHandler < DefaultFileHandler
+
+    class VirtualNode < ::Node
+
+      def =~( path )
+        md = /^(#{@path}|#{@node_info[:reference]})(?=#|$)/ =~ path
+        ( md ? $& : nil )
+      end
+
+    end
+
+    infos :summary => 'Handles virtual files specified in the backing file'
+
+    def create_node( path, parent, meta_info )
+      #TODO check for already existing node
+      filename = File.basename( path )
+      filename, reference = (meta_info['url'] ? [meta_info['url'], filename] : [filename, filename])
+      node = VirtualNode.new( parent, filename )
+      node.meta_info.update( meta_info )
+      node.node_info[:reference] = reference
+      node.node_info[:processor] = self
+      node
     end
 
   end

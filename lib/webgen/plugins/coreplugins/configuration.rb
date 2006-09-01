@@ -29,6 +29,7 @@ module CorePlugins
 
     param 'srcDir', 'src', 'The directory from which the source files are read.'
     param 'outDir', 'output', 'The directory to which the output files are written.'
+    param 'websiteDir', nil, 'The website directory - is automatically set and cannot be overridden!'
     param 'lang', 'en', 'The default language.'
     param 'loggerLevel', 2, 'The logging level, ranges from 0 (debug, more verbose) to 3 (error, less verbose)'
 

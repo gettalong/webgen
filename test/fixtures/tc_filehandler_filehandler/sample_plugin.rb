@@ -15,6 +15,8 @@ class SampleHandler < FileHandlers::DefaultFileHandler
   register_path_pattern '**/*.page'
   register_extension 'page'
 
+  default_meta_info( {'key'=>'value'} )
+
   def initialize( plugin_manager )
     super
     register_extension 'page'

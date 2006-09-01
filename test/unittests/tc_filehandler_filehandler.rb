@@ -16,6 +16,7 @@ class FileHandlerTest < Webgen::PluginTestCase
   plugin_to_test 'FileHandlers::FileHandler'
 
   def setup
+    @websiteDir = nil
     super
     self.class.class_eval "class ::FileHandlers::FileHandler
            public :find_all_files
@@ -25,6 +26,13 @@ class FileHandlerTest < Webgen::PluginTestCase
          end"
   end
 
+  def param_for_plugin( plugin_name, param )
+    if [plugin_name, param] == ['CorePlugins::Configuration', 'websiteDir']
+      @websiteDir || super
+    else
+      super
+    end
+  end
 
   def test_file_modified
     modified = fixture_path( 'modified' )
@@ -130,6 +138,44 @@ class FileHandlerTest < Webgen::PluginTestCase
     def calc_length( tree ); tree.children.inject( 1 ) {|memo,c| memo += calc_length( c ) }; end
 
     assert( calc_length( tree ), nr_paths_on_disc )
+  end
+
+  def test_load_meta_info_backing_file
+    @websiteDir = fixture_path('backing')
+    @plugin.instance_eval { load_meta_info_backing_file }
+    assert_equal({'key1'=>'value1'}, @plugin.instance_eval { @source_backing['file1'] })
+    assert_equal({}, @plugin.instance_eval { @output_backing })
+  rescue
+    puts $!
+    @websiteDir = nil
+  end
+
+  def test_meta_info_for
+    @plugin.instance_eval { @source_backing = {'/file'=>{'key'=>'novalue'}} }
+    assert_equal( {'key'=>'value'}, @plugin.meta_info_for( @manager['SampleHandler'] ) )
+    assert_equal( {'key'=>'novalue'}, @plugin.meta_info_for( @manager['SampleHandler'], '/file' ) )
+    @plugin.instance_eval { @source_backing = {'file'=>{'key'=>'novalue'}} }
+    assert_equal( {'key'=>'novalue'}, @plugin.meta_info_for( @manager['SampleHandler'], '/file' ) )
+    assert_equal( {'key'=>'value'}, @plugin.meta_info_for( @manager['SampleHandler'] ) )
+  end
+
+  def test_handle_output_backing
+    root = @plugin.instance_eval { create_root_node }
+    node = Node.new( Node.new( root, 'dir/' ), 'test1.html' )
+    @plugin.instance_eval { @output_backing = {'api.html'=>{'url'=>'rdoc/index.html'}, '/doc/test.html'=>{'url'=>'http://www.webgen.com'}}}
+    @plugin.instance_eval { handle_output_backing( root ) }
+
+    assert_not_nil( root.resolve_node( 'rdoc/index.html' ) )
+    assert_not_nil( root.resolve_node( 'api.html' ) )
+    backed1 = root.resolve_node( 'api.html' )
+    assert_equal( 'api.html', backed1.node_info[:reference] )
+    assert_equal( @manager['FileHandlers::VirtualFileHandler'], backed1.node_info[:processor] )
+
+    backed2 = root.resolve_node( 'doc/test.html' )
+    assert_not_nil( backed2 )
+
+    assert_equal( '<a href="../rdoc/index.html"></a>', backed1.link_from( node ) )
+    assert_equal( '<a href="http://www.webgen.com"></a>', backed2.link_from( node ) )
   end
 
 end
