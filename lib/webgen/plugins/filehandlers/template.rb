@@ -77,12 +77,16 @@ TODO: MOVE TO DOC
         node['template'] = template_node
       elsif node['template'].kind_of?( Node )
         template_node = node['template']
+      else
+        log(:info) { "Using default template for <#{node.node_info[:src]}>" }
+        template_node = get_default_template( node.parent )
+        node['template'] = template_node
       end
 
       if template_node.nil?
         []
       else
-        templates_for_node( template_node ) + [template_node]
+        (template_node == node ? [] : templates_for_node( template_node ) + [template_node])
       end
     end
 
