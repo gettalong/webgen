@@ -22,6 +22,7 @@
 
 require 'set'
 require 'yaml'
+require 'webgen/node'
 require 'webgen/listener'
 require 'webgen/languages'
 
@@ -164,9 +165,13 @@ TODO move todoc
     def handle_output_backing( root )
       @output_backing.each do |path, data|
         path = path[1..-1] if path =~ /^\//
-        node = create_node( path, root, @plugin_manager['FileHandlers::VirtualFileHandler'] ) do |src, parent, handler, meta_info|
-          meta_info = meta_info_for( handler ).update( data )
-          handler.create_node( src, parent, meta_info )
+        if node = root.resolve_node( path )
+          node.meta_info.update( data )
+        else
+          node = create_node( path, root, @plugin_manager['FileHandlers::VirtualFileHandler'] ) do |src, parent, handler, meta_info|
+            meta_info = meta_info_for( handler ).update( data )
+            handler.create_node( src, parent, meta_info )
+          end
         end
       end
     end
@@ -381,6 +386,10 @@ TODO move todoc
       node.node_info[:reference] = reference
       node.node_info[:processor] = self
       node
+    end
+
+    def write_node( node )
+      # nothing to write
     end
 
   end

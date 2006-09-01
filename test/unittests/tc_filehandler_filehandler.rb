@@ -162,9 +162,15 @@ class FileHandlerTest < Webgen::PluginTestCase
   def test_handle_output_backing
     root = @plugin.instance_eval { create_root_node }
     node = Node.new( Node.new( root, 'dir/' ), 'test1.html' )
-    @plugin.instance_eval { @output_backing = {'api.html'=>{'url'=>'rdoc/index.html'}, '/doc/test.html'=>{'url'=>'http://www.webgen.com'}}}
+    node['test'] = 'yes'
+    @plugin.instance_eval { @output_backing = {
+        'api.html'=>{'url'=>'rdoc/index.html'},
+        '/doc/test.html'=>{'url'=>'http://www.webgen.com'},
+        'dir/test1.html'=>{'test'=>'no'}
+      }}
     @plugin.instance_eval { handle_output_backing( root ) }
 
+    # test virtual node creation
     assert_not_nil( root.resolve_node( 'rdoc/index.html' ) )
     assert_not_nil( root.resolve_node( 'api.html' ) )
     backed1 = root.resolve_node( 'api.html' )
@@ -176,6 +182,10 @@ class FileHandlerTest < Webgen::PluginTestCase
 
     assert_equal( '<a href="../rdoc/index.html"></a>', backed1.link_from( node ) )
     assert_equal( '<a href="http://www.webgen.com"></a>', backed2.link_from( node ) )
+
+    # test setting of meta infos for existing nodes
+    assert_equal( 1, root.resolve_node( 'dir/' ).children.length )
+    assert_equal( 'no', node['test'] )
   end
 
 end
