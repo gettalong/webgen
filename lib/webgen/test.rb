@@ -137,6 +137,7 @@ module Webgen
       case [plugin_name, param]
       when ['CorePlugins::Configuration', 'srcDir'] then sample_site( 'src' )
       when ['CorePlugins::Configuration', 'outDir'] then sample_site( 'out' )
+      when ['CorePlugins::Configuration', 'websiteDir'] then sample_site
       else raise Webgen::PluginParamNotFound.new( plugin_name, param )
       end
     end
