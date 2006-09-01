@@ -66,9 +66,18 @@ TODO: move to doc
     def process_tag( tag, chain )
       @menus ||= {}
       unless @menus.has_key?( chain.last['lang'] )
-        @menus[chain.last['lang']] = create_menu_tree( Node.root( chain.last ), nil, chain.last['lang'] ).sort!
+        @menus[chain.last['lang']] = create_menu_tree( Node.root( chain.last ), nil, chain.last['lang'] )
+        @menus[chain.last['lang']].sort! if @menus[chain.last['lang']]
       end
-      Webgen::Plugin['DefaultMenuStyle'].get_menu_style( param( 'menuStyle' ) ).build_menu( node, @menus[chain.last['lang']], param( 'options' ) )
+      style = @plugin_manager['MenuStyles::DefaultMenuStyle'].registered_handlers[param( 'menuStyle' )]
+      if style.nil?
+        log(:error) { "Invalid style specified in <#{chain.first.node_info[:src]}>" }
+        ''
+      elsif @menus[chain.last['lang']]
+        style.build_menu( chain.last, @menus[chain.last['lang']], param( 'options' ) )
+      else
+        ''
+      end
     end
 
 
@@ -76,6 +85,7 @@ TODO: move to doc
     private
     #######
 
+    # Returns a menu tree if at least one node is in the menu or +nil+ otherwise.
     def create_menu_tree( node, parent, lang )
       menu_node = MenuNode.new( parent, node )
       parent.del_child( menu_node ) if parent

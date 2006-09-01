@@ -193,9 +193,6 @@ module Tags
         set_default_mandatory_param( config, node )
 
       when NilClass
-        if has_mandatory_params?
-          log(:error) { "Mandatory parameters for tag '#{self.class.name}' in <#{node.node_info[:src]}> not specified" }
-        end
 
       else
         log(:error) { "Invalid parameter for tag '#{self.class.name}' in <#{node.node_info[:src]}>" }
@@ -255,15 +252,10 @@ module Tags
       end
     end
 
-    # Check if this tag has mandatory parameters.
-    def has_mandatory_params?
-      !self.class.config.params.nil? && self.class.config.params.any? {|k,v| v.mandatory }
-    end
-
     # Check if all mandatory parameters have been set
     def all_mandatory_params_set?
       params = self.class.config.params
-      ( params.nil? ? true : params.all? { |k,v| !v.mandatory || @cur_config.has_key?( k ) } )
+      ( params.nil? ? true : params.all? { |k,v| !v.mandatory || @cur_config.has_key?( k ) || !v.default.nil? } )
     end
 
   end

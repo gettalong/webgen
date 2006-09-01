@@ -39,7 +39,12 @@ module Tags
       if block_node.node_info[:pagedata].blocks.has_key?( param( 'block' ) )
         if block_node['useERB']
           node = chain.last
-          content = block_node.node_info[:pagedata].blocks[param('block')].render_with_erb( binding )
+          begin
+            content = block_node.node_info[:pagedata].blocks[param('block')].render_with_erb( binding )
+          rescue
+            log(:error) { "Error while running ERB on <#{block_node.node_info[:src]}> (block '#{param('block')}'): #{$!.message}" }
+            content = ''
+          end
         else
           content = block_node.node_info[:pagedata].blocks[param('block')].content
         end

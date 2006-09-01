@@ -40,7 +40,7 @@ module Tags
       if chain.last[tag]
         output = chain.last[tag].to_s
       else
-        log(:warn) { "No value for tag '#{tag}' in <#{chain.first.node_info[:src]}> found in <#{chain.last.node_info['src']}>" }
+        log(:warn) { "No value for tag '#{tag}' in <#{chain.first.node_info[:src]}> found in <#{chain.last.node_info[:src]}>" }
       end
       output
     end
