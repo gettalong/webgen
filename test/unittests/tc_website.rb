@@ -103,11 +103,7 @@ end
 
 class ConfigurationFileTest < Webgen::TestCase
 
-  def test_param_for_plugin
-    configfile = Webgen::ConfigurationFile.new( fixture_path( 'correct.yaml' ) )
-    assert_kind_of( Hash, configfile.config )
-    assert_equal( 'value', configfile.param_for_plugin( 'TestPlugin', 'param' ) )
-
+  def test_initialize
     assert_raise( Webgen::ConfigurationFileInvalid ) do
       Webgen::ConfigurationFile.new( fixture_path( 'incorrect_structure.yaml' ) )
     end
@@ -117,6 +113,14 @@ class ConfigurationFileTest < Webgen::TestCase
 
     configfile = Webgen::ConfigurationFile.new( fixture_path( 'missing.yaml' ) )
     assert_equal( {}, configfile.config )
+  end
+
+  def test_param_for_plugin
+    configfile = Webgen::ConfigurationFile.new( fixture_path( 'correct.yaml' ) )
+    assert_kind_of( Hash, configfile.config )
+    assert_equal( 'value', configfile.param_for_plugin( 'TestPlugin', 'param' ) )
+    assert_raise( Webgen::PluginParamNotFound ) { configfile.param_for_plugin( 'TestPlugin', 'noparam' ) }
+    assert_raise( Webgen::PluginParamNotFound ) { configfile.param_for_plugin( 'UnknownPlugin', 'param' ) }
   end
 
 

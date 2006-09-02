@@ -24,6 +24,7 @@ require 'pathname'
 require 'yaml'
 require 'fileutils'
 require 'webgen/config'
+require 'webgen/plugin'
 
 module Webgen
 
@@ -139,6 +140,7 @@ module Webgen
       case [plugin_name, param]
       when ['CorePlugins::Configuration', 'srcDir'] then @srcDir
       when ['CorePlugins::Configuration', 'outDir'] then @outDir
+      when ['CorePlugins::Configuration', 'websiteDir'] then @directory
       else @plugin_config.param_for_plugin( plugin_name, param )
       end
     end
@@ -149,7 +151,7 @@ module Webgen
       @manager.init
 
       @logger.info( 'WebSite#render' ) { "Starting rendering of website #{directory}..." }
-      @manager['FileHandler::FileHandler'].render_site
+      @manager['FileHandlers::FileHandler'].render_site
       @logger.info( 'WebSite#render' ) { "Rendering of #{directory} finished" }
     end
 
@@ -167,8 +169,8 @@ module Webgen
           @logger.error( 'WebSite#initialize' ) { e.message + ' -> Not using config file' }
         end
       end
-      @srcdir = File.join( @directory, @manager.param_for_plugin(  'CorePlugins::Configuration', 'srcDir' ) ) #TODO change to allow absolute paths
-      @outdir = File.join( @directory, @manager.param_for_plugin(  'CorePlugins::Configuration', 'outDir' ) )
+      @srcDir = File.join( @directory, @manager.param_for_plugin(  'CorePlugins::Configuration', 'srcDir' ) ) #TODO change to allow absolute paths
+      @outDir = File.join( @directory, @manager.param_for_plugin(  'CorePlugins::Configuration', 'outDir' ) )
       @plugin_config = @manager.plugin_config
       @manager.plugin_config = self
     end
@@ -213,8 +215,12 @@ module Webgen
     end
 
     # See PluginManager#param_for_plugin .
-    def param_for_plugin( plugin, param )
-      @config[plugin][param] if @config.has_key?( plugin )
+    def param_for_plugin( plugin_name, param )
+      if @config.has_key?( plugin_name ) && @config[plugin_name].has_key?( param )
+        @config[plugin_name][param]
+      else
+        raise PluginParamNotFound.new( plugin_name, param )
+      end
     end
 
     #######
