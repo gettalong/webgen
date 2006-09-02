@@ -51,10 +51,10 @@ class TemplateFileHandlerTest < Webgen::PluginTestCase
     template = Node.new( root, 'default.template' )
     dir1 = Node.new( root, 'dir1/' )
 
-    assert_equal( template, @plugin.instance_eval { get_default_template( root ) })
-    assert_equal( template, @plugin.instance_eval { get_default_template( dir1 ) })
+    assert_equal( template, @plugin.instance_eval { get_default_template( root, 'default.template' ) })
+    assert_equal( template, @plugin.instance_eval { get_default_template( dir1, 'default.template' ) })
     root.del_child( template )
-    assert_nil( @plugin.instance_eval { get_default_template( root ) })
+    assert_nil( @plugin.instance_eval { get_default_template( root, 'default.template' ) })
   end
 
 end

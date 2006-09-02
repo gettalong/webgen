@@ -126,6 +126,8 @@ TODO move todoc
       dispatch_msg( :after_node_created, node ) unless node.nil?
 
       #TODO check node for correct lang and other things
+      node['lang'] = Webgen::LanguageManager.language_for_code( node['lang'] ) unless node.nil? || node['lang'].kind_of?( Webgen::Language )
+
       node
     end
 

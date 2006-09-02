@@ -119,14 +119,17 @@ module Tags
 
     # Returns a hash of the registered tag plugins with the tag name as key.
     def registered_tags
-      tags = {}
-      @plugin_manager.plugins.each do |name, plugin|
-        if plugin.kind_of?( DefaultTag )
-          #TOOD write log message if duplicate tag name
-          plugin.tags.each {|tag| tags[tag] = plugin }
+      if !defined?( @registered_tags_cache ) || @cached_plugins_hash != @plugin_manager.plugins.keys.hash
+        @registered_tags_cache = {}
+        @plugin_manager.plugins.each do |name, plugin|
+          if plugin.kind_of?( DefaultTag )
+            #TOOD write log message if duplicate tag name
+            plugin.tags.each {|tag| @registered_tags_cache[tag] = plugin }
+          end
         end
+        @cached_plugins_hash = @plugin_manager.plugins.keys.hash
       end
-      tags
+      @registered_tags_cache
     end
 
   end
@@ -171,7 +174,7 @@ module Tags
       (self.config.infos[:tags] ||= [] ) << tag
     end
 
-    # See DefaultTag.tag
+    # See DefaultTag.register_tag
     def register_tag( tag )
       @tags << tag
     end

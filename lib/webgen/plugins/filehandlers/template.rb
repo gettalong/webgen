@@ -72,14 +72,14 @@ TODO: MOVE TO DOC
         template_node = node.resolve_node( node['template'] )
         if template_node.nil?
           log(:warn) { "Specified template '#{node['template']}' for file <#{node.node_info[:src]}> not found, using default template!" }
-          template_node = get_default_template( node.parent )
+          template_node = get_default_template( node.parent, param( 'defaultTemplate' ) )
         end
         node['template'] = template_node
       elsif node['template'].kind_of?( Node )
         template_node = node['template']
       else
         log(:info) { "Using default template for <#{node.node_info[:src]}>" }
-        template_node = get_default_template( node.parent )
+        template_node = get_default_template( node.parent, param( 'defaultTemplate' ) )
         node['template'] = template_node
       end
 
@@ -96,13 +96,13 @@ TODO: MOVE TO DOC
 
     # Returns the default template of the directory node +dir+. If the template node is not found,
     # the parent directories are searched.
-    def get_default_template( dir )
-      template_node = dir.find {|child| child =~ param( 'defaultTemplate' ) }
+    def get_default_template( dir, default_template )
+      template_node = dir.find {|child| child =~ default_template }
       if template_node.nil?
         if dir.parent.nil?
-          log(:warn) { "No default template '#{param( 'defaultTemplate' )}' in root directory found!" }
+          log(:warn) { "No default template '#{default_template}' in root directory found!" }
         else
-          template_node = get_default_template( dir.parent )
+          template_node = get_default_template( dir.parent, default_template )
         end
       end
       template_node

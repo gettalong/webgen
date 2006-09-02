@@ -4,6 +4,8 @@ require 'webgen/languages'
 class LanguageTest < Webgen::TestCase
 
   def test_get_language
+    assert_nil( Webgen::LanguageManager.language_for_code( nil ) )
+
     lang1 = lang2 = lang3 = lang4 = nil
     assert_nothing_raised do
       lang1 = Webgen::LanguageManager.language_for_code( 'ger' )

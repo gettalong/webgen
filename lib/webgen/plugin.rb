@@ -417,14 +417,16 @@ module Webgen
       end
 
       def registered_handlers
-        # TODO could be made faster by storing the hash
-        handlers = {}
-        @plugin_manager.plugins.each do |name, plugin|
-          if plugin.kind_of?( self.class ) && plugin.class.registered_handler
-            handlers[plugin.class.registered_handler] = plugin
+        if !defined?( @registered_handlers_cache ) || @cached_plugins_hash != @plugin_manager.plugins.keys.hash
+          @registered_handlers_cache = {}
+          @plugin_manager.plugins.each do |name, plugin|
+            if plugin.kind_of?( self.class ) && plugin.class.registered_handler
+              @registered_handlers_cache[plugin.class.registered_handler] = plugin
+            end
           end
+          @cached_plugins_hash = @plugin_manager.plugins.keys.hash
         end
-        handlers
+        @registered_handlers_cache
       end
 
     end

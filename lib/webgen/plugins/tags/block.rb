@@ -36,21 +36,22 @@ module Tags
 
     def process_tag( tag, chain )
       block_node = (chain.length > 1 ? chain[1] : chain[0])
-      if block_node.node_info[:pagedata].blocks.has_key?( param( 'block' ) )
+      block_name = param( 'block' )
+      if block_node.node_info[:pagedata].blocks.has_key?( block_name )
         if block_node['useERB']
           node = chain.last
           begin
-            content = block_node.node_info[:pagedata].blocks[param('block')].render_with_erb( binding )
+            content = block_node.node_info[:pagedata].blocks[block_name].render_with_erb( binding )
           rescue
-            log(:error) { "Error while running ERB on <#{block_node.node_info[:src]}> (block '#{param('block')}'): #{$!.message}" }
+            log(:error) { "Error while running ERB on <#{block_node.node_info[:src]}> (block '#{block_name}'): #{$!.message}" }
             content = ''
           end
         else
-          content = block_node.node_info[:pagedata].blocks[param('block')].content
+          content = block_node.node_info[:pagedata].blocks[block_name].content
         end
         [content, (chain[1..-1].empty? ? chain : chain[1..-1]) ]
       else
-        log(:error) { "Node <#{block_node.node_info[:src]}> does not contain a block called '#{param('block')}'" }
+        log(:error) { "Node <#{block_node.node_info[:src]}> does not contain a block called '#{block_name}'" }
         ''
       end
     end

@@ -41,12 +41,13 @@ module Tags
 
     def process_tag( tag, chain )
       @process_output = param( 'processOutput' )
-      if param( 'command' )
-        cmd = ExtendedCommand.new( param( 'command' ) )
-        log(:debug) { "Executed command '#{param('command')}', results: #{cmd.inspect}" }
+      command = param( 'command' )
+      if command
+        cmd = ExtendedCommand.new( command )
+        log(:debug) { "Executed command '#{command}', results: #{cmd.inspect}" }
         output = cmd.out_text
         if cmd.ret_code != 0
-          log(:error) { "Command '#{param( 'command' )}' did not return with exit value 0: #{cmd.err_text}" }
+          log(:error) { "Command '#{command}' did not return with exit value 0: #{cmd.err_text}" }
         end
         output = CGI::escapeHTML( output ) if param( 'escapeHTML' )
       end

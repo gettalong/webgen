@@ -96,9 +96,9 @@ module Webgen
         File.readlines( code_file ).each do |l|
           data = l.chomp.split( '|' ).collect {|f| f.empty? ? nil : f }
           lang = Language.new( data[0..2], data[3] )
-          @@languages[lang.code2chars] ||= lang
-          @@languages[lang.code3chars] ||= lang
-          @@languages[lang.code3chars_alternative] ||= lang
+          @@languages[lang.code2chars] ||= lang unless lang.code2chars.nil?
+          @@languages[lang.code3chars] ||= lang unless lang.code3chars.nil?
+          @@languages[lang.code3chars_alternative] ||= lang unless lang.code3chars_alternative.nil?
         end
         @@languages.freeze
       end

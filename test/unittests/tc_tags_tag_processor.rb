@@ -71,7 +71,6 @@ class TagProcessorTest < Webgen::PluginTestCase
     @manager.init
   end
 
-
 end
 
 
