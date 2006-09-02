@@ -66,19 +66,19 @@ class PageHandlerTest < Webgen::PluginTestCase
   def test_create_node_from_data
     root = @manager['FileHandlers::FileHandler'].instance_eval { create_root_node }
     testdata = YAML::load( File.read( fixture_path( 'testdata.yaml' ) ) )
-    node = @plugin.create_node_from_data( 'index.page', root, testdata['data'], {'lang'=>'eo', 'test'=>'yes'} )
+    node = @plugin.create_node_from_data( 'index.page', root, testdata['data'], {'lang'=>'eo', 'test'=>'yes', 'orderInfo'=>6} )
 
-    assert_equal( 'index.html', node.path )
+    assert_equal( 'index.eo.html', node.path )
     assert_equal( 'index.page', node.node_info[:pagename] )
-    assert_equal( 'index.en.page', node.node_info[:local_pagename] )
+    assert_equal( 'index.eo.page', node.node_info[:local_pagename] )
     assert_equal( 'index.page', node.node_info[:src] )
     assert_equal( @plugin, node.node_info[:processor] )
     assert_equal( 'Index', node['title'] )
     assert_equal( 'yes', node['test'] )
-    assert_equal( 0, node['orderInfo'] )
-    assert_equal( Webgen::LanguageManager.language_for_code( 'en' ), node['lang'] )
+    assert_equal( 6, node['orderInfo'] )
+    assert_equal( Webgen::LanguageManager.language_for_code( 'epo' ), node['lang'] )
 
-    node1 = @plugin.create_node_from_data( 'index.page', root, testdata['data'], {} )
+    node1 = @plugin.create_node_from_data( 'index.page', root, testdata['data'], {'lang'=>'eo'} )
     assert_same( node, node1 )
   end
 
@@ -113,23 +113,31 @@ class PageHandlerTest < Webgen::PluginTestCase
     analyse_file_name( OpenStruct.new( {'lang' => @manager.param_for_plugin( 'CorePlugins::Configuration', 'lang' ),
                                         'filename' => 'default.page',
                                         'name' => 'default', 'orderInfo' => 0,
-                                        'title' => 'Default', 'useLangPart' => false } ) )
+                                        'title' => 'Default', 'useLangPart' => false } ), nil )
+    analyse_file_name( OpenStruct.new( {'lang' => 'de',
+                                        'filename' => 'default.page',
+                                        'name' => 'default', 'orderInfo' => 0,
+                                        'title' => 'Default', 'useLangPart' => true } ), 'de' )
     analyse_file_name( OpenStruct.new( {'lang' => 'de',
                                         'filename' => 'default.de.page',
                                         'name' => 'default', 'orderInfo' => 0,
-                                        'title' => 'Default', 'useLangPart' => true } ) )
+                                        'title' => 'Default', 'useLangPart' => true } ), nil )
+    analyse_file_name( OpenStruct.new( {'lang' => 'en',
+                                        'filename' => 'default.de.page',
+                                        'name' => 'default', 'orderInfo' => 0,
+                                        'title' => 'Default', 'useLangPart' => false } ), 'en' )
     analyse_file_name( OpenStruct.new( {'lang' => 'eo',
                                         'filename' => '12.Hello webpage_hello.eo.page',
                                         'name' => 'Hello webpage_hello', 'orderInfo' => 12,
-                                        'title' => 'Hello webpage hello', 'useLangPart' => true } ) )
+                                        'title' => 'Hello webpage hello', 'useLangPart' => true } ), nil )
     analyse_file_name( OpenStruct.new( {'lang' => @manager.param_for_plugin( 'CorePlugins::Configuration', 'lang' ),
                                         'filename' => 'default.e.page',
                                         'name' => 'default', 'orderInfo' => 0,
-                                        'title' => 'Default', 'useLangPart' => false } ) )
+                                        'title' => 'Default', 'useLangPart' => false } ), nil )
     analyse_file_name( OpenStruct.new( {'lang' => @manager.param_for_plugin( 'CorePlugins::Configuration', 'lang' ),
                                         'filename' => 'default.eadd.page',
                                         'name' => 'default', 'orderInfo' => 0,
-                                        'title' => 'Default', 'useLangPart' => false } ) )
+                                        'title' => 'Default', 'useLangPart' => false } ), nil )
   end
 
   def test_create_output_name
@@ -153,8 +161,8 @@ class PageHandlerTest < Webgen::PluginTestCase
     assert_equal( expected, @plugin.instance_eval { create_output_name( analysed, style, omitLang ) })
   end
 
-  def analyse_file_name( struct )
-    assert_equal( struct, @plugin.instance_eval { analyse_file_name( struct.filename ) })
+  def analyse_file_name( struct, lang )
+    assert_equal( struct, @plugin.instance_eval { analyse_file_name( struct.filename, lang ) })
   end
 
 end

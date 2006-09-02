@@ -125,20 +125,20 @@ TODO: move to doc
 =end
 
     def create_node_from_data( filename, parent, data, meta_info )
-      analysed_name = analyse_file_name( filename )
-
       begin
-        data = WebPageData.new( data, @plugin_manager['ContentConverters::DefaultContentConverter'].registered_handlers )
+        data = WebPageData.new( data, @plugin_manager['ContentConverters::DefaultContentConverter'].registered_handlers,
+                                {'blocks' => meta_info['blocks']} )
       rescue WebPageDataInvalid => e
         log(:error) { "Invalid page file <#{filename}>: #{e.message}" }
         return nil
       end
 
+      data.meta_info.update( meta_info )
+      analysed_name = analyse_file_name( filename, data.meta_info['lang'] )
+
       data.meta_info['lang'] ||= analysed_name.lang
-      data.meta_info['lang'] = Webgen::LanguageManager.language_for_code( data.meta_info['lang'] )
       data.meta_info['title'] ||= analysed_name.title
       data.meta_info['orderInfo'] ||= analysed_name.orderInfo
-      data.meta_info.update( meta_info.merge( data.meta_info ) )
 
       pagename = analysed_name.name + '.' + EXTENSION
       localizedPagename = analysed_name.name + '.' + data.meta_info['lang'] + '.' + EXTENSION
@@ -161,12 +161,14 @@ TODO: move to doc
     end
 
     def render_node( node, block_name = 'content', use_templates = true )
-      chain = [nil]
+      dummy = Node.new( nil, 'dummy' )
+      dummy.node_info[:src] = 'dummy'
+      chain = [dummy]
       content = "{block: #{block_name}}"
-      chain << @plugin_manager['FileHandlers::TemplateFileHandler'].templates_for_node( node ) if use_templates
+      chain += @plugin_manager['FileHandlers::TemplateFileHandler'].templates_for_node( node ) if use_templates
       chain << node
 
-      result = @plugin_manager['Tags::Tags'].substitute_tags( content, chain )
+      result = @plugin_manager['Tags::TagProcessor'].process( content, chain )
       dispatch_msg( :AFTER_CONTENT_RENDERED, result, node )
       result
     end
@@ -187,7 +189,11 @@ TODO: move to doc
 
     # See DefaultFileHandler#node_for_lang
     def node_for_lang( node, lang )
-      node.parent.find {|c| c.node_info[:pagename] == node.node_info[:pagename] && c['lang'] == lang}
+      if node['lang'] == lang
+        node
+      else
+        node.parent.find {|c| c.node_info[:pagename] == node.node_info[:pagename] && c['lang'] == lang}
+      end
     end
 
     # See DefaultFileHandler#link_from
@@ -213,12 +219,12 @@ TODO: MOVE TO DOC
 - lang part can be two or three characters, otherwise ignored, has to be a ISO-639-2 lang name
 =end
 
-    def analyse_file_name( filename )
+    def analyse_file_name( filename, lang = nil )
       matchData = /^(?:(\d+)\.)?([^.]*?)(?:\.(\w\w\w?))?\.(.*)$/.match( File.basename( filename ) )
       analysed = OpenStruct.new
 
-      log(:info) { "Using default language for file <#{filename}>" } if matchData[3].nil?
-      analysed.lang      = matchData[3] || param( 'lang', 'CorePlugins::Configuration' )
+      log(:info) { "Using default language for file <#{filename}>" } if lang.nil? && matchData[3].nil?
+      analysed.lang      = lang || matchData[3] || param( 'lang', 'CorePlugins::Configuration' )
       analysed.filename  = filename
       analysed.useLangPart  = ( param( 'defaultLangInFilename' ) || param( 'lang', 'CorePlugins::Configuration' ) != analysed.lang )
       analysed.name      = matchData[2]
