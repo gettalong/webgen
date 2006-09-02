@@ -4,8 +4,9 @@ require 'rbconfig'
 class ExecuteCommandTagTest < Webgen::TagTestCase
 
   plugin_files [
-    'webgen/plugins/tags/executecommand.rb',
-  ]
+                'webgen/plugins/coreplugins/resourcemanager.rb',
+                'webgen/plugins/tags/executecommand.rb',
+               ]
   plugin_to_test 'Tags::ExecuteCommandTag'
 
 
@@ -21,6 +22,9 @@ class ExecuteCommandTagTest < Webgen::TagTestCase
 
     set_config( 'command'=>echo_cmd( testtext ), 'processOutput'=>true, 'escapeHTML'=>true )
     assert_equal( 'a&quot;b&quot;', @plugin.process_tag( 'executecommand', nil ).chomp.strip )
+
+    set_config( 'command'=>echo_cmd( testtext ), 'processOutput'=>true, 'escapeHTML'=>true, 'highlight'=>'ruby' )
+    assert_kind_of( String, @plugin.process_tag( 'executecommand', nil ) )
 
     set_config( 'command'=>"invalid_echo_command -n '#{testtext}'", 'processOutput'=>true, 'escapeHTML'=>true )
     assert_equal( '', @plugin.process_tag( 'executecommand', nil ).chomp.strip )

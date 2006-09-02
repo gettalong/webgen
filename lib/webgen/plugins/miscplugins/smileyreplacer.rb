@@ -55,7 +55,7 @@ TODO: move to doc
 
     def initialize( plugin_manager )
       super
-      @plugin_manager['FileHandlers::PageFileHandler'].add_msg_listener( :AFTER_CONTENT_RENDERED, method( :replace_smileys ) )
+      @plugin_manager['FileHandlers::PageFileHandler'].add_msg_listener( :after_content_rendered, method( :replace_smileys ) )
     end
 
     #######

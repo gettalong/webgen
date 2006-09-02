@@ -4,6 +4,7 @@ require 'webgen/node'
 class TagProcessorTest < Webgen::PluginTestCase
 
   plugin_files [
+    'webgen/plugins/coreplugins/resourcemanager.rb',
     'webgen/plugins/tags/tag_processor.rb'
   ]
   plugin_to_test 'Tags::TagProcessor'
@@ -44,9 +45,9 @@ class TagProcessorTest < Webgen::PluginTestCase
   end
 
   def test_registered_tags
-    assert_equal( {}, @plugin.instance_eval { registered_tags } )
+    assert_equal( {'resource'=>@manager['Tags::ResourceTag']}, @plugin.instance_eval { registered_tags } )
     add_tag
-    assert_equal( {'test'=>@manager['TestTag']}, @plugin.instance_eval { registered_tags } )
+    assert_equal( {'resource'=>@manager['Tags::ResourceTag'], 'test'=>@manager['TestTag']}, @plugin.instance_eval { registered_tags } )
   end
 
   #######

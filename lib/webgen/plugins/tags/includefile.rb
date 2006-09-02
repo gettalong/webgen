@@ -22,6 +22,7 @@
 
 require 'cgi'
 require 'webgen/plugins/tags/tag_processor'
+require 'webgen/plugins/miscplugins/syntax_highlighter'
 
 module Tags
 
@@ -33,9 +34,13 @@ module Tags
     param 'filename', nil, 'The name of the file which should be included'
     param 'processOutput', true, 'The file content will be scanned for tags if true'
     param 'escapeHTML', true, 'Special HTML characters in the file content will be escaped if true'
+    param 'highlight', nil, 'Name of language that should be used for syntax highlighting of ' +
+      'the content of the file. If set to nil, no highlighting is performed. ' +
+      "Available langs: #{MiscPlugins::SyntaxHighlighter.available_languages.sort.join(', ')}"
     set_mandatory 'filename', true
 
     register_tag 'includeFile'
+
 
     def process_tag( tag, chain )
       @process_output = param( 'processOutput' )
@@ -48,6 +53,9 @@ module Tags
       end
       content = CGI::escapeHTML( content ) if param( 'escapeHTML' )
 
+      if !param( 'highlight' ).nil?
+        content = @plugin_manager['MiscPlugins::SyntaxHighlighter'].highlight( content, param( 'highlight' ) )
+      end
       content
     end
 

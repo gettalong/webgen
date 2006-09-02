@@ -84,6 +84,8 @@ module Webgen
     # required stdlib files sothat no warnings etc. are shown when re-requiring files
     require 'set'
     require 'fileutils'
+    # require coderay, it will not work anymore if the CodeRay constants gets removed...
+    begin require 'coderay'; rescue LoadError; end
 
     def setup
       @loader = PluginLoader.new

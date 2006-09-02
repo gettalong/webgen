@@ -68,7 +68,7 @@ module CorePlugins
       end
 
       # Write the resource to the output directory.
-      def write_resource( root_dir )
+      def write_resource( root_dir, file_handler )
         raise NotImplementedError
       end
 
@@ -113,7 +113,7 @@ module CorePlugins
       end
 
       def write_resource( root_dir, file_handler )
-        File.open( dest_path, 'w' ) {|file| file.write( data )} if write_resource?( root_dir, file_handler )
+        File.open( dest_path( root_dir ), 'w' ) {|file| file.write( data )} if write_resource?( root_dir, file_handler )
       end
 
     end
@@ -132,7 +132,7 @@ module CorePlugins
 
     def initialize( plugin_manager )
       super
-      @plugin_manager['FileHandlers::FileHandler'].add_msg_listener( :after_all_written, method( :write_resources ) )
+      @plugin_manager['FileHandlers::FileHandler'].add_msg_listener( :after_all_nodes_written, method( :write_resources ) )
       @resources = {}
       define_webgen_resources unless Webgen.data_dir.empty?
       define_user_resources
@@ -235,7 +235,7 @@ module CorePlugins
     end
 
 
-    def write_resources
+    def write_resources( root )
       outDir = @plugin_manager.param_for_plugin( 'CorePlugins::Configuration', 'outDir' )
 
       @resources.each do |name, res|

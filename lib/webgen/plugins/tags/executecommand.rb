@@ -22,6 +22,7 @@
 
 require 'cgi'
 require 'webgen/plugins/tags/tag_processor'
+require 'webgen/plugins/miscplugins/syntax_highlighter'
 require 'webgen/extcommand'
 
 module Tags
@@ -35,6 +36,9 @@ module Tags
     param 'command', nil, 'The command which should be executed'
     param 'processOutput', true, 'The output of the command will be further processed by the TagProcessor if true'
     param 'escapeHTML', true, 'Special HTML characters in the output will be escaped if true'
+    param 'highlight', nil, 'Name of language that should be used for syntax highlighting ' +
+      'the output of the command. If set to nil, no highlighting is performed. ' +
+      "Available langs: #{MiscPlugins::SyntaxHighlighter.available_languages.sort.join(', ')}"
     set_mandatory 'command', true
 
     register_tag 'execute'
@@ -50,6 +54,9 @@ module Tags
           log(:error) { "Command '#{command}' did not return with exit value 0: #{cmd.err_text}" }
         end
         output = CGI::escapeHTML( output ) if param( 'escapeHTML' )
+        if !param( 'highlight' ).nil?
+          output = @plugin_manager['MiscPlugins::SyntaxHighlighter'].highlight( output, param( 'highlight' ) )
+        end
       end
       output
     end

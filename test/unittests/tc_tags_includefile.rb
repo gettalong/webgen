@@ -4,8 +4,9 @@ require 'webgen/node'
 class IncludeFileTagTest < Webgen::TagTestCase
 
   plugin_files [
-    'webgen/plugins/tags/includefile.rb',
-  ]
+                'webgen/plugins/coreplugins/resourcemanager.rb',
+                'webgen/plugins/tags/includefile.rb',
+               ]
   plugin_to_test 'Tags::IncludeFileTag'
 
   def test_process_tag
@@ -26,6 +27,9 @@ class IncludeFileTagTest < Webgen::TagTestCase
 
     set_config( 'filename'=>"testfile", 'processOutput'=>true, 'escapeHTML'=>true )
     assert_equal( CGI::escapeHTML(content), @plugin.process_tag( 'includeFile', [node] ) )
+
+    set_config( 'filename'=>"testfile", 'processOutput'=>true, 'escapeHTML'=>false, 'highlight'=>'html' )
+    assert_kind_of( String, @plugin.process_tag( 'includeFile', [node] ) )
 
     set_config( 'filename'=>"invalidfile", 'processOutput'=>true, 'escapeHTML'=>true )
     assert_equal( '', @plugin.process_tag( 'includeFile', [node] ) )

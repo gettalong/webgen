@@ -111,7 +111,9 @@ TODO: MOVE TO DOC
 
     def initialize( plugin_manager )
       super
-      add_msg_name( :AFTER_CONTENT_RENDERED )
+      add_msg_name( :after_content_rendered )
+      @dummy_node = Node.new( nil, 'dummy' )
+      @dummy_node.node_info[:src] = 'dummy'
     end
 
     def create_node( srcName, parent, meta_info )
@@ -161,15 +163,13 @@ TODO: move to doc
     end
 
     def render_node( node, block_name = 'content', use_templates = true )
-      dummy = Node.new( nil, 'dummy' )
-      dummy.node_info[:src] = 'dummy'
-      chain = [dummy]
+      chain = [@dummy_node]
       content = "{block: #{block_name}}"
       chain += @plugin_manager['FileHandlers::TemplateFileHandler'].templates_for_node( node ) if use_templates
       chain << node
 
       result = @plugin_manager['Tags::TagProcessor'].process( content, chain )
-      dispatch_msg( :AFTER_CONTENT_RENDERED, result, node )
+      dispatch_msg( :after_content_rendered, result, node )
       result
     end
 

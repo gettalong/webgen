@@ -65,8 +65,11 @@ TODO move todoc
       super
       add_msg_name( :before_node_created )
       add_msg_name( :after_node_created )
-      add_msg_name( :after_all_read )
-      add_msg_name( :after_all_written )
+      add_msg_name( :after_all_nodes_created )
+      add_msg_name( :before_node_written )
+      add_msg_name( :after_node_written )
+      add_msg_name( :before_all_nodes_written )
+      add_msg_name( :after_all_nodes_written )
       load_meta_info_backing_file
     end
 
@@ -115,8 +118,8 @@ TODO move todoc
 
       meta_info = meta_info_for( handler, File.join( parent_node.absolute_path, filename ) )
       log(:info) { "Trying to create node for <#{file}>..." }
-      dispatch_msg( :before_node_created, parent_node, filename )
       src_path = File.join( Node.root( parent_node ).node_info[:src], parent_node.absolute_path, filename )
+      dispatch_msg( :before_node_created, src_path, parent_node, handler, meta_info )
       if block_given?
         node = yield( src_path, parent_node, handler, meta_info )
       else
@@ -200,20 +203,22 @@ TODO move todoc
       log(:info) { "No handlers found for: #{unused_files.inspect}" } if unused_files.length > 0
 
       handle_output_backing( root_node )
-      dispatch_msg( :after_all_read, root_node )
+      dispatch_msg( :after_all_nodes_created, root_node )
 
       root_node
     end
 
     # Recursively writes out the tree specified by +node+.
     def write_tree( node )
-      dispatch_msg( :before_all_written ) if node.parent.nil?
+      dispatch_msg( :before_all_nodes_written, node ) if node.parent.nil?
 
       log(:info) { "Writing <#{node.full_path}>" }
+      dispatch_msg( :before_node_written, node )
       node.write_node
+      dispatch_msg( :after_node_written, node )
       node.each {|child| write_tree( child ) }
 
-      dispatch_msg( :after_all_written ) if node.parent.nil?
+      dispatch_msg( :after_all_nodes_written, node ) if node.parent.nil?
     end
 
     # Creates a set of all files in the source directory, removing all files which should be ignored.
