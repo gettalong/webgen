@@ -42,7 +42,7 @@ module MenuStyles
     end
 
     def param( name, plugin = nil )
-      if !@options.nil? && @options.kind_of?( Hash ) && @options.has_key?( name ) &&
+      if defined?( @options) && !@options.nil? && @options.kind_of?( Hash ) && @options.has_key?( name ) &&
           self.class.config.params.has_key?( name )
         @options[name]
       else

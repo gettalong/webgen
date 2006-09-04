@@ -49,7 +49,7 @@ class FileHandlerTest < Webgen::PluginTestCase
 
   def test_find_all_files
     found_files = @plugin.find_all_files
-    files = find_in_sample_site {|p| p != sample_site( 'src' ) + '/' }
+    files = find_in_sample_site {|p| p != sample_site( Webgen::SRC_DIR ) + '/' }
     assert_equal( files, found_files )
   end
 

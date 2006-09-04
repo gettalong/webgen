@@ -137,7 +137,7 @@ module Webgen
 
     def param_for_plugin( plugin_name, param )
       case [plugin_name, param]
-      when ['CorePlugins::Configuration', 'srcDir'] then sample_site( 'src' )
+      when ['CorePlugins::Configuration', 'srcDir'] then sample_site( Webgen::SRC_DIR )
       when ['CorePlugins::Configuration', 'outDir'] then sample_site( 'out' )
       when ['CorePlugins::Configuration', 'websiteDir'] then sample_site
       else raise Webgen::PluginParamNotFound.new( plugin_name, param )
@@ -146,7 +146,7 @@ module Webgen
 
     def find_in_sample_site
       files = Set.new
-      Find.find( sample_site( 'src' ) ) do |path|
+      Find.find( sample_site( Webgen::SRC_DIR ) ) do |path|
         Find.prune if File.basename( path ) =~ /^\./
         path += '/' if FileTest.directory?(path)
         files << path if yield( path )

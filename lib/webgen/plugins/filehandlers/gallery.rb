@@ -178,6 +178,11 @@ TODO: move to doc
 
 =end
 
+    def initialize( plugin_manager )
+      super
+      @filedata = {}
+    end
+
     def create_node( file, parent, meta_info )
       @filedata = {}
       @imagedata = {}

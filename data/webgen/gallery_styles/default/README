@@ -1,5 +1,6 @@
 description:
-  Provides a useful but simple gallery style.
+  Provides a simple and useful gallery style with thumbnail previews that link
+  to the next and previous picture or gallery page.
 
 creator:
   Thomas Leitner

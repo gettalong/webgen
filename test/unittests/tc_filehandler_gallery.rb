@@ -83,6 +83,10 @@ class GalleryFileHandlerTest < Webgen::PluginTestCase
   ]
   plugin_to_test 'FileHandlers::GalleryFileHandler'
 
+  def test_param
+    assert_nothing_raised { @plugin.instance_eval { param('imagesPerPage') } }
+  end
+
   def test_create_node
     root = Node.new( nil, '/' )
     root.node_info[:src] = ''

@@ -25,6 +25,7 @@ require 'yaml'
 require 'ostruct'
 require 'logger'
 require 'tsort'
+require 'webgen/config'
 
 class OpenStruct
   public :table #:nodoc:#

@@ -30,6 +30,12 @@ module Webgen
   "It is used to generate static Web pages from templates and page " \
   "description files."
 
+  # The directory below a website directory in which the source files are.
+  SRC_DIR = 'src'
+
+  # The directory below a website directory in which the plugin files are.
+  PLUGIN_DIR = 'plugin'
+
   # Returns the data directory for webgen.
   def self.data_dir
     unless defined?( @@data_dir )

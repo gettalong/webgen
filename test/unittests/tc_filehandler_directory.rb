@@ -68,7 +68,7 @@ class DirectoryHandlerTest < Webgen::PluginTestCase
 
   def setup
     super
-    @dirs = find_in_sample_site {|path| path =~ /\/$/ }.collect {|p| p.sub(/^#{sample_site( 'src' )}/, sample_site( 'out' ) )}
+    @dirs = find_in_sample_site {|path| path =~ /\/$/ }.collect {|p| p.sub(/^#{sample_site( Webgen::SRC_DIR )}/, sample_site( 'out' ) )}
     @root_dir = @dirs.min
     @max_dir = @dirs.max
   end
