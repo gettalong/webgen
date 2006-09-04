@@ -71,6 +71,18 @@ module Webgen
       ' '*indent + "#{Color.green}#{text}:#{Color.reset}".ljust( ljustlength - indent + Color.green.length + Color.reset.length )
     end
 
+    def self.dirinfo_output( opts, name, dirinfo )
+      ljust = 15 + opts.summary_indent.length
+      opts.separator CliUtils.section( 'Name', ljust, opts.summary_indent.length + 2 ) + "#{Color.lred}#{name}#{Color.reset}"
+
+      dirinfo.infos.sort.each do |name, value|
+        desc = CliUtils.format( value, ljust )
+        opts.separator CliUtils.section( name.capitalize, ljust, opts.summary_indent.length + 2 ) + desc.shift
+        desc.each {|line| opts.separator line}
+      end
+      opts.separator ''
+    end
+
   end
 
 
@@ -89,17 +101,10 @@ module Webgen
         opts.separator ""
         opts.separator "Available templates and styles:"
         opts.separator ""
-        entry_output_proc = proc do |name, entry|
-          desc = CliUtils.format( entry.infos['description'], 15 + opts.summary_indent.length )
-          opts.separator opts.summary_indent + "  #{Color.green}Name:#{Color.reset}        #{Color.lred}#{name}#{Color.reset}"
-          opts.separator opts.summary_indent + "  #{Color.green}Description:#{Color.reset} #{desc.shift}"
-          desc.each {|line| opts.separator line}
-          opts.separator ""
-        end
         opts.separator opts.summary_indent + "#{Color.bold}Templates#{Color.reset}"
-        Webgen::WebSiteTemplate.entries.sort.each( &entry_output_proc )
+        Webgen::WebSiteTemplate.entries.sort.each {|name, entry| CliUtils.dirinfo_output( opts, name, entry ) }
         opts.separator opts.summary_indent + "#{Color.bold}Styles#{Color.reset}"
-        Webgen::WebSiteStyle.entries.sort.each( &entry_output_proc )
+        Webgen::WebSiteStyle.entries.sort.each {|name, entry| CliUtils.dirinfo_output( opts, name, entry ) }
       end
       @template = 'default'
       @style = 'default'
@@ -135,8 +140,7 @@ module Webgen
       useWebsiteStyle.options = CmdParse::OptionParserWrapper.new do |opts|
         opts.separator "Available styles:"
         opts.separator ""
-        opts.separator opts.summary_indent + "#{Color.bold}Styles#{Color.reset}"
-        Webgen::WebSiteStyle.entries.sort.each {|name, entry| entry_output( opts, name, entry ) }
+        Webgen::WebSiteStyle.entries.sort.each {|name, entry| CliUtils.dirinfo_output( opts, name, entry ) }
       end
       def useWebsiteStyle.usage
         "Usage: #{commandparser.program_name} [global options] use website_style STYLE"
@@ -160,8 +164,7 @@ module Webgen
       useGalleryStyle.options = CmdParse::OptionParserWrapper.new do |opts|
         opts.separator "Available styles:"
         opts.separator ""
-        opts.separator opts.summary_indent + "#{Color.bold}Styles#{Color.reset}"
-        Webgen::GalleryStyle.entries.sort.each {|name, entry| entry_output( opts, name, entry ) }
+        Webgen::GalleryStyle.entries.sort.each {|name, entry| CliUtils.dirinfo_output( opts, name, entry ) }
       end
       def useGalleryStyle.usage
         "Usage: #{commandparser.program_name} [global options] use gallery_style STYLE"
@@ -179,14 +182,6 @@ module Webgen
     #######
     private
     #######
-
-    def entry_output( opts, name, entry )
-      desc = CliUtils.format( entry.infos['description'], 15 + opts.summary_indent.length )
-      opts.separator opts.summary_indent + "  #{Color.green}Name:#{Color.reset}        #{Color.lred}#{name}#{Color.reset}"
-      opts.separator opts.summary_indent + "  #{Color.green}Description:#{Color.reset} #{desc.shift}"
-      desc.each {|line| opts.separator line}
-      opts.separator ""
-    end
 
   end
 
