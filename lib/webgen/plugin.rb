@@ -450,7 +450,9 @@ module Webgen
 
   end
 
-  #DEFAULT_PLUGIN_LOADER.load_from_dir( File.join( File.dirname( __FILE__ ), 'plugins' ),
-  #                                     File.dirname( __FILE__ ).sub( /webgen$/, '' ) )
+  LOAD_DEFAULT_PLUGINS = true unless defined?( LOAD_DEFAULT_PLUGINS )
+
+  DEFAULT_PLUGIN_LOADER.load_from_dir( File.join( File.dirname( __FILE__ ), 'plugins' ),
+                                       File.dirname( __FILE__ ).sub( /webgen$/, '' ) ) if LOAD_DEFAULT_PLUGINS
 
 end

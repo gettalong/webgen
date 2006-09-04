@@ -1,7 +1,10 @@
+require 'webgen/config'
+
+Webgen::LOAD_DEFAULT_PLUGINS = false
+
 require 'pp'
 require 'test/unit'
 require 'webgen/plugin'
-require 'webgen/config'
 
 module Webgen
 

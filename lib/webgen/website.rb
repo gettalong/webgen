@@ -61,8 +61,8 @@ module Webgen
     # hierarchy.
     def copy_to( dest )
       files.each do |file|
-        destpath = File.join( dest, file.sub( /^#{path}/, '' ) )
-        FileUtils.mkdir_p( destpath )
+        destpath = File.join( dest, File.dirname( file ).sub( /^#{path}/, '' ) )
+        FileUtils.mkdir_p( File.dirname( destpath ) )
         if File.directory?( file )
           FileUtils.mkdir( File.join( destpath, File.basename( file ) ) )
         else
@@ -112,6 +112,22 @@ module Webgen
   end
 
 
+  # A gallery style provides style information for gallery pages. It should contains the files
+  # +gallery_main.template+, +gallery_gallery.template+ and +gallery_image.template+ and an optional
+  # readme file.
+  class GalleryStyle < DirectoryInfo
+
+    # Base path for the styles.
+    BASE_PATH = File.join( Webgen.data_dir, 'gallery_styles' )
+
+    # See DirectoryInfo#files
+    def files
+      super.select {|f| f != File.join( path, 'README' )}
+    end
+
+  end
+
+
   # A WebSite object represents a webgen website directory and is used for manipulating it.
   class WebSite
 
@@ -121,6 +137,9 @@ module Webgen
     # The logger used for the website
     attr_reader :logger
 
+    # The plugin manager used for this website.
+    attr_reader :manager
+
     # Creates a new WebSite object for the given +directory+ and loads its plugins. If the
     # +plugin_config+ parameter is given, it is used to resolve the values for plugin parameters.
     # Otherwise, a ConfigurationFile instance is used as plugin configuration.
@@ -129,13 +148,13 @@ module Webgen
       @logger = Webgen::Logger.new
 
       @loader = PluginLoader.new
-      @loader.load_from_dir( File.join( @directory, 'plugin' ) )
+      @loader.load_from_dir( File.join( @directory, Webgen::PLUGIN_DIR ) )
       @manager = PluginManager.new( [DEFAULT_PLUGIN_LOADER, @loader], DEFAULT_PLUGIN_LOADER.plugins + @loader.plugins )
       @manager.logger = @logger
       set_plugin_config( plugin_config )
     end
 
-    # Returns a modified value for Configuration:srcDir and Configuration:outDir.
+    # Returns a modified value for Configuration:srcDir, Configuration:outDir and Configuration:websiteDir.
     def param_for_plugin( plugin_name, param )
       case [plugin_name, param]
       when ['CorePlugins::Configuration', 'srcDir'] then @srcDir
@@ -155,24 +174,13 @@ module Webgen
       @logger.info( 'WebSite#render' ) { "Rendering of #{directory} finished" }
     end
 
-    #######
-    private
-    #######
-
-    def set_plugin_config( plugin_config )
-      if plugin_config
-        @manager.plugin_config = plugin_config
-      else
-        begin
-          @manager.plugin_config = ConfigurationFile.new( File.join( @directory, 'config.yaml' ) )
-        rescue ConfigurationFileInvalid => e
-          @logger.error( 'WebSite#initialize' ) { e.message + ' -> Not using config file' }
-        end
+    # Loads the configuration file from the +directory+.
+    def self.load_config_file( directory = Dir.pwd )
+      begin
+        ConfigurationFile.new( File.join( directory, 'config.yaml' ) )
+      rescue ConfigurationFileInvalid => e
+        @logger.error( 'WebSite#initialize' ) { e.message + ' -> Not using config file' }
       end
-      @srcDir = File.join( @directory, @manager.param_for_plugin(  'CorePlugins::Configuration', 'srcDir' ) ) #TODO change to allow absolute paths
-      @outDir = File.join( @directory, @manager.param_for_plugin(  'CorePlugins::Configuration', 'outDir' ) )
-      @plugin_config = @manager.plugin_config
-      @manager.plugin_config = self
     end
 
     # Create a website in the +directory+, using the template +templateName+ and the style +styleName+.
@@ -185,7 +193,39 @@ module Webgen
       raise ArgumentError.new( "Directory <#{directory}> does already exist!") if File.exists?( directory )
       FileUtils.mkdir( directory )
       template.copy_to( directory )
-      style.copy_to( File.join( directory, 'src' ) )
+      style.copy_to( File.join( directory, Webgen::SRC_DIR) )
+    end
+
+    # Copies the style files for +style+ to the source directory of the website +directory+
+    # overwritting exisiting files.
+    def self.use_website_style( directory, style )
+      styleEntry = WebSiteStyle.entries[style]
+      raise ArgumentError.new( "Invalid style '#{style}'" ) if styleEntry.nil?
+      raise ArgumentError.new( "Directory <#{directory}> does not exist!") unless File.exists?( directory )
+      styleEntry.copy_to( File.join( directory, Webgen::SRC_DIR ) )
+    end
+
+    # Copies the gallery style files for +style+ to the source directory of the website +directory+
+    # overwritting exisiting files.
+    def self.use_gallery_style( directory, style )
+      styleEntry = GalleryStyle.entries[style]
+      raise ArgumentError.new( "Invalid gallery style '#{style}'" ) if styleEntry.nil?
+      srcDir = File.join( directory, Webgen::SRC_DIR )
+      raise ArgumentError.new( "Directory <#{srcDir}> does not exist!") unless File.exists?( srcDir )
+      styleEntry.copy_to( srcDir )
+    end
+
+    #######
+    private
+    #######
+
+    def set_plugin_config( plugin_config )
+      @manager.plugin_config = ( plugin_config ? plugin_config : self.class.load_config_file( @directory ) )
+      @srcDir = File.join( @directory, Webgen::SRC_DIR )
+      outDir = @manager.param_for_plugin(  'CorePlugins::Configuration', 'outDir' )
+      @outDir = (/^(\/|[A-Za-z]:)/ =~ outDir ? outDir : File.join( @directory, outDir ) )
+      @plugin_config = @manager.plugin_config
+      @manager.plugin_config = self
     end
 
   end
