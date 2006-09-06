@@ -1,0 +1,35 @@
+/* andreas01 - an open source xhtml/css website layout by Andreas Viklund  - http://andreasviklund.com . Free to use for any purpose as long as the proper credits are given to the original author.
+Version: 2.0 (Jun 25, 2006)
+Print layout: */
+
+body{
+margin:0 auto;
+padding:0;
+font-family:"Times New Roman",serif;
+background:#ffffff;
+color:#000000;
+}
+	
+#wrap{
+margin:2%;
+width:auto;
+float:none !important;
+}
+
+#header h1{
+margin:0 0 25px 0;
+}
+
+#frontphoto, #leftside ul, #extras, .announce, .hide{
+display:none;
+}
+
+#content img{
+display:none;
+}
+
+a{
+text-decoration:underline;
+color:#0000ff;
+background-color:inherit;
+}
