@@ -1,15 +1,16 @@
 --- content, html
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="{lang:}">
   <head>
-	<meta http-equiv="content-type" content="text/html; charset=iso-8859-1" />
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 	<meta name="description" content="Your description goes here..." />
 	<meta name="keywords" content="your,keywords,goes,here" />
 	<meta name="author" content="Your Name / Design by Andreas Viklund - http://andreasviklund.com/" />
 	<meta name="generator" content="webgen - http://webgen.rubyforge.com/" />
-	<link rel="stylesheet" type="text/css" href="{relocatable: default.css}" title="1024px style" media="screen,projection" />
-	<link rel="stylesheet" type="text/css" href="{resource: webgen-css}" title="webgen css" />
-	<title>Title</title>
+	<link rel="stylesheet" type="text/css" href="{relocatable: default.css}" media="screen,projection" />
+	<link rel="stylesheet" type="text/css" href="{resource: webgen-css}" />
+	<title>{title: }</title>
   </head>
 
   <body>
@@ -17,7 +18,7 @@
 
 	  <div id="header">
 		<p id="toplinks">Skip to: <a href="#content">Content</a> | <a href="#sidebar">Navigation</a> | <a href="#footer">Footer</a><br />
-		Hierarchy: {breadcrumbTrail: }<br />
+		Location: {breadcrumbTrail: }<br />
 		Language: {langbar: }
 		</p>
 		<h1><a href="{relocatable: /index.page}">Title<span class="fade">appendix</span></a></h1>
