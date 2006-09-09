@@ -8,11 +8,11 @@ class MenuTagTest < Webgen::TagTestCase
     'webgen/plugins/filehandlers/directory.rb',
     'webgen/plugins/filehandlers/page.rb',
   ]
-  plugin_to_test 'Tags::MenuTag'
+  plugin_to_test 'Tags/MenuTag'
 
 
   def test_create_menu_tree
-    root = @manager['FileHandlers::FileHandler'].instance_eval { build_tree }
+    root = @manager['Core/FileHandler'].instance_eval { build_tree }
 
     tree_en = @plugin.instance_eval { create_menu_tree( root, nil, Webgen::LanguageManager.language_for_code( 'en' ) ) }
     nodes = [

@@ -22,13 +22,14 @@
 
 begin
   require 'bluecloth'
-  require 'webgen/plugins/contentconverters/default'
+  load_plugin 'webgen/plugins/contentconverters/default'
 
   module ContentConverters
 
     # Converts text formatted in Markdown format using BlueCloth to HTML.
     class MarkdownConverter < DefaultContentConverter
 
+      plugin_name 'ContentConverter/Markdown'
       infos :summary => "Handles content formatted in Markdown format using BlueCloth"
 
       register_handler 'markdown'

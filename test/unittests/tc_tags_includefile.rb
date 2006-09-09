@@ -7,7 +7,7 @@ class IncludeFileTagTest < Webgen::TagTestCase
                 'webgen/plugins/coreplugins/resourcemanager.rb',
                 'webgen/plugins/tags/includefile.rb',
                ]
-  plugin_to_test 'Tags::IncludeFileTag'
+  plugin_to_test 'Tags/IncludeFileTag'
 
   def test_process_tag
     parent = Node.new( nil, 'dir/' )

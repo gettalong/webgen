@@ -20,7 +20,7 @@
 #++
 #
 
-require 'webgen/plugins/tags/tag_processor'
+load_plugin 'webgen/plugins/tags/tag_processor'
 
 module Tags
 

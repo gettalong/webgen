@@ -20,13 +20,14 @@
 #++
 #
 
-require 'webgen/plugins/htmlvalidators/default'
+load_plugin 'webgen/plugins/htmlvalidators/default'
 require 'webgen/extcommand'
 
 module HtmlValidators
 
   class XmllintHtmlValidator < DefaultHtmlValidator
 
+    plugin_name 'HtmlValidator/xmllint'
     infos :summary => "Uses xmllint to check if a file is valid HTML and well-formed"
 
     param "args", '--catalogs --noout --valid', 'Arguments passed to the xmllint command'

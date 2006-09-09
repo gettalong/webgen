@@ -20,12 +20,13 @@
 #++
 #
 
-require 'webgen/plugins/menustyles/default'
+load_plugin 'webgen/plugins/menustyles/default'
 
 module MenuStyles
 
   class VerticalMenuStyle < MenuStyles::DefaultMenuStyle
 
+    plugin_name 'MenuStyle/Vertical'
     infos :summary => "Builds a vertical menu"
 
     register_handler 'vertical'
@@ -37,24 +38,7 @@ module MenuStyles
     param 'showCurrentSubtreeOnly', true, 'True if only the current subtree should be shown in the menu. ' +
       'If set to false, each subtree will be shown.'
 
-    def initialize( plugin_manager )
-      super
-      @css = "
-/* START webgen vertical menu style */
-.webgen-menu-vert li > ul { font-size: 95%%; }
-.webgen-menu-vert ul { padding: 0px; margin-left: 10px; }
-.webgen-menu-vert li { padding-left: 5px; }
-.webgen-menu-vert .%s > a { font-weight: bold; }
-.webgen-menu-vert .%s > a { font-weight: bold; }
-/* STOP webgen vertical menu style */
-" % [ param( 'submenuInHierarchyClass' ), param( 'selectedMenuitemClass' )]
-    end
-
     def internal_build_menu( src_node, menu_tree )
-      unless defined?( @css_added )
-        @plugin_manager['CorePlugins::ResourceManager'].append_data( 'webgen-css', @css )
-        @css_added = true
-      end
       "<div class=\"webgen-menu-vert #{param('divClass')}\">#{submenu( src_node, menu_tree, 1 )}</div>"
     end
 

@@ -8,11 +8,11 @@ class SitemapTagTest < Webgen::TagTestCase
     'webgen/plugins/filehandlers/directory.rb',
     'webgen/plugins/filehandlers/page.rb',
   ]
-  plugin_to_test 'Tags::SitemapTag'
+  plugin_to_test 'Tags/SitemapTag'
 
 
   def test_process_tag
-    root = @manager['FileHandlers::FileHandler'].instance_eval { build_tree }
+    root = @manager['Core/FileHandler'].instance_eval { build_tree }
 
     node = root.resolve_node( 'file1.en.page' )
     assert_equal( '<ul><li><a href="dir1/">Dir1</a><ul><li><a href="dir1/dir11/index.html">Dir11</a>' +

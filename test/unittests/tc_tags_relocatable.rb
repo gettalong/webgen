@@ -8,11 +8,11 @@ class RelocatableTagTest < Webgen::TagTestCase
     'webgen/plugins/filehandlers/directory.rb',
     'webgen/plugins/filehandlers/page.rb',
   ]
-  plugin_to_test 'Tags::RelocatableTag'
+  plugin_to_test 'Tags/RelocatableTag'
 
 
   def test_process_tag
-    root = @manager['FileHandlers::FileHandler'].instance_eval { build_tree }
+    root = @manager['Core/FileHandler'].instance_eval { build_tree }
 
     # basic node resolving
     node = root.resolve_node( 'file1.page' )

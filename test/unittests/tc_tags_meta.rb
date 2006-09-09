@@ -6,7 +6,7 @@ class MetaTagTest < Webgen::TagTestCase
   plugin_files [
     'webgen/plugins/tags/meta.rb',
   ]
-  plugin_to_test 'Tags::MetaTag'
+  plugin_to_test 'Tags/MetaTag'
 
 
   def test_process_tag

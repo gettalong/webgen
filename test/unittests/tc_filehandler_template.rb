@@ -6,14 +6,14 @@ class TemplateFileHandlerTest < Webgen::PluginTestCase
     'webgen/plugins/filehandlers/template.rb',
     'webgen/plugins/filehandlers/directory.rb'
   ]
-  plugin_to_test 'FileHandlers::TemplateFileHandler'
+  plugin_to_test 'File/TemplateHandler'
 
   def test_initialization
     assert_not_nil( @plugin )
   end
 
   def test_create_node
-    root = @manager['FileHandlers::FileHandler'].instance_eval { create_root_node }
+    root = @manager['Core/FileHandler'].instance_eval { create_root_node }
     file = sample_site( File.join( Webgen::SRC_DIR, 'default.template' ) )
     node = @plugin.create_node( file, root, {} )
 
@@ -27,7 +27,7 @@ class TemplateFileHandlerTest < Webgen::PluginTestCase
   end
 
   def test_templates_for_node
-    root = @manager['FileHandlers::FileHandler'].instance_eval { build_tree }
+    root = @manager['Core/FileHandler'].instance_eval { build_tree }
 
     default_t = root.resolve_node( 'default.template' )
     assert_equal( [], default_t.templates_for_node )

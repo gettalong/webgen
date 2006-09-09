@@ -20,12 +20,13 @@
 #++
 #
 
-require 'webgen/plugins/menustyles/default'
+load_plugin 'webgen/plugins/menustyles/default'
 
 module MenuStyles
 
   class VerticalDropdownMenuStyle < MenuStyles::DefaultMenuStyle
 
+    plugin_name 'MenuStyle/VerticalDropdown'
     infos :summary => "Builds a vertical menu with CSS drop down submenus"
 
     register_handler 'vertical-dropdown'
@@ -63,7 +64,7 @@ module MenuStyles
 
     def internal_build_menu( src_node, menu_tree )
       unless defined?( @css_added )
-        @plugin_manager['CorePlugins::ResourceManager'].append_data( 'webgen-css', @css )
+        @plugin_manager['Core/ResourceManager'].append_data( 'webgen-css', @css )
         @css_added = true
       end
       "<div class=\"webgen-menu-vert-dd #{param('divClass')}\">#{submenu( src_node, menu_tree, 1 )}</div>"

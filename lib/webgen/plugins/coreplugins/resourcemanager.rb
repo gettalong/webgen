@@ -21,8 +21,8 @@
 #
 
 require 'fileutils'
-require 'webgen/plugins/tags/tag_processor'
-require 'webgen/plugins/filehandlers/filehandler'
+load_plugin 'webgen/plugins/tags/tag_processor'
+load_plugin 'webgen/plugins/filehandlers/filehandler'
 
 module CorePlugins
 
@@ -118,6 +118,7 @@ module CorePlugins
 
     end
 
+    plugin_name 'Core/ResourceManager'
 
     infos(
           :summary => "Provides access to pre- and userdefined resources",
@@ -127,12 +128,12 @@ module CorePlugins
     param 'resources', [], 'User defined file resources. Value has to be an array of ' +
       'arrays with three strings defining name, resource path and output path'
 
-    depends_on 'FileHandlers::FileHandler'
+    depends_on 'Core/FileHandler'
 
 
     def initialize( plugin_manager )
       super
-      @plugin_manager['FileHandlers::FileHandler'].add_msg_listener( :after_all_nodes_written, method( :write_resources ) )
+      @plugin_manager['Core/FileHandler'].add_msg_listener( :after_all_nodes_written, method( :write_resources ) )
       @resources = {}
       define_webgen_resources unless Webgen.data_dir.empty?
       define_user_resources
@@ -236,13 +237,13 @@ module CorePlugins
 
 
     def write_resources( root )
-      outDir = @plugin_manager.param_for_plugin( 'CorePlugins::Configuration', 'outDir' )
+      outDir = @plugin_manager.param_for_plugin( 'Core/Configuration', 'outDir' )
 
       @resources.each do |name, res|
-        if res.write_resource?( outDir, @plugin_manager['FileHandlers::FileHandler'] )
+        if res.write_resource?( outDir, @plugin_manager['Core/FileHandler'] )
           begin
             FileUtils.makedirs( File.dirname( res.dest_path( outDir ) ) )
-            res.write_resource( outDir, @plugin_manager['FileHandlers::FileHandler'] )
+            res.write_resource( outDir, @plugin_manager['Core/FileHandler'] )
             log(:info) { "Resource '#{name}' written to <#{res.dest_path( outDir )}>" }
           rescue Exception => e
             log(:error) { "Error while writing resource '#{name}': #{e.message}" }
@@ -274,7 +275,7 @@ module Tags
 
     def process_tag( tag, chain )
       result = ''
-      if res = @plugin_manager['CorePlugins::ResourceManager'].get_resource( param( 'name' ) )
+      if res = @plugin_manager['Core/ResourceManager'].get_resource( param( 'name' ) )
         result = (param( 'insert' ) == :path ? res.referenced! && res.route_from( chain.last ) : res.data )
       else
         log(:error) { "Could not use resource #{param( 'name' )} as it does not exist!" }

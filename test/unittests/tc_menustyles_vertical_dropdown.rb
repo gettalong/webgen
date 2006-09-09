@@ -11,7 +11,7 @@ class VerticalDropdownMenuStyleTest < Webgen::PluginTestCase
   plugin_to_test 'MenuStyles::VerticalDropdownMenuStyle'
 
   def test_submenu
-    root = @manager['FileHandlers::FileHandler'].instance_eval { build_tree }
+    root = @manager['Core/FileHandler'].instance_eval { build_tree }
     flunk
   end
 

@@ -20,7 +20,7 @@
 #++
 #
 
-require 'webgen/plugins/filehandlers/filehandler'
+load_plugin 'webgen/plugins/filehandlers/filehandler'
 require 'webgen/listener'
 require 'webgen/languages'
 require 'webgen/content'
@@ -29,7 +29,7 @@ require 'webgen/node'
 module FileHandlers
 
   # Super class for all page description files.
-  class PageFileHandler < DefaultFileHandler
+  class PageHandler < DefaultHandler
 
     class FragmentNode < Node
 
@@ -87,6 +87,7 @@ TODO: MOVE TO DOC
 
     EXTENSION = 'page'
 
+    plugin_name 'File/PageHandler'
     infos :summary => "Plugin for processing page files"
 
     param 'defaultLangInFilename', false, 'If true, the output files for the default language ' +
@@ -128,7 +129,7 @@ TODO: move to doc
 
     def create_node_from_data( filename, parent, data, meta_info )
       begin
-        data = WebPageData.new( data, @plugin_manager['ContentConverters::DefaultContentConverter'].registered_handlers,
+        data = WebPageData.new( data, @plugin_manager['ContentConverter/Default'].registered_handlers,
                                 {'blocks' => meta_info['blocks']} )
       rescue WebPageDataInvalid => e
         log(:error) { "Invalid page file <#{filename}>: #{e.message}" }
@@ -165,10 +166,10 @@ TODO: move to doc
     def render_node( node, block_name = 'content', use_templates = true )
       chain = [@dummy_node]
       content = "{block: #{block_name}}"
-      chain += @plugin_manager['FileHandlers::TemplateFileHandler'].templates_for_node( node ) if use_templates
+      chain += @plugin_manager['File/TemplateHandler'].templates_for_node( node ) if use_templates
       chain << node
 
-      result = @plugin_manager['Tags::TagProcessor'].process( content, chain )
+      result = @plugin_manager['Core/TagProcessor'].process( content, chain )
       dispatch_msg( :after_content_rendered, result, node )
       result
     end
@@ -181,7 +182,7 @@ TODO: move to doc
       end
 
       validator = param( 'validator' )
-      validators = @plugin_manager['HtmlValidators::DefaultHtmlValidator'].registered_handlers
+      validators = @plugin_manager['HtmlValidator/Default'].registered_handlers
       unless validator.nil? || validator == '' || validators[validator].nil?
         validators[validator].validate_file( node.full_path )
       end
@@ -224,9 +225,9 @@ TODO: MOVE TO DOC
       analysed = OpenStruct.new
 
       log(:info) { "Using default language for file <#{filename}>" } if lang.nil? && matchData[3].nil?
-      analysed.lang      = lang || matchData[3] || param( 'lang', 'CorePlugins::Configuration' )
+      analysed.lang      = lang || matchData[3] || param( 'lang', 'Core/Configuration' )
       analysed.filename  = filename
-      analysed.useLangPart  = ( param( 'defaultLangInFilename' ) || param( 'lang', 'CorePlugins::Configuration' ) != analysed.lang )
+      analysed.useLangPart  = ( param( 'defaultLangInFilename' ) || param( 'lang', 'Core/Configuration' ) != analysed.lang )
       analysed.name      = matchData[2]
       analysed.orderInfo = matchData[1].to_i
       analysed.title     = matchData[2].tr('_-', ' ').capitalize

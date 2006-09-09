@@ -20,8 +20,8 @@
 #++
 #
 
-require 'webgen/plugins/tags/tag_processor'
-require 'webgen/plugins/coreplugins/resourcemanager'
+load_plugin 'webgen/plugins/tags/tag_processor'
+load_plugin 'webgen/plugins/coreplugins/resourcemanager'
 require 'yaml'
 require 'uri'
 require 'open-uri'
@@ -44,13 +44,13 @@ TODO: move to doc
 - describe structure of mapping file
 =end
 
-    depends_on 'CorePlugins::ResourceManager'
+    depends_on 'Core/ResourceManager'
 
     register_tag 'download'
 
     def initialize( plugin_manager )
       super
-      @plugin_manager['CorePlugins::ResourceManager'].append_data( 'webgen-css', '
+      @plugin_manager['Core/ResourceManager'].append_data( 'webgen-css', '
 /* START webgen download tag */
 .webgen-file-icon, .webgen-download-icon { vertical-align: middle; }
 /* STOP webgen download tag */

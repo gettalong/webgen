@@ -22,13 +22,14 @@
 
 require 'rdoc/markup/simple_markup'
 require 'rdoc/markup/simple_markup/to_html'
-require 'webgen/plugins/contentconverters/default'
+load_plugin 'webgen/plugins/contentconverters/default'
 
 module ContentConverters
 
   # Handles text in RDoc format.
   class RDocConverter < DefaultContentConverter
 
+    plugin_name 'ContentConverter/RDoc'
     infos :summary => "Handles content in RDOC format"
 
     register_handler 'rdoc'

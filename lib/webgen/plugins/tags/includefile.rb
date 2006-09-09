@@ -21,8 +21,8 @@
 #
 
 require 'cgi'
-require 'webgen/plugins/tags/tag_processor'
-require 'webgen/plugins/miscplugins/syntax_highlighter'
+load_plugin 'webgen/plugins/tags/tag_processor'
+load_plugin 'webgen/plugins/miscplugins/syntax_highlighter'
 
 module Tags
 
@@ -54,7 +54,7 @@ module Tags
       content = CGI::escapeHTML( content ) if param( 'escapeHTML' )
 
       if !param( 'highlight' ).nil?
-        content = @plugin_manager['MiscPlugins::SyntaxHighlighter'].highlight( content, param( 'highlight' ) )
+        content = @plugin_manager['Misc/SyntaxHighlighter'].highlight( content, param( 'highlight' ) )
       end
       content
     end

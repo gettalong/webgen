@@ -8,10 +8,10 @@ class DefaultMenuStyleTest < Webgen::PluginTestCase
                 'webgen/plugins/filehandlers/page.rb'
                ]
 
-  plugin_to_test 'MenuStyles::DefaultMenuStyle'
+  plugin_to_test 'MenuStyle/Default'
 
   def test_menu_item_details
-    root = @manager['FileHandlers::FileHandler'].instance_eval { build_tree }
+    root = @manager['Core/FileHandler'].instance_eval { build_tree }
 
     src_node = root.resolve_node( 'dir1/dir11/file111.en.page' )
     csub  = @plugin.param( 'submenuClass' )

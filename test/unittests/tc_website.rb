@@ -82,19 +82,27 @@ class WebSiteTest < Webgen::TestCase
 
   SAMPLE_SITE = fixture_path( '../sample_site/' )
 
+  def test_initialize
+    temp = Marshal.load( Marshal.dump( Webgen::DEFAULT_PLUGIN_LOADER ) )
+    Webgen::DEFAULT_PLUGIN_LOADER.load_from_file( 'webgen/plugins/coreplugins/configuration' )
+
+    # Test repeated initialization
+    website = Webgen::WebSite.new( SAMPLE_SITE )
+    website = Webgen::WebSite.new( SAMPLE_SITE )
+  ensure
+    Webgen.remove_const( :DEFAULT_PLUGIN_LOADER )
+    Webgen.const_set( :DEFAULT_PLUGIN_LOADER, temp )
+  end
+
   def test_param_for_plugin
     # without plugin_config
     # with plugin_config
     flunk
   end
 
-  def test_render
-    flunk
-  end
-
   def test_create_website
-    assert_raise( ArgumentError ) { Webgen::WebSite.create_website( File.join( SAMPLE_SITE, test ), 'invalid_name' ) }
-    assert_raise( ArgumentError ) { Webgen::WebSite.create_website( File.join( SAMPLE_SITE, test ), 'default', 'invalid_name' ) }
+    assert_raise( ArgumentError ) { Webgen::WebSite.create_website( File.join( SAMPLE_SITE, 'test' ), 'invalid_name' ) }
+    assert_raise( ArgumentError ) { Webgen::WebSite.create_website( File.join( SAMPLE_SITE, 'test' ), 'default', 'invalid_name' ) }
     assert_raise( ArgumentError ) { Webgen::WebSite.create_website( SAMPLE_SITE, 'default', 'default' ) }
   end
 

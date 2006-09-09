@@ -21,14 +21,15 @@
 #
 
 require 'fileutils'
-require 'webgen/plugins/filehandlers/filehandler'
+load_plugin 'webgen/plugins/filehandlers/filehandler'
 
 module FileHandlers
 
   # A simple file handler which copies files specified by a pattern from the source to the output
   # directory.
-  class FileCopyHandler < DefaultFileHandler
+  class CopyHandler < DefaultHandler
 
+    plugin_name 'File/CopyHandler'
     infos :summary => "Copies files from source to destination without modification"
     param 'paths', ['**/*.css', '**/*.jpg', '**/*.png', '**/*.gif'], \
     'The path patterns which match the files that should get copied by this handler.'
@@ -55,7 +56,7 @@ module FileHandlers
 
     # Copy the file to the destination directory if it has been modified.
     def write_node( node )
-      if @plugin_manager['FileHandlers::FileHandler'].file_modified?( node.node_info[:src], node.full_path )
+      if @plugin_manager['Core/FileHandler'].file_modified?( node.node_info[:src], node.full_path )
         node.parent.write_node
         FileUtils.cp( node.node_info[:src], node.full_path )
       end

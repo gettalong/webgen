@@ -8,7 +8,7 @@ class FragmentNodeTest < Webgen::PluginTestCase
   ]
 
   def test_accessors
-    @node = FileHandlers::PageFileHandler::FragmentNode.new( nil, 'test' )
+    @node = @wrapper::FileHandlers::PageHandler::FragmentNode.new( nil, 'test' )
     assert_same( @node, @node.node_info[:processor] )
     assert( !@node.meta_info['inMenu'] )
   end
@@ -26,7 +26,7 @@ class PageNodeTest < Webgen::PluginTestCase
     super
     @testdata = YAML::load( File.read( fixture_path( 'testdata.yaml' ) ) )
     @data = WebPageData.new( @testdata['data'], 'default'=>proc{|c| c} )
-    @node = FileHandlers::PageFileHandler::PageNode.new( nil, 'test.html', @data )
+    @node = @wrapper::FileHandlers::PageHandler::PageNode.new( nil, 'test.html', @data )
   end
 
   def test_initialization
@@ -56,7 +56,7 @@ class PageHandlerTest < Webgen::PluginTestCase
     'webgen/plugins/filehandlers/directory.rb',
     'webgen/plugins/filehandlers/page.rb',
   ]
-  plugin_to_test 'FileHandlers::PageFileHandler'
+  plugin_to_test 'File/PageHandler'
 
 
   def test_initialization
@@ -64,7 +64,7 @@ class PageHandlerTest < Webgen::PluginTestCase
   end
 
   def test_create_node_from_data
-    root = @manager['FileHandlers::FileHandler'].instance_eval { create_root_node }
+    root = @manager['Core/FileHandler'].instance_eval { create_root_node }
     testdata = YAML::load( File.read( fixture_path( 'testdata.yaml' ) ) )
     node = @plugin.create_node_from_data( 'index.page', root, testdata['data'], {'lang'=>'eo', 'test'=>'yes', 'orderInfo'=>6} )
 
@@ -87,7 +87,7 @@ class PageHandlerTest < Webgen::PluginTestCase
   end
 
   def test_node_for_lang
-    root = @manager['FileHandlers::FileHandler'].instance_eval { build_tree }
+    root = @manager['Core/FileHandler'].instance_eval { build_tree }
 
     index = root.resolve_node( 'index.page' )
     de = Webgen::LanguageManager.language_for_code( 'de' )
@@ -100,7 +100,7 @@ class PageHandlerTest < Webgen::PluginTestCase
   end
 
   def test_link_from
-    root = @manager['FileHandlers::FileHandler'].instance_eval { build_tree }
+    root = @manager['Core/FileHandler'].instance_eval { build_tree }
     index_en = root.resolve_node( 'index.en.page' )
     index_de = root.resolve_node( 'index.de.page' )
     file1 = root.resolve_node( 'file1.page' )
@@ -110,7 +110,7 @@ class PageHandlerTest < Webgen::PluginTestCase
   end
 
   def test_analyse_file_name
-    analyse_file_name( OpenStruct.new( {'lang' => @manager.param_for_plugin( 'CorePlugins::Configuration', 'lang' ),
+    analyse_file_name( OpenStruct.new( {'lang' => @manager.param_for_plugin( 'Core/Configuration', 'lang' ),
                                         'filename' => 'default.page',
                                         'name' => 'default', 'orderInfo' => 0,
                                         'title' => 'Default', 'useLangPart' => false } ), nil )
@@ -130,11 +130,11 @@ class PageHandlerTest < Webgen::PluginTestCase
                                         'filename' => '12.Hello webpage_hello.eo.page',
                                         'name' => 'Hello webpage_hello', 'orderInfo' => 12,
                                         'title' => 'Hello webpage hello', 'useLangPart' => true } ), nil )
-    analyse_file_name( OpenStruct.new( {'lang' => @manager.param_for_plugin( 'CorePlugins::Configuration', 'lang' ),
+    analyse_file_name( OpenStruct.new( {'lang' => @manager.param_for_plugin( 'Core/Configuration', 'lang' ),
                                         'filename' => 'default.e.page',
                                         'name' => 'default', 'orderInfo' => 0,
                                         'title' => 'Default', 'useLangPart' => false } ), nil )
-    analyse_file_name( OpenStruct.new( {'lang' => @manager.param_for_plugin( 'CorePlugins::Configuration', 'lang' ),
+    analyse_file_name( OpenStruct.new( {'lang' => @manager.param_for_plugin( 'Core/Configuration', 'lang' ),
                                         'filename' => 'default.eadd.page',
                                         'name' => 'default', 'orderInfo' => 0,
                                         'title' => 'Default', 'useLangPart' => false } ), nil )

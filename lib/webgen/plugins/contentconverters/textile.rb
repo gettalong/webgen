@@ -22,13 +22,14 @@
 
 begin
   require 'redcloth'
-  require 'webgen/plugins/contentconverters/default'
+  load_plugin 'webgen/plugins/contentconverters/default'
 
   module ContentConverters
 
     # Handles content in Textile format using RedCloth.
     class TextileConverter < DefaultContentConverter
 
+      plugin_name 'ContentConverter/Textile'
       infos :summary => "Handles content in Textile format using RedCloth"
 
       register_handler 'textile'

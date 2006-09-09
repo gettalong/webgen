@@ -7,7 +7,7 @@ class TagProcessorTest < Webgen::PluginTestCase
     'webgen/plugins/coreplugins/resourcemanager.rb',
     'webgen/plugins/tags/tag_processor.rb'
   ]
-  plugin_to_test 'Tags::TagProcessor'
+  plugin_to_test 'Core/TagProcessor'
 
   def test_process
     parent = Node.new( nil, fixture_path )
@@ -40,14 +40,14 @@ class TagProcessorTest < Webgen::PluginTestCase
   def test_processor_for_tag
     assert_nil( @plugin.instance_eval { processor_for_tag( 'test' ) } )
     assert_nil( @plugin.instance_eval { processor_for_tag( :default ) } )
-    add_tag
-    assert_not_nil( @plugin.instance_eval { processor_for_tag( 'test' ) } )
+    add_tag( 'webgen/plugins/tags/meta.rb' )
+    assert_not_nil( @plugin.instance_eval { processor_for_tag( :default ) } )
   end
 
   def test_registered_tags
-    assert_equal( {'resource'=>@manager['Tags::ResourceTag']}, @plugin.instance_eval { registered_tags } )
-    add_tag
-    assert_equal( {'resource'=>@manager['Tags::ResourceTag'], 'test'=>@manager['TestTag']}, @plugin.instance_eval { registered_tags } )
+    assert_equal( {'resource'=>@manager['Tags/ResourceTag']}, @plugin.instance_eval { registered_tags } )
+    add_tag( 'webgen/plugins/tags/meta.rb' )
+    assert_equal( {'resource'=>@manager['Tags/ResourceTag'], :default=>@manager['Tags/MetaTag']}, @plugin.instance_eval { registered_tags } )
   end
 
   #######
@@ -60,15 +60,9 @@ class TagProcessorTest < Webgen::PluginTestCase
     assert_equal( count, i, content )
   end
 
-  def add_tag( file = nil )
-    if file
-      @loader.load_from_file( file )
-    else
-      @loader.load_from_block do
-        self.class.module_eval "class ::TestTag < Tags::DefaultTag; register_tag 'test'; end"
-      end
-    end
-    @manager.add_plugin_classes( @loader.plugins )
+  def add_tag( file )
+    @loader.load_from_file( file )
+    @manager.add_plugin_classes( @loader.plugin_classes )
     @manager.init
   end
 
@@ -81,28 +75,28 @@ class DefaultTagTest < Webgen::PluginTestCase
                 'webgen/plugins/tags/tag_processor.rb',
                 fixture_path( 'testtag.rb' )
                ]
-  plugin_to_test 'Tags::DefaultTag'
+  plugin_to_test 'Tags/DefaultTag'
 
   def test_tags
-    assert_equal( ['test', 'test1'], @manager['Testing::TestTag'].tags )
+    assert_equal( ['test', 'test1'], @manager['Testing/TestTag'].tags )
   end
 
   def test_set_tag_config
-    @manager['Testing::TestTag'].set_tag_config( nil, Webgen::Dummy.new )
-    assert_equal( nil, @manager['Testing::TestTag'].param( 'test' ) )
+    @manager['Testing/TestTag'].set_tag_config( nil, Webgen::Dummy.new )
+    assert_equal( nil, @manager['Testing/TestTag'].param( 'test' ) )
 
-    @manager['Testing::TestTag'].set_tag_config( {}, Webgen::Dummy.new )
-    assert_equal( nil, @manager['Testing::TestTag'].param( 'test' ) )
+    @manager['Testing/TestTag'].set_tag_config( {}, Webgen::Dummy.new )
+    assert_equal( nil, @manager['Testing/TestTag'].param( 'test' ) )
 
-    @manager['Testing::TestTag'].set_tag_config( 'test_value', Webgen::Dummy.new )
-    assert_equal( 'test_value', @manager['Testing::TestTag'].param( 'test' ) )
+    @manager['Testing/TestTag'].set_tag_config( 'test_value', Webgen::Dummy.new )
+    assert_equal( 'test_value', @manager['Testing/TestTag'].param( 'test' ) )
 
-    @manager['Testing::TestTag'].set_tag_config( {'test' => 'test_value'}, Webgen::Dummy.new )
-    assert_equal( 'test_value', @manager['Testing::TestTag'].param( 'test' ) )
+    @manager['Testing/TestTag'].set_tag_config( {'test' => 'test_value'}, Webgen::Dummy.new )
+    assert_equal( 'test_value', @manager['Testing/TestTag'].param( 'test' ) )
   end
 
   def test_process_tag
-    assert_raises( NotImplementedError ) { Tags::DefaultTag.new( @manager ).process_tag( nil, nil ) }
+    assert_raises( NotImplementedError ) { @wrapper::Tags::DefaultTag.new( @manager ).process_tag( nil, nil ) }
   end
 
 end

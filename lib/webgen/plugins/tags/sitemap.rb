@@ -20,8 +20,8 @@
 #++
 #
 
-require 'webgen/plugins/tags/tag_processor'
-require 'webgen/plugins/filehandlers/page'
+load_plugin 'webgen/plugins/tags/tag_processor'
+load_plugin 'webgen/plugins/filehandlers/page'
 
 module Tags
 
@@ -53,7 +53,7 @@ TODO: move to doc
 
     def output_node( node, src_node )
       nodes = node.select do |child|
-        child.is_directory? || (child.kind_of?( FileHandlers::PageFileHandler::PageNode ) && child['lang'] == src_node['lang'])
+        child.is_directory? || (child.kind_of?( FileHandlers::PageHandler::PageNode ) && child['lang'] == src_node['lang'])
       end
       return '' if nodes.empty?
 

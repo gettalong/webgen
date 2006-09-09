@@ -8,11 +8,11 @@ class DownloadTagTest < Webgen::TagTestCase
     'webgen/plugins/filehandlers/directory.rb',
     'webgen/plugins/filehandlers/copy.rb',
   ]
-  plugin_to_test 'Tags::DownloadTag'
+  plugin_to_test 'Tags/DownloadTag'
 
 
   def test_process_tag
-    root = @manager['FileHandlers::FileHandler'].instance_eval { build_tree }
+    root = @manager['Core/FileHandler'].instance_eval { build_tree }
     node = root.resolve_node( 'test.jpg' )
 
     assert_equal( '', @plugin.process_tag( 'sitemap', [node] ) )

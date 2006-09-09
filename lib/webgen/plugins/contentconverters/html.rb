@@ -20,13 +20,14 @@
 #++
 #
 
-require 'webgen/plugins/contentconverters/default'
+load_plugin 'webgen/plugins/contentconverters/default'
 
 module ContentConverters
 
   # Handles HTML content. Assumes that the content is already valid HTML.
   class HtmlConverter < DefaultContentConverter
 
+    plugin_name 'ContentConverter/HTML'
     infos :summary => "Handles HTML formatted content"
 
     register_handler 'html'

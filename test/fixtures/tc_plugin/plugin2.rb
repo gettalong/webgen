@@ -1,4 +1,4 @@
-require File.join( File.dirname( __FILE__ ), 'plugin1.rb' )
+load_plugin File.join( File.dirname( __FILE__ ), 'plugin1.rb' )
 
 module Testing
 

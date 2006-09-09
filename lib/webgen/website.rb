@@ -64,7 +64,7 @@ module Webgen
         destpath = File.join( dest, File.dirname( file ).sub( /^#{path}/, '' ) )
         FileUtils.mkdir_p( File.dirname( destpath ) )
         if File.directory?( file )
-          FileUtils.mkdir( File.join( destpath, File.basename( file ) ) )
+          FileUtils.mkdir_p( File.join( destpath, File.basename( file ) ) )
         else
           FileUtils.cp( file, destpath )
         end
@@ -147,9 +147,12 @@ module Webgen
       @directory = File.expand_path( directory )
       @logger = Webgen::Logger.new
 
-      @loader = PluginLoader.new
+      wrapper_mod = Module.new
+      wrapper_mod.module_eval { include DEFAULT_WRAPPER_MODULE }
+      @loader = PluginLoader.new( wrapper_mod )
       @loader.load_from_dir( File.join( @directory, Webgen::PLUGIN_DIR ) )
-      @manager = PluginManager.new( [DEFAULT_PLUGIN_LOADER, @loader], DEFAULT_PLUGIN_LOADER.plugins + @loader.plugins )
+
+      @manager = PluginManager.new( [DEFAULT_PLUGIN_LOADER, @loader], DEFAULT_PLUGIN_LOADER.plugin_classes + @loader.plugin_classes )
       @manager.logger = @logger
       set_plugin_config( plugin_config )
     end
@@ -157,20 +160,20 @@ module Webgen
     # Returns a modified value for Configuration:srcDir, Configuration:outDir and Configuration:websiteDir.
     def param_for_plugin( plugin_name, param )
       case [plugin_name, param]
-      when ['CorePlugins::Configuration', 'srcDir'] then @srcDir
-      when ['CorePlugins::Configuration', 'outDir'] then @outDir
-      when ['CorePlugins::Configuration', 'websiteDir'] then @directory
+      when ['Core/Configuration', 'srcDir'] then @srcDir
+      when ['Core/Configuration', 'outDir'] then @outDir
+      when ['Core/Configuration', 'websiteDir'] then @directory
       else @plugin_config.param_for_plugin( plugin_name, param )
       end
     end
 
     # Initializes all plugins and renders the website.
     def render
-      @logger.level = @manager.param_for_plugin( 'CorePlugins::Configuration', 'loggerLevel' )
+      @logger.level = @manager.param_for_plugin( 'Core/Configuration', 'loggerLevel' )
       @manager.init
 
       @logger.info( 'WebSite#render' ) { "Starting rendering of website #{directory}..." }
-      @manager['FileHandlers::FileHandler'].render_site
+      @manager['Core/FileHandler'].render_site
       @logger.info( 'WebSite#render' ) { "Rendering of #{directory} finished" }
     end
 
@@ -179,7 +182,7 @@ module Webgen
       begin
         ConfigurationFile.new( File.join( directory, 'config.yaml' ) )
       rescue ConfigurationFileInvalid => e
-        @logger.error( 'WebSite#initialize' ) { e.message + ' -> Not using config file' }
+        nil
       end
     end
 
@@ -187,8 +190,8 @@ module Webgen
     def self.create_website( directory, templateName = 'default', styleName = 'default' )
       template = WebSiteTemplate.entries[templateName]
       style = WebSiteStyle.entries[styleName]
-      raise ArgumentError.new( "Invalid template '#{template}'" ) if template.nil?
-      raise ArgumentError.new( "Invalid style '#{style}'" ) if style.nil?
+      raise ArgumentError.new( "Invalid website template '#{template}'" ) if template.nil?
+      raise ArgumentError.new( "Invalid website style '#{style}'" ) if style.nil?
 
       raise ArgumentError.new( "Directory <#{directory}> does already exist!") if File.exists?( directory )
       FileUtils.mkdir( directory )
@@ -200,7 +203,7 @@ module Webgen
     # overwritting exisiting files.
     def self.use_website_style( directory, style )
       styleEntry = WebSiteStyle.entries[style]
-      raise ArgumentError.new( "Invalid style '#{style}'" ) if styleEntry.nil?
+      raise ArgumentError.new( "Invalid website style '#{style}'" ) if styleEntry.nil?
       raise ArgumentError.new( "Directory <#{directory}> does not exist!") unless File.exists?( directory )
       styleEntry.copy_to( File.join( directory, Webgen::SRC_DIR ) )
     end
@@ -222,7 +225,7 @@ module Webgen
     def set_plugin_config( plugin_config )
       @manager.plugin_config = ( plugin_config ? plugin_config : self.class.load_config_file( @directory ) )
       @srcDir = File.join( @directory, Webgen::SRC_DIR )
-      outDir = @manager.param_for_plugin(  'CorePlugins::Configuration', 'outDir' )
+      outDir = @manager.param_for_plugin(  'Core/Configuration', 'outDir' )
       @outDir = (/^(\/|[A-Za-z]:)/ =~ outDir ? outDir : File.join( @directory, outDir ) )
       @plugin_config = @manager.plugin_config
       @manager.plugin_config = self

@@ -8,14 +8,14 @@ class DirNodeTest < Webgen::PluginTestCase
   ]
 
   def test_accessors
-    dir = FileHandlers::DirectoryHandler::DirNode.new( nil, 'dir/', {'test'=>'test'} )
+    dir = @wrapper::FileHandlers::DirectoryHandler::DirNode.new( nil, 'dir/', {'test'=>'test'} )
     assert_equal( 'Dir', dir['title'] )
     assert_equal( 'test', dir['test'] )
   end
 
   def test_order_info
-    dir = FileHandlers::DirectoryHandler::DirNode.new( nil, 'dir/' )
-    dir.node_info[:processor] = @manager['FileHandlers::DirectoryHandler']
+    dir = @wrapper::FileHandlers::DirectoryHandler::DirNode.new( nil, 'dir/' )
+    dir.node_info[:processor] = @manager['File/DirectoryHandler']
 
     assert_equal( 0, dir.order_info )
 
@@ -32,8 +32,8 @@ class DirNodeTest < Webgen::PluginTestCase
   end
 
   def test_index_file
-    dir = FileHandlers::DirectoryHandler::DirNode.new( nil, 'dir/' )
-    dir.node_info[:processor] = @manager['FileHandlers::DirectoryHandler']
+    dir = @wrapper::FileHandlers::DirectoryHandler::DirNode.new( nil, 'dir/' )
+    dir.node_info[:processor] = @manager['File/DirectoryHandler']
 
     assert_nil( dir['indexFile'] )
 
@@ -64,7 +64,7 @@ class DirectoryHandlerTest < Webgen::PluginTestCase
     'webgen/plugins/filehandlers/directory.rb',
     base_fixture_path( 'tc_filehandler_filehandler/sample_plugin.rb' )
   ]
-  plugin_to_test 'FileHandlers::DirectoryHandler'
+  plugin_to_test 'File/DirectoryHandler'
 
   def setup
     super
@@ -108,7 +108,7 @@ class DirectoryHandlerTest < Webgen::PluginTestCase
 
   def test_node_for_lang
     # directory with index file
-    root = @manager['FileHandlers::FileHandler'].instance_eval { build_tree }
+    root = @manager['Core/FileHandler'].instance_eval { build_tree }
     assert_equal( root.resolve_node( 'index.en.html' ), root.node_for_lang( Webgen::LanguageManager.language_for_code( 'en' ) ) )
     assert_equal( root.resolve_node( 'index.de.html' ), root.node_for_lang( Webgen::LanguageManager.language_for_code( 'de' ) ) )
 
@@ -118,7 +118,7 @@ class DirectoryHandlerTest < Webgen::PluginTestCase
   end
 
   def test_link_from
-    root = @manager['FileHandlers::FileHandler'].instance_eval { build_tree }
+    root = @manager['Core/FileHandler'].instance_eval { build_tree }
 
     file11 = root.resolve_node( 'dir1/file11.html' )
     assert_equal( '<a href="../index.en.html"></a>', root.link_from( file11 ) )

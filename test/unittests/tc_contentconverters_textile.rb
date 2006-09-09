@@ -6,7 +6,7 @@ begin
   class TextileConverterTest < Webgen::PluginTestCase
 
     plugin_files ['webgen/plugins/contentconverters/textile.rb']
-    plugin_to_test 'ContentConverters::TextileConverter'
+    plugin_to_test 'ContentConverter/Textile'
 
     def test_initialization
       assert_not_nil( @plugin )

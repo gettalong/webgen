@@ -8,7 +8,7 @@ class SmileyReplacerTest < Webgen::PluginTestCase
                 'webgen/plugins/miscplugins/smileyreplacer.rb'
                ]
 
-  plugin_to_test 'MiscPlugins::SmileyReplacer'
+  plugin_to_test 'Misc/SmileyReplacer'
 
   def test_replace_smileys
     node = Node.new( nil, 'test' )
@@ -18,7 +18,7 @@ class SmileyReplacerTest < Webgen::PluginTestCase
     assert_equal( ':-)', @plugin.instance_eval { replace_smileys( ':-)', node ) } )
 
     node['emoticonPack'] = 'glass'
-    assert_equal( "<img src=\"#{@manager['CorePlugins::ResourceManager'].get_resource( 'webgen-emoticons-glass-smile' ).output_path}\" alt=\"smiley :-)\" />",
+    assert_equal( "<img src=\"#{@manager['Core/ResourceManager'].get_resource( 'webgen-emoticons-glass-smile' ).output_path}\" alt=\"smiley :-)\" />",
                   @plugin.instance_eval { replace_smileys( ':-)', node ) } )
   end
 

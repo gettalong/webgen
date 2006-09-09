@@ -33,6 +33,7 @@ module Tags
   # The default plugin can be registered by using the special key <tt>:default</tt>.
   class TagProcessor < Webgen::Plugin
 
+    plugin_name 'Core/TagProcessor'
     infos :summary => "Plugin for processing tags"
 
     #TODO new comment: Substitutes all references to tags in the string +content+. The +node+ parameter specifies the

@@ -24,9 +24,10 @@ module MenuStyles
 
   class DefaultMenuStyle < Webgen::HandlerPlugin
 
+    plugin_name 'MenuStyle/Default'
     infos :summary => "Base class for all menu styles"
 
-    param 'divClass', '', 'Additional CSS class for the div-tag surrounding the menu'
+    param 'divClass', 'webgen-menu', 'Additional CSS class for the div-tag surrounding the menu'
     param 'submenuClass', 'webgen-menu-submenu', 'Specifies the class of a submenu.'
     param 'submenuInHierarchyClass', 'webgen-menu-submenu-inhierarchy', 'Specifies the class of the submenus which are ' \
     'in the hierarchy of the selected menu item.'

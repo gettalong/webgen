@@ -52,6 +52,7 @@ module Webgen
   class CliUtils
 
     def self.format( content, indent = 0, width = 100 )
+      content ||= ''
       return [content] if content.length + indent <= width
       lines = []
       while content.length + indent > width
@@ -200,13 +201,13 @@ module Webgen
         headers = Hash.new {|h,k| h[k] = (k.nil? ? "Other Plugins" : k.gsub(/([A-Z][a-z])/, ' \1').strip) }
 
         header = ''
-        Webgen::WebSite.new( cmdparser.directory, cmdparser ).manager.plugin_classes.sort {|a, b| a.name <=> b.name }.each do |plugin|
-          newHeader = headers[plugin.name[/^.*?(?=::)/]]
+        cmdparser.website.manager.plugin_classes.sort {|a, b| a.plugin_name <=> b.plugin_name }.each do |plugin|
+          newHeader = headers[plugin.plugin_name[/^.*?(?=\/)/]]
           unless newHeader == header
             puts "\n" + CliUtils.headline( newHeader )
             header = newHeader
           end
-          puts CliUtils.section( plugin.name[/\w+$/], 33 ) + CliUtils.format( plugin.config.infos[:summary], 33 ).join("\n")
+          puts CliUtils.section( plugin.plugin_name[/\w+$/], 33 ) + CliUtils.format( plugin.config.infos[:summary], 33 ).join("\n")
         end
       end
       self.add_command( showPlugins )
@@ -221,10 +222,8 @@ module Webgen
         puts "List of plugin informations:"
         puts
 
-        website = Webgen::WebSite.new( cmdparser.directory, cmdparser )
-        website.manager.init
-        website.manager.plugins.sort {|a, b| a[0] <=> b[0] }.each do |name, plugin|
-          next if args.length > 0 && /#{args[0]}/ !~ name
+        cmdparser.website.manager.plugins.sort {|a, b| a[0] <=> b[0] }.each do |name, plugin|
+          next if args.length > 0 && /#{args[0]}/i !~ name
 
           config = plugin.class.config
           puts CliUtils.headline( name )
@@ -232,8 +231,8 @@ module Webgen
 
           puts CliUtils.section( 'Summary', ljust ) + CliUtils.format( config.infos[:summary], ljust ).join("\n") if config.infos[:summary]
           puts CliUtils.section( 'Description', ljust ) + CliUtils.format( config.infos[:description], ljust ).join("\n") if config.infos[:description]
-          puts CliUtils.section( 'Tag names', ljust ) + plugin.tags.join(", ") if plugin.kind_of?( Tags::DefaultTag )
-          puts CliUtils.section( 'Handles paths', ljust ) + plugin.path_patterns.collect {|r,f| f}.inspect if plugin.kind_of?( FileHandlers::DefaultFileHandler )
+          puts CliUtils.section( 'Tag names', ljust ) + plugin.tags.join(", ") if plugin.respond_to?( :tags )
+          puts CliUtils.section( 'Handles paths', ljust ) + plugin.path_patterns.collect {|r,f| f}.inspect if plugin.respond_to?( :path_patterns )
           puts CliUtils.section( 'Dependencies', ljust ) + config.dependencies.join(', ') if !config.dependencies.empty?
 
           if !config.params.empty?
@@ -265,6 +264,7 @@ module Webgen
     VERBOSITY_UNUSED = -1
 
     attr_reader :directory
+    attr_reader :website
 
     def initialize
       super( true )
@@ -283,7 +283,7 @@ module Webgen
       run = CmdParse::Command.new( 'run', false )
       run.short_desc = "Runs webgen, ie. generates the HTML files"
       run.set_execution_block do |args|
-        Webgen::WebSite.new( @directory, self ).render
+        @website.render
       end
       self.add_command( run, true )
 
@@ -295,18 +295,24 @@ module Webgen
     end
 
     def param_for_plugin( plugin_name, param )
-      if @verbosity == VERBOSITY_UNUSED
-        @config_file.param_for_plugin( plugin_name, param )
-      elsif [plugin_name, param] == ['CorePlugins::Configuration', 'loggerLevel']
+      if [plugin_name, param] == ['Core/Configuration', 'loggerLevel'] && @verbosity != VERBOSITY_UNUSED
         @verbosity
-      else
+      elsif @config_file
         @config_file.param_for_plugin( plugin_name, param )
+      else
+        raise Webgen::PluginParamNotFound.new( plugin_name, param )
       end
     end
 
     def parse( argv = ARGV )
       super do |level, cmd_name|
-        @config_file = Webgen::WebSite.load_config_file( @directory ) if level == 0
+        if level == 0
+          @config_file = Webgen::WebSite.load_config_file( @directory )
+          @website = Webgen::WebSite.new( @directory, self )
+          @website.manager.init
+          @website.manager.plugins.
+            each {|name,plugin| self.add_command( plugin ) if plugin.kind_of?( Webgen::CommandPlugin ) }
+        end
       end
     end
 
@@ -318,27 +324,6 @@ module Webgen
     Color.colorify if $stdout.isatty && !Config::CONFIG['arch'].include?( 'mswin32' )
     cmdparser = CommandParser.new
     cmdparser.parse
-    #Plugin['Configuration'].cmdparser = CommandParser.new
-    #Plugin['Configuration'].cmdparser.parse do |level, cmdName|
-    #  Plugin['Configuration'].init_all if level == 0
-    #end
   end
 
 end
-
-=begin
-# TODO(should be done somewhere else) add CommandPlugin instance to the global CommandParser.
-      # TODO(make command parser work - special PluginManager (only used in CLI))
-      #Webgen::Plugin.config.keys.find_all {|klass| klass.ancestors.include?( Webgen::CommandPlugin )}.each do |cmdKlass|
-      #  add_cmdparser_command( Webgen::Plugin.config[cmdKlass].obj )
-      #end
-
-
-    # Returns the +CommandParser+ object used for parsing the command line. You can add site
-    # specific commands to it by calling the Configuration#add_cmdparser_command method!
-    attr_accessor :cmdparser
-
-    def add_cmdparser_command( command )
-      @cmdparser.add_command( command ) if @cmdparser
-    end
-=end

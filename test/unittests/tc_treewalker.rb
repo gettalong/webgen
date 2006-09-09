@@ -19,7 +19,7 @@ class TreeWalkerTest < Webgen::PluginTestCase
 
   plugin_files ['webgen/plugins/miscplugins/treewalker.rb']
 
-  plugin_to_test 'TreeWalkers::TreeWalker'
+  plugin_to_test 'TreeWalkers/TreeWalker'
 
   def test_execute
     root = Node.new( nil, '/' )

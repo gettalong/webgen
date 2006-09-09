@@ -3,7 +3,7 @@ require 'webgen/test'
 class HtmlConverterTest < Webgen::PluginTestCase
 
   plugin_files ['webgen/plugins/contentconverters/html.rb']
-  plugin_to_test 'ContentConverters::HtmlConverter'
+  plugin_to_test 'ContentConverter/HTML'
 
   def test_initialization
     assert_not_nil( @plugin )

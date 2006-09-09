@@ -20,13 +20,14 @@
 #++
 #
 
-require 'webgen/plugins/filehandlers/page'
+load_plugin 'webgen/plugins/filehandlers/page'
 
 module FileHandlers
 
   # Handles template files. Template files are just page files with another extension.
-  class TemplateFileHandler < DefaultFileHandler
+  class TemplateHandler < DefaultHandler
 
+    plugin_name 'File/TemplateHandler'
     infos :summary =>  "Handles the template files"
     param 'defaultTemplate', 'default.template', 'The default file name for the template file.'
 
@@ -39,8 +40,8 @@ TODO: MOVE TO DOC
 
     def create_node( srcName, parent, meta_info )
       begin
-        page_meta_info = @plugin_manager['FileHandlers::FileHandler'].meta_info_for( @plugin_manager['FileHandlers::PageFileHandler'] )
-        data = WebPageData.new( File.read( srcName ), @plugin_manager['ContentConverters::DefaultContentConverter'].registered_handlers,
+        page_meta_info = @plugin_manager['Core/FileHandler'].meta_info_for( @plugin_manager['File/PageHandler'] )
+        data = WebPageData.new( File.read( srcName ), @plugin_manager['ContentConverter/Default'].registered_handlers,
                                 page_meta_info.merge( meta_info ) )
       rescue WebPageDataInvalid => e
         log(:error) { "Invalid template file <#{srcName}>: #{e.message}" }
@@ -51,7 +52,7 @@ TODO: MOVE TO DOC
         log(:warn) { "Can't create node <#{node.full_path}> as it already exists! Using existing!" }
       else
         basename = File.basename( srcName )
-        node = FileHandlers::PageFileHandler::PageNode.new( parent, basename, data  )
+        node = FileHandlers::PageHandler::PageNode.new( parent, basename, data  )
         node['title'] = 'template'
         node.node_info[:src] = srcName
         node.node_info[:processor] = self

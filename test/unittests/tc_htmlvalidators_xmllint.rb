@@ -3,7 +3,7 @@ require 'webgen/test'
 class XmllintHtmlValidatorTest < Webgen::PluginTestCase
 
   plugin_files ['webgen/plugins/htmlvalidators/xmllint.rb']
-  plugin_to_test 'HtmlValidators::XmllintHtmlValidator'
+  plugin_to_test 'HtmlValidator/xmllint'
 
 
   def test_loading_of_plugin

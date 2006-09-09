@@ -22,10 +22,10 @@
 
 begin
   require 'coderay'
-  Webgen::SYNTAX_HIGHLIGHTING = true
+  SYNTAX_HIGHLIGHTING = true
 rescue LoadError => e
   $stderr.puts( "Coderay not available, therefore syntax highlighting is not available: #{e.message}" ) if $VERBOSE
-  Webgen::SYNTAX_HIGHLIGHTING = false
+  SYNTAX_HIGHLIGHTING = false
 end
 
 
@@ -33,8 +33,9 @@ module MiscPlugins
 
   class SyntaxHighlighter < Webgen::Plugin
 
+    plugin_name 'Misc/SyntaxHighlighter'
     infos :summary => "Utility plugin for syntax highlighting"
-    depends_on 'CorePlugins::ResourceManager'
+    depends_on 'Core/ResourceManager'
 
 =begin
 TODO: move to doc
@@ -44,13 +45,13 @@ TODO: move to doc
 
     def initialize( plugin_manager )
       super
-      if Webgen::SYNTAX_HIGHLIGHTING
-        @plugin_manager['CorePlugins::ResourceManager'].append_data( 'webgen-css', CodeRay::Encoders[:html]::CSS.new.stylesheet )
+      if SYNTAX_HIGHLIGHTING
+        @plugin_manager['Core/ResourceManager'].append_data( 'webgen-css', CodeRay::Encoders[:html]::CSS.new.stylesheet )
       end
     end
 
     def self.available_languages
-      if Webgen::SYNTAX_HIGHLIGHTING
+      if SYNTAX_HIGHLIGHTING
         CodeRay::Scanners.all_plugin_names
       else
         []
@@ -58,7 +59,7 @@ TODO: move to doc
     end
 
     def highlight( content, lang )
-      if Webgen::SYNTAX_HIGHLIGHTING
+      if SYNTAX_HIGHLIGHTING
         CodeRay.scan( content, (lang.kind_of?( String ) ? lang.to_sym : lang ) ).html( :wrap => :div, :line_numbers => :inline )
       else
         content

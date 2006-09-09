@@ -1,4 +1,4 @@
-class SampleHandler < FileHandlers::DefaultFileHandler
+class SampleHandler < FileHandlers::DefaultHandler
 
   class PageNode < ::Node
 
@@ -36,7 +36,7 @@ class SampleHandler < FileHandlers::DefaultFileHandler
       if node['lang']
         node['lang'] = Webgen::LanguageManager.language_for_code( node['lang'] )
       else
-        node['lang'] = Webgen::LanguageManager.language_for_code( param( 'lang', 'CorePlugins::Configuration' ) )
+        node['lang'] = Webgen::LanguageManager.language_for_code( param( 'lang', 'Core/Configuration' ) )
       end
     end
     node

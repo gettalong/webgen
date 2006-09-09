@@ -8,11 +8,11 @@ class LangbarTagTest < Webgen::TagTestCase
     'webgen/plugins/filehandlers/directory.rb',
     'webgen/plugins/filehandlers/page.rb',
   ]
-  plugin_to_test 'Tags::LangbarTag'
+  plugin_to_test 'Tags/LangbarTag'
 
 
   def test_process_tag
-    root = @manager['FileHandlers::FileHandler'].instance_eval { build_tree }
+    root = @manager['Core/FileHandler'].instance_eval { build_tree }
 
     node = root.resolve_node( 'index.en.page' )
     de_link = '<a href="index.de.html">de</a>'

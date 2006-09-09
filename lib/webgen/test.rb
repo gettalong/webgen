@@ -91,19 +91,15 @@ module Webgen
     begin require 'coderay'; rescue LoadError; end
 
     def setup
-      @loader = PluginLoader.new
+      @loader = PluginLoader.new( @wrapper = Module.new )
 
-      before = $".dup
-      @constants = Object.constants.dup
-      @webgen_constants = Webgen.constants.dup
       begin
         self.class.plugin_files.each {|p| @loader.load_from_file( p ) }
       rescue Exception => e
-        puts "Caught exception during loading of plugins in #setup: #{e.message}"
+        puts "Caught exception during loading of plugins in #setup: #{e.message} - #{e.backtrace.first}"
       end
-      @required_files = $".dup - before
 
-      @manager = PluginManager.new( [@loader], @loader.plugins )
+      @manager = PluginManager.new( [@loader], @loader.plugin_classes )
       if $VERBOSE
         @manager.logger = Webgen::Logger.new
         @manager.logger.level = ::Logger::DEBUG
@@ -111,9 +107,9 @@ module Webgen
       @manager.plugin_config = self
       @manager.init
 
-      if !@manager.plugins.has_key?( 'ContentConverters::DefaultContentConverter' )
-        @manager.plugins['ContentConverters::DefaultContentConverter'] = Object.new
-        def (@manager.plugins['ContentConverters::DefaultContentConverter']).registered_handlers
+      if !@manager.plugins.has_key?( 'ContentConverter/Default' )
+        @manager.plugins['ContentConverter/Default'] = Object.new
+        def (@manager.plugins['ContentConverter/Default']).registered_handlers
           {'default' => proc {|c| c}, 'textile' => proc {|c| c}}
         end
       end
@@ -122,12 +118,8 @@ module Webgen
     end
 
     def teardown
-      remove_consts( Object, Object.constants - @constants )
-      remove_consts( Webgen, Webgen.constants - @webgen_constants )
-      @required_files.each {|f| $".delete( f )}
       @manager = nil
       @loader = nil
-      @plugin_files = nil
     end
 
     def self.sample_site( filename = '' )
@@ -140,9 +132,9 @@ module Webgen
 
     def param_for_plugin( plugin_name, param )
       case [plugin_name, param]
-      when ['CorePlugins::Configuration', 'srcDir'] then sample_site( Webgen::SRC_DIR )
-      when ['CorePlugins::Configuration', 'outDir'] then sample_site( 'out' )
-      when ['CorePlugins::Configuration', 'websiteDir'] then sample_site
+      when ['Core/Configuration', 'srcDir'] then sample_site( Webgen::SRC_DIR )
+      when ['Core/Configuration', 'outDir'] then sample_site( 'out' )
+      when ['Core/Configuration', 'websiteDir'] then sample_site
       else raise Webgen::PluginParamNotFound.new( plugin_name, param )
       end
     end

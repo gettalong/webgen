@@ -24,6 +24,7 @@ module HtmlValidators
 
   class DefaultHtmlValidator < Webgen::HandlerPlugin
 
+    plugin_name 'HtmlValidator/Default'
     infos :summary => "Base class for all HTML validators"
 
     # Validates the file +filename+. Has to be overridden in subclasses!

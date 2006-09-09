@@ -21,7 +21,7 @@
 #
 
 require 'webgen/node'
-require 'webgen/plugins/tags/tag_processor'
+load_plugin 'webgen/plugins/tags/tag_processor'
 
 module Tags
 
@@ -69,7 +69,7 @@ TODO: move to doc
         @menus[chain.last['lang']] = create_menu_tree( Node.root( chain.last ), nil, chain.last['lang'] )
         @menus[chain.last['lang']].sort! if @menus[chain.last['lang']]
       end
-      style = @plugin_manager['MenuStyles::DefaultMenuStyle'].registered_handlers[param( 'menuStyle' )]
+      style = @plugin_manager['MenuStyle/Default'].registered_handlers[param( 'menuStyle' )]
       if style.nil?
         log(:error) { "Invalid style specified in <#{chain.first.node_info[:src]}>" }
         ''

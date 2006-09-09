@@ -20,13 +20,13 @@
 #++
 #
 
-require 'webgen/plugins/filehandlers/filehandler'
-require 'webgen/plugins/filehandlers/directory'
-require 'webgen/plugins/filehandlers/page'
+load_plugin 'webgen/plugins/filehandlers/filehandler'
+load_plugin 'webgen/plugins/filehandlers/directory'
+load_plugin 'webgen/plugins/filehandlers/page'
 
 module FileHandlers
 
-  class GalleryFileHandler < DefaultFileHandler
+  class GalleryHandler < DefaultHandler
 
     class GalleryInfo
 
@@ -150,7 +150,7 @@ module FileHandlers
 
     end
 
-
+    plugin_name 'File/GalleryHandler'
     infos :summary => "Handles images gallery files"
 
     register_extension 'gallery'
@@ -233,8 +233,8 @@ TODO: move to doc
     end
 
     def create_page_node( filename, parent, data )
-      filehandler = @plugin_manager['FileHandlers::FileHandler']
-      pagehandler = @plugin_manager['FileHandlers::PageFileHandler']
+      filehandler = @plugin_manager['Core/FileHandler']
+      pagehandler = @plugin_manager['File/PageHandler']
       filehandler.create_node( filename, parent, pagehandler ) do |filename, parent, handler, meta_info|
         pagehandler.create_node_from_data( filename, parent, data, meta_info )
       end
@@ -328,13 +328,13 @@ TODO: move to doc
   begin
     require 'RMagick'
 
-    class GalleryFileHandler
+    class GalleryHandler
 
       remove_method :get_thumbnail
       def get_thumbnail( image, data, parent )
-        parent_node = @plugin_manager['FileHandlers::DirectoryHandler'].recursive_create_path( File.dirname( image ), parent )
-        tn_handler = @plugin_manager['FileHandlers::ThumbnailWriter']
-        file_handler = @plugin_manager['FileHandlers::FileHandler']
+        parent_node = @plugin_manager['File/DirectoryHandler'].recursive_create_path( File.dirname( image ), parent )
+        tn_handler = @plugin_manager['File/ThumbnailWriter']
+        file_handler = @plugin_manager['Core/FileHandler']
         node = file_handler.create_node( File.basename( image ), parent_node, tn_handler ) do |fn, parent, h, mi|
           h.create_node( fn, parent, data['thumbnailSize'] )
         end
@@ -343,8 +343,9 @@ TODO: move to doc
 
     end
 
-    class ThumbnailWriter < DefaultFileHandler
+    class ThumbnailWriter < DefaultHandler
 
+      plugin_name 'File/ThumbnailWriter'
       infos :summary => "Writes out thumbnails with RMagick"
 
       def create_node( file, parent, thumbnailSize = nil )
@@ -357,7 +358,7 @@ TODO: move to doc
       end
 
       def write_node( node )
-        if @plugin_manager['FileHandlers::FileHandler'].file_modified?( node.node_info[:thumbnail_file], node.full_path )
+        if @plugin_manager['Core/FileHandler'].file_modified?( node.node_info[:thumbnail_file], node.full_path )
           log(:info) {"Creating thumbnail <#{node.full_path}> from <#{node.node_info[:thumbnail_file]}>"}
           image = Magick::ImageList.new( node.node_info[:thumbnail_file] )
           image.change_geometry( node.node_info[:thumbnail_size] ) {|c,r,i| i.resize!( c, r )}

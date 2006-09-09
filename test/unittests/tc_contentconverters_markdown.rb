@@ -6,7 +6,7 @@ begin
   class MarkdownConverterTest < Webgen::PluginTestCase
 
     plugin_files ['webgen/plugins/contentconverters/markdown.rb']
-    plugin_to_test 'ContentConverters::MarkdownConverter'
+    plugin_to_test 'ContentConverter/Markdown'
 
     def test_initialization
       assert_not_nil( @plugin )

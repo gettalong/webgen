@@ -5,7 +5,7 @@ class ResourceManagerTest < Webgen::PluginTestCase
 
   plugin_files ['webgen/plugins/coreplugins/resourcemanager.rb']
 
-  plugin_to_test 'CorePlugins::ResourceManager'
+  plugin_to_test 'Core/ResourceManager'
 
   def test_get_resource
     assert_not_nil( @plugin.get_resource( 'webgen-css' ) )
@@ -25,10 +25,10 @@ class ResourceTagTest < Webgen::TagTestCase
 
   plugin_files ['webgen/plugins/coreplugins/resourcemanager.rb']
 
-  plugin_to_test 'Tags::ResourceTag'
+  plugin_to_test 'Tags/ResourceTag'
 
   def test_process_tag
-    css = @manager['CorePlugins::ResourceManager'].get_resource( 'webgen-css' )
+    css = @manager['Core/ResourceManager'].get_resource( 'webgen-css' )
     node = Node.new( nil, 'out' )
 
     set_config( 'name' => 'webgen-css', 'insert' => :path )

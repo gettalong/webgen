@@ -30,6 +30,8 @@ module FileHandlers
 
   class FileHandler < Webgen::Plugin
 
+    plugin_name 'Core/FileHandler'
+
     infos :summary => "Main plugin for handling the files in the source directory"
 
     param 'ignorePaths', ['**/CVS{/**/**,/}'], 'An array of path patterns which match files ' +
@@ -37,6 +39,8 @@ module FileHandlers
 
     param 'defaultMetaInfo', {}, 'The keys for this hash are the names of file handlers, the ' +
       'values hashes with meta data.'
+
+    depends_on 'Core/Configuration'
 
 =begin
 TODO move todoc
@@ -98,7 +102,7 @@ TODO move todoc
     # starting with a slash.
     def meta_info_for( handler, file = nil )
       info = (handler.class.config.infos[:default_meta_info] || {}).dup
-      info.update( param('defaultMetaInfo')[handler.class.name] || {} )
+      info.update( param('defaultMetaInfo')[handler.class.plugin_name] || {} )
       if file
         if @source_backing.has_key?( file )
           info.update( @source_backing[file] )
@@ -114,7 +118,7 @@ TODO move todoc
     # useful if you want a custom node creation method.
     def create_node( file, parent_node, handler ) # :yields: file, parent_node, handler, meta_info
       pathname, filename = File.split( file )
-      parent_node = @plugin_manager['FileHandlers::DirectoryHandler'].recursive_create_path( pathname, parent_node )
+      parent_node = @plugin_manager['File/DirectoryHandler'].recursive_create_path( pathname, parent_node )
 
       meta_info = meta_info_for( handler, File.join( parent_node.absolute_path, filename ) )
       log(:info) { "Trying to create node for <#{file}>..." }
@@ -139,7 +143,7 @@ TODO move todoc
     #######
 
     def load_meta_info_backing_file
-      file = File.join( param( 'websiteDir', 'CorePlugins::Configuration' ), 'metainfo.yaml' )
+      file = File.join( param( 'websiteDir', 'Core/Configuration' ), 'metainfo.yaml' )
       if File.exists?( file )
         begin
           index = 1
@@ -173,7 +177,7 @@ TODO move todoc
         if node = root.resolve_node( path )
           node.meta_info.update( data )
         else
-          node = create_node( path, root, @plugin_manager['FileHandlers::VirtualFileHandler'] ) do |src, parent, handler, meta_info|
+          node = create_node( path, root, @plugin_manager['File/VirtualFileHandler'] ) do |src, parent, handler, meta_info|
             meta_info = meta_info_for( handler ).update( data )
             handler.create_node( src, parent, meta_info )
           end
@@ -225,7 +229,7 @@ TODO move todoc
     def find_all_files
       all_files = files_for_pattern( '**/{**,**/}' ).to_set
       param( 'ignorePaths' ).each {|pattern| all_files.subtract( files_for_pattern( pattern ) ) }
-      log(:error) { "No files found in the source directory <#{param('srcDir', 'CorePlugins::Configuration')}>" } if all_files.empty?
+      log(:error) { "No files found in the source directory <#{param('srcDir', 'Core/Configuration')}>" } if all_files.empty?
       all_files
     end
 
@@ -235,7 +239,7 @@ TODO move todoc
       files_for_handlers = []
       @plugin_manager.plugins.each do |name, plugin|
         files_for_plugin = Set.new
-        if plugin.kind_of?( DefaultFileHandler )
+        if plugin.kind_of?( DefaultHandler )
           plugin.path_patterns.each do |rank, pattern|
             files = files_for_pattern( pattern ) - files_for_plugin
             files_for_handlers << [rank, plugin, files ] unless files.empty?
@@ -248,8 +252,8 @@ TODO move todoc
 
     # Returns an array of files of the source directory matching +pattern+
     def files_for_pattern( pattern )
-      files = Dir[File.join( param( 'srcDir', 'CorePlugins::Configuration' ), pattern )].to_set
-      files.delete( File.join( param( 'srcDir', 'CorePlugins::Configuration' ), '/' ) )
+      files = Dir[File.join( param( 'srcDir', 'Core/Configuration' ), pattern )].to_set
+      files.delete( File.join( param( 'srcDir', 'Core/Configuration' ), '/' ) )
       files.collect!  do |f|
         f = f.sub( /([^.])\.{1,2}$/, '\1' ) # remove '.' and '..' from end of paths
         f += '/' if File.directory?( f ) && ( f[-1] != ?/ )
@@ -259,8 +263,8 @@ TODO move todoc
     end
 
     def create_root_node
-      root_path = File.join( param( 'srcDir', 'CorePlugins::Configuration' ), '/' )
-      root_handler = @plugin_manager['FileHandlers::DirectoryHandler']
+      root_path = File.join( param( 'srcDir', 'Core/Configuration' ), '/' )
+      root_handler = @plugin_manager['File/DirectoryHandler']
       if root_handler.nil?
         log(:error) { "No handler for root directory <#{root_path}> found" }
         return nil
@@ -268,7 +272,7 @@ TODO move todoc
 
       root = root_handler.create_node( root_path, nil, meta_info_for( root_handler, '/' ) )
       root['title'] = ''
-      root.path = File.join( param( 'outDir', 'CorePlugins::Configuration' ), '/' )
+      root.path = File.join( param( 'outDir', 'Core/Configuration' ), '/' )
       root.node_info[:src] = root_path
 
       root
@@ -278,11 +282,12 @@ TODO move todoc
 
   # The default handler which is the super class of all file handlers. It defines class methods
   # which should be used by the subclasses to specify which files should be handled.
-  class DefaultFileHandler < Webgen::Plugin
+  class DefaultHandler < Webgen::Plugin
 
     EXTENSION_PATH_PATTERN = "**/*.%s"
     DEFAULT_RANK = 100
 
+    plugin_name 'File/DefaultHandler'
     infos(
           :summary => "Base class of all file handler plugins",
           :instantiate => false
@@ -291,12 +296,12 @@ TODO move todoc
 =begin
 TODO move todoc
 - two types of paths: constant paths defined in class, dynamic ones defined when initializing
-  FileHandler retrieves all plugins which derive from DefaultFileHandler, uses constant + dynamic paths
+  FileHandler retrieves all plugins which derive from DefaultHandler, uses constant + dynamic paths
 - if a file is matched by more than one pattern defined by a single file handler, it is only used once
   for the first pattern
 - patterns are sorted ascending using their rank and nodes are then created in this order
 - default meta information for nodes can be set via default_meta_info method and overridden with config
-  file by setting the param FileHandlers::FileHandler:defaultMetaInfo
+  file by setting the param Core/FileHandler:defaultMetaInfo
 =end
 
     # TODO comment Specify the extension which should be handled by the class.
@@ -311,13 +316,13 @@ TODO move todoc
       register_path_pattern( EXTENSION_PATH_PATTERN % [ext], rank )
     end
 
-    # See DefaultFileHandler.register_path_pattern
+    # See DefaultHandler.register_path_pattern
     def register_path_pattern( path, rank = DEFAULT_RANK )
       (@path_patterns ||= []) << [rank, path]
     end
     protected :register_path_pattern
 
-    # See DefaultFileHandler.register_extension
+    # See DefaultHandler.register_extension
     def register_extension( ext, rank = DEFAULT_RANK )
       register_path_pattern( EXTENSION_PATH_PATTERN % [ext], rank )
     end
@@ -371,7 +376,7 @@ TODO move todoc
   end
 
 
-  class VirtualFileHandler < DefaultFileHandler
+  class VirtualFileHandler < DefaultHandler
 
     class VirtualNode < ::Node
 
@@ -382,6 +387,7 @@ TODO move todoc
 
     end
 
+    plugin_name 'File/VirtualFileHandler'
     infos :summary => 'Handles virtual files specified in the backing file'
 
     def create_node( path, parent, meta_info )

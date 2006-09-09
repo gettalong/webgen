@@ -20,13 +20,13 @@
 #++
 #
 
-require 'webgen/plugins/filehandlers/filehandler'
+load_plugin 'webgen/plugins/filehandlers/filehandler.rb'
 require 'webgen/node'
 
 module FileHandlers
 
   # Handles directories.
-  class DirectoryHandler < DefaultFileHandler
+  class DirectoryHandler < DefaultHandler
 
     # Specialized node for a directory.
     class DirNode < Node
@@ -75,6 +75,7 @@ TODO move to doc
 - orderInfo set on directory counts before orderInfo on index file
 =end
 
+    plugin_name 'File/DirectoryHandler'
     infos :summary => "Handles directories"
 
     default_meta_info( { 'indexFile' => 'index.page' } )
@@ -118,7 +119,7 @@ TODO move to doc
         case pathname
         when '.' then  #do nothing
         when '..' then parent = parent.parent
-        else parent = @plugin_manager['FileHandlers::FileHandler'].create_node( pathname, parent, self )
+        else parent = @plugin_manager['Core/FileHandler'].create_node( pathname, parent, self )
         end
       end
       parent

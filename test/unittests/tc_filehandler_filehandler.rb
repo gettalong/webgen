@@ -6,28 +6,22 @@ require 'webgen/config'
 
 class FileHandlerTest < Webgen::PluginTestCase
 
-  #TODO think about runtime depdencies  (e.g. CorePlugins::Configuration for FileHandlers::FileHandler)
+  #TODO think about runtime depdencies  (e.g. Configuration for Core/FileHandler)
   #     ie. ones which are not required for initializing, but for running
   plugin_files [
     'webgen/plugins/filehandlers/filehandler.rb',
     'webgen/plugins/filehandlers/directory.rb',
     fixture_path( 'sample_plugin.rb' ),
   ]
-  plugin_to_test 'FileHandlers::FileHandler'
+  plugin_to_test 'Core/FileHandler'
 
   def setup
     @websiteDir = nil
     super
-    self.class.class_eval "class ::FileHandlers::FileHandler
-           public :find_all_files
-           public :find_files_for_handlers
-           public :create_root_node
-           public :build_tree
-         end"
   end
 
   def param_for_plugin( plugin_name, param )
-    if [plugin_name, param] == ['CorePlugins::Configuration', 'websiteDir']
+    if [plugin_name, param] == ['Core/Configuration', 'websiteDir']
       @websiteDir || super
     else
       super
@@ -48,13 +42,13 @@ class FileHandlerTest < Webgen::PluginTestCase
   end
 
   def test_find_all_files
-    found_files = @plugin.find_all_files
+    found_files = @plugin.instance_eval {find_all_files}
     files = find_in_sample_site {|p| p != sample_site( Webgen::SRC_DIR ) + '/' }
     assert_equal( files, found_files )
   end
 
   def test_find_files_for_handlers
-    files_for_handlers = @plugin.find_files_for_handlers
+    files_for_handlers = @plugin.instance_eval {find_files_for_handlers}
     files = find_in_sample_site {|path| path =~ /\.page$/}
 
     assert_equal( 2, files_for_handlers.length )
@@ -64,15 +58,15 @@ class FileHandlerTest < Webgen::PluginTestCase
   end
 
   def test_create_root_node
-    srcDir = @manager.param_for_plugin( 'CorePlugins::Configuration', 'srcDir' ) + '/'
-    outDir = @manager.param_for_plugin( 'CorePlugins::Configuration', 'outDir' ) + '/'
+    srcDir = @manager.param_for_plugin( 'Core/Configuration', 'srcDir' ) + '/'
+    outDir = @manager.param_for_plugin( 'Core/Configuration', 'outDir' ) + '/'
 
-    dir_handler = @manager.plugins.delete( 'FileHandlers::DirectoryHandler' )
-    root = @plugin.create_root_node
+    dir_handler = @manager.plugins.delete( 'File/DirectoryHandler' )
+    root = @plugin.instance_eval {create_root_node}
     assert_nil( root )
 
-    @manager.plugins['FileHandlers::DirectoryHandler'] = dir_handler
-    root = @plugin.create_root_node
+    @manager.plugins['File/DirectoryHandler'] = dir_handler
+    root = @plugin.instance_eval {create_root_node}
     assert_kind_of( Node, root )
     assert_equal( '', root['title'] )
     assert_equal( outDir, root.path )
@@ -83,8 +77,8 @@ class FileHandlerTest < Webgen::PluginTestCase
   def test_create_node_dir
     dirs = find_in_sample_site {|path| File.directory?(path)}
 
-    root_node = @plugin.create_root_node
-    dir_handler = @manager['FileHandlers::DirectoryHandler']
+    root_node = @plugin.instance_eval {create_root_node}
+    dir_handler = @manager['File/DirectoryHandler']
 
     max_dir = dirs.max
 
@@ -108,8 +102,8 @@ class FileHandlerTest < Webgen::PluginTestCase
   def test_create_node_file
     pages = find_in_sample_site {|path| path =~ /\.page$/}
 
-    root_node = @plugin.create_root_node
-    dir_handler = @manager['FileHandlers::DirectoryHandler']
+    root_node = @plugin.instance_eval {create_root_node}
+    dir_handler = @manager['File/DirectoryHandler']
     page_handler = @manager['SampleHandler']
 
     max_page = pages.max
@@ -125,9 +119,9 @@ class FileHandlerTest < Webgen::PluginTestCase
   end
 
   def test_build_tree
-    outDir = @manager.param_for_plugin( 'CorePlugins::Configuration', 'outDir' ) + '/'
+    outDir = @manager.param_for_plugin( 'Core/Configuration', 'outDir' ) + '/'
 
-    tree = @plugin.build_tree
+    tree = @plugin.instance_eval {build_tree}
     assert_not_nil( tree )
     assert_equal( outDir, tree.full_path )
     assert_equal( 5, tree.children.size )
@@ -175,7 +169,7 @@ class FileHandlerTest < Webgen::PluginTestCase
     assert_not_nil( root.resolve_node( 'api.html' ) )
     backed1 = root.resolve_node( 'api.html' )
     assert_equal( 'api.html', backed1.node_info[:reference] )
-    assert_equal( @manager['FileHandlers::VirtualFileHandler'], backed1.node_info[:processor] )
+    assert_equal( @manager['File/VirtualFileHandler'], backed1.node_info[:processor] )
 
     backed2 = root.resolve_node( 'doc/test.html' )
     assert_not_nil( backed2 )
@@ -190,14 +184,15 @@ class FileHandlerTest < Webgen::PluginTestCase
 
 end
 
-class DefaultFileHandlerTest < Webgen::PluginTestCase
+class DefaultHandlerTest < Webgen::PluginTestCase
 
   plugin_files ['webgen/plugins/filehandlers/filehandler.rb']
-  plugin_to_test 'FileHandler::DefaultFileHandler'
+  plugin_to_test 'File/DefaultHandler'
 
   def setup
     super
-    @plugin1 = FileHandlers::DefaultFileHandler.new( @manager )
+    @defHandlerClass = @manager.plugin_class_for_name( 'File/DefaultHandler' )
+    @plugin1 = @defHandlerClass.new( @manager )
   end
 
   def test_initialization
@@ -205,17 +200,15 @@ class DefaultFileHandlerTest < Webgen::PluginTestCase
   end
 
   def test_accessors
-    self.class.class_eval( <<-EVAL_END )
-    class ::FileHandlers::DefaultFileHandler
-        register_path_pattern 'first'
-        register_path_pattern 'second', 10
-        register_extension 'fff'
-        register_extension 'ggg', 20
+    @defHandlerClass.class_eval do
+      register_path_pattern 'first'
+      register_path_pattern 'second', 10
+      register_extension 'fff'
+      register_extension 'ggg', 20
 
-        public :register_extension
-        public :register_path_pattern
+      public :register_extension
+      public :register_path_pattern
     end
-    EVAL_END
     @plugin1.register_path_pattern 'third'
     @plugin1.register_path_pattern 'fourth', 30
     @plugin1.register_extension 'hhh'
@@ -224,15 +217,15 @@ class DefaultFileHandlerTest < Webgen::PluginTestCase
     patterns = @plugin1.path_patterns.sort
     [
      [10, 'second'],
-     [20, FileHandlers::DefaultFileHandler::EXTENSION_PATH_PATTERN % ['ggg']],
+     [20, @defHandlerClass::EXTENSION_PATH_PATTERN % ['ggg']],
      [30, 'fourth'],
-     [40, FileHandlers::DefaultFileHandler::EXTENSION_PATH_PATTERN % ['iii']],
-     [FileHandlers::DefaultFileHandler::DEFAULT_RANK, 'first'],
-     [FileHandlers::DefaultFileHandler::DEFAULT_RANK, 'third'],
-     [FileHandlers::DefaultFileHandler::DEFAULT_RANK, FileHandlers::DefaultFileHandler::EXTENSION_PATH_PATTERN % ['fff']],
-     [FileHandlers::DefaultFileHandler::DEFAULT_RANK, FileHandlers::DefaultFileHandler::EXTENSION_PATH_PATTERN % ['hhh']]
+     [40, @defHandlerClass::EXTENSION_PATH_PATTERN % ['iii']],
+     [@defHandlerClass::DEFAULT_RANK, 'first'],
+     [@defHandlerClass::DEFAULT_RANK, 'third'],
+     [@defHandlerClass::DEFAULT_RANK, @defHandlerClass::EXTENSION_PATH_PATTERN % ['fff']],
+     [@defHandlerClass::DEFAULT_RANK, @defHandlerClass::EXTENSION_PATH_PATTERN % ['hhh']]
     ].each_with_index do |p, index|
-      if p[0] == FileHandlers::DefaultFileHandler::DEFAULT_RANK
+      if p[0] == @defHandlerClass::DEFAULT_RANK
         assert( patterns.include?( p ), "#{p} missing" )
       else
         assert_equal( p, patterns[index] )
