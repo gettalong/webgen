@@ -351,7 +351,7 @@ module Webgen
       if value_found
         value
       else
-        raise PluginParamNotFound.new( plugin.name, param )
+        raise PluginParamNotFound.new( plugin.plugin_name, param )
       end
     end
 
@@ -388,7 +388,7 @@ module Webgen
     end
 
     def get_plugin_param_value( plugin, param )
-      raise PluginParamNotFound.new( plugin.name, param ) unless plugin.config.params.has_key?( param )
+      raise PluginParamNotFound.new( plugin.plugin_name, param ) unless plugin.config.params.has_key?( param )
 
       value_found = false
       if @plugin_config

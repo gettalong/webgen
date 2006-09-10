@@ -31,27 +31,14 @@ module MenuStyles
 
     register_handler 'horizontal'
 
-    def initialize( plugin_manager )
-      super
-      @css = "
-/* START webgen horizontal menu style */
-.webgen-menu-horiz { text-align: center; }
-.webgen-menu-horiz ul {
-  display: block;
-  margin: 0px;
-  padding-bottom: 3px;
-  margin-bottom: 3px;
-}
-.webgen-menu-horiz li { display: inline; padding: 0px 5px; }
-.webgen-menu-horiz .%s { font-weight: bold; }
-.webgen-menu-horiz .%s { font-weight: bold; }
-/* STOP webgen horizontal menu style */
-" % [ param( 'submenuInHierarchyClass' ), param( 'selectedMenuitemClass' )]
-    end
-
     def internal_build_menu( src_node, menu_tree )
       unless defined?( @css_added )
-        @plugin_manager['Core/ResourceManager'].append_data( 'webgen-css', @css )
+        @plugin_manager['Core/ResourceManager'].append_data( 'webgen-css', "
+/* START webgen horizontal menu style */
+.webgen-menu-horiz ul { display: block; }
+.webgen-menu-horiz li { display: inline; }
+/* STOP webgen horizontal menu style */
+" )
         @css_added = true
       end
       "<div class=\"webgen-menu-horiz #{param('divClass')}\">#{submenu( src_node, menu_tree, 1 )}</div>"

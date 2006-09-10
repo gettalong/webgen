@@ -195,11 +195,11 @@ TODO move todoc
 
       used_files = Set.new
       files_for_handlers.sort {|a,b| a[0] <=> b[0]}.each do |rank, handler, files|
-        log(:debug) { "Creating nodes for #{handler.class.name} with rank #{rank}" }
+        log(:debug) { "Creating nodes for #{handler.class.plugin_name} with rank #{rank}" }
         common = all_files & files
         used_files += common
         diff = files - common
-        log(:info) { "Not using these files for #{handler.class.name} as they do not exist or are excluded: #{diff.inspect}" } if diff.length > 0
+        log(:info) { "Not using these files for #{handler.class.plugin_name} as they do not exist or are excluded: #{diff.inspect}" } if diff.length > 0
         common.each  {|file| create_node( file.sub( /^#{root_node.node_info[:src]}/, '' ), root_node, handler ) }
       end
 

@@ -199,11 +199,11 @@ module Tags
       when NilClass
 
       else
-        log(:error) { "Invalid parameter for tag '#{self.class.name}' in <#{node.node_info[:src]}>" }
+        log(:error) { "Invalid parameter for tag '#{self.class.plugin_name}' in <#{node.node_info[:src]}>" }
       end
 
       unless all_mandatory_params_set?
-        log(:error) { "Not all mandatory parameters for tag '#{self.class.name}' in <#{node.node_info[:src]}> set" }
+        log(:error) { "Not all mandatory parameters for tag '#{self.class.plugin_name}' in <#{node.node_info[:src]}> set" }
       end
     end
 
@@ -239,9 +239,9 @@ module Tags
       config.each do |key, value|
         if self.class.config.params.has_key?( key )
           @cur_config[key] = value
-          log(:debug) { "Setting parameter '#{key}' to '#{value}' for tag '#{self.class.name}' in <#{node.node_info[:src]}>" }
+          log(:debug) { "Setting parameter '#{key}' to '#{value}' for tag '#{self.class.plugin_name}' in <#{node.node_info[:src]}>" }
         else
-          log(:warn) { "Invalid parameter '#{key}' for tag '#{self.class.name}' in <#{node.node_info[:src]}>" }
+          log(:warn) { "Invalid parameter '#{key}' for tag '#{self.class.plugin_name}' in <#{node.node_info[:src]}>" }
         end
       end
     end
@@ -250,7 +250,7 @@ module Tags
     def set_default_mandatory_param( value, node )
       param_name, param_value = self.class.config.params.find {|k,v| v.mandatory_default} unless self.class.config.params.nil?
       if param_name.nil?
-        log(:error) { "No default mandatory parameter specified for tag '#{self.class.name}' but set in <#{node.node_info[:src]}>"}
+        log(:error) { "No default mandatory parameter specified for tag '#{self.class.plugin_name}' but set in <#{node.node_info[:src]}>"}
       else
         @cur_config[param_name] = value
       end

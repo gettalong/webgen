@@ -31,10 +31,12 @@ module MenuStyles
 
     register_handler 'vertical'
 
-    param 'level', 1, 'Specifies how many levels the menu should have by default, ie. how deep it is. ' +
-      'For example, if level = 3, then three levels are always shown at least.'
-    param 'subtreeLevel', 3,  'Specifies how many levels should be shown for subtrees. The number ' +
-      'specifies the maximum depth the menu will have.'
+    param 'startLevel', 1, 'The level at which the menu starts. For example, if set to 2 the top most ' +
+      'menu items are not shown.'
+    param 'minLevels', 1, 'Specifies how many levels should be always be shown, ie. how deep the menu is. ' +
+      'For example, if minLevels = 3, then three levels are always shown at least.'
+    param 'maxLevels', 3,  'Specifies the maximum number of levels that should be shown. ' +
+      'For example, if maxLevels = 1, then only one level is shown.'
     param 'showCurrentSubtreeOnly', true, 'True if only the current subtree should be shown in the menu. ' +
       'If set to false, each subtree will be shown.'
 
@@ -48,27 +50,34 @@ module MenuStyles
 
     def submenu( src_node, menu_node, level )
       if menu_node.nil? \
-        || level > param( 'subtreeLevel' ) \
-        || ( level > param( 'level' ) \
-             && ( menu_node.node_info[:node].level > src_node.level \
+        || level > param( 'maxLevels' ) + param( 'startLevel' ) - 1 \
+        || ( ( level > param( 'minLevels' ) + param( 'startLevel' ) - 1 ) \
+             && ( menu_node.node_info[:node].level >= src_node.level \
                   || ( param( 'showCurrentSubtreeOnly' ) && !src_node.in_subtree_of?( menu_node.node_info[:node] ) )
                   )
-             )
+             ) \
+        || src_node.level < param( 'startLevel' ) \
+        || (level == param('startLevel') && !src_node.in_subtree_of?( menu_node.node_info[:node] ))
         return ''
       end
 
+      submenus = ''
       out = "<ul>"
       menu_node.each do |child|
         menu = child.node_info[:node].is_directory? ? submenu( src_node, child, level + 1 ) : ''
         style, link = menu_item_details( src_node, child.node_info[:node] )
-
+        submenus << menu
         out << "<li #{style}>#{link}"
         out << menu
         out << "</li>"
       end
       out << "</ul>"
 
-      return out
+      if level < param( 'startLevel' )
+        '' + submenus
+      else
+        out
+      end
     end
 
   end

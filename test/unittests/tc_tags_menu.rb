@@ -21,8 +21,11 @@ class MenuTagTest < Webgen::TagTestCase
              root.resolve_node( 'dir1/dir11' ),
              root.resolve_node( 'dir1/dir11/file111.en.page' ),
              root.resolve_node( 'dir1/dir11/index.page' ),
-             root.resolve_node( 'dir1/file11.page' )
+             root.resolve_node( 'dir1/file11.page' ),
+             root.resolve_node( 'dir2' ),
+             root.resolve_node( 'dir2/file21.page' )
             ]
+
     check_tree( tree_en, nodes )
     assert( nodes.empty? )
 

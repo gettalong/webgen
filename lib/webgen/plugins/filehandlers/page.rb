@@ -201,7 +201,7 @@ TODO: move to doc
     def link_from( node, refNode, attr = {} )
       lang_node = node_for_lang( node, refNode['lang'] )
       if lang_node.nil?
-        log(:warn) { "Translation of page node <#{node.parent.full_path + node.node_info[:pagename]}> to language '#{refNode['lang']} not found, can't create link"}
+        log(:warn) { "Translation of page node <#{node.parent.full_path + node.node_info[:pagename]}> to language '#{refNode['lang']}' not found, can't create link"}
         node['title']
       else
         super( lang_node, refNode, attr )
