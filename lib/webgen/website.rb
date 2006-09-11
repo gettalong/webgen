@@ -169,12 +169,16 @@ module Webgen
     end
 
     # Initializes all plugins and renders the website.
-    def render
+    def render( files = [] )
       @logger.level = @manager.param_for_plugin( 'Core/Configuration', 'loggerLevel' )
       @manager.init
 
       @logger.info( 'WebSite#render' ) { "Starting rendering of website #{directory}..." }
-      @manager['Core/FileHandler'].render_site
+      if files.empty?
+        @manager['Core/FileHandler'].render_site
+      else
+        @manager['Core/FileHandler'].render_files( files )
+      end
       @logger.info( 'WebSite#render' ) { "Rendering of #{directory} finished" }
     end
 

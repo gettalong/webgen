@@ -296,8 +296,10 @@ module Webgen
       # Run command
       run = CmdParse::Command.new( 'run', false )
       run.short_desc = "Runs webgen, ie. generates the HTML files"
+      run.description = CliUtils.format("\nWith no arguments, renders the whole site. If file names are " +
+                                        "specified (don't include the path/to/src/ part), only those are rendered." )
       run.set_execution_block do |args|
-        @website.render
+        @website.render( args )
       end
       self.add_command( run, true )
 

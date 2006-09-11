@@ -77,11 +77,25 @@ TODO move todoc
       load_meta_info_backing_file
     end
 
+    # Renders the whole website.
     def render_site
       tree = build_tree
       #TODO
       #transform tree???
       write_tree( tree ) unless tree.nil?
+    end
+
+    # Renders only the given +files+.
+    def render_files( files )
+      tree = build_tree
+      return unless tree.nil?
+      files.each do |file|
+        node = tree.resolve_node( file )
+        if !node.nil?
+          write_node( node.parent ) if !node.parent.nil? && node.parent.is_directory?
+          write_node( node )
+        end
+      end
     end
 
     # Returns true if the file +src+ is newer than +dest+ and therefore has been modified since the
@@ -216,13 +230,18 @@ TODO move todoc
     def write_tree( node )
       dispatch_msg( :before_all_nodes_written, node ) if node.parent.nil?
 
+      write_node( node )
+      node.each {|child| write_tree( child ) }
+
+      dispatch_msg( :after_all_nodes_written, node ) if node.parent.nil?
+    end
+
+    # Writes out the given +node+.
+    def write_node( node )
       log(:info) { "Writing <#{node.full_path}>" }
       dispatch_msg( :before_node_written, node )
       node.write_node
       dispatch_msg( :after_node_written, node )
-      node.each {|child| write_tree( child ) }
-
-      dispatch_msg( :after_all_nodes_written, node ) if node.parent.nil?
     end
 
     # Creates a set of all files in the source directory, removing all files which should be ignored.
