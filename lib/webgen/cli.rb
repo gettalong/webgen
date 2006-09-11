@@ -91,7 +91,8 @@ module Webgen
 
     def initialize
       super( 'create', false )
-      self.short_desc = "Creates the basic directories and files for webgen"
+      self.short_desc = "Creates the basic directories and files for webgen."
+      self.description = CliUtils.format( "\nIf the global verbosity level is set to 0 or 1, the created files are listed." )
       self.options = CmdParse::OptionParserWrapper.new do |opts|
         opts.separator "Options:"
         opts.on( '-t', '--template TEMPLATE', Webgen::WebSiteTemplate.entries.keys, 'Specify the template which should be used' ) {|@template|}
@@ -119,7 +120,11 @@ module Webgen
       if args.length == 0
         raise OptionParser::MissingArgument.new( 'DIR' )
       else
-        Webgen::WebSite.create_website( args[0], @template, @style )
+        files = Webgen::WebSite.create_website( args[0], @template, @style )
+        if (0..1) === commandparser.verbosity
+          puts "The following files were created:"
+          puts files.collect {|f| "- " + f }.join("\n")
+        end
       end
     end
 
@@ -135,9 +140,9 @@ module Webgen
       useWebsiteStyle = CmdParse::Command.new( 'website_style', false )
       useWebsiteStyle.short_desc = "Changes the used website style"
       useWebsiteStyle.description =
-        CliUtils.format("\nCopies the style files for the website " +
-                        "style STYLE to the website directory defined by the " +
-                        "global directory option, overwritting existing files.")
+        CliUtils.format("\nCopies the style files for the website style STYLE to the website " +
+                        "directory defined by the global directory option, overwritting existing " +
+                        "files. If the global verbosity level is set to 0 or 1, the copied files are listed.")
       useWebsiteStyle.options = CmdParse::OptionParserWrapper.new do |opts|
         opts.separator "Available styles:"
         opts.separator ""
@@ -150,7 +155,11 @@ module Webgen
         if args.length == 0
           raise OptionParser::MissingArgument.new( 'STYLE' )
         else
-          Webgen::WebSite.use_website_style( cmdparser.directory, args[0] )
+          files = Webgen::WebSite.use_website_style( cmdparser.directory, args[0] )
+          if (0..1) === cmdparser.verbosity
+            puts "The following files were created or overwritten:"
+            puts files.collect {|f| "- " + f }.join("\n")
+          end
         end
       end
       self.add_command( useWebsiteStyle )
@@ -159,9 +168,9 @@ module Webgen
       useGalleryStyle = CmdParse::Command.new( 'gallery_style', false )
       useGalleryStyle.short_desc = "Changes the used gallery style"
       useGalleryStyle.description =
-        CliUtils.format("\nCopies the gallery templates for the gallery " +
-                        "style STYLE to the website directory defined by the " +
-                        "global directory option, overwritting existing files.")
+        CliUtils.format("\nCopies the gallery templates for the gallery style STYLE to the website " +
+                        "directory defined by the global directory option, overwritting existing files. " +
+                        "If the global verbosity level is set to 0 or 1, the copied files are listed.")
       useGalleryStyle.options = CmdParse::OptionParserWrapper.new do |opts|
         opts.separator "Available styles:"
         opts.separator ""
@@ -174,7 +183,11 @@ module Webgen
         if args.length == 0
           raise OptionParser::MissingArgument.new( 'STYLE' )
         else
-          Webgen::WebSite.use_gallery_style( cmdparser.directory, args[0] )
+          files = Webgen::WebSite.use_gallery_style( cmdparser.directory, args[0] )
+          if (0..1) === cmdparser.verbosity
+            puts "The following files were created or overwritten:"
+            puts files.collect {|f| "- " + f }.join("\n")
+          end
         end
       end
       self.add_command( useGalleryStyle )
@@ -214,7 +227,7 @@ module Webgen
 
       # Show config command
       showConfig = CmdParse::Command.new( 'config', false )
-      showConfig.short_desc = "Shows information like the parameters for all plugins or the specified one"
+      showConfig.short_desc = "Shows information like the parameters for all or the matched plugins"
       showConfig.description =
         CliUtils.format( "\nIf no argument is provided, all plugins and their information are listed. If " +
                          "an argument is specified, all plugin names that match the argument are listed." ).join("\n")
@@ -265,6 +278,7 @@ module Webgen
 
     attr_reader :directory
     attr_reader :website
+    attr_reader :verbosity
 
     def initialize
       super( true )

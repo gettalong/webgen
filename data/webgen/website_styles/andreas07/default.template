@@ -22,7 +22,7 @@
       <h2>your website slogan</h2>
 
       <div id="menu">
-        {menu: {menuStyle: vertical, options: {subtreeLevel: 1}}}
+        {menu: {menuStyle: vertical, options: {maxLevels: 1}}}
       </div>
 
       <h3>Links:</h3>

@@ -21,7 +21,7 @@
       </div>
 
       <div id="navigation">
-        {menu: {menuStyle: vertical, options: {subtreeLevel: 1}}}
+        {menu: {menuStyle: vertical, options: {maxLevels: 1}}}
       </div>
 
       <div id="content">

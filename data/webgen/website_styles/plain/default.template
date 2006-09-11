@@ -16,7 +16,7 @@
     <a name="top" id="top"></a>
     <center>
       <div id="menu">
-        {menu: {menuStyle: vertical, options: {subtreeLevel: 1}}}
+        {menu: {menuStyle: vertical, options: {maxLevels: 1}}}
       </div>
 
       <div id="header">
@@ -32,10 +32,12 @@
         </p>
 
         <div id="sidebar">
+	  <% if node.level > 1 %>
           <h2>Sub Menu</h2>
           <div class="submenu">
-            {menu: {menuStyle: vertical, options: {subtreeLevel: 2}}}
+            {menu: {menuStyle: vertical, options: {startLevel: 2, maxLevels: 2}}}
           </div>
+	  <% end %>
 
           <h2>Links</h2>
           <div class="submenu">

@@ -22,7 +22,7 @@
       </div>
 
       <div id="mainmenu">
-        {menu: {menuStyle: vertical, options: {subtreeLevel: 1}}}
+        {menu: {menuStyle: vertical, options: {maxLevels: 1}}}
       </div>
 
       <div id="wrap">

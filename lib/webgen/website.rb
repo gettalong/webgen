@@ -60,7 +60,7 @@ module Webgen
     # Copies the files returned by +#files+ into the directory +dest+, preserving the directory
     # hierarchy.
     def copy_to( dest )
-      files.each do |file|
+      files.collect do |file|
         destpath = File.join( dest, File.dirname( file ).sub( /^#{path}/, '' ) )
         FileUtils.mkdir_p( File.dirname( destpath ) )
         if File.directory?( file )
@@ -68,6 +68,7 @@ module Webgen
         else
           FileUtils.cp( file, destpath )
         end
+        File.join( destpath, File.basename( file ) )
       end
     end
 
@@ -195,8 +196,7 @@ module Webgen
 
       raise ArgumentError.new( "Directory <#{directory}> does already exist!") if File.exists?( directory )
       FileUtils.mkdir( directory )
-      template.copy_to( directory )
-      style.copy_to( File.join( directory, Webgen::SRC_DIR) )
+      return template.copy_to( directory ) + style.copy_to( File.join( directory, Webgen::SRC_DIR) )
     end
 
     # Copies the style files for +style+ to the source directory of the website +directory+
@@ -204,8 +204,9 @@ module Webgen
     def self.use_website_style( directory, style )
       styleEntry = WebSiteStyle.entries[style]
       raise ArgumentError.new( "Invalid website style '#{style}'" ) if styleEntry.nil?
-      raise ArgumentError.new( "Directory <#{directory}> does not exist!") unless File.exists?( directory )
-      styleEntry.copy_to( File.join( directory, Webgen::SRC_DIR ) )
+      srcDir = File.join( directory, Webgen::SRC_DIR )
+      raise ArgumentError.new( "Directory <#{srcDir}> does not exist!") unless File.exists?( srcDir )
+      return styleEntry.copy_to( srcDir )
     end
 
     # Copies the gallery style files for +style+ to the source directory of the website +directory+
@@ -215,7 +216,7 @@ module Webgen
       raise ArgumentError.new( "Invalid gallery style '#{style}'" ) if styleEntry.nil?
       srcDir = File.join( directory, Webgen::SRC_DIR )
       raise ArgumentError.new( "Directory <#{srcDir}> does not exist!") unless File.exists?( srcDir )
-      styleEntry.copy_to( srcDir )
+      return styleEntry.copy_to( srcDir )
     end
 
     #######

@@ -19,7 +19,7 @@
 	  <div id="sidebar">
 
 		<h2>Site menu</h2>
-		{menu: {menuStyle: vertical, options: {subtreeLevel: 1}}}
+		{menu: {menuStyle: vertical, options: {maxLevels: 1}}}
 
 		<p class="sidenote">
 		  Links:<br />

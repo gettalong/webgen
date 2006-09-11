@@ -37,7 +37,7 @@
 		<p>Write a short presentation of yourself or the site right here!</p>
 
 		<h2>Pages:</h2>
-		{menu: {menuStyle: vertical, options: {subtreeLevel: 2}}}
+		{menu: {menuStyle: vertical, options: {maxLevels: 2}}}
 
 		<h2>Site news:</h2>
 		<p><strong>09.09.2009</strong><br />

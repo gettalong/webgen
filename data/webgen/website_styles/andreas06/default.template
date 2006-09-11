@@ -25,7 +25,7 @@
       </div>
 
       <div id="nav">
-        {menu: {menuStyle: vertical, options: {subtreeLevel: 1}}}
+        {menu: {menuStyle: vertical, options: {maxLevels: 1}}}
         <p class="hide"><a href="#top">Back to top</a></p>
       </div>
 
@@ -39,8 +39,10 @@
           <div id="leftside">
             <a id="sectionmenu"></a>
             <p class="soft">Some text here, maybe a website description</p>
-            <h1>Site menu:</h1>
-            {menu: {menuStyle: vertical, options: {level: 2, subtreeLevel: 3}}}
+            <% if node.level > 1 %>
+	    <h1>Site menu:</h1>
+            {menu: {menuStyle: vertical, options: {startLevel: 2, maxLevels: 2}}}
+	    <% end %>
           </div>
 
           <div id="rightside">

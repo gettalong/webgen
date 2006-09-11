@@ -74,7 +74,7 @@ float:left;
 width:752px;
 }
 
-#nav ul{
+#nav ul, #nav li{
 list-style:none;
 margin:0;
 padding:0;
@@ -101,11 +101,11 @@ margin:0 4px 0 0;
 padding:0 0 0 9px;
 }
 
-#nav .webgen-menu-item-selected {
+#nav li.webgen-menu-item-selected, #nav li.webgen-menu-submenu-inhierarchy {
 background:url(images/tabs.gif) no-repeat 0 -41px;
 }
 
-#nav .webgen-menu-item-selected a{
+#nav li.webgen-menu-item-selected a, #nav li.webgen-menu-submenu-inhierarchy a {
 background:url(images/tabs.gif) no-repeat 100% -41px;
 color:#303030;
 padding:7px 20px 5px 11px;

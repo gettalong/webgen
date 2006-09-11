@@ -31,7 +31,7 @@ module MenuStyles
 
     register_handler 'section'
 
-    param 'subtreeLevel', 3, 'Specifies how many levels should be shown. The number specifies ' +
+    param 'maxLevels', 3, 'Specifies how many levels should be shown. The number specifies ' +
       'the maximum depth the menu will have.'
     param 'dropdown', false, 'Specifies if the menu should be a drop-down menu'
     param 'numberSections', true, 'Specifies whether the section titles should be numbered'
@@ -68,7 +68,7 @@ TODO:
     #######
 
     def submenu( sections, level, number )
-      return '' if sections.empty? || level > param( 'subtreeLevel' )
+      return '' if sections.empty? || level > param( 'maxLevels' )
 
       out = ''
       out << "<ul>"

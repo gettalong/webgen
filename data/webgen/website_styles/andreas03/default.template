@@ -39,7 +39,7 @@
       <div id="sidebar">
 
         <h2 class="sidelink menuheader"><a id="sitemenu"></a>Menu:</h2>
-        {menu: {menuStyle: vertical, options: {subtreeLevel: 1}}}
+        {menu: {menuStyle: vertical, options: {maxLevels: 1}}}
         <a class="hide" href="#top" accesskey="1">Top of page</a>
 
         <h3>Regular links</h3>
