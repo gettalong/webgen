@@ -323,6 +323,8 @@ TODO move todoc
 - patterns are sorted ascending using their rank and nodes are then created in this order
 - default meta information for nodes can be set via default_meta_info method and overridden with config
   file by setting the param Core/FileHandler:defaultMetaInfo
+- new meta info linkAttrs: should be a hash of attribute-value pairs which will be added to a link to
+  this page node
 =end
 
     # TODO comment Specify the extension which should be handled by the class.
@@ -386,6 +388,7 @@ TODO move todoc
     # present in +attr+, it will be used as the link text; otherwise the title of the +node+ will be
     # used.
     def link_from( node, refNode, attr = {} )
+      attr = node['linkAttrs'].merge( attr ) if node['linkAttrs'].kind_of?( Hash )
       link_text = attr[:link_text] || node['title']
       attr.delete( :link_text )
       attr.delete( 'href' )

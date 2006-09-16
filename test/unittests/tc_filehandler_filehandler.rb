@@ -256,6 +256,10 @@ class DefaultHandlerTest < Webgen::PluginTestCase
                   @plugin1.link_from( node, refNode, :link_text => 'link_text' ) )
     assert_equal( '<a attr1="val1" href="#frag">link_text</a>',
                   @plugin1.link_from( node, refNode, :link_text => 'link_text', :attr1 => 'val1' ) )
+
+    node['linkAttrs'] = {:link_text => 'Default Text', 'class'=>'help'}
+    assert_equal( '<a attr1="val1" class="help" href="#frag">link_text</a>',
+                  @plugin1.link_from( node, refNode, :link_text => 'link_text', :attr1 => 'val1' ) )
   end
 
 end
