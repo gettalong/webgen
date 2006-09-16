@@ -135,7 +135,7 @@ TODO move todoc
       parent_node = @plugin_manager['File/DirectoryHandler'].recursive_create_path( pathname, parent_node )
 
       meta_info = meta_info_for( handler, File.join( parent_node.absolute_path, filename ) )
-      log(:info) { "Trying to create node for <#{file}>..." }
+
       src_path = File.join( Node.root( parent_node ).node_info[:src], parent_node.absolute_path, filename )
       dispatch_msg( :before_node_created, src_path, parent_node, handler, meta_info )
       if block_given?
@@ -143,7 +143,6 @@ TODO move todoc
       else
         node = handler.create_node( src_path, parent_node, meta_info )
       end
-      log(:info) { "Node for <#{file}> created" } unless node.nil?
       dispatch_msg( :after_node_created, node ) unless node.nil?
 
       #TODO check node for correct lang and other things
@@ -214,7 +213,10 @@ TODO move todoc
         used_files += common
         diff = files - common
         log(:info) { "Not using these files for #{handler.class.plugin_name} as they do not exist or are excluded: #{diff.inspect}" } if diff.length > 0
-        common.each  {|file| create_node( file.sub( /^#{root_node.node_info[:src]}/, '' ), root_node, handler ) }
+        common.each  do |file|
+          log(:info) { "Creating node(s) for file <#{file}>..." }
+          create_node( file.sub( /^#{root_node.node_info[:src]}/, '' ), root_node, handler )
+        end
       end
 
       unused_files = all_files - used_files

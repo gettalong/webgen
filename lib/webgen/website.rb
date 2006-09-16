@@ -173,13 +173,13 @@ module Webgen
       @logger.level = @manager.param_for_plugin( 'Core/Configuration', 'loggerLevel' )
       @manager.init
 
-      @logger.info( 'WebSite#render' ) { "Starting rendering of website #{directory}..." }
+      @logger.info( 'WebSite#render' ) { "Starting rendering of website <#{directory}>..." }
       if files.empty?
         @manager['Core/FileHandler'].render_site
       else
         @manager['Core/FileHandler'].render_files( files )
       end
-      @logger.info( 'WebSite#render' ) { "Rendering of #{directory} finished" }
+      @logger.info( 'WebSite#render' ) { "Rendering of website <#{directory}> finished" }
     end
 
     # Loads the configuration file from the +directory+.

@@ -41,12 +41,12 @@ module Tags
     # all references should be resolved.
     def process( content, chain )
       if !content.kind_of?( String )
-        log(:error) { "The content in <#{chain.first.node_info[:src]}> is not a string, but a #{content.class.name}" }
+        log(:warn) { "The content in <#{chain.first.node_info[:src]}> is not a string, but a #{content.class.name}" }
         content = content.to_s
       end
 
       return replace_tags( content, chain.first ) do |tag, tag_data|
-        log(:info) { "Replacing tag #{tag} with data '#{tag_data}' in <#{chain.first.full_path}>" }
+        log(:debug) { "Replacing tag #{tag} with data '#{tag_data}' in <#{chain.first.full_path}>" }
 
         result = ''
         processor = processor_for_tag( tag )
@@ -54,7 +54,7 @@ module Tags
           begin
             processor.set_tag_config( YAML::load( "--- #{tag_data}" ), chain.first )
           rescue ArgumentError => e
-            self.logger.error { "Could not parse the data '#{tag_data}' for tag #{tag} in <#{node.nod_info[:src]}>: #{e.message}" }
+            log(:error) { "Could not parse the data '#{tag_data}' for tag #{tag} in <#{node.nod_info[:src]}>: #{e.message}" }
           end
           result, tag_chain = processor.process_tag( tag, chain )
           processor.reset_tag_config
@@ -199,7 +199,7 @@ module Tags
       when NilClass
 
       else
-        log(:error) { "Invalid parameter for tag '#{self.class.plugin_name}' in <#{node.node_info[:src]}>" }
+        log(:error) { "Invalid parameter type (#{config.class}) for tag '#{self.class.plugin_name}' in <#{node.node_info[:src]}>" }
       end
 
       unless all_mandatory_params_set?

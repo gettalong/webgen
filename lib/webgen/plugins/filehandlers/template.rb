@@ -38,23 +38,23 @@ TODO: MOVE TO DOC
 - use meta_info 'template'
 =end
 
-    def create_node( srcName, parent, meta_info )
+    def create_node( src_name, parent, meta_info )
       begin
         page_meta_info = @plugin_manager['Core/FileHandler'].meta_info_for( @plugin_manager['File/PageHandler'] )
-        data = WebPageData.new( File.read( srcName ), @plugin_manager['ContentConverter/Default'].registered_handlers,
+        data = WebPageData.new( File.read( src_name ), @plugin_manager['ContentConverter/Default'].registered_handlers,
                                 page_meta_info.merge( meta_info ) )
       rescue WebPageDataInvalid => e
-        log(:error) { "Invalid template file <#{srcName}>: #{e.message}" }
+        log(:error) { "Invalid template file <#{src_name}>: #{e.message}" }
         return nil
       end
 
-      if node = parent.find {|n| n =~ srcName }
+      if node = parent.find {|n| n =~ src_name }
         log(:warn) { "Can't create node <#{node.full_path}> as it already exists! Using existing!" }
       else
-        basename = File.basename( srcName )
+        basename = File.basename( src_name )
         node = FileHandlers::PageHandler::PageNode.new( parent, basename, data  )
         node['title'] = 'template'
-        node.node_info[:src] = srcName
+        node.node_info[:src] = src_name
         node.node_info[:processor] = self
         node.node_info[:pagename] = basename
         node.node_info[:local_pagename] = basename
@@ -72,7 +72,7 @@ TODO: MOVE TO DOC
       if node['template'].kind_of?( String )
         template_node = node.resolve_node( node['template'] )
         if template_node.nil?
-          log(:warn) { "Specified template '#{node['template']}' for file <#{node.node_info[:src]}> not found, using default template!" }
+          log(:warn) { "Specified template '#{node['template']}' for <#{node.node_info[:src]}> not found, using default template!" }
           template_node = get_default_template( node.parent, param( 'defaultTemplate' ) )
         end
         node['template'] = template_node

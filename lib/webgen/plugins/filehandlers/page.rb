@@ -117,8 +117,8 @@ TODO: MOVE TO DOC
       @dummy_node.node_info[:src] = 'dummy'
     end
 
-    def create_node( srcName, parent, meta_info )
-      create_node_from_data( srcName, parent, File.read( srcName ), meta_info )
+    def create_node( src_name, parent, meta_info )
+      create_node_from_data( src_name, parent, File.read( src_name ), meta_info )
     end
 
 =begin
@@ -224,7 +224,7 @@ TODO: MOVE TO DOC
       matchData = /^(?:(\d+)\.)?([^.]*?)(?:\.(\w\w\w?))?\.(.*)$/.match( File.basename( filename ) )
       analysed = OpenStruct.new
 
-      log(:info) { "Using default language for file <#{filename}>" } if lang.nil? && matchData[3].nil?
+      log(:debug) { "Using default language for file <#{filename}>" } if lang.nil? && matchData[3].nil?
       analysed.lang      = lang || matchData[3] || param( 'lang', 'Core/Configuration' )
       analysed.filename  = filename
       analysed.useLangPart  = ( param( 'defaultLangInFilename' ) || param( 'lang', 'Core/Configuration' ) != analysed.lang )

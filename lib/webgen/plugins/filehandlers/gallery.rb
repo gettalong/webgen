@@ -359,7 +359,7 @@ TODO: move to doc
 
       def write_node( node )
         if @plugin_manager['Core/FileHandler'].file_modified?( node.node_info[:thumbnail_file], node.full_path )
-          log(:info) {"Creating thumbnail <#{node.full_path}> from <#{node.node_info[:thumbnail_file]}>"}
+          log(:info) {"Creating thumbnail <#{node.full_path}> from image <#{node.node_info[:thumbnail_file]}>"}
           image = Magick::ImageList.new( node.node_info[:thumbnail_file] )
           image.change_geometry( node.node_info[:thumbnail_size] ) {|c,r,i| i.resize!( c, r )}
           image.write( node.full_path )

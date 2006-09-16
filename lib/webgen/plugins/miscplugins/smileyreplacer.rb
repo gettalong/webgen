@@ -69,7 +69,6 @@ TODO: move to doc
 
       log(:info) { "Replacing smileys in file <#{node.full_path}>..." }
       content.gsub!( SMILEY_REGEXP ) do |match|
-        log(:info) { "Found smiley #{match}, trying to replace it with emoticon..." }
         if res = @plugin_manager['Core/ResourceManager'].get_resource( "webgen-emoticons-#{pack}-#{SMILEY_MAP[match]}" )
           res.referenced!
           "<img src=\"#{res.route_from( node )}\" alt=\"smiley #{match}\" />"
