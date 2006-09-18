@@ -54,7 +54,11 @@ class PageHandlerTest < Webgen::PluginTestCase
 
   plugin_files [
     'webgen/plugins/filehandlers/directory.rb',
+    'webgen/plugins/filehandlers/template.rb',
     'webgen/plugins/filehandlers/page.rb',
+    'webgen/plugins/tags/tag_processor.rb',
+    'webgen/plugins/tags/block.rb',
+    'webgen/plugins/tags/meta.rb',
   ]
   plugin_to_test 'File/PageHandler'
 
@@ -83,7 +87,14 @@ class PageHandlerTest < Webgen::PluginTestCase
   end
 
   def test_render_node
-    flunk
+    root = @manager['Core/FileHandler'].instance_eval { build_tree }
+    file2 = root.resolve_node( 'file2.de.page' )
+
+    assert_equal( "Template\n"+
+                  "Block 1 is inMenu true\n"+
+                  "Template", @plugin.render_node( file2 ) )
+    assert_equal( "", @plugin.render_node( file2, 'other' ) )
+    assert_equal( "Block 2 is inMenu true", @plugin.render_node( file2, 'other', false ) )
   end
 
   def test_node_for_lang
