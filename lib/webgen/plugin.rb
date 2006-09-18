@@ -429,11 +429,7 @@ end
 
 module Webgen
 
-  # Default PluginLoader instance responsible for loading all plugins shipped with webgen.
-  DEFAULT_WRAPPER_MODULE = Module.new
-  DEFAULT_PLUGIN_LOADER = PluginLoader.new( DEFAULT_WRAPPER_MODULE )
-
-  DEFAULT_PLUGIN_LOADER.load_from_block do
+  DEFAULT_PLUGIN_LOAD_PROC = proc do
 
     # THE base class for all plugins.
     class Plugin
@@ -489,6 +485,16 @@ module Webgen
     end
 
   end
+
+  def self.init_default_plugin_loader( mod, block = DEFAULT_PLUGIN_LOAD_PROC )
+    loader = PluginLoader.new( mod )
+    loader.load_from_block( &block )
+    loader
+  end
+
+  # Default PluginLoader instance responsible for loading all plugins shipped with webgen.
+  DEFAULT_WRAPPER_MODULE = Module.new
+  DEFAULT_PLUGIN_LOADER = init_default_plugin_loader( DEFAULT_WRAPPER_MODULE )
 
   # Set this constant to +false+ before requiring the file to not load the default plugins.
   LOAD_DEFAULT_PLUGINS = true unless defined?( LOAD_DEFAULT_PLUGINS )

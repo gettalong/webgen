@@ -82,28 +82,56 @@ class WebSiteTest < Webgen::TestCase
 
   SAMPLE_SITE = fixture_path( '../sample_site/' )
 
-  def test_initialize
-    temp = Marshal.load( Marshal.dump( Webgen::DEFAULT_PLUGIN_LOADER ) )
-    Webgen::DEFAULT_PLUGIN_LOADER.load_from_file( 'webgen/plugins/coreplugins/configuration' )
+  def param_for_plugin( plugin_name, param )
+    if [plugin_name, param] == ['Core/Configuration', 'lang']
+      'eo'
+    else
+      raise Webgen::PluginParamNotFound.new( plugin_name, param )
+    end
+  end
 
-    # Test repeated initialization
-    website = Webgen::WebSite.new( SAMPLE_SITE )
-    website = Webgen::WebSite.new( SAMPLE_SITE )
-  ensure
-    Webgen.remove_const( :DEFAULT_PLUGIN_LOADER )
-    Webgen.const_set( :DEFAULT_PLUGIN_LOADER, temp )
+  def test_initialize
+    plugin_sandbox do
+      # Test repeated initialization
+      website = Webgen::WebSite.new( SAMPLE_SITE )
+      website = Webgen::WebSite.new( SAMPLE_SITE )
+    end
   end
 
   def test_param_for_plugin
-    # without plugin_config
-    # with plugin_config
-    flunk
+    plugin_sandbox do
+      # without plugin_config
+      website = Webgen::WebSite.new( SAMPLE_SITE )
+      path = File.expand_path( SAMPLE_SITE )
+      assert_equal( File.join( path, Webgen::SRC_DIR ), website.manager.param_for_plugin( 'Core/Configuration', 'srcDir' ) )
+      assert_equal( File.join( path, 'output' ), website.manager.param_for_plugin( 'Core/Configuration', 'outDir' ) )
+      assert_equal( path, website.manager.param_for_plugin( 'Core/Configuration', 'websiteDir' ) )
+      assert_equal( 'en', website.manager.param_for_plugin( 'Core/Configuration', 'lang' ) )
+
+      # with plugin_config
+      website = Webgen::WebSite.new( SAMPLE_SITE, self )
+      assert_equal( 'eo', website.manager.param_for_plugin( 'Core/Configuration', 'lang' ) )
+    end
   end
 
   def test_create_website
     assert_raise( ArgumentError ) { Webgen::WebSite.create_website( File.join( SAMPLE_SITE, 'test' ), 'invalid_name' ) }
     assert_raise( ArgumentError ) { Webgen::WebSite.create_website( File.join( SAMPLE_SITE, 'test' ), 'default', 'invalid_name' ) }
     assert_raise( ArgumentError ) { Webgen::WebSite.create_website( SAMPLE_SITE, 'default', 'default' ) }
+  end
+
+  #######
+  private
+  #######
+
+  def plugin_sandbox
+    Webgen::DEFAULT_PLUGIN_LOADER.load_from_file( 'webgen/plugins/coreplugins/configuration' )
+    yield
+  ensure
+    Webgen.remove_const( :DEFAULT_PLUGIN_LOADER )
+    Webgen.remove_const( :DEFAULT_WRAPPER_MODULE )
+    Webgen.const_set( :DEFAULT_WRAPPER_MODULE, Module.new )
+    Webgen.const_set( :DEFAULT_PLUGIN_LOADER, Webgen.init_default_plugin_loader( Webgen::DEFAULT_WRAPPER_MODULE ) )
   end
 
 end

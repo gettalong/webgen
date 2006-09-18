@@ -31,36 +31,11 @@ module MenuStyles
 
     register_handler 'section'
 
-    param 'maxLevels', 3, 'Specifies how many levels should be shown. The number specifies ' +
-      'the maximum depth the menu will have.'
-    param 'dropdown', false, 'Specifies if the menu should be a drop-down menu'
+    param 'maxLevels', 3, 'Specifies the maximum number of levels that should be shown.'
     param 'numberSections', true, 'Specifies whether the section titles should be numbered'
 
-=begin
-TODO:
-- test dropdown functionality
-=end
-
-    def initialize( plugin_manager )
-      super
-      @css = "
-/* START webgen section menu style */
-.webgen-menu-section-dropdown > ul { display: none; }
-.webgen-menu-section-dropdown:hover > ul { display: block; }
-/* STOP webgen section menu style */
-"
-    end
-
     def internal_build_menu( src_node, menu_tree )
-      unless defined?( @css_added )
-        @plugin_manager['Core/ResourceManager'].append_data( 'webgen-css', @css )
-        @css_added = true
-      end
-      styles = ['webgen-menu-section',
-                (param( 'dropdown' ) ? 'webgen-menu-section-dropdown' : ''),
-                param( 'divClass' )]
-
-      "<div class=\"#{styles.join(' ')}\">#{submenu( src_node.node_info[:pagesections], 1, '' )}</div>"
+      "<div class=\"webgen-menu-section #{param('divClass')}\">#{submenu( src_node.node_info[:pagesections], 1, '' )}</div>"
     end
 
     #######
@@ -77,7 +52,7 @@ TODO:
         child_number = number + index.to_s + '.'
         menu = (!child.subsections.empty? ? submenu( child.subsections, level + 1, child_number ) : '')
 
-        out << "<li><a href=\"##{child.id}\">#{param('numberSections') ? child_number : ''} #{child.title}</a>"
+        out << "<li><a href=\"##{child.id}\">#{param('numberSections') ? child_number + ' ': ''}#{child.title}</a>"
         out << menu
         out << "</li>"
       end
@@ -85,29 +60,6 @@ TODO:
 
       out
     end
-
-
-=begin
-      out = ''
-      if get_param( 'dropdown' ) && level == src_node.level
-        style, link = menu_item_details( src_node, menu_node['node'] )
-        out << "#{link}"
-      end
-
-      out << "<ul>" if level >= src_node.level
-      menu_node.each do |child|
-        menu = child['node']['int:directory?'] ? submenu( src_node, child, level + 1 ) : ''
-        style, link = menu_item_details( src_node, child['node'] )
-
-        out << "<li #{style}>#{link}" if level >= src_node.level
-        out << menu
-        out << "</li>" if level >= src_node.level
-      end
-      out << "</ul>" if level >= src_node.level
-
-      return out
-    end
-=end
 
   end
 
