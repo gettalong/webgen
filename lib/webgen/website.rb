@@ -275,10 +275,27 @@ module Webgen
     private
     #######
 
+=begin
+TODO: move to doc
+- if a filehandler plugin (ie. one starting with File/) has set the defaultMetaInfo param, then the content
+  is used to update the defaultMetaInfo hash specified by the plugin BUT only if Core/FileHandler:defaultMetaInfo is not set!
+=end
+
     def check_config
       if !@config.kind_of?( Hash ) || !@config.all? {|k,v| v.kind_of?( Hash )}
         raise ConfigurationFileInvalid.new( 'Structure of config file is not valid, has to be a Hash of Hashes' )
       end
+
+      if !@config.has_key?( 'Core/FileHandler' ) || !@config['Core/FileHandler'].has_key?( 'defaultMetaInfo' )
+        @config.each_key do |plugin_name|
+          next unless plugin_name =~ /File\//
+          if @config[plugin_name]['defaultMetaInfo'].kind_of?( Hash )
+            ((@config['Core/FileHandler'] ||= {})['defaultMetaInfo'] ||= {})[plugin_name] = @config[plugin_name]['defaultMetaInfo']
+            @config[plugin_name].delete( 'defaultMetaInfo' )
+          end
+        end
+      end
+
     end
 
   end

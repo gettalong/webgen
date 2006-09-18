@@ -159,5 +159,12 @@ class ConfigurationFileTest < Webgen::TestCase
     assert_raise( Webgen::PluginParamNotFound ) { configfile.param_for_plugin( 'UnknownPlugin', 'param' ) }
   end
 
+  def test_auto_default_meta_info_setter
+    configfile = Webgen::ConfigurationFile.new( fixture_path( 'correct.yaml' ) )
+    assert_equal( {'File/MyHandler'=>{'metainfo'=>'value'}}, configfile.param_for_plugin( 'Core/FileHandler', 'defaultMetaInfo' ) )
+
+    configfile = Webgen::ConfigurationFile.new( fixture_path( 'meta_info_test.yaml' ) )
+    assert_equal( {'metainfo'=>'value'}, configfile.param_for_plugin( 'Core/FileHandler', 'defaultMetaInfo' ) )
+  end
 
 end
