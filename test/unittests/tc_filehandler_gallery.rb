@@ -150,9 +150,9 @@ begin
     plugin_to_test 'File/ThumbnailWriter'
 
     def test_create_node
-      node = @plugin.create_node( 'testfor\\anddo.jpg', nil, '100x100' )
+      node = @plugin.create_node( 'testfor anddo.jpg', nil, '100x100' )
       assert_equal( 'tn_testfor_anddo.jpg', node.path )
-      assert_equal( 'testfor\\anddo.jpg', node.node_info[:thumbnail_file] )
+      assert_equal( 'testfor anddo.jpg', node.node_info[:thumbnail_file] )
       assert_equal( '100x100', node.node_info[:thumbnail_size] )
     end
 

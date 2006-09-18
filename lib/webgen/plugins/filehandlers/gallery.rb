@@ -349,7 +349,7 @@ TODO: move to doc
       infos :summary => "Writes out thumbnails with RMagick"
 
       def create_node( file, parent, thumbnailSize = nil )
-        node = Node.new( parent, 'tn_' + File.basename( file ).tr( '/ \\', '_' ) )
+        node = Node.new( parent, 'tn_' + File.basename( file ).tr( ' ', '_' ) )
         node['title'] = node.path
         node.node_info[:thumbnail_size] = thumbnailSize
         node.node_info[:thumbnail_file] = file
