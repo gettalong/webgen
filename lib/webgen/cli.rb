@@ -35,8 +35,8 @@ module Webgen
     def self.colorify
       @@colors.each do |color, values|
         module_eval <<-EOF
-        def Color.#{color.to_s}
-        "\e[#{values[0]};#{values[1]}m"
+        def Color.#{color.to_s}( text = nil )
+          "\e[#{values[0]};#{values[1]}m" + (text.nil? ? '' : text + self.reset)
         end
         EOF
       end
@@ -65,16 +65,16 @@ module Webgen
     end
 
     def self.headline( text, indent = 2 )
-      ' '*indent + "#{Color.bold}#{text}#{Color.reset}"
+      ' '*indent + "#{Color.bold( text )}"
     end
 
-    def self.section( text, ljustlength = 0, indent = 4 )
-      ' '*indent + "#{Color.green}#{text}:#{Color.reset}".ljust( ljustlength - indent + Color.green.length + Color.reset.length )
+    def self.section( text, ljustlength = 0, indent = 4, color = :green )
+      ' '*indent + "#{Color.send( color, text )}".ljust( ljustlength - indent + Color.send( color ).length + Color.reset.length )
     end
 
     def self.dirinfo_output( opts, name, dirinfo )
       ljust = 15 + opts.summary_indent.length
-      opts.separator CliUtils.section( 'Name', ljust, opts.summary_indent.length + 2 ) + "#{Color.lred}#{name}#{Color.reset}"
+      opts.separator CliUtils.section( 'Name', ljust, opts.summary_indent.length + 2 ) + "#{Color.lred( name )}"
 
       dirinfo.infos.sort.each do |name, value|
         desc = CliUtils.format( value, ljust )
@@ -103,9 +103,9 @@ module Webgen
         opts.separator ""
         opts.separator "Available templates and styles:"
         opts.separator ""
-        opts.separator opts.summary_indent + "#{Color.bold}Templates#{Color.reset}"
+        opts.separator opts.summary_indent + "#{Color.bold( 'Templates' )}"
         Webgen::WebSiteTemplate.entries.sort.each {|name, entry| CliUtils.dirinfo_output( opts, name, entry ) }
-        opts.separator opts.summary_indent + "#{Color.bold}Styles#{Color.reset}"
+        opts.separator opts.summary_indent + "#{Color.bold( 'Styles' )}"
         Webgen::WebSiteStyle.entries.sort.each {|name, entry| CliUtils.dirinfo_output( opts, name, entry ) }
       end
       @template = 'default'
@@ -252,8 +252,7 @@ module Webgen
             puts "\n" + CliUtils.section( 'Parameters' )
             config.params.sort.each do |name, item|
               print "\n" + CliUtils.section( 'Parameter', ljust, 6 )
-              puts Color.lred + item.name + Color.reset + " = " +
-                Color.lblue + plugin.instance_eval {param( name )}.inspect + Color.reset +
+              puts Color.lred( item.name ) + " = " + Color.lblue( plugin.instance_eval {param( name )}.inspect ) +
                 " (" + item.default.inspect + ")"
               puts CliUtils.section( 'Description', ljust, 6 ) + CliUtils.format( item.description, ljust ).join("\n")
             end
@@ -272,6 +271,68 @@ module Webgen
   end
 
 
+  class CheckCommand < CmdParse::Command
+
+    def initialize( cmdparser )
+      super( 'check', true )
+      self.short_desc = "Checks things like validity of the config file or the availability of optional libraries"
+
+      # Check configuration file command
+      checkConfig = CmdParse::Command.new( 'config', false )
+      checkConfig.short_desc = "Checks the validity of the configuration and outputs the used options"
+      checkConfig.set_execution_block do |args|
+        begin
+          print CliUtils.section( "Checking configuration file syntax...", 50, 0, :bold )
+          config_file = ConfigurationFile.new( File.join( cmdparser.directory, 'config.yaml' ) )
+          puts Color.green( 'OK' )
+
+          puts CliUtils.section( "Checking parameters...", 0, 0, :bold )
+          config_file.config.each do |plugin_name, params|
+            params.each do |param_name, value|
+              print CliUtils.section( "#{plugin_name}:#{param_name}", 50, 2, :reset )
+              if cmdparser.website.manager.plugin_class_for_name( plugin_name ).nil?
+                puts Color.lred( 'NOT OK' ) + ': no such plugin'
+              else
+                begin
+                  cmdparser.website.manager.param_for_plugin( plugin_name, param_name )
+                  puts Color.green( 'OK' )
+                rescue PluginParamNotFound => e
+                  puts Color.lred( 'NOT OK' ) + ': no such parameter'
+                end
+              end
+            end
+          end
+        rescue ConfigurationFileInvalid => e
+          puts Color.lred( 'NOT OK' ) + ': ' + e.message
+        end
+      end
+      self.add_command( checkConfig, true )
+
+      # Check optional libraries
+      checkLibs = CmdParse::Command.new( 'libs', false )
+      checkLibs.short_desc = "Checks the availability of optional libraries used by plugins"
+      checkLibs.set_execution_block do |args|
+        puts CliUtils.format( "List of optional libraries (the info line specifies which functionality will be available " +
+                              "if the needed gems are installed):" ).join("\n")
+        puts
+
+        cmdparser.website.manager.plugin_loaders.each do |loader|
+          loader.optional_parts.sort.each do |name, options|
+            puts CliUtils.headline( name )
+            puts CliUtils.section( 'Info', 25 ) + CliUtils.format( options[:info], 25 ).join("\n")
+            puts CliUtils.section( 'Needed gems', 25 ) + options[:needed_gems].join( ', ' )
+            puts CliUtils.section( 'Loaded', 25 ) + ( options[:loaded] ? Color.green( 'yes' ) : Color.lred( 'no' ) )
+            puts CliUtils.section( 'Error message', 25 ) + CliUtils.format( options[:error_msg], 25 ).join("\n") unless options[:loaded]
+            puts
+          end
+        end
+      end
+      self.add_command( checkLibs )
+    end
+
+  end
+
+
   class CommandParser < CmdParse::CommandParser
 
     VERBOSITY_UNUSED = -1
@@ -279,6 +340,7 @@ module Webgen
     attr_reader :directory
     attr_reader :website
     attr_reader :verbosity
+    attr_reader :config_file
 
     def initialize
       super( true )
@@ -308,6 +370,7 @@ module Webgen
       self.add_command( UseCommand.new( self ) )
       self.add_command( CmdParse::HelpCommand.new )
       self.add_command( CmdParse::VersionCommand.new )
+      self.add_command( CheckCommand.new( self ) )
     end
 
     def param_for_plugin( plugin_name, param )
