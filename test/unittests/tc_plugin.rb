@@ -43,6 +43,15 @@ class PluginLoaderTest < Webgen::TestCase
     check_loaded_plugin_class( @l, TestPlugin )
   end
 
+  def test_load_optional_part
+    assert_nothing_thrown do
+      @l.load_from_file( fixture_path( 'plugin1') )
+    end
+    assert_not_nil( @l.optional_parts['test'] )
+    assert_equal( ['unknown'], @l.optional_parts['test'][:needed_gems] )
+    assert( !@l.optional_parts['test'][:loaded] )
+  end
+
   def test_accessors
     assert_equal( 0, @l.plugin_classes.length )
     @l.load_from_block { self.class.module_eval "class TestPlugin < Webgen::Plugin; end" }

@@ -151,6 +151,17 @@ module Webgen
       wrapper.module_eval( File.read( realfile ), file, 1 ) if do_load
     end
 
+    def load_optional_part( name, options = {} )
+      options[:loaded] = true
+      begin
+        yield
+      rescue LoadError => e
+        options[:loaded] = false
+        options[:error_msg] ||= e.message
+      end
+      callcc {|cont| throw :load_optional_part, [cont, name, options]}
+    end
+
   end
 
   # Responsible for loading plugins classes. Each PluginLoader has an array of plugin classes which
@@ -159,6 +170,7 @@ module Webgen
 
     # The plugin classes loaded by this PluginLoader instance.
     attr_reader :plugin_classes
+    attr_reader :optional_parts
 
     # Creates a new PluginLoader instance. The +wrapper_module+ is used when loading the plugins so
     # that they do not pollute the global namespace.
@@ -166,6 +178,7 @@ module Webgen
       @plugin_classes = []
       @loaded_files = []
       @wrapper_module = wrapper_module
+      @optional_parts = {}
     end
 
     # Loads all plugin classes in the given +dir+ and in its subdirectories. Before +require+ is
@@ -195,7 +208,11 @@ module Webgen
     # Loads all plugin classes which get declared in the given block.
     def load_from_block( &block )
       cont, klass = catch( :plugin_class_found ) do
-        yield
+        cont, name, options = catch( :load_optional_part ) { yield }
+        if cont
+          @optional_parts[name] = options
+          cont.call
+        end
         nil # return value for catch, means: all classes processed
       end
       add_plugin_class( klass ) unless klass.nil?

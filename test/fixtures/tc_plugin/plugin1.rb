@@ -23,4 +23,10 @@ module Testing
 
   end
 
+  load_optional_part( 'test',
+                      :needed_gems => ['unknown'],
+                      :error_msg => 'error_msg' ) do
+    require 'unknown_library'
+  end
+
 end
