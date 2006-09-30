@@ -167,12 +167,12 @@ TODO: MOVE TO DOC
 
     blocks.each_with_index do |block_data, index|
       name, format, content = *block_data
-      name = name || (@meta_info['blocks'] && @meta_info['blocks'][index] && @meta_info['blocks'][index]['name']) || 'content'
+      name = name || (@meta_info['blocks'] && @meta_info['blocks'][index] && @meta_info['blocks'][index][0]) || 'content'
       raise( WebPageDataInvalid, "Same name used for more than one block: #{name}" ) if @blocks.has_key?( name )
       content ||= ''
       content.gsub!( /^(\\+)(---.*?)$/ ) {|m| "\\" * ($1.length / 2) + $2 }
       content.strip!
-      format = format || (@meta_info['blocks'] && @meta_info['blocks'][index] && @meta_info['blocks'][index]['format']) || 'default'
+      format = format || (@meta_info['blocks'] && @meta_info['blocks'][index] && @meta_info['blocks'][index][1]) || 'default'
       @blocks[name] = @blocks[index] = HtmlBlock.new( name, convert( content, format ) )
     end
   end
