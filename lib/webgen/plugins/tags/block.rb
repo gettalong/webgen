@@ -40,6 +40,7 @@ module Tags
       if block_node.node_info[:pagedata].blocks.has_key?( block_name )
         if block_node['useERB']
           node = chain.last
+          ref_node = block_node
           begin
             content = block_node.node_info[:pagedata].blocks[block_name].render_with_erb( binding )
           rescue
