@@ -20,12 +20,13 @@
 #++
 #
 
-begin
+load_optional_part( 'syntax-highlighting',
+                    :needed_gems => ['coderay'],
+                    :error_msg => "Coderay not available, therefore syntax highlighting is not available",
+                    :info => "Syntax highlighting of source code will be available (e.g. for the includeFile tag)" ) do
+
   require 'coderay'
-  SYNTAX_HIGHLIGHTING = true
-rescue LoadError => e
-  $stderr.puts( "Coderay not available, therefore syntax highlighting is not available: #{e.message}" ) if $VERBOSE
-  SYNTAX_HIGHLIGHTING = false
+
 end
 
 
@@ -45,24 +46,27 @@ TODO: move to doc
 
     def initialize( plugin_manager )
       super
-      if SYNTAX_HIGHLIGHTING
+      @sl_available = plugin_manager.optional_part( 'syntax-highlighting' )[:loaded]
+      if @sl_available
         @plugin_manager['Core/ResourceManager'].append_data( 'webgen-css', CodeRay::Encoders[:html]::CSS.new.stylesheet )
       end
     end
 
-    def self.available_languages
-      if SYNTAX_HIGHLIGHTING
-        CodeRay::Scanners.all_plugin_names
-      else
-        []
-      end
-    end
-
+    # Highlights the given +content+ in language +lang+.
     def highlight( content, lang )
-      if SYNTAX_HIGHLIGHTING
+      if @sl_available
         CodeRay.scan( content, (lang.kind_of?( String ) ? lang.to_sym : lang ) ).html( :wrap => :div, :line_numbers => :inline )
       else
         content
+      end
+    end
+
+    # Returns all available syntax highlighting languages.
+    def self.available_languages
+      if Object.const_defined?( :CodeRay )
+        CodeRay::Scanners.all_plugin_names
+      else
+        []
       end
     end
 

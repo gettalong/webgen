@@ -20,7 +20,11 @@
 #++
 #
 
-begin
+load_optional_part( 'content-converter-textile',
+                    :needed_gems => ['redcloth'],
+                    :error_msg => "Textile not available as content format as RedCloth could not be loaded",
+                    :info => "Textile can be used as content format" ) do
+
   require 'redcloth'
   load_plugin 'webgen/plugins/contentconverters/default'
 
@@ -45,6 +49,4 @@ begin
 
   end
 
-rescue LoadError => e
-  $stderr.puts( "Textile not available as content format as RedCloth could not be loaded: #{e.message}" ) if $VERBOSE
 end

@@ -377,6 +377,11 @@ module Webgen
       @plugin_classes.find {|p| p.plugin_name == plugin_name}
     end
 
+    # Returns the options hash for the given optional library.
+    def optional_part( name )
+      @plugin_loaders.each {|pl| return pl.optional_parts[name] if pl.optional_parts.has_key?( name ) }
+    end
+
     # Logs the result of executing +block+ under the severity level +sev_level+. The parameter
     # +source+ identifies the source of the log message.
     def log_msg( sev_level, source, &block )

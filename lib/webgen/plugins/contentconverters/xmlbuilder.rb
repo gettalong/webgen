@@ -20,7 +20,12 @@
 #++
 #
 
-begin
+
+load_optional_part( 'content-converter-xmlbuilder',
+                    :needed_gems => ['builder'],
+                    :error_msg => "XML Builder not available as content format as it could not be loaded",
+                    :info => "The builder library can be used to create XHTML/XML content" ) do
+
   require 'builder'
   load_plugin 'webgen/plugins/contentconverters/default'
 
@@ -52,6 +57,4 @@ TODO: move to doc
 
   end
 
-rescue LoadError => e
-  $stderr.puts( "XML Builder not available as content format as it could not be loaded: #{e.message}" ) if $VERBOSE
 end

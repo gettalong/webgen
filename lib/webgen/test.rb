@@ -110,7 +110,9 @@ module Webgen
       if !@manager.plugins.has_key?( 'ContentConverter/Default' )
         @manager.plugins['ContentConverter/Default'] = Object.new
         def (@manager.plugins['ContentConverter/Default']).registered_handlers
-          {'default' => proc {|c| c}, 'textile' => proc {|c| c}}
+          formatters = Hash.new {|h, k| h[k] = proc {|c| c} }
+          def formatters.has_key?( value ); true; end
+          formatters
         end
       end
 

@@ -20,7 +20,11 @@
 #++
 #
 
-begin
+load_optional_part( 'content-converter-markdown',
+                    :needed_gems => ['bluecloth'],
+                    :error_msg => "Markdown not available as content format as BlueCloth could not be loaded",
+                    :info => "Markdown can be used as content format" ) do
+
   require 'bluecloth'
   load_plugin 'webgen/plugins/contentconverters/default'
 
@@ -45,6 +49,4 @@ begin
 
   end
 
-rescue LoadError => e
-  $stderr.puts( "Markdown not available as content format as BlueCloth could not be loaded: #{e.message}" ) if $VERBOSE
 end

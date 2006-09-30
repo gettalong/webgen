@@ -92,7 +92,7 @@ class GalleryFileHandlerTest < Webgen::PluginTestCase
     ginfoclass = @wrapper::FileHandlers::GalleryHandler::GalleryInfo
 
     root = Node.new( nil, '/' )
-    root.node_info[:src] = ''
+    root.node_info[:src] = fixture_path
 
     # with a main page
     assert_nil( @plugin.create_node( fixture_path( 'test.gallery' ), root, {} ) )
@@ -158,12 +158,12 @@ begin
 
     def test_gallery_thumbnail_creation
       root = Node.new( nil, '/' )
-      root.node_info[:src] = ''
+      root.node_info[:src] = fixture_path
 
       @manager['File/GalleryHandler'].create_node( fixture_path( 'test.gallery' ), root, {} )
       tn_node = root.resolve_node( 'tn_test1.jpg' )
       assert_not_nil( tn_node )
-      assert_equal( '/test1.jpg', tn_node.node_info[:thumbnail_file] )
+      assert_equal( fixture_path( 'test1.jpg' ), tn_node.node_info[:thumbnail_file] )
       assert_equal( tn_node.absolute_path, root.resolve_node( 'Test_test1_jpg.page' ).node_info[:ginfo].cur_image.data['thumbnail'] )
     end
 

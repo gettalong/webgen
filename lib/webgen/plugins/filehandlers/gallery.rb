@@ -24,6 +24,16 @@ load_plugin 'webgen/plugins/filehandlers/filehandler'
 load_plugin 'webgen/plugins/filehandlers/directory'
 load_plugin 'webgen/plugins/filehandlers/page'
 
+load_optional_part( 'gallery-exif',
+                    :needed_gems => ['exifr'],
+                    :error_msg => 'EXIF library could not be loaded',
+                    :info => 'EXIF information will be available for each image' ) do
+
+  require 'exifr'
+
+end
+
+
 module FileHandlers
 
   class GalleryHandler < DefaultHandler
@@ -72,10 +82,12 @@ module FileHandlers
       class Image < Object
 
         attr_reader :filename
+        attr_reader :exif
 
-        def initialize( pagename, data, filename )
+        def initialize( pagename, data, filename, exif = nil )
           super( pagename, data )
           @filename = filename
+          @exif = nil
         end
 
         # Returns the thumbnail tag.
@@ -312,10 +324,27 @@ TODO: move to doc
 
         filename = param( 'title' ) + ' ' + image
         node = create_page_node( gallery_file_name( filename ), parent, page_data( data ) )
-        image = GalleryInfo::Image.new( node.path, data, image )
+        image = GalleryInfo::Image.new( node.path, data, image, get_exif_data( File.join( parent.node_info[:src], image ) ) )
         imageList << [node, image]
       end
       imageList
+    end
+
+    def get_exif_data( image )
+      if @plugin_manager.optional_part( 'gallery-exif' )[:loaded]
+        jpeg = EXIFR::JPEG.new( image ) rescue nil
+        if !jpeg.nil? && jpeg.exif?
+          jpeg.exif[:width] = jpeg.width
+          jpeg.exif[:height] = jpeg.height
+          jpeg.exif[:comment] = jpeg.comment
+          jpeg.exif[:bits] = jpeg.bits
+          jpeg.exif
+        else
+          nil
+        end
+      else
+        nil
+      end
     end
 
     def get_thumbnail( image, data, parent )
@@ -325,7 +354,11 @@ TODO: move to doc
   end
 
   # Try to use RMagick as thumbnail creator
-  begin
+  load_optional_part( 'gallery-thumbnail',
+                      :error_msg => "Could not load RMagick, creation of thumbnails not available",
+                      :needed_gems => ['rmagick'],
+                      :info => 'RMagick will be used to create thumbnails from the images used in an image gallery.' ) do
+
     require 'RMagick'
 
     class GalleryHandler
@@ -368,8 +401,6 @@ TODO: move to doc
 
     end
 
-  rescue LoadError => e
-    $stderr.puts( "Could not load RMagick, creation of thumbnails not available: #{e.message}" ) if $VERBOSE
   end
 
 end

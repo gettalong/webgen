@@ -11,7 +11,7 @@ class SyntaxHighlighterTest < Webgen::PluginTestCase
   plugin_to_test 'Misc/SyntaxHighlighter'
 
   def test_available_languages
-    if @wrapper::SYNTAX_HIGHLIGHTING
+    if @manager.optional_part( 'syntax-highlighting' )[:loaded]
       assert( @wrapper::MiscPlugins::SyntaxHighlighter.available_languages.length > 0 )
     else
       assert_equal( [], @wrapper::MiscPlugins::SyntaxHighlighter.available_languages )
@@ -19,7 +19,7 @@ class SyntaxHighlighterTest < Webgen::PluginTestCase
   end
 
   def test_highlight
-    if @wrapper::SYNTAX_HIGHLIGHTING
+    if @manager.optional_part( 'syntax-highlighting' )[:loaded]
       assert_not_nil( 'TestData', @plugin.highlight( 'TestData', 'ruby' ) )
       assert_not_nil( 'TestData', @plugin.highlight( 'TestData', :ruby ) )
     else

@@ -103,7 +103,7 @@ TODO: MOVE TO DOC
 
     default_meta_info({
                         'useERB' => true,
-                        'blocks' => [{'name'=>'content', 'format'=>'textile'}]
+                        'blocks' => [{'name'=>'content', 'format'=>'html'}]
                       })
 
     register_extension EXTENSION
