@@ -66,9 +66,10 @@ class HtmlBlock
     @sections = self.class.parse_sections( content )
   end
 
-  # Renders the block using ERB and +context+ as the binding.
+  # Renders the block using ERB and +context+ as binding.
   def render_with_erb( context )
-    ERB.new( content ).result( context )
+    @compiled_block = ERB.new( @content ) unless defined?( @compiled_block )
+    @compiled_block.result( context )
   end
 
   #######
