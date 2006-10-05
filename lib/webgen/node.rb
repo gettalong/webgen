@@ -21,6 +21,7 @@
 #
 
 require 'uri'
+require 'pathname'
 require 'webgen/composite'
 
 # The Node class is used for building the internal data structure which represents the output tree.
@@ -158,13 +159,18 @@ class Node
 
   # Returns the route to the given path. The parameter +path+ can be a String or a Node.
   def route_to( other )
-    url = case other
-          when String then self.to_url + other
-          when Node then other.to_url
-          else raise ArgumentError
-          end
-    route = self.to_url.route_to( url ).to_s
-    (route == '' ? other.path : route )
+    my_url = self.to_url
+    other_url = case other
+                when String then my_url + other
+                when Node then other.to_url
+                else raise ArgumentError
+                end
+    # resolve any '.' and '..' paths in the target url
+    if other_url.path =~ /\/\.\.?\// && other_url.scheme == 'webgen'
+      other_url.path = Pathname.new( other_url.path ).cleanpath.to_s
+    end
+    route = my_url.route_to( other_url ).to_s
+    (route == '' ? ( self.is_fragment? ? self.parent.path : self.path ) : route )
   end
 
   # Checks if the current node is in the subtree which is spanned by the supplied node. The check is

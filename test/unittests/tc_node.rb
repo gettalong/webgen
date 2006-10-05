@@ -99,6 +99,7 @@ class NodeTest < Webgen::TestCase
     assert_equal( 'dir_a/', @n['file_a'].route_to( @n['dir_a/'] ) )
 
     #arg is String
+    assert_equal( 'file_a', @n['file_a'].route_to( 'file_a' ) )
     assert_equal( '../other', @n['file_aa'].route_to( '/other' ) )
     assert_equal( '../other', @n['file_aa'].route_to( '../other' ) )
     assert_equal( 'document/file2', @n['file_aa#'].route_to( 'document/file2' ) )
@@ -106,6 +107,14 @@ class NodeTest < Webgen::TestCase
 
     assert_equal( './', @n['file_a'].route_to( '/' ) )
     assert_equal( './', @n['dir_a/'].route_to( '/dir_a' ) )
+
+    assert_equal( '../other', @n['file_aa'].route_to( '/other' ) )
+
+    #test args with '..' and '.': either too many of them or absolute path given
+    assert_equal( '../dir', @n['file_aa'].route_to( '../../../dir/./' ) )
+    assert_equal( '../dir', @n['file_aa'].route_to( '/../../../dir/./' ) )
+    assert_equal( '../file', @n['file_aa'].route_to( '/dir/../file' ) )
+    assert_equal( 'file', @n['file_aa'].route_to( 'dir/../file' ) )
 
     #arg is something else
     assert_raise( ArgumentError ) { @n['file_a'].route_to( 5 ) }
