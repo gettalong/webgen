@@ -161,7 +161,7 @@ TODO move todoc
         begin
           index = 1
           YAML::load_documents( File.read( file ) ) do |data|
-            if data.kind_of?( Hash ) && data.all? {|k,v| v.kind_of?( Hash ) }
+            if data.nil? || (data.kind_of?( Hash ) && data.all? {|k,v| v.kind_of?( Hash ) })
               if index == 1
                 @source_backing = data
               elsif index == 2
@@ -191,7 +191,7 @@ TODO move todoc
           node.meta_info.update( data )
         else
           node = create_node( path, root, @plugin_manager['File/VirtualFileHandler'] ) do |src, parent, handler, meta_info|
-            meta_info = meta_info_for( handler ).update( data )
+            meta_info = meta_info.merge( data )
             handler.create_node( src, parent, meta_info )
           end
         end

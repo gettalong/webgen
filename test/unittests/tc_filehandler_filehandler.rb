@@ -136,9 +136,14 @@ class FileHandlerTest < Webgen::PluginTestCase
 
   def test_load_meta_info_backing_file
     @websiteDir = fixture_path('backing')
+    assert( File.exists?( @websiteDir ) )
     @plugin.instance_eval { load_meta_info_backing_file }
     assert_equal({'key1'=>'value1'}, @plugin.instance_eval { @source_backing['file1'] })
     assert_equal({}, @plugin.instance_eval { @output_backing })
+    @websiteDir = fixture_path('backing_empty')
+    assert( File.exists?( @websiteDir ) )
+    @plugin.instance_eval { @source_backing = nil; @output_backing = nil; load_meta_info_backing_file }
+    assert_equal({}, @plugin.instance_eval { @source_backing })
   rescue
     puts $!
     @websiteDir = nil
