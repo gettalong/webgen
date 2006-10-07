@@ -49,7 +49,7 @@ module MenuStyles
     #######
 
     def submenu( src_node, menu_node, level )
-      if menu_node.nil? || menu_node.node_info[:node].level > src_node.level \
+      if menu_node.nil? || menu_node.level > src_node.level \
         || !src_node.in_subtree_of?( menu_node.node_info[:node] )
         return ''
       end
@@ -57,7 +57,7 @@ module MenuStyles
       submenu = ''
       out = "<ul>"
       menu_node.each do |child|
-        submenu << (child.node_info[:node].is_directory? ? submenu( src_node, child, level + 1 ) : '')
+        submenu << (child.has_children? ? submenu( src_node, child, level + 1 ) : '')
         style, link = menu_item_details( src_node, child.node_info[:node] )
         out << "<li #{style}>#{link}</li>"
       end

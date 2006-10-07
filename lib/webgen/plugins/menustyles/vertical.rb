@@ -52,7 +52,7 @@ module MenuStyles
       if menu_node.nil? \
         || level > param( 'maxLevels' ) + param( 'startLevel' ) - 1 \
         || ( ( level > param( 'minLevels' ) + param( 'startLevel' ) - 1 ) \
-             && ( menu_node.node_info[:node].level >= src_node.level \
+             && ( menu_node.level >= src_node.level \
                   || ( param( 'showCurrentSubtreeOnly' ) && !src_node.in_subtree_of?( menu_node.node_info[:node] ) )
                   )
              ) \
@@ -64,7 +64,7 @@ module MenuStyles
       submenus = ''
       out = "<ul>"
       menu_node.each do |child|
-        menu = child.node_info[:node].is_directory? ? submenu( src_node, child, level + 1 ) : ''
+        menu = child.has_children? ? submenu( src_node, child, level + 1 ) : ''
         style, link = menu_item_details( src_node, child.node_info[:node] )
         submenus << menu
         out << "<li #{style}>#{link}"

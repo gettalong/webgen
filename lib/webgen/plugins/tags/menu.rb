@@ -36,7 +36,7 @@ module Tags
 
       def initialize( parent, node )
         super( parent, '' )
-        self['title'] = 'Menu: '+ node['title']
+        self['title'] = 'Menu: ' + node['title']
         self.node_info[:node] = node
       end
 
@@ -47,6 +47,11 @@ module Tags
         self.children.sort! {|a,b| a.node_info[:node] <=> b.node_info[:node] }
         self.children.each {|child| child.sort! }
       end
+
+      def inspect
+        @node_info[:node]
+      end
+      alias_method :to_s, :inspect
 
     end
 
@@ -64,17 +69,19 @@ TODO: move to doc
     register_tag 'menu'
 
     def process_tag( tag, chain )
+      lang = chain.last['lang']
       @menus ||= {}
-      unless @menus.has_key?( chain.last['lang'] )
-        @menus[chain.last['lang']] = create_menu_tree( Node.root( chain.last ), nil, chain.last['lang'] )
-        @menus[chain.last['lang']].sort! if @menus[chain.last['lang']]
+      unless @menus[lang]
+        @menus[lang] = create_menu_tree( Node.root( chain.last ), nil, lang )
+        @menus[lang].sort! if @menus[lang]
       end
+
       style = @plugin_manager['MenuStyle/Default'].registered_handlers[param( 'menuStyle' )]
       if style.nil?
         log(:error) { "Invalid style specified in <#{chain.first.node_info[:src]}>" }
         ''
-      elsif @menus[chain.last['lang']]
-        style.build_menu( chain.last, @menus[chain.last['lang']], param( 'options' ) )
+      elsif @menus[lang]
+        style.build_menu( chain.last, @menus[lang], param( 'options' ) )
       else
         ''
       end
@@ -91,7 +98,7 @@ TODO: move to doc
       parent.del_child( menu_node ) if parent
 
       node.select do |child|
-        child['lang'] == lang || child.is_directory?
+        child['lang'] == lang || child['lang'].nil? || child.is_directory?
       end.each do |child|
         sub_node = create_menu_tree( child, menu_node, lang )
         menu_node.add_child( sub_node ) unless sub_node.nil?
@@ -99,6 +106,34 @@ TODO: move to doc
 
       return menu_node.has_children? ? menu_node : ( node['inMenu'] ? menu_node : nil )
     end
+
+=begin
+TODO: move to doc
+- no static menu, but can be built using output backing file
+  - you can use exisiting page files by specifying the file directly:
+    features.page:
+      inMenu: true
+      orderInfo: 1
+  - you can add non-existing files and directories to structure the menu the way you like it,
+    also add on page under two headings
+    newdir:
+      orderInfo: 2
+    newdir/new.page:
+      orderInfo: 1       -> orderInfo for subdir
+      inMenu: true
+      lang: en           -> lang has to be set explicitly if named file does not exist, and if
+                            the file should only appear in the english menu, if not set, appears
+                            in every menu
+      url: ../features.page  -> ../features.page is shown
+
+- menu structure:
+  - Menu Title: /doit.page
+  - Other Title: /doit.page
+  - Again: /subdir/doit.page
+  - Category:
+    - item: /doit.page
+    - item: /subdir/doit.page
+=end
 
   end
 

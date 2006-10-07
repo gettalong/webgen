@@ -61,6 +61,9 @@ TODO move todoc
     - for keys that can be matched to an output file, meta info is set after all files are read
     - for keys that cannot be matched, virtual nodes are created with the supplied data
       the special data key 'url' can be used to specify arbitrary URLs as destination (use example)
+      the url is taken relative to the directory the virtual node is in or it is a
+      complete URL; if it can be resolved, the path of the resolved node is used, otherwise the url itself
+      is used (see example with 'static' menus')
 =end
 
     include Listener
@@ -145,8 +148,7 @@ TODO move todoc
       end
       dispatch_msg( :after_node_created, node ) unless node.nil?
 
-      #TODO check node for correct lang and other things
-      node['lang'] = Webgen::LanguageManager.language_for_code( node['lang'] ) unless node.nil? || node['lang'].kind_of?( Webgen::Language )
+      check_node( node )
 
       node
     end
@@ -154,6 +156,12 @@ TODO move todoc
     #######
     private
     #######
+
+    # Used to check that certain meta/node information is available and correct.
+    def check_node( node )
+      node['lang'] = Webgen::LanguageManager.language_for_code( node['lang'] ) unless node.nil? || node['lang'].kind_of?( Webgen::Language )
+      node['title'] ||= node.path
+    end
 
     def load_meta_info_backing_file
       file = File.join( param( 'websiteDir', 'Core/Configuration' ), 'metainfo.yaml' )
@@ -189,6 +197,7 @@ TODO move todoc
         path = path[1..-1] if path =~ /^\//
         if node = root.resolve_node( path )
           node.meta_info.update( data )
+          check_node( node )
         else
           node = create_node( path, root, @plugin_manager['File/VirtualFileHandler'] ) do |src, parent, handler, meta_info|
             meta_info = meta_info.merge( data )
@@ -418,7 +427,16 @@ TODO move todoc
       #TODO check for already existing node
       filename = File.basename( path )
       filename, reference = (meta_info['url'] ? [meta_info['url'], filename] : [filename, filename])
-      node = VirtualNode.new( parent, filename )
+
+      temp_node = VirtualNode.new( parent, reference )
+      resolved_node = temp_node.resolve_node( filename )
+      if resolved_node
+        node = VirtualNode.new( parent, temp_node.route_to( resolved_node ) )
+      else
+        node = VirtualNode.new( parent, filename )
+      end
+      parent.del_child( temp_node )
+
       node.meta_info.update( meta_info )
       node.node_info[:reference] = reference
       node.node_info[:processor] = self

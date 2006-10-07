@@ -179,8 +179,8 @@ class FileHandlerTest < Webgen::PluginTestCase
     backed2 = root.resolve_node( 'doc/test.html' )
     assert_not_nil( backed2 )
 
-    assert_equal( '<a href="../rdoc/index.html"></a>', backed1.link_from( node ) )
-    assert_equal( '<a href="http://www.webgen.com"></a>', backed2.link_from( node ) )
+    assert_equal( '<a href="../rdoc/index.html">rdoc/index.html</a>', backed1.link_from( node ) )
+    assert_equal( '<a href="http://www.webgen.com">http://www.webgen.com</a>', backed2.link_from( node ) )
 
     # test setting of meta infos for existing nodes
     assert_equal( 1, root.resolve_node( 'dir/' ).children.length )

@@ -187,8 +187,8 @@ class Node
   def resolve_node( path )
     url = self.to_url + path
 
-    path = url.path[1..-1] + (url.fragment.nil? ? '' : '#' + url.fragment)
-    return nil if path =~ /^\.\./ # path outside dest dir
+    path = url.path[1..-1].to_s + (url.fragment.nil? ? '' : '#' + url.fragment)
+    return nil if path =~ /^\.\./ || url.scheme != 'webgen' # path outside dest dir or not an internal URL (webgen://...)
 
     node = Node.root( self )
 
