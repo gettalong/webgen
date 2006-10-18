@@ -40,7 +40,7 @@ class NodeTest < Webgen::TestCase
     x = Node.new( nil, 'test' )
     assert( @n['/'].include?( @n['dir_a/'] ) )
     @n['dir_a/'].parent = x
-    assert( @n['dir_a/'].parent = x )
+    assert( @n['dir_a/'].parent == x )
     assert( x.include?( @n['dir_a/'] ) )
     assert( !@n['/'].include?( @n['dir_a/'] ) )
   end

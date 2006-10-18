@@ -33,7 +33,7 @@ class Node
   attr_reader :parent
 
   # The path of this node.
-  attr_accessor :path
+  attr_reader :path
 
   # Information used for processing the node.
   attr_accessor :node_info
@@ -56,8 +56,8 @@ class Node
   #    with path 'dir/'!!! (solution: just create a node with path 'file' and node 'dir/' as parent!)
   def initialize( parent, path )
     @parent = nil
-    self.parent = parent
     @path = path
+    self.parent = parent
     @node_info = Hash.new
     @meta_info = Hash.new
   end
@@ -73,6 +73,13 @@ class Node
     @parent.del_child( self ) unless @parent.nil?
     @parent = var
     @parent.add_child( self ) unless @parent.nil?
+    precalc_with_children!
+  end
+
+  # Sets the path for the node.
+  def path=( path )
+    @path = path
+    precalc!
   end
 
   # Gets object +name+ from +meta_info+.
@@ -85,9 +92,14 @@ class Node
     @meta_info[name] = value
   end
 
+  # Regexp for matching absolute URLs, ie. URLs with a scheme part (also see RFC1738)
+  ABSOLUTE_URL = /^\w[a-zA-Z0-9+.-]*:/
+
   # Returns the full path for this node. See also Node#absolute_path !
   def full_path
-    if URI::parse( @path ).absolute?
+    return @precalc[:full_path] if @precalc
+
+    if @path =~ ABSOLUTE_URL
       @path
     else
       (@parent.nil? ? @path : @parent.full_path + @path)
@@ -104,7 +116,9 @@ class Node
   #   node.full_path # => '../output/testdir/testfile'
   #   node.absolute_path # => '/testdir/testfile'
   def absolute_path
-    if URI::parse( @path ).absolute?
+    return @precalc[:absolute_path] if @precalc
+
+    if @path =~ ABSOLUTE_URL
       @path
     else
       full_path.sub( /^#{Node.root( self ).path}/, '/' )
@@ -206,6 +220,8 @@ class Node
   # URL does not include the real path of the root node but a slash instead. So if the full path of
   # the node is 'a/b/c/d/file1' and the root node path is 'a/b/c', the URL path would be '/d/file1'.
   def to_url
+    return @precalc[:to_url] if @precalc
+
     url = URI::parse( absolute_path )
     url = URI::parse( 'webgen://webgen.localhost/' ) + url unless url.absolute?
     url
@@ -221,6 +237,21 @@ class Node
   #######
   private
   #######
+
+  def precalc!
+    @precalc = nil
+    @precalc = {
+      :full_path => full_path,
+      :absolute_path => absolute_path,
+      :to_url => to_url
+    }
+  end
+
+  def precalc_with_children!
+    precalc!
+    each {|child| child.precalc_with_children!}
+  end
+  protected :precalc_with_children!
 
   # Delegates missing methods to a processor. The current node is placed into the argument array as
   # the first argument before the method +name+ is invoked on the processor.
