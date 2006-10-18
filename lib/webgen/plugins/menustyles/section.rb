@@ -26,8 +26,9 @@ module MenuStyles
 
   class SectionMenuStyle < MenuStyles::DefaultMenuStyle
 
-    plugin_name 'MenuStyle/Section'
-    infos :summary => "Builds a menu out of the HTML sections (h1, h2, ...)"
+    infos( :name => 'MenuStyle/Section',
+           :summary => "Builds a menu out of the HTML sections (h1, h2, ...)"
+           )
 
     register_handler 'section'
 

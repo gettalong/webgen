@@ -25,8 +25,9 @@ module CorePlugins
   # Used for storing the basic configuration options.
   class Configuration < Webgen::Plugin
 
-    plugin_name 'Core/Configuration'
-    infos :summary => "Responsible for storing general parameters"
+    infos( :name => 'Core/Configuration',
+           :summary => "Responsible for storing general parameters"
+           )
 
     param 'srcDir', Webgen::SRC_DIR, 'The directory from which the source files are read - is automatically set and cannot be overridden.'
     param 'outDir', 'output', 'The directory to which the output files are written.'

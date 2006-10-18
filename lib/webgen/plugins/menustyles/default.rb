@@ -24,8 +24,9 @@ module MenuStyles
 
   class DefaultMenuStyle < Webgen::HandlerPlugin
 
-    plugin_name 'MenuStyle/Default'
-    infos :summary => "Base class for all menu styles"
+    infos( :name => 'MenuStyle/Default',
+           :summary => "Base class for all menu styles"
+           )
 
     param 'divClass', 'webgen-menu', 'Additional CSS class for the div-tag surrounding the menu'
     param 'submenuClass', 'webgen-menu-submenu', 'Specifies the class of a submenu.'
@@ -65,7 +66,6 @@ module MenuStyles
       style = "class=\"#{styles.join(' ')}\"" if styles.length > 0
       link = node.link_from( src_node )
 
-      log(:debug) { [style, link] }
       return style, link
     end
 

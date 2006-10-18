@@ -26,8 +26,9 @@ module MenuStyles
 
   class HorizontalDropdownMenuStyle < MenuStyles::DefaultMenuStyle
 
-    plugin_name 'MenuStyle/HorizontalDropdown'
-    infos :summary => "Builds a horizontal menu with CSS drop down submenus"
+    infos( :name => 'MenuStyle/HorizontalDropdown',
+           :summary => "Builds a horizontal menu with CSS drop down submenus"
+           )
 
     register_handler 'horizontal-dropdown'
 

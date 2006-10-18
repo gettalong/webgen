@@ -24,21 +24,24 @@ require 'yaml'
 
 module Tags
 
-  #TODO new comment: This is the main class for tags. Tag plugins can register themselves by adding a new key:value
-  # pair to +tags+. The key has to be the name of the tag as specified in the page description files
-  # and the value is the plugin object itself. When the content is parsed and a tag is
+  # This class is used for processing tags. When a content string is parsed and a tag is
   # encountered, the registered plugin for the tag is called. If no plugin for a tag is registered
   # but a default plugin is, the default plugin is called. Otherwise an error is raised.
   #
-  # The default plugin can be registered by using the special key <tt>:default</tt>.
+  # The default plugin can be defined by using the special key <tt>:default</tt>.
   class TagProcessor < Webgen::Plugin
 
-    plugin_name 'Core/TagProcessor'
-    infos :summary => "Plugin for processing tags"
+    infos( :name => 'Core/TagProcessor',
+           :summary => "Plugin for processing tags"
+           )
 
-    #TODO new comment: Substitutes all references to tags in the string +content+. The +node+ parameter specifies the
-    # tree node the content of which is used. The +refNode+ parameter specifies relative to which
-    # all references should be resolved.
+    # Processes the given +content+ using the nodes in +chain+ which should be an array of nodes.
+    # The first node is the main template (from which the +content+ was retrieved, the +ref_node+),
+    # then comes the sub template, the sub sub template and so on until the last node which is the
+    # current node ( the +node+) that is the reason for the whole processing.
+    #
+    # After having processed all nodes, the method returns the result as string, ie. the rendered
+    # content.
     def process( content, chain )
       if !content.kind_of?( String )
         log(:warn) { "The content in <#{chain.first.node_info[:src]}> is not a string, but a #{content.class.name}" }
@@ -140,10 +143,9 @@ module Tags
   # configuration data from either the configuration file or the tag itself.
   class DefaultTag < Webgen::Plugin
 
-    infos(
-          :summary => "Base class for all tag plugins",
-          :instantiate => false
-          )
+    infos( :summary => "Base class for all tag plugins",
+           :instantiate => false
+           )
 
     def initialize( plugin_manager )
       super
@@ -206,7 +208,6 @@ module Tags
         log(:error) { "Not all mandatory parameters for tag '#{self.class.plugin_name}' in <#{node.node_info[:src]}> set" }
       end
     end
-
 
     # Resets the tag configuration data.
     def reset_tag_config

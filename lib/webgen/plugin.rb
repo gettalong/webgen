@@ -60,9 +60,9 @@ module Webgen
       def init_config
         @config = OpenStruct.new
         @config.plugin_klass = self
-        @config.plugin_name = self.name.sub(/^(#<.*?>|Webgen::DEFAULT_WRAPPER_MODULE)::/,'').sub('::','/')
         @config.params = {}
         @config.infos = {}
+        @config.infos[:name] = self.name.sub(/^(#<.*?>|Webgen::DEFAULT_WRAPPER_MODULE)::/,'').sub('::','/')
         @config.dependencies = []
       end
 
@@ -71,10 +71,9 @@ module Webgen
         @config
       end
 
-      # Sets the name of the plugin if the parameter +name+ is specified. Otherwise the plugin name
-      # is returned. If the plugin name is not set, a default name is used.
-      def plugin_name( name = nil )
-        (name.nil? ? @config.plugin_name : @config.plugin_name = name)
+      # Returns the name of the plugin. If not plugin name is set a default value is used.
+      def plugin_name
+        @config.infos[:name]
       end
 
       # Sets general information about the plugin (summary text, description, ...). The parameter
@@ -122,13 +121,15 @@ module Webgen
     # Returns the parameter +name+ for the plugin. If +plugin+ is specified, the parameter +name+
     # for the plugin +plugin+ is returned.
     def []( name, plugin = nil)
-      @plugin_manager.param_for_plugin( plugin || self.class, name )
+      @plugin_manager.param_for_plugin( plugin || self.class.plugin_name, name )
     end
     alias param []
 
+    CALLER_REGEXP = Regexp.new("`.*'")
+
     # Logs the the result of +block+ using the severity level +sev_level+.
     def log( sev_level, &block )
-      source = self.class.plugin_name + '#' + caller[0][Regexp.new("`.*'")][1..-2]
+      source = self.class.plugin_name + '#' + caller[0][CALLER_REGEXP][1..-2]
       @plugin_manager.log_msg( sev_level, source, &block )
     end
 
@@ -170,6 +171,8 @@ module Webgen
 
     # The plugin classes loaded by this PluginLoader instance.
     attr_reader :plugin_classes
+
+    # The optional parts managed (loaded or not) by this PluginLoader instance.
     attr_reader :optional_parts
 
     # Creates a new PluginLoader instance. The +wrapper_module+ is used when loading the plugins so
@@ -278,6 +281,10 @@ module Webgen
   end
 
 
+  # This class should be passed as return value if the value for a parameter could not be found.
+  class PluginParamValueNotFound; end
+
+
   # Helper class for calculating plugin dependencies.
   class DependencyHash < Hash
     include TSort
@@ -297,9 +304,6 @@ module Webgen
     # A hash of all instantiated plugins.
     attr_reader :plugins
 
-    # Define which plugins should get instantiated.
-    attr_reader :plugin_classes
-
     # Used for plugin dependency resolution.
     attr_reader :plugin_loaders
 
@@ -313,59 +317,60 @@ module Webgen
     def initialize( plugin_loaders = [], plugin_classes = [] )
       @logger = nil
       @plugins = {}
-      @plugin_classes = []
+      @plugin_classes = {}
       @plugin_loaders = plugin_loaders
       @plugin_config = nil
       add_plugin_classes( plugin_classes )
     end
 
+    # A list of all plugins that should get instantiated.
+    def plugin_classes
+      @plugin_classes.values
+    end
+
     # Adds all Plugin classes in the array +plugins+ and their dependencies.
     def add_plugin_classes( plugins )
       deps = dependent_plugins( plugins )
-      @plugin_classes += plugins + deps
-      @plugin_classes.uniq!
+      (plugins + deps).each {|p| @plugin_classes[p.plugin_name] = p }
     end
 
     # Instantiates the plugins in the correct order, except the classes which have the plugin info
     # +:instantiate+ set to +false+.
     def init
       @plugins = {}
+      #precalculate_param_values! #TODO: maybe activate this feature
       dep = DependencyHash.new
-      @plugin_classes.each {|plugin| dep[plugin.plugin_name] = plugin.config.dependencies }
+      @plugin_classes.each {|name, plugin| dep[name] = plugin.config.dependencies }
       dep.tsort.each do |plugin_name|
         config = plugin_class_for_name( plugin_name ).config
         unless config.infos.has_key?(:instantiate) && !config.infos[:instantiate]
           log_msg( :debug, 'PluginManager#init') { "Creating plugin of class #{config.plugin_name}" }
-          @plugins[config.plugin_name] = config.plugin_klass.new( self )
+          @plugins[plugin_name] = config.plugin_klass.new( self )
         end
       end
     end
 
-    # Returns the plugin instance for +plugin+. +plugin+ can either be a plugin class or the name of
-    # a plugin.
-    def []( plugin )
-      ( plugin.kind_of?( Class ) ? @plugins[plugin.plugin_name] : @plugins[plugin] )
+    # Returns the plugin instance for the plugin called +plugin_name+.
+    def []( plugin_name )
+      @plugins[plugin_name]
     end
 
-    # Returns the parameter +param+ for the +plugin_name+.
+    # Returns the parameter +param+ for the plugin called +plugin_name+.
     def param_for_plugin( plugin_name, param )
-      plugin = ( plugin_name.kind_of?( String ) ?
-                 plugin_class_for_name( plugin_name ) :
-                 plugin_class_for_name( plugin_name.plugin_name ) )
+      plugin = plugin_class_for_name( plugin_name )
       raise PluginParamNotFound.new( plugin_name, param ) if plugin.nil?
 
-      value_found = false
-      value = nil
-      plugin.ancestor_classes.each do |plugin_klass|
-        begin
-          value = get_plugin_param_value( plugin_klass, param )
-          value_found = true
-          break
-        rescue PluginParamNotFound
+      if @precalculated_param_values
+        value = @precalculated_param_values[plugin_name][param]
+      else
+        value = PluginParamValueNotFound
+        plugin.ancestor_classes.each do |plugin_klass|
+          value = get_plugin_param_value( plugin_klass.plugin_name, plugin_klass.config, param )
+          break unless value == PluginParamValueNotFound
         end
       end
 
-      if value_found
+      if value != PluginParamValueNotFound
         value
       else
         raise PluginParamNotFound.new( plugin.plugin_name, param )
@@ -374,7 +379,7 @@ module Webgen
 
     # Returns the plugin class for the plugin +plugin_name+.
     def plugin_class_for_name( plugin_name )
-      @plugin_classes.find {|p| p.plugin_name == plugin_name}
+      @plugin_classes[plugin_name]
     end
 
     # Returns the options hash for the given optional library.
@@ -393,6 +398,19 @@ module Webgen
     private
     #######
 
+    def precalculate_param_values!
+      @precalculated_param_values = nil
+      precalc = Hash.new {|h,k| h[k] = Hash.new( PluginParamValueNotFound ) }
+      @plugin_classes.each do |name, klass|
+        klass.ancestor_classes.each do |a_klass|
+          a_klass.config.params.each do |p_name, p_data|
+            precalc[name][p_name] = param_for_plugin( name, p_name )
+          end
+        end
+      end
+      @precalculated_param_values = precalc
+    end
+
     def dependent_plugins( classes )
       deps = []
       classes.each do |plugin|
@@ -409,19 +427,13 @@ module Webgen
       deps
     end
 
-    def get_plugin_param_value( plugin, param )
-      raise PluginParamNotFound.new( plugin.plugin_name, param ) unless plugin.config.params.has_key?( param )
+    def get_plugin_param_value( plugin_name, config, param )
+      return PluginParamValueNotFound unless config.params.has_key?( param )
 
-      value_found = false
-      if @plugin_config
-        begin
-          value = @plugin_config.param_for_plugin( plugin.plugin_name, param )
-          value_found = true
-        rescue PluginParamNotFound
-        end
-      end
+      value = PluginParamValueNotFound
+      value = @plugin_config.param_for_plugin( plugin_name, param ) if @plugin_config
+      value = config.params[param].default if value == PluginParamValueNotFound
 
-      value = plugin.config.params[param].default unless value_found
       value
     end
 
@@ -462,21 +474,30 @@ module Webgen
 
     end
 
-    #TODO better comment and document methods: Base class for plugins which are super classes of
-    #plugins that handle different types of a simliar kind. E.g. different markup to HTML
-    #converters.
+    # You can use this class for easily handling similiar things, for example, various markup to
+    # HTML converters.
+    #
+    # To use it, just create a subclass of HandlerPlugin which will be the manager for a class of
+    # plugins. This subclass should specify all the methods, specific implementations should
+    # provide. The specific implementations should then be derived from this subclass, each using a
+    # different name for +register_handler+. Then you can retrieve a specific implementation by
+    # using the method registered_handlers[<NAME>] on the manager class.
     class HandlerPlugin < Plugin
 
       infos :is_base_plugin => true
 
+      # Defines the name for the specific handler under which the handler instance can be retrieved.
       def self.register_handler( name )
         self.config.infos[:handler_for] = name
       end
 
+      # Returns the name of the specific handler.
       def self.registered_handler
         self.config.infos[:handler_for]
       end
 
+      # Returns all handler instances as a hash. The names defined with
+      # HandlerPlugin#register_handler can be used to retrieve a specific handler instance.
       def registered_handlers
         if !defined?( @registered_handlers_cache ) || @cached_plugins_hash != @plugin_manager.plugins.keys.hash
           @registered_handlers_cache = {}

@@ -29,8 +29,9 @@ module ContentConverters
   # Handles text in RDoc format.
   class RDocConverter < DefaultContentConverter
 
-    plugin_name 'ContentConverter/RDoc'
-    infos :summary => "Handles content in RDOC format"
+    infos( :name => 'ContentConverter/RDoc',
+           :summary => "Handles content in RDOC format"
+           )
 
     register_handler 'rdoc'
 

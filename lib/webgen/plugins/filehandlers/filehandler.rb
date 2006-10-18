@@ -30,9 +30,9 @@ module FileHandlers
 
   class FileHandler < Webgen::Plugin
 
-    plugin_name 'Core/FileHandler'
-
-    infos :summary => "Main plugin for handling the files in the source directory"
+    infos( :name => 'Core/FileHandler',
+           :summary => "Main plugin for handling the files in the source directory"
+           )
 
     param 'ignorePaths', ['**/CVS{/**/**,/}'], 'An array of path patterns which match files ' +
       'that should be excluded from the list of \'to be processed\' files.'
@@ -148,7 +148,7 @@ TODO move todoc
       end
       dispatch_msg( :after_node_created, node ) unless node.nil?
 
-      check_node( node )
+      check_node( node ) unless node.nil?
 
       node
     end
@@ -163,6 +163,7 @@ TODO move todoc
       node['title'] ||= node.path
     end
 
+    # Loads the meta information backing file from the website directory.
     def load_meta_info_backing_file
       file = File.join( param( 'websiteDir', 'Core/Configuration' ), 'metainfo.yaml' )
       if File.exists?( file )
@@ -192,6 +193,8 @@ TODO move todoc
       @output_backing ||= {}
     end
 
+    # Uses the output backing section of the meta information file to assign meta information or, if
+    # no node for a path can be found, to create virtual nodes.
     def handle_output_backing( root )
       @output_backing.each do |path, data|
         path = path[1..-1] if path =~ /^\//
@@ -207,6 +210,7 @@ TODO move todoc
       end
     end
 
+    # Reads all files from the source directory and constructs the node tree which is returned.
     def build_tree
       all_files = find_all_files()
       return if all_files.empty?
@@ -292,6 +296,7 @@ TODO move todoc
       files
     end
 
+    # Creates the root node.
     def create_root_node
       root_path = File.join( param( 'srcDir', 'Core/Configuration' ), '/' )
       root_handler = @plugin_manager['File/DirectoryHandler']
@@ -317,10 +322,9 @@ TODO move todoc
     EXTENSION_PATH_PATTERN = "**/*.%s"
     DEFAULT_RANK = 100
 
-    plugin_name 'File/DefaultHandler'
-    infos(
-          :summary => "Base class of all file handler plugins",
-          :instantiate => false
+    infos( :name => 'File/DefaultHandler',
+           :summary => "Base class of all file handler plugins",
+           :instantiate => false
           )
 
 =begin
@@ -336,14 +340,13 @@ TODO move todoc
   this page node
 =end
 
-    # TODO comment Specify the extension which should be handled by the class.
+    # Specify the path pattern which should be handled by the class.
     def self.register_path_pattern( path, rank = DEFAULT_RANK )
       (self.config.infos[:path_patterns] ||= []) << [rank, path]
     end
 
     # Specify the files handled by the class via the extension. The parameter +ext+ should be the
-    # pure extension without the dot. Files in hidden directories (starting with a dot) are also
-    # searched.
+    # pure extension without the dot.
     def self.register_extension( ext, rank = DEFAULT_RANK )
       register_path_pattern( EXTENSION_PATH_PATTERN % [ext], rank )
     end
@@ -365,14 +368,16 @@ TODO move todoc
       (self.class.config.infos[:path_patterns] || []) + (@path_patterns ||= [])
     end
 
-    # Sets the default meta data for the file handler.
+    # Sets the default meta data for the file handler. This information is latter passed to the
+    # #create_node method.
     def self.default_meta_info( hash )
       self.config.infos[:default_meta_info] = hash
     end
 
     # Asks the plugin to create a node for the given +path+ and the +parent+, using +meta_info+ as
-    # default meta data for the node. Should return the node for the path or nil if the node could
-    # not be created.
+    # default meta data for the node. Should return the node for the path (the newly created node
+    # or, if a node with the path already exists, the existing one) or nil if the node could not be
+    # created.
     #
     # Has to be overridden by the subclass!!!
     def create_node( path, parent, meta_info )
@@ -395,7 +400,7 @@ TODO move todoc
     # Returns a HTML link to the +node+ from +refNode+. You can optionally specify additional
     # attributes for the <a>-Element in the +attr+ Hash. If the special value +:link_text+ is
     # present in +attr+, it will be used as the link text; otherwise the title of the +node+ will be
-    # used.
+    # used. The meta information +linkAttrs+ of node can be used to set additional attributes.
     def link_from( node, refNode, attr = {} )
       attr = node['linkAttrs'].merge( attr ) if node['linkAttrs'].kind_of?( Hash )
       link_text = attr[:link_text] || node['title']
@@ -409,10 +414,14 @@ TODO move todoc
   end
 
 
+  # Handles virtual nodes created via the output backing section of the meta information backing
+  # file.
   class VirtualFileHandler < DefaultHandler
 
+    # A virtual node.
     class VirtualNode < ::Node
 
+      # Overridden to also match the +reference+ path of the virtual node.
       def =~( path )
         md = /^(#{@path}|#{@node_info[:reference]})(?=#|$)/ =~ path
         ( md ? $& : nil )
@@ -420,14 +429,15 @@ TODO move todoc
 
     end
 
-    plugin_name 'File/VirtualFileHandler'
-    infos :summary => 'Handles virtual files specified in the backing file'
+    infos( :name => 'File/VirtualFileHandler',
+           :summary => 'Handles virtual files specified in the backing file'
+           )
 
     def create_node( path, parent, meta_info )
-      #TODO check for already existing node
       filename = File.basename( path )
       filename, reference = (meta_info['url'] ? [meta_info['url'], filename] : [filename, filename])
 
+      # no need to check for an existing nodes, that is already done in FileHandler#handle_output_backing
       temp_node = VirtualNode.new( parent, reference )
       resolved_node = temp_node.resolve_node( filename )
       if resolved_node

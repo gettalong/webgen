@@ -27,8 +27,10 @@ module MiscPlugins
 
   class SmileyReplacer < Webgen::Plugin
 
-    plugin_name 'Misc/SmileyReplacer'
-    infos :summary => "Replaces smiley characters with actual smileys"
+    infos( :name => 'Misc/SmileyReplacer',
+           :summary => "Replaces smiley characters with actual smileys"
+           )
+
     depends_on 'File/PageHandler'
 
     param 'emoticonPack', nil, 'The name of the emoticon package which should be used. If set to nil, ' +

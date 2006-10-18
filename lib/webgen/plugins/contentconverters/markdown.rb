@@ -33,8 +33,9 @@ load_optional_part( 'content-converter-markdown',
     # Converts text formatted in Markdown format using BlueCloth to HTML.
     class MarkdownConverter < DefaultContentConverter
 
-      plugin_name 'ContentConverter/Markdown'
-      infos :summary => "Handles content formatted in Markdown format using BlueCloth"
+      infos(   :name => 'ContentConverter/Markdown',
+             :summary => "Handles content formatted in Markdown format using BlueCloth"
+             )
 
       register_handler 'markdown'
 

@@ -26,8 +26,9 @@ module MenuStyles
 
   class HorizontalMenuStyle < DefaultMenuStyle
 
-    plugin_name 'MenuStyle/Horizontal'
-    infos :summary => "Builds a horizontal menu"
+    infos( :name => 'MenuStyle/Horizontal',
+           :summary => "Builds a horizontal menu"
+           )
 
     register_handler 'horizontal'
 

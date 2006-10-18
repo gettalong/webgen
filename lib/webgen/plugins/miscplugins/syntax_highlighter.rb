@@ -34,8 +34,10 @@ module MiscPlugins
 
   class SyntaxHighlighter < Webgen::Plugin
 
-    plugin_name 'Misc/SyntaxHighlighter'
-    infos :summary => "Utility plugin for syntax highlighting"
+    infos( :name => 'Misc/SyntaxHighlighter',
+           :summary => "Utility plugin for syntax highlighting"
+           )
+
     depends_on 'Core/ResourceManager'
 
 =begin

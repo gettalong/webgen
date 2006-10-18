@@ -12,7 +12,7 @@ class FileCopyHandlerTest < Webgen::PluginTestCase
     root = @manager['Core/FileHandler'].instance_eval { create_root_node }
 
     # normal file
-    src_file = File.join( param_for_plugin( 'Core/Configuration', 'srcDir' ), 'file1.page' )
+    src_file = File.join( @manager.param_for_plugin( 'Core/Configuration', 'srcDir' ), 'file1.page' )
     file = @plugin.create_node( src_file, root, {'test'=>'hallo', 'title'=>'none'} )
     assert_equal( 'file1.page', file.path )
     assert_equal( 'none', file['title'] )
@@ -23,7 +23,7 @@ class FileCopyHandlerTest < Webgen::PluginTestCase
     assert_same( file, @plugin.create_node( src_file, root, {} ) )
 
     # ERB preprocessed file
-    src_file = File.join( param_for_plugin( 'Core/Configuration', 'srcDir' ), 'embedded.rhtml' )
+    src_file = File.join( @manager.param_for_plugin( 'Core/Configuration', 'srcDir' ), 'embedded.rhtml' )
     file = @plugin.create_node( src_file, root, {'hallo'=>'hallo', 'title'=>'title'} )
     assert_equal( 'embedded.html', file.path )
     assert_equal( 'title', file['title'] )
@@ -49,7 +49,7 @@ class FileCopyHandlerTest < Webgen::PluginTestCase
   end
 
   def check_write_node( root, file )
-    src_file = File.join( param_for_plugin( 'Core/Configuration', 'srcDir' ), file )
+    src_file = File.join( @manager.param_for_plugin( 'Core/Configuration', 'srcDir' ), file )
     file = @plugin.create_node( src_file, root, {} )
 
     file.write_node

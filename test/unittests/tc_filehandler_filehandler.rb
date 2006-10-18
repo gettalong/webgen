@@ -21,8 +21,8 @@ class FileHandlerTest < Webgen::PluginTestCase
   end
 
   def param_for_plugin( plugin_name, param )
-    if [plugin_name, param] == ['Core/Configuration', 'websiteDir']
-      @websiteDir || super
+    if [plugin_name, param] == ['Core/Configuration', 'websiteDir'] && @websiteDir
+      @websiteDir
     else
       super
     end
@@ -144,8 +144,7 @@ class FileHandlerTest < Webgen::PluginTestCase
     assert( File.exists?( @websiteDir ) )
     @plugin.instance_eval { @source_backing = nil; @output_backing = nil; load_meta_info_backing_file }
     assert_equal({}, @plugin.instance_eval { @source_backing })
-  rescue
-    puts $!
+  ensure
     @websiteDir = nil
   end
 

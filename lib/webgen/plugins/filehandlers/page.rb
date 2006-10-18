@@ -39,8 +39,6 @@ module FileHandlers
         self.node_info[:processor] = self
       end
 
-      #TODO: node_for_lang (eg. for menu tag), link_from
-
       def write_node
         #do nothing
       end
@@ -87,8 +85,9 @@ TODO: MOVE TO DOC
 
     EXTENSION = 'page'
 
-    plugin_name 'File/PageHandler'
-    infos :summary => "Plugin for processing page files"
+    infos( :name => 'File/PageHandler',
+           :summary => "Plugin for processing page files"
+           )
 
     param 'defaultLangInFilename', false, 'If true, the output files for the default language ' +
       'will have the language in the file name like all other page files. If false, they won''t.'

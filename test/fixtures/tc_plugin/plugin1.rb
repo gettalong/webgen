@@ -7,7 +7,8 @@ module Testing
   INFOS_HASH = {
     :summary => 'Summary',
     :description => 'Description',
-    :instantiate => false
+    :instantiate => false,
+    :name => 'Testing/PluginWithData'
   }
   PARAM_ARRAY = ['test', [5,6], 'Test description']
   DEPS_ARRAY = ['Testing/BasicPlugin', 'Testing/DerivedPlugin']

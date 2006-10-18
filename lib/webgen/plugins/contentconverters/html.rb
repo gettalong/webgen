@@ -27,8 +27,9 @@ module ContentConverters
   # Handles HTML content. Assumes that the content is already valid HTML.
   class HtmlConverter < DefaultContentConverter
 
-    plugin_name 'ContentConverter/HTML'
-    infos :summary => "Handles HTML formatted content"
+    infos( :name => 'ContentConverter/HTML',
+           :summary => "Handles HTML formatted content"
+           )
 
     register_handler 'html'
 

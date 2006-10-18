@@ -26,8 +26,9 @@ module MenuStyles
 
   class VerticalDropdownMenuStyle < MenuStyles::DefaultMenuStyle
 
-    plugin_name 'MenuStyle/VerticalDropdown'
-    infos :summary => "Builds a vertical menu with CSS drop down submenus"
+    infos( :name => 'MenuStyle/VerticalDropdown',
+           :summary => "Builds a vertical menu with CSS drop down submenus"
+           )
 
     register_handler 'vertical-dropdown'
 

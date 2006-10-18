@@ -26,8 +26,9 @@ module MenuStyles
 
   class VerticalMenuStyle < MenuStyles::DefaultMenuStyle
 
-    plugin_name 'MenuStyle/Vertical'
-    infos :summary => "Builds a vertical menu"
+    infos( :name => 'MenuStyle/Vertical',
+           :summary => "Builds a vertical menu"
+           )
 
     register_handler 'vertical'
 

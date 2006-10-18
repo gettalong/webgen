@@ -81,7 +81,7 @@ class PluginTest < Webgen::TestCase
   end
 
   def test_plugin_config
-    check_plugin_data( @wrapper::Testing::BasicPlugin, 'Testing/BasicPlugin', {}, [], [] )
+    check_plugin_data( @wrapper::Testing::BasicPlugin, 'Testing/BasicPlugin', {:name => 'Testing/BasicPlugin'}, [], [] )
     check_plugin_data( @wrapper::Testing::PluginWithData, 'Testing/PluginWithData', @wrapper::Testing::INFOS_HASH,
                        @wrapper::Testing::PARAM_ARRAY, @wrapper::Testing::DEPS_ARRAY )
   end
@@ -146,7 +146,7 @@ class DummyConfig
   end
 
   def param_for_plugin( plugin, param )
-    @config[plugin][param] || (raise Webgen::PluginParamNotFound.new( plugin, param ))
+    @config[plugin][param] || Webgen::PluginParamValueNotFound
   end
 
 end
@@ -164,7 +164,8 @@ class PluginManagerTest < Webgen::TestCase
 
     loader.load_from_file( fixture_path( 'plugin2.rb' ) )
     assert_nothing_raised { manager.add_plugin_classes( loader.plugin_classes) }
-    assert_equal( loader.plugin_classes, manager.plugin_classes )
+    assert_equal( loader.plugin_classes.sort {|a,b| a.plugin_name <=> b.plugin_name },
+                  manager.plugin_classes.sort {|a,b| a.plugin_name <=> b.plugin_name } )
   end
 
   def test_init
@@ -176,7 +177,7 @@ class PluginManagerTest < Webgen::TestCase
     manager.init
     assert_equal( 5, manager.plugins.length )
 
-    assert_kind_of( wrapper::Testing::BasicPlugin, manager[wrapper::Testing::BasicPlugin] )
+    assert_kind_of( wrapper::Testing::BasicPlugin, manager['Testing/BasicPlugin'] )
     assert_kind_of( wrapper::Testing::DerivedPlugin, manager['Testing/DerivedPlugin'] )
     assert_nil( manager['Testing/PluginWithData'] )
   end
@@ -192,19 +193,20 @@ class PluginManagerTest < Webgen::TestCase
     other_loader = Webgen::PluginLoader.new
     other_loader.load_from_block { self.class.module_eval "class FalsePlugin < Webgen::Plugin; end" }
 
-    assert_raise( Webgen::PluginParamNotFound ) { manager.param_for_plugin( FalsePlugin, 'param' ) }
+    assert_raise( Webgen::PluginParamNotFound ) { manager.param_for_plugin( 'FalsePlugin', 'param' ) }
 
-    assert_equal( wrapper::Testing::PARAM_ARRAY[1], manager.param_for_plugin( wrapper::Testing::PluginWithData, wrapper::Testing::PARAM_ARRAY[0] ) )
-    assert_equal( wrapper::Testing::PARAM_ARRAY[1], manager[wrapper::Testing::DerivedPlugin].param( wrapper::Testing::PARAM_ARRAY[0] ) )
-    assert_equal( manager[wrapper::Testing::DerivedPlugin].param( wrapper::Testing::PARAM_ARRAY[0] ),
+    assert_equal( wrapper::Testing::PARAM_ARRAY[1], manager.param_for_plugin( 'Testing/PluginWithData', wrapper::Testing::PARAM_ARRAY[0] ) )
+    assert_equal( wrapper::Testing::PARAM_ARRAY[1], manager['Testing/DerivedPlugin'].param( wrapper::Testing::PARAM_ARRAY[0] ) )
+    assert_equal( manager['Testing/DerivedPlugin'].param( wrapper::Testing::PARAM_ARRAY[0] ),
                   manager.param_for_plugin( 'Testing/PluginWithData', wrapper::Testing::PARAM_ARRAY[0] ) )
 
-    assert_equal( wrapper::Testing::PARAM_ARRAY[1], manager[wrapper::Testing::BasicPlugin].param( wrapper::Testing::PARAM_ARRAY[0], 'Testing/PluginWithData' ) )
+    assert_equal( wrapper::Testing::PARAM_ARRAY[1], manager['Testing/BasicPlugin'].param( wrapper::Testing::PARAM_ARRAY[0], 'Testing/PluginWithData' ) )
 
     manager.plugin_config = DummyConfig.new
+    manager.init #re-precalculate param values, still TODO
     assert_raise( Webgen::PluginParamNotFound ) { manager.param_for_plugin( 'Testing/BasicPlugin', 'param' ) }
-    assert_equal( [6,7], manager.param_for_plugin( wrapper::Testing::PluginWithData, wrapper::Testing::PARAM_ARRAY[0] ) )
-    assert_equal( [6,7], manager[wrapper::Testing::DerivedPlugin].param( wrapper::Testing::PARAM_ARRAY[0] ) )
+    assert_equal( [6,7], manager.param_for_plugin( 'Testing/PluginWithData', wrapper::Testing::PARAM_ARRAY[0] ) )
+    assert_equal( [6,7], manager['Testing/DerivedPlugin'].param( wrapper::Testing::PARAM_ARRAY[0] ) )
 
     assert_equal( 'otherparam', manager.param_for_plugin( 'Testing/PluginWithData', 'otherparam' ) )
   end

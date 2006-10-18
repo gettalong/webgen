@@ -162,8 +162,9 @@ module FileHandlers
 
     end
 
-    plugin_name 'File/GalleryHandler'
-    infos :summary => "Handles images gallery files"
+    infos( :name => 'File/GalleryHandler',
+           :summary => "Handles images gallery files"
+           )
 
     register_extension 'gallery'
 
@@ -378,8 +379,9 @@ TODO: move to doc
 
     class ThumbnailWriter < DefaultHandler
 
-      plugin_name 'File/ThumbnailWriter'
-      infos :summary => "Writes out thumbnails with RMagick"
+      infos(   :name => 'File/ThumbnailWriter',
+             :summary => "Writes out thumbnails with RMagick"
+             )
 
       def create_node( file, parent, thumbnailSize = nil )
         node = Node.new( parent, 'tn_' + File.basename( file ).tr( ' ', '_' ) )

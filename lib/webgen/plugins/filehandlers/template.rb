@@ -27,8 +27,10 @@ module FileHandlers
   # Handles template files. Template files are just page files with another extension.
   class TemplateHandler < DefaultHandler
 
-    plugin_name 'File/TemplateHandler'
-    infos :summary =>  "Handles the template files"
+    infos( :name => 'File/TemplateHandler',
+           :summary =>  "Handles the template files"
+           )
+
     param 'defaultTemplate', 'default.template', 'The default file name for the template file.'
 
     register_extension 'template'

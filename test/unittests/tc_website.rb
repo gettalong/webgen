@@ -86,7 +86,7 @@ class WebSiteTest < Webgen::TestCase
     if [plugin_name, param] == ['Core/Configuration', 'lang']
       'eo'
     else
-      raise Webgen::PluginParamNotFound.new( plugin_name, param )
+      Webgen::PluginParamValueNotFound
     end
   end
 
@@ -155,8 +155,8 @@ class ConfigurationFileTest < Webgen::TestCase
     configfile = Webgen::ConfigurationFile.new( fixture_path( 'correct.yaml' ) )
     assert_kind_of( Hash, configfile.config )
     assert_equal( 'value', configfile.param_for_plugin( 'TestPlugin', 'param' ) )
-    assert_raise( Webgen::PluginParamNotFound ) { configfile.param_for_plugin( 'TestPlugin', 'noparam' ) }
-    assert_raise( Webgen::PluginParamNotFound ) { configfile.param_for_plugin( 'UnknownPlugin', 'param' ) }
+    assert_equal( Webgen::PluginParamValueNotFound, configfile.param_for_plugin( 'TestPlugin', 'noparam' ) )
+    assert_equal( Webgen::PluginParamValueNotFound, configfile.param_for_plugin( 'UnknownPlugin', 'param' ) )
   end
 
   def test_auto_default_meta_info_setter

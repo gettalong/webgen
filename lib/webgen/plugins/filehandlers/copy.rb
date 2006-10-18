@@ -30,10 +30,13 @@ module FileHandlers
   # directory.
   class CopyHandler < DefaultHandler
 
-    plugin_name 'File/CopyHandler'
-    infos :summary => "Copies files from source to destination without modification"
+    infos( :name => 'File/CopyHandler',
+           :summary => "Copies files from source to destination without modification"
+           )
+
     param 'paths', ['**/*.css', '**/*.jpg', '**/*.png', '**/*.gif'], 'The path patterns ' +
       'which match the files that should get copied by this handler.'
+
     param 'erbPaths', ['**/*.rhtml', '**/*.rcss'], 'The path patterns which match the files ' +
       'that should get preprocessed by ERB. The leading letter r is removed from the extension.'
 

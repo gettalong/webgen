@@ -27,8 +27,9 @@ module HtmlValidators
 
   class XmllintHtmlValidator < DefaultHtmlValidator
 
-    plugin_name 'HtmlValidator/xmllint'
-    infos :summary => "Uses xmllint to check if a file is valid HTML and well-formed"
+    infos( :name => 'HtmlValidator/xmllint',
+           :summary => "Uses xmllint to check if a file is valid HTML and well-formed"
+           )
 
     param "args", '--catalogs --noout --valid', 'Arguments passed to the xmllint command'
 

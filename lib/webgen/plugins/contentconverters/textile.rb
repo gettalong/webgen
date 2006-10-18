@@ -33,8 +33,9 @@ load_optional_part( 'content-converter-textile',
     # Handles content in Textile format using RedCloth.
     class TextileConverter < DefaultContentConverter
 
-      plugin_name 'ContentConverter/Textile'
-      infos :summary => "Handles content in Textile format using RedCloth"
+      infos(   :name => 'ContentConverter/Textile',
+             :summary => "Handles content in Textile format using RedCloth"
+             )
 
       register_handler 'textile'
 

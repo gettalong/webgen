@@ -75,8 +75,9 @@ TODO move to doc
 - orderInfo set on directory counts before orderInfo on index file
 =end
 
-    plugin_name 'File/DirectoryHandler'
-    infos :summary => "Handles directories"
+    infos( :name => 'File/DirectoryHandler',
+           :summary => "Handles directories"
+           )
 
     default_meta_info( { 'indexFile' => 'index.page' } )
 

@@ -118,13 +118,13 @@ module CorePlugins
 
     end
 
-    plugin_name 'Core/ResourceManager'
 
-    infos(
-          :summary => "Provides access to pre- and userdefined resources",
-          :description => "The resource manager manages a list of predefined and " +
-          "userdefined resources. These resources can be used, for example, in page files."
+    infos( :name => 'Core/ResourceManager',
+           :summary => "Provides access to pre- and userdefined resources",
+           :description => "The resource manager manages a list of predefined and " +
+           "userdefined resources. These resources can be used, for example, in page files."
           )
+
     param 'resources', [], 'User defined file resources. Value has to be an array of ' +
       'arrays with three strings defining name, resource path and output path'
 
@@ -261,8 +261,7 @@ module Tags
 
   class ResourceTag < DefaultTag
 
-    infos(
-          :summary => "Used for referencing resources",
+    infos(          :summary => "Used for referencing resources",
           :description => "This tag can be used to output the path to a resource or the resource itself."
           )
 

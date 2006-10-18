@@ -2,7 +2,6 @@ require 'webgen/config'
 
 Webgen::LOAD_DEFAULT_PLUGINS = false
 
-require 'pp'
 require 'test/unit'
 require 'webgen/plugin'
 
@@ -12,6 +11,7 @@ module Webgen
   # tests.
   class TestCase < Test::Unit::TestCase
 
+    # Sets the base fixture path and the fixture path for the test case.
     def self.inherited( klass )
       path = caller[0][/^.*?:/][0..-2]
       dir, file = File.split( path )
@@ -27,6 +27,7 @@ module Webgen
       klass.instance_variable_set( :@base_fixture_path, fpath + '/' )
     end
 
+    # Reimplemented to hide the base test case.
     def self.suite
       if self == TestCase
         return Test::Unit::TestSuite.new('Webgen::TestCase')
@@ -35,12 +36,11 @@ module Webgen
       end
     end
 
-    #TODO doc
+    # Helper method for retrieving a path name with an optionally appended filename.
     def self.path_helper( var, filename = nil )
       var = instance_variable_get( var )
       (filename.nil? ? var : File.join( var, filename ) )
     end
-
 
     # If +filename+ is not specified, returns the fixture path for the test case. If +filename+ is
     # specified, it is appended to the fixture path.
@@ -53,6 +53,8 @@ module Webgen
       self.class.fixture_path( filename )
     end
 
+    # Returns the base fixture path for the test case. If +filename+ is specified, it is appended to
+    # the base fixture path.
     def self.base_fixture_path( filename = nil )
       path_helper( :@base_fixture_path, filename )
     end
@@ -77,6 +79,7 @@ module Webgen
         (files.nil? ? @plugin_files.to_a + ['webgen/plugins/coreplugins/configuration.rb'] : @plugin_files = files )
       end
 
+      # The name of the plugin which should be tested.
       def plugin_to_test( plugin = nil )
         @plugin_name ||= nil
         (plugin.nil? ? @plugin_name : @plugin_name = plugin )
@@ -87,8 +90,6 @@ module Webgen
     # required stdlib files sothat no warnings etc. are shown when re-requiring files
     require 'set'
     require 'fileutils'
-    # require coderay, it will not work anymore if the CodeRay constants gets removed...
-    begin require 'coderay'; rescue LoadError; end
 
     def setup
       @loader = PluginLoader.new( @wrapper = Module.new )
@@ -137,7 +138,7 @@ module Webgen
       when ['Core/Configuration', 'srcDir'] then sample_site( Webgen::SRC_DIR )
       when ['Core/Configuration', 'outDir'] then sample_site( 'out' )
       when ['Core/Configuration', 'websiteDir'] then sample_site
-      else raise Webgen::PluginParamNotFound.new( plugin_name, param )
+      else PluginParamValueNotFound
       end
     end
 

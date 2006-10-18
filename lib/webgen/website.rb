@@ -267,7 +267,7 @@ module Webgen
       if @config.has_key?( plugin_name ) && @config[plugin_name].has_key?( param )
         @config[plugin_name][param]
       else
-        raise PluginParamNotFound.new( plugin_name, param )
+        PluginParamValueNotFound
       end
     end
 

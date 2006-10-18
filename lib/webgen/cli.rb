@@ -379,7 +379,7 @@ module Webgen
       elsif @config_file
         @config_file.param_for_plugin( plugin_name, param )
       else
-        raise Webgen::PluginParamNotFound.new( plugin_name, param )
+        Webgen::PluginParamValueNotFound
       end
     end
 
