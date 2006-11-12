@@ -1,16 +1,17 @@
 webgen - a template based static website generator
 
-Copyright (C) 2004 Thomas Leitner
+Copyright (C) 2006 Thomas Leitner
 
 >>> The documentation for webgen is in the doc/src subdirectory. <<<
 
-You can build the documentation by
-invoking
+You can build the documentation by executing
  $ rake doc
 
-in the root of the package or by running webgen manually in the +doc+ directory:
- $ ruby -I../lib ../bin/webgen
+or (if you don't have rake installed) by executing
+ $ ruby -Ilib bin/webgen -d doc
 
-This documentation is actually the same as the one on webgen.rubyforge.org. When releasing a new
+in the root of the package. Either command will build the documentation and place it in doc/output.
+
+This documentation is actually the same as the one on http://webgen.rubyforge.org. When releasing a new
 version of webgen, I run one of the above commands to create the pages and then only copy it to the
 website! :-)

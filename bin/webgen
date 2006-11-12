@@ -1,5 +1,4 @@
 #!/usr/bin/env ruby
 
 require 'webgen/cli'
-
 Webgen::cli_main

@@ -106,7 +106,7 @@ PKG_FILES = FileList.new( [
                             'lib/**/*.rb',
                             'data/**/*',
                             'testsite/**/*',
-                            'tests/**/*',
+                            'test/**/*',
                             'doc/**/*'
                           ]) do |fl|
   fl.exclude( /\bsvn\b/ )
@@ -115,7 +115,7 @@ PKG_FILES = FileList.new( [
   fl.exclude( 'doc/output' )
 end
 
-task :package => [:gen_files, :create_gal_layout_pics] do
+task :package => [:gen_files] do
   chdir 'pkg' do
     sh "rpaadmin packport #{PKG_NAME}-#{PKG_VERSION}"
   end
