@@ -24,7 +24,6 @@ require 'rbconfig'
 require 'fileutils'
 require 'cmdparse'
 require 'webgen/website'
-require 'webgen/plugin'
 
 module Webgen
 
@@ -243,6 +242,7 @@ module Webgen
           ljust = 25
 
           puts CliUtils.section( 'Summary', ljust ) + CliUtils.format( config.infos[:summary], ljust ).join("\n") if config.infos[:summary]
+          puts CliUtils.section( 'Author', ljust ) + CliUtils.format( config.infos[:author], ljust ).join("\n") if config.infos[:author]
           puts CliUtils.section( 'Description', ljust ) + CliUtils.format( config.infos[:description], ljust ).join("\n") if config.infos[:description]
           puts CliUtils.section( 'Tag names', ljust ) + plugin.tags.join(", ") if plugin.respond_to?( :tags )
           puts CliUtils.section( 'Handles paths', ljust ) + plugin.path_patterns.collect {|r,f| f}.inspect if plugin.respond_to?( :path_patterns )
@@ -258,7 +258,7 @@ module Webgen
             end
           end
 
-          otherinfos = config.infos.select {|k,v| ![:summary, :description, :tags, :path_patterns].include?( k ) }
+          otherinfos = config.infos.select {|k,v| ![:name, :author, :summary, :description, :tags, :path_patterns].include?( k ) }
           puts "\n" +CliUtils.section( 'Other Information' ) unless otherinfos.empty?
           otherinfos.each {|name, value| puts CliUtils.section( name.to_s.tr('_', ' '), ljust, 6 ) + value.inspect }
 

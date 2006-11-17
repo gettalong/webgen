@@ -123,7 +123,15 @@ module Webgen
 
     # See DirectoryInfo#files
     def files
-      super.select {|f| f != File.join( path, 'README' )}
+      super.select {|f| f != File.join( path, 'README' )} - plugin_files
+    end
+
+    def plugin_files
+      plugin_files = []
+      @infos['plugin files'].each do |pfile|
+        plugin_files += Dir[File.join( path, pfile )]
+      end if @infos['plugin files']
+      plugin_files
     end
 
   end
@@ -191,10 +199,10 @@ module Webgen
       end
     end
 
-    # Create a website in the +directory+, using the template +templateName+ and the style +styleName+.
-    def self.create_website( directory, templateName = 'default', styleName = 'default' )
-      template = WebSiteTemplate.entries[templateName]
-      style = WebSiteStyle.entries[styleName]
+    # Create a website in the +directory+, using the template +template_name+ and the style +style_name+.
+    def self.create_website( directory, template_name = 'default', style_name = 'default' )
+      template = WebSiteTemplate.entries[template_name]
+      style = WebSiteStyle.entries[style_name]
       raise ArgumentError.new( "Invalid website template '#{template}'" ) if template.nil?
       raise ArgumentError.new( "Invalid website style '#{style}'" ) if style.nil?
 
@@ -205,22 +213,26 @@ module Webgen
 
     # Copies the style files for +style+ to the source directory of the website +directory+
     # overwritting exisiting files.
-    def self.use_website_style( directory, style )
-      styleEntry = WebSiteStyle.entries[style]
-      raise ArgumentError.new( "Invalid website style '#{style}'" ) if styleEntry.nil?
-      srcDir = File.join( directory, Webgen::SRC_DIR )
-      raise ArgumentError.new( "Directory <#{srcDir}> does not exist!") unless File.exists?( srcDir )
-      return styleEntry.copy_to( srcDir )
+    def self.use_website_style( directory, style_name )
+      style = WebSiteStyle.entries[style_name]
+      raise ArgumentError.new( "Invalid website style '#{style_name}'" ) if style.nil?
+      src_dir = File.join( directory, Webgen::SRC_DIR )
+      raise ArgumentError.new( "Directory <#{src_dir}> does not exist!") unless File.exists?( src_dir )
+      return style.copy_to( src_dir )
     end
 
     # Copies the gallery style files for +style+ to the source directory of the website +directory+
     # overwritting exisiting files.
-    def self.use_gallery_style( directory, style )
-      styleEntry = GalleryStyle.entries[style]
-      raise ArgumentError.new( "Invalid gallery style '#{style}'" ) if styleEntry.nil?
-      srcDir = File.join( directory, Webgen::SRC_DIR )
-      raise ArgumentError.new( "Directory <#{srcDir}> does not exist!") unless File.exists?( srcDir )
-      return styleEntry.copy_to( srcDir )
+    def self.use_gallery_style( directory, style_name )
+      style = GalleryStyle.entries[style_name]
+      raise ArgumentError.new( "Invalid gallery style '#{style_name}'" ) if style.nil?
+      src_dir = File.join( directory, Webgen::SRC_DIR )
+      plugin_dir = File.join( directory, Webgen::PLUGIN_DIR )
+      raise ArgumentError.new( "Directory <#{src_dir}> does not exist!") unless File.exists?( src_dir )
+      plugin_files = style.plugin_files
+      FileUtils.mkdir( plugin_dir ) unless File.exists?( plugin_dir )
+      FileUtils.cp( plugin_files, plugin_dir )
+      return style.copy_to( src_dir ) + plugin_files.collect {|f| File.join( plugin_dir, File.basename( f ) )}
     end
 
     #######
