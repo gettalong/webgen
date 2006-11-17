@@ -1,5 +1,12 @@
 --- content, html
-<% ginfo = node.node_info[:ginfo] %>
+<%
+ginfo = node.node_info[:ginfo]
+if ginfo[:collage_node].nil?
+  log(:error) { "Use of templates from gallery style 'slides' only possible if option layouter is set to 'slides' in gallery file!" }
+else
+%>
+
+
 <div class="webgen-gallery webgen-gallery-main" style="background-color: <%= ginfo[:collage_node].collage_color %>">
 <p style="text-align: center"><img src="<%= ginfo[:collage_node].path %>" alt="collage" /></p>
 <table width="100%">
@@ -20,3 +27,6 @@
 <% end %>
 </table>
 </div>
+
+
+<% end %>
