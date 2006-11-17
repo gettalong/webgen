@@ -66,7 +66,7 @@ TODO: move to doc
     # Returns all available syntax highlighting languages.
     def self.available_languages
       if Object.const_defined?( :CodeRay )
-        CodeRay::Scanners.all_plugin_names
+        CodeRay::Scanners.list
       else
         []
       end
