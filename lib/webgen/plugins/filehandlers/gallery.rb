@@ -177,6 +177,7 @@ module FileHandlers
     end
 
     infos( :name => 'File/GalleryHandler',
+           :author => Webgen::AUTHOR,
            :summary => "Handles images gallery files"
            )
 
@@ -415,6 +416,7 @@ TODO: move to doc
     class ThumbnailWriter < DefaultHandler
 
       infos( :name => 'File/ThumbnailWriter',
+             :author => Webgen::AUTHOR,
              :summary => "Writes out thumbnails with RMagick"
              )
 

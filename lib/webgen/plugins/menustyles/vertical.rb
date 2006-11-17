@@ -27,6 +27,7 @@ module MenuStyles
   class VerticalMenuStyle < MenuStyles::DefaultMenuStyle
 
     infos( :name => 'MenuStyle/Vertical',
+           :author => Webgen::AUTHOR,
            :summary => "Builds a vertical menu"
            )
 

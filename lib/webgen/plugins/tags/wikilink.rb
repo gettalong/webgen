@@ -26,7 +26,9 @@ module Tags
 
   class WikiLinkTag < DefaultTag
 
-    infos :summary => 'Adds a link to a wiki page'
+    infos( :author => Webgen::AUTHOR,
+           :summary => 'Adds a link to a wiki page'
+           )
 
     param 'linkText', nil, 'The text of the link. If it is not specified, the title of the current page is used.'
     param 'rootURL', '/wiki/wiki.pl?', 'The root URL for the wiki link, ie. the path to the wiki CGI.'

@@ -28,6 +28,7 @@ module ContentConverters
   class HtmlConverter < DefaultContentConverter
 
     infos( :name => 'ContentConverter/HTML',
+           :author => Webgen::AUTHOR,
            :summary => "Handles HTML formatted content"
            )
 

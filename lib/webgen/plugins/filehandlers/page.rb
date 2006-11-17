@@ -86,6 +86,7 @@ TODO: MOVE TO DOC
     EXTENSION = 'page'
 
     infos( :name => 'File/PageHandler',
+           :author => Webgen::AUTHOR,
            :summary => "Plugin for processing page files"
            )
 

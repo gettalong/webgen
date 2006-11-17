@@ -34,7 +34,8 @@ load_optional_part( 'content-converter-xmlbuilder',
     # Handles content in Textile format using RedCloth.
     class XmlBuilderConverter < DefaultContentConverter
 
-      infos(   :name => 'ContentConverter/XmlBuilder',
+      infos( :name => 'ContentConverter/XmlBuilder',
+             :author => Webgen::AUTHOR,
              :summary => "Handles content structured using the XML Builder library"
              )
 

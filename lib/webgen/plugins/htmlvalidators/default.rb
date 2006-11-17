@@ -25,6 +25,7 @@ module HtmlValidators
   class DefaultHtmlValidator < Webgen::HandlerPlugin
 
     infos( :name => 'HtmlValidator/Default',
+           :author => Webgen::AUTHOR,
            :summary => "Base class for all HTML validators"
            )
 

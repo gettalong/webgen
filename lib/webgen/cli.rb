@@ -41,8 +41,8 @@ module Webgen
       end
     end
 
-    def self.method_missing( id )
-      ''
+    def self.method_missing( id, text = nil )
+      text.to_s
     end
 
   end

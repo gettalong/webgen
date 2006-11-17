@@ -120,6 +120,7 @@ module CorePlugins
 
 
     infos( :name => 'Core/ResourceManager',
+           :author => Webgen::AUTHOR,
            :summary => "Provides access to pre- and userdefined resources",
            :description => "The resource manager manages a list of predefined and " +
            "userdefined resources. These resources can be used, for example, in page files."
@@ -261,8 +262,9 @@ module Tags
 
   class ResourceTag < DefaultTag
 
-    infos(          :summary => "Used for referencing resources",
-          :description => "This tag can be used to output the path to a resource or the resource itself."
+    infos( :author => Webgen::AUTHOR,
+           :summary => "Used for referencing resources",
+           :description => "This tag can be used to output the path to a resource or the resource itself."
           )
 
     param 'name', nil, 'The name of the resource'

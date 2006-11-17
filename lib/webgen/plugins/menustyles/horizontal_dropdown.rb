@@ -27,6 +27,7 @@ module MenuStyles
   class HorizontalDropdownMenuStyle < MenuStyles::DefaultMenuStyle
 
     infos( :name => 'MenuStyle/HorizontalDropdown',
+           :author => Webgen::AUTHOR,
            :summary => "Builds a horizontal menu with CSS drop down submenus"
            )
 

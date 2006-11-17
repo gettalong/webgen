@@ -33,7 +33,8 @@ load_optional_part( 'content-converter-textile',
     # Handles content in Textile format using RedCloth.
     class TextileConverter < DefaultContentConverter
 
-      infos(   :name => 'ContentConverter/Textile',
+      infos( :name => 'ContentConverter/Textile',
+             :author => Webgen::AUTHOR,
              :summary => "Handles content in Textile format using RedCloth"
              )
 

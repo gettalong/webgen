@@ -35,7 +35,10 @@ module Tags
   # Tag parameter: the name of the file which should be relocated
   class RelocatableTag < DefaultTag
 
-    infos :summary => 'Adds a relative path to the specified name if necessary'
+    infos( :author => Webgen::AUTHOR,
+           :summary => 'Adds a relative path to the specified name if necessary'
+           )
+
     param 'path', nil, 'The path which should be relocatable'
     param 'resolveFragment', true, 'Specifies if the fragment part (#something) in the path should also be resolved'
     set_mandatory 'path', true

@@ -31,7 +31,9 @@ module Tags
   # characters are escaped.
   class ExecuteCommandTag < DefaultTag
 
-    infos :summary => "Executes the given command and uses its standard output as the tag value"
+    infos( :author => Webgen::AUTHOR,
+           :summary => "Executes the given command and uses its standard output as the tag value"
+           )
 
     param 'command', nil, 'The command which should be executed'
     param 'processOutput', true, 'The output of the command will be further processed by the TagProcessor if true'

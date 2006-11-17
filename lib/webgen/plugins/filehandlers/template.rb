@@ -28,6 +28,7 @@ module FileHandlers
   class TemplateHandler < DefaultHandler
 
     infos( :name => 'File/TemplateHandler',
+           :author => Webgen::AUTHOR,
            :summary =>  "Handles the template files"
            )
 

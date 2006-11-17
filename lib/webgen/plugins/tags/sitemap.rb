@@ -28,7 +28,10 @@ module Tags
   # Generates a sitemap. The sitemap contains the hierarchy of all pages on the web site.
   class SitemapTag < DefaultTag
 
-    infos :summary => 'Shows all page files of the website'
+    infos( :author => Webgen::AUTHOR,
+           :summary => 'Shows all page files of the website'
+           )
+
     param 'levelTag', 'ul', 'The tag used for creating a new hierarchy level.'
     param 'itemTag', 'li', 'The tag used for hierarchy items.'
     param 'honorInMenu', true, 'Only pages for which the \'inMenu\' meta information is set are shown in ' +

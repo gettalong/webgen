@@ -27,6 +27,7 @@ module MenuStyles
   class VerticalDropdownMenuStyle < MenuStyles::DefaultMenuStyle
 
     infos( :name => 'MenuStyle/VerticalDropdown',
+           :author => Webgen::AUTHOR,
            :summary => "Builds a vertical menu with CSS drop down submenus"
            )
 

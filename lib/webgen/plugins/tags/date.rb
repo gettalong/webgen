@@ -28,7 +28,10 @@ module Tags
   # can use everything Time#strftime offers.
   class DateTag < DefaultTag
 
-    infos :summary => "Prints out the current date/time in a customizable format"
+    infos( :author => Webgen::AUTHOR,
+           :summary => "Prints out the current date/time in a customizable format"
+           )
+
     param 'format', '%A, %B %d %H:%M:%S %Z %Y', 'The format of the date (same options as Ruby\'s Time#strftime).'
 
     register_tag 'date'

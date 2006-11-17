@@ -30,6 +30,7 @@ module ContentConverters
   class RDocConverter < DefaultContentConverter
 
     infos( :name => 'ContentConverter/RDoc',
+           :author => Webgen::AUTHOR,
            :summary => "Handles content in RDOC format"
            )
 

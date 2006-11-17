@@ -31,6 +31,7 @@ module FileHandlers
   class FileHandler < Webgen::Plugin
 
     infos( :name => 'Core/FileHandler',
+           :author => Webgen::AUTHOR,
            :summary => "Main plugin for handling the files in the source directory"
            )
 
@@ -323,6 +324,7 @@ TODO move todoc
     DEFAULT_RANK = 100
 
     infos( :name => 'File/DefaultHandler',
+           :author => Webgen::AUTHOR,
            :summary => "Base class of all file handler plugins",
            :instantiate => false
           )
@@ -430,6 +432,7 @@ TODO move todoc
     end
 
     infos( :name => 'File/VirtualFileHandler',
+           :author => Webgen::AUTHOR,
            :summary => 'Handles virtual files specified in the backing file'
            )
 

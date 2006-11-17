@@ -31,6 +31,7 @@ module FileHandlers
   class CopyHandler < DefaultHandler
 
     infos( :name => 'File/CopyHandler',
+           :author => Webgen::AUTHOR,
            :summary => "Copies files from source to destination without modification"
            )
 

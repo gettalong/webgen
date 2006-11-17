@@ -29,7 +29,9 @@ module Tags
   # Includes a file verbatim. All HTML special characters are escaped.
   class IncludeFileTag < DefaultTag
 
-    infos :summary => "Includes a file verbatim"
+    infos( :author => Webgen::AUTHOR,
+           :summary => "Includes a file verbatim"
+           )
 
     param 'filename', nil, 'The name of the file which should be included'
     param 'processOutput', true, 'The file content will be scanned for tags if true'

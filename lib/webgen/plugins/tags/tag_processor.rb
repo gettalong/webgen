@@ -32,6 +32,7 @@ module Tags
   class TagProcessor < Webgen::Plugin
 
     infos( :name => 'Core/TagProcessor',
+           :author => Webgen::AUTHOR,
            :summary => "Plugin for processing tags"
            )
 
@@ -144,6 +145,7 @@ module Tags
   class DefaultTag < Webgen::Plugin
 
     infos( :summary => "Base class for all tag plugins",
+           :author => Webgen::AUTHOR,
            :instantiate => false
            )
 

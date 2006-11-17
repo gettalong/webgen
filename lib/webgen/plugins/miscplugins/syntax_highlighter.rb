@@ -35,6 +35,7 @@ module MiscPlugins
   class SyntaxHighlighter < Webgen::Plugin
 
     infos( :name => 'Misc/SyntaxHighlighter',
+           :author => Webgen::AUTHOR,
            :summary => "Utility plugin for syntax highlighting"
            )
 

@@ -25,6 +25,7 @@ module MenuStyles
   class DefaultMenuStyle < Webgen::HandlerPlugin
 
     infos( :name => 'MenuStyle/Default',
+           :author => Webgen::AUTHOR,
            :summary => "Base class for all menu styles"
            )
 

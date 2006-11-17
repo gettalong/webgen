@@ -26,6 +26,7 @@ module CorePlugins
   class Configuration < Webgen::Plugin
 
     infos( :name => 'Core/Configuration',
+           :author => Webgen::AUTHOR,
            :summary => "Responsible for storing general parameters"
            )
 

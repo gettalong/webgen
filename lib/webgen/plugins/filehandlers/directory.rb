@@ -76,6 +76,7 @@ TODO move to doc
 =end
 
     infos( :name => 'File/DirectoryHandler',
+           :author => Webgen::AUTHOR,
            :summary => "Handles directories"
            )
 

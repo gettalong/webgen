@@ -28,6 +28,7 @@ module MiscPlugins
   class SmileyReplacer < Webgen::Plugin
 
     infos( :name => 'Misc/SmileyReplacer',
+           :author => Webgen::AUTHOR,
            :summary => "Replaces smiley characters with actual smileys"
            )
 

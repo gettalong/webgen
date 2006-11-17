@@ -8,6 +8,7 @@ module Collage
   class Layouter < Webgen::Plugin
 
     infos( :name => 'GalleryLayouter/slides',
+           :author => Webgen::AUTHOR,
            :summary => 'Handles additional tasks for the gallery layout \'slides\''
            )
 
@@ -92,6 +93,7 @@ module Collage
     include Magick
 
     infos( :name => 'File/SlideWriter',
+           :author => Webgen::AUTHOR,
            :summary => 'Generates a slide background for image thumbnails' )
 
     param 'borderWidth', 10, 'The width of the slide border'
@@ -152,6 +154,7 @@ module Collage
     include Magick
 
     infos( :name => 'File/CollageWriter',
+           :author => Webgen::AUTHOR,
            :summary => 'Generates a pretty collage for the main gallery page' )
 
     param 'size', '700x300', 'The size of the generated collage'
@@ -301,6 +304,7 @@ module Collage
     include Magick
 
     infos( :name => 'File/CollageThumbWriter',
+           :author => Webgen::AUTHOR,
            :summary => 'Generates a thumbnail of a collage image' )
 
     def create_node( path, parent, meta_info, data )

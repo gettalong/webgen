@@ -31,7 +31,9 @@ module Tags
   # simple copy the values to the output file.
   class MetaTag < DefaultTag
 
-    infos :summary => "Replaces all tags without tag plugin with their respective values from the node meta info"
+    infos( :author => Webgen::AUTHOR,
+           :summary => "Replaces all tags without tag plugin with their respective values from the node meta info"
+           )
 
     register_tag :default
 

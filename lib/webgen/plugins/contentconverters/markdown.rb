@@ -33,7 +33,8 @@ load_optional_part( 'content-converter-markdown',
     # Converts text formatted in Markdown format using BlueCloth to HTML.
     class MarkdownConverter < DefaultContentConverter
 
-      infos(   :name => 'ContentConverter/Markdown',
+      infos( :name => 'ContentConverter/Markdown',
+             :author => Webgen::AUTHOR,
              :summary => "Handles content formatted in Markdown format using BlueCloth"
              )
 

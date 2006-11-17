@@ -26,6 +26,7 @@ module ContentConverters
   class DefaultContentConverter < Webgen::HandlerPlugin
 
     infos( :name => 'ContentConverter/Default',
+           :author => Webgen::AUTHOR,
            :summary => "Base class for content to HTML converters"
            )
 

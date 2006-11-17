@@ -27,6 +27,7 @@ module MenuStyles
   class SectionMenuStyle < MenuStyles::DefaultMenuStyle
 
     infos( :name => 'MenuStyle/Section',
+           :author => Webgen::AUTHOR,
            :summary => "Builds a menu out of the HTML sections (h1, h2, ...)"
            )
 

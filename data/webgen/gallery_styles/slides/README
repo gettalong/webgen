@@ -1,7 +1,7 @@
 description:
   A style which uses RMagick to generate a slide background for the thumbnails and
   a collage for the main page, prettier than the default style ;-)
-  This style was done after reading an article by Corban Brook on rendering 
+  This style was done after reading an article by Corban Brook on rendering
   collages with Ruby and RMagick.
 
 author:

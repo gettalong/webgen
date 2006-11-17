@@ -34,7 +34,10 @@ module Tags
   # where each listed name is linked to the corresponding file.
   class BreadcrumbTrailTag < DefaultTag
 
-    infos :summary => 'Shows the hierarchy for the current page'
+    infos( :author => Webgen::AUTHOR,
+           :summary => 'Shows the hierarchy for the current page'
+           )
+
     param 'separator', ' / ', 'Separates the hierachy entries from each other.'
 
     register_tag 'breadcrumbTrail'

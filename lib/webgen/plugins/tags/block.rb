@@ -27,7 +27,9 @@ module Tags
   # Substitutes the tag with an actual content block.
   class BlockTag < DefaultTag
 
-    infos :summary => "Returns the rendered content of a page file block"
+    infos( :author => Webgen::AUTHOR,
+           :summary => "Returns the rendered content of a page file block"
+           )
 
     param 'block', 'content', 'The name of the block which should be rendered.'
     set_mandatory 'block', true

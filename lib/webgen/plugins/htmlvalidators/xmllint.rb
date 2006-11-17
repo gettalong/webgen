@@ -28,6 +28,7 @@ module HtmlValidators
   class XmllintHtmlValidator < DefaultHtmlValidator
 
     infos( :name => 'HtmlValidator/xmllint',
+           :author => Webgen::AUTHOR,
            :summary => "Uses xmllint to check if a file is valid HTML and well-formed"
            )
 

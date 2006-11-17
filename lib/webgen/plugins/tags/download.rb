@@ -30,7 +30,9 @@ module Tags
 
   class DownloadTag < DefaultTag
 
-    infos :summary => "Provides a nice download link and, optional, image "
+    infos( :author => Webgen::AUTHOR,
+           :summary => "Provides a nice download link and, optional, image "
+           )
 
     param 'url', nil, 'The URL to the file. Can be a local file or one referenced via HTTP/FTP.'
     param 'icon', nil, 'The URL to an icon which will be shown next to the name.'

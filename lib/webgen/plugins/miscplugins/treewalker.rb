@@ -28,7 +28,9 @@ module TreeWalkers
   # so that it is called when the main class' #execute method is called.
   class TreeWalker < Webgen::Plugin
 
-    infos :summary => "Super plugin for traversing the node tree"
+    infos( :author => Webgen::AUTHOR,
+           :summary => "Super plugin for traversing the node tree"
+           )
 
     # Walks the +tree+ for the +walker+ in the +direction+, either +:forward+ or +:backward+.
     def execute( tree, walker, direction = :forward )

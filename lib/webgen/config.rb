@@ -25,6 +25,7 @@ require 'rbconfig'
 module Webgen
 
   VERSION = [0, 4, 0]
+  AUTHOR = 'Thomas Leitner <t_leitner@gmx.at>'
   SUMMARY = "webgen is a templated based static Web site generator."
   DESCRIPTION = "webgen is a Web site generator implemented in Ruby. " \
   "It is used to generate static Web pages from templates and page " \

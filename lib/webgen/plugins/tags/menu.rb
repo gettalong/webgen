@@ -56,7 +56,10 @@ module Tags
     end
 
 
-    infos :summary => 'Builds a menu'
+    infos( :author => Webgen::AUTHOR,
+           :summary => 'Builds a menu'
+           )
+
     param 'menuStyle', nil, 'Specifies the style of the menu.'
     param 'options', {}, 'Options that are passed on to the plugin which layouts the menu.'
     set_mandatory 'menuStyle', true

@@ -27,6 +27,7 @@ module MenuStyles
   class HorizontalMenuStyle < DefaultMenuStyle
 
     infos( :name => 'MenuStyle/Horizontal',
+           :author => Webgen::AUTHOR,
            :summary => "Builds a horizontal menu"
            )
 
