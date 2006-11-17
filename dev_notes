@@ -6,3 +6,32 @@ Other classes:
     * throw exceptions, main webgen class (presumably WebSite) catches and handles them
       (logs them and corrects them)
 
+Plugin infos hash keys:
+    * :instantiate -> controllers whether a plugin object will be instantiated
+    * :is_base_plugin -> if set than the plugin class does not get registered by a PluginLoader
+
+
+* Configuration file syntax:
+
+  plugin 'Core/FileHandler' do
+    param 'ignorePaths', ['**/CVS']
+    meta_info({
+      'indexFile' => 'test'
+    }, :merge | :update)
+  end
+
+  -----
+  oder:
+  -----
+
+  File/GalleryHandler:
+    param1: value
+    param2: [val1, val2]
+    param3: {key: val}
+    update_default_meta_info:
+      imagesPerPage: 100
+  File/PageHandler:
+    default_meta_info:
+      imagesPerPage: 100
+  Tags/Meta:
+    param: value
