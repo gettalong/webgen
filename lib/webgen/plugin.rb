@@ -529,20 +529,23 @@ module Webgen
 
   end
 
-  def self.init_default_plugin_loader( mod, block = DEFAULT_PLUGIN_LOAD_PROC )
+  def self.init_default_plugin_loader( mod = DEFAULT_WRAPPER_MODULE, block = DEFAULT_PLUGIN_LOAD_PROC )
     loader = PluginLoader.new( mod )
     loader.load_from_block( &block )
     loader
   end
 
-  # Default PluginLoader instance responsible for loading all plugins shipped with webgen.
-  DEFAULT_WRAPPER_MODULE = Module.new
-  DEFAULT_PLUGIN_LOADER = init_default_plugin_loader( DEFAULT_WRAPPER_MODULE )
+  def self.load_default_plugins( loader = DEFAULT_PLUGIN_LOADER )
+    loader.load_from_dir( File.join( File.dirname( __FILE__ ), 'plugins' ),
+                          File.dirname( __FILE__ ).sub( /webgen$/, '' ) )
+  end
 
   # Set this constant to +false+ before requiring the file to not load the default plugins.
   LOAD_DEFAULT_PLUGINS = true unless defined?( LOAD_DEFAULT_PLUGINS )
 
-  DEFAULT_PLUGIN_LOADER.load_from_dir( File.join( File.dirname( __FILE__ ), 'plugins' ),
-                                       File.dirname( __FILE__ ).sub( /webgen$/, '' ) ) if LOAD_DEFAULT_PLUGINS
+  # Default PluginLoader instance responsible for loading all plugins shipped with webgen.
+  DEFAULT_WRAPPER_MODULE = Module.new
+  DEFAULT_PLUGIN_LOADER = init_default_plugin_loader
+  load_default_plugins if LOAD_DEFAULT_PLUGINS
 
 end

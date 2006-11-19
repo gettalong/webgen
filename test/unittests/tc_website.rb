@@ -7,7 +7,7 @@ module DirectoryInfoUtils
     assert_kind_of( Webgen::DirectoryInfo, dir_info )
     assert_equal( name, dir_info.name )
     assert_kind_of( String, dir_info.infos['description'] )
-    assert_kind_of( String, dir_info.infos['creator'] )
+    assert_kind_of( String, dir_info.infos['author'] )
     assert_kind_of( Hash, dir_info.infos )
     assert_kind_of( Array, dir_info.files )
   end
@@ -118,6 +118,18 @@ class WebSiteTest < Webgen::TestCase
     assert_raise( ArgumentError ) { Webgen::WebSite.create_website( File.join( SAMPLE_SITE, 'test' ), 'invalid_name' ) }
     assert_raise( ArgumentError ) { Webgen::WebSite.create_website( File.join( SAMPLE_SITE, 'test' ), 'default', 'invalid_name' ) }
     assert_raise( ArgumentError ) { Webgen::WebSite.create_website( SAMPLE_SITE, 'default', 'default' ) }
+  end
+
+  def test_all_plugin_values_set
+    plugin_sandbox do
+      Webgen.load_default_plugins
+      website = Webgen::WebSite.new( SAMPLE_SITE )
+      website.manager.plugin_classes.each do |klass|
+        assert( klass.config.infos.has_key?(:author) )
+        assert( klass.config.infos.has_key?(:summary) )
+        assert( klass.config.infos.has_key?(:name) )
+      end
+    end
   end
 
   #######

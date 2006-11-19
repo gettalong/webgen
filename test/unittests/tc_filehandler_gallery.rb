@@ -20,56 +20,48 @@ class GalleryInfoTest < Webgen::PluginTestCase
                               [@iclass.new( 'test5.html', {}, 'test5.jpg' ), @iclass.new( 'test6.html', {}, 'test6.jpg' )] )
   end
 
+  def create_ginfo( gindex = nil, iindex = nil )
+    @ginfoclass.new( {:galleries => @galleries}, gindex, iindex )
+  end
+
   def test_cur_image
-    ginfo = @ginfoclass.new( @galleries, 0, 0 )
-    assert_equal( @galleries[0].images[0], ginfo.cur_image )
+    assert_equal( @galleries[0].images[0], create_ginfo( 0, 0 ).cur_image )
   end
 
   def test_cur_gallery
-    ginfo = @ginfoclass.new( @galleries, 0 )
-    assert_equal( @galleries[0], ginfo.cur_gallery )
+    assert_equal( @galleries[0], create_ginfo( 0 ).cur_gallery )
   end
 
   def test_prev_image
-    ginfo = @ginfoclass.new( @galleries, 0, 0 )
-    assert_equal( nil, ginfo.prev_image )
-    ginfo = @ginfoclass.new( @galleries, 0, 1 )
-    assert_equal( @galleries[0].images[0], ginfo.prev_image )
-    ginfo = @ginfoclass.new( @galleries, 1, 0 )
-    assert_equal( @galleries[0].images[1], ginfo.prev_image )
+    assert_equal( nil, create_ginfo( 0, 0 ).prev_image )
+    assert_equal( @galleries[0].images[0], create_ginfo( 0, 1 ).prev_image )
+    assert_equal( @galleries[0].images[1], create_ginfo( 1, 0 ).prev_image )
   end
 
   def test_next_image
-    ginfo = @ginfoclass.new( @galleries, 2, 1 )
-    assert_equal( nil, ginfo.next_image )
-    ginfo = @ginfoclass.new( @galleries, 0, 0 )
-    assert_equal( @galleries[0].images[1], ginfo.next_image )
-    ginfo = @ginfoclass.new( @galleries, 0, 1 )
-    assert_equal( @galleries[1].images[0], ginfo.next_image )
+    assert_equal( nil, create_ginfo( 2, 1 ).next_image )
+    assert_equal( @galleries[0].images[1], create_ginfo( 0, 0 ).next_image )
+    assert_equal( @galleries[1].images[0], create_ginfo( 0, 1 ).next_image )
   end
 
   def test_prev_gallery
-    ginfo = @ginfoclass.new( @galleries, 0 )
-    assert_equal( nil, ginfo.prev_gallery )
-    ginfo = @ginfoclass.new( @galleries, 1 )
-    assert_equal( @galleries[0], ginfo.prev_gallery )
+    assert_equal( nil, create_ginfo( 0 ).prev_gallery )
+    assert_equal( @galleries[0], create_ginfo( 1 ).prev_gallery )
   end
 
   def test_next_gallery
-    ginfo = @ginfoclass.new( @galleries, 2 )
-    assert_equal( nil, ginfo.next_gallery )
-    ginfo = @ginfoclass.new( @galleries, 0 )
-    assert_equal( @galleries[1], ginfo.next_gallery )
+    assert_equal( nil, create_ginfo( 2 ).next_gallery )
+    assert_equal( @galleries[1], create_ginfo( 0 ).next_gallery )
   end
 
   def test_image_accessors
-    ginfo = @ginfoclass.new( @galleries, 0, 0 )
+    ginfo = create_ginfo( 0, 0 )
     assert_equal( '<img src="{relocatable: tn_test1.jpg}" alt="" />', ginfo.cur_image.thumbnail )
     assert_equal( '<img src="{relocatable: test2.jpg}" width="100" height="50" alt="" />', ginfo.next_image.thumbnail )
   end
 
   def test_gallery_accessors
-    ginfo = @ginfoclass.new( @galleries, 0, 0 )
+    ginfo = create_ginfo( 0, 0 )
     assert_equal( '<img src="{relocatable: tn_test1.jpg}" alt="" />', ginfo.cur_gallery.thumbnail )
     assert_equal( '<img src="{relocatable: test3.jpg}" width="" height="" alt="" />', ginfo.next_gallery.thumbnail )
   end

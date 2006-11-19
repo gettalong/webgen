@@ -26,13 +26,22 @@ load_plugin 'webgen/plugins/filehandlers/filehandler'
 
 module CorePlugins
 
+  # Handles resources in webgen.
   class ResourceManager < Webgen::Plugin
 
+    # The base class for all resources.
     class Resource
 
+      # The unique name of the resource.
       attr_reader :name
+
+      # The output path.
       attr_reader :output_path
+
+      # Specifies if this resource is predefined. This is only used internally by webgen!
       attr_accessor :predefined
+
+      # The type of resource: file or memory.
       attr_accessor :type
 
       def initialize( name, type, output_path )
@@ -74,8 +83,10 @@ module CorePlugins
 
     end
 
+    # Describes a file resource.
     class FileResource < Resource
 
+      # The path to the file the resource references.
       attr_reader :res_path
 
       def initialize( name, output_path, res_path )
@@ -97,6 +108,7 @@ module CorePlugins
 
     end
 
+    # Describes a memory resource.
     class MemoryResource < Resource
 
       def initialize( name, output_path )
@@ -132,6 +144,10 @@ module CorePlugins
     depends_on 'Core/FileHandler'
 
 
+    # Returns all defined resources.
+    attr_reader :resources
+
+
     def initialize( plugin_manager )
       super
       @plugin_manager['Core/FileHandler'].add_msg_listener( :after_all_nodes_written, method( :write_resources ) )
@@ -157,6 +173,7 @@ module CorePlugins
       define_resource( name, MemoryResource.new( name, output_path ) )
     end
 
+    # Assigns the resource +res+ the name +name+.
     def define_resource( name, res )
       @resources[name] = res unless @resources.has_key?( name )
     end
@@ -197,9 +214,9 @@ module CorePlugins
       define_webgen_icons
 
       define_memory_resource( 'webgen-css', '/css/webgen.css'
-                              ).predefined = "Plugins use this resource for their CSS styles."
-      define_memory_resource( 'webgen-javascript', '/css/webgen.js'
-                              ).predefined = "Plugins use this resource for their Javascript fragments."
+                              ).predefined = "Plugins use this resource for adding their CSS styles."
+      define_memory_resource( 'webgen-javascript', '/js/webgen.js'
+                              ).predefined = "Plugins use this resource for adding their Javascript fragments."
     end
 
     def define_webgen_emoticons
