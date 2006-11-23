@@ -26,7 +26,7 @@ class SitemapTagTest < Webgen::TagTestCase
                   '<ul><li><a href="dir1/dir11/file111.html">File111</a></li></ul></li>' +
                   '<li><a href="dir1/file11.html">File11</a></li></ul></li>' +
                   '<li><a href="dir2/">Dir2</a><ul><li><a href="dir2/file21.html">File21</a></li></ul></li>' +
-                  '<li><a href="file1.html">File1</a></li><li><a href="index.html">Index</a></li></ul>',
+                  '<li><span>File1</span></li><li><a href="index.html">Index</a></li></ul>',
                   @plugin.process_tag( 'sitemap', [node] ) )
   end
 

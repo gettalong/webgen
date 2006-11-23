@@ -38,12 +38,13 @@ module Tags
     register_tag 'langbar'
 
     def process_tag( tag, chain )
-      langs = chain.last.parent.find_all {|child| child.node_info[:pagename] == chain.last.node_info[:pagename] }
+      cur_node = chain.last
+      langs = cur_node.parent.find_all {|child| child.node_info[:pagename] == cur_node.node_info[:pagename] }
       nr_langs = langs.length
       langs = langs.
-        delete_if {|child| (chain.last['lang'] == child['lang'] && !param( 'showOwnLang' )) }.
+        delete_if {|child| (cur_node['lang'] == child['lang'] && !param( 'showOwnLang' )) }.
         sort {|a, b| a['lang'] <=> b['lang']}.
-        collect {|n| n.link_from( n, :link_text => n['lang'] )}.
+        collect {|n| n.link_from( cur_node, :resolve_lang_node => false, :link_text => n['lang'] )}.
         join( param( 'separator' ) )
       ( param( 'showSingleLang' ) || nr_langs > 1 ? langs : "" )
     end

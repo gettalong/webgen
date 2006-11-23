@@ -199,6 +199,14 @@ class DefaultHandlerTest < Webgen::PluginTestCase
     @plugin1 = @defHandlerClass.new( @manager )
   end
 
+  def param_for_plugin( plugin_name, param )
+    if [plugin_name, param] == ['File/DefaultHandler', 'linkToCurrentPage'] && @link_to_current
+      @link_to_current
+    else
+      super
+    end
+  end
+
   def test_initialization
     assert_nil( @plugin )
   end
@@ -259,11 +267,20 @@ class DefaultHandlerTest < Webgen::PluginTestCase
     assert_equal( '<a href="#frag">link_text</a>',
                   @plugin1.link_from( node, refNode, :link_text => 'link_text' ) )
     assert_equal( '<a attr1="val1" href="#frag">link_text</a>',
+                  @plugin1.link_from( node, refNode, :link_text => 'link_text', 'attr1' => 'val1' ) )
+    assert_equal( '<a href="#frag">link_text</a>',
                   @plugin1.link_from( node, refNode, :link_text => 'link_text', :attr1 => 'val1' ) )
 
     node['linkAttrs'] = {:link_text => 'Default Text', 'class'=>'help'}
     assert_equal( '<a attr1="val1" class="help" href="#frag">link_text</a>',
-                  @plugin1.link_from( node, refNode, :link_text => 'link_text', :attr1 => 'val1' ) )
+                  @plugin1.link_from( node, refNode, :link_text => 'link_text', 'attr1' => 'val1' ) )
+
+    # Test param setting
+    node['linkAttrs'] = nil
+    @link_to_current = true
+    assert_equal( '<a href="#frag">title</a>', @plugin1.link_from( node, node ) )
+    @link_to_current = false
+    assert_equal( '<span>title</span>', @plugin1.link_from( node, node ) )
   end
 
 end

@@ -16,11 +16,11 @@ class LangbarTagTest < Webgen::TagTestCase
 
     node = root.resolve_node( 'index.en.page' )
     de_link = '<a href="index.de.html">de</a>'
-    en_link = '<a href="index.html">en</a>'
+    en_link = '<span>en</span>'
     check_results( node, "#{de_link} | #{en_link}", de_link, "#{de_link} | #{en_link}", de_link )
 
     node = root.resolve_node( 'file1.page' )
-    link = '<a href="file1.html">en</a>'
+    link = '<span>en</span>'
     check_results( node, link, '', '', '' )
   end
 

@@ -35,31 +35,31 @@ class VerticalMenuStyleTest < Webgen::PluginTestCase
     output = @plugin.build_menu( root.resolve_node('dir1/file11.en.page'), tree_en, options_hash( 1, 1, 2, true ) )
     assert_equal( menu_output( '<ul><li class="webgen-menu-submenu webgen-menu-submenu-inhierarchy"><a href="./">Dir1</a>'+
                                '<ul><li class="webgen-menu-submenu"><a href="dir11/index.html">Dir11</a></li>'+
-                               '<li class="webgen-menu-item-selected"><a href="file11.html">File11</a></li></ul></li>' +
+                               '<li class="webgen-menu-item-selected"><span>File11</span></li></ul></li>' +
                                '<li class="webgen-menu-submenu"><a href="../dir2/">Dir2</a></li></ul>' ), output )
     output = @plugin.build_menu( root.resolve_node('dir1/file11.en.page'), tree_en, options_hash( 1, 1, 2, false ) )
     assert_equal( menu_output( '<ul><li class="webgen-menu-submenu webgen-menu-submenu-inhierarchy"><a href="./">Dir1</a>'+
                                '<ul><li class="webgen-menu-submenu"><a href="dir11/index.html">Dir11</a></li>'+
-                               '<li class="webgen-menu-item-selected"><a href="file11.html">File11</a></li></ul></li>' +
+                               '<li class="webgen-menu-item-selected"><span>File11</span></li></ul></li>' +
                                '<li class="webgen-menu-submenu"><a href="../dir2/">Dir2</a>'+
                                '<ul><li ><a href="../dir2/file21.html">File21</a></li></ul></li></ul>' ), output )
 
     # testing startLevel
     output = @plugin.build_menu( root.resolve_node('dir1/file11.en.page'), tree_en, options_hash( 2, 1, 2, true ) )
     assert_equal( menu_output( '<ul><li class="webgen-menu-submenu"><a href="dir11/index.html">Dir11</a></li>'+
-                               '<li class="webgen-menu-item-selected"><a href="file11.html">File11</a></li></ul>' ), output )
+                               '<li class="webgen-menu-item-selected"><span>File11</span></li></ul>' ), output )
     output = @plugin.build_menu( root.resolve_node('dir1/file11.en.page'), tree_en, options_hash( 2, 1, 2, false ) )
     assert_equal( menu_output( '<ul><li class="webgen-menu-submenu"><a href="dir11/index.html">Dir11</a></li>'+
-                               '<li class="webgen-menu-item-selected"><a href="file11.html">File11</a></li></ul>' ), output )
+                               '<li class="webgen-menu-item-selected"><span>File11</span></li></ul>' ), output )
     output = @plugin.build_menu( root.resolve_node('dir1/file11.en.page'), tree_en, options_hash( 2, 2, 2, false ) )
     assert_equal( menu_output( '<ul><li class="webgen-menu-submenu"><a href="dir11/index.html">Dir11</a>' +
                                '<ul><li ><a href="dir11/file111.html">File111</a></li>' +
                                '<li ><a href="dir11/index.html">Index</a></li></ul></li>'+
-                               '<li class="webgen-menu-item-selected"><a href="file11.html">File11</a></li></ul>' ), output )
+                               '<li class="webgen-menu-item-selected"><span>File11</span></li></ul>' ), output )
     output = @plugin.build_menu( root.resolve_node('dir1/dir11/file111.en.page'), tree_en, options_hash( 2, 1, 2, true ) )
     assert_equal( menu_output( '<ul><li class="webgen-menu-submenu webgen-menu-submenu-inhierarchy">' +
                                '<a href="index.html">Dir11</a>' +
-                               '<ul><li class="webgen-menu-item-selected"><a href="file111.html">File111</a></li>'+
+                               '<ul><li class="webgen-menu-item-selected"><span>File111</span></li>'+
                                '<li ><a href="index.html">Index</a></li></ul></li>' +
                                '<li ><a href="../file11.html">File11</a></li></ul>' ), output )
   end

@@ -128,6 +128,7 @@ class WebSiteTest < Webgen::TestCase
         assert( klass.config.infos.has_key?(:author) )
         assert( klass.config.infos.has_key?(:summary) )
         assert( klass.config.infos.has_key?(:name) )
+        klass.config.dependencies.each {|dep| assert( !website.manager.plugin_class_for_name(dep).nil? ) }
       end
     end
   end

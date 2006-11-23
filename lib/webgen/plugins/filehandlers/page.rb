@@ -125,6 +125,8 @@ TODO: MOVE TO DOC
 TODO: move to doc
 - lang in meta_info overwrites lang in filename and default lang, orderinfo the same, title the same
 - meta info outputNameStyle overwrites parameter outputNameStyle
+- special attr value :resolve_lang_node in link_from specifies if the lang node should be resolved or if the current
+  node should be used
 =end
 
     def create_node_from_data( filename, parent, data, meta_info )
@@ -198,13 +200,13 @@ TODO: move to doc
     end
 
     # See DefaultFileHandler#link_from
-    def link_from( node, refNode, attr = {} )
-      lang_node = node_for_lang( node, refNode['lang'] )
+    def link_from( node, ref_node, attr = {} )
+      lang_node = (attr[:resolve_lang_node] == false ? node : node_for_lang( node, ref_node['lang'] ) )
       if lang_node.nil?
-        log(:warn) { "Translation of page node <#{node.parent.full_path + node.node_info[:pagename]}> to language '#{refNode['lang']}' not found, can't create link"}
+        log(:warn) { "Translation of page node <#{node.parent.full_path + node.node_info[:pagename]}> to language '#{ref_node['lang']}' not found, can't create link"}
         node['title']
       else
-        super( lang_node, refNode, attr )
+        super( lang_node, ref_node, attr )
       end
     end
 

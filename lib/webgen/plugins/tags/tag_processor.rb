@@ -39,7 +39,7 @@ module Tags
     # Processes the given +content+ using the nodes in +chain+ which should be an array of nodes.
     # The first node is the main template (from which the +content+ was retrieved, the +ref_node+),
     # then comes the sub template, the sub sub template and so on until the last node which is the
-    # current node ( the +node+) that is the reason for the whole processing.
+    # current node (the +node+) that is the reason for the whole processing.
     #
     # After having processed all nodes, the method returns the result as string, ie. the rendered
     # content.

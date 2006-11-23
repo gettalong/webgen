@@ -252,7 +252,7 @@ module Webgen
             puts "\n" + CliUtils.section( 'Parameters' )
             config.params.sort.each do |name, item|
               print "\n" + CliUtils.section( 'Parameter', ljust, 6 )
-              puts Color.lred( item.name ) + " = " + Color.lblue( plugin.instance_eval {param( name )}.inspect ) +
+              puts Color.lred( item.name ) + ": " + Color.lblue( plugin.instance_eval {param( name )}.inspect ) +
                 " (" + item.default.inspect + ")"
               puts CliUtils.section( 'Description', ljust, 6 ) + CliUtils.format( item.description, ljust ).join("\n")
             end

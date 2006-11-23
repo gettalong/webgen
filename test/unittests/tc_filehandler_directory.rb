@@ -122,7 +122,7 @@ class DirectoryHandlerTest < Webgen::PluginTestCase
 
     file11 = root.resolve_node( 'dir1/file11.html' )
     assert_equal( '<a href="../index.en.html"></a>', root.link_from( file11 ) )
-    assert_equal( '<a href="index.de.html">TestLink</a>',
+    assert_equal( '<span>TestLink</span>',
                   root.link_from( root.resolve_node( 'index.de.html' ), {:link_text => 'TestLink' } ) )
 
     dir1 = root.resolve_node( 'dir1' )

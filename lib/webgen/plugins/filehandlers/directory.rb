@@ -108,10 +108,10 @@ TODO move to doc
       langnode || node
     end
 
-    def link_from( node, refNode, attr = {} )
-      lang_node = node.node_for_lang( refNode['lang'] )
+    def link_from( node, ref_node, attr = {} )
+      lang_node = (attr[:resolve_lang_node] == false ? node : node.node_for_lang( ref_node['lang'] ) )
       attr[:link_text] ||=  lang_node['directoryName'] || node['title']
-      super( lang_node, refNode, attr )
+      super( lang_node, ref_node, attr )
     end
 
     # Recursively creates a given directory path starting from the path of +parent+ and returns the

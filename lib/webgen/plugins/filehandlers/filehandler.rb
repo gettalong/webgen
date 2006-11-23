@@ -329,6 +329,9 @@ TODO move todoc
            :instantiate => false
           )
 
+    param 'linkToCurrentPage', false, 'Specifies whether in menus, breadcrumb trails, etc. a real link to ' +
+      'the current page should be used or only the link text.'
+
 =begin
 TODO move todoc
 - two types of paths: constant paths defined in class, dynamic ones defined when initializing
@@ -399,18 +402,25 @@ TODO move todoc
       node
     end
 
-    # Returns a HTML link to the +node+ from +refNode+. You can optionally specify additional
-    # attributes for the <a>-Element in the +attr+ Hash. If the special value +:link_text+ is
-    # present in +attr+, it will be used as the link text; otherwise the title of the +node+ will be
-    # used. The meta information +linkAttrs+ of node can be used to set additional attributes.
-    def link_from( node, refNode, attr = {} )
+    # Returns a HTML link to the +node+ from +ref_node+ or, if +node+ and +ref_node+ are the same, a
+    # +span+ element with the link text.
+    #
+    # You can optionally specify additional attributes for the html element in the +attr+ Hash.
+    # Also, the meta information +linkAttrs+ of the given +node+ is used, if available, to set
+    # attributes. However, the +attr+ parameter takes precedence over the +linkAttrs+ meta
+    # information. If the special value +:link_text+ is present in the attributes, it will be used
+    # as the link text; otherwise the title of the +node+ will be used. Be aware that all key-value
+    # pairs with Symbol keys are removed before the attributes are written. Therefore you always
+    # need to specify general attributes with Strings!
+    def link_from( node, ref_node, attr = {} )
       attr = node['linkAttrs'].merge( attr ) if node['linkAttrs'].kind_of?( Hash )
       link_text = attr[:link_text] || node['title']
-      attr.delete( :link_text )
-      attr.delete( 'href' )
-      attr[:href] = refNode.route_to( node )
-      attrs = attr.collect {|name,value| "#{name.to_s}=\"#{value}\"" }.sort.join( ' ' )
-      "<a #{attrs}>#{link_text}</a>"
+      attr.delete_if {|k,v| k.kind_of?( Symbol )}
+
+      use_link = ( node != ref_node || param( 'linkToCurrentPage' ) )
+      attr['href'] = ref_node.route_to( node ) if use_link
+      attrs = attr.collect {|name,value| "#{name.to_s}=\"#{value}\"" }.sort.unshift( '' ).join( ' ' )
+      ( use_link ? "<a#{attrs}>#{link_text}</a>" : "<span#{attrs}>#{link_text}</span>" )
     end
 
   end
