@@ -1,0 +1,55 @@
+---
+title: FileHandler
+inMenu: true
+template: /plugin.template
+plugin: Core/FileHandler
+---
+h2. Description
+
+The FileHandler plugin is one of the two main workhorses, the other being the {plugin:
+Core/TagProcessor}. When running webgen the FileHandler is responsible for traversing the source
+directory and creating the internal representation of all handled files as well as writing the
+output files by using the individual file handler plugins. These file handler plugins reside in the
+{plugin: File} namespace.
+
+There are many different file handler plugins available, ranging from very simple ones, like copying a
+file verbatim from the source to the output directory, to complicated ones, like creating HTML files
+from page files or creating whole image galleries from a simple gallery defintion file!
+
+h2. Path Patterns
+
+Each file handler plugin specifies path patterns which are used to locate the files that the plugin
+can handle. Normally these patterns are used to match file extensions, however, they are much more
+powerful. For detailed information have a look at
+"Dir.glob":http://ruby-doc.org/core/classes/Dir.html#M002375 .
+
+The path patterns that are handled by a particular file handler plugin are stated on its
+documentation page and cannot be changed for most plugins, eg. the {plugin: File/PageHandler} will
+always handle @.page@ files. However, the information about how these path patterns work are useful
+for the usage of webgen because of two reasons:
+
+* so that the user knows which files will be processed by a specific file handler plugin
+* so that the user can specify path patterns for some special file handler plugin that supports
+  additional path patterns, like the {plugin: File/CopyHandler}.
+
+Here are some examples:
+
+<table class="examples">
+<tr><th>Path Pattern</th><th>Result</th></tr>
+<tr>
+  <td><notextile><code>*/*.html</code></notextile></td>
+  <td>All files with the extension @html@ in the subdirectories of the source directory</td>
+</tr>
+<tr>
+  <td><notextile><code>**/*.html</code></notextile></td>
+  <td>All files with the extension @html@ in all directories</td>
+</tr>
+<tr>
+  <td><notextile><code>**/{foo,bar}*</code></notextile></td>
+  <td>All files in all directories which start with @foo@ or @bar@</td>
+</tr>
+<tr>
+  <td><notextile><code>**/???</code></notextile></td>
+  <td>All files in all directories whose file name is exactly three characters long</td>
+</tr>
+</table>

@@ -1,0 +1,10 @@
+--- content, textile
+h1. General Information
+
+<notextile>
+
+{describe: <%= node['plugin'] %>}
+
+{block: content}
+
+</notextile>

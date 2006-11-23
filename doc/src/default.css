@@ -86,7 +86,7 @@ p {
   padding:0;
 }
 
-#mainmenu a {
+#mainmenu a, #mainmenu span {
   border-right:1px solid #b0b0b0;
   color:#606060;
   display:block;
@@ -95,13 +95,17 @@ p {
   text-transform:uppercase;
 }
 
+#mainmenu span {
+  font-weight: bold;
+}
+
 #mainmenu a:hover {
   background:#f0f0f0 url(images/menuhover.jpg) top left repeat-x;
   color:#505050;
   text-decoration:none;
 }
 
-#mainmenu li.webgen-menu-item-selected a, #mainmenu li.webgen-menu-submenu-inhierarchy a {
+#mainmenu li.webgen-menu-item-selected a, #mainmenu li.webgen-menu-item-selected span, #mainmenu li.webgen-menu-submenu-inhierarchy a, #mainmenu li.webgen-menu-submenu-inhierarchy span {
   background:#f0f0f0 url(images/menuhover.jpg) top left repeat-x;
   color:#505050;
   text-decoration:none;
@@ -162,37 +166,36 @@ p {
 
 /*** Sidebar menu ***/
 
-.webgen-menu-partial ul {
-  margin: 0 0 16px 10px;
+#leftside .webgen-menu ul {
+  margin: 0 0 10px 0px;
   padding: 0px;
   list-style: none;
 }
 
-.nav, .webgen-menu-partial a {
+#leftside .webgen-menu a, #leftside .webgen-menu span {
   background:#e8e9ea;
   border:1px solid #b0b0b0;
   color:#606060;
   display:block;
-  margin-top:8px;
-  padding:5px 4px 4px 10px;
+  margin-top:4px;
+  padding:2px 4px 2px 4px;
   position:relative;
-  text-transform:uppercase;
   width:140px;
 }
 
-.nav:hover, .webgen-menu-partial a:hover, .webgen-menu-partial li.webgen-menu-item-selected a, .webgen-menu-partial li.webgen-menu-submenu-inhierarchy a, .active {
+#leftside .webgen-menu span {
+  font-weight: bold;
+}
+
+#leftside .webgen-menu a:hover, #leftside .webgen-menu li.webgen-menu-item-selected > a, #leftside .webgen-menu li.webgen-menu-item-selected > span, #leftside .webgen-menu li.webgen-menu-submenu-inhierarchy > a, #leftside .webgen-menu li.webgen-menu-submenu-inhierarchy > span {
   background:#f8f9fa;
   border:1px solid #909090;
   color:#303030;
   text-decoration:none;
 }
 
-.sub {
-  font-size:0.8em;
-  letter-spacing:1px;
-  margin:3px 0 2px 10px;
-  padding:4px 2px 2px 8px;
-  width:125px;
+#leftside .webgen-menu ul ul {
+  margin-left: 8px;
 }
 
 /*** Content ***/
@@ -214,7 +217,7 @@ p {
 }
 
 
-.content,#contentalt {
+.content {
   background-color:#fafcff;
   border:1px solid #909090;
   color:#2a2a2a;
@@ -222,28 +225,21 @@ p {
 }
 
 .content {margin:0 200px;}
-#contentalt {margin:0 200px 0 20px;}
 
-.content h1,.content h2,#contentalt h1,#contentalt h2 {
+.content h1, .content h2 {
   background-color:inherit;
   color:#606060;
   font-size:1.8em;
   font-weight:bold;
   letter-spacing:-1px;
-  margin:0 0 15px;
+  margin: 15px 0 10px;
   padding:0;
 }
 
-.content h2,#contentalt h2 {
+.content h2 {
   font-size:1.6em;
+  letter-spacing: 0px;
   margin-bottom:10px;
-}
-
-#contentalt img {
-  border:1px solid #b0b0b0;
-  float:left;
-  margin:5px 15px 6px;
-  padding:5px;
 }
 
 /*** Footer ***/
@@ -296,3 +292,66 @@ p {
 .right {text-align:right;}
 
 /*** End of file ***/
+
+
+/*** General style ***/
+/*********************/
+
+.content ul {
+  padding-left: 20px;
+}
+
+.content li {
+  padding: 3px 0px;
+}
+
+/*** Styles for plugin pages ***/
+/*******************************/
+
+table.plugin-info {
+  margin: 10px 0px;
+  padding: 0px;
+}
+
+table.plugin-info th {
+  text-align: left;
+  width: 10em;
+}
+
+.param {
+  margin-bottom: 5px;
+}
+
+.param-name {
+  color: red;
+}
+
+.param-default-value {
+  color: blue;
+}
+
+.param-description {
+}
+
+table.examples {
+  width: 100%;
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+
+table.examples th, table.examples td {
+  border: 1px solid black;
+  padding: 5px;
+}
+
+table.resources {
+  width: 100%;
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+
+table.resources th, table.resources td {
+  border: 1px solid black;
+  padding: 5px;
+}
+

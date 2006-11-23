@@ -1,3 +1,4 @@
+--- content, html
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="{lang:}">
@@ -8,6 +9,7 @@
     <meta name="Keywords" content="webgen, static web site generator, ruby, HTML, dynamic tags, plugin based, static web, web generator, site generator" />
     <meta name="author" content="Thomas Leitner / Original design by Andreas Viklund - http://andreasviklund.com" />
     <link rel="stylesheet" href="{relocatable: default.css}" type="text/css" media="screen" />
+    <link rel="stylesheet" href="{resource: {name: webgen-css, insert: :path}}" type="text/css" media="screen" />
   </head>
 
   <body>
@@ -19,22 +21,17 @@
       </div>
 
       <div id="mainmenu">
-        {menu: {menuStyle: vertical, options: {level: 1, subtreeLevel: 1}}}
+        {menu: {menuStyle: vertical, options: {startLevel: 1, maxLevels: 1}}}
       </div>
 
       <div id="wrap">
 
         <div id="leftside">
-          <% if node.level != 1 %>
-          <h1>Page Menu</h1>
-          {menu: {menuStyle: partial}}
+          <% if node.level > 1 %>
+          <h1>Sub Menu</h1>
+          {menu: {menuStyle: vertical, options: {startLevel: 2, maxLevels: 3}}}
           <% end %>
-          <h1>Quick Links</h1>
-          <ul class="linklist">
-            <li><a href="http://rubyforge.org/projects/webgen">webgen on Rubyforge</a></li>
-            <li><a href="http://rubyforge.org/frs/?group_id=296">Download</a></li>
-            <li><a href="{relocatable: api.page}">API Documentation</a></li>
-          </ul>
+          <p>TODO what to place here</p>
         </div>
 
         <div id="rightside">
@@ -45,6 +42,9 @@
           Place for news or important messages, maybe?</p>
           <h1>Links</h1>
           <ul class="linklist">
+            <li><a href="http://rubyforge.org/projects/webgen">webgen on Rubyforge</a></li>
+            <li><a href="http://rubyforge.org/frs/?group_id=296">webgen downloads</a></li>
+            <li><a href="{relocatable: api.html}">webgen API</a></li>
             <li><a href="TODO">Ruby Windows Installer</a></li>
             <li><a href="http://www.ruby-lang.org">Ruby Homepage</a></li>
           </ul>
@@ -53,13 +53,12 @@
         <div id="navbar" class="content">
           <span class="leftbox">Location: {breadcrumbTrail: } </span>
           <span class="rightbox">Language: {langbar: }</span>
-          <span class="rightbox">Feedback: {wikilink: {rootURL: http://webgen.rubyforge.org/wiki/wiki.pl?, title: Click here}}</span>
-          <span class="rightbox">{source: }</span>
+          <span class="rightbox">Feedback: {wikilink: {rootURL: http://webgen.rubyforge.org/wiki/wiki.pl?, linkText: Click here}}</span>
           <div style="clear: both">&nbsp;</div>
         </div>
 
         <div id="content" class="content">
-          {content: }
+          {block: content}
         </div>
         <div class="clearingdiv">&nbsp;</div>
 

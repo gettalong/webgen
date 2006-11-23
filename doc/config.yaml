@@ -1,5 +1,5 @@
-PageHandler:
+File/PageHandler:
   validator: xmllint
 
-SmileyReplacer:
+Misc/SmileyReplacer:
   emoticonPack: crystal

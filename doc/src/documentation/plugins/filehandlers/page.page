@@ -1,11 +1,9 @@
 ---
 title: Page Handler
 inMenu: true
+template: /plugin.template
+plugin: File/PageHandler
 ---
-h2. Information
-
-<notextile>{describe: PageFileHandler}</notextile>
-
 h2. Description
 
 Page description files are used to specify the actual content for the website. They contain the

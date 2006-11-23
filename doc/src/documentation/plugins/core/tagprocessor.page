@@ -1,0 +1,59 @@
+---
+title: TagProcessor
+inMenu: true
+template: /plugin.template
+plugin: Core/TagProcessor
+---
+h2. Description
+
+The TagProcessor plugin, apart from the {plugin: Core/FileHandler}, is the main workhorse. It is
+responsible for parsing HTML files and replacing special constructs, so called tags, with dynamic
+content. For more information on how these tags look like, how they are used and why they are
+useful, have a look at the <a href="TODO">page file content description</a>!
+
+Each tag has a unique name and an associated handler plugin. Therefore it is very easy to define new
+tags. webgen already comes with many tag plugins that handle simple things, like including a file,
+to advanced things, like generating a menu (the menus used on this homepage are generated with
+webgen). These tag plugins reside in the {plugin: Tag} namespace.
+
+
+TODO move to page file content description#tags
+
+Tags are used to generate content. During processing of the page description files so called 'tags'
+are replaced with dynamic content. For example, the menu you see to left was generated. This makes
+it easier to add or remove menu items. If the menu was not generated, you would have to change every
+file which uses the menu.
+
+h2. Usage
+
+Tags are defined by a special markup code. A tag has the following structure:
+
+<pre>\{tagname: {parameters}}</pre>
+
+Every time a tag is found in a source file, the registered plugin for the tag is called. The plugin
+returns a string which is put into the output file instead of the tag. The output a tag plugin can
+produce ranges from something simple to something complex. For example, the <a href="{relocatable: meta.page}">
+Meta Tag</a> plugin copies any additional info specified in the source file verbatim
+into the correct place in the output file. And in contrast, the <a href="{relocatable: menu.page}">
+Menu Tag</a> plugin generates a whole menu tree.
+
+If you want to use the markup code used for tags, you need to escape the tag, like this:
+
+<pre>\\\{tagname: {parameters}}</pre>
+
+
+h2. Tag Parameters
+
+A tag can have zero or more parameters some of which are mandatory. You can see the supported
+parameters (and if they are mandatory) for each tag on the tag's page. The default mandatory
+parameter can be specified in a special way, see the examples below. The format used for parsing the
+parameters is YAML.
+
+h2. Examples
+
+table{border: 1px solid black}.
+|^. @\{tagname: }@|^. No parameter specified|
+|^. @\{tagname: test.html}@|^. The default mandatory parameter is set to @test.html@. This form can only be used if there is only one mandatory parameter|
+|^. @\{tagname: {param1: value1, param2: value2}}@|^. Two parameters (param1 and param2) specified|
+
+END TODO

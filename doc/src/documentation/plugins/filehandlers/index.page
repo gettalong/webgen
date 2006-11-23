@@ -1,34 +1,7 @@
 ---
-directoryName: File Handlers
+title: File Handlers
+directoryName: File
 ---
-h2. Information
+h2. About
 
-<notextile>{describe: FileHandler}</notextile>
-
-h2. Description
-
-File handlers are used to handle different types of input files. You can see the currently exisiting
-file handlers in the menu. Choose one to get a description for it!
-
-Each file handler specifies path patterns for the files he handles (you can see which paths are
-handled by a file handler in its information section). During the processing of the website, the
-FileHandler instance calls the approriate file handler for each file and builds the internal
-representation of the source directory.
-
-h2. Path Patterns
-
-Path patterns are more like shell globs than regular expressions. One can use any path pattern that
-the @Dir.glob@ method understands. If two path patterns would match the same path, the one with
-fewer asterisks and question marks is used because that one "seems" to be more specific.
-
-
-Here are some examples:
-
-table{border: 1px solid black}.
-|^. <notextile><code>*/*.html</code></notextile>|^. All files with the extension @html@ in the subdirectories of the root source directory|
-|^. <notextile><code>**/*.html</code></notextile>|^. All files with the extension @html@ in all directories|
-|^. <notextile><code>**/{foo,bar}*</code></notextile>|^. All files in all directories which start with @foo@ or @bar@|
-|^. <notextile><code>**/???</code></notextile>|^. All files in all directories whose file name is exactly three characters long|
-
-
-
+TODO
