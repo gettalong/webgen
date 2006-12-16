@@ -58,6 +58,10 @@
         </div>
 
         <div id="content" class="content">
+          <div id="inpage-menu">
+            <p style="text-align: center"><b>Page Menu</b></p>
+            {menu: {menuStyle: section}}
+          </div>
           {block: content}
         </div>
         <div class="clearingdiv">&nbsp;</div>

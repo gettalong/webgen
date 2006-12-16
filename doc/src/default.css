@@ -226,10 +226,10 @@ p {
 
 .content {margin:0 200px;}
 
-.content h1, .content h2 {
+.content h1, .content h2, .content h3 {
   background-color:inherit;
   color:#606060;
-  font-size:1.8em;
+  font-size: 2.0em;
   font-weight:bold;
   letter-spacing:-1px;
   margin: 15px 0 10px;
@@ -237,9 +237,25 @@ p {
 }
 
 .content h2 {
+  font-size:1.8em;
+  letter-spacing: 0px;
+  margin-bottom:10px;
+}
+
+.content h3 {
   font-size:1.6em;
   letter-spacing: 0px;
   margin-bottom:10px;
+}
+
+#inpage-menu {
+  padding: 3px;
+  margin-left: 0px;
+  margin-top: -15px;
+  margin-right: -20px;
+  float: right;
+  border-left: 1px solid #909090;
+  border-bottom: 1px solid #909090;
 }
 
 /*** Footer ***/
@@ -355,3 +371,8 @@ table.resources th, table.resources td {
   padding: 5px;
 }
 
+.plugin-ref {
+}
+
+.param-ref {
+}

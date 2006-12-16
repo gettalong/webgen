@@ -1,3 +1,36 @@
+class SvgToPngConverter < FileHandlers::DefaultHandler
+
+  infos( :name => 'File/SvgToPng',
+         :summary => "Converts an svg image to png using inkscape"
+         )
+
+  register_extension 'svg'
+
+  def create_node( path, parent, meta_info )
+    name = File.basename( path, '.svg' ) + '.png'
+
+    node = parent.find {|c| c =~ name }
+    if node.nil?
+      node = Node.new( parent, name )
+      node['title'] = name
+      node.meta_info.update( meta_info )
+      node.node_info[:src] = path
+      node.node_info[:processor] = self
+    else
+      log(:warn) { "Can't create node <#{node.full_path}> as it already exists (node handled by #{node.node_info[:processor].class.plugin_name})!" }
+    end
+    node
+  end
+
+  def write_node( node )
+    if @plugin_manager['Core/FileHandler'].file_modified?( node.node_info[:src], node.full_path )
+      `inkscape -e #{node.full_path} #{node.node_info[:src]}`
+    end
+  end
+
+end
+
+
 class VersionTag < Tags::DefaultTag
 
   infos( :name => 'WebgenDocu/VersionTag',
@@ -26,12 +59,31 @@ class PluginRefTag < Tags::DefaultTag
 
   def process_tag( tag, chain )
     plugin = param('plugin')
-    pluginfile = (plugin.index('/') ? plugin.downcase + '.page' : plugin.downcase + '/index.page')
-    "<a href=\"{relocatable: /documentation/plugins/#{pluginfile}}\">#{plugin}</a>"
+    anchor = plugin.slice!( /#.*$/ )
+    pluginfile = (plugin.index('/') ? plugin.downcase + '.page' : plugin.downcase + '/') + anchor.to_s
+    "<span class='plugin-ref'><a href=\"{relocatable: /documentation/plugins/#{pluginfile}}\">#{plugin}</a></span>"
   end
 
 end
 
+class ParamRefTag < Tags::DefaultTag
+
+  infos( :name => 'WebgenDocu/ParamRefTag',
+         :summary => "Outputs a link to the plugin responsible for the given param name"
+         )
+
+  param 'param', nil, 'The param which should be referenced'
+  set_mandatory 'param', true
+
+  register_tag 'param'
+
+  def process_tag( tag, chain )
+    plugin, param = param('param').split(':')
+    pluginfile = plugin.downcase + '.page'
+    "<span class='param-ref'><a href=\"{relocatable: /documentation/plugins/#{pluginfile}}\">#{plugin}:#{param}</a></span>"
+  end
+
+end
 
 class DescribeTag < Tags::DefaultTag
 
@@ -51,9 +103,9 @@ class DescribeTag < Tags::DefaultTag
   def process_tag( tag, chain )
     plugin_name = param( 'plugin' )
     log(:debug) { "Describing tag #{plugin_name}" }
-    plugin = @plugin_manager[plugin_name]
+    plugin = @plugin_manager.plugin_class_for_name( plugin_name )
     log(:warn) { "Could not describe plugin '#{plugin_name}' as it does not exist" } if plugin.nil?
-    ( plugin.nil? ? '' : format_data( plugin.class.config ) )
+    ( plugin.nil? ? '' : format_data( plugin.config ) )
   end
 
   def format_data( data )
@@ -77,9 +129,10 @@ class DescribeTag < Tags::DefaultTag
       s += row['Parameters', format_params( data.params )]
     end
 
-    # tag names, file ext
+    # tag names, file ext, default meta info
     s += row['Handled tags', (data.infos[:tags].collect {|t| t == :default ? "Default tag" : t}.join(', '))] if data.infos[:tags]
     s += row['Handled paths', data.infos[:path_patterns].collect {|rank, path| CGI::escapeHTML( path )}.join('<br />')] if data.infos[:path_patterns]
+    s += row['Default Meta Information', CGI::escapeHTML( data.infos[:default_meta_info].to_yaml )] if !data.infos[:default_meta_info].nil? && !data.infos[:default_meta_info].empty?
 
     # Show all registered handlers
     # TODO use new style

@@ -43,30 +43,6 @@ module FileHandlers
 
     depends_on 'Core/Configuration'
 
-=begin
-TODO move todoc
-- document how defaultMetaInfo is used, how to set it
-- how meta infos are used
-  - specified via default_meta_info (before node creation)
-  - overridden via defaultMetaInfo param (before node creation)
-  - overridden by file specific meta infos provided by meta info file (before node creation)
-  ----> now node is created using current meta info
-  - during node creation, meta info may be overridden by file specific settings (e.g. page handler,
-    some infos are taken from the filename and the meta info section of the page)
-- how to specify files in meta info backing file
-  two blocks separated with --- (like in page file)
-  - first block: input file matching
-    - for keys that can be matched to a source file, meta info is provided before node creation
-    - used for setting additional meta information for a node
-  - second block: output file matching (done after all files are read)
-    - for keys that can be matched to an output file, meta info is set after all files are read
-    - for keys that cannot be matched, virtual nodes are created with the supplied data
-      the special data key 'url' can be used to specify arbitrary URLs as destination (use example)
-      the url is taken relative to the directory the virtual node is in or it is a
-      complete URL; if it can be resolved, the path of the resolved node is used, otherwise the url itself
-      is used (see example with 'static' menus')
-=end
-
     include Listener
 
     def initialize( manager )
@@ -160,7 +136,7 @@ TODO move todoc
 
     # Used to check that certain meta/node information is available and correct.
     def check_node( node )
-      node['lang'] = Webgen::LanguageManager.language_for_code( node['lang'] ) unless node.nil? || node['lang'].kind_of?( Webgen::Language )
+      node['lang'] = Webgen::LanguageManager.language_for_code( node['lang'] ) unless node['lang'].kind_of?( Webgen::Language )
       node['title'] ||= node.path
     end
 
@@ -201,13 +177,13 @@ TODO move todoc
         path = path[1..-1] if path =~ /^\//
         if node = root.resolve_node( path )
           node.meta_info.update( data )
-          check_node( node )
         else
           node = create_node( path, root, @plugin_manager['File/VirtualFileHandler'] ) do |src, parent, handler, meta_info|
             meta_info = meta_info.merge( data )
             handler.create_node( src, parent, meta_info )
           end
         end
+        check_node( node )
       end
     end
 
@@ -316,8 +292,15 @@ TODO move todoc
 
   end
 
-  # The default handler which is the super class of all file handlers. It defines class methods
-  # which should be used by the subclasses to specify which files should be handled.
+
+  # The default handler which is the super class of all file handlers. It defines methods thata
+  # should be used by the subclasses to specify which files should be handled. There are two types
+  # of path patterns: constant ones defined using the class methods and dynamic ones defined using
+  # the instance methods. The dynamic path patterns should be defined during the initialization!
+  #
+  # During a webgen run the FileHandler retrieves all plugins which derive from the DefaultHandler
+  # and uses the constant and dynamic path patterns defined for each file handler plugin for finding
+  # the handled files.
   class DefaultHandler < Webgen::Plugin
 
     EXTENSION_PATH_PATTERN = "**/*.%s"
@@ -332,26 +315,17 @@ TODO move todoc
     param 'linkToCurrentPage', false, 'Specifies whether in menus, breadcrumb trails, etc. a real link to ' +
       'the current page should be used or only the link text.'
 
-=begin
-TODO move todoc
-- two types of paths: constant paths defined in class, dynamic ones defined when initializing
-  FileHandler retrieves all plugins which derive from DefaultHandler, uses constant + dynamic paths
-- if a file is matched by more than one pattern defined by a single file handler, it is only used once
-  for the first pattern
-- patterns are sorted ascending using their rank and nodes are then created in this order
-- default meta information for nodes can be set via default_meta_info method and overridden with config
-  file by setting the param Core/FileHandler:defaultMetaInfo
-- new meta info linkAttrs: should be a hash of attribute-value pairs which will be added to a link to
-  this page node
-=end
 
-    # Specify the path pattern which should be handled by the class.
+    # Specify the path pattern which should be handled by the class. The +rank+ is used for sorting
+    # the patterns so that the creation order of nodes can be influenced. If a file is matched by
+    # more than one path pattern defined by a single file handler plugin, it is only used once for
+    # the first pattern.
     def self.register_path_pattern( path, rank = DEFAULT_RANK )
       (self.config.infos[:path_patterns] ||= []) << [rank, path]
     end
 
     # Specify the files handled by the class via the extension. The parameter +ext+ should be the
-    # pure extension without the dot.
+    # pure extension without the dot. Also see DefaultHandler.register_path_pattern !
     def self.register_extension( ext, rank = DEFAULT_RANK )
       register_path_pattern( EXTENSION_PATH_PATTERN % [ext], rank )
     end
@@ -373,8 +347,10 @@ TODO move todoc
       (self.class.config.infos[:path_patterns] || []) + (@path_patterns ||= [])
     end
 
-    # Sets the default meta data for the file handler. This information is latter passed to the
-    # #create_node method.
+    # Sets the default meta information for the file handler. This meta information can later be
+    # overridden by the +Core/FileHandler:defaultMetaInfo+ parameter and values set in the meta
+    # information backing file. The so updated meta information is then passed to the #create_node
+    # method.
     def self.default_meta_info( hash )
       self.config.infos[:default_meta_info] = hash
     end
@@ -402,8 +378,8 @@ TODO move todoc
       node
     end
 
-    # Returns a HTML link to the +node+ from +ref_node+ or, if +node+ and +ref_node+ are the same, a
-    # +span+ element with the link text.
+    # Returns a HTML link to the +node+ from +ref_node+ or, if +node+ and +ref_node+ are the same
+    # and the parameter +linkToCurrentPage+ is +false+, a +span+ element with the link text.
     #
     # You can optionally specify additional attributes for the html element in the +attr+ Hash.
     # Also, the meta information +linkAttrs+ of the given +node+ is used, if available, to set
