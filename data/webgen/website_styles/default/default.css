@@ -62,7 +62,7 @@
 	text-decoration: underline;
   }
 
-  #menu .webgen-menuitem-selected {
+  #menu .webgen-menu-item-selected {
 	border-left: 3px solid black;
   }
 
