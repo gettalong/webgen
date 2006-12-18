@@ -1,5 +1,6 @@
 ---- CURRENT ----
 
+* make linking to image galleries possible by specifing the gallery file
 * change namespace of tag plugins from tags to tag
 * send bug report to rdoc maintainer (rdoc does not handle nested method defintions correctly)
 * make source installation work again (because of help forum entry)?
@@ -14,6 +15,10 @@
 
 ---- DOCU ----
 
+* documentation: add info about what webgen does during a run (read files, create nodes, write nodes)
+* documentation: new meta info linkAttrs used in links: should be a hash of attribute-value pairs which will be added to a link to this page node
+* documentation: add a page about YAML and basic use
+* documentation: plugin names should have the form namespace/namespace/.../name where namespace and name should only have alphanumeric chars
 * documentation: what else to say generally about file handlers?
 * documentation: add a resource reference file with the table of resources
 * document: check for consistent naming (page files, tags,...)
@@ -43,7 +48,7 @@
 * provide a sample blog (with andreas04 style)
 * document that website styles have be edited and full demos are available on the given homepage
 * the use commands only copy files, they do not delete files in the src dir
-* place a note about the spelling of webgen somewhere very prominently
+* place a note about the spelling of webgen (all lowercase) somewhere very prominently
 * website_template/website_style/gallery_style -> README first infos are shown in help, after --- ignored for infos hash
 * document that source directory is now always called src - no parameter anymore
 * describe how path patterns work -> ri Dir.glob

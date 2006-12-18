@@ -70,10 +70,6 @@ module FileHandlers
 
     end
 
-=begin
-TODO move to doc
-- orderInfo set on directory counts before orderInfo on index file
-=end
 
     infos( :name => 'File/DirectoryHandler',
            :author => Webgen::AUTHOR,
@@ -83,6 +79,7 @@ TODO move to doc
     default_meta_info( { 'indexFile' => 'index.page' } )
 
     register_path_pattern '**/', 0
+
 
     # Returns a new DirNode.
     def create_node( path, parent, meta_info )

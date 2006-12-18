@@ -132,7 +132,7 @@ class DescribeTag < Tags::DefaultTag
     # tag names, file ext, default meta info
     s += row['Handled tags', (data.infos[:tags].collect {|t| t == :default ? "Default tag" : t}.join(', '))] if data.infos[:tags]
     s += row['Handled paths', data.infos[:path_patterns].collect {|rank, path| CGI::escapeHTML( path )}.join('<br />')] if data.infos[:path_patterns]
-    s += row['Default Meta Information', CGI::escapeHTML( data.infos[:default_meta_info].to_yaml )] if !data.infos[:default_meta_info].nil? && !data.infos[:default_meta_info].empty?
+    s += row['Default Meta Information', "<pre>" + CGI::escapeHTML( data.infos[:default_meta_info].to_yaml.sub( /\A---\s*\n/m, '') ) + "</pre>"] if !data.infos[:default_meta_info].nil? && !data.infos[:default_meta_info].empty?
 
     # Show all registered handlers
     # TODO use new style
