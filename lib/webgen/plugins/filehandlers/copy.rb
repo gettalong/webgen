@@ -32,10 +32,10 @@ module FileHandlers
 
     infos( :name => 'File/CopyHandler',
            :author => Webgen::AUTHOR,
-           :summary => "Copies files from source to destination without modification"
+           :summary => "Copies files from source to destination"
            )
 
-    param 'paths', ['**/*.css', '**/*.jpg', '**/*.png', '**/*.gif'], 'The path patterns ' +
+    param 'paths', ['**/*.css', '**/*.js', '**/*.jpg', '**/*.png', '**/*.gif'], 'The path patterns ' +
       'which match the files that should get copied by this handler.'
 
     param 'erbPaths', ['**/*.rhtml', '**/*.rcss'], 'The path patterns which match the files ' +
@@ -46,12 +46,6 @@ module FileHandlers
       param( 'paths' ).each {|path| register_path_pattern( path ) }
       param( 'erbPaths' ).each {|path| register_path_pattern( path ) }
     end
-
-=begin
-TODO: move to doc
-- file name is first checked against erbPaths, if a match -> erb processed (problem when same patterns in paths and erbPaths)
-- node object is available when preprocessing with ERB
-=end
 
     def create_node( path, parent, meta_info )
       processWithErb = param( 'erbPaths' ).any? {|pattern| File.fnmatch( pattern, path, File::FNM_DOTMATCH )}

@@ -1,12 +1,26 @@
 ---
-title: File Copy Handler
+title: CopyHandler
 inMenu: true
+template: /plugin.template
+plugin: File/CopyHandler
 ---
-h2. Information
+h2(#description). Description
 
-<notextile>{describe: CopyFileHandler}</notextile>
+This plugin has two operation modes:
 
-h2. Description
+* All files that match the @erbPaths@ parameter are processed with ERB and then written out. The
+  leading letter @r@ is stripped from the extension (e.g. @.rhtml@) to form the output file name.
+  During processing with ERB the current @node@ object is available. This operation mode is useful,
+  for example, for @.rhtml@ files (HTML with embedded ruby) or @.rcss@ files (CSS files with
+  embedded ruby).
 
-The file copy handler copies files without modification from the source to the target directory.
-This is useful, for example, for CSS stylesheets and images.
+* All files that match the @paths@ parameter are copied from the source to the output directory
+  without modification. This is useful, for example, for CSS stylesheets, javascript files and
+  images.
+
+When a file matches against @erbPaths@ and @paths@, it is handled as if it matches only against
+@erbPaths@.
+
+Also note that files are written only if the source file is newer than the output file! This means
+that, for example, images are copied only during the first webgen run and not during the second if
+the image files have not changed.

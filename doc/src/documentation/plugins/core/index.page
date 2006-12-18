@@ -2,7 +2,7 @@
 title: Core Plugins
 directoryName: Core
 ---
-h2. About
+h2(#Description). Description
 
 The plugins in this namespace provide the core functionality for webgen. They allow webgen to
 * handle resources

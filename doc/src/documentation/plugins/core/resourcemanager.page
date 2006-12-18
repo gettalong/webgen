@@ -4,7 +4,7 @@ inMenu: true
 template: /plugin.template
 plugin: Core/ResourceManager
 ---
-h2. Description
+h2(#description). Description
 
 The ResourceManager plugin provides access to the resources which are shipped with webgen, for
 example, the emoticons. Furthermore, it allows the user to specify their own resources.
@@ -31,7 +31,7 @@ Speaking of the output path, each resource has four properties:
    Javascript code.
 * *description*: A short description of the resource.
 
-h2. Predefined Resources
+h2(#resources). Predefined Resources
 
 A reason why webgen has a ResourceManager is the possibility to ship predefined resources with
 webgen. These resources can be used by any website developed with webgen.

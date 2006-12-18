@@ -58,10 +58,12 @@
         </div>
 
         <div id="content" class="content">
+          <% if !node.node_info[:pagesections].empty? %>
           <div id="inpage-menu">
             <p style="text-align: center"><b>Page Menu</b></p>
             {menu: {menuStyle: section}}
           </div>
+          <% end %>
           {block: content}
         </div>
         <div class="clearingdiv">&nbsp;</div>
