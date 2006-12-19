@@ -1,0 +1,33 @@
+---
+title: TemplateHandler
+inMenu: true
+template: /plugin.template
+plugin: File/TemplateHandler
+---
+h2(#description). Description
+
+The template handler processes the templates found in the source directory. Templates, as the name
+already implies, normally specify the layout and the overall "picture" of a web page that is defined
+using a page file.
+
+These files have the same format as page files - more information about this format can be found
+here (TODO(link) WebPage Description Format). Also be aware that the template handler uses the
+content format set for the page handler! This is normally something like Textile or Markdown, if you
+want to use plain HTML you have to explicitly specify it!
+
+The parameter {param: File/TemplateHandler:defaultTemplate} specifies the name of the default
+template which is used when no explicit template for a page file is set via the meta information
+@template@. webgen assumes that the default template is in the same directory as the page file.
+However, if it can not be found there, the parent directory is searched for it and so on. If a
+default template isn't found in the root directory, no template is used at all. This means that when
+you create a default template in the root directory, it is used as template for all page files that
+have no explicit template set.
+
+It is also possible to nest templates. This makes it possible, for example, to create a general
+website layout and then to create a special image gallery layout which uses the general one. As the
+template files have the same format as page files, you just need to set the @template@ meta
+information on a template to specify the template in which it should be nested.
+
+This page uses two templates: a general one which defines the overall layout of the website (the
+menus and so on) and a specific plugin documentation template which provides the general information
+section.

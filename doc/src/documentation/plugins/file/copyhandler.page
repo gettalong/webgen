@@ -8,18 +8,18 @@ h2(#description). Description
 
 This plugin has two operation modes:
 
-* All files that match the @erbPaths@ parameter are processed with ERB and then written out. The
-  leading letter @r@ is stripped from the extension (e.g. @.rhtml@) to form the output file name.
-  During processing with ERB the current @node@ object is available. This operation mode is useful,
-  for example, for @.rhtml@ files (HTML with embedded ruby) or @.rcss@ files (CSS files with
-  embedded ruby).
+* All files that match the {param: File/CopyHandler:erbPaths} parameter are processed with ERB and
+  then written out. The leading letter @r@ is stripped from the extension (e.g. @.rhtml@) to form
+  the output file name. During processing with ERB the current @node@ object is available. This
+  operation mode is useful, for example, for @.rhtml@ files (HTML with embedded ruby) or @.rcss@
+  files (CSS files with embedded ruby).
 
-* All files that match the @paths@ parameter are copied from the source to the output directory
-  without modification. This is useful, for example, for CSS stylesheets, javascript files and
-  images.
+* All files that match the {param: File/CopyHandler:paths} parameter are copied from the source to
+  the output directory without modification. This is useful, for example, for CSS stylesheets,
+  javascript files and images.
 
-When a file matches against @erbPaths@ and @paths@, it is handled as if it matches only against
-@erbPaths@.
+When a file matches against both parameters, it is handled as if it matches only against {param:
+File/CopyHandler:erbPaths}.
 
 Also note that files are written only if the source file is newer than the output file! This means
 that, for example, images are copied only during the first webgen run and not during the second if

@@ -60,8 +60,14 @@ class PluginRefTag < Tags::DefaultTag
   def process_tag( tag, chain )
     plugin = param('plugin')
     anchor = plugin.slice!( /#.*$/ )
-    pluginfile = (plugin.index('/') ? plugin.downcase + '.page' : plugin.downcase + '/') + anchor.to_s
-    "<span class='plugin-ref'><a href=\"{relocatable: /documentation/plugins/#{pluginfile}}\">#{plugin}</a></span>"
+
+    if @plugin_manager.plugin_class_for_name( plugin ).nil? && plugin.index('/')
+      log(:error) { "Invalid link to plugin: #{plugin}" }
+      "INVALID PLUGIN"
+    else
+      pluginfile = (plugin.index('/') ? plugin.downcase + '.page' : plugin.downcase + '/') + anchor.to_s
+      "<span class='plugin-ref'><a href=\"{relocatable: /documentation/plugins/#{pluginfile}}\">#{plugin}</a></span>"
+    end
   end
 
 end
@@ -79,8 +85,14 @@ class ParamRefTag < Tags::DefaultTag
 
   def process_tag( tag, chain )
     plugin, param = param('param').split(':')
-    pluginfile = plugin.downcase + '.page'
-    "<span class='param-ref'><a href=\"{relocatable: /documentation/plugins/#{pluginfile}}\">#{plugin}:#{param}</a></span>"
+    if @plugin_manager.plugin_class_for_name( plugin ).nil? || !@plugin_manager.plugin_class_for_name( plugin ).config.params.has_key?( param )
+      log(:error) { "Invalid link to parameter: #{plugin}:#{param}" }
+      "INVALID PARAM"
+    else
+      pluginfile = plugin.downcase + '.page'
+      link_text = ( chain.last.node_info[:pagename] == File.basename( pluginfile ) ? param : plugin + ':' + param )
+      "<span class='param-ref'><a href=\"{relocatable: /documentation/plugins/#{pluginfile}}\">#{link_text}</a></span>"
+    end
   end
 
 end
@@ -146,9 +158,8 @@ class DescribeTag < Tags::DefaultTag
   def format_params( params )
     params.sort.collect do |k,v|
       "<p class='param'><span class='param-name'>#{v.name}</span>" + \
-      ( v.mandatory.nil? \
-        ? "&nbsp;:&nbsp;<span class='param-default-value'>#{CGI::escapeHTML( v.default.inspect )}</span>" \
-        : " (=" + ( v.mandatory_default ? "default " : "" ) + "mandatory parameter)" ) + \
+      ( v.mandatory.nil? ? "" : " (=" + ( v.mandatory_default ? "default ": "" ) + "mandatory parameter)" ) + \
+      ":&nbsp;<span class='param-default-value'>#{CGI::escapeHTML( v.default.inspect )}</span>" + \
       "<br /><span class='param-description'>#{CGI::escapeHTML( v.description )}</span></p>"
     end.join( "\n" )
   end

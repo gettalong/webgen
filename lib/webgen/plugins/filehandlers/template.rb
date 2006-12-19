@@ -36,10 +36,6 @@ module FileHandlers
 
     register_extension 'template'
 
-=begin
-TODO: MOVE TO DOC
-- use meta_info 'template'
-=end
 
     def create_node( src_name, parent, meta_info )
       begin

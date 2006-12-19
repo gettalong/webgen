@@ -61,7 +61,7 @@ always handle @.page@ files. However, the information about how these path patte
 for the usage of webgen because of two reasons:
 
 * so that the user knows which files will be processed by a specific file handler plugin
-* so that the user can specify path patterns for some special file handler plugin that supports
+* so that the user can specify path patterns for some special file handler plugins that support
   additional path patterns, like the {plugin: File/CopyHandler}.
 
 Here are some example path patterns:
@@ -101,8 +101,9 @@ h3(#metainfo-param). The @defaultMetaInfo@ parameter
 
 
 This parameter can be used to override the default meta information set for a file handler plugin.
-The keys are the names of file handler plugins and the values are the meta information. The (TODO:
-link) configuration file provides an easy way to set this parameter for a file handler plugin.
+The keys are the names of file handler plugins and the values are the meta information. You can
+either set the parameter directly or use the special functionality provided by the (TODO: link)
+configuration file to set it for a file handler plugin.
 
 
 h3(#metainfo-file). The meta information backing file

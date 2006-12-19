@@ -71,6 +71,7 @@
 
 ---- FUTURE ----
 
+* remove duplicate code from file handler plugins' create_node method
 * add flag images for language bar which are (control through param) used instead of language abbr
 * allow resources to reference URLs???
 * allow following configuration file syntax:
