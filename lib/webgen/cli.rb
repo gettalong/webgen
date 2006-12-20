@@ -135,6 +135,12 @@ module Webgen
       super( 'use', true )
       self.short_desc = "Changes the used website or gallery styles"
 
+      @force = false
+      self.options = CmdParse::OptionParserWrapper.new do |opts|
+        opts.separator "Options:"
+        opts.on( '-f', '--[no-]force', 'If specified, existing files are overwritten without asking.' ) {|@force|}
+      end
+
       # Use website style command.
       useWebsiteStyle = CmdParse::Command.new( 'website_style', false )
       useWebsiteStyle.short_desc = "Changes the used website style"
@@ -154,10 +160,12 @@ module Webgen
         if args.length == 0
           raise OptionParser::MissingArgument.new( 'STYLE' )
         else
-          files = Webgen::WebSite.use_website_style( cmdparser.directory, args[0] )
-          if (0..1) === cmdparser.verbosity
-            puts "The following files were created or overwritten:"
-            puts files.collect {|f| "- " + f }.join("\n")
+          if @force || ask_overwrite
+            files = Webgen::WebSite.use_website_style( cmdparser.directory, args[0] )
+            if (0..1) === cmdparser.verbosity
+              puts "The following files were created or overwritten:"
+              puts files.collect {|f| "- " + f }.join("\n")
+            end
           end
         end
       end
@@ -182,10 +190,12 @@ module Webgen
         if args.length == 0
           raise OptionParser::MissingArgument.new( 'STYLE' )
         else
-          files = Webgen::WebSite.use_gallery_style( cmdparser.directory, args[0] )
-          if (0..1) === cmdparser.verbosity
-            puts "The following files were created or overwritten:"
-            puts files.collect {|f| "- " + f }.join("\n")
+          if @force || ask_overwrite
+            files = Webgen::WebSite.use_gallery_style( cmdparser.directory, args[0] )
+            if (0..1) === cmdparser.verbosity
+              puts "The following files were created or overwritten:"
+              puts files.collect {|f| "- " + f }.join("\n")
+            end
           end
         end
       end
@@ -195,6 +205,11 @@ module Webgen
     #######
     private
     #######
+
+    def ask_overwrite
+      printf "Existing files may get overwritten, procede (yes/no)? : "
+      $stdin.gets =~ /y|yes/
+    end
 
   end
 
