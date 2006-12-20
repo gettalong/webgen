@@ -36,10 +36,14 @@ end
 
 module FileHandlers
 
+  # Handles image gallery files.
   class GalleryHandler < DefaultHandler
 
+    # Objects of this class represent a whole image gallery and are available in all image gallery
+    # page files.
     class GalleryInfo
 
+      # A helper module that allows acessing and changing data via the bracket notation.
       module KeyAccess
 
         def []( key )
@@ -52,12 +56,18 @@ module FileHandlers
 
       end
 
+      # A helper module which declares common attributes for gallery pages.
       module ItemHelper
 
         include KeyAccess
 
+        # The name of the page.
         attr_accessor :pagename
+
+        # The title of the page.
         attr_reader :title
+
+        # Meta data for the page.
         attr_reader :data
 
         def initialize( pagename, data )
@@ -68,12 +78,16 @@ module FileHandlers
 
       end
 
+
+      # Represents the main page of an image gallery.
       class MainPage; include ItemHelper; end
 
+      # Represents an image gallery page.
       class Gallery
 
         include ItemHelper
 
+        # A list of images for this gallery.
         attr_reader :images
 
         def initialize( pagename, data, images )
@@ -81,16 +95,19 @@ module FileHandlers
           @images = images
         end
 
+        # Returns the thumbnail image tag for the gallery.
         def thumbnail( attr = {} )
           @images.first.thumbnail( attr )
         end
 
       end
 
+      # Represents an image page.
       class Image
 
         include ItemHelper
 
+        # The name of the image file.
         attr_reader :filename
 
         def initialize( pagename, data, filename )
@@ -98,7 +115,7 @@ module FileHandlers
           @filename = filename
         end
 
-        # Returns the thumbnail tag.
+        # Returns the thumbnail image tag for the image.
         def thumbnail( attr = {} )
           attr = attr.collect {|k,v| "#{k}='#{v}'"}.join( ' ' )
           if !@data['thumbnail'].to_s.empty? && @data['thumbnail'] != @filename
@@ -113,9 +130,16 @@ module FileHandlers
 
       include KeyAccess
 
+      # The index for the current gallery or +nil+ if there is no current gallery.
       attr_reader :gIndex
+
+      # The index for the current image in the current gallery or +nil+ if there is no current image.
       attr_reader :iIndex
+
+      # The main page object if it exists; otherwise +nil+.
       attr_accessor :mainpage
+
+      # The whole data hahs for the image gallery.
       attr_reader :data
 
       def initialize( gallery_data, gIndex = nil, iIndex = nil )
@@ -124,6 +148,7 @@ module FileHandlers
         @iIndex = iIndex
       end
 
+      # Returns the list of gallery objects for this image gallery.
       def galleries
         @data[:galleries]
       end
@@ -190,26 +215,8 @@ module FileHandlers
       'If nil or a not existing file is specified, the default template is used.'
     param "mainPageTemplate", 'gallery_main.template', 'The template for the main page. ' +
       'If nil or a not existing file is specified, the default template is used.'
-    param "images", 'images/**/*.jpg', 'The Dir glob for specifying the image files'
+    param "images", 'images/**/*.jpg', 'The path pattern for specifying the image files'
 
-=begin
-TODO: move to doc
-- inMenu can be specified in the gallery, image, main templates and overrriden for the image templates by the pages
-- used keys for configuration section:
-  - all params (imagesPerPage, bla...Template, images)
-  - mainPageMetaData
-  - galleryPagesMetaData (if orderInfo is specified, it will be used for the first gallery page, next one orderInfo + 1 and so on)
-  - layouter: plugin used for additional gallery tasks, has to be registered under GalleryLayouter/<layouter-name>
-  - thumbnailSize: the size of the thumbnails, can also be set individually for each image
-  - thumbnailResizeMethod: the method used to create the thumbnails, can also be set individually for each image
-- used keys for image meta data
-  - thumbnail (specifies a thumbnail image for the image, prevents automatic thumbnail creation)
-  - thumbnailSize
-  - thumbnailResizeMethod
-  - template
-  - title (if not specified, capitalized name of file will be used)
-  - exif
-=end
 
     def initialize( plugin_manager )
       super
@@ -308,7 +315,7 @@ TODO: move to doc
       main = {}
       main['title'] = @filedata['title']
       main['template'] = param( 'mainPageTemplate' )
-      main.update( @filedata['mainPageMetaData'] || {} )
+      main.update( @filedata['mainPageMetaInfo'] || {} )
       main
     end
 
@@ -318,7 +325,7 @@ TODO: move to doc
       0.step( images.length - 1, picsPerPage ) do |i|
         gIndex = i/picsPerPage + 1
 
-        data = (@filedata['galleryPagesMetaData'] || {}).dup
+        data = (@filedata['galleryPagesMetaInfo'] || {}).dup
         data['template'] ||= param( 'galleryPageTemplate' )
         data['orderInfo'] += gIndex if data['orderInfo']
         data['title'] = @filedata['title'] + ' ' + gIndex.to_s
@@ -393,7 +400,7 @@ TODO: move to doc
   load_optional_part( 'gallery-thumbnail',
                       :error_msg => "Could not load RMagick, creation of thumbnails not available",
                       :needed_gems => ['rmagick'],
-                      :info => 'RMagick will be used to create thumbnails from the images used in an image gallery.' ) do
+                      :info => 'RMagick will be used to create thumbnails for the images used in an image gallery.' ) do
 
     require 'RMagick'
 
@@ -405,7 +412,7 @@ TODO: move to doc
         tn_handler = @plugin_manager['File/ThumbnailWriter']
         file_handler = @plugin_manager['Core/FileHandler']
         node = file_handler.create_node( File.basename( image ), parent_node, tn_handler ) do |fn, parent, h, mi|
-          h.create_node( fn, parent, data['thumbnailSize'], data['thumbnailResizeMethod'] )
+          h.create_node( fn, parent, mi, data['thumbnailSize'], data['thumbnailResizeMethod'] )
         end
         node.absolute_path
       end
@@ -413,6 +420,7 @@ TODO: move to doc
     end
 
 
+    # Used for creating thumbnails for images.
     class ThumbnailWriter < DefaultHandler
 
       infos( :name => 'File/ThumbnailWriter',
@@ -425,8 +433,9 @@ TODO: move to doc
         ':normal (thumbnail fits exactly into given thumbnail size), ' +
         ':cropped (resized to exact thumbnail size, image parts maybe cropped)'
 
-      def create_node( file, parent, thumbnailSize = nil, method = nil )
+      def create_node( file, parent, meta_info, thumbnailSize = nil, method = nil )
         node = Node.new( parent, 'tn_' + File.basename( file ).tr( ' ', '_' ) )
+        node.meta_info.update( meta_info )
         node['title'] = node.path
         node.node_info[:thumbnail_size] = thumbnailSize || param( 'thumbnailSize' )
         node.node_info[:thumbnail_file] = file

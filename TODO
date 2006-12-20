@@ -15,6 +15,9 @@
 
 ---- DOCU ----
 
+* document how to create gallery styles
+* documentation: create an example section where gallery styles, website style, aso are showcased!
+* document somewhere which objects are available when processing templates/pages files with ERB
 * documentation: add info about what webgen does during a run (read files, create nodes, write nodes)
 * documentation: new meta info linkAttrs used in links: should be a hash of attribute-value pairs which will be added to a link to this page node
 * documentation: add a page about YAML and basic use
