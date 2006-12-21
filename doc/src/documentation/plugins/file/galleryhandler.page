@@ -94,12 +94,12 @@ following keys are used by the gallery handler:
 
 For more information about the last two items have a look at {plugin: File/ThumbnailWriter}!
 
-Two important parameters should also be mentioned here: {param: File/GalleryHandler:imagesPerPage}
-and {param: File/GalleryHandler:images}. The first specifies how many images should be placed on a
-single gallery page. The second one specifies which images should be used the whole image gallery.
-These images have to be somewhere in the website source directory! You can/should not specify images
-outside the source directory as these images are not automatically copied to the output directory
-and automatic thumbnail creation may not work correctly!
+Two nearly always specified parameters should also be mentioned here: {param:
+File/GalleryHandler:imagesPerPage} and {param: File/GalleryHandler:images}. The first specifies how
+many images should be placed on a single gallery page. The second one specifies which images should
+be used the whole image gallery. These images have to be somewhere in the website source directory!
+You can/should not specify images outside the source directory as these images are not automatically
+copied to the output directory and automatic thumbnail creation may not work correctly!
 
 All other key-value pairs specified are not used by webgen. However, as layouter plugins have access
 to the whole configuration section they may use their own configuration keys.
@@ -125,9 +125,9 @@ keys are used and/or set by the gallery handler:
    value from the configuration section is used. If that is also not set, a default value is used
    (see {param: File/ThumbnailWriter:thumbnailSize}).
 * *thumbnailResizeMethod*: The method used to create the automatic thumbnail. For more information
-   about the possible values have a look at {param: File/ThumbnailWriter:thumbnailResizeMethod}. If
+   about the possible values have a look at {param: File/ThumbnailWriter:resizeMethod}. If
    not set, the value from the configuration section is used, If that is also not set, a default
-   value is used (see {param: File/ThumbnailWriter:thumbnailResizeMethod}).
+   value is used (see {param: File/ThumbnailWriter:resizeMethod}).
 * *exif*: If not set and the exif reading library is installed, it is assigned the exif information
    of the image.
 
