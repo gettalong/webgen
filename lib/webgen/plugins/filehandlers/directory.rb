@@ -105,6 +105,7 @@ module FileHandlers
       langnode || node
     end
 
+    # See DefaultFileHandler#link_from and PageHandler#link_from.
     def link_from( node, ref_node, attr = {} )
       lang_node = (attr[:resolve_lang_node] == false ? node : node.node_for_lang( ref_node['lang'] ) )
       attr[:link_text] ||=  lang_node['directoryName'] || node['title']

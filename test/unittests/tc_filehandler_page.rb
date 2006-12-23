@@ -149,6 +149,10 @@ class PageHandlerTest < Webgen::PluginTestCase
                                         'filename' => 'default.eadd.page',
                                         'name' => 'default', 'orderInfo' => 0,
                                         'title' => 'Default', 'useLangPart' => false } ), nil )
+    analyse_file_name( OpenStruct.new( {'lang' => @manager.param_for_plugin( 'Core/Configuration', 'lang' ),
+                                        'filename' => 'blabla.default.eadd.page',
+                                        'name' => 'blabla', 'orderInfo' => 0,
+                                        'title' => 'Blabla', 'useLangPart' => false } ), nil )
   end
 
   def test_create_output_name

@@ -15,6 +15,7 @@
 
 ---- DOCU ----
 
+* documentation: add a glossary (webgen, node, page file, gallery file, parameter, path pattern, plugin, ...)
 * document how to create gallery styles
 * documentation: create an example section where gallery styles, website style, aso are showcased!
 * document somewhere which objects are available when processing templates/pages files with ERB

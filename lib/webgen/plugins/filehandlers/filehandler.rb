@@ -28,6 +28,19 @@ require 'webgen/languages'
 
 module FileHandlers
 
+  # The main plugin for handling files.
+  #
+  # The following message listening hooks (defined via symbols) are available for this plugin
+  # (see Listener):
+  #
+  # +before_node_created+:: called before a node is created
+  # +after_node_created+::  called after a node has been created
+  # +after_all_nodes_created+:: called after the plugin has finfished reading in all files and the
+  #                             output backing section of the meta information file has been processed
+  # +before_node_written+:: called before a node is written out
+  # +after_node_written+::  called after a node has been written out
+  # +before_all_nodes_written+:: called before the plugin starts writing out the files
+  # +after_all_nodes_written+:: called after the plugin has finfished writing out the files
   class FileHandler < Webgen::Plugin
 
     infos( :name => 'Core/FileHandler',
@@ -123,9 +136,10 @@ module FileHandlers
       else
         node = handler.create_node( src_path, parent_node, meta_info )
       end
+      check_node( node ) unless node.nil?
+
       dispatch_msg( :after_node_created, node ) unless node.nil?
 
-      check_node( node ) unless node.nil?
 
       node
     end

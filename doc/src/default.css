@@ -256,6 +256,7 @@ p {
   float: right;
   border-left: 1px solid #909090;
   border-bottom: 1px solid #909090;
+  max-width: 250px;
 }
 
 /*** Footer ***/
@@ -317,6 +318,10 @@ p {
   padding-left: 20px;
 }
 
+.content ul p {
+  margin-bottom: 0px;
+}
+
 .content li {
   padding: 3px 0px;
 }
@@ -353,6 +358,7 @@ table.examples {
   width: 100%;
   border: 1px solid black;
   border-collapse: collapse;
+  margin-bottom: 10px;
 }
 
 table.examples th, table.examples td {

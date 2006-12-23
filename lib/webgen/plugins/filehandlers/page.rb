@@ -28,9 +28,15 @@ require 'webgen/node'
 
 module FileHandlers
 
-  # Super class for all page description files.
+  # File handler plugin for handling page files.
+  #
+  # The following message listening hooks (defined via symbols) are available for this plugin
+  # (see Listener):
+  #
+  # +after_node_rendered+:: called after rendering a node via render_node
   class PageHandler < DefaultHandler
 
+    # Specialised node for URL fragments.
     class FragmentNode < Node
 
       def initialize( parent, path )
@@ -39,12 +45,14 @@ module FileHandlers
         self.node_info[:processor] = self
       end
 
+      # Does not write out anything.
       def write_node
         #do nothing
       end
 
     end
 
+    # Specialised noed for page files.
     class PageNode < Node
 
       def initialize( parent, path, pagedata )
@@ -58,13 +66,7 @@ module FileHandlers
         end
       end
 
-=begin
-TODO: MOVE TO DOC
-- how to resolve page node: via output name, via localized page name or via page name
-- only sections of block named 'content' are added to the page node and used for in-page menu when file is read
-  only sections already existing are used, sections added later by tags, erb, etc. are not used!
-=end
-
+      # Overwritten to also handle matching of the page name and the local page name.
       def =~( path )
         md = /^(#{@path}|#{@node_info[:local_pagename]}|#{@node_info[:pagename]})(?=#|$)/ =~ path
         ( md ? $& : nil )
@@ -95,24 +97,22 @@ TODO: MOVE TO DOC
 
     param 'outputNameStyle', [:name, ['.', :lang], '.html'], 'Defines how the output name should ' +
       'be built. The correct name will be used for the :name part and the file language will be ' +
-      'used for the :lang part. If <defaultLangInFilename> is true, the :lang part or the ' +
+      'used for the :lang part. If defaultLangInFilename is true, the :lang part or the ' +
       'subarray in which the :lang part was defined, will be omitted.'
 
     param 'validator', nil, 'The validator for checking HTML files on their validness. Set ' +
       'to an empty string or nil to prevent checking.'
 
-    default_meta_info({
-                        'useERB' => true,
-                        'blocks' => [['content', 'textile']]
-                      })
+    default_meta_info( 'useERB' => true, 'blocks' => [['content', 'textile']] )
 
     register_extension EXTENSION
 
     include Listener
 
+
     def initialize( plugin_manager )
       super
-      add_msg_name( :after_content_rendered )
+      add_msg_name( :after_node_rendered )
       @dummy_node = Node.new( nil, 'dummy' )
       @dummy_node.node_info[:src] = 'dummy'
     end
@@ -121,14 +121,7 @@ TODO: MOVE TO DOC
       create_node_from_data( src_name, parent, File.read( src_name ), meta_info )
     end
 
-=begin
-TODO: move to doc
-- lang in meta_info overwrites lang in filename and default lang, orderinfo the same, title the same
-- meta info outputNameStyle overwrites parameter outputNameStyle
-- special attr value :resolve_lang_node in link_from specifies if the lang node should be resolved or if the current
-  node should be used
-=end
-
+    # Same functionality as +create_node+, but uses the given +data+ as content.
     def create_node_from_data( filename, parent, data, meta_info )
       begin
         data = WebPageData.new( data, @plugin_manager['ContentConverter/Default'].registered_handlers,
@@ -165,6 +158,8 @@ TODO: move to doc
       node
     end
 
+    # Renders the block called +block_name+ of the given +node+. If +use_templates+ is +true+, then
+    # the node is rendered in context of its templates.
     def render_node( node, block_name = 'content', use_templates = true )
       chain = [@dummy_node]
       content = "{block: #{block_name}}"
@@ -172,10 +167,14 @@ TODO: move to doc
       chain << node
 
       result = @plugin_manager['Core/TagProcessor'].process( content, chain )
-      dispatch_msg( :after_content_rendered, result, node )
+      dispatch_msg( :after_node_rendered, result, node )
       result
     end
 
+    # See DefaultFileHandler#write_node.
+    #
+    # After the node has been written it is validated by the validator specified in the param
+    # +validator+.
     def write_node( node )
       outstring = render_node( node )
 
@@ -199,7 +198,10 @@ TODO: move to doc
       end
     end
 
-    # See DefaultFileHandler#link_from
+    # See DefaultFileHandler#link_from.
+    #
+    # The special +attr+ value <code>:resolve_lang_node</code> specifies if the lang node should be
+    # resolved or if the current node should be used.
     def link_from( node, ref_node, attr = {} )
       lang_node = (attr[:resolve_lang_node] == false ? node : node_for_lang( node, ref_node['lang'] ) )
       if lang_node.nil?
@@ -214,13 +216,6 @@ TODO: move to doc
     #######
     private
     #######
-
-=begin
-TODO: MOVE TO DOC
-- filename format: [orderinfo.]name[.lang].extension
-- title is equal to name but with these transformations: _ and - become spaces
-- lang part can be two or three characters, otherwise ignored, has to be a ISO-639-2 lang name
-=end
 
     def analyse_file_name( filename, lang = nil )
       matchData = /^(?:(\d+)\.)?([^.]*?)(?:\.(\w\w\w?))?\.(.*)$/.match( File.basename( filename ) )
