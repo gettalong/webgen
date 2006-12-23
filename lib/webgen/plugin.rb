@@ -99,9 +99,10 @@ module Webgen
         self.config.params[name] = data
       end
 
-      # Returns the ancestor classes for the object's class which are sub classes from Plugin.
+      # Returns the ancestor classes for the object's class which are not base plugins.
       def ancestor_classes
-        ancestors.delete_if {|c| c.instance_of?( Module ) }[0..-3]
+        ancestors.delete_if {|c| c.instance_of?( Module ) ||
+          (c.respond_to?( :config ) && c.config.infos[:is_base_plugin] == true) }[0..-2]
       end
 
     end

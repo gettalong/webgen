@@ -15,6 +15,9 @@ images:
 
 documentation/plugins/file:
   indexFile: defaulthandler.page
+
+documentation/plugins/htmlvalidator:
+  indexFile: default.page
 ---
 api.html:
   url: rdoc/index.html

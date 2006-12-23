@@ -1,0 +1,12 @@
+---
+title: Default
+directoryName: HtmlValidator
+inMenu: true
+template: /plugin.template
+plugin: HtmlValidator/Default
+---
+h2(#description). Description
+
+
+This is the base class (does not provide any functionality) for all HTML validators. Have a look at
+individual validators to see what they can do for you!
