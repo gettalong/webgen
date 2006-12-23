@@ -1,24 +1,49 @@
 index.page:
   orderInfo: 1
 
-download.page:
-  orderInfo: 8
+about.page:
+  orderInfo: 2
 
 features.page:
   orderInfo: 5
 
-documentation/index.page:
+download.page:
+  orderInfo: 8
+
+documentation/:
   orderInfo: 9
 
 images:
   indexFile: ~
 
+
+documentation/cli.page:
+  orderInfo: 1
+
+documentation/gettingstarted.page:
+  orderInfo: 3
+
+documentation/extending_webgen.page:
+  orderInfo: 5
+
+documentation/references/:
+  orderInfo: 7
+
+documentation/plugins/:
+  orderInfo: 9
+
+
 documentation/plugins/file:
   indexFile: defaulthandler.page
 
+documentation/plugins/file/defaulthandler.page:
+  orderInfo: -1
+
 documentation/plugins/htmlvalidator:
   indexFile: default.page
+
 ---
+
 api.html:
   url: rdoc/index.html
   title: API Reference

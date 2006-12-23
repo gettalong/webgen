@@ -29,8 +29,3 @@ dirWithOnlyImages:
 
 This will prevent webgen from showing warnings because you explicitly define a null index file. This
 can also be done globally in the configuration file!
-
-h2(#caveats). Caveats
-
-* The @orderInfo@ meta information set on a directory node has precedence over the @orderInfo@ meta
-  information of an associated index file.
