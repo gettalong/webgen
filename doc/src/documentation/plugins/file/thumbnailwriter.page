@@ -1,0 +1,29 @@
+---
+title: ThumbnailWriter
+inMenu: true
+template: /plugin.template
+plugin: File/ThumbnailWriter
+---
+h2(#description). Description
+
+
+This plugin is used by other plugins to create thumbnails for images. For example, the {plugin:
+File/GalleryHandler} uses it to automatically create thumbnails for all images in an image gallery.
+
+The {param: File/ThumbnailWriter:thumbnailSize} parameter has to be in the format "WIDTHxHEIGHT"
+where WIDTH and HEIGHT are numeric values specifying the width and the height for the thumbnail.
+
+The {param: File/ThumbnailWriter:resizeMethod} parameter specifies how the image should be resized
+for creating the thumbnail. The following pictures illustrate the differences between the settings
+for a thumbnail size of 100x100:
+
+<table class="example">
+<tr>
+  <td>Original image (320x240)</td><td>@:normal@ (100x75)</td><td>@:cropped@ (100x100)</td>
+</tr>
+<tr>
+  <td style="vertical-align: top"><img src="{relocatable: /images/thumb_example.jpg}" alt="Thumbnail example image" /></td>
+  <td style="vertical-align: top"><img src="{relocatable: /images/thumb_example_normal.jpg}" alt="Thumbnail using normal resize method" /></td>
+  <td style="vertical-align: top"><img src="{relocatable: /images/thumb_example_cropped.jpg}" alt="Thumbnail using cropped resize method" /></td>
+</tr>
+</table>
