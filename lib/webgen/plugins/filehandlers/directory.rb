@@ -44,10 +44,6 @@ module FileHandlers
         super
       end
 
-      def order_info
-        (super != 0 || self['indexFile'].nil?) ? super : self['indexFile'].order_info
-      end
-
       #######
       private
       #######

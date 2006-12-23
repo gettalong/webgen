@@ -138,7 +138,7 @@ class FileHandlerTest < Webgen::PluginTestCase
     @websiteDir = fixture_path('backing')
     assert( File.exists?( @websiteDir ) )
     @plugin.instance_eval { load_meta_info_backing_file }
-    assert_equal({'key1'=>'value1'}, @plugin.instance_eval { @source_backing['file1'] })
+    assert_equal({'key1'=>'value1'}, @plugin.instance_eval { @source_backing['/file1'] })
     assert_equal({}, @plugin.instance_eval { @output_backing })
     @websiteDir = fixture_path('backing_empty')
     assert( File.exists?( @websiteDir ) )
@@ -149,12 +149,20 @@ class FileHandlerTest < Webgen::PluginTestCase
   end
 
   def test_meta_info_for
+    @plugin.instance_eval { @source_backing = {'/file'=>{'key'=>'novalue'},'ile'=>{'key'=>'false value'}} }
+    assert_equal( {'key'=>'value'}, @plugin.meta_info_for( @manager['SampleHandler'] ) )
+    assert_equal( {'key'=>'novalue'}, @plugin.meta_info_for( @manager['SampleHandler'], '/file' ) )
+    assert_equal( {'key'=>'novalue'}, @plugin.meta_info_for( @manager['SampleHandler'], 'file' ) )
+
     @plugin.instance_eval { @source_backing = {'/file'=>{'key'=>'novalue'}} }
-    assert_equal( {'key'=>'value'}, @plugin.meta_info_for( @manager['SampleHandler'] ) )
-    assert_equal( {'key'=>'novalue'}, @plugin.meta_info_for( @manager['SampleHandler'], '/file' ) )
-    @plugin.instance_eval { @source_backing = {'file'=>{'key'=>'novalue'}} }
     assert_equal( {'key'=>'novalue'}, @plugin.meta_info_for( @manager['SampleHandler'], '/file' ) )
     assert_equal( {'key'=>'value'}, @plugin.meta_info_for( @manager['SampleHandler'] ) )
+
+    @plugin.instance_eval { @source_backing = {'/dir'=>{'key'=>'novalue'}} }
+    assert_equal( {'key'=>'novalue'}, @plugin.meta_info_for( @manager['SampleHandler'], 'dir' ) )
+    assert_equal( {'key'=>'novalue'}, @plugin.meta_info_for( @manager['SampleHandler'], '/dir/' ) )
+    assert_equal( {'key'=>'novalue'}, @plugin.meta_info_for( @manager['SampleHandler'], '/dir' ) )
+    assert_equal( {'key'=>'novalue'}, @plugin.meta_info_for( @manager['SampleHandler'], 'dir/' ) )
   end
 
   def test_handle_output_backing

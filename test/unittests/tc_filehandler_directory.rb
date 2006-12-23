@@ -25,7 +25,7 @@ class DirNodeTest < Webgen::PluginTestCase
 
     dir['indexFile'] = 'index.page'
     index['orderInfo'] = 1
-    assert_equal( 1, dir.order_info )
+    assert_equal( 0, dir.order_info )
 
     dir['orderInfo'] = 2
     assert_equal( 2, dir.order_info )

@@ -111,10 +111,9 @@ module FileHandlers
       info = (handler.class.config.infos[:default_meta_info] || {}).dup
       info.update( param('defaultMetaInfo')[handler.class.plugin_name] || {} )
       if file
+        file = normalize_path( file )
         if @source_backing.has_key?( file )
           info.update( @source_backing[file] )
-        elsif @source_backing.has_key?( file[1..-1] )
-          info.update( @source_backing[file[1..-1]] )
         end
       end
       info
@@ -154,6 +153,11 @@ module FileHandlers
       node['title'] ||= node.path
     end
 
+    # Returns a normalized path, ie. a path starting with a slash and any trailing slashes removed.
+    def normalize_path( path )
+      path = (path =~ /^\// ? '' : '/') + path.sub( /\/+$/, '' )
+    end
+
     # Loads the meta information backing file from the website directory.
     def load_meta_info_backing_file
       file = File.join( param( 'websiteDir', 'Core/Configuration' ), 'metainfo.yaml' )
@@ -163,7 +167,8 @@ module FileHandlers
           YAML::load_documents( File.read( file ) ) do |data|
             if data.nil? || (data.kind_of?( Hash ) && data.all? {|k,v| v.kind_of?( Hash ) })
               if index == 1
-                @source_backing = data
+                @source_backing = {}
+                data.each_pair {|path, metainfo| @source_backing[normalize_path(path)] = metainfo}
               elsif index == 2
                 @output_backing = data
               else
