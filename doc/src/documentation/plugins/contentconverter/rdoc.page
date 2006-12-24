@@ -1,11 +1,11 @@
 ---
-title: RDOC
+title: RDoc
 inMenu: true
+template: /plugin.template
+plugin: ContentConverter/RDoc
 ---
-h2. Information
+h2(#description). Description
 
-<notextile>{describe: RDocContentHandler}</notextile>
 
-h2. Description
-
-Handles content written in RDOC (default documentation system for Ruby source files).
+Converts content written in RDoc (default documentation system for Ruby source files,
+"reference":http://rdoc.sourceforge.net/doc/) to HTML.

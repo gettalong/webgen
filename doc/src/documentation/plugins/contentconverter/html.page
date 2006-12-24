@@ -1,11 +1,10 @@
 ---
 title: HTML
 inMenu: true
+template: /plugin.template
+plugin: ContentConverter/HTML
 ---
-h2. Information
+h2(#description). Description
 
-<notextile>{describe: HTMLContentHandler}</notextile>
 
-h2. Description
-
-Handles content written in plain HTML.
+Handles content written in plain HTML, i.e. the content is just copied and no changes are made.

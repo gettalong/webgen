@@ -27,3 +27,13 @@ for a thumbnail size of 100x100:
   <td style="vertical-align: top"><img src="{relocatable: /images/thumb_example_cropped.jpg}" alt="Thumbnail using cropped resize method" /></td>
 </tr>
 </table>
+
+
+h2(#caveat). Caveat
+
+
+This plugin is only available if you have installed the
+"rmagick":http://rmagick.rubyforge.org/ library. The preferred way to do this is via
+Rubygems:
+
+  gem install rmagick

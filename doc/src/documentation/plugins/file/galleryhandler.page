@@ -64,11 +64,6 @@ section!
 
 h2(#file-format). Gallery File Format
 
-=begin
-TODO: move to doc
-- automatic thumbnail creation: only when rmagick is installed!
-- document thumbnailwriter handler
-=end
 
 A gallery file has YAML as file format and is easy to create. It consists of two sections which are
 separated by a line consisting only of three dashes: the configuration section and the image
@@ -129,7 +124,19 @@ keys are used and/or set by the gallery handler:
    not set, the value from the configuration section is used, If that is also not set, a default
    value is used (see {param: File/ThumbnailWriter:resizeMethod}).
 * *exif*: If not set and the exif reading library is installed, it is assigned the exif information
-   of the image.
+   of the image. The exif reading library can be installed using <code>gem install exifr</code>
+
+
+h2(#thumbnail-creation). Automatic thumbnail creation
+
+
+The gallery handler is able to automatically create thumbnails for the images in the image gallery
+if the {plugin: File/ThumbnailWriter} is available. If so, the @thumbnailSize@ and
+@thumbnailResizeMethod@ keys described above are used to create the thumbnail.
+
+If the plugin is not available, you either have to explicitly specify a thumbnail via the
+@thumbnail@ key for an image or the @width@ and @height@ attributes of the HTML @img@ tag are used
+to scale the full image to the thumbnail size.
 
 
 h2(#file-format-example). Example gallery file
@@ -156,6 +163,7 @@ example/dir1/img1.jpg:
 
 example/img2.jpg
     title: Title2 of pic
+    mykey: mydata
 </pre>
 
 First the title of the gallery is set and the {param: File/GalleryHandler:imagesPerPage} parameter
@@ -167,4 +175,5 @@ the @orderInfo@ meta information is set for the gallery pages. This implies that
 automatically increments the @orderInfo@ value for each gallery page sothat they are sorted and
 displayed in the menu correctly.
 
-The second section sets the meta information for the images of the gallery.
+The second section sets the meta information for the images of the gallery. All meta information set
+for the images will be available to the image template.

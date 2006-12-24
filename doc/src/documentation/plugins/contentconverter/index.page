@@ -1,7 +1,0 @@
----
-directoryName: Content Handlers
----
-h2. About
-
-Content handlers are used to handle different content formats. This allows one to write the page
-descriptions using the format he likes.
