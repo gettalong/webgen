@@ -42,6 +42,9 @@ documentation/plugins/file/defaulthandler.page:
 documentation/plugins/htmlvalidator:
   indexFile: default.page
 
+documentation/plugins/contentconverter:
+  indexFile: default.page
+
 ---
 
 api.html:
