@@ -8,7 +8,7 @@ class BlockTagTest < Webgen::TagTestCase
     'webgen/plugins/filehandlers/directory.rb',
     'webgen/plugins/filehandlers/page.rb',
   ]
-  plugin_to_test 'Tags/BlockTag'
+  plugin_to_test 'Tag/Block'
 
 
   def test_process_tag
@@ -20,7 +20,7 @@ class BlockTagTest < Webgen::TagTestCase
     page_node['useERB'] = false
     assert_equal( ["5 * 3 = <%= 5*3 %>", [page_node]], @plugin.process_tag( 'block', [page_node] ) )
 
-    set_config( 'block' => 'unknown' )
+    set_config( 'blockName' => 'unknown' )
     assert_equal( '', @plugin.process_tag( 'block', [page_node] ) )
   end
 

@@ -27,18 +27,19 @@ module Tags
   # Substitutes the tag with an actual content block.
   class BlockTag < DefaultTag
 
-    infos( :author => Webgen::AUTHOR,
+    infos( :name => 'Tag/Block',
+           :author => Webgen::AUTHOR,
            :summary => "Returns the rendered content of a page file block"
            )
 
-    param 'block', 'content', 'The name of the block which should be rendered.'
-    set_mandatory 'block', true
+    param 'blockName', 'content', 'The name of the block which should be rendered.'
+    set_mandatory 'blockName', true
 
     register_tag 'block'
 
     def process_tag( tag, chain )
       block_node = (chain.length > 1 ? chain[1] : chain[0])
-      block_name = param( 'block' )
+      block_name = param( 'blockName' )
       if block_node.node_info[:pagedata].blocks.has_key?( block_name )
         if block_node['useERB']
           node = chain.last
