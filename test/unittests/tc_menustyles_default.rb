@@ -5,10 +5,24 @@ class DefaultMenuStyleTest < Webgen::PluginTestCase
   plugin_files [
                 'webgen/plugins/menustyles/default.rb',
                 'webgen/plugins/filehandlers/directory.rb',
-                'webgen/plugins/filehandlers/page.rb'
+                'webgen/plugins/filehandlers/page.rb',
+                fixture_path( 'menustyle.rb' )
                ]
 
   plugin_to_test 'MenuStyle/Default'
+
+  def test_options_hash
+    plugin = @manager['MenuStyle/Test']
+
+    assert_equal( @manager['MenuStyle/Default'].param( 'divClass' ), plugin.param( 'divClass' ) )
+    assert_equal( 'testvalue', plugin.param( 'testparam' ) )
+
+    plugin.instance_eval { @options = {'divClass' => 'none', 'testparam' => 'other'} }
+    assert_equal( 'none', plugin.param( 'divClass' ) )
+    assert_equal( 'other', plugin.param( 'testparam' ) )
+
+    assert_raises( Webgen::PluginParamNotFound ) { plugin.param( 'invalidParam' ) }
+  end
 
   def test_menu_item_details
     root = @manager['Core/FileHandler'].instance_eval { build_tree }

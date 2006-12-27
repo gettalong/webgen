@@ -28,7 +28,7 @@ module MenuStyles
 
     infos( :name => 'MenuStyle/Vertical',
            :author => Webgen::AUTHOR,
-           :summary => "Builds a vertical menu"
+           :summary => "Builds a vertical menu and is very flexible"
            )
 
     register_handler 'vertical'

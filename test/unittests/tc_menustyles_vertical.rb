@@ -28,8 +28,6 @@ class VerticalMenuStyleTest < Webgen::PluginTestCase
                                '<li ><a href="dir1/file11.html">File11</a></li></ul></li>' +
                                '<li class="webgen-menu-submenu"><a href="dir2/">Dir2</a>'+
                                '<ul><li ><a href="dir2/file21.html">File21</a></li></ul></li></ul>' ), output )
-    output = @plugin.build_menu( root.resolve_node('index.en.page'), tree_en, options_hash( 2, 1, 1, true ) )
-    assert_equal( menu_output( '' ), output )
 
     # testing showCurrentSubtreeOnly
     output = @plugin.build_menu( root.resolve_node('dir1/file11.en.page'), tree_en, options_hash( 1, 1, 2, true ) )
@@ -45,6 +43,8 @@ class VerticalMenuStyleTest < Webgen::PluginTestCase
                                '<ul><li ><a href="../dir2/file21.html">File21</a></li></ul></li></ul>' ), output )
 
     # testing startLevel
+    output = @plugin.build_menu( root.resolve_node('index.en.page'), tree_en, options_hash( 2, 1, 1, true ) )
+    assert_equal( menu_output( '' ), output )
     output = @plugin.build_menu( root.resolve_node('dir1/file11.en.page'), tree_en, options_hash( 2, 1, 2, true ) )
     assert_equal( menu_output( '<ul><li class="webgen-menu-submenu"><a href="dir11/index.html">Dir11</a></li>'+
                                '<li class="webgen-menu-item-selected"><span>File11</span></li></ul>' ), output )

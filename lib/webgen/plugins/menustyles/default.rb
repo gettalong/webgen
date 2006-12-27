@@ -26,10 +26,10 @@ module MenuStyles
 
     infos( :name => 'MenuStyle/Default',
            :author => Webgen::AUTHOR,
-           :summary => "Base class for all menu styles"
+           :summary => "Base plugin for all menu styles"
            )
 
-    param 'divClass', 'webgen-menu', 'Additional CSS class for the div-tag surrounding the menu'
+    param 'divClass', 'webgen-menu', 'Additional CSS class for the div-tag surrounding the menu.'
     param 'submenuClass', 'webgen-menu-submenu', 'Specifies the class of a submenu.'
     param 'submenuInHierarchyClass', 'webgen-menu-submenu-inhierarchy', 'Specifies the class of the submenus which are ' \
     'in the hierarchy of the selected menu item.'
@@ -45,8 +45,8 @@ module MenuStyles
     end
 
     def param( name, plugin = nil )
-      if defined?( @options) && !@options.nil? && @options.kind_of?( Hash ) && @options.has_key?( name ) &&
-          self.class.config.params.has_key?( name )
+      if defined?( @options ) && !@options.nil? && @options.kind_of?( Hash ) && @options.has_key?( name ) &&
+          self.class.ancestor_classes.any? {|klass| klass.config.params.has_key?( name )}
         @options[name]
       else
         super
