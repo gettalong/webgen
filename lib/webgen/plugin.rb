@@ -83,7 +83,8 @@ module Webgen
       end
 
       # Add a dependency to the plugin, ie. the name of another plugin. Dependencies are
-      # instantiated before the plugin gets instantiated.
+      # instantiated before the plugin gets instantiated. So only add those plugins here that you
+      # need to reference/use in the initialize method!
       def depends_on( *dep )
         dep.each {|d| self.config.dependencies << d}
       end

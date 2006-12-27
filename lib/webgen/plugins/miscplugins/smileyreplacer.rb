@@ -37,10 +37,6 @@ module MiscPlugins
     param 'emoticonPack', nil, 'The name of the emoticon package which should be used. If set to nil, ' +
       'smileys are not replaced.'
 
-=begin
-TODO: move to doc
-- uses metainfo 'emoticonPack'
-=end
 
     SMILEY_MAP = {
       ':-@' => 'angry',
@@ -59,7 +55,7 @@ TODO: move to doc
 
     def initialize( plugin_manager )
       super
-      @plugin_manager['File/PageHandler'].add_msg_listener( :after_content_rendered, method( :replace_smileys ) )
+      @plugin_manager['File/PageHandler'].add_msg_listener( :after_node_rendered, method( :replace_smileys ) )
     end
 
     #######

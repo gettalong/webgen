@@ -41,12 +41,6 @@ module MiscPlugins
 
     depends_on 'Core/ResourceManager'
 
-=begin
-TODO: move to doc
-- coderay (gem install coderay) needed for syntax highlighting
-- available syntax highlighting languages depend on version of Coderay
-=end
-
     def initialize( plugin_manager )
       super
       @sl_available = plugin_manager.optional_part( 'syntax-highlighting' )[:loaded]

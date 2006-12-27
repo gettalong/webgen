@@ -11,7 +11,7 @@ class ShowEmoticonsTag < Tags::DefaultTag
     packs = Dir[File.join( Webgen.data_dir, 'resources', 'emoticons', '*/')].collect {|p| File.basename( p )}.sort
 
     map = @plugin_manager['Misc/SmileyReplacer'].class::SMILEY_MAP
-    output = '<table style="width: 100%; border: 1px solid black" summary="List of emoticon packs" rules="groups" frame="border">'
+    output = '<table class="examples" summary="List of emoticon packs">'
     header = map.sort {|a,b| a[1] <=> b[1]}.collect {|s, name| "<th><code>#{s}</code><br />(#{name})</th>" }.join('')
     output << "<thead><tr><th>Smiley/Pack</th>#{header}</tr></thead><tbody>"
     packs.each do |pack|
