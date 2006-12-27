@@ -1,0 +1,17 @@
+---
+title: Tags
+directoryName: Tag
+---
+h2(#Description). Description
+
+
+Tags are used to include dynamic content in page files. For more information, have a look at
+{plugin: Core/TagProcessor}.
+
+Each tag plugin responds to one or more tag names and creates content dynamically. webgen comes with
+a broad range of tag plugins for
+
+* generating menus and breadcrumb trails
+* including files
+* generating sitemaps
+* and much more!
