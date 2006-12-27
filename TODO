@@ -1,5 +1,7 @@
 ---- CURRENT ----
 
+* add a common class to the menu element (either a or span, depending on Fil/DefaultFileHandler:linkToCurrentPage) for easier referencing in CSS styles (update menu CSS style afterwards for horiz-dd, vert-dd, ...)
+* add parameters startLevel, minLevels, maxLevels to horizontal menu style
 * make linking to image galleries possible by specifing the gallery file
 * change namespace of tag plugins from tags to tag
 * send bug report to rdoc maintainer (rdoc does not handle nested method defintions correctly)

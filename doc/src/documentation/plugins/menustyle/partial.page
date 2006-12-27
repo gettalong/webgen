@@ -1,27 +1,34 @@
 ---
-title: Partial
+title: Section
+directoryName: MenuStyle
 inMenu: true
+template: /plugin.template
+plugin: MenuStyle/Section
 ---
-h2. Information
+h2(#description). Description
 
-<notextile>{describe: PartialMenuStyle}</notextile>
 
-h2. Description
+Builds a simple menu showing only the sections of the current page.
 
-Builds a simple menu showing only the menu levels under the current page. This means that if you are
-in the third level of the hierarchy, the first two menu levels are not shown.
 
-h2. Style Advice
+h2(#examples). Examples
 
-The menu is constructed using HTML lists with @ul@ and @li@ tags. However, the menu looks better if
-no discs are shown for the menu items (using <code>list-style-type: none</code>).
+<table class="examples">
+<tr>
+  <th>Used parameters</th><th>Resulting menu</th>
+</tr>
+<tr>
+  <td>Using default values</td>
+  <td>{menu: {menuStyle: section}}</td>
+</tr>
+<tr>
+  <td>\{menu: {menuStyle: section, options: {maxLevels: 1, numberSections: false}}}</td>
+  <td>{menu: {menuStyle: section, options: {maxLevels: 1, numberSections: false}}}</td>
+</tr>
+</table>
 
-h2. Examples
 
-Basic menu as it appears by default, nothing styled additionally with CSS:
+h3(#sample). Sample sub section
 
-<notextile>{menu: {menuStyle: partial}}</notextile>
 
-The same menu with a little CSS magic:
-
-<notextile>{menu: {menuStyle: partial, options: {divClass: partial-menu}}}</notextile>
+This section is just for demonstration purposes for the examples.

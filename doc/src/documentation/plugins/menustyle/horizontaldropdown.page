@@ -1,26 +1,28 @@
 ---
-title: Horizontal Dropdown
+title: HorizontalDropdown
+directoryName: MenuStyle
 inMenu: true
+template: /plugin.template
+plugin: MenuStyle/HorizontalDropdown
 ---
-h2. Information
+h2(#description). Description
 
-<notextile>{describe: HorizontalDropdownMenuStyle}</notextile>
-
-h2. Description
 
 Builds a horizontal menu with CSS drop down menus. This menu should work fine in any browser
 supporting CSS and the @:hover@ selector (Mozilla based browsers like Firefox, Opera and Konqueror
-are fine, does NOT work in IE 6 on Windows XP).
+are fine, does NOT work in IE 6 on Windows XP, not tested with IE 7).
 
-h2. Style Advice
 
-The menu works by only using CSS, not DHTML or anything else. Here is a list of CSS selectors and
-descriptions how these selectors can be used to style various parts of the menu. You have to pay
+h2(#style). Style Advice
+
+
+The menu works by only using CSS, not DHTML or anything else. Following is a list of CSS selectors
+and descriptions how these selectors can be used to style various parts of the menu. You have to pay
 attention to the last element in the selector (@ul@, @li@, or @a@). When you want to style menu
 items, you normally want to use @a@. You should also be aware of the use of the @>@ sign, there is a
 dramatic difference between writing @li a@ and @li > a@ (the former selecting ALL @a@ elements of
 the list item, i.e. all @a@ elements in submenus too; and the latter only selecting the direct
-descendant)!
+descendants)!
 
 table{border: 1px solid black}.
 |<code>.webgen-menu-horiz-dd ul > li > a</code>|Style the top level menu items (the ones that are always shown)|
@@ -28,15 +30,16 @@ table{border: 1px solid black}.
 |<code>.webgen-menu-horiz-dd ul ul > li > a</code>|Style the drop down menu items|
 |<code>.webgen-menu-horiz-dd li:hover > a</code>|Style the hovered-over menu item|
 
-h2. Example
 
-Basic menu as it appears by default, nothing styled additionally with CSS:
+h2(#examples). Examples
 
-<notextile>{menu: {menuStyle: horizontal-dropdown}}</notextile>
 
-<br />
-The same menu with a little CSS magic:
-
-<notextile>{menu: {menuStyle: horizontal-dropdown, options: {divClass: horiz-dd-menu}}}</notextile>
-
-<br/>
+<table class="examples">
+<tr>
+  <th>Used parameters</th><th>Resulting menu</th>
+</tr>
+<tr>
+  <td>Using default values</td>
+  <td>{menu: {menuStyle: horizontal-dropdown}}</td>
+</tr>
+</table>

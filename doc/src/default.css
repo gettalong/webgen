@@ -382,3 +382,20 @@ table.resources th, table.resources td {
 
 .param-ref {
 }
+
+.menu-example-horiz li {
+  margin-left: 2px;
+  margin-right: 2px;
+  border: 1px solid #333;
+  padding: 1px;
+  background-color: #ddd;
+}
+
+.menu-example-horiz ul {
+  margin-bottom: 15px;
+}
+
+.menu-example-horiz .webgen-menu-item-selected a, .menu-example-horiz .webgen-menu-submenu-inhierarchy a, .menu-example-horiz .webgen-menu-item-selected span, .menu-example-horiz .webgen-menu-submenu-inhierarchy span {
+  background-color: #880000;
+  color: white;
+}

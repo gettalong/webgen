@@ -8,5 +8,5 @@ plugin: HtmlValidator/Default
 h2(#description). Description
 
 
-This is the base class (does not provide any functionality) for all HTML validators. Have a look at
+This is the base plugin (does not provide any functionality) for all HTML validators. Have a look at
 individual validators to see what they can do for you!

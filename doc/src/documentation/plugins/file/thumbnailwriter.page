@@ -17,7 +17,7 @@ The {param: File/ThumbnailWriter:resizeMethod} parameter specifies how the image
 for creating the thumbnail. The following pictures illustrate the differences between the settings
 for a thumbnail size of 100x100:
 
-<table class="example">
+<table class="examples">
 <tr>
   <td>Original image (320x240)</td><td>@:normal@ (100x75)</td><td>@:cropped@ (100x100)</td>
 </tr>

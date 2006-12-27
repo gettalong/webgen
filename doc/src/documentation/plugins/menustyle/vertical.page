@@ -1,32 +1,48 @@
 ---
 title: Vertical
+directoryName: MenuStyle
 inMenu: true
+template: /plugin.template
+plugin: MenuStyle/Vertical
 ---
-h2. Information
+h2(#description). Description
 
-<notextile>{describe: VerticalMenuStyle}</notextile>
 
-h2. Description
+This menu style builds a seemingly simple vertical menu. However, it is very flexible due to its
+many parameters that let you decide every detail of the menu. Have a look at the examples to see
+what is possible!
 
-Builds a simple vertical menu. This is the most basic of all menus. Use the various parameters to
-change how many menu levels should be shown.
 
-h2. Style Advice
+h2(#style). Style Advice
+
 
 The menu is constructed using HTML lists with @ul@ and @li@ tags. However, the menu looks better if
-no discs are shown for the menu items (using <code>list-style-type: none</code>).
+no discs are shown for the menu items (using the CSS directive <code>list-style-type: none</code>).
 
-h2. Examples
 
-Basic menu as it appears by default, nothing styled additionally with CSS:
+h2(#examples). Examples
 
-<notextile>{menu: {menuStyle: vertical}}</notextile>
 
-The same menu with a little CSS magic:
+Following are some examples of this menu style with varying parameter values (without CSS styling).
 
-<notextile>{menu: {menuStyle: vertical, options: {divClass: vert-menu}}}</notextile>
-
-Examples of the menu with other parameter settings
-
-table{border: 1px solid black}.
-|^. \{menu: {menuStyle: vertical, options: {subtreeLevel: 1}}}{menu: {menuStyle: vertical, options: {subtreeLevel: 1}}}|^. \{menu: {menuStyle: vertical, options: {subtreeLevel: 4, showCurrentSubtreeOnly: false}}} {menu: {menuStyle: vertical, options: {subtreeLevel: 4, showCurrentSubtreeOnly: false}}}|
+<table class="examples">
+<tr>
+  <th>Used parameters</th><th>Resulting menu</th>
+</tr>
+<tr>
+  <td>Using default values</td>
+  <td>{menu: {menuStyle: vertical}}</td>
+</tr>
+<tr>
+  <td>\{menu: {menuStyle: vertical, options: {maxLevels: 1}}}</td>
+  <td>{menu: {menuStyle: vertical, options: {maxLevels: 1}}}</td>
+</tr>
+<tr>
+  <td>\{menu: {menuStyle: vertical, options: {showCurrentSubtreeOnly: false, maxLevels: 3}}}</td>
+  <td>{menu: {menuStyle: vertical, options: {showCurrentSubtreeOnly: false, maxLevels: 3}}}</td>
+</tr>
+<tr>
+  <td>\{menu: {menuStyle: vertical, options: {startLevel: 2, maxLevels: 3}}}</td>
+  <td>{menu: {menuStyle: vertical, options: {startLevel: 2, maxLevels: 3}}}</td>
+</tr>
+</table>

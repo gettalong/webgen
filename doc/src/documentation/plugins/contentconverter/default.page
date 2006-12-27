@@ -8,7 +8,7 @@ plugin: ContentConverter/Default
 h2(#description). Description
 
 
-This is the base class (does not provide any functionality) for all "content to HTML" converters.
+This is the base plugin (does not provide any functionality) for all "content to HTML" converters.
 These converters are used, for example, for page files to allow the page creators to use a format he
 likes.
 

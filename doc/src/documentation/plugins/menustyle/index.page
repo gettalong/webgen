@@ -1,12 +1,18 @@
 ---
-directoryName: Menu Styles
+title: Default
+directoryName: MenuStyle
+inMenu: true
+template: /plugin.template
+plugin: MenuStyle/Default
 ---
-h2. Information
+h2(#description). Description
 
-<notextile>{describe: DefaultMenuStyle}</notextile>
 
-h2. Description
+This is the base plugin for all menu styles. Menu Styles are used to build different types of menus.
+Some web sites use vertical menus on the left or right side, some horizontal menus at the top. It's
+up to you to chose the best suited menu style for your website!
 
-Menu Styles are used to build different types of menus. Some web sites use vertical menus on the
-left or right side, some horizontal menus at the top. It's up to you to chose the best suited
-menu style for your website!
+This plugin defines some parameters that are used by the individual menu style plugins sothat
+the generated menus can be styled more easily with CSS.
+
+Have a look at the individual menu styles for more information!
