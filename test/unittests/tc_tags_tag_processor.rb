@@ -75,7 +75,7 @@ class DefaultTagTest < Webgen::PluginTestCase
                 'webgen/plugins/tags/tag_processor.rb',
                 fixture_path( 'testtag.rb' )
                ]
-  plugin_to_test 'Tags/DefaultTag'
+  plugin_to_test 'Tag/Default'
 
   def test_tags
     assert_equal( ['test', 'test1'], @manager['Testing/TestTag'].tags )

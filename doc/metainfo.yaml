@@ -45,6 +45,12 @@ documentation/plugins/htmlvalidator:
 documentation/plugins/contentconverter:
   indexFile: default.page
 
+documentation/plugins/tag:
+  indexFile: default.page
+
+documentation/plugins/tag/default.page:
+  orderInfo: -1
+
 ---
 
 api.html:

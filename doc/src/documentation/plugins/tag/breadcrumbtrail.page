@@ -1,20 +1,29 @@
 ---
-title: Breadcrumb Trail
+title: BreadcrumbTrail
 inMenu: true
+template: /plugin.template
+plugin: Tag/BreadcrumbTrail
 ---
-h2. Information
+h2(#description). Description
 
-<notextile>{describe: BreadcrumbTrailTag}</notextile>
-
-h2. Description
 
 The breadcrumb trail tag is used to display the hierarchy for the current page. You can see it in
-action on the left side of the header.
+action above the main content area.
 
-h2. Examples
 
-table{border:1px solid black}.
-|_.Command|_.Output|
-|\{breadcrumbTrail:}|{breadcrumbTrail:}|
-|<notextile>\{breadcrumbTrail: {separator: " HALLO "}}</notextile>|<notextile>{breadcrumbTrail: {separator: " HALLO "}}</notextile>|
+h2(#examples). Examples
 
+
+<table class="examples">
+<tr>
+  <th>Usage</th><th>Output</th>
+</tr>
+<tr>
+  <td>\{breadcrumbTrail:}</td>
+  <td>{breadcrumbTrail:}</td>
+</tr>
+<tr>
+  <td><notextile>\{breadcrumbTrail: {separator: " HELLO "}}</notextile></td>
+  <td><notextile>{breadcrumbTrail: {separator: " HELLO "}}</notextile></td>
+</tr>
+</table>

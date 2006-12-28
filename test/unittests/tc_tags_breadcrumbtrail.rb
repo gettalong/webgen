@@ -8,7 +8,7 @@ class BreadcrumbTrailTagTest < Webgen::TagTestCase
     'webgen/plugins/filehandlers/directory.rb',
     'webgen/plugins/filehandlers/page.rb',
   ]
-  plugin_to_test 'Tags/BreadcrumbTrailTag'
+  plugin_to_test 'Tag/BreadcrumbTrail'
 
 
   def test_process_tag

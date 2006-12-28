@@ -144,7 +144,8 @@ module Tags
   # configuration data from either the configuration file or the tag itself.
   class DefaultTag < Webgen::Plugin
 
-    infos( :summary => "Base class for all tag plugins",
+    infos( :name => 'Tag/DefaultTag',
+           :summary => "Base plugin for all tag plugins",
            :author => Webgen::AUTHOR,
            :instantiate => false
            )

@@ -1,8 +1,18 @@
 ---
-title: Tags
+title: DefaultTag
 directoryName: Tag
+inMenu: true
+template: /plugin.template
+plugin: Tag/DefaultTag
 ---
-h2(#Description). Description
+h2(#description). Description
+
+
+The DefaultTag is the base plugin for all tag plugins. It provides the functionality for specifying
+which tag names should be handled, methods for setting the configuration and so on.
+
+
+h2(#about-tags). About Tags
 
 
 Tags are used to include dynamic content in page files. For more information, have a look at

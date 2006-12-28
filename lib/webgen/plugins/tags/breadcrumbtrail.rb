@@ -34,7 +34,8 @@ module Tags
   # where each listed name is linked to the corresponding file.
   class BreadcrumbTrailTag < DefaultTag
 
-    infos( :author => Webgen::AUTHOR,
+    infos( :name => 'Tag/BreadcrumbTrail',
+           :author => Webgen::AUTHOR,
            :summary => 'Shows the hierarchy for the current page'
            )
 
