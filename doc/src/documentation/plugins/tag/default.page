@@ -1,9 +1,9 @@
 ---
-title: DefaultTag
+title: Default
 directoryName: Tag
 inMenu: true
 template: /plugin.template
-plugin: Tag/DefaultTag
+plugin: Tag/Default
 ---
 h2(#description). Description
 

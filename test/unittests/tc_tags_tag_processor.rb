@@ -81,6 +81,11 @@ class DefaultTagTest < Webgen::PluginTestCase
     assert_equal( ['test', 'test1'], @manager['Testing/TestTag'].tags )
   end
 
+  def test_initialize
+    assert_nil( @plugin )
+    assert_not_nil( @manager.plugin_class_for_name( 'Tag/Default' ) )
+  end
+
   def test_set_tag_config
     @manager['Testing/TestTag'].set_tag_config( nil, Webgen::Dummy.new )
     assert_equal( nil, @manager['Testing/TestTag'].param( 'test' ) )

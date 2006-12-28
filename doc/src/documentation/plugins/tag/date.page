@@ -1,19 +1,33 @@
 ---
 title: Date
 inMenu: true
+template: /plugin.template
+plugin: Tag/Date
 ---
-h2. Information
+h2(#description). Description
 
-<notextile>{describe: DateTag}</notextile>
 
-h2. Description
+The date tag is used to display the current time in a specific format (the format of Ruby's inbuilt
+method TODO(link) Time#strftime). Have a look a the examples below to see some possible outputs.
 
-The date tag is used to display the current time in a specific format. You can see how the default
-output looks like in the footer.
 
-h2. Examples
+h2(#examples). Examples
 
-table{border:1px solid black}.
-|_.Command|_.Output|
-|\{date: {format: %Y-%m-%d %H:%M:%S}}|{date: {format: %Y-%m-%d %H:%M:%S}}|
-|\{date: {format: %x - %X}}|{date: {format: %y - %X}}|
+
+<table class="examples">
+<tr>
+  <th>Usage</th><th>Output</th>
+</tr>
+<tr>
+  <td>\{date:}</td>
+  <td>{date:}</td>
+</tr>
+<tr>
+  <td>\{date: {format: %Y-%m-%d %H:%M:%S}}</td>
+  <td>{date: {format: %Y-%m-%d %H:%M:%S}}</td>
+</tr>
+<tr>
+  <td>\{date: {format: %x - %X}}</td>
+  <td>{date: {format: %x - %X}}</td>
+</tr>
+</table>

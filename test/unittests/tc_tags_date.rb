@@ -5,7 +5,7 @@ class DateTagTest < Webgen::TagTestCase
   plugin_files [
     'webgen/plugins/tags/date.rb',
   ]
-  plugin_to_test 'Tags/DateTag'
+  plugin_to_test 'Tag/Date'
 
 
   def test_process_tag
