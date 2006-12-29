@@ -2,29 +2,52 @@
 title: Plugins
 directoryName: Plugins
 ---
-h2. About
+h2(#about). About
 
-All available plugins in the distribution are described in this section. Choose a plugin category
+
+All available plugins in the distribution are described in this section. Choose a plugin namespace
 to get more information!
 
-h2. Plugins
 
-webgen is written with extensibility in mind; therefore most of its features are implemented with
+h2(#plugins). Plugins
+
+
+webgen is written with extensibility in mind; therefore most of its features are implemented using
 plugins, only the core functions are not plugins.
 
 Writing your own plugins is not difficult, too! If you need a specific functionality, implement a
 plugin and put it under the site specific @plugin@ directory - then the plugin gets loaded with the
 others. It's so easy!
 
-For more information have a look at the <a href="{relocatable: /rdoc/index.html}">API documentation</a>!
+For more information have a look at the <a href="{relocatable: /api.html}">API documentation</a>!
+TODO(link to plugin development section)
 
-h2. Parameters
+
+h3(#plugin-naming). Naming of Plugins
+
+
+Plugin names have an easy structure. The first part (before the slash) describes the namespace it is
+located in, the second part is the actual plugin name.
+
+Following is a list of the default namespaces and what they are used for:
+
+* *ContentConverter/*: plugins used for converting content into HTML
+* *Core/*: the core plugins of webgen
+* *File/*: all plugins handling files (ie. derived from {plugin: File/DefaultHandler}
+* *HtmlValidator/*: HTML validator plugins
+* *MenuStyle/*: menu style plugins
+* *Misc/*. miscellaneous plugins
+* *Tags/*: all tag plugins used by {plugin: Core/TagProcessor}
+
+
+h3(#plugin-param). Plugin Parameters
+
 
 Each plugin can define parameters which can be used to configure the plugin. These parameters are
-listed in the "Information" section of each plugin page. Also note that plugins can use the
-parameters from their "super plugins" - this allows a group of plugins which have similar
-functionality (e.g. the menu style plugins) to share common configuration values. The names of the
-"super plugins" are enclosed in parentheses after the plugin name in the "Information" section.
+listed at the top of each plugin page. Also note that plugins can use the parameters from their
+"parent plugins" - this allows a group of plugins which have similar functionality (e.g. the menu
+style plugins) to share common configuration values. The names of the "super plugins" are enclosed
+in parentheses after the plugin names in the "General Information" section.
 
 Parameters can have various types: String, Number, Boolean, Array... When setting a parameter via
 the configuration file, you need to ensure that it has the proper type. Have a look at

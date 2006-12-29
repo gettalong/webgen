@@ -16,6 +16,9 @@ The available languages for syntax highlighting depend on the version of coderay
 h2(#caveat). Caveat
 
 
+You should link to the @webgen-css@ resource in your template as this plugin defines some CSS
+styles!
+
 This plugin is only available if you have installed the
 "coderay":http://coderay.rubychan.de/ library. The preferred way to do this is via
 Rubygems:

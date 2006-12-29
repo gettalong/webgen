@@ -12,6 +12,9 @@ Builds a horizontal menu with CSS drop down menus. This menu should work fine in
 supporting CSS and the @:hover@ selector (Mozilla based browsers like Firefox, Opera and Konqueror
 are fine, does NOT work in IE 6 on Windows XP, not tested with IE 7).
 
+*Caveat*: You should link to the @webgen-css@ resource in your template as this plugin defines some
+CSS styles!
+
 
 h2(#style). Style Advice
 
