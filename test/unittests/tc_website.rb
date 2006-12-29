@@ -108,6 +108,10 @@ class WebSiteTest < Webgen::TestCase
       assert_equal( path, website.manager.param_for_plugin( 'Core/Configuration', 'websiteDir' ) )
       assert_equal( 'en', website.manager.param_for_plugin( 'Core/Configuration', 'lang' ) )
 
+      # fake invalid configuration file
+      website.instance_eval { @plugin_config = nil }
+      assert_equal( nil, website.manager.param_for_plugin( 'File/PageHandler', 'validator' ) )
+
       # with plugin_config
       website = Webgen::WebSite.new( SAMPLE_SITE, self )
       assert_equal( 'eo', website.manager.param_for_plugin( 'Core/Configuration', 'lang' ) )
@@ -139,6 +143,7 @@ class WebSiteTest < Webgen::TestCase
 
   def plugin_sandbox
     Webgen::DEFAULT_PLUGIN_LOADER.load_from_file( 'webgen/plugins/coreplugins/configuration' )
+    Webgen::DEFAULT_PLUGIN_LOADER.load_from_file( 'webgen/plugins/filehandlers/page' )
     yield
   ensure
     Webgen.remove_const( :DEFAULT_PLUGIN_LOADER )

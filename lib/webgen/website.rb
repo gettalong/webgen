@@ -172,7 +172,8 @@ module Webgen
       when ['Core/Configuration', 'srcDir'] then @srcDir
       when ['Core/Configuration', 'outDir'] then @outDir
       when ['Core/Configuration', 'websiteDir'] then @directory
-      else @plugin_config.param_for_plugin( plugin_name, param )
+      else
+        (@plugin_config ? @plugin_config.param_for_plugin( plugin_name, param ) : PluginParamValueNotFound)
       end
     end
 
