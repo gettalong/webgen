@@ -21,8 +21,10 @@
 </tr>
 </table>
 
-<p>
+<p style="text-align: center">
 <img src="{relocatable: <%= ginfo.cur_image.filename %>}" alt="<%= ginfo.cur_image.title %>" /> <br />
-<%= ginfo.cur_image['description'] %>
 </p>
+
+<p><%= ginfo.cur_image['description'] %></p>
+
 </div>

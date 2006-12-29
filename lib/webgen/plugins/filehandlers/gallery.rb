@@ -451,22 +451,24 @@ module FileHandlers
           case node.node_info[:thumbnail_resize_method]
           when :cropped then cropped_thumbnail( image, node.node_info[:thumbnail_size] )
           when :normal then normal_thumbnail( image, node.node_info[:thumbnail_size] )
-          else normal_thumbnail( image, node.node_info[:thumbnail_size] )
+          else
+            log(:warn) {"Invalid resize method specified (#{node.node_info[:thumbnail_resize_method].inspect}), falling back to :normal"}
+            normal_thumbnail( image, node.node_info[:thumbnail_size] )
           end
           image.write( node.full_path )
         end
       end
 
-    end
+      private
 
-    private
+      def normal_thumbnail( image, size )
+        image.change_geometry( size ) {|c,r,i| i.resize!( c, r )}
+      end
 
-    def normal_thumbnail( image, size )
-      image.change_geometry( size ) {|c,r,i| i.resize!( c, r )}
-    end
+      def cropped_thumbnail( image, size )
+        image.crop_resized!( *size.split('x').collect {|s| s.to_i} )
+      end
 
-    def cropped_thumbnail( image, size )
-      image.crop_resized!( *size.split('x').collect {|s| s.to_i} )
     end
 
   end
