@@ -449,13 +449,24 @@ module FileHandlers
           log(:info) {"Creating thumbnail <#{node.full_path}> from image <#{node.node_info[:thumbnail_file]}>"}
           image = Magick::ImageList.new( node.node_info[:thumbnail_file] ).first
           case node.node_info[:thumbnail_resize_method]
-          when :normal then image.change_geometry( node.node_info[:thumbnail_size] ) {|c,r,i| i.resize!( c, r )}
-          when :cropped then image.crop_resized!( *node.node_info[:thumbnail_size].split('x').collect {|s| s.to_i} )
+          when :cropped then cropped_thumbnail( image, node.node_info[:thumbnail_size] )
+          when :normal then normal_thumbnail( image, node.node_info[:thumbnail_size] )
+          else normal_thumbnail( image, node.node_info[:thumbnail_size] )
           end
           image.write( node.full_path )
         end
       end
 
+    end
+
+    private
+
+    def normal_thumbnail( image, size )
+      image.change_geometry( size ) {|c,r,i| i.resize!( c, r )}
+    end
+
+    def cropped_thumbnail( image, size )
+      image.crop_resized!( *size.split('x').collect {|s| s.to_i} )
     end
 
   end
