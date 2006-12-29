@@ -1,18 +1,29 @@
 ---
-title: Execute Command
+title: ExecuteCommand
 inMenu: true
+template: /plugin.template
+plugin: Tag/ExecuteCommand
 ---
-h2. Information
+h2(#description). Description
 
-<notextile>{describe: ExecuteCommandTag}</notextile>
 
-h2. Description
+The execute command tag is used to include the output from a shell command. It also includes a
+parameter for highlighting the output via the {plugin: Misc/SyntaxHighlighter}.
 
-The execute command tag is used to include the output from a shell command.
 
-h2. Examples
+h2(#examples). Examples
 
-table{border:1px solid black}.
-|_.Command|_.Output|
-|\{execute: ls}|<pre class="webgen-file">{execute: ls}</pre>|
-|\{execute: uname -p}|<pre class="webgen-file">{execute: uname -p}</pre>|
+
+<table class="examples">
+<tr>
+  <th>Usage</th><th>Output</th>
+</tr>
+<tr>
+  <td>\{execute: uname -p}</td>
+  <td><pre>{execute: uname -p}</pre></td>
+</tr>
+<tr>
+  <td><notextile>\{execute: {command: 'echo puts LANG + 5.to_s', highlight: ruby}}</notextile></td>
+  <td><notextile>{execute: {command: 'echo puts LANG + 5.to_s', highlight: ruby}}</notextile></td>
+</tr>
+</table>

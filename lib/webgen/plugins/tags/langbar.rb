@@ -27,13 +27,14 @@ module Tags
   # Generates a list with all the languages for a page.
   class LangbarTag < DefaultTag
 
-    infos( :author => Webgen::AUTHOR,
+    infos( :name => 'Tag/Langbar',
+           :author => Webgen::AUTHOR,
            :summary => 'Provides links to translations of the page'
            )
 
     param 'separator', ' | ', 'Separates the languages from each other.'
     param 'showSingleLang', true, 'Should the link be shown although the page is only available in one language?'
-    param 'showOwnLang', true, 'Should the link to the currently displayed language page be shown? '
+    param 'showOwnLang', true, 'Should the link to the currently displayed language page be shown?'
 
     register_tag 'langbar'
 

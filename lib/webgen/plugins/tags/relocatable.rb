@@ -35,7 +35,8 @@ module Tags
   # Tag parameter: the name of the file which should be relocated
   class RelocatableTag < DefaultTag
 
-    infos( :author => Webgen::AUTHOR,
+    infos( :name => 'Tag/Relocatable',
+           :author => Webgen::AUTHOR,
            :summary => 'Adds a relative path to the specified name if necessary'
            )
 
@@ -45,15 +46,6 @@ module Tags
 
     register_tag 'relocatable'
 
-=begin
-TODO: move to doc
-- resolves absolute and relative URLs
-- basically, output names are searched for
-- extension: standardized page names can also be used
-  - without language part: searches for page in current language
-  - with language part: uses exact language file
-- extension: directory index files are resolved if only directory name specified
-=end
 
     def process_tag( tag, chain )
       uri_string = param( 'path' )

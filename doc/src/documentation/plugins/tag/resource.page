@@ -1,22 +1,35 @@
 ---
 title: Resource
 inMenu: true
+template: /plugin.template
+plugin: Tag/Resource
 ---
-h2. Information
+h2(#description). Description
 
-<notextile>{describe: ResourceTag}</notextile>
-
-h2. Description
 
 The resource tag is used to include a resource either verbatim (i.e. its content is copied) or by
-path. For more information about resources have a look at the
-<a href="{relocatable: ../coreplugins/resourcemanager.page}">Resource Manager</a>.
+its path. For more information about resources have a look at the {plugin: Core/ResourceManager}.
 
-h2. Examples
+This tag is mostly used in templates to include the webgen CSS and JS resources.
 
-table{border:1px solid black}.
-|_{width: 30%}.Command|_.Output|
-|\{resource: webgen-logo}|{resource: webgen-logo}|
-|\{resource: w3c-valid-xhtml11}|{resource: w3c-valid-xhtml11}|
-|\{resource: {name: webgen-css, insert: data}}|{resource: {name: webgen-css, insert: data}}|
 
+h2(#examples). Examples
+
+
+<table class="examples">
+<tr>
+  <th>Usage</th><th>Output</th>
+</tr>
+<tr>
+  <td><notextile>\{resource: webgen-logo}</notextile></td>
+  <td><notextile>{resource: webgen-logo}</notextile></td>
+</tr>
+<tr>
+  <td><notextile>\{resource: w3c-valid-xhtml11}</notextile></td>
+  <td><notextile>{resource: w3c-valid-xhtml11}</notextile></td>
+</tr>
+<tr>
+  <td><notextile>\{resource: {name: webgen-css, insert: data}}</notextile></td>
+  <td><notextile>{resource: {name: webgen-css, insert: data}}</notextile></td>
+</tr>
+</table>

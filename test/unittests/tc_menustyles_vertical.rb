@@ -13,7 +13,7 @@ class VerticalMenuStyleTest < Webgen::PluginTestCase
 
   def test_submenu
     root = @manager['Core/FileHandler'].instance_eval { build_tree }
-    tree_en = @manager['Tags/MenuTag'].instance_eval { create_menu_tree( root, nil, Webgen::LanguageManager.language_for_code( 'en' ) ) }
+    tree_en = @manager['Tag/Menu'].instance_eval { create_menu_tree( root, nil, Webgen::LanguageManager.language_for_code( 'en' ) ) }
 
     # testing minLevels and maxLevels
     output = @plugin.build_menu( root.resolve_node('index.en.page'), tree_en, options_hash( 1, 1, 1, true ) )

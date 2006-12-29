@@ -8,7 +8,7 @@ class RelocatableTagTest < Webgen::TagTestCase
     'webgen/plugins/filehandlers/directory.rb',
     'webgen/plugins/filehandlers/page.rb',
   ]
-  plugin_to_test 'Tags/RelocatableTag'
+  plugin_to_test 'Tag/Relocatable'
 
 
   def test_process_tag

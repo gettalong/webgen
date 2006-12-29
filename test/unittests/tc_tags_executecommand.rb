@@ -7,7 +7,7 @@ class ExecuteCommandTagTest < Webgen::TagTestCase
                 'webgen/plugins/coreplugins/resourcemanager.rb',
                 'webgen/plugins/tags/executecommand.rb',
                ]
-  plugin_to_test 'Tags/ExecuteCommandTag'
+  plugin_to_test 'Tag/ExecuteCommand'
 
 
   def test_process_tag

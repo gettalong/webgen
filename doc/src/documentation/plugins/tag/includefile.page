@@ -1,15 +1,30 @@
 ---
-title: Include File
+title: IncludeFile
 inMenu: true
+template: /plugin.template
+plugin: Tag/IncludeFile
 ---
-h2. Information
+h2(#description). Description
 
-<notextile>{describe: IncludeFileTag}</notextile>
 
-h2. Description
+The include file tag is used to include the content of a file. The content can be highlighted via
+{plugin: Misc/SyntaxHighlighter} by specifying an available language for the parameter {param:
+Tag/IncludeFile:highlight}.
 
-The include file tag is used to include the contents of a file.
 
-h2. Examples
+h2(#examples). Examples
 
-<pre class="webgen-file">{includeFile: {filename: includefile.page, processOutput: false}}</pre>
+
+<table class="examples">
+<tr>
+  <th>Usage</th><th>Output</th>
+</tr>
+<tr>
+  <td>\{includeFile: {filename: includefile.page, processOutput: false}}</td>
+  <td><pre>{includeFile: {filename: includefile.page, processOutput: false}}</pre></td>
+</tr>
+<tr>
+  <td>\{includeFile: {filename: ../../../../plugin/emoticon.rb, escapeHTML: false, processOutput: false, highlight: ruby}}</td>
+  <td>{includeFile: {filename: ../../../../plugin/emoticon.rb, escapeHTML: false, processOutput: false, highlight: ruby}}</td>
+</tr>
+</table>

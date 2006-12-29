@@ -56,18 +56,14 @@ module Tags
     end
 
 
-    infos( :author => Webgen::AUTHOR,
+    infos( :name => 'Tag/Menu',
+           :author => Webgen::AUTHOR,
            :summary => 'Builds a menu'
            )
 
     param 'menuStyle', nil, 'Specifies the style of the menu.'
     param 'options', {}, 'Options that are passed on to the plugin which layouts the menu.'
     set_mandatory 'menuStyle', true
-
-=begin
-TODO: move to doc
-- used_meta_info 'orderInfo', 'inMenu'
-=end
 
     register_tag 'menu'
 
@@ -109,34 +105,6 @@ TODO: move to doc
 
       return menu_node.has_children? ? menu_node : ( node['inMenu'] ? menu_node : nil )
     end
-
-=begin
-TODO: move to doc
-- no static menu, but can be built using output backing file
-  - you can use exisiting page files by specifying the file directly:
-    features.page:
-      inMenu: true
-      orderInfo: 1
-  - you can add non-existing files and directories to structure the menu the way you like it,
-    also add on page under two headings
-    newdir:
-      orderInfo: 2
-    newdir/new.page:
-      orderInfo: 1       -> orderInfo for subdir
-      inMenu: true
-      lang: en           -> lang has to be set explicitly if named file does not exist, and if
-                            the file should only appear in the english menu, if not set, appears
-                            in every menu
-      url: ../features.page  -> ../features.page is shown
-
-- menu structure:
-  - Menu Title: /doit.page
-  - Other Title: /doit.page
-  - Again: /subdir/doit.page
-  - Category:
-    - item: /doit.page
-    - item: /subdir/doit.page
-=end
 
   end
 

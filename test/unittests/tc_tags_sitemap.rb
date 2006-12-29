@@ -8,7 +8,7 @@ class SitemapTagTest < Webgen::TagTestCase
     'webgen/plugins/filehandlers/directory.rb',
     'webgen/plugins/filehandlers/page.rb',
   ]
-  plugin_to_test 'Tags/SitemapTag'
+  plugin_to_test 'Tag/Sitemap'
 
 
   def test_process_tag

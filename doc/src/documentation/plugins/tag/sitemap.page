@@ -1,17 +1,35 @@
 ---
 title: Sitemap
 inMenu: true
+template: /plugin.template
+plugin: Tag/Sitemap
 ---
-h2. Information
+h2(#description). Description
 
-<notextile>{describe: SitemapTag}</notextile>
 
-h2. Description
+The SitemapTag is used to display a site map of the current website. There are two operation modi:
+if the parameter {param: Tag/Sitemap:honorInMenu} is @true@, then only those pages are shown in the
+sitemap for which the @inMenu@ meta information is set. If it is @false@, then all pages are
+displayed. The tag also respects the @orderInfo@ meta information!
 
-The SitemapTag is used to display the site map of the current web site.
+*Caveat*: Only page files are shown in the sitemap and from those not all, but only the ones in the
+language of the page file the sitemap tag is used in (i.e. the tag shows the sitemap for a specific
+language).
 
-h2. Examples
 
-table{border:1px solid black}.
-|_.Command|_.Output|
-|\{sitemap:}|{sitemap:}|
+h2(#examples). Examples
+
+
+<table class="examples">
+<tr>
+  <th>Usage</th><th>Output</th>
+</tr>
+<tr>
+  <td><notextile>\{sitemap: }</notextile></td>
+  <td><notextile>{sitemap: }</notextile></td>
+</tr>
+<tr>
+  <td><notextile>\{sitemap: {honorInMenu: false}}</notextile></td>
+  <td><notextile>{sitemap: {honorInMenu: false}}</notextile></td>
+</tr>
+</table>

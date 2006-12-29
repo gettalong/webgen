@@ -1,27 +1,41 @@
 ---
-title: Language Bar
+title: Langbar
 inMenu: true
+template: /plugin.template
+plugin: Tag/Langbar
 ---
-h2. Information
+h2(#description). Description
 
-<notextile>{describe: LangbarTag}</notextile>
 
-h2. Description
+This tag is used to display a list of languages for a page. Take a look at the header. There you
+will find a link titled 'en'. This is the link to the english (=en) version of this page.
 
-The language tag is used to display a list of languages for a page. Take a look at the lower right
-corner of the header. There you will find a link titled 'en'. This is the link to the english (=en)
-version of this page.
 
-h2. Examples
+h2(#examples). Examples
 
-Here is a <a href="{relocatable: multilang.page}">link</a> to a page which is translated to several
-languages (more or less ;-). Have a look at it and don't forget to view the page in the other
-languages!
 
-table{border:1px solid black}.
-|_.Command|_.Output|
-|<notextile>\{langbar: }</notextile>|<notextile>{langbar: }</notextile>|
-|\{langbar: {separator: Hallo}}|{langbar: {separator: Hallo}}|
-|\{langbar: {showSingleLang: false}}|{langbar: {showSingleLang: false}}|
-|\{langbar: {showOwnLang: false}}|{langbar: {showOwnLang: false}}|
+This page is available in several other languages (however, with nearly no content :-)) for
+demonstration purposes.
 
+
+<table class="examples">
+<tr>
+  <th>Usage</th><th>Output</th>
+</tr>
+<tr>
+  <td>\{langbar: }</td>
+  <td>{langbar: }</td>
+</tr>
+<tr>
+  <td>\{langbar: {separator: Hallo}}</td>
+  <td>{langbar: {separator: Hallo}}</td>
+</tr>
+<tr>
+  <td>\{langbar: {showSingleLang: false}}</td>
+  <td>{langbar: {showSingleLang: false}}</td>
+</tr>
+<tr>
+  <td>\{langbar: {showOwnLang: false}}</td>
+  <td>{langbar: {showOwnLang: false}}</td>
+</tr>
+</table>

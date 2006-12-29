@@ -30,7 +30,8 @@ module Tags
 
   class DownloadTag < DefaultTag
 
-    infos( :author => Webgen::AUTHOR,
+    infos( :name => 'Tag/Download',
+           :author => Webgen::AUTHOR,
            :summary => "Provides a nice download link and, optional, image "
            )
 
@@ -40,11 +41,6 @@ module Tags
       'when no icon is available for the file type.'
     param 'mappingFile', nil, 'An additional mapping file used for mapping extensions to icons.'
     set_mandatory 'url', true
-
-=begin
-TODO: move to doc
-- describe structure of mapping file
-=end
 
     depends_on 'Core/ResourceManager'
 

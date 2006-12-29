@@ -279,7 +279,8 @@ module Tags
 
   class ResourceTag < DefaultTag
 
-    infos( :author => Webgen::AUTHOR,
+    infos( :name => 'Tag/Resource',
+           :author => Webgen::AUTHOR,
            :summary => "Used for referencing resources",
            :description => "This tag can be used to output the path to a resource or the resource itself."
           )

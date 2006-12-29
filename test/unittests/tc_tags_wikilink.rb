@@ -6,7 +6,7 @@ class WikiLinkTagTest < Webgen::TagTestCase
   plugin_files [
     'webgen/plugins/tags/wikilink.rb',
   ]
-  plugin_to_test 'Tags/WikiLinkTag'
+  plugin_to_test 'Tag/WikiLink'
 
 
   def test_process_tag

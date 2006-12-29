@@ -1,20 +1,21 @@
 ---
 title: Meta
 inMenu: true
+template: /plugin.template
+plugin: Tag/Meta
 dummyForMeta: This is content specified in the meta information section.
 ---
-h2. Information
+h2(#description). Description
 
-<notextile>{describe: MetaTag}</notextile>
-
-h2. Description
 
 The meta tag is used to copy meta information verbatim to the output file. For example, if you
 define a meta information with the key <code>revision</code>, you could put the tag
-<code>\{revision: }</code> into the content part of the file and the value gets substituted
+<code>\{revision: }</code> into a block of the page file and the value gets substituted
 automatically.
 
-h2. Examples
+
+h2(#examples). Examples
+
 
 There is a meta information called 'dummyForMeta' defined for this page, so when this tag
-is used @\{dummyForMeta:}@, you get this '@{dummyForMeta:}@'.
+@\{dummyForMeta:}@ is used, you get this '@{dummyForMeta:}@'.

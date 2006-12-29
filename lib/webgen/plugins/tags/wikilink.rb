@@ -26,7 +26,8 @@ module Tags
 
   class WikiLinkTag < DefaultTag
 
-    infos( :author => Webgen::AUTHOR,
+    infos( :name => 'Tag/WikiLink',
+           :author => Webgen::AUTHOR,
            :summary => 'Adds a link to a wiki page'
            )
 
@@ -39,11 +40,6 @@ module Tags
     set_mandatory 'rootURL'
     set_mandatory 'invalidChars'
     set_mandatory 'replacementChar'
-
-=begin
-TODO: move to do
-- used_meta_info 'title'
-=end
 
     register_tag 'wikilink'
 

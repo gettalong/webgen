@@ -25,7 +25,7 @@ class ResourceTagTest < Webgen::TagTestCase
 
   plugin_files ['webgen/plugins/coreplugins/resourcemanager.rb']
 
-  plugin_to_test 'Tags/ResourceTag'
+  plugin_to_test 'Tag/Resource'
 
   def test_process_tag
     css = @manager['Core/ResourceManager'].get_resource( 'webgen-css' )

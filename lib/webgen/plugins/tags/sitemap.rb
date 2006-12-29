@@ -28,7 +28,8 @@ module Tags
   # Generates a sitemap. The sitemap contains the hierarchy of all pages on the web site.
   class SitemapTag < DefaultTag
 
-    infos( :author => Webgen::AUTHOR,
+    infos( :name => 'Tag/Sitemap',
+           :author => Webgen::AUTHOR,
            :summary => 'Shows all page files of the website'
            )
 
@@ -39,11 +40,6 @@ module Tags
 
     register_tag 'sitemap'
 
-=begin
-TODO: move to doc
-- used meta info 'orderInfo' (orderInfo has to be an integer, not a float)
-- respects language (only shows pages in the current language)
-=end
 
     def process_tag( tag, chain )
       root = Node.root( chain.last )

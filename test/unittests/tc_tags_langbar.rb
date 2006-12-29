@@ -8,7 +8,7 @@ class LangbarTagTest < Webgen::TagTestCase
     'webgen/plugins/filehandlers/directory.rb',
     'webgen/plugins/filehandlers/page.rb',
   ]
-  plugin_to_test 'Tags/LangbarTag'
+  plugin_to_test 'Tag/Langbar'
 
 
   def test_process_tag

@@ -8,7 +8,7 @@ class DownloadTagTest < Webgen::TagTestCase
     'webgen/plugins/filehandlers/directory.rb',
     'webgen/plugins/filehandlers/copy.rb',
   ]
-  plugin_to_test 'Tags/DownloadTag'
+  plugin_to_test 'Tag/Download'
 
 
   def test_process_tag

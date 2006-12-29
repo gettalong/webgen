@@ -1,18 +1,33 @@
 ---
 title: WikiLink
 inMenu: true
+template: /plugin.template
+plugin: Tag/WikiLink
 ---
-h2. Information
+h2(#description). Description
 
-<notextile>{describe: WikiLinkTag}</notextile>
-
-h2. Description
 
 This tag can be used to add a link to a wiki page. It is used on this website to automatically
 provide a "Feedback" link for each page.
 
-table{border:1px solid black}.
-|_.Command|_.Output|
-|\{wikilink: }|{wikilink: }|
-|\{wikilink: {relURL: hallo}}|{wikilink: {relURL: hallo}}|
-|\{wikilink: {relURL: hallo, title: MoinMoin}}|{wikilink: {relURL: hallo, title: MoinMoin}}|
+
+h2(#examples). Examples
+
+
+<table class="examples">
+<tr>
+  <th>Usage</th><th>Output</th>
+</tr>
+<tr>
+  <td><notextile>\{wikilink: }</notextile></td>
+  <td><notextile>{wikilink: }</notextile></td>
+</tr>
+<tr>
+  <td><notextile>\{wikilink: {relURL: hallo}}</notextile></td>
+  <td><notextile>{wikilink: {relURL: hallo}}</notextile></td>
+</tr>
+<tr>
+  <td><notextile>\{wikilink: {relURL: hallo, linkText: MoinMoin}}</notextile></td>
+  <td><notextile>{wikilink: {relURL: hallo, linkText: MoinMoin}}</notextile></td>
+</tr>
+</table>

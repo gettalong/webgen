@@ -1,12 +1,11 @@
 ---
 title: Download
 inMenu: true
+template: /plugin.template
+plugin: Tag/Download
 ---
-h2. Information
+h2(#description). Description
 
-<notextile>{describe: DownloadTag}</notextile>
-
-h2. Description
 
 This tag is used to provide a nice download link. The download link includes the following parts:
 
@@ -15,9 +14,44 @@ This tag is used to provide a nice download link. The download link includes the
 * *link to file*: the link to the file
 * *file size*: the size of the file if it can be calculated
 
-h2. Examples
 
-table{border:1px solid black}.
-|_.Command|_.Output|
-|<notextile>\{download: {url: /images/screenshots/wge-image.png, alwaysShowDownloadIcon: true}}</notextile>|<notextile>{download: {url: /images/screenshots/wge-image.png, alwaysShowDownloadIcon: true}}</notextile>|
-|<notextile>\{download: download.page}</notextile>|<notextile>{download: download.page}</notextile>|
+h2(#mapping-file). Format of mapping file
+
+
+You can specify additional type-to-icon mappings using the parameter {param:
+Tag/Download:mappingFile} which needs to point to a file with the mappings. The format for the file
+is YAML and following is an example:
+
+<pre>
+file-mapping:
+    /images/mytype.jpg: [.my, .mytype]
+    /images/documents.jpg: [.wpd, .doc, .sxw, .odt, .rtf]
+
+resource-mapping:
+    webgen-icons-text: [.page, .template]
+</pre>
+
+The two possible top level keys are @file-mapping@ and @resource-mapping@. The first specifies which
+image file and the second which resource should be used for the specified extensions.
+
+
+h2(#examples). Examples
+
+
+<table class="examples">
+<tr>
+  <th>Usage</th><th>Output</th>
+</tr>
+<tr>
+  <td><notextile>\{download: {url: /images/thumb_example.jpg}}</notextile></td>
+  <td><notextile>{download: {url: /images/thumb_example.jpg}}</notextile></td>
+</tr>
+<tr>
+  <td><notextile>\{download: {url: /images/thumb_example.jpg, alwaysShowDownloadIcon: true}}</notextile></td>
+  <td><notextile>{download: {url: /images/thumb_example.jpg, alwaysShowDownloadIcon: true}}</notextile></td>
+</tr>
+<tr>
+  <td><notextile>\{download: download.page}</notextile></td>
+  <td><notextile>{download: download.page}</notextile></td>
+</tr>
+</table>

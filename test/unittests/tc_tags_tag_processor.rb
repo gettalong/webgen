@@ -45,9 +45,9 @@ class TagProcessorTest < Webgen::PluginTestCase
   end
 
   def test_registered_tags
-    assert_equal( {'resource'=>@manager['Tags/ResourceTag']}, @plugin.instance_eval { registered_tags } )
+    assert_equal( {'resource'=>@manager['Tag/Resource']}, @plugin.instance_eval { registered_tags } )
     add_tag( 'webgen/plugins/tags/meta.rb' )
-    assert_equal( {'resource'=>@manager['Tags/ResourceTag'], :default=>@manager['Tags/MetaTag']}, @plugin.instance_eval { registered_tags } )
+    assert_equal( {'resource'=>@manager['Tag/Resource'], :default=>@manager['Tag/Meta']}, @plugin.instance_eval { registered_tags } )
   end
 
   #######

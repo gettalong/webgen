@@ -8,7 +8,7 @@ class MenuTagTest < Webgen::TagTestCase
     'webgen/plugins/filehandlers/directory.rb',
     'webgen/plugins/filehandlers/page.rb',
   ]
-  plugin_to_test 'Tags/MenuTag'
+  plugin_to_test 'Tag/Menu'
 
 
   def test_create_menu_tree
