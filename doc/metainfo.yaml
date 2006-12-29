@@ -13,12 +13,12 @@ download.page:
 documentation/:
   orderInfo: 9
 
+examples/:
+  orderInfo: 10
+  inMenu: true
+
 images:
   indexFile: ~
-
-
-documentation/cli.page:
-  orderInfo: 1
 
 documentation/gettingstarted.page:
   orderInfo: 3
@@ -67,5 +67,5 @@ wiki.html:
   url: http://webgen.rubyforge.org/wiki/wiki.pl
   title: WikiWiki Web
   inMenu: true
-  orderInfo: 10
+  orderInfo: 11
 

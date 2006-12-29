@@ -24,6 +24,7 @@ begin
 rescue Exception
 end
 
+require 'fileutils'
 require 'rake/clean'
 require 'rake/packagetask'
 require 'rake/rdoctask'
@@ -62,19 +63,166 @@ task :install => [:prepare] do
   ruby "setup.rb install"
 end
 
-
+CLEAN.exclude( 'doc/src/documentation/plugins/core' )
 task :clean do
   ruby "setup.rb clean"
 end
 
 
-CLOBBER << "doc/output"
-desc "Builds the documentation"
-task :doc => [:rdoc] do
-  chdir 'doc' do
-    puts "\nGenerating online documentation..."
-    ruby %{-I../lib ../bin/webgen -V 2 }
+desc "Creates the whole documentation"
+task :doc => [:rdoc, :webgen_doc]
+
+
+CLOBBER << "doc/examples"
+CLOBBER << "doc/src/examples/website_templates"
+CLOBBER << "doc/src/examples/website_styles"
+CLOBBER << "doc/src/examples/gallery_styles"
+CLOBBER << "doc/plugin/gallery"
+desc "Creates the files for the examples section of the docu"
+task :create_examples do
+  require 'webgen/website'
+
+  # website templates
+  data = {}
+  data[:dirname] = 'Website Templates'
+  data[:desc]= "h2(#list). List of website templates
+
+The website templates open in an iframe when you use the menu items. Use the links provided below to
+open the website templates directly (fullscreen).
+
+Following is the list of all available website templates:
+"
+  data[:entries] = Webgen::WebSiteTemplate.entries
+  create_examples( 'website_templates', data, nil, 'default' )
+
+  # website styles
+  data = {}
+  data[:dirname] = 'Website Styles'
+  data[:desc]= "h2(#list). List of website styles
+
+The website styles open in an iframe when you use the menu items. Use the links provided below to
+open the website styles directly (fullscreen).
+
+Following is the list of all available website styles:
+"
+  data[:entries] = Webgen::WebSiteStyle.entries
+  create_examples( 'website_styles', data, 'project', nil )
+
+  # gallery styles
+  Webgen::GalleryStyle.entries.each do |name, entry|
+    puts "Creating example files for gallery style '#{name}'..."
+    mkdir_p( "doc/plugin/gallery/#{name}" )
+    FileUtils.cp( entry.plugin_files, "doc/plugin/gallery/#{name}" )
+    base_dir = "doc/src/examples/gallery_styles/#{name}"
+    mkdir_p( base_dir )
+    entry.copy_to( base_dir )
+
+    additional = case name
+               when 'slides' then "layouter: slides\nthumbnailResizeMethod: :cropped"
+               else ''
+               end
+    File.open( File.join( base_dir, "#{name}.gallery" ), 'w+' ) do |f|
+      f.write("title: index
+images: ../../images/*
+imagesPerPage: 8
+mainPageMetaInfo:
+  inMenu: true
+#{additional}
+---
+../../images/image01.jpg:
+  title: Chinese Garden
+  description: This picture show the Chinese Garden located in the outskirts of Vienna (Austria).
+
+../../images/image02.jpg:
+  title: Goldenes Dach
+  description: This is the landmark of Innsbruck (Tyrol, Austria), called the 'Goldene Dach' (golden roof).
+
+../../images/image03.jpg:
+  title: Mountains in Innsbruck
+  description: A view from the <a href='http://www.nordpark.com'>NordPark</a> in Innsbruck.
+
+../../images/image04.jpg:
+  title: Kristallwelten 1
+  description: The entry to the 'Kristallwelten' of <a href='http://www.swarovski.com'>Swarovski</a> in Innsbruck.
+
+../../images/image05.jpg:
+  title: Kristallwelten 2
+  description: On the roof of the building.
+
+../../images/image06.jpg:
+  title: Kristallwelten 3
+  description: Some crystals.
+
+../../images/image07.jpg:
+  title: Minimundus 1
+  description: A french castle
+
+../../images/image08.jpg:
+  title: Minimundus 2
+  description: A small copy of the <a href=''>Sagrada Familia</a> of Barcelona.
+
+../../images/image09.jpg:
+  title: Minimundus 3
+  description: The Stephansdom in Vienna.
+
+../../images/image10.jpg:
+  title: Minimundus 4
+  description: Overview of Minimundus, a place with smaller versions of famous buildings.
+
+../../images/image11.jpg:
+  title: Velden
+  description: Photo from Velden, Wörtersee, Carinthia, Austria
+
+../../images/image12.jpg:
+  title: Stockholm 1
+  description: A 300-year-old ship, the Wasa, located in the Wasamuseet in Stockholm.
+
+../../images/image13.jpg:
+  title: Stockholm 2
+  description: A fort near Stockholm.
+
+../../images/image14.jpg:
+  title: Stockholm 3
+  description: Overview of Gamla Stan (old town centre of Stockholm)
+
+../../images/image15.jpg:
+  title: Stockholm 4
+  description: View from a bridge in the direction of Gamla Stan
+
+../../images/image16.jpg:
+  title: Zakynthos 1
+  description: An isle that looks like a turtle
+
+../../images/image17.jpg:
+  title: Zakynthos 2
+  description: The oldest olive tree of Zakynthos.
+
+../../images/image18.jpg:
+  title: Zakynthos 3
+  description: The Navagio ship wreck, very famous Greek tourist destination.
+")
+    end
   end
+
+  data = {}
+  data[:dirname] = 'Gallery Styles'
+  data[:desc]= "h2(#list). List of gallery styles
+
+The gallery style example pages open in an iframe when you use the menu items. Use the links
+provided below to open the gallery style example pages directly (fullscreen).
+
+Following is the list of all available gallery styles:
+"
+  data[:entries] = Webgen::GalleryStyle.entries
+  create_example_index( "doc/src/examples/gallery_styles/index.page", data )
+
+end
+
+CLOBBER << "doc/output"
+desc "Generates the webgen documentation"
+task :webgen_doc => [:create_examples] do
+  puts "\nGenerating online documentation..."
+  ruby %{-Ilib bin/webgen -d doc -V 2 }
 end
 
 rd = Rake::RDocTask.new do |rdoc|
@@ -85,7 +233,6 @@ rd = Rake::RDocTask.new do |rdoc|
   rdoc.rdoc_files.include( 'lib/**/*.rb' )
 end
 
-CLOBBER << "test/webgen.log"
 task :test do
   ruby "-Ilib -Itest test/runtests.rb"
 end
@@ -137,34 +284,8 @@ task :gen_version do
   File.open( 'VERSION', 'w+' ) do |file| file.write( PKG_VERSION + "\n" ) end
 end
 
-task :gen_installrb do
-  puts "Generating install.rb file"
-  File.open( 'install.rb', 'w+' ) do |file|
-    file.write "
-require 'rpa/install'
-
-class Install_#{PKG_NAME} < RPA::Install::FullInstaller
-  name '#{PKG_NAME}'
-  version '#{PKG_VERSION}-1'
-  classification Application
-  build do
-    installdocs %w[COPYING ChangeLog TODO]
-    installdocs 'docs'
-    installrdoc %w[README] + Dir['lib/**/*.rb']
-    installdata
-  end
-  description <<-EOF
-#{PKG_SUMMARY}
-
-#{PKG_DESCRIPTION}
-  EOF
-end
-"
-    end
-end
-
-task :gen_files => [:gen_changelog, :gen_version, :gen_installrb]
-CLOBBER << "ChangeLog" << "VERSION" << "install.rb"
+task :gen_files => [:gen_changelog, :gen_version]
+CLOBBER << "ChangeLog" << "VERSION"
 
 Rake::PackageTask.new( PKG_NAME, PKG_VERSION ) do |p|
   p.need_tar = true
@@ -234,6 +355,56 @@ end
 
 # Misc tasks ###################################################################
 
+def create_examples( dir_name, data, template = nil, style = nil )
+  base_dir = 'doc/examples'
+  src_dir = 'doc/src/examples'
+
+  mkdir_p( File.join( src_dir, dir_name ) )
+  mkdir_p( File.join( base_dir, dir_name ) )
+  data[:entries].sort.each do |name, entry|
+    dir = File.join( base_dir, dir_name, name )
+    files_mtime = entry.files.collect {|f| File.mtime( f ) }.max
+    dir_mtime = File.mtime( dir ) rescue Time.parse("1970-1-1")
+    if dir_mtime < files_mtime
+      puts "Creating example files for #{dir_name} '#{name}'..."
+      rm_rf( dir )
+      Webgen::WebSite.create_website( dir, template || name, style || name )
+      File.open( File.join( dir, 'config.yaml' ), 'w+' ) do |f|
+        f.write( "Core/Configuration: \n"+
+                 "  outDir: ../../../output/examples/#{dir_name}/#{name}" )
+      end
+      Webgen::WebSite.new( dir ).render
+    end
+    File.open( File.join( src_dir, dir_name, "#{name}.page" ), 'w+' ) do |f|
+      f.write("---
+title: #{name}
+inMenu: true
+--- content, html
+<object type='text/html' data='#{name}/index.html' width='100%' height='600px' />
+")
+    end
+  end
+  create_example_index( File.join( src_dir, dir_name, "index.page" ), data )
+end
+
+def create_example_index( filename, data )
+  mkdir_p(  File.dirname( filename ) )
+  index = File.open( File.join( filename ), 'w+' )
+  index.puts("---
+title: Index
+directoryName: #{data[:dirname]}
+---
+#{data[:desc]}
+
+")
+  data[:entries].sort.each do |name, entry|
+    index.puts("* <a href='#{name}/index.html'>#{name}</a>\n\n")
+    entry.infos.sort.each do |info_name, info_value|
+      index.puts("  * *#{info_name.capitalize}*: #{info_value}")
+    end
+  end
+  index.close
+end
 
 def count_lines( filename )
   lines = 0

@@ -7,10 +7,7 @@ Copyright (C) 2006 Thomas Leitner
 You can build the documentation by executing
  $ rake doc
 
-or (if you don't have rake installed) by executing
- $ ruby -Ilib bin/webgen -d doc
-
-in the root of the package. Either command will build the documentation and place it in doc/output.
+in the root of the package. This command will build the documentation and place it in doc/output.
 
 This documentation is actually the same as the one on http://webgen.rubyforge.org. When releasing a new
 version of webgen, I run one of the above commands to create the pages and then only copy it to the
