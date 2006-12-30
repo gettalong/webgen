@@ -1,0 +1,61 @@
+---
+title: XmlBuilder
+inMenu: true
+template: /plugin.template
+plugin: ContentConverter/XmlBuilder
+---
+h2(#description). Description
+
+
+This plugin can be used to programatically create XHTML/XML documents
+("Reference":http://builder.rubyforge.org). The top builder object is provided through the @xml@
+object.
+
+
+h2(#examples). Examples
+
+
+Following is a short example on how to use this plugin in a page file which generates a custom XML
+document (the block has to be valid Ruby!):
+
+<pre>
+\---
+outputNameStyle: [:name, ['.', :lang], '.xml']
+title: Person Object
+\--- content, xmlbuilder
+xml.persons do |p|
+  xml.person do |b|
+    b.firstname('Thomas')
+    b.lastname('Leitner')
+  end
+  xml.person do |b|
+    b.firstname('Other first')
+    b.lastname('Other last')
+  end
+end
+</pre>
+
+The above will produce the following output:
+
+<pre>
+<persons>
+  <person>
+  <firstname>Thomas</firstname>
+  <lastname>Leitner</lastname>
+  </person>
+  <person>
+    <firstname>Other first</firstname>
+    <lastname>Other last</lastname>
+  </person>
+</persons>
+</pre>
+
+
+h2(#caveat). Caveat
+
+
+This plugin is only available if you have installed the
+"builder":http://builder.rubyforge.org library. The preferred way to do this is via
+Rubygems:
+
+  gem install builder

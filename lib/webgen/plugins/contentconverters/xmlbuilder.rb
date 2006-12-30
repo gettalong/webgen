@@ -41,10 +41,6 @@ load_optional_part( 'content-converter-xmlbuilder',
 
       register_handler 'xmlbuilder'
 
-=begin
-TODO: move to doc
-- the xml builder object is provided through the xml object in an XML builder block
-=end
 
       def call( content )
         xml = Builder::XmlMarkup.new( :indent => 2 )

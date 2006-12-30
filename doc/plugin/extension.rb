@@ -146,11 +146,7 @@ class DescribeTag < Tags::DefaultTag
     s += row['Handled paths', data.infos[:path_patterns].collect {|rank, path| CGI::escapeHTML( path )}.join('<br />')] if data.infos[:path_patterns]
     s += row['Default Meta Information', "<pre>" + CGI::escapeHTML( data.infos[:default_meta_info].to_yaml.sub( /\A---\s*\n/m, '') ) + "</pre>"] if !data.infos[:default_meta_info].nil? && !data.infos[:default_meta_info].empty?
 
-    # Show all registered handlers
-    # TODO use new style
-    #data.table.keys.find_all {|k| /^registered_/ =~ k.to_s }.each do |k|
-    #  s += row[k.to_s.sub( /^registered_/, '' ).tr('_', ' ').capitalize + " name", data.send( k )]
-    #end
+    s += row['Handler name', data.infos[:handler_for]] if data.infos[:handler_for]
 
     s += "</table>"
   end
