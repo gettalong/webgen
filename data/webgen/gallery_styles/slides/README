@@ -4,6 +4,12 @@ description:
   This style was done after reading an article by Corban Brook on rendering
   collages with Ruby and RMagick.
 
+usage:
+  This style uses a layouter plugin for creating the collage and slide backgrounds. Therefore you
+  have to explicitly specify in the gallery file that you want to use the layouter slides. The
+  plugin also only generates images if they do not exist. So, if there is already a collage image, a
+  new one will not be created.
+
 author:
   Thomas Leitner (original collage creation routine by Corban Brook)
 

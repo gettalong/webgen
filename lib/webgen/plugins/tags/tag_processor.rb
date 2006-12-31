@@ -227,7 +227,15 @@ module Tags
       end
     end
 
-    # Default implementation for processing a tag.
+    # Default implementation for processing a tag. The parameter +tag+ specifies the name of the tag
+    # which should be processed (useful for tag plugins which process different tags).
+    #
+    # The +node_chain+ parameter holds all relevant nodes. The first node in the chain is always the
+    # node in which the tag was found (a template )and the last node is the current node, i.e. the
+    # page node which triggered all this. The nodes between are other template nodes.
+    #
+    # The method has to return the result of the tag processing and, optionally, a modified chain
+    # (as second result). The second value is currently only returned by the block tag.
     #
     # Has to be overridden by subclasses!!!
     def process_tag( tag, node_chain )

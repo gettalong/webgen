@@ -376,8 +376,8 @@ module FileHandlers
 
     # Asks the plugin to create a node for the given +path+ and the +parent+, using +meta_info+ as
     # default meta data for the node. Should return the node for the path (the newly created node
-    # or, if a node with the path already exists, the existing one) or nil if the node could not be
-    # created.
+    # or, if a node with the path already exists, the existing one) or +nil+ if the node could not
+    # be created.
     #
     # Has to be overridden by the subclass!!!
     def create_node( path, parent, meta_info )

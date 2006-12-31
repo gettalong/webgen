@@ -84,7 +84,7 @@ module Webgen
 
       # Add a dependency to the plugin, ie. the name of another plugin. Dependencies are
       # instantiated before the plugin gets instantiated. So only add those plugins here that you
-      # need to reference/use in the initialize method!
+      # need to reference/use in the initialize method! The parameters have to be Strings!
       def depends_on( *dep )
         dep.each {|d| self.config.dependencies << d}
       end
@@ -468,6 +468,10 @@ module Webgen
   DEFAULT_PLUGIN_LOAD_PROC = proc do
 
     # THE base class for all plugins.
+    #
+    # Information about a plugin can be set via the class method +infos+. If no name for the plugin
+    # is set, then the full plugin class name (including the namespace modules) is used, with
+    # slashes instead of the double colons.
     class Plugin
 
       include PluginDefs
