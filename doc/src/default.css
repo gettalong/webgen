@@ -326,7 +326,7 @@ p {
   padding: 3px 0px;
 }
 
-/*** Styles for plugin pages ***/
+/*** Other Styless ***/
 /*******************************/
 
 table.plugin-info {
@@ -398,4 +398,19 @@ table.resources th, table.resources td {
 .menu-example-horiz .webgen-menu-item-selected a, .menu-example-horiz .webgen-menu-submenu-inhierarchy a, .menu-example-horiz .webgen-menu-item-selected span, .menu-example-horiz .webgen-menu-submenu-inhierarchy span {
   background-color: #880000;
   color: white;
+}
+
+
+
+
+table.metainfo {
+  width: 100%;
+  border: 1px solid black;
+  border-collapse: collapse;
+  margin-bottom: 10px;
+}
+
+table.metainfo th, table.metainfo td {
+  border: 1px solid black;
+  padding: 2px;
 }

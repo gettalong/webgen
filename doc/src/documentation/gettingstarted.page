@@ -130,6 +130,9 @@ example:
   $ webgen use website_style default
 </pre>
 
+Existing files may be overwritten be this command (after asking). However, this command is not able
+to delete previously copied website style files, so you have to remove them yourself!
+
 Have a look at the <a href="{relocatable: /examples}">examples</a> sections to see demonstrations
 for all shipped website templates and styles!
 

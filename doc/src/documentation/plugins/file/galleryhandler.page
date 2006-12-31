@@ -56,7 +56,9 @@ $ wegben use gallery_style STYLE
 </pre>
 
 This copies all normal gallery style files from the gallery style to the source directory and all
-plugins to the plugin directory.
+plugins to the plugin directory, maybe overwritting files (you are asked before copying if you would
+like to procede). However, this command is not able to delete previously copied gallery style files,
+so you have to remove them yourself.
 
 For information about how a gallery style can be created have a look at TODO(link) extending webgen
 section!

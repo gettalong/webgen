@@ -8,15 +8,89 @@ h2. Meta Information Reference
 Following is a list of all the meta information items that are used in one way or another by a
 plugin, be it a file handler plugin, a tag plugin...
 
-table{border: 1px solid black}.
-|_. Name         |_. Type  |_. Example    |_. Valid for   |_. Description|
-|*blocks*        |Hash     |\{format: markdown, name: sidebar}|Page file|Sets the name and format of content blocks.|
-|*directoryName* |String   |Img Directory |Page file      |Only used if set on a directory index page file; specifies the title of the directory for which it is the index file. If it is not specified, the title of the directory  will be used.|
-|*indexFile*     |String   |getting.page  |Directory      |Sets the directory index file for the directory overriding the default value.|
-|*inMenu*        |Boolean  |true          |Any            |Specifies if the file/directory should appear in menus.|
-|*lang*          |String   |de            |Page file      |Sets the language for the page file. Has to be the two character code for the language.|
-|*orderInfo*     |Integer  |15            |Any            |Sets the orderering information for the file/directory.|
-|*template*      |String   |my.template   |Page file      |Sets the template for the page file overriding the default value.|
-|*title*         |String   |New Title     |Any            |Sets the title for the file/directory.|
-|*useERB*        |Boolean  |false         |Page file      |Specifies if the content blocks of the page file should be processed with ERB overriding the default value.|
-|*emoticonPack*  |String   |bigeyes       |Page file      |Sets the emoticon package which should be used for the page.|
+<table class="metainfo">
+<tr>
+  <th>Name</th><th>Type</th><th>Example</th><th>Valid for</th><th>Description</th>
+</tr>
+<tr>
+  <th>blocks</th>
+  <td>Array of Arrays</td>
+  <td>[[content, markdown], [sidebar, html]]</td>
+  <td>Page/Template file</td>
+  <td>Sets the name and format of content blocks. Each sub-array contains, in this order, the name
+      of the block and its format.</td>
+</tr>
+<tr>
+  <th>directoryName</th>
+  <td>String</td>
+  <td>Image Directory</td>
+  <td>Page file</td>
+  <td>Only used if set on a directory index page file; specifies the title of the directory for
+      which it is the index file. If it is not specified, the title of the directory will be
+      used.</td>
+</tr>
+<tr>
+  <th>indexFile</th>
+  <td>String</td>
+  <td>getting.page</td>
+  <td>Directory</td>
+  <td>Sets the directory index file for the directory overriding the default value.</td>
+</tr>
+<tr>
+  <th>inMenu</th>
+  <td>Boolean</td>
+  <td>true</td>
+  <td>Any</td>
+  <td>Specifies if the file/directory should appear in menus.</td>
+</tr>
+<tr>
+  <th>lang</th>
+  <td>String</td>
+  <td>de</td>
+  <td>Page file</td>
+  <td>Sets the language for the page file. Has to be a valid ISO-639-1/2 character code for the language.</td>
+</tr>
+<tr>
+  <th>orderInfo</th>
+  <td>Integer</td>
+  <td>15</td>
+  <td>Any</td>
+  <td>Sets the ordering information for the file/directory.</td>
+</tr>
+<tr>
+  <th>template</th>
+  <td>String</td>
+  <td>my.template</td>
+  <td>Page/Template file</td>
+  <td>Sets the template for the page/template file overriding the default value.</td>
+</tr>
+<tr>
+  <th>title</th>
+  <td>String</td>
+  <td>New Title</td>
+  <td>Any</td>
+  <td>Sets the title for the file/directory.</td>
+</tr>
+<tr>
+  <th>useERB</th>
+  <td>Boolean</td>
+  <td>false</td>
+  <td>Page/Template file</td>
+  <td>Specifies if the content blocks of the page/template file should be processed with ERB overriding the default value.</td>
+</tr>
+<tr>
+  <th>linkAttrs</th>
+  <td>Hash</td>
+  <td>{title: Hallo, class: extra}</td>
+  <td>Any</td>
+  <td>Specifies additional attribute-value pairs (in form of a Hash) that should be added to a link to the file/directory.</td>
+</tr>
+<tr>
+  <th>emoticonPack</th>
+  <td>String</td>
+  <td>bigeyes</td>
+  <td>Page file</td>
+  <td>Sets the emoticon package which should be used for the page.</td>
+</tr>
+</table>
+

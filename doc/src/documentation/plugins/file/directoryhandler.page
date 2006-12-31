@@ -17,6 +17,11 @@ This meta information is set by default and can be overridden globally by using 
 setting it on individual directories using the TODO(use new link tag) "meta information backing
 file":{relocatable: ../core/filehandler.page#metainfo-backing}".
 
+The title for a directory can be set via the @title@ meta information on the directory itself.
+However, if the directory has an index file, the meta information @directoryName@ of the index file
+is used for the directory title. This allows different directory names based on the current
+language.
+
 Normally, webgen shows a warning if it could not find the directory index file for a directory.
 However, there are most certainly directories which should not have an index file, e.g. a directory
 with only images. To prevent webgen from displaying warnings for such directories, you can set a
