@@ -2,51 +2,158 @@
 title: Getting Started
 inMenu: true
 ---
-h1. Getting Started with webgen
+h1(#basics). Basics
 
-h2. The Needed Directories
 
-webgen utilizes the following directories. These directories are in the direcctory in which the
-webgen command is issued.
+h2(#directories). The Needed Directories
 
-* @src@: The source directory in which all the source files for the website are.
 
+webgen needs a special directory structure so that it can work correctly. Basically, you have a
+website directory under which the following directories have to be:
+
+* @src@: The source directory in which all the source files for the website are. The name of this
+  directory cannot be changed!
 * @output@: This directory is created, if it does not exist, when webgen is run. All the output
-            files are put into this directory
-
-* @log@: If the logging mechanism is configured to write the log messages to files, this is the
-         directory where the log files will be. It will be created if it does not exist.
-
+  files are put into this directory. The name of this directory and its location can be customized
+  using the parameter {param: Core/Configuration:outDir}.
 * @plugin@: The extension directory. You can put self-written plugins into this directory so that
-            they can be used by webgen. All <tt>*.rb</tt> files in this directory and its
-            subdirectories are loaded as plugins.
+  they can be used by webgen. All <notextile><tt>*.rb</tt></notextile> files in this directory and
+  its subdirectories are loaded as plugins. The name of this directory can't be customized, too!
 
-h2. Create basic website structure
+The directory in which these directories are in is called the *website directory*.
 
-And now, let's make a website!
 
-First, you need to create the basic directories. You can let webgen do this:
+h2(#cmdline). The @webgen@ Command
+
+
+The executable for webgen is called... webgen ;-) It uses a command style syntax (like Subversion's
+@svn@ or Rubygem's @gem@ commands) through the "cmdparse":http://cmdparse.rubyforge.org library. To
+get an overview of the possible commands run
 
 <pre>
-~ > webgen create sample_site
+  $ webgen help
+</pre>
+
+This will output something like this:
+
+<pre>
+Usage: webgen [options] COMMAND [options] [COMMAND [options] ...] [args]
+
+Available commands:
+  check          Checks things like validity of the config file or the availability of optional libraries
+    config         Checks the validity of the configuration and outputs the used options (=default command)
+    libs           Checks the availability of optional libraries used by plugins
+  create         Creates the basic directories and files for webgen.
+  help           Provide help for individual commands
+  run            Runs webgen, ie. generates the HTML files (=default command)
+  show           Shows various information
+    config         Shows information like the parameters for all or the matched plugins
+    plugins        Shows the available plugins
+  use            Changes the used website or gallery styles
+    gallery_style  Changes the used gallery style
+    website_style  Changes the used website style
+  version        Show the version of the program
+
+Global options:
+    -d, --directory DIR              The website directory, if none specified, current directory is used.
+    -V, --verbosity LEVEL            The verbosity level (0-3)
+    -h, --help                       Show help
+    -v, --version                    Show the version of the program
+</pre>
+
+
+As you can see, webgen supports many commands, from checking the validity of the configuration and
+the available libraries to displaying the configuration values. However, the main command is the
+@run@ command which does the actual website generation. This command uses the current working
+directory as website directory if none was specified via the @-d@ option.
+
+For more information on how the commands work have a look at the
+"cmdparse":http://cmdparse.rubyforge.org documentation!
+
+
+h2(#config). Configuration
+
+
+webgen provides a default configuration out of the box. If you can live with that, you do not need
+to write any configuration files. Because most people cannot, you can use your own configuration
+file. The configuration file has to be written in YAML and is called @config.yaml@. webgen assumes
+it to be in the website directory.
+
+Each plugin can specify parameters which can be configured through the configuration file. You can
+display a list of all available parameters by running
+
+<pre>
+  $ webgen show config
+</pre>
+
+(This information is also provided on this website, have a look at the
+<a href="{relocatable: plugins}">plugins section</a>!)
+
+The list shows sorted by the plugin name the current values and the default values for each
+parameter. Each parameter can be overridden in the configuration file by specifing the plugin name
+as top level key and each parameter and value as a key/value pair. Therefore a configuration file
+looks like this (this is the one for the webgen homepage):
+
+<pre class="webgen-file">{includeFile: ../../config.yaml}</pre>
+
+
+h1(#website-creation). Website Creation Tutorial
+
+
+This short tutorial shows you how to create a website with webgen.
+
+
+h2(#website-structure). Creating the Basic Directories
+
+
+First, you need to create the basic directories. You can either do this by hand or you can let
+webgen do this:
+
+<pre>
+  $ webgen create sample_site
 </pre>
 
 webgen created the @sample_site@ directory which holds all directories necessary for running webgen.
-So you can run webgen to create your website. Just change into the @sample_site@ directory and run
-webgen
+
+The @create@ command also accepts two options: one for a website template and one for a website
+style:
+
+* A *website template* defines a structure for your website. For example, the @project@ template
+  defines several pages including a features and about page.
+* A *website style* defines the look and feel of your website. webgen comes with some predefined
+  styles which you can use (most of them are converted open source web design styles).
+
+You can change the website style later by using the @use website_style@ command for @webgen@, for
+example:
 
 <pre>
-~ > cd sample_site
-~/sample_site > webgen
+  $ webgen use website_style default
 </pre>
+
+Have a look at the <a href="{relocatable: /examples}">examples</a> sections to see demonstrations
+for all shipped website templates and styles!
+
+Now you can run webgen to create your website. There are two possibilities:
+
+* Either change into the @sample_site@ directory and run webgen there, like this
+  <pre>
+  $ cd sample_site
+  sample_site $ webgen
+  </pre>
+* Or you can run webgen like this
+  <pre>
+  $ webgen -d sample_site
+  </pre>
 
 Easy! webgen has parsed the @src@ directory and has created the HTML output. However, as we did not
 write any content yet, there is not much to see (only the default page). So let's do that now!
 
-h2. Add Content to the Website
+
+h2(#website-content). Adding Content to the Website
+
 
 When using the @create@ command, webgen does not only create the needed directories but it also
-provides you with some default files:
+provides you with some default files, you should have at least the following ones:
 
 * @src/default.template@: The default template for the new website.
 * @src/default.css@: The default css file for the new website.
@@ -64,24 +171,22 @@ inMenu: true
 This is a sample page with the title "{title:}" and it is in the menu!!!
 </pre>
 
-After that, run webgen in the @sample_site@ directory and then open @output/index.html@ to view your
-website.
+After that, run webgen and then open @output/index.html@ to view your website.
 
-Just add page files and other content to your website and let it grow!
+Then just add page files and other content to your website and let it grow!
 
-h2. Using Meta Information in Pages
 
-Meta information is specified at the beginning of a page file. Have a look at the
-<a href="{relocatable: plugins/filehandlers/page.page}">documentation</a> to see how that is done
-in detail!
+h2(#website-metainfo). Using Tags and Meta Information in Pages
+
+
+Meta information is specified at the beginning of a page file. Have a look at the TODO(link -
+webpage description format) to see how that is done in detail!
 
 We are now going to use meta information to customize our website! Open the file @default.template@
 and add this before the &lt;/body&gt; tag:
 
 <pre>
-  <div class="bar">
-    File last changed on \{filemdate: }!
-  </div>
+  File last changed on \{filemdate: }!
 </pre>
 
 The part @\{filemdate: }@ is called a tag. Tags are implemented using plugins and they can be used to
@@ -111,7 +216,9 @@ Run webgen and view the output! The tag @\{filemdate: }@ got substituted by the 
 the meta information. As we have not put any meta information in the @index.page@ file, a warning is
 issued when webgen is run and no date is shown on the page!
 
-h2(#simple-plugin). Write a Simple Plugin
+
+h2(#website-plugin). Writing a Simple Plugin
+
 
 Because we are not quite happy with our basic file modification time tag, we are going to write a
 simple tag plugin.
@@ -119,21 +226,15 @@ simple tag plugin.
 Create the file @plugin/filemdate.rb@ with the following content:
 
 <pre>
-require 'webgen/plugins/tags/tag_processor'
+class FileMDateTag < Tags::DefaultTag
 
-module Tags
+  infos( :name => 'Custom/FileMDate',
+         :summary => "Puts the modification time of the file on the page" )
 
-  class FileMDateTag < DefaultTag
+  register_tag 'filemdate'
 
-    summary "Puts the modification time of the file on the page"
-    depends_on 'Tags'
-
-    tag 'filemdate'
-
-    def process_tag( tag, node, refNode )
-      return File.mtime( node.recursive_value( 'src' ) ).to_s
-    end
-
+  def process_tag( tag, chain )
+    return File.mtime( chain.last.node_info[:src] ).to_s
   end
 
 end
@@ -144,3 +245,11 @@ encountered. We can now safely remove the @filemdate@ meta info from the file @h
 you can leave it there - it won't do any harm.
 
 Again, just run webgen and view the output!
+
+
+h2(#website-conclusio). Conclusion
+
+
+You have just created a simple static website using webgen. For further information on how to
+procede from here have a look at the <a href="{relocatable: plugins}">plugins section</a> and the
+other documentation.

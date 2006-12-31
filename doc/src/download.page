@@ -2,7 +2,8 @@
 title: Download &amp; Installation
 inMenu: true
 ---
-h2. Download
+h2(#download). Download
+
 
 The newest version of webgen can be downloaded from Rubyforge.
 
@@ -10,36 +11,55 @@ Homepage: "webgen.rubyforge.org":http://webgen.rubyforge.org
 
 Download: "http://rubyforge.org/frs/?group_id=296":http://rubyforge.org/frs/?group_id=296
 
-h2. Dependencies
+
+h2(#deps). Dependencies
+
 
 * "cmdparse":http://cmdparse.rubyforge.org version 2.0.0 or higher
-* "RedCloth":http://redcloth.rubyforge.org version 2.0.10 or higher if you want Textile support
-* "BlueCloth":http://www.deveiate.org version 1.0.0 or higher if you want Markdown support
-* "RMagick":http://rmagick.rubyforge.org/ version 1.7.1 or higher if you want automatic thumbnail
-  creation for image galleries
 
-h2. Installation
+* [optional] "RedCloth":http://redcloth.rubyforge.org version 2.0.10 or higher if you want Textile
+  support
 
-There are many ways to install webgen. Choose the one you like best:
+* [optional] "BlueCloth":http://www.deveiate.org version 1.0.0 or higher if you want Markdown
+  support
 
-* Via RPA
- <pre>
-  $ rpa install webgen
- </pre>
+* [optional] "RMagick":http://rmagick.rubyforge.org/ version 1.7.1 or higher if you want automatic
+  thumbnail creation for image galleries
 
-* Via RubyGems
- <pre>
+* [optional] "builder":http://builder.rubyforge.org/ version 2.0.0 or higher if you want programatic
+  HTML/XML file generation
+
+* [optional] "exifr":http://exifr.rubyforge.org/ version 0.9.4 or higher if you want to be able to
+  have EXIF information available for image galleries
+
+* [optional] "coderay":http://coderay.rubychan.de/ version 0.7.4.215 or higher if you want syntax
+  highlighting to be available for certain plugins
+
+
+All the optional libraries can be installed via Rubygems (which I recommend). You can check the
+availability of the libraries by executing
+
+  $ webgen check libs
+
+The output tells you whether webgen has been able to load the optional libraries or not!
+
+
+h2(#installation). Installation
+
+
+The easiest way to install webgen is via Rubygems
+
   $ gem install webgen
- </pre>
 
-* The do-it-yourself way
- <pre>
+However, you can also use the included @setup.rb@ installation method:
+
   $ ruby setup.rb config
   $ ruby setup.rb setup
   $ ruby setup.rb install
- </pre>
 
-* The simplified do-it-yourself way
- <pre>
+Or all commands together via
+
   $ rake install
- </pre>
+
+
+The above listed methods also work when installing on Windows (preferred way is via Rubygems).

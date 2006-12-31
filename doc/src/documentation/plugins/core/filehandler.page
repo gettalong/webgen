@@ -26,7 +26,8 @@ h2(#filehandling). Handling of files in the source directory
 
 Following is the list of rules how files in the source directory are handled by webgen:
 
-# All file/directory names in the source directory are fetched
+# All file/directory names in the source directory are fetched (actually, only those file/directory
+  names without a leading dot)
 # Those files which match an {param: Core/FileHandler:ignorePaths} pattern are excluded
 # The path patterns for each file handler plugin are matched against the remaining files and all
   matching files are then handled by the file handler plugin

@@ -3,12 +3,22 @@ directoryName: Documentation
 ---
 h2. Information
 
+
 p={font-size: 150%; color: red}. *!!! This documentation is for webgen {version: } !!!*
 
-The source files for this website are in the @doc/src@ directory of the webgen package. Have a look
-at them to see a real world example on how to use webgen!
+The source files for this website are in the @doc/src@ directory of the webgen distribution. Have a
+look at them to see a real world example on how to use webgen!
+
+
+h2. Spelling of the name "webgen"
+
+
+I often see that the name of the program is misspelled: WebGen, Webgen, WEBGEN, ... It is just
+*webgen*, all lower case!
+
 
 h2. Philosophy
+
 
 There are some things about webgen which I think are important to mention. It's about how webgen
 works and what you can expect when you start webgen.
@@ -16,9 +26,9 @@ works and what you can expect when you start webgen.
 * <b>webgen runs till the end and does not stop on errors!</b>
 
   I did not like it when webgen stopped because there was an error in the configuration file or an
-  error in a page description file. So if something exceptional happens it is logged so that the
-  user can see what happened and a useful default alternative is used instead. For example, if no
-  default template was found in the source directory, a dummy template is used instead.
+  error in a page file. So if something exceptional happens it is logged so that the user can see
+  what happened and a useful default alternative is used instead. For example, if no default
+  template was found in the source directory, a dummy template is used instead.
 
   Therefore it is also not necessary to install the dependencies (although you would be wise to do
   it, so that you can use all the features of webgen). If a dependency is not found (e.g. RedCloth
@@ -35,26 +45,3 @@ works and what you can expect when you start webgen.
   informational and debug messages. For the normal user, the error and warning messages are
   important. Developers who extend webgen by writing a new plugin can use the informational and
   debug messages to see what is going on and to help them develop the plugin.
-
-h2. Configuration
-
-webgen provides a default configuration out of the box. If you can live with that, you do not need
-to write any configuration files. Because most people cannot, you can use your own configuration
-file. The configuration file has to be written in YAML and is called @config.yaml@. webgen searches
-in the current directory for the configuration file.
-
-If you want to get the configuration values you can run webgen like this
-<pre>
-  $ webgen show config
-</pre>
-
-(This information is also provided on this website, have a look at the
-<a href="{relocatable: plugins}">plugins section</a>!)
-
-The list shows sorted by the plugin name the current values and the default values for each
-parameter. Each parameter can be overridden in the configuration file by specifing the
-plugin name as top level key and each parameter and value as a key/value pair. A configuration file
-looks like this:
-
-<pre class="webgen-file">{includeFile: ../../config.yaml}</pre>
-
