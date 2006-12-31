@@ -77,7 +77,15 @@ module Webgen
       end
 
       # Sets general information about the plugin (summary text, description, ...). The parameter
-      # has to be a Hash.
+      # has to be a Hash. The following fields are recognized:
+      # :name::        The name of the plugin. Should be of the form Namespace/Namespace/name and
+      #                should contain only alphanumeric characters.
+      # :summary::     Summary of what the plugin does
+      # :description:: Extended description of the functionality
+      # :author::      The author of the plugin
+      # :instantiate:: Boolean value defining whether an instance of this plugin should be created
+      # :is_base_plugin:: Boolean value defining whether the plugin class is available from a plugin
+      #                   loader/manager after loading
       def infos( param )
         self.config.infos.update( param )
       end
@@ -139,6 +147,7 @@ module Webgen
 
   class ::Object
 
+    # This method should be used instead of +require+ when loading a plugin file.
     def load_plugin( file )
       file = file + '.rb' unless /\.rb$/ =~ file
       wrapper, do_load = callcc {|cont| throw :load_plugin_file?, [cont, file]}
@@ -154,6 +163,11 @@ module Webgen
       wrapper.module_eval( File.read( realfile ), file, 1 ) if do_load
     end
 
+    # Used to load optional parts. You have to specify a unique +name+ for the optional part and
+    # options with some information about it. The following keys can be used:
+    # :needed_gems:: an array of Rubygem's gem names that are required for the part
+    # :error_msg::   error message that should be displayed if the part can't be loaded
+    # :info::        information about what the part does
     def load_optional_part( name, options = {} )
       options[:loaded] = true
       begin
@@ -188,7 +202,8 @@ module Webgen
 
     # Loads all plugin classes in the given +dir+ and in its subdirectories. Before +require+ is
     # actually called the path is trimmed: if +trimpath+ matches the beginning of the string,
-    # +trimpath+ is deleted from it.
+    # +trimpath+ is deleted from it. The loaded classes are wrapped in the wrapper module and won't
+    # pollute the namespace.
     def load_from_dir( dir, trimpath = '')
       Find.find( dir ) do |file|
         trimmedFile = file.gsub(/^#{trimpath}/, '')
@@ -197,7 +212,8 @@ module Webgen
       end
     end
 
-    # Loads all plugin classes specified in the +file+.
+    # Loads all plugin classes specified in the +file+.The loaded classes are wrapped in the wrapper
+    # module and won't pollute the namespace.
     def load_from_file( file )
       load_from_block do
         cont, file = catch( :load_plugin_file? ) do
@@ -210,7 +226,8 @@ module Webgen
       end
     end
 
-    # Loads all plugin classes which get declared in the given block.
+    # Loads all plugin classes which get declared in the given block. Be aware that this method does
+    # not put the classes into the wrapper module!
     def load_from_block( &block )
       cont, klass = catch( :plugin_class_found ) do
         cont, name, options = catch( :load_optional_part ) { yield }
