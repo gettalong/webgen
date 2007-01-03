@@ -137,20 +137,6 @@ class WebPageData
   private
   #######
 
-=begin
-TODO: MOVE TO DOC
-- format is called WebPage Description Format, a file using this format is called a page file
-- page file consists of optionally one meta info block at beginning, 1 to n content blocks
-- meta info block is YAML
-- default name for block if none specified (ie. no explicit name in --- line or in blocks meta info of correct index) is 'content' (precedence (low to high): default, blocks meta info, --- line)
-- default for block format (ie. if non in --- line or in blocks meta info of correct index) called 'default', precedence as above
-- block names have to be unique
-- escaped block separators in blocks are unescaped and leading/trailing whitespace stripped off
-- if first line contains only --- (with optional trailing space), then the first block is considered to be a meta information block
-  else it is a content block
-=end
-
-
   def parse( data )
     @blocks = {}
     blocks = data.scan( /(?:(?:^--- *(?:(\w+) *(?:, *(\w+) *)?)?$)|\A)(.*?)(?:(?=^---.*?$)|\Z)/m )

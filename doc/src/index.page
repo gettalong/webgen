@@ -3,9 +3,16 @@ title: HomePage
 inMenu: true
 directoryName: webgen
 ---
-h2. Welcome
+h2. About _webgen_
 
-... to the homepage of _*webgen*_, a template based static website generator.
+webgen is used to generate web pages from page and template files. You create one or more template
+files in which you define the layout of your page and where the content should go. After that you
+create page files in which you only define the content.
+
+When webgen is run it combines the template with each of the page files and generates the HTML
+output files. During this process special tags are substituted so that, for example, a menu is
+generated. Actually, this website was generated with webgen and, for example, the menu that you can
+see was created dynamically. For more information look at the documentation!
 
 This whole site was generated with webgen and provides an online demonstration of its features.
 Choose from the menu what you want to see from or know about webgen!
@@ -16,105 +23,10 @@ can "report it here!":http://rubyforge.org/tracker/?atid=1207&group_id=296&func=
 are "forums":http://rubyforge.org/forum/?group_id=296 and a "mailing
 list":http://rubyforge.org/mail/?group_id=296 available if you have any questions!
 
-h2. News
 
-<b>??.12.2005 - webgen 0.3.8 release!!!</b>
+h2. Author
 
-Bug fix release
-
-<b>27.11.2005 - webgen 0.3.7 released!!!</b>
-
-Major changes:
-
-* Now using cmdparse version 2.0.0!
-* %{color:red}Attention%: For unified naming in reference to image galleries, I have removed all occurences of the word "picture" from the code and documentation and replaced it with "image". Therefore you may need to adapt your code, especially custom gallery layouters!
-* %{color:red}Attention%: Many documentation and library files have been renamed for better consistency! Custom plugins may have to be adapted!
-* <b>New <a href="{relocatable: /documentation/webgen_gallery_editor.page}">application</a></b> for managing image galleries (only alpha quality currently!)
-* Smileys are now optionally replaced with emoticons (<notextile>:-) ;-) :'-( 8-)</notextile>, several different emoticon packs available) -> see <a href="{relocatable: documentation/plugins/miscplugins/smileyreplacer.page}">SmileyReplacer</a>
-* <a href="{relocatable: documentation/extending_webgen.page}">Site specific commands</a> (used in command line processing) can now be used
-* New plugin <a href="{relocatable: documentation/plugins/tags/download.page}">Download Tag</a> for nice download links
-* New parameters: <a href="{relocatable: documentation/plugins/filehandlers/page.page}">PageFileHandler:defaultPageMetaData</a>, <a href="{relocatable: documentation/plugins/tags/sitemap.page}">SitemapTag:honorInMenu</a>
-* Removed parameters: PageFileHandler:useERB, PageFileHandler:defaultContentFormat
-* Renamed tag <b>navbar</b> to <b>breadcrumbTrail</b>
-* Images in image galleries can now be ordered by specifying the @orderInfo@ meta information
-* The use of directory index files is now optional: by setting the parameter <a href="{relocatable: documentation/plugins/filehandlers/directoryhandler.page}">DirectoryHandler:indexFile</a> to nil directory index files are not used
-* Languages can now be specified using 2-char ISO-639-1 codes or 3-char ISO-639-2 codes
-* Now there is a link (next to the wiki link) to the source of each page unless the page was programmatically generated.
-
-<b>24.06.2005 - webgen 0.3.5 released!!!</b>
-
-Major changes:
-
-* Now using cmdparse version 1.0.3!
-* New CLI command "clean" for deleting the generated or all files from the output directory
-* Restructured menu tag -> five different menu styles now available (see <a href="{relocatable: documentation/plugins/menustyles}">Menu Styles</a>)
-* New plugin <a href="{relocatable: documentation/plugins/coreplugins/resourcemanager.page}">ResourceManager</a> for defining resources
-* New plugin <a href="{relocatable: documentation/plugins/tags/resource.page}">Resource Tag</a> for accessing resources
-* Pages files can now be referenced in @relocatable@ tag and backing files with a standardified name (see <a href="{relocatable: documentation/plugins/filehandlers/page.page#naming}">here</a>), despite an eventually self defined naming scheme
-* New parameters: <a href="{relocatable: documentation/plugins/tags/langbar.page}">LangbarTag:showOwnLang</a>
-* Changed paramters: <a href="{relocatable: documentation/plugins/filehandlers/page.page}">PageFileHandler:validator</a> (now deactivated by default)
-* Fixed bugs
-
-<b>12.05.2005 - webgen 0.3.4 released!!!</b>
-
-Major changes:
-
-* FileHandler now uses path patterns and/or extensions for determining which files to process !
-* ERB (embedded ruby) can now be used in templates and page files (see <a href="{relocatable: documentation/plugins/filehandlers/page.page}">PageFileHandler</a>)!
-* Relocatable tag now accepts complex URIs (URIs with query and fragment part, absolute URIs)
-* Changed meta info name *menuOrder* to *orderInfo* (e.g. used for specifying order information for menus) -- you have to adapt your page and backing files!!!
-* New parameters: <a href="{relocatable: documentation/plugins/filehandlers/page.page}">PageFileHandler:useERB</a>
-* Changed parameters: <a href="{relocatable: documentation/plugins/filehandlers}">FileHandler:ignorePaths</a>, <a href="{relocatable: documentation/plugins/filehandlers/copy.page}">CopyFileHandler:paths</a>
-* New page describing meta information items used by plugins
-* Fixed bugs
-
-<b>21.04.2005 - webgen 0.3.3 released!!!</b>
-
-Major changes:
-
-* New command line interface based on "CommandParser":http://cmdparse.rubyforge.org
-* Now you can let webgen create the basic directories and files by executing @webgen create my_site@
-* New logging plugin lets you have more control over logging and log files
-* Now each website can have a plugin directory
-* New parameters for: <a href="{relocatable: documentation/plugins/tags/wikilink.page}">wikilink</a>
-* Changed format of backing files -> have a look at the <a href="{relocatable: documentation/plugins/filehandlers/backing.page}">documentation</a>!
-* Removed obsolete Extension Loader plugin
-* Fixed bugs
-
-
-<b>17.03.2005 - webgen 0.3.2 released!!!</b>
-
-Bug fix release for bug #1637 and other bugs
-
-
-<b>16.03.2005 - webgen 0.3.1 released!!!</b>
-
-Major changes:
-
-* Better DefaultLayouter for image galleries (<a href="{relocatable: Screenshots_1.page}">online demo</a>)
-* Output names for page files now customizable (see <a href="{relocatable: documentation/plugins/filehandlers/page.page}">PageFileHandler</a>)
-* On-the-fly creation of thumbnails for images with RMagick
-* New tags: <a href="{relocatable: documentation/plugins/tags/sitemap.page}">sitemap</a>
-* Tag @lang@ renamed, new name @langbar@!
-* New parameters for @menu@ tag
-* Automatic checking of HTML files on their validness
-* Fixed bugs
-
-
-<b>21.02.2005 - webgen 0.3.0 released!!!</b>
-
-Major changes:
-
-* Textile, Markdown, RDOC and HTML as content format supported!!!
-* New tags: <a href="{relocatable: documentation/plugins/tags/wikilink.page}">wikilink</a>
-* Improved plugin system
-* On-the-fly creation of new tags
-* Fixed bugs
-* Improved online documentation: pages on file handlers and tags now show parameters and other
-  additional info
-* Added comprehensive test suite
-* and more...
-
-h2. And so ...
-
-... have fun!
+* *Thomas Leitner*
+* Web: "http://webgen.rubyforge.org":http://webgen.rubyforge.org
+* e-Mail: "t_leitner@gmx.at":mailto:t_leitner@gmx.at
+* GPG Key-Id: 0xD942E7F6

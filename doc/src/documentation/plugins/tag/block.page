@@ -8,7 +8,7 @@ h2(#description). Description
 
 
 This tag is used to render a page file block (for more information about blocks have a look at the
-TODO(link) WebPage Description Format).
+<a href="{relocatable: /documentation/references/webpage_format.page}">WebPage Format reference</a>).
 
 
 h2(#examples). Examples

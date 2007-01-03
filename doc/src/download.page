@@ -63,3 +63,12 @@ Or all commands together via
 
 
 The above listed methods also work when installing on Windows (preferred way is via Rubygems).
+
+
+
+
+--- sidebar, textile
+
+<h1>Information</h1>
+
+webgen has been tested on Linux and on Windows XP with Ruby 1.8.4.

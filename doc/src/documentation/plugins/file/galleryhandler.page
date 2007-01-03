@@ -9,7 +9,7 @@ h2(#description). Description
 
 This file handler uses image gallery files to automatically build image galleries. These image
 galleries are highly configurable and theme-able through the use of different gallery styles - have
-a look at the TODO(link) examples section!
+a look at the <a href="{relocatable: /examples/gallery_styles}">examples section</a>!
 
 
 h2(#structure). Structure of image galleries
@@ -60,8 +60,8 @@ plugins to the plugin directory, maybe overwritting files (you are asked before 
 like to procede). However, this command is not able to delete previously copied gallery style files,
 so you have to remove them yourself.
 
-For information about how a gallery style can be created have a look at TODO(link) extending webgen
-section!
+For information about how a gallery style can be created have a look at
+<a href="{relocatable: /documentation/extending_webgen.page}">extending webgen section</a>!
 
 
 h2(#file-format). Gallery File Format

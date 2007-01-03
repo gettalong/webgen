@@ -96,6 +96,11 @@ looks like this (this is the one for the webgen homepage):
 
 <pre class="webgen-file">{includeFile: ../../config.yaml}</pre>
 
+There is a special key for file handler plugins: @defaultMetaInfo@. It's value should be a hash with
+the default meta information for nodes created by the plugin. The value is used to update the
+correct part of the {param: Core/FileHandler:defaultMetaInfo} parameter *if and only if* no value
+for the {param: Core/FileHandler:defaultMetaInfo} parameter has been set in the configuration file!
+
 
 h1(#website-creation). Website Creation Tutorial
 
@@ -182,8 +187,9 @@ Then just add page files and other content to your website and let it grow!
 h2(#website-metainfo). Using Tags and Meta Information in Pages
 
 
-Meta information is specified at the beginning of a page file. Have a look at the TODO(link -
-webpage description format) to see how that is done in detail!
+Meta information is specified at the beginning of a page file. Have a look at the
+<a href="{relocatable: /documentation/references/webpage_format.page}">WebPage Format reference</a>
+to see how that is done in detail!
 
 We are now going to use meta information to customize our website! Open the file @default.template@
 and add this before the &lt;/body&gt; tag:

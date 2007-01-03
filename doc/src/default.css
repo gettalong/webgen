@@ -150,10 +150,20 @@ p {
   margin: 0 0 20px;
 }
 
-#leftside p, #rightside p {
+#leftside p, #leftside ul.list, #rightside p {
   font-size:0.9em;
   line-height:1.4em;
   margin:0 0 16px 10px;
+}
+
+#leftside ul.list {
+  margin: 0px;
+  padding: 0px;
+}
+
+#leftside ul.list li {
+  margin:0 0 8px 25px;
+  padding: 0px;
 }
 
 .linklist {
@@ -257,6 +267,7 @@ p {
   border-left: 1px solid #909090;
   border-bottom: 1px solid #909090;
   max-width: 250px;
+  background-color: inherit;
 }
 
 /*** Footer ***/
@@ -413,4 +424,11 @@ table.metainfo {
 table.metainfo th, table.metainfo td {
   border: 1px solid black;
   padding: 2px;
+}
+
+pre {
+  margin-left: 10px;
+  margin-right: 10px;
+  background: #ccc;
+  border: 1px solid #aaa;
 }

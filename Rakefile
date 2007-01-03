@@ -85,7 +85,7 @@ task :create_examples do
   # website templates
   data = {}
   data[:dirname] = 'Website Templates'
-  data[:desc]= "h2(#list). List of website templates
+  data[:desc]= "h2. List of website templates
 
 The website templates open in an iframe when you use the menu items. Use the links provided below to
 open the website templates directly (fullscreen).
@@ -98,7 +98,7 @@ Following is the list of all available website templates:
   # website styles
   data = {}
   data[:dirname] = 'Website Styles'
-  data[:desc]= "h2(#list). List of website styles
+  data[:desc]= "h2. List of website styles
 
 The website styles open in an iframe when you use the menu items. Use the links provided below to
 open the website styles directly (fullscreen).
@@ -206,7 +206,7 @@ mainPageMetaInfo:
 
   data = {}
   data[:dirname] = 'Gallery Styles'
-  data[:desc]= "h2(#list). List of gallery styles
+  data[:desc]= "h2. List of gallery styles
 
 The gallery style example pages open in an iframe when you use the menu items. Use the links
 provided below to open the gallery style example pages directly (fullscreen).

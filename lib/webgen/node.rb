@@ -264,12 +264,8 @@ class Node
   end
 
 =begin
-TODO: move to doc
-- value 0 for orderInfo means that it is not set! Only use number greater than 0
-- orderInfo for directory: first tries to use orderInfo of dir node, if it fails, uses orderInfo of indexFile if available
-
+TODO:
 - stable sort which does not switch items that have the same order_info
-
 =end
 
 end

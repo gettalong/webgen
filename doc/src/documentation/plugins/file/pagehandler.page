@@ -9,7 +9,9 @@ h2(#description). Description
 
 Page files are used to specify the actual content for the website. They contain the content for a
 web page and, optionally, meta information. For information about the format used for page files
-have a look at (TODO(link) WebPage Description Format).
+have a look at the <a href="{relocatable: /documentation/references/webpage_format.page}">WebPage Format reference</a>.
+The default values for the content block name and format specifier have been overwritten by setting
+a default for the @blocks@ meta information!
 
 
 h2(#conventions). Conventions
@@ -150,112 +152,3 @@ node sothat they can be used later by webgen plugins. However, there are certain
 
 A plugin using these fragment nodes is {plugin: MenuStyle/Section} which displays an in-page content
 menu.
-
-
-TODO BEGIN move to WebPage Description Format page
-
-h2(#structure). Page File Format
-
-The format of these files is a very simple one and can be divided into two cases:
-
-# Only content
-# Meta information and content
-
-A simple file may look like this:
-<pre>
-This is the content!!!
-</pre>
-
-Only content is specified in this file. Meta information can be specified at the beginning of the
-file:
-<pre>
-\---
-title: The title set by Meta info
-\---
-This is the content of the file
-</pre>
-
-In this example, meta information is specified ("more info":#meta). Note the three dashes at the
-beginning of the file. This indicates that the following 'block' is used for meta information. If
-the three dashes at the beginning are omitted, then the parser won't know that the following block
-contains meta information and thinks it is content. If not specified, the default name for the
-content block is @content@.
-
-If you want to include a line in your file which only has three dashes, you have to write this:
-<pre>
-\\---
-</pre>
-
-The meta information is separated from the content by another three dashes and so the content itself
-builds a second 'block'. The following examples contains three blocks, the meta information block
-and two content blocks.
-<pre>
-\---
-title: The title set by Meta info
-\---
-This is the 1. content of the file
-\---
-This is the 2. content of the file
-</pre>
-
-However, without naming blocks they cannot be accessed. You can specify the name and the content
-formatting using meta information. Look at the following example:
-<pre>
-\---
-title: The title set by Meta info
-blocks:
-  - \{name: content, format: textile}
-  - \{name: sidebar, format: markdown}
-\---
-This is the 1. content of the file
-\---
-This is the 2. content of the file
-</pre>
-
-The first block in this file is named @content@ and formatted using @textile@. The second block is
-named @sidebar@ and formatted using @markdown@.
-
-h2. Content format
-
-h3. Embedded Ruby (ERB)
-
-Before the content is converted to HTML with a specific content handler, ERB is run over the
-content. This allows one to add dynamic content to the web pages without using tags. Following is an
-example of a page file which uses ERB:
-
-<notextile>
-<pre>
-\---
-title: Test page with ERB
-\---
-This page has the following meta info items:
-&lt;% node.metainfo.each do |key, value| %&gt;
-    * &lt;%=key %&gt;: &lt;%=value %&gt;
-&lt;% end %&gt;
-</pre>
-</notextile>
-
-This would output all meta information for the current page. As one can see in the example, the node
-for the current page can be accessed by using @node@. The parameter @useERB@ specifies if ERB should
-be used. To provide more control, one can enable or disable ERB for a page file by setting the meta
-information @useERB@ to @true@ or @false@.
-
-The template will always be processed with ERB!
-
-h3. Format
-
-The content of page description can be written in different formats. Have a look at the
-<a href="{relocatable: ../contenconverter}">content converters</a> to get an overview of the existing
-formats.
-
-h2(#meta). Meta Information
-
-Meta information can be specified at the beginning of the file as described "here":#structure. Meta
-information is formatted using YAML, a simple markup language. For more information about YAML, have
-a look at the "www.yaml.org":http://www.yaml.org!
-
-Any information can be specified. The most important use for meta information is to override values
-like the title of the page (e.g. if you want dots in it), the ordering and so on. It is also used to
-specify the names and the formatting of content blocks in the file.
-
-TODO END

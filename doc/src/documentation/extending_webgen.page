@@ -21,7 +21,7 @@ a string.
 h3. Normal plugins (new tags, file handlers, etc)
 
 As webgen is plugin-based, it can be extended very easily. A simple example is shown in the
-<a href="{relocatable: gettingstarted.page#simple-plugin}">Getting Started</a> guide.
+<a href="{relocatable: gettingstarted.page#website-plugin}">Getting Started</a> guide.
 
 If you want more sophisticated examples of plugins, have a look at webgen itself and the plugins
 that get shipped with it. They can be found in the directory @lib/webgen/plugins/@!

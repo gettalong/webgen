@@ -1,7 +1,7 @@
 index.page:
   orderInfo: 1
 
-about.page:
+news.page:
   orderInfo: 2
 
 features.page:
@@ -20,6 +20,7 @@ examples/:
 images:
   indexFile: ~
 
+
 documentation/gettingstarted.page:
   orderInfo: 3
 
@@ -33,6 +34,16 @@ documentation/plugins/:
   orderInfo: 9
 
 
+documentation/references/webpage_format.page:
+  orderInfo: 5
+
+documentation/references/parameter_reference.page:
+  orderInfo: 15
+
+documentation/references/meta_info_reference.page:
+  orderInfo: 10
+
+
 documentation/plugins/file:
   indexFile: defaulthandler.page
 
@@ -43,6 +54,9 @@ documentation/plugins/htmlvalidator:
   indexFile: default.page
 
 documentation/plugins/contentconverter:
+  indexFile: default.page
+
+documentation/plugins/menustyle:
   indexFile: default.page
 
 documentation/plugins/tag:

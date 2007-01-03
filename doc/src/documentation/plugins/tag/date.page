@@ -8,7 +8,8 @@ h2(#description). Description
 
 
 The date tag is used to display the current time in a specific format (the format of Ruby's inbuilt
-method TODO(link) Time#strftime). Have a look a the examples below to see some possible outputs.
+method <a href="http://www.ruby-doc.org/core/classes/Time.html#M000304">Time#strftime</a>). Have a
+look a the examples below to see some possible outputs.
 
 
 h2(#examples). Examples

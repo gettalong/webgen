@@ -45,7 +45,7 @@ page files have the @inMenu@ meta information set:
 
   <pre>
     newdir:
-      orderInfo: 2       -> no need to specify inMenu if page under dir have it specified
+      orderInfo: 2       -> no need to specify inMenu if a page under the dir has it specified
 
     newdir/new.page:
       orderInfo: 1       -> orderInfo for the page

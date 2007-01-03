@@ -1,7 +1,6 @@
 ---
 title: Meta Info Reference
 inMenu: true
-orderInfo: 25
 ---
 h2. Meta Information Reference
 
@@ -55,7 +54,11 @@ plugin, be it a file handler plugin, a tag plugin...
   <td>Integer</td>
   <td>15</td>
   <td>Any</td>
-  <td>Sets the ordering information for the file/directory.</td>
+  <td>Sets the ordering information for the file/directory. The value 0 is used as default and means 'not set'.
+      You should only use numbers greater than zero. However, if you want a menu item to always appear as first item,
+      it is recommended to use the value -1. When sorting nodes, the @orderInfo@ value is used first. If the values for both
+      nodes are the same, then they are sorted according to their @title@ meta information.
+  </td>
 </tr>
 <tr>
   <th>template</th>
@@ -81,7 +84,7 @@ plugin, be it a file handler plugin, a tag plugin...
 <tr>
   <th>linkAttrs</th>
   <td>Hash</td>
-  <td>{title: Hallo, class: extra}</td>
+  <td>\{title: Hallo, class: extra}</td>
   <td>Any</td>
   <td>Specifies additional attribute-value pairs (in form of a Hash) that should be added to a link to the file/directory.</td>
 </tr>

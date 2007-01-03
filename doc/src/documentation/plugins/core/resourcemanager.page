@@ -13,7 +13,7 @@ A resource can either be included directly which means that the content of the r
 into the HTML file. Or it can be referenced in which case only the path is written into the HTML
 file and the content of the resource itself is written to its predefined output path. Be aware that
 a resource is *only* written to its output path if it is referenced at least once (for example, by
-the plugin {plugin: Tags/ResourceTag})!
+the plugin {plugin: Tag/Resource})!
 
 Speaking of the output path, each resource has four properties:
 

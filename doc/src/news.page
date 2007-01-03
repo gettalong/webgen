@@ -1,0 +1,147 @@
+---
+title: News
+inMenu: true
+---
+h2. News
+
+
+h3(#news-2006-01-TODO). TODO.01.2006 - webgen 0.4.0
+
+
+This is a major release with many updates to the webgen core, the plugins and the documentation.
+Plugins written for prior version won't work with this one anymore. However, changing them to work
+again is easy. As an upgrade guide is currently not available have a look at webgen plugins and the
+API documentation to see how to do upgrade plugins.
+
+Major changes:
+
+* New website layout :-)
+* webgen now includes many <a href="{relocatable: examples/website_styles}">website styles</a> which can be used out of the box!
+* Template files have the same format as page files now and can be nested!
+* Speed-up through caching of node information
+* New and cool gallery style
+* New content converter plugin ({plugin: ContentConverter/XmlBuilder})
+* New plugin for syntax highlighting ({plugin: Misc/SyntaxHighlighter})
+* Many changes to the core (plugin system revised, webgen can now be used from other Ruby applications directly, faster node resolution, hooks are now spelled with only lowercase letters, ...)
+* Structure of meta information @blocks@ changed
+* New meta information @linkAttrs@ for setting additional attributes on links
+* Handling and structure of meta information backing file changed
+* Evaluation of page files changed (first converted to HTML, then ERB, then webgen tags)
+* "Static" menus now available
+* New sub-commands for the webgen command
+* Gallery editor application deprecated.
+* Many tests have been added.
+* Documentation on the homepage as well as the API documentation is now more complete
+* *Many other changes*
+
+Fur detailed information have a look at the ChangeLog file included in the webgen distribution!
+
+
+h3(#news-2005-12-29). 29.12.2005 - webgen 0.3.8
+
+
+Bug fix release
+
+
+h3(#news-2005-11-27). 27.11.2005 - webgen 0.3.7
+
+
+Major changes:
+
+* Now using cmdparse version 2.0.0!
+* %{color:red}Attention%: For unified naming in reference to image galleries, I have removed all occurences of the word "picture" from the code and documentation and replaced it with "image". Therefore you may need to adapt your code, especially custom gallery layouters!
+* %{color:red}Attention%: Many documentation and library files have been renamed for better consistency! Custom plugins may have to be adapted!
+* New application for managing image galleries (only alpha quality currently!)
+* Smileys are now optionally replaced with emoticons (<notextile>:-) ;-) :'-( 8-)</notextile>, several different emoticon packs available) -> see {plugin: Misc/SmileyReplacer}
+* <a href="{relocatable: documentation/extending_webgen.page}">Site specific commands</a> (used in command line processing) can now be used
+* New plugin {plugin: Tag/Download} for nice download links
+* New parameters: PageFileHandler:defaultPageMetaData, SitemapTag:honorInMenu
+* Removed parameters: PageFileHandler:useERB, PageFileHandler:defaultContentFormat
+* Renamed tag <b>navbar</b> to <b>breadcrumbTrail</b>
+* Images in image galleries can now be ordered by specifying the @orderInfo@ meta information
+* The use of directory index files is now optional: by setting the parameter File/DirectoryHandler:indexFile to nil directory index files are not used
+* Languages can now be specified using 2-char ISO-639-1 codes or 3-char ISO-639-2 codes
+* Now there is a link (next to the wiki link) to the source of each page unless the page was programmatically generated.
+
+
+h3(#news-2005-06-24). 24.06.2005 - webgen 0.3.5
+
+
+Major changes:
+
+* Now using cmdparse version 1.0.3!
+* New CLI command "clean" for deleting the generated or all files from the output directory
+* Restructured menu tag -> five different menu styles now available (see {plugin: MenuStyle})
+* New plugin {plugin: Core/ResourceManager} for defining resources
+* New plugin {plugin: Tag/Resource} for accessing resources
+* Pages files can now be referenced in @relocatable@ tag and backing files with a standardified name, despite an eventually self defined naming scheme
+* New parameters: LangbarTag:showOwnLang
+* Changed paramters: PageFileHandler:validator (now deactivated by default)
+* Fixed bugs
+
+
+h3(#news-2005-05-12). 12.05.2005 - webgen 0.3.4
+
+
+Major changes:
+
+* FileHandler now uses path patterns and/or extensions for determining which files to process !
+* ERB (embedded ruby) can now be used in templates and page files !
+* Relocatable tag now accepts complex URIs (URIs with query and fragment part, absolute URIs)
+* Changed meta info name *menuOrder* to *orderInfo* (e.g. used for specifying order information for menus) -- you have to adapt your page and backing files!!!
+* New parameters: PageFileHandler:useERB
+* Changed parameters: FileHandler:ignorePaths, CopyFileHandler:paths
+* New page describing meta information items used by plugins
+* Fixed bugs
+
+
+h3(#news-2005-04-21). 21.04.2005 - webgen 0.3.3
+
+
+Major changes:
+
+* New command line interface based on "CommandParser":http://cmdparse.rubyforge.org
+* Now you can let webgen create the basic directories and files by executing @webgen create my_site@
+* New logging plugin lets you have more control over logging and log files
+* Now each website can have a plugin directory
+* New parameters for: Tag/WikiLink
+* Changed format of backing files -> have a look at the documentation
+* Removed obsolete Extension Loader plugin
+* Fixed bugs
+
+
+h3(#news-2005-03-17). 17.03.2005 - webgen 0.3.2
+
+
+Bug fix release for bug #1637 and other bugs
+
+
+h3(#news-2005-03-16). 16.03.2005 - webgen 0.3.1
+
+
+Major changes:
+
+* Better DefaultLayouter for image galleries
+* Output names for page files now customizable (see {plugin: File/PageHandler})
+* On-the-fly creation of thumbnails for images with RMagick
+* New tags: {plugin: Tag/Sitemap}
+* Tag @lang@ renamed, new name @langbar@!
+* New parameters for @menu@ tag
+* Automatic checking of HTML files on their validness
+* Fixed bugs
+
+
+h3(#news-2005-02-21). 21.02.2005 - webgen 0.3.0
+
+
+Major changes:
+
+* Textile, Markdown, RDOC and HTML as content format supported!!!
+* New tags: {plugin: Tag/WikiLink}
+* Improved plugin system
+* On-the-fly creation of new tags
+* Fixed bugs
+* Improved online documentation: pages on file handlers and tags now show parameters and other
+  additional info
+* Added comprehensive test suite
+* and more...

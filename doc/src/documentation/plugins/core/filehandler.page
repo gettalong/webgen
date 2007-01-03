@@ -103,8 +103,9 @@ h3(#metainfo-param). The @defaultMetaInfo@ parameter
 
 This parameter can be used to override the default meta information set for a file handler plugin.
 The keys are the names of file handler plugins and the values are the meta information. You can
-either set the parameter directly or use the special functionality provided by the (TODO: link)
-configuration file to set it for a file handler plugin.
+either set the parameter directly or use the special functionality provided by the
+<a href="{relocatable: /documentation/gettingstarted.page#config}">configuration file</a> to
+set it for a file handler plugin.
 
 
 h3(#metainfo-file). The meta information backing file

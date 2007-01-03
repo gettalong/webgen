@@ -62,7 +62,7 @@ class PluginRefTag < Tags::DefaultTag
     anchor = plugin.slice!( /#.*$/ )
 
     if @plugin_manager.plugin_class_for_name( plugin ).nil? && plugin.index('/')
-      log(:error) { "Invalid link to plugin: #{plugin}" }
+      log(:error) { "Invalid link to plugin: #{plugin} in <#{chain.first.node_info[:src]}>" }
       "INVALID PLUGIN"
     else
       pluginfile = (plugin.index('/') ? plugin.downcase + '.page' : plugin.downcase + '/') + anchor.to_s
@@ -86,7 +86,7 @@ class ParamRefTag < Tags::DefaultTag
   def process_tag( tag, chain )
     plugin, param = param('param').split(':')
     if @plugin_manager.plugin_class_for_name( plugin ).nil? || !@plugin_manager.plugin_class_for_name( plugin ).config.params.has_key?( param )
-      log(:error) { "Invalid link to parameter: #{plugin}:#{param}" }
+      log(:error) { "Invalid link to parameter: #{plugin}:#{param} in <#{chain.first.node_info[:src]}>" }
       "INVALID PARAM"
     else
       pluginfile = plugin.downcase + '.page'
