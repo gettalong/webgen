@@ -297,25 +297,29 @@ module Webgen
       checkConfig.short_desc = "Checks the validity of the configuration and outputs the used options"
       checkConfig.set_execution_block do |args|
         begin
-          print CliUtils.section( "Checking configuration file syntax...", 50, 0, :bold )
-          config_file = ConfigurationFile.new( File.join( cmdparser.directory, 'config.yaml' ) )
-          puts Color.green( 'OK' )
+          if File.exists?( File.join( cmdparser.directory, 'config.yaml' ) )
+            print CliUtils.section( "Checking configuration file syntax...", 50, 0, :bold )
+            config_file = ConfigurationFile.new( File.join( cmdparser.directory, 'config.yaml' ) )
+            puts Color.green( 'OK' )
 
-          puts CliUtils.section( "Checking parameters...", 0, 0, :bold )
-          config_file.config.each do |plugin_name, params|
-            params.each do |param_name, value|
-              print CliUtils.section( "#{plugin_name}:#{param_name}", 50, 2, :reset )
-              if cmdparser.website.manager.plugin_class_for_name( plugin_name ).nil?
-                puts Color.lred( 'NOT OK' ) + ': no such plugin'
-              else
-                begin
-                  cmdparser.website.manager.param_for_plugin( plugin_name, param_name )
-                  puts Color.green( 'OK' )
-                rescue PluginParamNotFound => e
-                  puts Color.lred( 'NOT OK' ) + ': no such parameter'
+            puts CliUtils.section( "Checking parameters...", 0, 0, :bold )
+            config_file.config.each do |plugin_name, params|
+              params.each do |param_name, value|
+                print CliUtils.section( "#{plugin_name}:#{param_name}", 50, 2, :reset )
+                if cmdparser.website.manager.plugin_class_for_name( plugin_name ).nil?
+                  puts Color.lred( 'NOT OK' ) + ': no such plugin'
+                else
+                  begin
+                    cmdparser.website.manager.param_for_plugin( plugin_name, param_name )
+                    puts Color.green( 'OK' )
+                  rescue PluginParamNotFound => e
+                    puts Color.lred( 'NOT OK' ) + ': no such parameter'
+                  end
                 end
               end
             end
+          else
+            print CliUtils.section( "No configuration file found!", 50, 0, :bold )
           end
         rescue ConfigurationFileInvalid => e
           puts Color.lred( 'NOT OK' ) + ': ' + e.message
