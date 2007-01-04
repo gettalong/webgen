@@ -248,8 +248,7 @@ PKG_FILES = FileList.new( [
                             'Rakefile',
                             'ChangeLog',
                             'VERSION',
-                            'install.rb',
-                            'bin/**/*',
+                            'bin/webgen',
                             'lib/**/*.rb',
                             'data/**/*',
                             'testsite/**/*',
@@ -260,12 +259,6 @@ PKG_FILES = FileList.new( [
   fl.exclude( 'testsite/output' )
   fl.exclude( 'testsite/coverage' )
   fl.exclude( 'doc/output' )
-end
-
-task :package => [:gen_files] do
-  chdir 'pkg' do
-    sh "rpaadmin packport #{PKG_NAME}-#{PKG_VERSION}"
-  end
 end
 
 CLOBBER << "otherdata/web-for-gallery-pics/output"
@@ -337,15 +330,6 @@ else
 
 end
 
-=begin
-desc "Creates a tag in the repository"
-task :tag do
-  repositoryPath = File.dirname( $1 ) if `svn info` =~ /^URL: (.*)$/
-  fail "Tag already created in repository " if /#{PKG_NAME}/ =~ `svn ls #{repositoryPath}/versions`
-  sh "svn cp -m 'Created version #{PKG_NAME}' #{repositoryPath}/trunk #{repositoryPath}/versions/#{PKG_NAME}"
-end
-=end
-
 desc "Upload documentation to homepage"
 task :uploaddoc => [:doc] do
   Dir.chdir('doc/output')
@@ -353,7 +337,7 @@ task :uploaddoc => [:doc] do
 end
 
 
-# Misc tasks ###################################################################
+# Helper methods ###################################################################
 
 def create_examples( dir_name, data, template = nil, style = nil )
   base_dir = 'doc/examples'
@@ -404,38 +388,4 @@ directoryName: #{data[:dirname]}
     end
   end
   index.close
-end
-
-def count_lines( filename )
-  lines = 0
-  codelines = 0
-  open( filename ) do |f|
-    f.each do |line|
-      lines += 1
-      next if line =~ /^\s*$/
-      next if line =~ /^\s*#/
-      codelines += 1
-    end
-  end
-  [lines, codelines]
-end
-
-
-def show_line( msg, lines, loc )
-  printf "%6s %6s   %s\n", lines.to_s, loc.to_s, msg
-end
-
-
-desc "Show statistics"
-task :statistics do
-  total_lines = 0
-  total_code = 0
-  show_line( "File Name", "Lines", "LOC" )
-  SRC_RB.each do |fn|
-    lines, codelines = count_lines fn
-    show_line( fn, lines, codelines )
-    total_lines += lines
-    total_code  += codelines
-  end
-  show_line( "Total", total_lines, total_code )
 end

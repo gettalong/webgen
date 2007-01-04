@@ -78,14 +78,14 @@ module Webgen
 
       # Sets general information about the plugin (summary text, description, ...). The parameter
       # has to be a Hash. The following fields are recognized:
-      # :name::        The name of the plugin. Should be of the form Namespace/Namespace/name and
-      #                should contain only alphanumeric characters.
-      # :summary::     Summary of what the plugin does
-      # :description:: Extended description of the functionality
-      # :author::      The author of the plugin
-      # :instantiate:: Boolean value defining whether an instance of this plugin should be created
-      # :is_base_plugin:: Boolean value defining whether the plugin class is available from a plugin
-      #                   loader/manager after loading
+      # :name ::        The name of the plugin. Should be of the form Namespace/Namespace/name and
+      #                 should contain only alphanumeric characters.
+      # :summary ::     Summary of what the plugin does
+      # :description :: Extended description of the functionality
+      # :author ::      The author of the plugin
+      # :instantiate :: Boolean value defining whether an instance of this plugin should be created
+      # :is_base_plugin :: Boolean value defining whether the plugin class is available from a plugin
+      #                    loader/manager after loading
       def infos( param )
         self.config.infos.update( param )
       end
@@ -165,9 +165,9 @@ module Webgen
 
     # Used to load optional parts. You have to specify a unique +name+ for the optional part and
     # options with some information about it. The following keys can be used:
-    # :needed_gems:: an array of Rubygem's gem names that are required for the part
-    # :error_msg::   error message that should be displayed if the part can't be loaded
-    # :info::        information about what the part does
+    # :needed_gems :: an array of Rubygem's gem names that are required for the part
+    # :error_msg ::   error message that should be displayed if the part can't be loaded
+    # :info ::        information about what the part does
     def load_optional_part( name, options = {} )
       options[:loaded] = true
       begin
