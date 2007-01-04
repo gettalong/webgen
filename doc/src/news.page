@@ -5,7 +5,7 @@ inMenu: true
 h2. News
 
 
-h3(#news-2006-01-TODO). TODO.01.2006 - webgen 0.4.0
+h3(#news-2007-01-05). 05.01.2007 - webgen 0.4.0
 
 
 This is a major release with many updates to the webgen core, the plugins and the documentation.
@@ -34,7 +34,13 @@ Major changes:
 * Documentation on the homepage as well as the API documentation is now more complete
 * *Many other changes*
 
-Fur detailed information have a look at the ChangeLog file included in the webgen distribution!
+For detailed information have a look at the ChangeLog file included in the webgen distribution!
+
+*Upcoming features:*
+
+* More documentation
+* Blogging plugins
+* RSS generation plugins
 
 
 h3(#news-2005-12-29). 29.12.2005 - webgen 0.3.8

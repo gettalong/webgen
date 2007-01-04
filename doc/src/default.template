@@ -47,8 +47,9 @@
 
         <div id="rightside">
           <h1>Latest news</h1>
-          <p><strong>2007-01-TODO: </strong>
-          webgen 0.4.0 released! Major update to the core and plugins and many new features added!
+          <p><strong>2007-01-05: </strong>
+            webgen 0.4.0 released! Major update to the core and plugins and many new features added!
+            <a href="{relocatable: news.en.page#news-2007-01-05}">More...</a>
           </p>
 
           <h1>Links</h1>

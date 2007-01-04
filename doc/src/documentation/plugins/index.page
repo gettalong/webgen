@@ -20,7 +20,6 @@ plugin and put it under the site specific @plugin@ directory - then the plugin g
 others. It's so easy!
 
 For more information have a look at the <a href="{relocatable: /api.html}">API documentation</a>!
-TODO(link to plugin development section)
 
 
 h3(#plugin-naming). Naming of Plugins
