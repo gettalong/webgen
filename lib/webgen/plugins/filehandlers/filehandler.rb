@@ -168,7 +168,7 @@ module FileHandlers
             if data.nil? || (data.kind_of?( Hash ) && data.all? {|k,v| v.kind_of?( Hash ) })
               if index == 1
                 @source_backing = {}
-                data.each_pair {|path, metainfo| @source_backing[normalize_path(path)] = metainfo}
+                data.each_pair {|path, metainfo| @source_backing[normalize_path(path)] = metainfo} unless data.nil?
               elsif index == 2
                 @output_backing = data
               else
