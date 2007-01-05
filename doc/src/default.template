@@ -57,7 +57,7 @@
             <li><a href="http://rubyforge.org/projects/webgen">webgen on Rubyforge</a></li>
             <li><a href="http://rubyforge.org/frs/?group_id=296">webgen downloads</a></li>
             <li><a href="{relocatable: api.html}">webgen API</a></li>
-            <li><a href="TODO">Ruby Windows Installer</a></li>
+            <li><a href="http://rubyinstaller.rubyforge.org/wiki/wiki.pl">Ruby Windows Installer</a></li>
             <li><a href="http://www.ruby-lang.org">Ruby Homepage</a></li>
           </ul>
 
