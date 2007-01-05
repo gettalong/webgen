@@ -32,6 +32,7 @@ Major changes:
 * Gallery editor application deprecated.
 * Many tests have been added.
 * Documentation on the homepage as well as the API documentation is now more complete
+* Fixed many bugs
 * *Many other changes*
 
 For detailed information have a look at the ChangeLog file included in the webgen distribution!

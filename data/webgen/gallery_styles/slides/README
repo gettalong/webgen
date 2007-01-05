@@ -11,7 +11,8 @@ usage:
   new one will not be created.
 
 author:
-  Thomas Leitner (original collage creation routine by Corban Brook)
+  Thomas Leitner (created gallery style)
+  Corban Brook (original collage creation routines)
 
 plugin files:
   collage.rb

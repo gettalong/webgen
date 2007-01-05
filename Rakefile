@@ -68,10 +68,8 @@ task :clean do
   ruby "setup.rb clean"
 end
 
-
 desc "Creates the whole documentation"
 task :doc => [:rdoc, :webgen_doc]
-
 
 CLOBBER << "doc/examples"
 CLOBBER << "doc/src/examples/website_templates"
@@ -268,17 +266,18 @@ task :create_gal_layout_pics do
   end
 end
 
+CLOBBER << "ChangeLog"
 task :gen_changelog do
   sh "svn log -r HEAD:1 -v > ChangeLog"
 end
 
+CLOBBER << "VERSION"
 task :gen_version do
   puts "Generating VERSION file"
   File.open( 'VERSION', 'w+' ) do |file| file.write( PKG_VERSION + "\n" ) end
 end
 
-task :gen_files => [:gen_changelog, :gen_version]
-CLOBBER << "ChangeLog" << "VERSION"
+task :package => [:gen_changelog, :gen_version]
 
 Rake::PackageTask.new( PKG_NAME, PKG_VERSION ) do |p|
   p.need_tar = true

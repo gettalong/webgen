@@ -149,6 +149,10 @@ module Collage
   end
 
 
+  # Most of the code in create_slide, backandforth and creat_collage is from Corban Brook from
+  # his tutorial
+  # http://schf.uc.org/articles/2006/10/18/render-greatlooking-collages-with-ruby-and-rmagick
+  # and has slightly been adapted for use in this gallery style.
   class CollageWriter < FileHandlers::DefaultHandler
 
     include Magick
