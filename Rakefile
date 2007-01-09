@@ -30,10 +30,11 @@ require 'rake/packagetask'
 require 'rake/rdoctask'
 require 'rake/testtask'
 
-# General actions  ##############################################################
+# General things  ##############################################################
 
 $:.push 'lib'
 require 'webgen/config'
+require 'webgen/raketasks'
 
 PKG_NAME = "webgen"
 PKG_VERSION = Webgen::VERSION.join( '.' )
@@ -43,8 +44,8 @@ PKG_DESCRIPTION = Webgen::DESCRIPTION
 
 SRC_RB = FileList['lib/**/*.rb']
 
-# The default task is run if rake is given no explicit arguments.
 
+# The default task is run if rake is given no explicit arguments.
 desc "Default Task"
 task :default => :test
 
@@ -63,13 +64,28 @@ task :install => [:prepare] do
   ruby "setup.rb install"
 end
 
+
 CLEAN.exclude( 'doc/src/documentation/plugins/core' )
+CLEAN.exclude( 'doc/output/documentation/plugins/core' )
 task :clean do
   ruby "setup.rb clean"
 end
 
+
 desc "Creates the whole documentation"
 task :doc => [:rdoc, :webgen_doc]
+
+Webgen::DocTask.new( 'doc' )
+task :webgen_doc => [:create_examples]
+
+rd = Rake::RDocTask.new do |rdoc|
+  rdoc.rdoc_dir = 'doc/output/rdoc'
+  rdoc.title    = PKG_NAME
+  rdoc.options << '--line-numbers' << '--inline-source' << '-m README'
+  rdoc.rdoc_files.include( 'README' )
+  rdoc.rdoc_files.include( 'lib/**/*.rb' )
+end
+
 
 CLOBBER << "doc/examples"
 CLOBBER << "doc/src/examples/website_templates"
@@ -216,20 +232,6 @@ Following is the list of all available gallery styles:
 
 end
 
-CLOBBER << "doc/output"
-desc "Generates the webgen documentation"
-task :webgen_doc => [:create_examples] do
-  puts "\nGenerating online documentation..."
-  ruby %{-Ilib bin/webgen -d doc -V 2 }
-end
-
-rd = Rake::RDocTask.new do |rdoc|
-  rdoc.rdoc_dir = 'doc/output/rdoc'
-  rdoc.title    = PKG_NAME
-  rdoc.options << '--line-numbers' << '--inline-source' << '-m README'
-  rdoc.rdoc_files.include( 'README' )
-  rdoc.rdoc_files.include( 'lib/**/*.rb' )
-end
 
 task :test do
   ruby "-Ilib -Itest test/runtests.rb"
