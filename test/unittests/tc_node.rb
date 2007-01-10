@@ -82,6 +82,9 @@ class NodeTest < Webgen::TestCase
     assert_equal( '/', @n['/'].absolute_path )
     assert_equal( '/dir_a/file_aa', @n['file_aa'].absolute_path )
     assert_equal( 'http://localhost/file_ah#doit', @n['file_ah#'].absolute_path )
+
+    root = Node.new( nil, 'C:/webgen/output/')
+    assert_equal( '/', root.absolute_path )
   end
 
   def test_route_to

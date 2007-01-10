@@ -118,7 +118,9 @@ class Node
   def absolute_path
     return @precalc[:absolute_path] if @precalc
 
-    if @path =~ ABSOLUTE_URL
+    if @parent.nil?
+      '/'
+    elsif @path =~ ABSOLUTE_URL
       @path
     else
       full_path.sub( /^#{Node.root( self ).path}/, '/' )
