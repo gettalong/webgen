@@ -40,9 +40,9 @@ module Webgen
   # Returns the data directory for webgen.
   def self.data_dir
     unless defined?( @@data_dir )
-      @@data_dir = File.join( Config::CONFIG["datadir"], "webgen" )
+      @@data_dir = File.expand_path( File.join( Config::CONFIG["datadir"], "webgen" ) )
 
-      @@data_dir =  File.join( File.dirname( __FILE__ ), '..', '..', 'data', 'webgen') if !File.exists?( @@data_dir )
+      @@data_dir =  File.expand_path( File.join( File.dirname( __FILE__ ), '..', '..', 'data', 'webgen') ) if !File.exists?( @@data_dir )
 
       raise "Could not find webgen data directory! This is a bug, report it please!" unless File.directory?( @@data_dir )
     end

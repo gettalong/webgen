@@ -32,9 +32,9 @@ require 'rake/testtask'
 
 # General things  ##############################################################
 
-$:.push 'lib'
+$:.push File.expand_path( File.join( File.dirname(__FILE__), 'lib' ) )
 require 'webgen/config'
-require 'webgen/raketasks'
+require 'webgen/rake/webgentask'
 
 PKG_NAME = "webgen"
 PKG_VERSION = Webgen::VERSION.join( '.' )
@@ -75,8 +75,11 @@ end
 desc "Creates the whole documentation"
 task :doc => [:rdoc, :webgen_doc]
 
-Webgen::DocTask.new( 'doc' )
-task :webgen_doc => [:create_examples]
+Webgen::Rake::WebgenTask.new do |webgen|
+  webgen.directory = File.join( File.dirname( __FILE__ ), 'doc' )
+  webgen.clobber_outdir = true
+end
+task :webgen => [:create_examples]
 
 rd = Rake::RDocTask.new do |rdoc|
   rdoc.rdoc_dir = 'doc/output/rdoc'

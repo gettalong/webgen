@@ -1,5 +1,6 @@
 ---- CURRENT ----
 
+* modify WebSite to allow better use (factor out loading of plugins into own method, do not call init in #render method, ...)
 * fix TreeWalker (call it!)
 * show error message when configuration file is invalid (Webgen::WebSite)
 * fix website styles menus to have a style for current menu item with <span> instead of <a>
