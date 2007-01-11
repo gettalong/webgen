@@ -1,0 +1,148 @@
+---
+title: Basics
+inMenu: true
+---
+h2(#directories). The Needed Directories
+
+
+webgen needs a special directory structure so that it can work correctly. Basically, you have a
+website directory under which the following directories have to be:
+
+* @src@: The source directory in which all the source files for the website are. The name of this
+  directory cannot be changed!
+* @output@: This directory is created, if it does not exist, when webgen is run. All the output
+  files are put into this directory. The name of this directory and its location can be customized
+  using the parameter {param: Core/Configuration:outDir}.
+* @plugin@: The extension directory. You can put self-written plugins into this directory so that
+  they can be used by webgen. All <notextile><tt>*.rb</tt></notextile> files in this directory and
+  its subdirectories are loaded as plugins. The name of this directory can't be customized, too!
+
+The directory in which these directories are in is called the *website directory*.
+
+
+h2(#cmdline). The @webgen@ Command
+
+
+The executable for webgen is called... webgen ;-) It uses a command style syntax (like Subversion's
+@svn@ or Rubygem's @gem@ commands) through the "cmdparse":http://cmdparse.rubyforge.org library. To
+get an overview of the possible commands run
+
+<pre>
+  $ webgen help
+</pre>
+
+This will output something like this:
+
+<pre>
+Usage: webgen [options] COMMAND [options] [COMMAND [options] ...] [args]
+
+Available commands:
+  check          Checks things like validity of the config file or the availability of optional libraries
+    config         Checks the validity of the configuration and outputs the used options (=default command)
+    libs           Checks the availability of optional libraries used by plugins
+  create         Creates the basic directories and files for webgen.
+  help           Provide help for individual commands
+  run            Runs webgen, ie. generates the HTML files (=default command)
+  show           Shows various information
+    config         Shows information like the parameters for all or the matched plugins
+    plugins        Shows the available plugins
+  use            Changes the used website or gallery styles
+    gallery_style  Changes the used gallery style
+    website_style  Changes the used website style
+  version        Show the version of the program
+
+Global options:
+    -d, --directory DIR              The website directory, if none specified, current directory is used.
+    -V, --verbosity LEVEL            The verbosity level (0-3)
+    -h, --help                       Show help
+    -v, --version                    Show the version of the program
+</pre>
+
+
+As you can see, webgen supports many commands, from checking the validity of the configuration and
+the available libraries to displaying the configuration values. However, the main command is the
+@run@ command which does the actual website generation. This command uses the current working
+directory as website directory if none was specified via the @-d@ option.
+
+You can invoke a command by specifying it after the executable name. If we also think of the
+executable @webgen@ as a command, then the options for a command are specified directly after the
+command name and before the next command or any arguments. For example, all the following command
+lines are valid:
+
+<pre>
+  $ webgen
+  $ webgen run
+  $ webgen -d doc run
+  $ webgen -V 0 create -t project
+  $ webgen show config
+  $ webgen help create
+  $ webgen help show config
+</pre>
+
+The commands on the first and second line do the same because of the @run@ command being the default
+command. The third command specifies a global option, as does the fourth. However, the fourth also
+specifies a command specific option @-t@. The fifth command shows how nested commands are used; in
+this case the @config@ command under the @show@ command is executed. The last two commands show how
+the included @help@ command works: the sixth command shows the help for the @create@ command and the
+last one shows it for the nested @show config@ command.
+
+For more information on how the commands work have a look at the
+"cmdparse":http://cmdparse.rubyforge.org documentation!
+
+
+h2(#config). Configuration
+
+
+webgen provides a default configuration out of the box. If you can live with that, you do not need
+to write any configuration files. Because most people cannot, you can use your own configuration
+file. The configuration file has to be written in YAML and is called @config.yaml@. webgen assumes
+it to be in the website directory.
+
+Each plugin can specify parameters which can be configured through the configuration file. You can
+display a list of all available parameters by running
+
+<pre>
+  $ webgen show config
+</pre>
+
+(This information is also provided on this website, have a look at the
+<a href="{relocatable: plugins}">plugins section</a>!)
+
+The list shows sorted by the plugin name the current values and the default values for each
+parameter. Each parameter can be overridden in the configuration file by specifing the plugin name
+as top level key and each parameter and value as a key/value pair. Therefore a configuration file
+looks like this (this is the one for the webgen homepage):
+
+<pre class="webgen-file">{includeFile: ../../config.yaml}</pre>
+
+There is a special key for file handler plugins: @defaultMetaInfo@. It's value should be a hash with
+the default meta information for nodes created by the plugin. The value is used to update the
+correct part of the {param: Core/FileHandler:defaultMetaInfo} parameter *if and only if* no value
+for the {param: Core/FileHandler:defaultMetaInfo} parameter has been set in the configuration file!
+
+
+h2(#filetypes). File Types
+
+
+webgen can handle different file types in the source directory through its plugin concept. The
+{plugin: File} plugins are used for this task.
+
+The most important files are the page and template files as they are used to define the content and
+the layout of your website. Have a look at the
+ <a href="{relocatable:references/webpage_format.page}">WebPage Format</a> documentation to see how
+these files look like and how they are structured. After that have a look at the documentation for
+the plugins {plugin: File/PageHandler} and {plugin: File/TemplateHandler} as they are responsible
+for handling the page and template files!
+
+You can naturally use any other type of file in the webgen source directory. However, be aware that
+some files may not be processed by webgen when no file handler plugin for them exist. For example,
+there is currently no file handler plugin for @.svg@ files, so those files would be ignored. If you
+just want to have files copied from the source to the output directory (like images or CSS files),
+the {plugin: File/CopyHandler} plugin is what you need!
+
+
+h2(#goingon). From here on...
+
+
+Now that you know the basics, you can go on to the
+ <a href="{relocatable: tutorial.page}">tutorial</a> to create your first website with webgen!

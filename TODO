@@ -372,3 +372,4 @@ W do not allow two or more page files in the same language, print warn
 * document somewhere which objects are available when processing templates/pages files with ERB
 * document evaluation order of page files (first content converted from Textile/Markdown/... to HTML, then ERB, then tags)
 * create a rake task for running webgen (like the rdoc task)
+* documentation: split getting started into basics and tutorial pages

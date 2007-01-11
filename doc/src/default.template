@@ -40,13 +40,17 @@
           <% end %>
           <h1>Tips</h1>
           <ul class="list">
-            <li>The <a href="{relocatable: /documentation/gettingstarted.en.page}">Getting Started</a> page contains everything one needs to get going with webgen!</li>
+            <li>The <a href="{relocatable: /documentation/basics.en.page}">basics page</a>contains everything one needs to get going with webgen!</li>
             <li>Descriptions for plugins can be found in the <a href="{relocatable:documentation/plugins}">plugins  section</a></li>
           </ul>
         </div>
 
         <div id="rightside">
           <h1>Latest news</h1>
+          <p><strong>2007-01-11: </strong>
+            webgen 0.4.1 released! Bug fix for running webgen on Windows and other small updates!
+            <a href="{relocatable: news.en.page#news-2007-01-11}">More...</a>
+          </p>
           <p><strong>2007-01-05: </strong>
             webgen 0.4.0 released! Major update to the core and plugins and many new features added!
             <a href="{relocatable: news.en.page#news-2007-01-05}">More...</a>

@@ -1,10 +1,13 @@
 ---
 directoryName: Documentation
+title: Preface
 ---
-h2. Information
+h2. Preface
 
 
-p={font-size: 150%; color: red}. *!!! This documentation is for webgen {version: } !!!*
+p={font-size: 150%; color:red}. *This documentation is for webgen {version: }! However, most parts
+are valid for all webgen 0.4.x releases!*
+
 
 The source files for this website are in the @doc/src@ directory of the webgen distribution. Have a
 look at them to see a real world example on how to use webgen!
@@ -17,7 +20,7 @@ I often see that the name of the program is misspelled: WebGen, Webgen, WEBGEN, 
 *webgen*, all lower case!
 
 
-h2. Philosophy
+h2. Philosophy of webgen
 
 
 There are some things about webgen which I think are important to mention. It's about how webgen

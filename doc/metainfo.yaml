@@ -21,7 +21,10 @@ images:
   indexFile: ~
 
 
-documentation/gettingstarted.page:
+documentation/basics.page:
+  orderInfo: 1
+
+documentation/tutorial.page:
   orderInfo: 3
 
 documentation/extending_webgen.page:

@@ -14,7 +14,7 @@ directory path is resolved (e.g. by the {plugin: Tag/Relocatable}) the index fil
 The name of the index file is specified with the @indexFile@ meta information on a directory node.
 This meta information is set by default and can be overridden globally by using the special
 @defaultMetaInfo@ param for the @DirectoryHandler@ in the
-<a href="{relocatable: /documentation/gettingstarted.page#config}">configuration file</a> or by
+<a href="{relocatable: /documentation/basics.page#config}">configuration file</a> or by
 setting it on individual directories using the
 <a href="{relocatable: ../core/filehandler.page#metainfo-file}">meta information backing file</a>.
 
