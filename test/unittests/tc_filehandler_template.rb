@@ -32,6 +32,9 @@ class TemplateFileHandlerTest < Webgen::PluginTestCase
     default_t = root.resolve_node( 'default.template' )
     assert_equal( [], default_t.templates_for_node )
 
+    test_t = root.resolve_node( 'index.de.page' )
+    assert_equal( [], @manager['File/TemplateHandler'].templates_for_node( test_t ) )
+
     test_t = root.resolve_node( 'test.template' )
     assert_equal( [default_t], test_t.templates_for_node )
 

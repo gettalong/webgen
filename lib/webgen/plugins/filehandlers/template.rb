@@ -77,6 +77,8 @@ module FileHandlers
         node['template'] = template_node
       elsif node['template'].kind_of?( Node )
         template_node = node['template']
+      elsif node.meta_info.has_key?( 'template' ) && node['template'].nil?
+        template_node = nil
       else
         log(:info) { "Using default template for <#{node.node_info[:src]}>" }
         template_node = get_default_template( node.parent, param( 'defaultTemplate' ) )
