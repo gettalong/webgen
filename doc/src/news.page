@@ -5,13 +5,14 @@ inMenu: true
 h2. News
 
 
-h3(#news-2007-01-11). 11.01.2007 - webgen 0.4.1
+h3(#news-2007-01-12). 12.01.2007 - webgen 0.4.1
 
 
 A minor release with bug fixes and some small enhancements:
 
 * webgen Windows bug resolved: webgen now really runs on Windows - thanks for the fast feedback!
 * Rake task for running webgen - thanks to Jeremy Hinegardner for providing it!
+* Meta information @template@ can now be set to @nil@ to specify that no template should be used!
 * Small documentation updates - thanks to John Gabriel for pointing out some flaws!
 
 

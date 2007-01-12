@@ -65,7 +65,8 @@ plugin, be it a file handler plugin, a tag plugin...
   <td>String</td>
   <td>my.template</td>
   <td>Page/Template file</td>
-  <td>Sets the template for the page/template file overriding the default value.</td>
+  <td>Sets the template for the page/template file overriding the default value. If set to @nil@, no
+      template is used for the page/template file!</td>
 </tr>
 <tr>
   <th>title</th>
