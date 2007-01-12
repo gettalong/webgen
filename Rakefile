@@ -73,7 +73,7 @@ end
 
 
 desc "Creates the whole documentation"
-task :doc => [:rdoc, :webgen_doc]
+task :doc => [:rdoc, :webgen]
 
 Webgen::Rake::WebgenTask.new do |webgen|
   webgen.directory = File.join( File.dirname( __FILE__ ), 'doc' )
