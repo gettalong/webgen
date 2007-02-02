@@ -80,11 +80,12 @@ margin:0;
 padding:0;
 }
 
-#nav a{
+#nav a, #nav span {
 background:url(images/tabs.gif) no-repeat 100% 0;
 color:#808080;
 display:block;
 font-size:1.2em;
+font-weight: 700;
 letter-spacing:-1px;
 padding:7px 20px 4px 11px;
 text-decoration:none;
@@ -105,7 +106,7 @@ padding:0 0 0 9px;
 background:url(images/tabs.gif) no-repeat 0 -41px;
 }
 
-#nav li.webgen-menu-item-selected a, #nav li.webgen-menu-submenu-inhierarchy a {
+#nav li.webgen-menu-item-selected a, #nav li.webgen-menu-submenu-inhierarchy a, #nav li.webgen-menu-item-selected span {
 background:url(images/tabs.gif) no-repeat 100% -41px;
 color:#303030;
 padding:7px 20px 5px 11px;

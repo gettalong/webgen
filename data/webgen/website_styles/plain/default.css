@@ -60,7 +60,7 @@ a:hover {
     padding: 0px;
 }
 
-#menu a {
+#menu a, #menu span {
 	color:#FFFFFF;
 	text-decoration:none;
 	padding:10px;
@@ -68,7 +68,7 @@ a:hover {
 	padding-bottom:20px;
 }
 
-#menu a:hover, #menu .webgen-menu-item-selected a, #menu li.webgen-menu-submenu-inhierarchy a {
+#menu a:hover, #menu .webgen-menu-item-selected a, #menu .webgen-menu-item-selected span, #menu li.webgen-menu-submenu-inhierarchy a {
 	border-bottom:1px solid #ffffff;
 	border-left:1px solid #728d40;
 	border-right:1px solid #e9ffb7;

@@ -101,7 +101,7 @@ margin: 0px;
 padding: 0px;
 }
 
-#menu a {
+#menu a, #menu span {
 margin:0;
 height:100px;
 padding:35px 6px 41px 6px;
@@ -111,7 +111,7 @@ letter-spacing:-1px;
 color: #888;
 }
 
-#menu a:hover {
+#menu a:hover, #menu li.webgen-menu-item-selected span, #menu li.webgen-menu-item-selected a {
 color:#269;
 text-decoration:none;
 background: #fff url(images/menuhover.png) repeat-x;

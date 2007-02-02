@@ -52,7 +52,7 @@
 
   /* styling the menu */
 
-  #menu a {
+  #menu a, #menu span {
 	text-decoration: none;
 	font-weight: bold;
 	font-size: 130%;

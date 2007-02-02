@@ -83,7 +83,7 @@ margin:0;
 padding:0;
 }
 
-#mainmenu a {
+#mainmenu a, #mainmenu span {
 border-right:1px solid #b0b0b0;
 color:#606060;
 display:block;
@@ -98,7 +98,7 @@ color:#505050;
 text-decoration:none;
 }
 
-#mainmenu .webgen-menu-item-selected a {
+#mainmenu .webgen-menu-item-selected a, #mainmenu .webgen-menu-item-selected span {
 background:#f0f0f0 url(images/menuhover.jpg) top left repeat-x;
 color:#505050;
 text-decoration:none;

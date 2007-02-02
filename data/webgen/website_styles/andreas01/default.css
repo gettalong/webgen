@@ -124,7 +124,7 @@ line-height:1.4em;
 display:inline;
 }
 
-.webgen-menu ul li a {
+.webgen-menu ul li a, .webgen-menu ul li span {
 background-color:#f4f4f4;
 color:#505050;
 font-weight:bold;
@@ -136,7 +136,7 @@ border-left:4px solid #cccccc;
 text-decoration:none;
 }
 
-.webgen-menu ul li a:hover, .webgen-menu ul li.webgen-menu-item-selected a {
+.webgen-menu ul li a:hover, .webgen-menu ul li.webgen-menu-item-selected a, .webgen-menu ul li.webgen-menu-item-selected span {
 background-color:#eaeaea;
 border-left:4px solid #286ea0;
 color:#505050;
@@ -149,7 +149,7 @@ font-size:0.9em;
 width:125px;
 }
 
-.webgen-menu ul ul a {
+.webgen-menu ul ul a, .webgen-menu ul ul span {
 padding:3px 1px 3px 5px;
 width:115px;
 }

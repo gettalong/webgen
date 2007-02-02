@@ -89,7 +89,7 @@ border-right:1px solid #ffffff;
 white-space:nowrap;
 }
 
-#navigation li a{
+#navigation li a, #navigation li span {
 display:block;
 padding:0 10px;
 font-size:0.8em;
@@ -102,7 +102,7 @@ color: #ffffff;
 
 * html #navigation a {width:1%;}
 
-#navigation .webgen-menu-item-selected a, #navigation a:hover {
+#navigation .webgen-menu-item-selected a, #navigation .webgen-menu-item-selected span, #navigation a:hover {
 background:#80b0da;
 color:#ffffff;
 text-decoration:none;

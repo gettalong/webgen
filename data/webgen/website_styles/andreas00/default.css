@@ -43,11 +43,11 @@ list-style:none;width:150px;margin:0 0 20px 0;padding:0;
 margin-bottom:5px;
 }
 
-#avmenu li a {
+#avmenu li a, #avmenu li span {
 font-weight:bold;height:20px;text-decoration:none;color:#505050;display:block;padding:6px 0 0 10px;background:#f4f4f4 url(images/menubg.gif) bottom left repeat-x;border-top:1px solid #d8d8d8;border-right:1px solid #d8d8d8;border-bottom:1px solid #d8d8d8;border-left:4px solid #cccccc;
 }
 
-#avmenu li a:hover, #avmenu li a.current, #avmenu li.webgen-menu-item-selected a {
+#avmenu li a:hover, #avmenu li a.current, #avmenu li.webgen-menu-item-selected a, #avmenu li.webgen-menu-item-selected span {
 background:#eaeaea url(images/menubg2.gif) bottom left repeat-x;color:#505050;border-top:1px solid #b0b0b0;border-right:1px solid #b0b0b0;border-bottom:1px solid #b0b0b0;border-left:4px solid #505050;
 }
 

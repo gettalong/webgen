@@ -25,8 +25,8 @@ h2{font-size:1.6em; font-weight:normal; letter-spacing:-1px; margin:5px 0 10px;}
 
 /* Menu */
 #sidebar .webgen-menu ul {list-style-type: none; margin: 0px; padding: 0px;}
-#sidebar .webgen-menu a{border:1px solid #ffffff; color:#286ea0; display:block; font-size:1.1em; font-weight:bold; padding:4px 2px 4px 10px; width:110px;}
-#sidebar .webgen-menu a:hover{background-color:#f8f8f8; border:1px solid #dadada; color:#286ea0; text-decoration:none;}
+#sidebar .webgen-menu a, #sidebar .webgen-menu span {border:1px solid #ffffff; color:#286ea0; display:block; font-size:1.1em; font-weight:bold; padding:4px 2px 4px 10px; width:110px;}
+#sidebar .webgen-menu a:hover, #sidebar .webgen-menu-item-selected a, #sidebar .webgen-menu-item-selected span {background-color:#f8f8f8; border:1px solid #dadada; color:#286ea0; text-decoration:none;}
 
 /* Various classes */
 .credits{color:#888; font-size:0.9em; margin-bottom:0;}
