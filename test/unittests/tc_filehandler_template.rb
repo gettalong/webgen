@@ -15,10 +15,11 @@ class TemplateFileHandlerTest < Webgen::PluginTestCase
   def test_create_node
     root = @manager['Core/FileHandler'].instance_eval { create_root_node }
     file = sample_site( File.join( Webgen::SRC_DIR, 'default.template' ) )
-    node = @plugin.create_node( file, root, {} )
+    node = @manager['Core/FileHandler'].create_node( File.basename( file ), root, @plugin )
 
     assert_not_nil( node )
     assert_equal( true, node['useERB'] )
+    assert_equal( ['content', 'html'], node['blocks'][0] )
     assert_equal( File.basename( file ), node.path )
     assert_equal( file, node.node_info[:src] )
     assert_equal( File.basename( file ), node.node_info[:pagename] )

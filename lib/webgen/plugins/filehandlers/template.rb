@@ -36,6 +36,7 @@ module FileHandlers
 
     register_extension 'template'
 
+    default_meta_info( 'blocks' => [['content', 'html']] )
 
     def create_node( src_name, parent, meta_info )
       begin

@@ -12,9 +12,7 @@ using a page file.
 
 These files have the same format as page files - more information about this format can be found
 in the <a href="{relocatable: /documentation/references/webpage_format.page}">WebPage Format reference</a>.
-Also be aware that the template handler uses the content format set for the page handler! This is
-normally something like Textile or Markdown, if you want to use plain HTML you have to explicitly
-specify it!
+The default content format for template files is HTML (contrary to page files).
 
 The parameter {param: File/TemplateHandler:defaultTemplate} specifies the name of the default
 template which is used when no explicit template for a page file is set via the meta information
