@@ -10,6 +10,14 @@ h2(#description). Description
 The breadcrumb trail tag is used to display the hierarchy for the current page. You can see it in
 action above the main content area.
 
+The {param: Tag/BreadcrumbTrail:omitLast} parameter can be used for always omitting the last path
+component in the trail (which is normally the page itself).
+
+The {param: Tag/BreadcrumbTrail:omitIndexFile} parameter can be used to omit the last path component
+if it is an index file for an directory (see {plugin: File/DirectoryHandler} for more information
+about index files). This behaviour can be overridden for individual index files by setting the meta
+information @omitIndexFileInBreadcrumbTrail@.
+
 
 h2(#examples). Examples
 
@@ -25,5 +33,9 @@ h2(#examples). Examples
 <tr>
   <td><notextile>\{breadcrumbTrail: {separator: " HELLO "}}</notextile></td>
   <td><notextile>{breadcrumbTrail: {separator: " HELLO "}}</notextile></td>
+</tr>
+<tr>
+  <td><notextile>\{breadcrumbTrail: {omitLast: true}}</notextile></td>
+  <td><notextile>{breadcrumbTrail: {omitLast: true}}</notextile></td>
 </tr>
 </table>

@@ -40,6 +40,8 @@ module Tags
            )
 
     param 'separator', ' / ', 'Separates the hierachy entries from each other.'
+    param 'omitLast', false, 'Omits the last path component.'
+    param 'omitIndexFile', false, 'Omits the last path component if it is an index file.'
 
     register_tag 'breadcrumbTrail'
 
@@ -47,11 +49,22 @@ module Tags
       out = []
       node = chain.last
 
+      omitIndexFile = if node.meta_info.has_key?( 'omitIndexFileInBreadcrumbTrail' )
+                        node['omitIndexFileInBreadcrumbTrail']
+                      else
+                        param( 'omitIndexFile' )
+                      end
+      omitIndexFile = omitIndexFile && node.parent['indexFile'] &&
+        node.parent['indexFile'].node_for_lang( node['lang'] ) == node
+
+      node = node.parent if omitIndexFile
+
       until node.nil?
         out.push( node.link_from( chain.last ) )
         node = node.parent
       end
 
+      out[0] = '' if param( 'omitLast' ) && !omitIndexFile
       out = out.reverse.join( param( 'separator' ) )
       log(:debug) { "Breadcrumb trail for <#{chain.last.node_info[:src]}>: #{out}" }
       out
