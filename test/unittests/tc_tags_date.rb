@@ -1,4 +1,5 @@
 require 'webgen/test'
+require 'time'
 
 class DateTagTest < Webgen::TagTestCase
 
