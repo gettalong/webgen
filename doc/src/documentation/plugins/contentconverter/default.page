@@ -2,6 +2,7 @@
 title: Default
 directoryName: ContentConverter
 inMenu: true
+omitIndexFileInBreadcrumbTrail: false
 template: /plugin.template
 plugin: ContentConverter/Default
 ---

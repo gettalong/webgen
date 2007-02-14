@@ -2,6 +2,7 @@
 title: DefaultHandler
 directoryName: File
 inMenu: true
+omitIndexFileInBreadcrumbTrail: false
 template: /plugin.template
 plugin: File/DefaultHandler
 ---

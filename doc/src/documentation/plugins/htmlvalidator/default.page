@@ -2,6 +2,7 @@
 title: Default
 directoryName: HtmlValidator
 inMenu: true
+omitIndexFileInBreadcrumbTrail: false
 template: /plugin.template
 plugin: HtmlValidator/Default
 ---

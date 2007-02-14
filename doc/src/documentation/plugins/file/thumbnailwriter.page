@@ -14,8 +14,11 @@ The {param: File/ThumbnailWriter:thumbnailSize} parameter has to be in the forma
 where WIDTH and HEIGHT are numeric values specifying the width and the height for the thumbnail.
 
 The {param: File/ThumbnailWriter:resizeMethod} parameter specifies how the image should be resized
-for creating the thumbnail. The following pictures illustrate the differences between the settings
-for a thumbnail size of 100x100:
+for creating the thumbnail. *Be aware* that the value has to be a symbol, not a string (@:normal@
+instead of @normal@)!
+
+The following pictures illustrate the differences between the settings for a thumbnail size of
+100x100:
 
 <table class="examples">
 <tr>

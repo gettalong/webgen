@@ -2,6 +2,7 @@
 title: Default
 directoryName: MenuStyle
 inMenu: true
+omitIndexFileInBreadcrumbTrail: false
 template: /plugin.template
 plugin: MenuStyle/Default
 ---

@@ -2,6 +2,7 @@
 title: Default
 directoryName: Tag
 inMenu: true
+omitIndexFileInBreadcrumbTrail: false
 template: /plugin.template
 plugin: Tag/Default
 ---

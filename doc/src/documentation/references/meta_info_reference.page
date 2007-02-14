@@ -23,10 +23,17 @@ plugin, be it a file handler plugin, a tag plugin...
   <th>directoryName</th>
   <td>String</td>
   <td>Image Directory</td>
-  <td>Page file</td>
-  <td>Only used if set on a directory index page file; specifies the title of the directory for
+  <td>Any</td>
+  <td>Only used if set on a directory index file; specifies the title of the directory for
       which it is the index file. If it is not specified, the title of the directory will be
       used.</td>
+</tr>
+<tr>
+  <th>emoticonPack</th>
+  <td>String</td>
+  <td>bigeyes</td>
+  <td>Page file</td>
+  <td>Sets the emoticon package which should be used for the page.</td>
 </tr>
 <tr>
   <th>indexFile</th>
@@ -50,6 +57,22 @@ plugin, be it a file handler plugin, a tag plugin...
   <td>Sets the language for the page file. Has to be a valid ISO-639-1/2 character code for the language.</td>
 </tr>
 <tr>
+  <th>linkAttrs</th>
+  <td>Hash</td>
+  <td>\{title: Hallo, class: extra}</td>
+  <td>Any</td>
+  <td>Specifies additional attribute-value pairs (in form of a Hash) that should be added to a link to the file/directory.</td>
+</tr>
+<tr>
+  <th>omitIndexFileInBreadcrumbTrail</th>
+  <td>Boolean</td>
+  <td>false</td>
+  <td>Index file</td>
+  <td>Controls whether the index file should appear in a breadcrumb trail despite the setting of the
+      {param: Tag/BreadcrumbTrail:omitIndexFile} parameter.
+  </td>
+</tr>
+<tr>
   <th>orderInfo</th>
   <td>Integer</td>
   <td>15</td>
@@ -58,6 +81,16 @@ plugin, be it a file handler plugin, a tag plugin...
       You should only use numbers greater than zero. However, if you want a menu item to always appear as first item,
       it is recommended to use the value -1. When sorting nodes, the @orderInfo@ value is used first. If the values for both
       nodes are the same, then they are sorted according to their @title@ meta information.
+  </td>
+</tr>
+<tr>
+  <th>outputNameStyle</th>
+  <td>String</td>
+  <td>[:name, [".", :lang], ".html"]</td>
+  <td>Page file</td>
+  <td>Sets a custom output name style for the specified page file only. The basename is substituted for the value @:name@
+      and the language for the value @:lang@. Strings are used verbatim. If @:lang@ is specified in a sub-array, the whole
+      sub-array is omitted, if the parameter {param: File/PageHandler:defaultLangInFilename} is false.
   </td>
 </tr>
 <tr>
@@ -81,20 +114,6 @@ plugin, be it a file handler plugin, a tag plugin...
   <td>false</td>
   <td>Page/Template file</td>
   <td>Specifies if the content blocks of the page/template file should be processed with ERB overriding the default value.</td>
-</tr>
-<tr>
-  <th>linkAttrs</th>
-  <td>Hash</td>
-  <td>\{title: Hallo, class: extra}</td>
-  <td>Any</td>
-  <td>Specifies additional attribute-value pairs (in form of a Hash) that should be added to a link to the file/directory.</td>
-</tr>
-<tr>
-  <th>emoticonPack</th>
-  <td>String</td>
-  <td>bigeyes</td>
-  <td>Page file</td>
-  <td>Sets the emoticon package which should be used for the page.</td>
 </tr>
 </table>
 
