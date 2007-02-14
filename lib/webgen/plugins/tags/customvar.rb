@@ -1,7 +1,7 @@
 #
 #--
 #
-# $Id$
+# $Id: meta.rb 563 2006-12-29 08:59:41Z thomas $
 #
 # webgen: template based static website generator
 # Copyright (C) 2004 Thomas Leitner
@@ -20,26 +20,35 @@
 #++
 #
 
-module CorePlugins
+load_plugin 'webgen/plugins/tags/tag_processor'
 
-  # Used for storing the basic configuration options.
-  class Configuration < Webgen::Plugin
+module Tags
 
-    infos( :name => 'Core/Configuration',
+  class CustomVarTag < DefaultTag
+
+    infos( :name => 'Tag/CustomVar',
            :author => Webgen::AUTHOR,
-           :summary => "Responsible for storing general parameters"
+           :summary => "Used to output custom variables defined in Core/Configuration:customVars."
            )
 
-    param 'srcDir', Webgen::SRC_DIR, 'The directory from which the source files are read - is automatically set and cannot be overridden.'
-    param 'outDir', 'output', 'The directory to which the output files are written.'
-    param 'websiteDir', nil, 'The website directory - is automatically set and cannot be overridden!'
-    param 'lang', 'en', 'The default language.'
-    param 'loggerLevel', 2, 'The logging level, ranges from 0 (debug, more verbose) to 3 (error, less verbose)'
+    param 'var', nil, 'The variable of which the value should be retrieved.'
+    set_mandatory 'var', true
 
-    param 'customVars', {}, 'A hash with global custom variables.'
+    register_tag 'customVar'
+
+    def process_tag( tag, chain )
+      output = ''
+      customVars = param( 'customVars', 'Core/Configuration' )
+      var = param( 'var' )
+
+      if customVars.kind_of?( Hash ) && customVars.has_key?( var )
+        output = customVars[var]
+      else
+        log(:warn) { "No custom variable called '#{var}' found in Core/Configuration:customVars (file <#{chain.first.node_info[:src]}>)" }
+      end
+      output
+    end
 
   end
 
 end
-
-
