@@ -136,6 +136,20 @@ module Webgen
 
   end
 
+  # A sipttra style provides a template and other files for styling sipttra files. It should contain
+  # at least a +sipttra.template+.
+  class SipttraStyle < DirectoryInfo
+
+    # Base path for the styles.
+    BASE_PATH = File.join( Webgen.data_dir, 'sipttra_styles' )
+
+    # See DirectoryInfo#files
+    def files
+      super.select {|f| f != File.join( path, 'README' )}
+    end
+
+  end
+
 
   # A WebSite object represents a webgen website directory and is used for manipulating it.
   class WebSite
@@ -234,6 +248,16 @@ module Webgen
       FileUtils.mkdir( plugin_dir ) unless File.exists?( plugin_dir )
       FileUtils.cp( plugin_files, plugin_dir )
       return style.copy_to( src_dir ) + plugin_files.collect {|f| File.join( plugin_dir, File.basename( f ) )}
+    end
+
+    # Copies the sipttra style files for +style+ to the source directory of the website +directory+
+    # overwritting exisiting files.
+    def self.use_sipttra_style( directory, style_name )
+      style = SipttraStyle.entries[style_name]
+      raise ArgumentError.new( "Invalid sipttra style '#{style_name}'" ) if style.nil?
+      src_dir = File.join( directory, Webgen::SRC_DIR )
+      raise ArgumentError.new( "Directory <#{src_dir}> does not exist!") unless File.exists?( src_dir )
+      return style.copy_to( src_dir )
     end
 
     #######

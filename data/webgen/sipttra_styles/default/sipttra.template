@@ -1,0 +1,105 @@
+--- content, html
+<% sipttra = node.node_info[:sipttra] %>
+
+<div class="sipttra">
+
+
+<h1>Milestones</h1>
+
+<% sipttra.milestones.each do |ms| %>
+
+<div class="milestone">
+
+<h2 class="milestone-name" id="ticket-<%= ms.name %>">Milestone: <span><%= ms.name %></span></h2>
+<p class="milestone-info">
+<% if ms.due_date %>Due on: <span class="date"><%= ms.due_date %></span><% else %>No due date<% end %>
+<% if ms.belongs_to %> | <% end %>
+<% if ms.belongs_to %>Belongs to milestone: <span class="belongs-to"><%= ms.belongs_to %></span><% end %>
+</p>
+
+
+<%
+  if ms.all_assigned_tickets.length > 0
+    closed = ms.all_assigned_tickets( :closed ).length
+    all = ms.all_assigned_tickets.length
+    percent = 100 * closed.to_f / all
+%>
+<div class="progress-info">
+<div class="progress-bar">
+  <div class="progress-indicator" style="width: <%= percent %>%"></div>
+</div>
+<p class="progress-text"><%= closed %> out of <%= all %> tickets (= <%= percent %>%) closed (including tickets in sub milestones)</p>
+</div>
+<% end %>
+
+
+<div class="milestone-summary"><%= CGI.escapeHTML(ms.summary) %></div>
+<% if !ms.description.to_s.empty? %>
+<p><b>Detailed description:</b></p>
+<div class="milestone-description"><%= sipttra.htmlize(ms.description) %></div>
+<% end %>
+
+<% if ms.assigned_tickets.length > 0 %>
+<p>Tickets directly assigned to milestone (<a href="javascript: toogle('assigned-tickets_<%= ms.name %>')">show/hide</a>):</p>
+<ul id="assigned-tickets_<%= ms.name %>" class="assigned-tickets">
+<% ms.assigned_tickets.each do |ticket| %>
+  <li>
+    <% if ticket.name.to_s.empty? %>
+    <a href='#category-<%= ticket.category.name %>'><%= CGI.escapeHTML(ticket.summary) %></a>
+    <% else %>
+    <a href='#ticket-<%= ticket.name %>'><%= ticket.name %>: <%= CGI.escapeHTML(ticket.summary) %></a>
+    <% end %>
+    <% if ticket.closed? %>(closed)<% end %>
+  </li>
+<% end %>
+</ul>
+<% end %>
+
+
+<% if ms.sub_milestones.length > 0 %>
+<p>Sub milestones (<a href="javascript: toogle('sub-milestones-<%= ms.name %>')">show/hide</a>):</p>
+<ul id="sub-milestones_<%= ms.name %>" class="sub-milestones">
+<% ms.sub_milestones.each do |sms| %>
+<li><a href='#ticket-<%= sms.name %>'><%= sms.name %></a> <% if sms.closed? %>(closed)<% end %></li>
+<% end %>
+</ul>
+<% end %>
+
+</div>
+
+<% end %>
+
+
+<h1>Tickets</h1>
+
+<% sipttra.category_names.each do |cat_name| %>
+
+<div class="ticket">
+
+<h2 id="category-<%= cat_name %>">Category: <%= cat_name %></h2>
+
+<table class='tickets'>
+  <tr class='header'><th>Name</th><th>Due&nbsp;Date</th><th>Belongs&nbsp;To</th><th>Text</th><th>Type</th></tr>
+
+<% sipttra.tickets_for_category( cat_name ).each do |ticket| %>
+  <tr class='<%= ticket.category.type %>'>
+    <td class='name'<%= ticket.name ? ' id="ticket-' + ticket.name + '"' : '' %>><%= ticket.name %></td>
+    <td class='due_date'><%= ticket.due_date %></td>
+    <td class='belongs_to'><a href='#<%= ticket.belongs_to %>'><%= ticket.belongs_to %></a></td>
+    <td class='text'>
+      <% if !ticket.description.empty? %><span style="float:right">(<a href="javascript: toogle('ticket-description-<%= ticket.hash.abs %>')">details</a>)</span><% end %>
+      <%= CGI.escapeHTML(ticket.summary) %>
+      <% if !ticket.description.empty? %><div class="ticket-description" id="ticket-description-<%= ticket.hash.abs %>"><%= BlueCloth.new(ticket.description).to_html %></div><% end %>
+    </td>
+    <td class='type'><%= ticket.category.type %></td>
+  </tr>
+<% end %>
+
+</table>
+
+</div>
+
+<% end %>
+
+
+</div>

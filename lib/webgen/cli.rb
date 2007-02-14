@@ -200,6 +200,36 @@ module Webgen
         end
       end
       self.add_command( useGalleryStyle )
+
+      # Use sipttra style command.
+      useSipttraStyle = CmdParse::Command.new( 'sipttra_style', false )
+      useSipttraStyle.short_desc = "Changes the used sipttra style"
+      useSipttraStyle.description =
+        CliUtils.format("\nCopies the sipttra styles files for the sipttra style STYLE to the website " +
+                        "directory defined by the global directory option, overwritting existing files. " +
+                        "If the global verbosity level is set to 0 or 1, the copied files are listed.")
+      useSipttraStyle.options = CmdParse::OptionParserWrapper.new do |opts|
+        opts.separator "Available styles:"
+        opts.separator ""
+        Webgen::SipttraStyle.entries.sort.each {|name, entry| CliUtils.dirinfo_output( opts, name, entry ) }
+      end
+      def useSipttraStyle.usage
+        "Usage: #{commandparser.program_name} [global options] use sipttra_style STYLE"
+      end
+      useSipttraStyle.set_execution_block do |args|
+        if args.length == 0
+          raise OptionParser::MissingArgument.new( 'STYLE' )
+        else
+          if @force || ask_overwrite
+            files = Webgen::WebSite.use_sipttra_style( cmdparser.directory, args[0] )
+            if (0..1) === cmdparser.verbosity
+              puts "The following files were created or overwritten:"
+              puts files.collect {|f| "- " + f }.join("\n")
+            end
+          end
+        end
+      end
+      self.add_command( useSipttraStyle )
     end
 
     #######
