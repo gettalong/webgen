@@ -363,7 +363,7 @@ module Webgen
       dep.tsort.each do |plugin_name|
         config = plugin_class_for_name( plugin_name ).config
         unless config.infos.has_key?(:instantiate) && !config.infos[:instantiate]
-          log_msg( :debug, 'PluginManager#init') { "Creating plugin of class #{config.plugin_name}" }
+          log_msg( :debug, 'PluginManager#init') { "Creating plugin of class #{plugin_name}" }
           @plugins[plugin_name] = config.plugin_klass.new( self )
         end
       end
