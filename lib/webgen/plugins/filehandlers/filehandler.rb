@@ -81,7 +81,7 @@ module FileHandlers
     # Renders only the given +files+.
     def render_files( files )
       tree = build_tree
-      return unless tree.nil?
+      return if tree.nil?
       files.each do |file|
         node = tree.resolve_node( file )
         if !node.nil?
