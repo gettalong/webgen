@@ -241,12 +241,15 @@ module Sipttra
       @info = {}
       level = 0
 
-      begin
-        index = data.index( "\n\n" ) || 0
-        @info = YAML.load( data[0...index] )
-        data = data[index..-1]
-      rescue
-        @info = {}
+      if data =~ /\A---\n/m
+        begin
+          index = data.index( "---\n", 4 ) || 0
+          @info = YAML.load( data[0...index] )
+          data = data[index..-1]
+        rescue
+        ensure
+          @info = {} unless @info.kind_of?( Hash )
+        end
       end
 
       data.split(/\n/).each do |line|
