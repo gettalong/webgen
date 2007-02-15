@@ -1,0 +1,71 @@
+<%
+copen = "#e0baba"
+cclosed = "#bae0ba"
+%>
+
+div.milestone h2.milestone-name {
+  padding-bottom: 0px;
+  margin-bottom: 0px;
+  border-bottom: 1px solid gray;
+}
+
+div.milestone h2.milestone-name span {
+  font-size: 110%;
+}
+
+div.milestone p.milestone-info {
+  padding-top: 0px;
+  margin-top: 0px;
+}
+
+div.milestone div.milestone-summary {
+}
+
+div.milestone div.milestone-description {
+  padding-left: 20px;
+}
+
+div.milestone div.progress-info {
+  padding-left: 20px;
+}
+
+div.milestone div.progress-bar {
+  margin-top: 10px;
+  height: 20px;
+  width: 400px;
+  background-color: <%= copen %>;
+}
+
+div.milestone div.progress-indicator {
+  background-color: <%= cclosed %>;
+  height: 100%;
+  width: 0px;
+}
+
+div.milestone p.progress-text {
+  font-size: 60%;
+}
+
+div.milestone ul.assigned-tickets, div.milestone ul.sub-milestones {
+  display: none;
+}
+
+div.ticket table.tickets {
+  width: 100%;
+}
+
+div.ticket table.tickets tr {
+  background-color: <%= copen %>;
+}
+
+div.ticket table.tickets tr.header {
+  background-color: inherit;
+}
+
+div.ticket table.tickets tr.closed {
+  background-color: <%= cclosed %>;
+}
+
+div.ticket table.tickets div.ticket-description {
+  display: none;
+}

@@ -17,6 +17,9 @@ examples/:
   orderInfo: 10
   inMenu: true
 
+project.page:
+  orderInfo: 11
+
 images:
   indexFile: ~
 
@@ -39,6 +42,9 @@ documentation/plugins/:
 
 documentation/references/webpage_format.page:
   orderInfo: 5
+
+documentation/references/sipttra_format.page:
+  orderInfo: 8
 
 documentation/references/parameter_reference.page:
   orderInfo: 15
@@ -84,5 +90,5 @@ wiki.html:
   url: http://webgen.rubyforge.org/wiki/wiki.pl
   title: WikiWiki Web
   inMenu: true
-  orderInfo: 11
+  orderInfo: 15
 
