@@ -6,7 +6,7 @@ plugin: File/SipttraHandler
 ---
 h2(#description). Description
 
-This plugin handles <a href="{reloctable:/documentation/references/sipttra_format.page">sipttra</a>
+This plugin handles <a href="{reloctable:/documentation/references/sipttra_format.page}">sipttra</a>
 (Simple Plain Text Tracker) files. This is a custom text format which one can use if a sophisticated
 tracker like Bugzilla or Trac is an overkill.
 
