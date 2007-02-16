@@ -61,8 +61,7 @@ module Collage
 .thumb-#{collage_title(ginfo)} img:hover {
   border: 1px solid black;
 }
-
-}")
+")
     end
 
     #######
@@ -226,6 +225,7 @@ module Collage
 
     def write_node( node )
       return if File.exists?( node.full_path ) #TODO always create? what settings to check?
+      return if node.node_info[:data][:ginfo].galleries.length == 1
       create_collage( node )
       node.node_info[:collage].write( node.full_path )
     end
@@ -321,6 +321,7 @@ module Collage
 
     def write_node( node )
       return if File.exists?( node.full_path ) #TODO always create? what settings to check?
+      return if node.node_info[:data][:ginfo].galleries.length == 1
       ginfo = node.node_info[:data][:ginfo]
       ginfo[:collage_node].create_collage
       collage = ginfo[:collage_node].node_info[:collage]
