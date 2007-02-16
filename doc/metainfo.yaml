@@ -17,6 +17,10 @@ examples/:
   orderInfo: 10
   inMenu: true
 
+examples/example_sites:
+  inMenu: true
+  orderInfo: 20
+
 project.page:
   orderInfo: 11
 

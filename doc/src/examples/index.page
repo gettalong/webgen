@@ -2,7 +2,7 @@
 title: Index
 directoryName: Examples
 ---
-h2(#overview). Overview
+h2. Overview
 
 
 This section shows examples for various parts of webgen. Currently, there are examples for
@@ -10,6 +10,7 @@ This section shows examples for various parts of webgen. Currently, there are ex
 * website templates
 * website styles
 * gallery styles
+* whole website done with webgen
 
 Most of the website styles are from open source web design sites and have been adjusted to work with
 webgen. Detailed information and full demos of these styles are available at the homepage specified

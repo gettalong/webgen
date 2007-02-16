@@ -61,10 +61,9 @@ Category for documentation issues:
 
 * T011 [Feb07] add example section for sipttra style files
 
-* T010 [Feb07] add some example sites
-  It was requested that one should be able to download some zipped examples sites from the examples
-  section showing basic use cases for webgen.
-
 
 ### Documentation (closed) ###
 
+* T010 [Feb07] add some example sites
+  It was requested that one should be able to download some zipped examples sites from the examples
+  section showing basic use cases for webgen.

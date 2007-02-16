@@ -5,6 +5,28 @@ inMenu: true
 h2. News
 
 
+h3(#news-2007-TODO). TODO.2007 - webgen 0.4.2
+
+
+Another minor release which concentrates on fixing some bugs and adding some new features:
+
+New features:
+
+* Implemented support for <a href="{relocatable:/documentation/references/sipttra_format.page}">sipttra</a> (Simple Plain Text Tracker) files and using it for the <a href="{relocatable: project.page}">project status page</a>
+* HTML is now the default content format for template files (also see "FR#7893":http://rubyforge.org/tracker/?func=detail&atid=1210&aid=7893&group_id=296)
+* New parameters for {plugin: Tag/BreadcrumbTrail}: {param: Tag/BreadcrumbTrail:omitLast} and {param: Tag/BreadcrumbTrail:omitIndexFile} (also see "Patch#7942":http://rubyforge.org/tracker/?func=detail&atid=1209&aid=7942&group_id=296)
+* New parameter {param: Core/Configuration:customVars} for storing custom global variables and a new plugin {plugin: Tag/CustomVar} for accessing them
+* Added an example websites section to the examples section!
+
+Closed bugs:
+
+* Specifying arguments to the @run@ command to render only certain files now actually works! ;-)
+* All website styles updated to behave correctly when {param: File/DefaultHandler:linkToCurrentPage} is false
+
+Thanks for the many comments and suggestions since the last release, especially to Bill Paxton,
+Massimiliano Filacchioni, Erhard Karger, Alejandro Sierra, Fritz Heinrichmeyer and Vincent Fourmond!
+
+
 h3(#news-2007-01-12). 12.01.2007 - webgen 0.4.1
 
 
