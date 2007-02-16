@@ -22,7 +22,7 @@
   if ms.all_assigned_tickets.length > 0
     closed = ms.all_assigned_tickets( :closed ).length
     all = ms.all_assigned_tickets.length
-    percent = 100 * closed.to_f / all
+    percent = "%.2f" % (100 * closed.to_f / all)
 %>
 <div class="progress-info">
 <div class="progress-bar">
