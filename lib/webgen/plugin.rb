@@ -191,6 +191,10 @@ module Webgen
     # The optional parts managed (loaded or not) by this PluginLoader instance.
     attr_reader :optional_parts
 
+    # The files loaded by this PluginLoader instance.
+    attr_reader :loaded_files
+
+
     # Creates a new PluginLoader instance. The +wrapper_module+ is used when loading the plugins so
     # that they do not pollute the global namespace.
     def initialize( wrapper_module = Module.new )
@@ -220,7 +224,7 @@ module Webgen
           load_plugin( file )
           nil
         end
-        do_load_file = !@loaded_files.include?( file ) unless file.nil?
+        do_load_file = !@loaded_files.include?( file ) && !DEFAULT_PLUGIN_LOADER.loaded_files.include?( file ) unless file.nil?
         @loaded_files << file unless file.nil? || @loaded_files.include?( file )
         cont.call( @wrapper_module, do_load_file ) if cont
       end

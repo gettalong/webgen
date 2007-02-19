@@ -1,3 +1,5 @@
+load_plugin "webgen/plugins/coreplugins/configuration"
+
 module Testing
 
   class BasicPlugin < Webgen::Plugin

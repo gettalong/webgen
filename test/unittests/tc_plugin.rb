@@ -23,11 +23,18 @@ class PluginLoaderTest < Webgen::TestCase
   end
 
   def test_load_from_file
+    Webgen.load_default_plugins
     assert_nothing_thrown do
       @l.load_from_file( fixture_path( 'plugin1') )
     end
     check_loaded_plugin_class( @l, @wrapper::Testing::BasicPlugin )
     check_loaded_plugin_class( @l, @wrapper::Testing::PluginWithData )
+    assert( !@wrapper.const_defined?( :CorePlugins ) )
+  ensure
+    Webgen.remove_const( :DEFAULT_PLUGIN_LOADER )
+    Webgen.remove_const( :DEFAULT_WRAPPER_MODULE )
+    Webgen.const_set( :DEFAULT_WRAPPER_MODULE, Module.new )
+    Webgen.const_set( :DEFAULT_PLUGIN_LOADER, Webgen.init_default_plugin_loader( Webgen::DEFAULT_WRAPPER_MODULE ) )
   end
 
   def test_load_from_block
@@ -175,7 +182,7 @@ class PluginManagerTest < Webgen::TestCase
     manager = Webgen::PluginManager.new( [loader] )
     manager.add_plugin_classes( loader.plugin_classes )
     manager.init
-    assert_equal( 5, manager.plugins.length )
+    assert_equal( 6, manager.plugins.length )
 
     assert_kind_of( wrapper::Testing::BasicPlugin, manager['Testing/BasicPlugin'] )
     assert_kind_of( wrapper::Testing::DerivedPlugin, manager['Testing/DerivedPlugin'] )
