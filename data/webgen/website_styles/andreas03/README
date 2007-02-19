@@ -1,11 +1,14 @@
 description:
-  Open source web design template by Andreas Viklund. An accessible 2-column template in blue, grey 
+  Open source web design template by Andreas Viklund. An accessible 2-column template in blue, grey
   and white which loads fast and works in all common browsers. Would be a good one for a blog!
   Have a look at the available styles in the CSS file and visit the homepage to see the original
   template and what can be done with it.
 
 author:
   Andreas Viklund (adapted for webgen by Thomas Leitner)
+
+copyright:
+  http://andreasviklund.com/about/copyright/
 
 homepage:
   http://andreasviklund.com/templates
