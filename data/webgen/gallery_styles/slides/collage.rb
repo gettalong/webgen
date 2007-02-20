@@ -1,9 +1,11 @@
-load_plugin 'webgen/plugins/filehandlers/filehandler'
-
 require 'rubygems'
 require 'RMagick'
 
+REF = self
+
 module Collage
+
+  include REF
 
   class Layouter < Webgen::Plugin
 
