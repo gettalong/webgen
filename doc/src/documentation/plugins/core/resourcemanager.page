@@ -34,13 +34,7 @@ Speaking of the output path, each resource has four properties:
 h2(#resources). Predefined Resources
 
 A reason why webgen has a ResourceManager is the possibility to ship predefined resources with
-webgen. These resources can be used by any website developed with webgen.
-
-*Credits*:
-
-* webgen-icons-<notextile>*</notextile>: These icons were taken from the "CrystalClear" package from
-"http://www.kde-look.org/content/show.php?content=25668":http://www.kde-look.org/content/show.php?content=25668
-* webgen-emoticons-<notextile>*</notextile>: Credits for the individual emoticon packs are listed on the {plugin:
-Misc/SmileyReplacer} page
-
-<notextile>{predefinedResources:}</notextile>
+webgen. These resources can be used by any website developed with webgen. The list of predefined
+resources can be viewed on the
+<a href="{relocatable: /documentation/references/resource_reference.page}">Resource Reference</a>
+page.

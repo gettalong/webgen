@@ -1,0 +1,18 @@
+---
+title: Resource Reference
+inMenu: true
+---
+h2. Resource Reference
+
+
+The following list shows all resources that are shipped with webgen and that can be used via the
+{plugin: Tag/Resource} plugin.
+
+*Credits*:
+
+* webgen-icons-<notextile>*</notextile>: These icons were taken from the "CrystalClear" package from
+"http://www.kde-look.org/content/show.php?content=25668":http://www.kde-look.org/content/show.php?content=25668
+* webgen-emoticons-<notextile>*</notextile>: Credits for the individual emoticon packs are listed on the {plugin:
+Misc/SmileyReplacer} page
+
+<notextile>{predefinedResources:}</notextile>

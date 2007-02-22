@@ -50,11 +50,15 @@ documentation/references/webpage_format.page:
 documentation/references/sipttra_format.page:
   orderInfo: 8
 
+documentation/references/meta_info_reference.page:
+  orderInfo: 10
+
+documentation/references/resource_reference.page:
+  orderInfo: 13
+
 documentation/references/parameter_reference.page:
   orderInfo: 15
 
-documentation/references/meta_info_reference.page:
-  orderInfo: 10
 
 
 documentation/plugins/file:

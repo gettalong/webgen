@@ -72,14 +72,17 @@ Category for documentation issues:
 ###### Documentation (open) ######
 
 
-* T011 [Feb07] add example section for sipttra style files
-
 * T014 [F] add plugin developer documentation
   - document how to write various plugins (file handler, tag, CLI command, ...)
   - caveat when using classes in modules
+
 
 ## Documentation (closed) ##
 
 * T010 [Feb07] add some example sites
   It was requested that one should be able to download some zipped examples sites from the examples
   section showing basic use cases for webgen.
+
+* T011 [Feb07] add example section for sipttra style files
+
+* T015 [Feb07] add a resource reference page with the table of resources
