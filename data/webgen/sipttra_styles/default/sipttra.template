@@ -85,7 +85,7 @@
   <tr class='<%= ticket.category.type %>'>
     <td class='name'<%= ticket.name ? ' id="ticket-' + ticket.name + '"' : '' %>><%= ticket.name %></td>
     <td class='due_date'><%= ticket.due_date %></td>
-    <td class='belongs_to'><a href='#<%= ticket.belongs_to %>'><%= ticket.belongs_to %></a></td>
+    <td class='belongs_to'><a href='#ticket-<%= ticket.belongs_to %>'><%= ticket.belongs_to %></a></td>
     <td class='text'>
       <% if !ticket.description.empty? %><span style="float:right">(<a href="javascript: toogle('ticket-description-<%= ticket.hash.abs %>')">details</a>)</span><% end %>
       <%= CGI.escapeHTML(ticket.summary) %>
