@@ -94,6 +94,7 @@ CLOBBER << "doc/examples"
 CLOBBER << "doc/src/examples/website_templates"
 CLOBBER << "doc/src/examples/website_styles"
 CLOBBER << "doc/src/examples/gallery_styles"
+CLOBBER << "doc/src/examples/sipttra_styles"
 CLOBBER << "doc/plugin/gallery"
 desc "Creates the files for the examples section of the docu"
 task :create_examples do
@@ -127,19 +128,23 @@ Following is the list of all available website styles:
 
   # gallery styles
   Webgen::GalleryStyle.entries.each do |name, entry|
-    puts "Creating example files for gallery style '#{name}'..."
-    mkdir_p( "doc/plugin/gallery/#{name}" )
-    FileUtils.cp( entry.plugin_files, "doc/plugin/gallery/#{name}" )
     base_dir = "doc/src/examples/gallery_styles/#{name}"
-    mkdir_p( base_dir )
-    entry.copy_to( base_dir )
+    files_mtime = (entry.files + entry.plugin_files).collect {|f| File.mtime( f) }.max
+    dir_mtime = File.mtime( base_dir ) rescue Time.parse("1970-1-1")
+    if dir_mtime < files_mtime
+      puts "Creating example files for gallery style '#{name}'..."
+      mkdir_p( "doc/plugin/gallery/#{name}" )
+      FileUtils.cp( entry.plugin_files, "doc/plugin/gallery/#{name}" )
+      mkdir_p( base_dir )
+      FileUtils.touch( base_dir )
+      entry.copy_to( base_dir )
 
-    additional = case name
-               when 'slides' then "layouter: slides\nthumbnailResizeMethod: :cropped"
-               else ''
-               end
-    File.open( File.join( base_dir, "#{name}.gallery" ), 'w+' ) do |f|
-      f.write("title: index
+      additional = case name
+                   when 'slides' then "layouter: slides\nthumbnailResizeMethod: :cropped"
+                   else ''
+                   end
+      File.open( File.join( base_dir, "#{name}.gallery" ), 'w+' ) do |f|
+        f.write("title: index
 images: ../../images/*
 imagesPerPage: 8
 mainPageMetaInfo:
@@ -218,6 +223,7 @@ mainPageMetaInfo:
   title: Zakynthos 3
   description: The Navagio ship wreck, very famous Greek tourist destination.
 ")
+      end
     end
   end
 
@@ -232,6 +238,122 @@ Following is the list of all available gallery styles:
 "
   data[:entries] = Webgen::GalleryStyle.entries
   create_example_index( "doc/src/examples/gallery_styles/index.page", data )
+
+
+  # sipttra styles
+  Webgen::SipttraStyle.entries.each do |name, entry|
+    base_dir = "doc/src/examples/sipttra_styles/#{name}"
+    files_mtime = entry.files.collect {|f| File.mtime( f ) }.max
+    dir_mtime = File.mtime( base_dir ) rescue Time.parse("1970-1-1")
+    if dir_mtime < files_mtime
+      puts "Creating example files for sipttra style '#{name}'..."
+      mkdir_p( base_dir )
+      FileUtils.touch( base_dir )
+      entry.copy_to( base_dir )
+
+      File.open( File.join( base_dir, "index.todo" ), 'w+' ) do |f|
+        f.write("---
+webgen-metainfo:
+  template: sipttra.template
+---
+###### Milestones ######
+* Feb07 (2007-02-28) Bug fixes and small enhancements
+  - include patches/requests created since 0.4.1 release
+  - add support for sipttra files, the Simple Plain Text Tracker
+
+* F: Ideas and todo items for future versions
+
+  This milestone holds all ideas/todo items/requests which are implemented some
+  time in the future.
+
+###### Implementation (open) ######
+
+* T002 [F] add localization support for all files
+  See also FR#7891
+
+* T003 [F] add additional tests for sipttra implementation
+
+## Implementation (closed) ##
+
+* T004 [Feb07] use HTML as default format for templates
+  See also FR#7893
+
+* T006 [Feb07] add parameter for not showing index files in breadcrumb trail
+  See also PATCH#7942
+
+* T007 [Feb07] implement a plugin for storing/accessing global variables
+
+* T001 [Feb07] add support for sipttra files
+
+###### Bugs (open) ######
+
+* T013 [Feb07] fix TreeWalker (write mail to mailing list and ask what should be done with it)
+
+## Bugs (closed) ##
+
+* T005 [Feb07] check all styles for correctly selected menu items
+  style issues because of new span element when File/DefaultHandler:linkToCurrentPage is false
+
+* T009 [Feb07] PluginManager#init: log typo for 'creating plugin of class...'
+
+* T012 [Feb07] update copyright notices for included website templates
+  See also Bug#8725
+
+* T008 [Feb07] PluginLoader shouldn't load plugins that are already loaded in the DEFAULT_WRAPPER_MODULE
+  When site plugins use the load_plugin command to load plugins that are shipped with webgen and loaded by
+  default, some plugins don't work correctly as plugin classes get defined twice with different oids.
+
+###### Documentation (open) ######
+
+* T011 [Feb07] add example section for sipttra style files
+
+## Documentation (closed) ##
+
+* T010 [Feb07] add some example sites
+  It was requested that one should be able to download some zipped examples sites from the examples
+  section showing basic use cases for webgen.
+")
+      end
+      File.open( File.join( base_dir, "default.template" ), 'w+' ) do |f|
+        f.write( '---
+template: ~
+---
+<html>
+  <head>
+    <title>Sipttra Style</title>
+    <link rel="stylesheet" href="{resource: {name: webgen-css, insert: :path}}" type="text/css" media="screen" />
+    <link rel="stylesheet" href="{relocatable: css/sipttra.css}" type="text/css" media="screen" />
+    <script type="text/javascript" src="{relocatable: js/sipttra.js}" />
+  </head>
+  <body>
+    {block:}
+  </body>
+</html>
+')
+      end
+      File.open( File.join( File.dirname( base_dir ), "#{name}.page" ), 'w+' ) do |f|
+        f.write("---
+title: #{name}
+inMenu: true
+--- content, html
+<object type='text/html' data='#{name}/index.html' width='100%' height='600px' />
+")
+      end
+    end
+  end
+
+  data = {}
+  data[:dirname] = 'Sipttra Styles'
+  data[:desc]= "h2. List of sipttra styles
+
+The sipttra style example pages open in an iframe when you use the menu items. Use the links
+provided below to open the sipttra style example pages directly (fullscreen). All sipttra style
+examples use
+
+Following is the list of all available sipttra styles:
+"
+  data[:entries] = Webgen::SipttraStyle.entries
+  create_example_index( "doc/src/examples/sipttra_styles/index.page", data )
 
 end
 
