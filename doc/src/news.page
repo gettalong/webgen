@@ -16,11 +16,12 @@ New features:
 * HTML is now the default content format for template files (also see "FR#7893":http://rubyforge.org/tracker/?func=detail&atid=1210&aid=7893&group_id=296)
 * New parameters for {plugin: Tag/BreadcrumbTrail}: {param: Tag/BreadcrumbTrail:omitLast} and {param: Tag/BreadcrumbTrail:omitIndexFile} (also see "Patch#7942":http://rubyforge.org/tracker/?func=detail&atid=1209&aid=7942&group_id=296)
 * New parameter {param: Core/Configuration:customVars} for storing custom global variables and a new plugin {plugin: Tag/CustomVar} for accessing them
-* Added an example websites section to the examples section!
+* Added an example websites section to the examples section (also see "FR#7827":http://rubyforge.org/tracker/?func=detail&atid=1210&aid=7827&group_id=296)!
 
 Closed bugs:
 
 * Specifying arguments to the @run@ command to render only certain files now actually works! ;-)
+* Fixed bug when loading site specific plugins: the use of @load_plugin@ should now work correctly!
 * All website styles updated to behave correctly when {param: File/DefaultHandler:linkToCurrentPage} is false
 
 Thanks for the many comments and suggestions since the last release, especially to Bill Paxton,

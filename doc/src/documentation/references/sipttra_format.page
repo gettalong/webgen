@@ -9,7 +9,7 @@ h1. The Sipttra Format
 h2(#sipttra). What is sipptra?
 
 
-sipttra is the acronym for <b>S</b>imple <b>P</b>lain <b>T</b>ext <b>T</b>racker. It is ticket
+sipttra is the acronym for <b>S</b>imple <b>P</b>lain <b>T</b>ext <b>T</b>racker. It is a ticket
 tracker which stores everything inside a human readable text file. Therefore it can be used with any
 text editor and no additional program to edit it is needed.
 

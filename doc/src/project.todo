@@ -6,7 +6,9 @@ webgen-metainfo:
 
 The following category defines all milestones for webgen:
 
-### Milestones ###
+
+###### Milestones ######
+
 
 * Feb07 (2007-02-28) Bug fixes and small enhancements
   - include patches/requests created since 0.4.1 release
@@ -21,7 +23,9 @@ The following category defines all milestones for webgen:
 
 Categories for implementation issues:
 
-### Features (open) ###
+
+###### Implementation (open) ######
+
 
 * T002 [F] add localization support for all files
   See also FR#7891
@@ -29,7 +33,7 @@ Categories for implementation issues:
 * T003 [F] add additional tests for sipttra implementation
 
 
-### Features (closed) ###
+## Implementation (closed) ##
 
 * T004 [Feb07] use HTML as default format for templates
   See also FR#7893
@@ -42,27 +46,39 @@ Categories for implementation issues:
 * T001 [Feb07] add support for sipttra files
 
 
-### Bugs (open) ###
+###### Bugs (open) ######
 
-* T008 [Feb07] PluginLoader shouldn't load plugins that are already loaded in the DEFAULT_WRAPPER_MODULE
+* T013 [Feb07] fix TreeWalker (write mail to mailing list and ask what should be done with it)
 
 
-### Bugs (closed) ###
+## Bugs (closed) ##
 
 * T005 [Feb07] check all styles for correctly selected menu items
   style issues because of new span element when File/DefaultHandler:linkToCurrentPage is false
 
 * T009 [Feb07] PluginManager#init: log typo for "creating plugin of class..."
 
+* T012 [Feb07] update copyright notices for included website templates
+  See also Bug#8725
+
+* T008 [Feb07] PluginLoader shouldn't load plugins that are already loaded in the DEFAULT_WRAPPER_MODULE
+  When site plugins use the load_plugin command to load plugins that are shipped with webgen and loaded by
+  default, some plugins don't work correctly as plugin classes get defined twice with different oids.
+
 
 Category for documentation issues:
 
-### Documentation (open) ###
+
+###### Documentation (open) ######
+
 
 * T011 [Feb07] add example section for sipttra style files
 
+* T014 [F] add plugin developer documentation
+  - document how to write various plugins (file handler, tag, CLI command, ...)
+  - caveat when using classes in modules
 
-### Documentation (closed) ###
+## Documentation (closed) ##
 
 * T010 [Feb07] add some example sites
   It was requested that one should be able to download some zipped examples sites from the examples
