@@ -6,7 +6,7 @@
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <meta name="description" content="Your website description goes here" />
     <meta name="keywords" content="your,keywords,goes,here" />
-    <meta name="generato" content="webgen - http://webgen.rubyforge.org" />
+    <meta name="generator" content="webgen - http://webgen.rubyforge.org" />
     <link rel="stylesheet" href="{relocatable: default.css}" type="text/css" media="screen,projection" />
     <link rel="stylesheet" type="text/css" href="{resource: webgen-css}" />
     <title>{title:}</title>
