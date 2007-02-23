@@ -242,6 +242,10 @@ use in your ERB code:
 * @ref_node@: the reference node, i.e. the node in which the content will be embedded (normally a
   template file)
 
+*Caveat*: you may need to ensure that the ERB start and end tags are not processed by the content
+converter. For example, with Textile you may need to surround the ERB code with &lt;textile&gt;
+tags!
+
 
 h3(#proc-tags). Evaluating webgen Tags
 

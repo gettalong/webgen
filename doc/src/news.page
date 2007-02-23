@@ -17,6 +17,7 @@ New features:
 * New parameters for {plugin: Tag/BreadcrumbTrail}: {param: Tag/BreadcrumbTrail:omitLast} and {param: Tag/BreadcrumbTrail:omitIndexFile} (also see "Patch#7942":http://rubyforge.org/tracker/?func=detail&atid=1209&aid=7942&group_id=296)
 * New parameter {param: Core/Configuration:customVars} for storing custom global variables and a new plugin {plugin: Tag/CustomVar} for accessing them
 * Added an example websites section to the examples section (also see "FR#7827":http://rubyforge.org/tracker/?func=detail&atid=1210&aid=7827&group_id=296)!
+* Added a <a href="{relocatable: documentation/howto.page}">HowTo page</a> which answer some often asked questions!
 
 Closed bugs:
 

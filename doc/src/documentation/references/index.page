@@ -12,10 +12,18 @@ This part of the documentation contains some references for your convenience:
   Describes the structure and format of the WebPage Format, the format used, for
   example, for page and template files.
 
+* <b><a href="{relocatable: sipttra_format.page}">sipttra Format Reference</a></b>
+
+  Describes the sipptra (Simple Plain Text Tracker) format.
+
 * <b><a href="{relocatable: meta_info_reference.page}">Meta Information Reference</a></b>
 
   Provides an overview over all special meta information keys that can be used in conjunction with
   webgen.
+
+* <b><a href="{relocatable: resource_reference.page}">Resource Reference</a></b>
+
+  Provides an overview over all predefined resources!
 
 * <b><a href="{relocatable: parameter_reference.page}">Parameter Reference</a></b>
 

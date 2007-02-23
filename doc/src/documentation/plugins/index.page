@@ -32,7 +32,7 @@ Following is a list of the default namespaces and what they are used for:
 
 * *ContentConverter/*: plugins used for converting content into HTML
 * *Core/*: the core plugins of webgen
-* *File/*: all plugins handling files (ie. derived from {plugin: File/DefaultHandler}
+* *File/*: all plugins handling files (ie. derived from {plugin: File/DefaultHandler})
 * *HtmlValidator/*: HTML validator plugins
 * *MenuStyle/*: menu style plugins
 * *Misc/*. miscellaneous plugins
@@ -45,7 +45,7 @@ h3(#plugin-param). Plugin Parameters
 Each plugin can define parameters which can be used to configure the plugin. These parameters are
 listed at the top of each plugin page. Also note that plugins can use the parameters from their
 "parent plugins" - this allows a group of plugins which have similar functionality (e.g. the menu
-style plugins) to share common configuration values. The names of the "super plugins" are enclosed
+style plugins) to share common configuration values. The names of the "parent plugins" are enclosed
 in parentheses after the plugin names in the "General Information" section.
 
 Parameters can have various types: String, Number, Boolean, Array... When setting a parameter via

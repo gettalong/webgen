@@ -2,11 +2,9 @@
 
 * modify WebSite to allow better use (factor out loading of plugins into own method, do not call init in #render method, ...)
 * show error message when configuration file is invalid (Webgen::WebSite)
-* fix website styles menus to have a style for current menu item with <span> instead of <a>
 * add a common class to the menu element (either a or span, depending on Fil/DefaultFileHandler:linkToCurrentPage) for easier referencing in CSS styles (update menu CSS style afterwards for horiz-dd, vert-dd, ...)
 * add parameters startLevel, minLevels, maxLevels to horizontal menu style
 * make linking to image galleries possible by specifing the gallery file
-* change namespace of tag plugins from tags to tag
 * send bug report to rdoc maintainer (rdoc does not handle nested method defintions correctly)
 * make source installation work again (because of help forum entry)?
 * rethink plugin config handling (maybe all in a list which is traversed and stopped when one item returns a value)
@@ -23,7 +21,6 @@
 * document how to create gallery styles
 * documentation: add info about what webgen does during a run (read files, create nodes, write nodes)
 * documentation: add a page about YAML and basic use
-* documentation: add a resource reference file with the table of resources
 * document: check for consistent naming (page files, tags,...)
 * document homepage structure (where is plugin docu, api docu,...)
 * document tag @processOutput changed to @process_output
@@ -374,3 +371,5 @@ W do not allow two or more page files in the same language, print warn
 * documentation: split getting started into basics and tutorial pages
 * make it possible to set meta information template to nil
 * check styles for correct selected menu items (due to new <span> element, e.g. andreas07)
+* change namespace of tag plugins from tags to tag
+* fix website styles menus to have a style for current menu item with <span> instead of <a>

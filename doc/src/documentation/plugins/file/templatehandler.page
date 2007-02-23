@@ -22,11 +22,30 @@ default template isn't found in the root directory, no template is used at all. 
 you create a default template in the root directory, it is used as template for all page files that
 have no explicit template set.
 
-It is also possible to nest templates. This makes it possible, for example, to create a general
-website layout and then to create a special image gallery layout which uses the general one. As the
-template files have the same format as page files, you just need to set the @template@ meta
-information on a template to specify the template in which it should be nested.
+webgen also uses the concept of a template chain to support multiple templates for one page file!
+For example, assume that
 
-This page uses two templates: a general one which defines the overall layout of the website (the
-menus and so on) and a specific plugin documentation template which provides the general information
-section.
+* the page file @index.page@ has set the @template@ meta information to @special.template@,
+* the template @special.template@ has no @template@ meta information set and
+* the page file @other.page@ also has no @template@ meta information set.
+
+The template chain for @index.page@ would look like this
+
+@default.template@ <= @special.template@ <= @index.page@
+
+whereas the template chain for @other.page@ would look like this
+
+@default.template@ <= @index.page@
+
+The first case also means that the @special.template@ is nested in the @default.template@! This
+makes it possible, for example, to create a general website layout and then to create a special
+image gallery layout which uses the general one.
+
+To stop the template handler from further searching for a template, you explicitly need set a null
+template for the page or template file:
+
+  template: ~
+
+This is useful if you want to have a different @default.template@ in a sub directory which should
+provide a different look-and-feel for this subtree as the @default.template@ in the root of the
+website.

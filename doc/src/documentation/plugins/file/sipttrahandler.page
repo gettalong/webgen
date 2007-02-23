@@ -10,5 +10,9 @@ This plugin handles <a href="{relocatable:/documentation/references/sipttra_form
 (Simple Plain Text Tracker) files. This is a custom text format which one can use if a sophisticated
 tracker like Bugzilla or Trac is an overkill.
 
-If you have created a sipttra file, you should also use a sipttra style TODO(link) to specify how
+The special key @webgen-metainfo@ in the meta information section of a sipttra file can be used to
+define meta information for the generated page.
+
+If you have created a sipttra file, you should also use a
+<a href="{relocatable: /examples/sipttra_styles}">sipttra style</a> to specify how
 the generated tracker page should look like.

@@ -34,6 +34,9 @@ documentation/basics.page:
 documentation/tutorial.page:
   orderInfo: 3
 
+documentation/howto.page:
+  orderInfo: 4
+
 documentation/extending_webgen.page:
   orderInfo: 5
 

@@ -40,8 +40,8 @@ The above will produce the following output:
 <pre>
 <persons>
   <person>
-  <firstname>Thomas</firstname>
-  <lastname>Leitner</lastname>
+    <firstname>Thomas</firstname>
+    <lastname>Leitner</lastname>
   </person>
   <person>
     <firstname>Other first</firstname>
