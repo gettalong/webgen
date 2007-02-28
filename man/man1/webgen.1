@@ -1,0 +1,75 @@
+.TH "WEBGEN" 1 "February 2007"
+.SH NAME
+webgen \- a template based static website generator
+.SH SYNOPSIS
+.B webgen
+[\fIglobal options\fR]
+\fIcommand\fR
+[\fIcommand arguments\fR] [command [command arguments] ...] [args]
+.SH DESCRIPTION
+webgen is used to generate web pages from page and template files.
+You create one template file in which you define the layout of your pages and
+where the content should go. After that you create page files in which you only
+define the content. webgen merges the page's content into the template and
+generates the final HTML output.
+.SH GLOBAL OPTIONS
+.TP
+.B \-d, \-\-directory DIR
+Set the website directectory. if none specified, the current directory is used.
+.TP
+.B \-V, \-\-verbosity level
+Set verbosity to the given \fIlevel\fR.
+.TP
+.B \-h, \-\-help
+Show generic help.
+.TP
+.B \-v, \-\-version
+Show the version of the program and exit.
+.SH COMMANDS
+.TP
+\fBcheck\fR
+Executes \fBcheck command\fR by default.
+.TP
+\fBcheck config\fR
+Checks validity of configuration file.
+.TP
+\fBcheck libs\fR
+Checks presence of optional libraries.
+.TP
+\fBcreate\fR
+Creates the basic directories and files for webgen.  This includes the
+source and output directories, the log and the plugin directory.  Also, a
+basic template plus a CSS and an index file are created.
+Takes the \fIdirectory\fR to create the webgen structure in as an argument.
+.TP
+\fBhelp\fR
+Provides help for the individual commands.
+.TP
+\fBrun\fR
+Runs webgen which will result in the generation of the HTML data
+in the output directory from the files in the source directory.
+This command is used as the default command when no command was issued.
+.TP
+\fBshow\fR
+Shows all available plugins or their configuration items.
+Takes either \fIconfig\fR or \fIplugins\fR as an argument.
+.TP
+\fBuse\fR
+Changes configured gallery style, sipttra or website style. Takes either
+\fIgallery_style\fR, \fIsipttra_style\fR or \fIwebsite_style\fR as an argument
+plus the gallery, sipttra or website style name you want to configure.
+.TP
+\fBversion\fR
+Shows the version of the program and exit.
+.SH SEE ALSO
+The webgen website, http://webgen.rubyforge.org/ for more information.
+.SH AUTHOR
+webgen was written by Thomas Leitner <t_leitner@gmx.at>
+.PP
+This manual page was written by Paul van Tilburg <paulvt@debian.org>
+for the Debian project (but may be used by others).
+This manual page was update to reflect webgen 0.4 change by Arnaud Cornet
+<arnaud.cornet@gmail.com>.
+This manual page was updated to reflect webgen 0.4.2 changes by
+Thomas Leitner <t_leitner@gmx.at>.
+
