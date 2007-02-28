@@ -12,7 +12,7 @@ The following category defines all milestones for webgen:
 
 * Feb07 (2007-02-28) Bug fixes and small enhancements
   - include patches/requests created since 0.4.1 release
-  - add support for sipttra files, the Simple Plain Text Tracker
+  - add support for sipttra (Simple Plain Text Tracker) files
 
 
 * F: Ideas and todo items for future versions
@@ -48,7 +48,6 @@ Categories for implementation issues:
 
 ###### Bugs (open) ######
 
-* T013 [Feb07] fix TreeWalker (write mail to mailing list and ask what should be done with it)
 
 
 ## Bugs (closed) ##
@@ -64,6 +63,10 @@ Categories for implementation issues:
 * T008 [Feb07] PluginLoader shouldn't load plugins that are already loaded in the DEFAULT_WRAPPER_MODULE
   When site plugins use the load_plugin command to load plugins that are shipped with webgen and loaded by
   default, some plugins don't work correctly as plugin classes get defined twice with different oids.
+
+* T013 [Feb07] fix TreeWalker
+  Make TreeWalker work as in 0.3.8 again, name it 'Misc/TreeWalker' and call it after building and
+  before writing tree
 
 
 Category for documentation issues:

@@ -73,9 +73,10 @@ module FileHandlers
     # Renders the whole website.
     def render_site
       tree = build_tree
-      #TODO
-      #transform tree???
-      write_tree( tree ) unless tree.nil?
+      unless tree.nil?
+        @plugin_manager['Misc/TreeWalker'].execute( tree )
+        write_tree( tree )
+      end
     end
 
     # Renders only the given +files+.
