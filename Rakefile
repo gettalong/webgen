@@ -368,23 +368,21 @@ end
 
 
 PKG_FILES = FileList.new( [
-                            'setup.rb',
-                            'TODO',
-                            'COPYING',
-                            'README',
-                            'Rakefile',
-                            'ChangeLog',
-                            'VERSION',
-                            'bin/webgen',
-                            'lib/**/*.rb',
-                            'data/**/*',
-                            'testsite/**/*',
-                            'test/**/*',
-                            'doc/**/*'
+                           'setup.rb',
+                           'TODO',
+                           'COPYING',
+                           'README',
+                           'Rakefile',
+                           'ChangeLog',
+                           'VERSION',
+                           'bin/webgen',
+                           'lib/**/*.rb',
+                           'data/**/*',
+                           'test/**/*',
+                           'doc/**/*',
+                           'man/**/*',
                           ]) do |fl|
   fl.exclude( /\bsvn\b/ )
-  fl.exclude( 'testsite/output' )
-  fl.exclude( 'testsite/coverage' )
   fl.exclude( 'doc/output' )
 end
 

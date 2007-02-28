@@ -1,4 +1,5 @@
 require 'fileutils'
+require 'tempfile'
 require 'webgen/test'
 require 'webgen/node'
 
@@ -35,19 +36,11 @@ class IncludeFileTagTest < Webgen::TagTestCase
     set_config( 'filename'=>"invalidfile", 'processOutput'=>true, 'escapeHTML'=>true )
     assert_equal( '', @plugin.process_tag( 'includeFile', [node] ) )
 
-    # test absolute file name
-    begin
-      name = "webgen-test-file-#{$$}.txt"
-      full_name = File.join( '/tmp', name )
-      FileUtils.mkdir_p( '/tmp' )
-      File.open( full_name, 'w+' ) {|f| f.write('hallo')}
-      set_config( 'filename'=>full_name, 'processOutput'=>true, 'escapeHTML'=>true )
-      assert_equal( 'hallo', @plugin.process_tag( 'includeFile', [node] ) )
-    ensure
-      FileUtils.rm( full_name ) rescue ''
-      FileUtils.rmdir( '/tmp' ) rescue ''
-    end
-
+    file = Tempfile.new( 'webgen-test-file' )
+    file.write('hallo')
+    file.close
+    set_config( 'filename'=>file.path, 'processOutput'=>true, 'escapeHTML'=>true )
+    assert_equal( 'hallo', @plugin.process_tag( 'includeFile', [node] ) )
   end
 
 end
