@@ -48,6 +48,10 @@
 
         <div id="rightside">
           <h1>Latest news</h1>
+          <p><strong>2007-02-28: </strong>
+            webgen 0.4.2 released! Bugs fixed and some feature added!
+            <a href="{relocatable: news.en.page#news-2007-02-28}">More...</a>
+          </p>
           <p><strong>2007-01-12: </strong>
             webgen 0.4.1 released! Bug fix for running webgen on Windows and other small updates!
             <a href="{relocatable: news.en.page#news-2007-01-12}">More...</a>
