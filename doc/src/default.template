@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="{relocatable: default.css}" type="text/css" media="screen" />
     <link rel="stylesheet" href="{resource: {name: webgen-css, insert: :path}}" type="text/css" media="screen" />
     <link rel="stylesheet" href="{relocatable: css/sipttra.css}" type="text/css" media="screen" />
-    <script type="text/javascript" src="{relocatable: js/sipttra.js}" />
+    <script type="text/javascript" src="{relocatable: js/sipttra.js}"></script>
   </head>
 
   <body>
