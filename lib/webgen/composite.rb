@@ -1,7 +1,7 @@
 #
 #--
 #
-# $Id$
+# $Id: composite.rb 402 2006-04-07 15:21:41Z thomas $
 #
 # webgen: template based static website generator
 # Copyright (C) 2004 Thomas Leitner

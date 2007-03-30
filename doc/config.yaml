@@ -1,8 +1,0 @@
-File/CopyHandler:
-  paths: ["**/*.css", "**/*.js", "**/*.jpg", "**/*.png", "**/*.gif", "**/*.zip"]
-
-File/PageHandler:
-  validator: xmllint
-
-Misc/SmileyReplacer:
-  emoticonPack: crystal

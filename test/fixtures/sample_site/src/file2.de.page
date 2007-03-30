@@ -1,6 +1,0 @@
----
-inMenu: true
----
-Block 1 is inMenu {inMenu:}
---- other, textile
-Block 2 is inMenu {inMenu:}

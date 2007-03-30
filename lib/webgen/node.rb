@@ -1,25 +1,3 @@
-#
-#--
-#
-# $Id$
-#
-# webgen: template based static website generator
-# Copyright (C) 2004 Thomas Leitner
-#
-# This program is free software; you can redistribute it and/or modify it under the terms of the GNU
-# General Public License as published by the Free Software Foundation; either version 2 of the
-# License, or (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
-# even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-# General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License along with this program; if not,
-# write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-#
-#++
-#
-
 require 'uri'
 require 'pathname'
 require 'webgen/composite'
@@ -34,6 +12,9 @@ class Node
 
   # The path of this node.
   attr_reader :path
+
+  # The canonical name of this node.
+  attr_reader :cn
 
   # Information used for processing the node.
   attr_accessor :node_info
@@ -51,12 +32,17 @@ class Node
   #    slash ('dir/'). If it is a fragment, the hash sign must be the first character of the
   #    path ('#fragment'). A compound path like 'dir/file#fragment' is also allowed as are
   #    absolute paths like 'http://myhost.com/'.
+  # +canonical_name+::
+  #    The canonical name used for resolving this node. Needs to be of the form 'basename.ext'
+  #    or 'basename' where +basename+ does not contain any dots. Also, the 'basename' must not
+  #    include a language part!
   #
   #    Note: a compound path like 'dir/file' is invalid if the parent node already has a child
   #    with path 'dir/'!!! (solution: just create a node with path 'file' and node 'dir/' as parent!)
-  def initialize( parent, path )
+  def initialize( parent, path, canonical_name = File.basename( path ) )
     @parent = nil
     @path = path
+    @cn = canonical_name
     self.parent = parent
     @node_info = Hash.new
     @meta_info = Hash.new
@@ -66,6 +52,15 @@ class Node
   def self.root( node )
     node = node.parent until node.parent.nil?
     node
+  end
+
+  # Returns the localized canoncial name for this node.
+  def lcn
+    if @node_info['lang'].nil?
+      @cn
+    else
+      @cn.split( '.' ).insert( 1, @node_info['lang'].to_s ).join( '.' )
+    end
   end
 
   # Sets a new parent for the node.
@@ -79,7 +74,7 @@ class Node
   # Sets the path for the node.
   def path=( path )
     @path = path
-    precalc!
+    precalc_with_children!
   end
 
   # Gets object +name+ from +meta_info+.
@@ -147,15 +142,15 @@ class Node
     @path[0] == ?#
   end
 
-  # Matches the path of the node against the given path at the beginning. Returns the
-  # matched portion or +nil+. Used by #resolve_node.
+  # Matches the (localized) canonical name of the node against the given path at the beginning.
+  # Returns the matched portion or +nil+. Used by #resolve_node.
   def =~( path )
     md = if is_directory?
-           /^#{@path.chomp('/')}(\/|$)/ =~ path                  #' #emacs hack
+           /^#{@cn}(\/|$)/ =~ path
          elsif is_fragment?
-           /^#{@path}$/ =~ path
+           /^#{@cn}$/ =~ path
          else
-           /^#{@path}(?=#|$)/ =~ path
+           /^(#{@cn}|#{lcn})(?=#|$)/ =~ path
          end
     if md then $& end
   end

@@ -1,0 +1,5 @@
+resources/templates/*/:
+  name: webgen/website/template/$basename
+
+resources/styles/*/*/:
+  name: webgen/website/style/$dir1/$basename

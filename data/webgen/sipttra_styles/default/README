@@ -1,7 +1,0 @@
-description:
-  This is the default style for layouting sipttra files. The design is similar
-  to the design of roadmap pages on trac installations. Make sure that
-  you have linked to the .css and .js files in your default.template!
-
-author:
-  Thomas Leitner

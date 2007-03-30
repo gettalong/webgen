@@ -1,7 +1,7 @@
 #
 #--
 #
-# $Id$
+# $Id: cli.rb 601 2007-02-14 21:20:44Z thomas $
 #
 # webgen: template based static website generator
 # Copyright (C) 2004 Thomas Leitner
@@ -27,361 +27,6 @@ require 'webgen/website'
 
 module Webgen
 
-  class Color
-
-    @@colors = {:bold => [0, 1], :green => [0, 32], :lblue => [1, 34], :lred => [1, 31], :reset => [0, 0]}
-
-    def self.colorify
-      @@colors.each do |color, values|
-        module_eval <<-EOF
-        def Color.#{color.to_s}( text = nil )
-          "\e[#{values[0]};#{values[1]}m" + (text.nil? ? '' : text + self.reset)
-        end
-        EOF
-      end
-    end
-
-    def self.method_missing( id, text = nil )
-      text.to_s
-    end
-
-  end
-
-
-  class CliUtils
-
-    def self.format( content, indent = 0, width = 100 )
-      content ||= ''
-      return [content] if content.length + indent <= width
-      lines = []
-      while content.length + indent > width
-        index = content[0..(width-indent-1)].rindex(' ')
-        lines << (lines.empty? ? '' : ' '*indent) + content[0..index]
-        content = content[index+1..-1]
-      end
-      lines << ' '*indent + content unless content.strip.empty?
-      lines
-    end
-
-    def self.headline( text, indent = 2 )
-      ' '*indent + "#{Color.bold( text )}"
-    end
-
-    def self.section( text, ljustlength = 0, indent = 4, color = :green )
-      ' '*indent + "#{Color.send( color, text )}".ljust( ljustlength - indent + Color.send( color ).length + Color.reset.length )
-    end
-
-    def self.dirinfo_output( opts, name, dirinfo )
-      ljust = 15 + opts.summary_indent.length
-      opts.separator CliUtils.section( 'Name', ljust, opts.summary_indent.length + 2 ) + "#{Color.lred( name )}"
-
-      dirinfo.infos.sort.each do |name, value|
-        desc = CliUtils.format( value, ljust )
-        opts.separator CliUtils.section( name.capitalize, ljust, opts.summary_indent.length + 2 ) + desc.shift
-        desc.each {|line| opts.separator line}
-      end
-      opts.separator ''
-    end
-
-  end
-
-
-  class CreateCommand < CmdParse::Command
-
-    def initialize
-      super( 'create', false )
-      self.short_desc = "Creates the basic directories and files for webgen."
-      self.description = CliUtils.format( "\nIf the global verbosity level is set to 0 or 1, the created files are listed." )
-      self.options = CmdParse::OptionParserWrapper.new do |opts|
-        opts.separator "Options:"
-        opts.on( '-t', '--template TEMPLATE', Webgen::WebSiteTemplate.entries.keys, 'Specify the template which should be used' ) {|@template|}
-        opts.on( '-s', '--style STYLE', Webgen::WebSiteStyle.entries.keys, 'Specify the style which should be used' ) {|@style|}
-        opts.separator ""
-        opts.separator "Arguments:"
-        opts.separator opts.summary_indent + "DIR: the base directory for the website"
-        opts.separator ""
-        opts.separator "Available templates and styles:"
-        opts.separator ""
-        opts.separator opts.summary_indent + "#{Color.bold( 'Templates' )}"
-        Webgen::WebSiteTemplate.entries.sort.each {|name, entry| CliUtils.dirinfo_output( opts, name, entry ) }
-        opts.separator opts.summary_indent + "#{Color.bold( 'Styles' )}"
-        Webgen::WebSiteStyle.entries.sort.each {|name, entry| CliUtils.dirinfo_output( opts, name, entry ) }
-      end
-      @template = 'default'
-      @style = 'default'
-    end
-
-    def usage
-      "Usage: #{commandparser.program_name} [global options] create [options] DIR"
-    end
-
-    def execute( args )
-      if args.length == 0
-        raise OptionParser::MissingArgument.new( 'DIR' )
-      else
-        files = Webgen::WebSite.create_website( args[0], @template, @style )
-        if (0..1) === commandparser.verbosity
-          puts "The following files were created:"
-          puts files.collect {|f| "- " + f }.join("\n")
-        end
-      end
-    end
-
-  end
-
-  class UseCommand < CmdParse::Command
-
-    def initialize( cmdparser )
-      super( 'use', true )
-      self.short_desc = "Changes the used website or gallery styles"
-
-      @force = false
-      self.options = CmdParse::OptionParserWrapper.new do |opts|
-        opts.separator "Options:"
-        opts.on( '-f', '--[no-]force', 'If specified, existing files are overwritten without asking.' ) {|@force|}
-      end
-
-      # Use website style command.
-      useWebsiteStyle = CmdParse::Command.new( 'website_style', false )
-      useWebsiteStyle.short_desc = "Changes the used website style"
-      useWebsiteStyle.description =
-        CliUtils.format("\nCopies the style files for the website style STYLE to the website " +
-                        "directory defined by the global directory option, overwritting existing " +
-                        "files. If the global verbosity level is set to 0 or 1, the copied files are listed.")
-      useWebsiteStyle.options = CmdParse::OptionParserWrapper.new do |opts|
-        opts.separator "Available styles:"
-        opts.separator ""
-        Webgen::WebSiteStyle.entries.sort.each {|name, entry| CliUtils.dirinfo_output( opts, name, entry ) }
-      end
-      def useWebsiteStyle.usage
-        "Usage: #{commandparser.program_name} [global options] use website_style STYLE"
-      end
-      useWebsiteStyle.set_execution_block do |args|
-        if args.length == 0
-          raise OptionParser::MissingArgument.new( 'STYLE' )
-        else
-          if @force || ask_overwrite
-            files = Webgen::WebSite.use_website_style( cmdparser.directory, args[0] )
-            if (0..1) === cmdparser.verbosity
-              puts "The following files were created or overwritten:"
-              puts files.collect {|f| "- " + f }.join("\n")
-            end
-          end
-        end
-      end
-      self.add_command( useWebsiteStyle )
-
-      # Use gallery style command.
-      useGalleryStyle = CmdParse::Command.new( 'gallery_style', false )
-      useGalleryStyle.short_desc = "Changes the used gallery style"
-      useGalleryStyle.description =
-        CliUtils.format("\nCopies the gallery templates for the gallery style STYLE to the website " +
-                        "directory defined by the global directory option, overwritting existing files. " +
-                        "If the global verbosity level is set to 0 or 1, the copied files are listed.")
-      useGalleryStyle.options = CmdParse::OptionParserWrapper.new do |opts|
-        opts.separator "Available styles:"
-        opts.separator ""
-        Webgen::GalleryStyle.entries.sort.each {|name, entry| CliUtils.dirinfo_output( opts, name, entry ) }
-      end
-      def useGalleryStyle.usage
-        "Usage: #{commandparser.program_name} [global options] use gallery_style STYLE"
-      end
-      useGalleryStyle.set_execution_block do |args|
-        if args.length == 0
-          raise OptionParser::MissingArgument.new( 'STYLE' )
-        else
-          if @force || ask_overwrite
-            files = Webgen::WebSite.use_gallery_style( cmdparser.directory, args[0] )
-            if (0..1) === cmdparser.verbosity
-              puts "The following files were created or overwritten:"
-              puts files.collect {|f| "- " + f }.join("\n")
-            end
-          end
-        end
-      end
-      self.add_command( useGalleryStyle )
-
-      # Use sipttra style command.
-      useSipttraStyle = CmdParse::Command.new( 'sipttra_style', false )
-      useSipttraStyle.short_desc = "Changes the used sipttra style"
-      useSipttraStyle.description =
-        CliUtils.format("\nCopies the sipttra styles files for the sipttra style STYLE to the website " +
-                        "directory defined by the global directory option, overwritting existing files. " +
-                        "If the global verbosity level is set to 0 or 1, the copied files are listed.")
-      useSipttraStyle.options = CmdParse::OptionParserWrapper.new do |opts|
-        opts.separator "Available styles:"
-        opts.separator ""
-        Webgen::SipttraStyle.entries.sort.each {|name, entry| CliUtils.dirinfo_output( opts, name, entry ) }
-      end
-      def useSipttraStyle.usage
-        "Usage: #{commandparser.program_name} [global options] use sipttra_style STYLE"
-      end
-      useSipttraStyle.set_execution_block do |args|
-        if args.length == 0
-          raise OptionParser::MissingArgument.new( 'STYLE' )
-        else
-          if @force || ask_overwrite
-            files = Webgen::WebSite.use_sipttra_style( cmdparser.directory, args[0] )
-            if (0..1) === cmdparser.verbosity
-              puts "The following files were created or overwritten:"
-              puts files.collect {|f| "- " + f }.join("\n")
-            end
-          end
-        end
-      end
-      self.add_command( useSipttraStyle )
-    end
-
-    #######
-    private
-    #######
-
-    def ask_overwrite
-      printf "Existing files may get overwritten, procede (yes/no)? : "
-      $stdin.gets =~ /y|yes/
-    end
-
-  end
-
-
-  class ShowCommand < CmdParse::Command
-
-    def initialize( cmdparser )
-      super( 'show', true )
-      self.short_desc = "Shows various information"
-
-      # Show plugins command
-      showPlugins = CmdParse::Command.new( 'plugins', false )
-      showPlugins.short_desc = "Shows the available plugins"
-      showPlugins.set_execution_block do |args|
-        puts "List of loaded plugins:"
-        headers = Hash.new {|h,k| h[k] = (k.nil? ? "Other Plugins" : k.gsub(/([A-Z][a-z])/, ' \1').strip) }
-
-        header = ''
-        cmdparser.website.manager.plugin_classes.sort {|a, b| a.plugin_name <=> b.plugin_name }.each do |plugin|
-          newHeader = headers[plugin.plugin_name[/^.*?(?=\/)/]]
-          unless newHeader == header
-            puts "\n" + CliUtils.headline( newHeader )
-            header = newHeader
-          end
-          puts CliUtils.section( plugin.plugin_name[/\w+$/], 33 ) + CliUtils.format( plugin.config.infos[:summary], 33 ).join("\n")
-        end
-      end
-      self.add_command( showPlugins )
-
-      # Show config command
-      showConfig = CmdParse::Command.new( 'config', false )
-      showConfig.short_desc = "Shows information like the parameters for all or the matched plugins"
-      showConfig.description =
-        CliUtils.format( "\nIf no argument is provided, all plugins and their information are listed. If " +
-                         "an argument is specified, all plugin names that match the argument are listed." ).join("\n")
-      showConfig.set_execution_block do |args|
-        puts "List of plugin informations:"
-        puts
-
-        cmdparser.website.manager.plugins.sort {|a, b| a[0] <=> b[0] }.each do |name, plugin|
-          next if args.length > 0 && /#{args[0]}/i !~ name
-
-          config = plugin.class.config
-          puts CliUtils.headline( name )
-          ljust = 25
-
-          puts CliUtils.section( 'Summary', ljust ) + CliUtils.format( config.infos[:summary], ljust ).join("\n") if config.infos[:summary]
-          puts CliUtils.section( 'Author', ljust ) + CliUtils.format( config.infos[:author], ljust ).join("\n") if config.infos[:author]
-          puts CliUtils.section( 'Description', ljust ) + CliUtils.format( config.infos[:description], ljust ).join("\n") if config.infos[:description]
-          puts CliUtils.section( 'Tag names', ljust ) + plugin.tags.join(", ") if plugin.respond_to?( :tags )
-          puts CliUtils.section( 'Handles paths', ljust ) + plugin.path_patterns.collect {|r,f| f}.inspect if plugin.respond_to?( :path_patterns )
-          puts CliUtils.section( 'Dependencies', ljust ) + config.dependencies.join(', ') if !config.dependencies.empty?
-
-          if !config.params.empty?
-            puts "\n" + CliUtils.section( 'Parameters' )
-            config.params.sort.each do |name, item|
-              print "\n" + CliUtils.section( 'Parameter', ljust, 6 )
-              puts Color.lred( item.name ) + ": " + Color.lblue( plugin.instance_eval {param( name )}.inspect ) +
-                " (" + item.default.inspect + ")"
-              puts CliUtils.section( 'Description', ljust, 6 ) + CliUtils.format( item.description, ljust ).join("\n")
-            end
-          end
-
-          otherinfos = config.infos.select {|k,v| ![:name, :author, :summary, :description, :tags, :path_patterns].include?( k ) }
-          puts "\n" +CliUtils.section( 'Other Information' ) unless otherinfos.empty?
-          otherinfos.each {|name, value| puts CliUtils.section( name.to_s.tr('_', ' '), ljust, 6 ) + value.inspect }
-
-          puts
-        end
-      end
-      self.add_command( showConfig )
-    end
-
-  end
-
-
-  class CheckCommand < CmdParse::Command
-
-    def initialize( cmdparser )
-      super( 'check', true )
-      self.short_desc = "Checks things like validity of the config file or the availability of optional libraries"
-
-      # Check configuration file command
-      checkConfig = CmdParse::Command.new( 'config', false )
-      checkConfig.short_desc = "Checks the validity of the configuration and outputs the used options"
-      checkConfig.set_execution_block do |args|
-        begin
-          if File.exists?( File.join( cmdparser.directory, 'config.yaml' ) )
-            print CliUtils.section( "Checking configuration file syntax...", 50, 0, :bold )
-            config_file = ConfigurationFile.new( File.join( cmdparser.directory, 'config.yaml' ) )
-            puts Color.green( 'OK' )
-
-            puts CliUtils.section( "Checking parameters...", 0, 0, :bold )
-            config_file.config.each do |plugin_name, params|
-              params.each do |param_name, value|
-                print CliUtils.section( "#{plugin_name}:#{param_name}", 50, 2, :reset )
-                if cmdparser.website.manager.plugin_class_for_name( plugin_name ).nil?
-                  puts Color.lred( 'NOT OK' ) + ': no such plugin'
-                else
-                  begin
-                    cmdparser.website.manager.param_for_plugin( plugin_name, param_name )
-                    puts Color.green( 'OK' )
-                  rescue PluginParamNotFound => e
-                    puts Color.lred( 'NOT OK' ) + ': no such parameter'
-                  end
-                end
-              end
-            end
-          else
-            print CliUtils.section( "No configuration file found!", 50, 0, :bold )
-          end
-        rescue ConfigurationFileInvalid => e
-          puts Color.lred( 'NOT OK' ) + ': ' + e.message
-        end
-      end
-      self.add_command( checkConfig, true )
-
-      # Check optional libraries
-      checkLibs = CmdParse::Command.new( 'libs', false )
-      checkLibs.short_desc = "Checks the availability of optional libraries used by plugins"
-      checkLibs.set_execution_block do |args|
-        puts CliUtils.format( "List of optional libraries (the info line specifies which functionality will be available " +
-                              "if the needed gems are installed):" ).join("\n")
-        puts
-
-        cmdparser.website.manager.plugin_loaders.each do |loader|
-          loader.optional_parts.sort.each do |name, options|
-            puts CliUtils.headline( name )
-            puts CliUtils.section( 'Info', 25 ) + CliUtils.format( options[:info], 25 ).join("\n")
-            puts CliUtils.section( 'Needed gems', 25 ) + options[:needed_gems].join( ', ' )
-            puts CliUtils.section( 'Loaded', 25 ) + ( options[:loaded] ? Color.green( 'yes' ) : Color.lred( 'no' ) )
-            puts CliUtils.section( 'Error message', 25 ) + CliUtils.format( options[:error_msg], 25 ).join("\n") unless options[:loaded]
-            puts
-          end
-        end
-      end
-      self.add_command( checkLibs )
-    end
-
-  end
-
-
   class CommandParser < CmdParse::CommandParser
 
     VERBOSITY_UNUSED = -1
@@ -403,23 +48,9 @@ module Webgen
         opts.on( "--directory DIR", "-d", String, "The website directory, if none specified, current directory is used." ) {|@directory|}
         opts.on( "--verbosity LEVEL", "-V", Integer, "The verbosity level (0-3)" ) {|@verbosity|}
       end
-
-      # Run command
-      run = CmdParse::Command.new( 'run', false )
-      run.short_desc = "Runs webgen, ie. generates the HTML files"
-      run.description = CliUtils.format("\nWith no arguments, renders the whole site. If file names are " +
-                                        "specified (don't include the path/to/src/ part), only those are rendered." )
-      run.set_execution_block do |args|
-        @website.render( args )
-      end
-      self.add_command( run, true )
-
-      self.add_command( CreateCommand.new )
-      self.add_command( ShowCommand.new( self ) )
-      self.add_command( UseCommand.new( self ) )
       self.add_command( CmdParse::HelpCommand.new )
       self.add_command( CmdParse::VersionCommand.new )
-      self.add_command( CheckCommand.new( self ) )
+
     end
 
     def param_for_plugin( plugin_name, param )
@@ -435,11 +66,13 @@ module Webgen
     def parse( argv = ARGV )
       super do |level, cmd_name|
         if level == 0
-          @config_file = Webgen::WebSite.load_config_file( @directory )
-          @website = Webgen::WebSite.new( @directory, self )
-          @website.manager.init
-          @website.manager.plugins.
-            each {|name,plugin| self.add_command( plugin ) if plugin.kind_of?( Webgen::CommandPlugin ) }
+          #@config_file = Webgen::WebSite.load_config_file( @directory )
+          @website = Webgen::WebSite.new( @directory )
+          @website.plugin_manager.configurators << self
+          @website.load_plugin_infos
+          @website.plugin_manager.plugin_infos[%r{^Cli/Commands/}].each do |name, info|
+            self.add_command( @website.plugin_manager[name] )
+          end
         end
       end
     end
@@ -449,7 +82,6 @@ module Webgen
 
   # Main program for the webgen CLI.
   def self.cli_main
-    Color.colorify if $stdout.isatty && !Config::CONFIG['arch'].include?( 'mswin32' )
     cmdparser = CommandParser.new
     cmdparser.parse
   end

@@ -1,7 +1,7 @@
 #
 #--
 #
-# $Id$
+# $Id: config.rb 621 2007-02-28 09:45:30Z thomas $
 #
 # webgen: template based static website generator
 # Copyright (C) 2004 Thomas Leitner
@@ -24,7 +24,7 @@ require 'rbconfig'
 
 module Webgen
 
-  VERSION = [0, 4, 2]
+  VERSION = [0, 4, 3]
   AUTHOR = 'Thomas Leitner <t_leitner@gmx.at>'
   SUMMARY = "webgen is a templated based static Web site generator."
   DESCRIPTION = "webgen is a Web site generator implemented in Ruby. " \
@@ -40,9 +40,9 @@ module Webgen
   # Returns the data directory for webgen.
   def self.data_dir
     unless defined?( @@data_dir )
-      @@data_dir = File.expand_path( File.join( Config::CONFIG["datadir"], "webgen" ) )
+      @@data_dir =  File.expand_path( File.join( File.dirname( __FILE__ ), '..', '..', 'data', 'webgen') )
 
-      @@data_dir =  File.expand_path( File.join( File.dirname( __FILE__ ), '..', '..', 'data', 'webgen') ) if !File.exists?( @@data_dir )
+      @@data_dir = File.expand_path( File.join( Config::CONFIG["datadir"], "webgen" ) ) if !File.exists?( @@data_dir )
 
       raise "Could not find webgen data directory! This is a bug, report it please!" unless File.directory?( @@data_dir )
     end

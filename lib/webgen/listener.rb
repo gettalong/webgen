@@ -1,7 +1,7 @@
 #
 #--
 #
-# $Id$
+# $Id: listener.rb 271 2005-05-09 08:50:47Z thomas $
 #
 # webgen: template based static website generator
 # Copyright (C) 2004 Thomas Leitner

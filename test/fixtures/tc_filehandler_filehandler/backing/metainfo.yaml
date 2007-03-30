@@ -1,9 +1,0 @@
-file1:
-  key1: value1
----
-nothing: valid
----
-invalid: 
-  value: ness
----
-[6: 7, 8: 9]

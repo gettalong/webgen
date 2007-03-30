@@ -1,0 +1,6 @@
+Cli/Commands/CreateWebsite:
+  about:
+    summary: Creates a basic webgen website with selectable templates/styles.
+    author: Thomas Leitner <t_leitner@gmx.at>
+  plugin:
+    load_deps: Cli/Utils

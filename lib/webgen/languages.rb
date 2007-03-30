@@ -1,7 +1,7 @@
 #
 #--
 #
-# $Id$
+# $Id: languages.rb 484 2006-09-02 07:55:59Z thomas $
 #
 # webgen: template based static website generator
 # Copyright (C) 2004 Thomas Leitner
