@@ -1,0 +1,12 @@
+File/DirectoryHandler:
+  about:
+    summary: Handles directories.
+    author: Thomas Leitner <t_leitner@gmx.at>
+  plugin:
+    load_deps: File/DefaultHandler
+    run_deps: Core/FileHandler
+    class: FileHandlers::DirectoryHandler
+  file:
+    patterns: [[0, '**/']]
+    meta_info:
+      indexFile: index.page
