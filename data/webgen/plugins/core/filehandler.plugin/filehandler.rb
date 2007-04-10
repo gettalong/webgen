@@ -43,9 +43,14 @@ module Core
     # information from the backing file is also used if available (using files specified in the
     # source block of the backing file). The parameter +file+ has to be an absolute path, ie.
     # starting with a slash.
-    def meta_info_for( handler, file = nil )
+    def meta_info_for( handler, file_struct = nil, file = nil )
       info = (@plugin_manager.plugin_infos.get( handler, 'file', 'meta_info' ) || {}).dup
       info.update( param('defaultMetaInfo')[handler] || {} )
+      if file_struct
+        info['lang'] = file_struct.lang
+        info['orderInfo'] = file_struct.orderInfo
+        info['title'] = file_struct.title
+      end
       if file
         file = normalize_path( file )
         info.update( @source_backing[file] ) if @source_backing.has_key?( file )
@@ -90,10 +95,10 @@ module Core
       pathname, filename = File.split( file )
       parent_node = @plugin_manager['File/DirectoryHandler'].recursive_create_path( pathname, parent_node )
 
-      meta_info = meta_info_for( handler.plugin_name, File.join( parent_node.absolute_path, filename ) )
-
       src_path = File.join( Node.root( parent_node ).node_info[:src], parent_node.absolute_path, filename )
       file_struct = analyse_filename( src_path )
+      meta_info = meta_info_for( handler.plugin_name, file_struct, File.join( parent_node.absolute_path, filename ) )
+
       dispatch_msg( :before_node_created, file_struct, parent_node, handler, meta_info )
       if block_given?
         node = yield( file_struct, parent_node, handler, meta_info )
@@ -120,6 +125,8 @@ module Core
       file_changed = (node.node_info.has_key?( :src ) ? file_changed?( node.node_info[:src], node.full_path ) : false)
       change_proc = (node.node_info.has_key?( :change_proc ) ? node.node_info[:change_proc].call( node ) : false)
       metainfo_changed = (node.meta_info != @plugin_manager['Core/CacheManager'].get( [:nodes, node.absolute_path, :metainfo], node.meta_info ))
+      log(:debug) { node.full_path + ': ' + [file_changed, change_proc, metainfo_changed].inspect }
+      log(:debug) { node.full_path + ': ' + node.meta_info.inspect }
       file_changed || metainfo_changed || change_proc
     end
 
@@ -159,11 +166,11 @@ module Core
 
       used_files = Set.new
       files_for_handlers.sort {|a,b| a[0] <=> b[0]}.each do |rank, handler, files|
-        log(:debug) { "Creating nodes for #{handler.class.plugin_name} with rank #{rank}" }
+        log(:debug) { "Creating nodes for #{handler.plugin_name} with rank #{rank}" }
         common = all_files & files
         used_files += common
         diff = files - common
-        log(:info) { "Not using these files for #{handler.class.plugin_name} as they do not exist or are excluded: #{diff.inspect}" } if diff.length > 0
+        log(:info) { "Not using these files for #{handler.plugin_name} as they do not exist or are excluded: #{diff.inspect}" } if diff.length > 0
         common.each  do |file|
           log(:info) { "Creating node(s) for file <#{file}>..." }
           create_node( file.sub( /^#{root_node.node_info[:src]}/, '' ), root_node, handler )
@@ -313,7 +320,8 @@ module Core
         return nil
       end
 
-      root = root_handler.create_node( analyse_filename( root_path ), nil, meta_info_for( root_handler, '/' ) )
+      file_struct = analyse_filename( root_path )
+      root = root_handler.create_node( file_struct, nil, meta_info_for( root_handler, file_struct, '/' ) )
       root['title'] = ''
       root.path = File.join( param( 'outDir', 'Core/Configuration' ), '/' )
       root.node_info[:src] = root_path

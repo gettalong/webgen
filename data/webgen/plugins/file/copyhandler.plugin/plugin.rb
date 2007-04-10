@@ -13,10 +13,10 @@ module FileHandlers
       processWithErb = param( 'erbPaths' ).any? {|pattern| File.fnmatch( pattern, file_struct.filename, File::FNM_DOTMATCH )}
       name = File.basename( file_struct.filename )
       name = name.sub( /\.r([^.]+)$/, '.\1' ) if processWithErb
+      file_struct.cn = file_struct.cn.sub( /\.r([^.]+)$/, '.\1' ) if processWithErb
 
       unless node = @plugin_manager['Core/FileHandler'].node_exist?( parent, name )
-        node = Node.new( parent, name )
-        node['title'] = name
+        node = Node.new( parent, name, file_struct.cn )
         node.meta_info.update( meta_info )
         node.node_info[:src] = file_struct.filename
         node.node_info[:processor] = self

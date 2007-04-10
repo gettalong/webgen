@@ -64,13 +64,6 @@ module FileHandlers
       langnode || node
     end
 
-    # See DefaultFileHandler#link_from and PageHandler#link_from.
-    def link_from( node, ref_node, attr = {} )
-      lang_node = (attr[:resolve_lang_node] == false ? node : node.node_for_lang( ref_node['lang'] ) ) #TODO still necessary?
-      attr[:link_text] ||=  lang_node['directoryName'] || node['title']
-      super( lang_node, ref_node, attr )
-    end
-
     # Recursively creates a given directory path starting from the path of +parent+ and returns the
     # bottom most directory node.
     def recursive_create_path( path, parent )
