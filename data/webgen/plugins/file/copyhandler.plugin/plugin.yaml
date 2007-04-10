@@ -1,0 +1,18 @@
+File/CopyHandler:
+  about:
+    summary: Copies files from the source directory to the output directory
+    author: Thomas Leitner <t_leitner@gmx.at>
+  plugin:
+    load_deps: File/DefaultHandler
+    run_deps: Core/FileHandler
+    class: FileHandlers::CopyHandler
+  params:
+    paths:
+      default: [**/*.css, **/*.js, **/*.jpg, **/*.png, **/*.gif]
+      desc: The path patterns which match the files that should get copied by this handler.
+    erbPaths:
+      default:  [**/*.rhtml, **/*.rcss]
+      desc: |
+        The path patterns which match the files that should get preprocessed by ERB.
+        The leading letter r is removed from the extension.
+
