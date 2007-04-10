@@ -34,8 +34,12 @@ module FileHandlers
     # Returns all (i.e. static and dynamic) path patterns defined for the file handler.
     def path_patterns
       if file_section = @plugin_manager.plugin_infos.get( @plugin_name, 'file' )
-        patterns = file_section['patterns'] || []
-        patterns += (file_section['extensions'] || []).collect {|rank,ext| [rank, EXTENSION_PATH_PATTERN % [ext]]}
+        patterns = (file_section['patterns'] || []).collect do |rank, pattern|
+          (pattern.nil? ? [DEFAULT_RANK, rank] : [rank, pattern])
+        end
+        patterns += (file_section['extensions'] || []).collect do |rank,ext|
+          (ext.nil? ? [DEFAULT_RANK, EXTENSION_PATH_PATTERN % [rank]] : [rank, EXTENSION_PATH_PATTERN % [ext]])
+        end
       end
       (patterns || []) + (@path_patterns || [])
     end
