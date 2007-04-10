@@ -1,0 +1,38 @@
+Core/FileHandler:
+  about:
+    summary: Main plugin for handling the files in the source directory
+    author: Thomas Leitner <t_leitner@gmx.at>
+  plugin:
+    file: filehandler.rb
+    load_deps: Core/Configuration
+    run_deps: File/DirectoryHandler
+  params:
+    ignorePaths:
+      default: ['**/CVS{/**/**,/}']
+      desc: An array of path patterns which match files that should be excluded from the list of 'to be processed' files.
+    defaultMetaInfo:
+      default: {}
+      desc: The keys for this hash are the names of file handlers, the values hashes with meta data.
+
+
+File/DefaultHandler:
+  about:
+    summary: Handles virtual files specified in the meta info backing file.
+    author: Thomas Leitner <t_leitner@gmx.at>
+  plugin:
+    file: defaulthandler.rb
+    class: FileHandlers::DefaultHandler
+  params:
+    linkToCurrentPage:
+      default: false
+      desc: Specifies whether in menus, breadcrumb trails, etc. a real link to the current page should be used or only the link text.
+
+
+File/VirtualFileHandler:
+  about:
+    summary: Handles virtual files specified in the meta info backing file.
+    author: Thomas Leitner <t_leitner@gmx.at>
+  plugin:
+    file: virtualhandler.rb
+    class: FileHandlers::VirtualFileHandler
+    load_deps: File/DefaultHandler
