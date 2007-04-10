@@ -168,12 +168,6 @@ class Node
     (self_oi == other_oi ? (self['title'] || '') <=> (other['title'] || '') : self_oi <=> other_oi)
   end
 
-  # Returns the node with the same canonical name but in language +lang+ or, if no such node exists,
-  # an unlocalized version of the node. If no such node is found either, +nil+ is returned.
-  def for_lang( lang )
-    self.parent.find {|n| n.cn == self.cn && n['lang'] == lang} || self.parent.find {|n| n.cn == self.cn && n['lang'].nil?}
-  end
-
   # Returns the route to the given path. The parameter +path+ can be a String or a Node.
   def route_to( other )
     my_url = self.to_url
@@ -217,7 +211,7 @@ class Node
     end
 
     if !lang.nil? && !match.nil? && match != node.lcn
-      node = node.for_lang( lang )
+      node = node.node_for_lang( lang )
     end
 
     node

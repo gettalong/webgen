@@ -5,6 +5,10 @@ require 'yaml'
 
 class TestProcessor
 
+  def node_for_lang( node, lang )
+    node.parent.find {|o| o.cn == node.cn && o['lang'] == lang} || node.parent.find {|o| o.cn == node.cn && o['lang'].nil?}
+  end
+
   def return( node, str )
     str + ' ' + node.path
   end
@@ -262,6 +266,7 @@ class NodeTest < Webgen::TestCase
     assert_equal( nil, @n['file_aa#'].resolve_node( 'file_aa#doit_invalid' ) )
 
     # with lang parameter
+    @n.each_value {|n| n.node_info[:processor] = TestProcessor.new}
     assert_equal( @n['file_l.de.page'], @n['/'].resolve_node( 'file_l.de.page', 'en' ) )
     assert_equal( @n['file_l.en.page'], @n['/'].resolve_node( 'file_l.page', 'en' ) )
     assert_equal( @n['file_l.de.page'], @n['/'].resolve_node( 'file_l.page', 'de' ) )
