@@ -1,0 +1,5 @@
+Converter/Textile:
+  about:
+    summary: Converts text in Textile markup to HTML using RedCloth
+    author: Thomas Leitner <t_leitner@gmx.at>
+  converts: textile
