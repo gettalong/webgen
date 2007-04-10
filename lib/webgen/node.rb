@@ -35,14 +35,14 @@ class Node
   # +canonical_name+::
   #    The canonical name used for resolving this node. Needs to be of the form 'basename.ext'
   #    or 'basename' where +basename+ does not contain any dots. Also, the 'basename' must not
-  #    include a language part!
+  #    include a language part! If not set, the +path+ is used as canonical name.
   #
   #    Note: a compound path like 'dir/file' is invalid if the parent node already has a child
   #    with path 'dir/'!!! (solution: just create a node with path 'file' and node 'dir/' as parent!)
-  def initialize( parent, path, canonical_name = File.basename( path ) )
+  def initialize( parent, path, canonical_name = path )
     @parent = nil
     @path = path
-    @cn = canonical_name
+    @cn = canonical_name.chomp('/')
     self.parent = parent
     @node_info = Hash.new
     @meta_info = Hash.new
@@ -56,10 +56,10 @@ class Node
 
   # Returns the localized canoncial name for this node.
   def lcn
-    if @node_info['lang'].nil?
+    if @meta_info['lang'].nil?
       @cn
     else
-      @cn.split( '.' ).insert( 1, @node_info['lang'].to_s ).join( '.' )
+      @cn.split( '.' ).insert( 1, @meta_info['lang'].to_s ).join( '.' )
     end
   end
 
@@ -168,6 +168,12 @@ class Node
     (self_oi == other_oi ? (self['title'] || '') <=> (other['title'] || '') : self_oi <=> other_oi)
   end
 
+  # Returns the node with the same canonical name but in language +lang+ or, if no such node exists,
+  # an unlocalized version of the node. If no such node is found either, +nil+ is returned.
+  def for_lang( lang )
+    self.parent.find {|n| n.cn == self.cn && n['lang'] == lang} || self.parent.find {|n| n.cn == self.cn && n['lang'].nil?}
+  end
+
   # Returns the route to the given path. The parameter +path+ can be a String or a Node.
   def route_to( other )
     my_url = self.to_url
@@ -192,10 +198,10 @@ class Node
     !temp.nil?
   end
 
-  # Returns the node representing the given +path+. The path can be absolute (i.e. starting with a
+  # TODO(redo): Returns the node representing the given +path+. The path can be absolute (i.e. starting with a
   # slash) or relative to the current node. If no node exists for the given path or it would lie
   # outside the node tree, +nil+ is returned.
-  def resolve_node( path )
+  def resolve_node( path, lang = nil )
     url = self.to_url + path
 
     path = url.path[1..-1].to_s + (url.fragment.nil? ? '' : '#' + url.fragment)
@@ -208,6 +214,10 @@ class Node
       node = node.find {|c| match = (c =~ path) }
       path.sub!( match, '' ) unless node.nil?
       break if path.empty?
+    end
+
+    if !lang.nil? && !match.nil? && match != node.lcn
+      node = node.for_lang( lang )
     end
 
     node
