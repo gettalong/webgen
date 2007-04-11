@@ -5,7 +5,7 @@ module FileHandlers
     def create_node( file_struct, parent, meta_info )
       begin
         page = Page.create_from_file( file_struct.filename, meta_info )
-      rescue WebPageDataInvalid => e
+      rescue PageInvalid => e
         log(:error) { "Invalid page file <#{file_struct.filename}>: #{e.message}" }
         return nil
       end
@@ -17,6 +17,7 @@ module FileHandlers
         node.node_info[:src] = file_struct.filename
         node.node_info[:processor] = self
         node.node_info[:page] = page
+        node.node_info[:no_output] = true
       end
       node
     end
