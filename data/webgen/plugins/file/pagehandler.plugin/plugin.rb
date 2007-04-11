@@ -25,7 +25,7 @@ module FileHandlers
     def create_node( file_struct, parent, meta_info )
       begin
         page = Page.create_from_file( file_struct.filename, meta_info )
-      rescue WebPageDataInvalid => e
+      rescue PageInvalid => e
         log(:error) { "Invalid page file <#{file_struct.filename}>: #{e.message}" }
         return nil
       end
@@ -42,6 +42,11 @@ module FileHandlers
         node.node_info[:src] = file_struct.filename
         node.node_info[:processor] = self
         node.node_info[:page] = page
+        node.node_info[:change_proc] = proc do
+          @plugin_manager['File/TemplateHandler'].templates_for_node( node ).any? do |n|
+            @plugin_manager['Core/FileHandler'].node_changed?( n )
+          end
+        end
       end
       node
     end
@@ -98,7 +103,11 @@ module FileHandlers
       #unless validator.nil? || validator == '' || validators[validator].nil?
       #  validators[validator].validate_file( node.full_path )
       #end
-      {:data => render_node( node )}
+      begin
+        {:data => render_node( node )}
+      rescue Exception => e
+        log(:error) { "Error while processing node <#{node.full_path}>" }
+      end
     end
 
     #######
