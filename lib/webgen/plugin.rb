@@ -228,6 +228,8 @@ module Webgen
       if @plugin_infos.has_key?( name )
         dep[name] = [@plugin_infos[name]['plugin'][type]].flatten
         dep[name].each {|d| all_plugin_deps(d, type, dep) unless dep.has_key?(d)}
+      else
+        raise "No plugin named '#{name}' found!"
       end
       dep
     end
