@@ -1,0 +1,5 @@
+Converter/Erb:
+  about:
+    summary: Converts text using ERB markup
+    author: Thomas Leitner <t_leitner@gmx.at>
+  converts: erb
