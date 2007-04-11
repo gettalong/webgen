@@ -14,7 +14,7 @@ module Converter
       RedCloth.new( content ).to_html
     rescue Exception => e
       log(:error) { "Error converting Textile text to HTML: #{e.message}" }
-      content
+      raise
     end
 
   end
