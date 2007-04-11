@@ -21,6 +21,7 @@ module FileHandlers
 
       node.meta_info.update( meta_info )
       node.node_info[:processor] = self
+      node.node_info[:no_output] = true
       node
     end
 

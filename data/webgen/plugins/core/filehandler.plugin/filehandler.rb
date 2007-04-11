@@ -70,15 +70,16 @@ module Core
     end
 
     # Analyses the +filename+ and returns a struct with the extracted information.
+    # Test: default.png, default.en.png, default.deu.png, default.template -> extension should always be correct!
     def analyse_filename( filename )
       analysed = OpenStruct.new
       analysed.filename  = filename
-      matchData = /^(?:(\d+)\.)?([^.]*?)(?:\.(\w\w\w?))?(?:\.(.*))?$/.match( File.basename( filename ) )
+      matchData = /^(?:(\d+)\.)?([^.]*?)(?:\.(\w\w\w?)(?=.))?(?:\.(.*))?$/.match( File.basename( filename ) )
 
       analysed.orderInfo = matchData[1].to_i
       analysed.basename  = matchData[2]
       analysed.lang      = Webgen::LanguageManager.language_for_code( matchData[3] )
-      analysed.ext       = matchData[3].to_s
+      analysed.ext       = matchData[4].to_s
 
       analysed.cn        = analysed.basename + (analysed.ext.length > 0 ? '.' + analysed.ext : '')
       analysed.title     = analysed.basename.tr('_-', ' ').capitalize
@@ -122,7 +123,9 @@ module Core
 
     # TODO(document)
     def node_changed?( node )
-      file_changed = (node.node_info.has_key?( :src ) ? file_changed?( node.node_info[:src], node.full_path ) : false)
+      file_changed = (node.node_info.has_key?( :src ) ?
+                      file_changed?( node.node_info[:src], (node.node_info[:no_output] ? nil : node.full_path) ) :
+                      false)
       change_proc = (node.node_info.has_key?( :change_proc ) ? node.node_info[:change_proc].call( node ) : false)
       metainfo_changed = (node.meta_info != @plugin_manager['Core/CacheManager'].get( [:nodes, node.absolute_path, :metainfo], node.meta_info ))
       log(:debug) { node.full_path + ': ' + [file_changed, change_proc, metainfo_changed].inspect }
