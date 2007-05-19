@@ -78,9 +78,6 @@ module FileHandlers
   # The <tt>plugin.yaml</tt> file:
   #
   #   File/CopyHandler:
-  #     about:
-  #       summary: Copies files from the source directory to the output directory
-  #       author: Thomas Leitner <t_leitner@gmx.at>
   #     plugin:
   #       file: copyhandler.rb
   #       load_deps: File/DefaultHandler
@@ -196,7 +193,7 @@ module FileHandlers
       link_text = attr[:link_text] || node['title']
       attr.delete_if {|k,v| k.kind_of?( Symbol )}
 
-      use_link = ( node != ref_node || param( 'linkToCurrentPage' ) )
+      use_link = ( node != ref_node || param( 'linkToCurrentPage', 'File/DefaultHandler' ) )
       attr['href'] = ref_node.route_to( node ) if use_link
       attrs = attr.collect {|name,value| "#{name.to_s}=\"#{value}\"" }.sort.unshift( '' ).join( ' ' )
       ( use_link ? "<a#{attrs}>#{link_text}</a>" : "<span#{attrs}>#{link_text}</span>" )

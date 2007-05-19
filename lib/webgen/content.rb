@@ -11,6 +11,7 @@ class Block
   # The content of the block.
   attr_reader :content
 
+  # The options set specifically for this block (includes for example the +pipeline+).
   attr_reader :options
 
   # Creates a new block with the name +name+ and the given +content+. The content gets parsed for

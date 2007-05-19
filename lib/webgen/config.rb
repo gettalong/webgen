@@ -13,8 +13,9 @@ require 'rbconfig'
 # category of plugins if such a base class is available.
 #
 # Here are some quick links for developing specific links:
-# * file handler plugins -> FileHandlers::DefaultHandler
 # * CLI command plugins -> Cli::Commands
+# * file handler plugins -> FileHandlers::DefaultHandler
+# * content processor plugins -> ContentProcessor
 module Webgen
 
   VERSION = [0, 5, 0]

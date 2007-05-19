@@ -79,7 +79,7 @@ module Webgen
 
     # Renders the website.
     def render
-      @plugin_manager['Core/FileHandler'].render_site
+      @plugin_manager['Core/FileHandler'].render_website
     end
 
   end

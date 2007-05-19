@@ -6,58 +6,6 @@ Console::ANSICode.define_ansicolor_method( :lblue, '1;34' )
 
 module Cli
 
-  # = CLI commands
-  #
-  # Each CLI command should be put into this module. A CLI command is a plugin that can be invoked
-  # from the webgen command and thus needs to be derived from CmdParse::Command. For detailed
-  # information on this class and the whole cmdparse package have a look at
-  # http://cmdparse.rubyforge.org!
-  #
-  # Here is a sample CLI command plugin:
-  #
-  #   class SampleCommand < CmdParse::Command
-  #
-  #     def initialize
-  #       super( 'sample', false )
-  #       self.short_desc = "This sample plugin just outputs its parameters"
-  #       self.description = Utils.format( "\nUses the global verbosity level and outputs additional " +
-  #         "information when the level is set to 0 or 1!" )
-  #       @username = nil
-  #     end
-  #
-  #     def init_plugin
-  #       self.options = CmdParse::OptionParserWrapper.new do |opts|
-  #         opts.separator "Options:"
-  #         opts.on( '-u', '--user USER', String,
-  #           'Specify an additional user name to output' ) {|@username|}
-  #       end
-  #     end
-  #
-  #     def execute( args )
-  #       if args.length == 0
-  #         raise OptionParser::MissingArgument.new( 'ARG1 [ARG2 ...]' )
-  #       else
-  #         puts "Command line arguments:"
-  #         args.each {|arg| puts arg}
-  #         if (0..1) === commandparser.verbosity
-  #           puts "Yeah, some additional information is always cool!"
-  #         end
-  #         puts "The entered username: #{@username}" if @username
-  #       end
-  #     end
-  #
-  #   end
-  #
-  # If you need to define options for a command, it is best to do this in the #init_plugin method
-  # since the plugin manager instance is available there. Also note the use of Utils.format in the
-  # initialize method so that the long text gets wrapped correctly! The Utils class provides some
-  # other useful methods, too!
-  #
-  # For information about which attributes are available on the webgen command parser instance have
-  # a look at Webgen::CommandParser!
-  module Commands end
-
-
   # Provides methods for other CLI plugins for formatting text in a consistent manner.
   class Utils
 
