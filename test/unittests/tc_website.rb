@@ -14,6 +14,9 @@ class FileConfiguratorTest < Webgen::TestCase
 
     configfile = Webgen::FileConfigurator.new( fixture_path( 'missing.yaml' ) )
     assert_equal( {}, configfile.config )
+
+    configfile = Webgen::FileConfigurator.for_website( fixture_path )
+    assert_equal( {}, configfile.config )
   end
 
   def test_param
