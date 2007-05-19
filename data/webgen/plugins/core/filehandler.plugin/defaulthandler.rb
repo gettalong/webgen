@@ -175,7 +175,7 @@ module FileHandlers
     # Returns the node with the same canonical name but in language +lang+ or, if no such node exists,
     # an unlocalized version of the node. If no such node is found either, +nil+ is returned.
     def node_for_lang( node, lang )
-      node.parent.find {|o| o.cn == node.cn && o['lang'] == lang} || node.parent.find {|o| o.cn == self.cn && o['lang'].nil?}
+      node.parent.find {|o| o.cn == node.cn && o['lang'] == lang} || node.parent.find {|o| o.cn == node.cn && o['lang'].nil?}
     end
 
     # Returns a HTML link to the +node+ from +ref_node+ or, if +node+ and +ref_node+ are the same

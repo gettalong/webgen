@@ -25,7 +25,7 @@ module Core
         @data = {}
       end
       @new_data = {}
-      @plugin_manager['Core/FileHandler'].add_msg_listener( :after_webgen_run ) do
+      @plugin_manager['Core/FileHandler'].add_msg_listener( :after_website_rendered ) do
         File.open( cache_file, 'wb' ) {|f| f.write( Marshal.dump( @new_data ) )}
       end
     end

@@ -85,7 +85,7 @@ module Webgen
       begin
         @plugin_manager.param( name, plugin )
       rescue
-        while ancestors.size > 0 && !ancestors[0].kind_of?( Class ) && !ancestors[0].respond_to?( :plugin_name )
+        while ancestors.size > 0 && !ancestors[0].respond_to?( :plugin_name )
           ancestors.shift
         end
         klass = ancestors.shift

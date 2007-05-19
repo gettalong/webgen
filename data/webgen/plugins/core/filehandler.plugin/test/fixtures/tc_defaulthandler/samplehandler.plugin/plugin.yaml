@@ -1,0 +1,4 @@
+Test/SampleFileHandler:
+  file:
+    patterns: [aaa, [10, bbb]]
+    extensions: [eee, [20, fff]]

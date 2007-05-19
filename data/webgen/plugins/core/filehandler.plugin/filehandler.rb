@@ -33,6 +33,7 @@ module Core
   # +after_node_written+::       called after a node has been written out
   # +before_all_nodes_written+:: called before the plugin starts writing out the files
   # +after_all_nodes_written+::  called after the plugin has finfished writing out the files
+  # +after_website_rendered+::   called after the whole website has been rendered
   class FileHandler
 
     include Listener
@@ -46,7 +47,7 @@ module Core
       add_msg_name( :after_node_written )
       add_msg_name( :before_all_nodes_written )
       add_msg_name( :after_all_nodes_written )
-      add_msg_name( :after_webgen_run )
+      add_msg_name( :after_website_rendered )
     end
 
     # During the initialisation, the meta information backing file is loaded. This method is
@@ -189,13 +190,14 @@ module Core
       @plugin_manager.logger.level = param( 'loggerLevel', 'Core/Configuration' )
       log(:info) { "Starting rendering of website <#{param('websiteDir', 'Core/Configuration')}>..." }
       log(:info) { "Using webgen data directory at <#{Webgen.data_dir}>" }
+      log(:debug) { "Available plugins: " + @plugin_manager.plugin_infos.keys.sort }
 
       tree = build_tree
       unless tree.nil?
         #@plugin_manager['Misc/TreeWalker'].execute( tree ) TODO activate again!
         write_tree( tree )
       end
-      dispatch_msg( :after_webgen_run )
+      dispatch_msg( :after_website_rendered )
 
       log(:info) { "Rendering of website <#{param('websiteDir', 'Core/Configuration')}> finished" }
     end
