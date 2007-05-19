@@ -19,12 +19,12 @@ class Block
     @name, @content, @options = name, content, options
   end
 
-  # context = { :chain => node_chain, :converters => {'webgentag' => WebgenTagConverter, 'erb' => ErbConverter, 'textile' => TextileConverter} }
+  # context = { :chain => node_chain, :processors => {'webgentag' => WebgenTagConverter, 'erb' => ErbConverter, 'textile' => TextileConverter} }
   def render( context )
     temp = content
-    @options['pipeline'].split(/;/).each do |converter|
-      raise "No such content converter available: #{converter}" unless context[:converters].has_key?( converter )
-      temp = context[:converters][converter].convert( temp, context, @options )
+    @options['pipeline'].to_s.split(/;/).each do |processor|
+      raise "No such content processor available: #{converter}" unless context[:processors].has_key?( processor )
+      temp = context[:processors][processor].process( temp, context, @options )
     end
     temp
   end

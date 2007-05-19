@@ -26,4 +26,4 @@ File/PageHandler:
     meta_info:
       blocks:
         default:
-          pipeline: erb,textile
+          pipeline: erb;textile

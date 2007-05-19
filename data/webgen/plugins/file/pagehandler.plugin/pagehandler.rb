@@ -80,11 +80,11 @@ module FileHandlers
       chain << node
 
       if chain.first.node_info[:page].blocks.has_key?( block_name )
-        converters = {}
-        @plugin_manager.plugin_infos[/^Converter\//].each do |k,v|
-          converters[v['converts']] = @plugin_manager[k]
+        processors = {}
+        @plugin_manager.plugin_infos[/^ContentProcessor\//].each do |k,v|
+          processors[v['processes']] = @plugin_manager[k]
         end
-        result = chain.first.node_info[:page].blocks[block_name].render( :chain => chain, :converters => converters )
+        result = chain.first.node_info[:page].blocks[block_name].render( :chain => chain, :processors => processors )
         dispatch_msg( :after_node_rendered, result, node )
       else
         log(:error) { "Error rendering node <#{node.full_path}>: no block with name '#{block_name}'" }
@@ -106,7 +106,7 @@ module FileHandlers
       begin
         {:data => render_node( node )}
       rescue Exception => e
-        log(:error) { "Error while processing node <#{node.full_path}>" }
+        log(:error) { "Error while processing <#{node.full_path}>: #{e.message}" }
       end
     end
 
