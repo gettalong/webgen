@@ -1,3 +1,5 @@
+require 'webgen/node'
+
 module FileHandlers
 
   class DirectoryHandler < DefaultHandler
