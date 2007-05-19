@@ -1,0 +1,6 @@
+TestPlugin:
+    param: value
+
+File/MyHandler:
+    defaultMetaInfo:
+        metainfo: value

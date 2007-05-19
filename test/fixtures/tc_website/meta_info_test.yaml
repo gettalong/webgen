@@ -1,0 +1,10 @@
+TestPlugin:
+    param: value
+
+File/MyHandler:
+    defaultMetaInfo:
+        metainfo: value
+
+Core/FileHandler:
+    defaultMetaInfo:
+        metainfo: value

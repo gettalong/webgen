@@ -27,6 +27,7 @@ require 'fileutils'
 require 'webgen/config'
 require 'webgen/plugin'
 
+
 module Webgen
 
   class WebSite
@@ -37,40 +38,21 @@ module Webgen
 
     def initialize( directory = Dir.pwd  )
       @directory = File.expand_path( directory )
-      @plugin_manager = PluginManager.new( [DefaultConfigurator.new( @directory )] )
-      @plugin_paths = [File.join( Webgen.data_dir, 'plugins' ), File.join( directory, 'plugins' )]
+      @plugin_paths = [File.join( Webgen.data_dir, 'plugins' ), File.join( @directory, 'plugins' )]
+      reset
     end
 
     def reset
-      @plugin_manager = PluginManager.new
-    end
-
-    def load_plugin_infos
-      Find.find( *@plugin_paths ) do |path|
-        if FileTest.directory?( path ) && path =~ /\.plugin$/
-          @plugin_manager.load_from_dir( path )
-          Find.prune
-        end
-      end
-    end
-
-  end
-
-
-  # Returns a modified value for Core/Configuration:srcDir, Core/Configuration:outDir and Core/Configuration:websiteDir.
-  class DefaultConfigurator
-
-    def initialize( websiteDir )
-      @websiteDir = websiteDir
-      @srcDir = File.join( websiteDir, 'src' ) #TODO use constant
+      @plugin_manager = PluginManager.new( [self] )
+      @plugin_manager.load_all_plugin_bundles( @plugin_paths )
     end
 
     def param( param, plugin, cur_val )
       case [plugin, param]
-      when ['Core/Configuration', 'websiteDir'] then [true, @websiteDir]
-      when ['Core/Configuration', 'srcDir'] then [true, @srcDir]
+      when ['Core/Configuration', 'websiteDir'] then [true, @directory]
+      when ['Core/Configuration', 'srcDir'] then [true, File.join( @directory, Webgen::SRC_DIR )]
       when ['Core/Configuration', 'outDir'] then
-        [true, (/^(\/|[A-Za-z]:)/ =~ cur_val ? cur_val : File.join( @websiteDir, cur_val ) )]
+        [true, (/^(\/|[A-Za-z]:)/ =~ cur_val ? cur_val : File.join( @directory, cur_val ) )]
       else
         [false, cur_val]
       end
