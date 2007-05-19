@@ -70,8 +70,8 @@ task :doc => [:rdoc]
 rd = Rake::RDocTask.new do |rdoc|
   rdoc.rdoc_dir = 'doc/output/rdoc'
   rdoc.title    = PKG_NAME
-  rdoc.options << '--line-numbers' << '--inline-source' << '-m README'
-  rdoc.rdoc_files.include( 'README' )
+  rdoc.options << '--line-numbers' << '--inline-source'# << '-m README' TODO
+  #  rdoc.rdoc_files.include( 'README' )
   rdoc.rdoc_files.include( 'lib/**/*.rb' )
 end
 

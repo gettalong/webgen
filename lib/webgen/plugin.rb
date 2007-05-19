@@ -36,15 +36,21 @@ module Webgen
   end
 
 
+  # This module gets mixed into plugin classes and provides some utility methods.
   module Plugin
 
+    # Returns the name of the plugin.
     attr_reader :plugin_name
 
+    # Invoked by the plugin manager after creating an object for setting the +plugin_manager+ and
+    # the +name+ of the plugin.
     def set_plugin_infos( plugin_manager, name )
       @plugin_manager = plugin_manager
       @plugin_name = name
     end
 
+    # Logs the result of the +block+ using the severity level +sev_level+. Uses the logger provided
+    # by the plugin manager.
     def log( sev_level, &block )
       if @plugin_manager.logger
         source = @plugin_name + '#' + caller[0][%r"`.*"][1..-2]
@@ -53,6 +59,8 @@ module Webgen
       nil
     end
 
+    # Returns the value of the parameter +name+ for +plugin+. If +plugin+ is not set, the plugin
+    # name of the current object is used.
     def param( name, plugin = nil )
       @plugin_manager.param( name, plugin || @plugin_name )
     end
@@ -77,15 +85,176 @@ module Webgen
 
   end
 
+
+  # Main class for managing plugins.
+  #
+  # = PluginManager class
+  #
+  # Provides the following functionality:
+  # * loads plugins and resources from plugin bundles
+  # * resolves load and runtime dependencies when instantiating a plugin
+  # * resolves current values for plugin parameters using configurator objects
+  #
+  # = Plugin bundles
+  #
+  # Plugin bundles are directories with the extension <tt>.plugin</tt>. Each plugin bundle can contain
+  # * zero or more plugins
+  # * zero or more resource files
+  # * optional plugin documentation
+  # * optional plugin test cases
+  #
+  # == <tt>plugin.yaml</tt> - Specifies plugins included in bundle
+  #
+  # Plugins and associated information are specified in the file <tt>plugin.yaml</tt>. If this file
+  # does not exist, it just means that the plugin bundle does not define any plugins. A sample file
+  # looks like this:
+  #
+  #   PluginCategory/PluginName:
+  #     about:
+  #       summary: Summary for the plugin
+  #       author: Name of author
+  #     plugin:
+  #       file: plugin_file.rb
+  #       class: PluginName
+  #       load_deps: [LoadDepPlugin]
+  #       run_deps: [RunDepPlugin]
+  #       docufile: documentation.page
+  #     params:
+  #       sample_param:
+  #         default: default value
+  #         desc: A small description for the parameter
+  #       another_param:
+  #         default: ~
+  #
+  #   SimplePlugin: ~
+  #
+  # Two plugins, <tt>PluginCategory/PluginName</tt> and +SimplePlugin+ are defined in this file. The
+  # first plugin specifies much information about the plugin, including information about the plugin
+  # itself in the +plugin+ section and its parameters in the +params+ section. The SimplePlugin uses
+  # the smallest possible way of defining a plugin by relying on the default values.
+  #
+  # The PluginManager uses information from the +plugin+ and the +params+ section. Following is a
+  # list of all useable keys in the +plugin+ section and their default values:
+  #
+  # +file+:: The file in which the plugin class is declared. Default value: <tt>plugin.rb</tt>.
+  # +class+:: The plugin class. This class is later used to instantiate the plugin. The default
+  #           value is constructed from the plugin name by substituting <tt>/</tt> with <tt>::</tt>.
+  # +load_deps+:: An array of load time dependencies of the plugin. Default value: <tt>[]</tt>.
+  # +run_deps+:: An array of runtime dependencies of the plugin. Default value: <tt>[]</tt>
+  # +docufile+:: The name of a file in WebPage Format containing documentation for the plugin.
+  #              Default value: <tt>documentation.page</tt>.
+  #
+  # The +params+ section is used to define parameters for the plugin. If no default value is
+  # specified, +nil+ becomes the default value.
+  #
+  # == <tt>resource.yaml</tt> - Specifies resources included in bundle
+  #
+  # Each plugin bundle can include resources. The file <tt>resource.yaml</tt> tells the
+  # PluginManager which resources have which name and which associated information. If this file
+  # does not exist, it just means that the plugin bundle does not include any resources!
+  #
+  # A sample file looks like this:
+  #
+  #   resources/templates/*/:
+  #     name: webgen/website/template/$basename
+  #     desc: A small description for the template $basename.
+  #
+  #   resources/styles/*/*/:
+  #     name: webgen/website/style/$dir1/$basename
+  #
+  # The top level keys are just file globs useable by <tt>Dir.glob</tt>. All files under the plugin
+  # bundle directory matching such a glob are considered to be resources. The only mandatory key for
+  # such a glob is +name+ which specifies the name of the resource. This name can later be used to
+  # access it. The PluginManager performs a simple variable expansion on all values. The following
+  # variables can be used (for the examples consider the resource
+  # <tt>resources/images/emoticons/smile.png</tt>):
+  #
+  # <tt>$basename</tt>:: Returns the basename of the resource, ie. <tt>smile.png</tt>
+  # <tt>$extname</tt>:: Returns the extension of the resource, ie. <tt>png</tt>
+  # <tt>$basename_no_ext</tt>:: Returns the basename without the extension, ie. <tt>smile</tt>
+  # <tt>$dirN</tt>:: Returns the Nth directory name, ie. for N=1 <tt>emoticons</tt>, for N=2 <tt>images</tt>, ...
+  #
+  # == Plugin documentation file
+  #
+  # The plugin documentation file has to be in WebPage Format. A processing pipeline for each block
+  # should always be specified sothat the blocks get rendered correctly!
+  #
+  # A documentation file should include at least the block +documentation+ which has in-depth
+  # documentation for the plugin. The optional block +usage+ can be used to show how the plugin
+  # works or document use cases.
+  #
+  # == Plugin test cases
+  #
+  # All Ruby source files in the directory +tests+ under a plugin bundle are considered to be test
+  # cases for the plugins included in the bundle. It is good practice to include test sothat the end
+  # user can verify if a given plugin will run correctly on his installation!
+  #
+  # = Configurators
+  #
+  # Configurator objects are used to determine the current values of plugin parameters. The
+  # PluginManager uses a chain of such objects to determine a parameter value. It invokes the
+  # configurators in the reverse order (so, first the last configurator is invoked, then the next to
+  # last and so on) with the names of the parameter and the plugin and the current value (the
+  # default value for a parameter is used at the beginning). The PluginManager stops if there are no
+  # more configurators or if a configurator has issued a stop and returns the value for the
+  # parameter.
+  #
+  # A configurator object must respond to the +param+ method and which has to take three
+  # parameters:
+  #
+  # 1. the name of the parameter
+  # 2. the name of the plugin
+  # 3. the current value for the parameter
+  #
+  # The method needs to return an array with two values: the first value can either be +true+ or
+  # +false+ and tells the PluginManager to stop here or to go on to the next configurator and the
+  # second value has to be the value for the parameter.
+  #
+  # A small example with two sample configurator objects:
+  #
+  #   class SampleConfigurator
+  #
+  #     def initialize( value, stop ); @value, @stop = value, stop; end
+  #
+  #     def param( name, plugin, cur_val )
+  #       ([plugin,name] == ['TestPlugin', 'test'] ? [@stop, @value] : [false, cur_val])
+  #     end
+  #   end
+  #
+  #   stop_configurator = SampleConfigurator.new( 'stop', true )
+  #   no_stop_configurator = SampleConfigurator.new( 'no stop', false )
+  #
+  #   pm = Webgen::PluginManager.new( [stop_configurator, no_stop_configurator] )
+  #   pm.param( 'test', 'TestPlugin' )     # -> 'stop'
+  #   pm = Webgen::PluginManager.new( [no_stop_configurator, stop_configurator] )
+  #   pm.param( 'test', 'TestPlugin' )     # -> 'stop'
+  #   pm.param( 'param', 'OtherPlugin' )   # returns the default value
+  #
+  # So, first we create a simple configurator class and then two configurator objects: one which
+  # stops the PluginManager and one which doesn't. As you can see it outputs 'stop' both times: the
+  # first time because the +stop_configurator+ is the first configurator in the chain (and therefore
+  # asked last) and the second time because it stops the PluginManager from further asking other
+  # configurators (in our case the +no_stop_configurator+).
+  #
   class PluginManager < Module
 
+    # Returns the Hash with the plugin infos, ie. the values from the <tt>plugin.yaml</tt> files.
     attr_accessor :plugin_infos
+
+    # Returns the Hash with the instantiated plugins.
     attr_accessor :plugins
+
+    # Returns the Hash with the resources defined in the <tt>resource.yaml</tt> files.
     attr_accessor :resources
 
+    # Returns the logger for the object.
     attr_accessor :logger
+
+    # Returns the array of configurators.
     attr_accessor :configurators
 
+    # Initializes a new PluginManager object using the optional +configurators+ and +logger+
+    # parameters.
     def initialize( configurators = [], logger = Logger.new )
       @plugins = {}
       @configurators = configurators
@@ -95,7 +264,7 @@ module Webgen
       @resources = SpecialHash.new
     end
 
-    # Can be used by a plugin to load files in the plugin bundle.
+    # Can be used by a plugin to load files in its plugin bundle.
     def load_local( file )
       file = (File.basename(file).index('.').nil? ? file + '.rb' : file )
       load_plugin_file( File.join( File.dirname( caller[0][/^[^:]+/] ), file ) )
@@ -136,9 +305,11 @@ module Webgen
       @plugins[plugin_name]
     end
 
+    # Returns the parameter +name+ for +plugin+ by using the configurators. Raises an error if no
+    # such parameter exists.
     def param( name, plugin )
       raise "No such parameter #{name} for plugin #{plugin}" unless @plugin_infos.has_key?( plugin ) && @plugin_infos[plugin]['params'].has_key?( name )
-      stop, value = false, @plugin_infos[plugin]['params'][name]['default']
+      stop, value = false, @plugin_infos.get( plugin, 'params', name, 'default' )
       @configurators.reverse.each do |configurator|
         stop, value = configurator.param( name, plugin, value )
         break if stop

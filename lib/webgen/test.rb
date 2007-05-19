@@ -164,6 +164,3 @@ module Webgen
 
 end
 
-class Module
-  public :remove_const
-end
