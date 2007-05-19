@@ -2,18 +2,19 @@ require 'rbconfig'
 
 module Webgen
 
-  VERSION = [0, 4, 3]
+  VERSION = [0, 5, 0]
   AUTHOR = 'Thomas Leitner <t_leitner@gmx.at>'
-  SUMMARY = "webgen is a templated based static Web site generator."
-  DESCRIPTION = "webgen is a Web site generator implemented in Ruby. " \
-  "It is used to generate static Web pages from templates and page " \
-  "description files."
+  SUMMARY = "webgen is a powerful and extendable static web site generator."
+  DESCRIPTION = "webgen generates static web pages from templates and page files." \
+  "Page/Template files can be written in several markup languages (Textile, Markdown, ...) and " \
+  "dynamically generated parts like a menu are easily included by " \
+  "using ERB (embedded Ruby) or webgen's own tag system."
 
   # The directory below a website directory in which the source files are.
   SRC_DIR = 'src'
 
   # The directory below a website directory in which the plugin files are.
-  PLUGIN_DIR = 'plugin'
+  PLUGIN_DIR = 'plugins'
 
   # Returns the data directory for webgen.
   def self.data_dir
