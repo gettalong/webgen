@@ -1,0 +1,14 @@
+# This is the configuration file for webgen used to set plugin parameter values.
+# The general syntax is:
+#
+# PluginName:
+#   key: value
+#   other key: [array, {mykey:value}]
+#
+# OtherPluginName:
+#   key: value
+#
+# The following example sets a different default language:
+#
+# Core/Configuration:
+#   lang: de

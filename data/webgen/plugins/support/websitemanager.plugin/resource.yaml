@@ -3,3 +3,6 @@ resources/templates/*/:
 
 resources/styles/*/*/:
   name: webgen/website/style/$dir1/$basename
+
+resources/skeleton/:
+  name: webgen/website/skeleton
