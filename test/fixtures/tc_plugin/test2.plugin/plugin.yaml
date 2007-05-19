@@ -1,0 +1,10 @@
+Test2Plugin:
+  plugin:
+    file: plugin2.rb
+    class: MyPlugin
+    docufile: mydoc.page
+    dir: hola
+    run_deps: [TestPlugin]
+  params:
+    test:
+      default: hello

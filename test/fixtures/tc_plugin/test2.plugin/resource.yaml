@@ -1,0 +1,7 @@
+myfile.resource:
+  name: webgen/test2res
+  test:
+    $basename
+    $basename_no_ext
+    $extname
+    $dir1

@@ -1,6 +1,7 @@
 require 'yaml'
 require 'logger'
 require 'tsort'
+require 'find'
 require 'webgen/config'
 require 'webgen/listener'
 require 'facets/core/kernel/constant'
@@ -45,8 +46,10 @@ module Webgen
     end
 
     def log( sev_level, &block )
-      source = @plugin_name + '#' + caller[0][%r"`.*"][1..-2]
-      @plugin_manager.logger.send( sev_level, source, &block ) if @plugin_manager.logger
+      if @plugin_manager.logger
+        source = @plugin_name + '#' + caller[0][%r"`.*"][1..-2]
+        @plugin_manager.logger.send( sev_level, source, &block )
+      end
       nil
     end
 
@@ -92,40 +95,45 @@ module Webgen
       @resources = SpecialHash.new
     end
 
+    # Can be used by a plugin to load files in the plugin bundle.
     def load_local( file )
       file = (File.basename(file).index('.').nil? ? file + '.rb' : file )
       load_plugin_file( File.join( File.dirname( caller[0][/^[^:]+/] ), file ) )
     end
 
-    def []( plugin )
-      load_plugins( [plugin] ) if !@plugins.has_key?( plugin )
-      @plugins[plugin]
-    end
-
-    def documentation_for( plugin, type = :text )
-      return '' unless @plugin_infos.has_key?( plugin )
-      content = ''
-      docufile = @plugin_infos[plugin]['plugin']['docufile']
-      docufile = File.join( @plugin_infos[plugin]['plugin']['dir'], docufile )
-      if File.exists?( docufile )
-        content = File.read( docufile )
-        content = BlueCloth.new( content ).to_html if type == :html
+    # Loads all plugin bundles, ie. directories with the extension +.plugin+, from the given
+    # directories +dirs+.
+    def load_all_plugin_bundles( dirs )
+      Find.find( *dirs ) do |path|
+        if FileTest.directory?( path ) && path =~ /\.plugin$/
+          load_plugin_bundle( path )
+          Find.prune
+        end
       end
-      content
     end
 
-    def load_from_dir( plugin_dir )
-      dir = File.expand_path( plugin_dir )
+    # Loads a single plugin bundle from +dir+.
+    def load_plugin_bundle( dir )
+      dir = File.expand_path( dir )
       load_plugin_infos( dir )
       load_resources( dir )
     end
 
-    def load_plugins( plugins = @plugin_infos.keys )
+    # Initializes the +plugins+ and all their dependencies. There is no need to call this method
+    # from your code since not initialized plugins are automatically initialized on access!
+    def init_plugins( plugins = @plugin_infos.keys )
       plugins.each do |plugin|
         deps = all_plugin_deps( plugin, 'load_deps' ).tsort
-        deps.each {|plugin_name| load_plugin( plugin_name ) }
-        deps.each {|dep| load_plugins( [@plugin_infos[dep]['plugin']['run_deps']].flatten - @plugins.keys ) }
+        deps.each {|plugin_name| init_plugin( plugin_name ) }
+        deps.each {|dep| init_plugins( [@plugin_infos[dep]['plugin']['run_deps']].flatten - @plugins.keys ) }
       end
+    end
+
+    # Returns the plugin +plugin_name+. The plugin is automatically initialized if it has not been
+    # initialized yet!
+    def []( plugin_name )
+      init_plugins( [plugin_name] ) if !@plugins.has_key?( plugin_name )
+      @plugins[plugin_name]
     end
 
     def param( name, plugin )
@@ -138,6 +146,20 @@ module Webgen
       value
     end
 
+    # TODO: redo, docu file should be in WebPage format, different sections
+    # -> usage (general usage of the plugin), documentation (in-depth documentation)
+    def documentation_for( plugin, type = :text )
+      return '' unless @plugin_infos.has_key?( plugin )
+      content = ''
+      docufile = @plugin_infos[plugin]['plugin']['docufile']
+      docufile = File.join( @plugin_infos[plugin]['plugin']['dir'], docufile )
+      if File.exists?( docufile )
+        content = File.read( docufile )
+        content = BlueCloth.new( content ).to_html if type == :html
+      end
+      content
+    end
+
     #######
     private
     #######
@@ -145,13 +167,12 @@ module Webgen
     def load_plugin_infos( plugin_dir )
       file = File.join( plugin_dir, 'plugin.yaml')
       return unless File.exist?( file )
+
       info = YAML::load( File.read( file ) )
+      raise "#{file} is invalid" unless info.kind_of?( Hash )
       info.each do |name, infos|
         raise "Plugin already defined" if @plugin_infos.has_key?( name )
-        @plugin_infos[name] = infos
-
-        @plugin_infos[name]['about'] ||= {}
-        @plugin_infos[name]['about']['summary'] ||= 'TODO'
+        @plugin_infos[name] = (infos || {})
 
         @plugin_infos[name]['plugin'] ||= {}
         @plugin_infos[name]['plugin']['name'] = name
@@ -160,7 +181,7 @@ module Webgen
         @plugin_infos[name]['plugin']['class'] ||= name.split('/').join('::')
         @plugin_infos[name]['plugin']['run_deps'] ||= []
         @plugin_infos[name]['plugin']['load_deps'] ||= []
-        @plugin_infos[name]['plugin']['docufile'] = 'documentation.rdoc'
+        @plugin_infos[name]['plugin']['docufile'] ||= 'documentation.page'
 
         @plugin_infos[name]['params'] ||= {}
       end
@@ -169,7 +190,9 @@ module Webgen
     def load_resources( plugin_dir )
       file = File.join( plugin_dir, 'resource.yaml' )
       return unless File.exist?( file )
+
       resources = YAML::load( File.read( file ) )
+      raise "#{file} is invalid" unless resources.kind_of?( Hash )
       resources.each do |res, infos|
         Dir[File.join( plugin_dir, res )].each do |res_file|
           res_infos = get_res_infos( res_file, infos.merge('src' => res_file ) )
@@ -185,7 +208,7 @@ module Webgen
       substs.merge!({
         'basename' => File.basename( res_file ),
         'basename_no_ext' => File.basename( res_file, '.*' ),
-        'extname' => File.extname( res_file ),
+        'extname' => File.extname( res_file )[1..-1],
         :dirnames => File.dirname( res_file ).split(File::SEPARATOR),
       })
       Hash[*infos.collect do |key, value|
@@ -204,14 +227,14 @@ module Webgen
         @loaded_features.push( file )
         begin
           module_eval( File.read( file ), file )
-        rescue
+        rescue Exception
           @loaded_features.pop
-          raise
+          raise "Error while loading file: #{$!.message}"
         end
       end
     end
 
-    def load_plugin( name )
+    def init_plugin( name )
       return if @plugins.has_key?(name)
 
       file = File.join( @plugin_infos[name]['plugin']['dir'], @plugin_infos[name]['plugin']['file'] )
