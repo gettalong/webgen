@@ -70,7 +70,7 @@ module FileHandlers
   # The default meta information is specified in the +file+ section of a file handler plugin in the
   # <tt>plugin.yaml</tt> using the key +defaultMetaInfo+.
   #
-  # = Example file handler
+  # = Sample File Handler Plugin
   #
   # Following is a simple file handler example which just copies files from the source to the output
   # directory.
@@ -149,7 +149,7 @@ module FileHandlers
           (ext.nil? ? [DEFAULT_RANK, EXTENSION_PATH_PATTERN % [rank]] : [rank, EXTENSION_PATH_PATTERN % [ext]])
         end
       end
-      (patterns || []) + (@path_patterns || [])
+      (patterns || []) + (@path_patterns ||= [])
     end
 
     # Asks the plugin to create a node with the information provided in +file_struct+ (see
@@ -193,7 +193,7 @@ module FileHandlers
       link_text = attr[:link_text] || node['title']
       attr.delete_if {|k,v| k.kind_of?( Symbol )}
 
-      use_link = ( node != ref_node || param( 'linkToCurrentPage', 'File/DefaultHandler' ) )
+      use_link = ( node != ref_node || param( 'linkToCurrentPage' ) )
       attr['href'] = ref_node.route_to( node ) if use_link
       attrs = attr.collect {|name,value| "#{name.to_s}=\"#{value}\"" }.sort.unshift( '' ).join( ' ' )
       ( use_link ? "<a#{attrs}>#{link_text}</a>" : "<span#{attrs}>#{link_text}</span>" )

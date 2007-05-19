@@ -40,6 +40,19 @@ module Webgen
   # This module gets mixed into plugin classes and provides some utility methods.
   module Plugin
 
+    # The methods of this module are available on plugin classes (not instances!).
+    module ClassMethods
+
+      # Returns the name of the plugin.
+      attr_reader :plugin_name
+
+    end
+
+    def self.included( klass )
+      super
+      klass.extend( ClassMethods )
+    end
+
     # Returns the name of the plugin.
     attr_reader :plugin_name
 
@@ -48,6 +61,7 @@ module Webgen
     def set_plugin_infos( plugin_manager, name )
       @plugin_manager = plugin_manager
       @plugin_name = name
+      self.class.instance_variable_set( :@plugin_name, name )
     end
 
     # Logs the result of the +block+ using the severity level +sev_level+. Uses the logger provided
@@ -61,9 +75,22 @@ module Webgen
     end
 
     # Returns the value of the parameter +name+ for +plugin+. If +plugin+ is not set, the plugin
-    # name of the current object is used.
+    # name of the current object is used. If no such parameter is found for the current object, it
+    # is tried to find the parameter in one of the super classes.
     def param( name, plugin = nil )
-      @plugin_manager.param( name, plugin || @plugin_name )
+      return @plugin_manager.param( name, plugin ) unless plugin.nil?
+
+      ancestors = self.class.ancestors[1..-3]
+      plugin = @plugin_name
+      begin
+        @plugin_manager.param( name, plugin )
+      rescue
+        while ancestors.size > 0 && !ancestors[0].kind_of?( Class ) && !ancestors[0].respond_to?( :plugin_name )
+          ancestors.shift
+        end
+        klass = ancestors.shift
+        (klass.nil? ? raise : (plugin = klass.plugin_name; retry))
+      end
     end
 
   end

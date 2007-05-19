@@ -133,6 +133,7 @@ class PluginTest < Webgen::TestCase
 
   def test_accessors
     assert_equal( 'Test2Plugin', @manager['Test2Plugin'].plugin_name )
+    assert_equal( 'Test2Plugin', @manager['Test2Plugin'].class.plugin_name )
   end
 
   # only used for test_log
@@ -149,6 +150,7 @@ class PluginTest < Webgen::TestCase
 
   def test_param
     assert_equal( 'hello',  @manager['Test2Plugin'].param( 'test' ) )
+    assert_equal( 'hello',  @manager['Test3Plugin'].param( 'test' ) )
 
     assert_raise( RuntimeError ) { assert_equal( 'hello',  @manager['TestPlugin'].param( 'test' ) ) }
     assert_equal( 'hello',  @manager['TestPlugin'].param( 'test', 'Test2Plugin' ) )

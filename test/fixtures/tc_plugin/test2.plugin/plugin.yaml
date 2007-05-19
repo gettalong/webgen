@@ -8,3 +8,8 @@ Test2Plugin:
   params:
     test:
       default: hello
+
+Test3Plugin:
+  plugin:
+    file: test3plugin.rb
+    load_deps: Test2Plugin
