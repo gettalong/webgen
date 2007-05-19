@@ -49,7 +49,7 @@ class PluginManagerTest < Webgen::TestCase
     assert_raise( RuntimeError ) { @manager.load_plugin_bundle( fixture_path( 'invalid_plugin_yaml' ) ) }
 
     @manager.load_plugin_bundle( fixture_path( 'test.plugin' ) )
-    assert_raise( RuntimeError ) { @manager.load_plugin_bundle( fixture_path( 'test.plugin' ) ) }
+    assert_nothing_raised { @manager.load_plugin_bundle( fixture_path( 'test.plugin' ) ) }
     assert( @manager.plugin_infos.include?( 'TestPlugin' ) )
     assert_equal( 'TestPlugin', @manager.plugin_infos['TestPlugin']['plugin']['name'] )
     assert_equal( File.expand_path( fixture_path( 'test.plugin' ) ), @manager.plugin_infos['TestPlugin']['plugin']['dir'] )

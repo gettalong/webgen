@@ -270,6 +270,7 @@ module Webgen
       @plugins = {}
       @configurators = configurators
       @logger = logger
+      @loaded_bundles = []
       @loaded_features = []
       @plugin_infos = SpecialHash.new
       @resources = SpecialHash.new
@@ -295,6 +296,8 @@ module Webgen
     # Loads a single plugin bundle from +dir+.
     def load_plugin_bundle( dir )
       dir = File.expand_path( dir )
+      return if @loaded_bundles.include?( dir )
+      @loaded_bundles << dir
       load_plugin_infos( dir )
       load_resources( dir )
     end
