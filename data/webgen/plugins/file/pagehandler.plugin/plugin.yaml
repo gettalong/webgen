@@ -24,7 +24,6 @@ File/PageHandler:
   file:
     extensions: page
     meta_info:
-      useERB: true
       blocks:
         default:
-          pipeline: textile
+          pipeline: erb,textile

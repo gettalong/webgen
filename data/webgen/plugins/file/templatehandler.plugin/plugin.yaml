@@ -13,7 +13,6 @@ File/TemplateHandler:
   file:
     extensions: template
     meta_info:
-      useERB: true
       blocks:
         default:
-          pipeline: textile
+          pipeline: erb
