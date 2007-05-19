@@ -157,6 +157,27 @@ class PluginTest < Webgen::TestCase
 end
 
 
+class LoggerTest < Webgen::TestCase
+
+  require 'stringio'
+
+  def test_logger
+    output = StringIO.new( '' )
+    logger = Webgen::Logger.new( output )
+    logger.warn { 'test' }
+    output.rewind; assert_equal( '', output.read )
+    logger.error('Class#method') { 'test' }
+    output.rewind; assert_equal( "ERROR -- test\n", output.read )
+
+    output = StringIO.new( '' )
+    logger = Webgen::Logger.new( output )
+    logger.level = Logger::DEBUG
+    logger.error('Class#method') { 'test' }
+    output.rewind; assert_equal( "ERROR -- Class#method: test\n", output.read )
+  end
+
+end
+
 class SpecialHashTest < Webgen::TestCase
 
   def setup
