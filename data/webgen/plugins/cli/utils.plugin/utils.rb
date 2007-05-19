@@ -2,12 +2,13 @@ require 'facets/more/ansicode'
 require 'rbconfig'
 
 Console::ANSICode.define_ansicolor_method( :lred, '1;31' )
+Console::ANSICode.define_ansicolor_method( :lblue, '1;34' )
 
 module Cli
 
   class Utils
 
-    USE_ANSI_COLORS = $stdout.isatty && !Config::CONFIG['arch'].include?( 'mswin32' )
+    USE_ANSI_COLORS = !Config::CONFIG['arch'].include?( 'mswin32' )
 
     def self.method_missing( id, text = nil )
       if USE_ANSI_COLORS && Console::ANSICode.respond_to?( id )
@@ -17,17 +18,31 @@ module Cli
       end
     end
 
-    def self.format( content, indent = 0, width = 100 )
+    def self.format( content, indent = 0, width = 72, hanging_indent = true )
       content ||= ''
-      return [content] if content.length + indent <= width
-      lines = []
-      while content.length + indent > width
-        index = content[0..(width-indent-1)].rindex(' ')
-        lines << (lines.empty? ? '' : ' '*indent) + content[0..index]
-        content = content[index+1..-1]
+      length = width - indent
+
+      paragraphs = content.split( /\n\n/ )
+      if paragraphs.length == 1
+        pattern = /^(.{0,#{length}})[ \n]/m
+        lines = []
+        while content.length > length
+          if content =~ pattern
+            str = $1
+            len = $&.length
+          else
+            str = content[0, length]
+            len = length
+          end
+          lines << (lines.empty? && hanging_indent ? '' : ' '*indent) + str.gsub( /\n/, ' ' )
+          content.slice!(0, len)
+        end
+        lines << (lines.empty? && hanging_indent ? '' : ' '*indent) + content.gsub( /\n/, ' ' ) unless content.strip.empty?
+        lines
+      else
+        ((format( paragraphs.shift, indent, width, hanging_indent ) << '') +
+         paragraphs.collect {|p| format( p, indent, width, false ) << '' }).flatten[0..-2]
       end
-      lines << ' '*indent + content unless content.strip.empty?
-      lines
     end
 
     def self.headline( text, indent = 2 )
