@@ -142,13 +142,21 @@ module Webgen
   # +file+:: The file in which the plugin class is declared. Default value: <tt>plugin.rb</tt>.
   # +class+:: The plugin class. This class is later used to instantiate the plugin. The default
   #           value is constructed from the plugin name by substituting <tt>/</tt> with <tt>::</tt>.
-  # +load_deps+:: An array of load time dependencies of the plugin. Default value: <tt>[]</tt>.
+  # +load_deps+:: An array of load time dependencies of the plugin, ie. other plugins that are
+  #               needed because of constants definition or for initializing. Default value: <tt>[]</tt>.
   # +run_deps+:: An array of runtime dependencies of the plugin. Default value: <tt>[]</tt>
   # +docufile+:: The name of a file in WebPage Format containing documentation for the plugin.
   #              Default value: <tt>documentation.page</tt>.
   #
   # The +params+ section is used to define parameters for the plugin. If no default value is
   # specified, +nil+ becomes the default value.
+  #
+  # A plugin class can be any Ruby class that can be initialized without any arguments. After
+  # resolving the plugin class, the Plugin module is mixed into the class which provides utility
+  # methods for plugins. When a plugin object gets created, it has no access to the plugin manager
+  # in the #initialize method since the values are set afterwards. To come around this problem a
+  # plugin class can define a method +init_plugin+ which gets called after the plugin manager
+  # variable has been set and which can be used to initialize the plugin.
   #
   # == <tt>resource.yaml</tt> - Specifies resources included in bundle
   #
