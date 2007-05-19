@@ -4,8 +4,8 @@ require 'tsort'
 require 'find'
 require 'webgen/config'
 require 'webgen/listener'
+require 'webgen/content'
 require 'facets/core/kernel/constant'
-require 'bluecloth'
 
 module Webgen
 
@@ -330,14 +330,14 @@ module Webgen
 
     # TODO: redo, docu file should be in WebPage format, different sections
     # -> usage (general usage of the plugin), documentation (in-depth documentation)
-    def documentation_for( plugin, type = :text )
+    def documentation_for( plugin, section = 'documenation', type = :text )
       return '' unless @plugin_infos.has_key?( plugin )
       content = ''
       docufile = @plugin_infos[plugin]['plugin']['docufile']
       docufile = File.join( @plugin_infos[plugin]['plugin']['dir'], docufile )
       if File.exists?( docufile )
-        content = File.read( docufile )
-        content = BlueCloth.new( content ).to_html if type == :html
+        page = Page.create_from_file( docufile )
+        content = page.blocks[section].content if page.blocks.has_key?( section )
       end
       content
     end

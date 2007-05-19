@@ -119,6 +119,8 @@ class Page
   #    pipeline: doit;haus;end
   #  entries:           # indiv entries for blocks, use ~ (nil) to not set name or options
   #    - [name, {format:textile, pipeline:doit}]
+  #
+  # test: "--- asdfasdf, asdfasd:asdfasdf,adfasdf\n" -> invalid "--- test\nasdf\n----" valid
   def self.parse_blocks( data, meta_info )
     scanned = data.scan( /(?:(?:^--- *(?:(\w+) *((?:, *\w+:[^\s,]+ *)*))?$)|\A)(.*?)(?:(?=^--- *(?:(?:\w+) *(?:(?:, *\w+:[^\s,]+ *)*))?$)|\Z)/m )
     raise( PageInvalid, 'No content blocks specified' ) if scanned.length == 0
@@ -126,7 +128,7 @@ class Page
     blocks = {}
     scanned.each_with_index do |block_data, index|
       name, options, content = *block_data
-      raise( PageInvalid, "Found invalid blocks starting line" ) if content =~ /^---/
+      raise( PageInvalid, "Found invalid blocks starting line" ) if content =~ /\A---/
       name = name || (meta_info['blocks']['entries'][index][0] rescue nil) || (index == 0 ? 'content' : 'block' + (index + 1).to_s)
       raise( PageInvalid, "Same name used for more than one block: #{name}" ) if blocks.has_key?( name )
       content ||= ''
