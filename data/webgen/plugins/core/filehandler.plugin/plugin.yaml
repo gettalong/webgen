@@ -6,6 +6,7 @@ Core/FileHandler:
     file: filehandler.rb
     load_deps: Core/Configuration
     run_deps: File/DirectoryHandler
+    docufile: docu_filehandler.page
   params:
     ignorePaths:
       default: ['**/CVS{/**/**,/}']
@@ -22,6 +23,7 @@ File/DefaultHandler:
   plugin:
     file: defaulthandler.rb
     class: FileHandlers::DefaultHandler
+    docufile: docu_defaulthandler.page
   params:
     linkToCurrentPage:
       default: false
@@ -37,3 +39,5 @@ File/VirtualFileHandler:
     file: virtualhandler.rb
     class: FileHandlers::VirtualFileHandler
     load_deps: File/DefaultHandler
+    docufile: docu_virtualhandler.page
+
