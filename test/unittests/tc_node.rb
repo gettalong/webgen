@@ -137,6 +137,12 @@ class NodeTest < Webgen::TestCase
     assert( !@n['/'].include?( @n['dir_a/'] ) )
   end
 
+  def test_path_setter
+    assert_equal( '/dir_a/file_aa#doit', @n['file_aa#'].absolute_path )
+    @n['file_aa'].path = 'file_aaaa'
+    assert_equal( '/dir_a/file_aaaa#doit', @n['file_aa#'].absolute_path )
+  end
+
   def test_accessors
     assert_equal( nil, @n['/'].parent )
     assert_equal( '../out/../dir1/', @n['/'].path )
