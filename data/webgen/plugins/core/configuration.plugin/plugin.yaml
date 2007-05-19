@@ -14,7 +14,7 @@ Core/Configuration:
       desc: The website directory - is automatically set and cannot be overridden!
     lang:
       default: en
-      desc: The default language.
+      desc: The default language for the website. Has to be a valid ISO-639-2 two or three letter language code!
     loggerLevel:
       default: 2
       desc: The logging level, ranges from 0 (debug, more verbose) to 3 (error, less verbose).
