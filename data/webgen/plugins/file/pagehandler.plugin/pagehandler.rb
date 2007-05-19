@@ -36,7 +36,7 @@ module FileHandlers
       path = create_output_name( file_struct.basename, page.meta_info['lang'], useLangPart,
                                  page.meta_info['outputNameStyle'] || param( 'outputNameStyle' ) )
 
-      unless node = @plugin_manager['Core/FileHandler'].node_exist?( parent, path )
+      unless node = node_exist?( parent, path )
         node = Node.new( parent, path, file_struct.cn )
         node.meta_info = page.meta_info
         node.node_info[:src] = file_struct.filename

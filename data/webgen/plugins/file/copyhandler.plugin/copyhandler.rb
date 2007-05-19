@@ -15,7 +15,7 @@ module FileHandlers
       name = name.sub( /\.r([^.]+)$/, '.\1' ) if processWithErb
       file_struct.cn = file_struct.cn.sub( /\.r([^.]+)$/, '.\1' ) if processWithErb
 
-      unless node = @plugin_manager['Core/FileHandler'].node_exist?( parent, name )
+      unless node = node_exist?( parent, name )
         node = Node.new( parent, name, file_struct.cn )
         node.meta_info.update( meta_info )
         node.node_info[:src] = file_struct.filename

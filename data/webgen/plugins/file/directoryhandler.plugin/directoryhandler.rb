@@ -46,7 +46,7 @@ module FileHandlers
     # Returns a new DirNode.
     def create_node( struct, parent, meta_info )
       filename = File.basename( struct.filename ) + '/'
-      if parent.nil? || (node = @plugin_manager['Core/FileHandler'].node_exist?( parent, filename )).nil?
+      if parent.nil? || (node = node_exist?( parent, filename )).nil?
         node = DirNode.new( parent, filename, struct, meta_info )
         node.node_info[:processor] = self
       end
