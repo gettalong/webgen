@@ -30,23 +30,42 @@ require 'webgen/plugin'
 
 module Webgen
 
+  # Main class for rendering a website. The only required parameter is the webgen website directory
+  # which should be rendered. The rendering itself is done via a simple call of the #render method.
   class WebSite
 
+    # Returns the website directory.
     attr_reader :directory
+
+    # Returns the list of paths which are used to load plugin bundles.
     attr_reader :plugin_paths
+
+    # Returns the PluginManager object for this website.
     attr_reader :plugin_manager
 
+    # Initializes a new WebSite object. The parameter +directory+ has to be a webgen website
+    # directory. Also, the <tt>@plugin_paths</tt> variable is initialized (in the given order) with
+    #
+    # * the path to the plugin bundles shipped with webgen
+    # * the user specific plugin directory (<tt>~/.webgen/plugins</tt>)
+    # * the website specific plugin directory
+    # * the paths in the environment variable +WEBGEN_PLUGIN_BUNDLES+.
     def initialize( directory = Dir.pwd  )
       @directory = File.expand_path( directory )
-      @plugin_paths = [File.join( Webgen.data_dir, Webgen::PLUGIN_DIR ), File.join( @directory, Webgen::PLUGIN_DIR )]
+      @plugin_paths = [File.join( Webgen.data_dir, Webgen::PLUGIN_DIR ),
+                       File.join( ENV['HOME'], '.webgen', Webgen::PLUGIN_DIR ),
+                       File.join( @directory, Webgen::PLUGIN_DIR )] + ENV['WEBGEN_PLUGIN_BUNDLES'].to_s.split(/,/)
       reset
     end
 
+    # Resets the website object.
     def reset
       @plugin_manager = PluginManager.new( [self] )
       @plugin_manager.load_all_plugin_bundles( @plugin_paths )
     end
 
+    # Called by a PluginManager instance to retrieve a parameter value, should not be called
+    # directly!
     def param( param, plugin, cur_val )
       case [plugin, param]
       when ['Core/Configuration', 'websiteDir'] then [true, @directory]
@@ -58,13 +77,19 @@ module Webgen
       end
     end
 
+    # Renders the website.
+    def render
+      @plugin_manager['Core/FileHandler'].render_site
+    end
+
   end
 
 
   # Raised when a configuration file has an invalid structure
   class ConfigurationFileInvalid < RuntimeError; end
 
-  # Represents the configuration file of a website.
+  # Represents the configuration file of a website and objects of this class can be added to the
+  # list of configurators of a PluginManager instance.
   class FileConfigurator
 
     # Creates a FileConfigurator object for the given website directory +dir+.
@@ -89,6 +114,8 @@ module Webgen
       check_config
     end
 
+    # Called by a PluginManager instance to retrieve a parameter value, should not be called
+    # directly!
     def param( param, plugin, cur_val )
       if @config.has_key?( plugin ) && @config[plugin].has_key?( param )
         [false, @config[plugin][param]]
