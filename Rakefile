@@ -76,7 +76,7 @@ rd = Rake::RDocTask.new do |rdoc|
 end
 
 Rake::TestTask.new do |t|
-  t.test_files = FileList['test/unittests/*.rb']
+  t.test_files = FileList['test/unittests/*.rb'] + FileList['data/webgen/plugins/**/test/unittests/*.rb']
 end
 
 begin

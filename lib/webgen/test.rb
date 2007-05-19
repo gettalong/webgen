@@ -66,6 +66,10 @@ module Webgen
 
   # Base class for all plugin test cases. It ensures that all needed plugins are loaded and
   # initalized before each test and that the original environment is restored afterwards.
+  #
+  # In the #setup method all plugin bundles distributed with webgen are loaded. If a plugin test
+  # case needs other plugin bundles, use the environment variable +WEBGEN_PLUGIN_BUNDLES+ to specify
+  # additional directories (comma separated) containing plugin bundles.
   class PluginTestCase < TestCase
 
     class << self
@@ -78,10 +82,16 @@ module Webgen
 
     end
 
+    # Initializes the plugin manager instance (available through <tt>@manager</tt>) and the plugin
+    # specified with PluginTestCase.plugin_to_test (available throught <tt>@plugin</tt>). Respects
+    # the +WEBGEN_PLUGIN_BUNDLES+ environment variable.
     def setup
       @manager = PluginManager.new( [self], nil )
       begin
-        @manager.load_all_plugin_bundles( File.join( Webgen.data_dir, 'plugins' ) )
+        @manager.load_all_plugin_bundles( File.join( Webgen.data_dir, Webgen::PLUGIN_DIR ) )
+        ENV['WEBGEN_PLUGIN_BUNDLES'].to_s.split(/,/).each do |bundle|
+          @manager.load_all_plugin_bundles( bundle )
+        end
       rescue Exception => e
         puts "Caught exception during loading of plugins in #setup: #{e.message} - #{e.backtrace.first}"
       end
@@ -94,18 +104,24 @@ module Webgen
       @plugin = @manager[self.class.plugin_to_test] if self.class.plugin_to_test
     end
 
+    # Removes the plugin manager and plugin instance variables.
     def teardown
       @manager = nil
+      @plugin = nil
     end
 
+    # Returns the path to the sample website. If +filename+ is specified, it is appended to the
+    # sample website path.
     def self.sample_site( filename = '' )
       path_helper( :@base_fixture_path, File.join( 'sample_site', filename ) )
     end
 
+    # See self.sample_site
     def sample_site( filename = '' )
       self.class.sample_site( filename )
     end
 
+    # The instance acts as a configurator for the plugin manager created in the #setup method.
     def param( name, plugin, cur_val )
       case [plugin, name]
       when ['Core/Configuration', 'srcDir'] then [true, sample_site( Webgen::SRC_DIR )]
@@ -115,6 +131,7 @@ module Webgen
       end
     end
 
+    # Returns all paths in the sample website for which the block yields +true+.
     def find_in_sample_site
       files = Set.new
       Find.find( sample_site( Webgen::SRC_DIR ) ) do |path|
@@ -125,6 +142,7 @@ module Webgen
       files
     end
 
+    # Reimplemented to hide the base test case.
     def self.suite
       if self == PluginTestCase
         return Test::Unit::TestSuite.new('Webgen::TestCase')
