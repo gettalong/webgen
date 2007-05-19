@@ -1,0 +1,115 @@
+module Cli
+
+  module Commands
+
+    class About < CmdParse::Command
+
+      def initialize
+        super( 'about', false )
+        @extended = false
+      end
+
+      def init_plugin
+        self.short_desc = @plugin_manager.plugin_infos.get( plugin_name, 'about', 'summary' )
+         self.options = CmdParse::OptionParserWrapper.new do |opts|
+           opts.separator "Options:"
+           opts.on( '-x', '--[no-]extended', 'Show extended information' ) {|@extended|}
+         end
+      end
+
+      def execute( args )
+        if args.length == 0
+          show_all_plugins
+        else
+          result = @plugin_manager.plugin_infos[/#{Regexp.escape(args[0])}/i]
+          if result.empty?
+            puts "No plugin name matches given pattern!"
+          elsif result.length > 1
+            puts "Too many matching plugins:"
+            puts "  " + result.collect {|p,i| p}.join(', ')
+          else
+            describe_plugin( result[0][0] )
+          end
+        end
+      end
+
+      #######
+      private
+      #######
+
+      def show_all_plugins
+        puts "List of all available plugins:"
+        puts
+
+        @plugin_manager.plugin_infos.keys.sort.each do |name|
+          puts Utils.section( name, 33, 2 ) +
+            Utils.format( @plugin_manager.plugin_infos.get( name, 'about', 'summary' ), 33 ).join("\n")
+        end
+      end
+
+      def describe_plugin( plugin )
+        puts "Information about #{Utils.bold(plugin)}:"
+        puts
+
+        infos = @plugin_manager.plugin_infos
+        ljust = 25
+
+        puts Utils.headline( 'General information' )
+
+        summary = Utils.format( infos.get( plugin, 'about', 'summary' ), ljust ).join("\n")
+        puts Utils.section( 'Summary', ljust ) + summary unless summary.empty?
+
+        author = Utils.format( infos.get( plugin, 'about', 'author' ), ljust ).join("\n")
+        puts Utils.section( 'Author', ljust ) + author unless author.empty?
+
+        deps = Array(infos.get( plugin, 'plugin', 'load_deps' )) + Array(infos.get( plugin, 'plugin', 'run_deps' ))
+        puts Utils.section( 'Dependencies', ljust ) + deps.join( ', ' ) unless deps.empty?
+
+        converter_name = infos.get( plugin, 'converts' )
+        puts Utils.section( 'Converter name', ljust ) + converter_name unless converter_name.nil?
+
+        path_patterns = (plugin =~ /^File/ ? @plugin_manager[plugin].path_patterns : nil)
+        puts Utils.section( 'Path patterns', ljust ) + path_patterns.collect {|r,f| f}.inspect unless path_patterns.nil?
+
+        tag_names = infos.get( plugin, 'tags' )
+        puts Utils.section( 'Tag names', ljust ) + tag_names.join(", ") unless tag_names.nil?
+        puts
+
+        params = infos.get( plugin, 'params' )
+        if !params.empty?
+          puts Utils.headline( 'Parameters' )
+          params.sort.each do |name, param_infos|
+            puts Utils.section( 'Name', ljust ) + Utils.lred( name )
+            puts Utils.section( 'Value (default)', ljust ) +
+              Utils.lblue( @plugin_manager.param( name, plugin ).inspect ) +
+              " (" + param_infos['default'].inspect + ")"
+            puts Utils.section( 'Description', ljust ) + Utils.format( param_infos['desc'], ljust ).join("\n")
+            puts
+          end
+        end
+
+        if @extended
+          puts
+          ['documentation', 'examples'].each do |section|
+            text = @plugin_manager.documentation_for( plugin, section )
+            unless text.strip.empty?
+              puts Utils.headline( section.capitalize )
+              puts
+              puts text
+              puts
+            end
+          end
+        end
+=begin
+        otherinfos = config.infos.select {|k,v| ![:name, :author, :summary, :description, :tags, :path_patterns].include?( k ) }
+        puts "\n" +Utils.section( 'Other Information' ) unless otherinfos.empty?
+        otherinfos.each {|name, value| puts Utils.section( name.to_s.tr('_', ' '), ljust, 6 ) + value.inspect }
+=end
+        puts
+      end
+
+    end
+
+  end
+
+end
