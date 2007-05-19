@@ -38,7 +38,7 @@ module Webgen
 
     def initialize( directory = Dir.pwd  )
       @directory = File.expand_path( directory )
-      @plugin_paths = [File.join( Webgen.data_dir, 'plugins' ), File.join( @directory, 'plugins' )]
+      @plugin_paths = [File.join( Webgen.data_dir, Webgen::PLUGIN_DIR ), File.join( @directory, Webgen::PLUGIN_DIR )]
       reset
     end
 
@@ -79,7 +79,7 @@ module Webgen
     def initialize( config_file )
       if File.exists?( config_file )
         begin
-          @config = YAML::load( File.read( config_file ) )
+          @config = YAML::load( File.read( config_file ) ) || {}
         rescue ArgumentError => e
           raise ConfigurationFileInvalid, e.message
         end
