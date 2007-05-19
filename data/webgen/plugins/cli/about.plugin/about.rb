@@ -1,3 +1,5 @@
+require 'cmdparse'
+
 module Cli
 
   module Commands
@@ -18,18 +20,13 @@ module Cli
       end
 
       def execute( args )
-        if args.length == 0
-          show_all_plugins
+        result = @plugin_manager.plugin_infos[/#{Regexp.escape(args[0] || '')}/i]
+        if result.empty?
+          puts "No plugin name matches the given pattern!"
+        elsif result.length > 1
+          show_plugins( result )
         else
-          result = @plugin_manager.plugin_infos[/#{Regexp.escape(args[0])}/i]
-          if result.empty?
-            puts "No plugin name matches given pattern!"
-          elsif result.length > 1
-            puts "Too many matching plugins:"
-            puts "  " + result.collect {|p,i| p}.join(', ')
-          else
-            describe_plugin( result[0][0] )
-          end
+          describe_plugin( result[0][0] )
         end
       end
 
@@ -37,18 +34,18 @@ module Cli
       private
       #######
 
-      def show_all_plugins
-        puts "List of all available plugins:"
+      def show_plugins( plugins )
+        puts "Too many plugins match the given pattern:"
         puts
 
-        @plugin_manager.plugin_infos.keys.sort.each do |name|
+        plugins.collect {|p,i| p}.sort.each do |name|
           puts Utils.section( name, 33, 2 ) +
             Utils.format( @plugin_manager.plugin_infos.get( name, 'about', 'summary' ), 33 ).join("\n")
         end
       end
 
       def describe_plugin( plugin )
-        puts "Information about #{Utils.bold(plugin)}:"
+        puts "Information about #{Utils.bold(plugin)} (use -x to show extended information):"
         puts
 
         infos = @plugin_manager.plugin_infos
@@ -89,7 +86,6 @@ module Cli
         end
 
         if @extended
-          puts
           ['documentation', 'examples'].each do |section|
             text = @plugin_manager.documentation_for( plugin, section )
             unless text.strip.empty?
@@ -100,12 +96,6 @@ module Cli
             end
           end
         end
-=begin
-        otherinfos = config.infos.select {|k,v| ![:name, :author, :summary, :description, :tags, :path_patterns].include?( k ) }
-        puts "\n" +Utils.section( 'Other Information' ) unless otherinfos.empty?
-        otherinfos.each {|name, value| puts Utils.section( name.to_s.tr('_', ' '), ljust, 6 ) + value.inspect }
-=end
-        puts
       end
 
     end

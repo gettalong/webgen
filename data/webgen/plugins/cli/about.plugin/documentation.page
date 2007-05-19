@@ -1,0 +1,18 @@
+--- documentation, pipeline:markdown
+Description
+-----------
+
+This CLI plugin displays information about plugins.
+
+It searches for a plugin matching the given argument or shows all
+plugins if no argument is given. If the search returns exactly one
+plugin, information about this plugin is displayed, including:
+
+* author
+* summary
+* dependencies
+* plugin parameters
+* plugin documentation (only in extended mode)
+
+Otherwise a list of matching plugins is displayed sothat the search can
+be further narrowed down.
