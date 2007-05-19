@@ -2,6 +2,8 @@ Core/Configuration:
   about:
     summary: Responsible for storing general parameters
     author: Thomas Leitner <t_leitner@gmx.at>
+  plugin:
+    file: configuration.rb
   params:
     srcDir:
       desc: The directory from which the source files are read - is automatically set and cannot be overridden.

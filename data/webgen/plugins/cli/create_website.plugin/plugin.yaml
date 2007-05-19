@@ -3,4 +3,5 @@ Cli/Commands/CreateWebsite:
     summary: Creates a basic webgen website with selectable templates/styles.
     author: Thomas Leitner <t_leitner@gmx.at>
   plugin:
+    file: create_website.rb
     load_deps: Cli/Utils

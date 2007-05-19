@@ -3,4 +3,5 @@ Core/CacheManager:
     summary: Caches various information between webgen runs
     author: Thomas Leitner <t_leitner@gmx.at>
   plugin:
+    file: cachemanager.rb
     run_deps: Core/FileHandler

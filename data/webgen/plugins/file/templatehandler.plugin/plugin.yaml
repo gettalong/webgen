@@ -3,6 +3,7 @@ File/TemplateHandler:
     summary: Processes template files
     author: Thomas Leitner <t_leitner@gmx.at>
   plugin:
+    file: templatehandler.rb
     load_deps: File/DefaultHandler
     class: FileHandlers::TemplateHandler
   params:

@@ -3,6 +3,7 @@ File/CopyHandler:
     summary: Copies files from the source directory to the output directory
     author: Thomas Leitner <t_leitner@gmx.at>
   plugin:
+    file: copyhandler.rb
     load_deps: File/DefaultHandler
     run_deps: Core/FileHandler
     class: FileHandlers::CopyHandler

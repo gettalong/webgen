@@ -2,3 +2,5 @@ Cli/Utils:
   about:
     summary: Provides some useful helpers for CLI plugins.
     author: Thomas Leitner <t_leitner@gmx.at>
+  plugin:
+    file: utils.rb

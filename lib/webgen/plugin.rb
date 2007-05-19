@@ -133,6 +133,9 @@ module Webgen
   # itself in the +plugin+ section and its parameters in the +params+ section. The SimplePlugin uses
   # the smallest possible way of defining a plugin by relying on the default values.
   #
+  # You can add any information you want! It is later accessible through the
+  # PluginManager#plugin_infos Hash.
+  #
   # The PluginManager uses information from the +plugin+ and the +params+ section. Following is a
   # list of all useable keys in the +plugin+ section and their default values:
   #

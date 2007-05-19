@@ -3,6 +3,7 @@ File/DirectoryHandler:
     summary: Handles directories.
     author: Thomas Leitner <t_leitner@gmx.at>
   plugin:
+    file: directoryhandler.rb
     load_deps: File/DefaultHandler
     run_deps: Core/FileHandler
     class: FileHandlers::DirectoryHandler

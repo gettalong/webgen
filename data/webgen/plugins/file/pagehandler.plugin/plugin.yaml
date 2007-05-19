@@ -3,6 +3,7 @@ File/PageHandler:
     summary: Processes page files
     author: Thomas Leitner <t_leitner@gmx.at>
   plugin:
+    file: pagehandler.rb
     load_deps: File/DefaultHandler
     run_deps: File/TemplateHandler
     class: FileHandlers::PageHandler
