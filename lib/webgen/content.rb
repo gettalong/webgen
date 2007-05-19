@@ -76,7 +76,7 @@ class WebPageFormat
   # be used to provide default meta information.
   def self.create_page_from_file( file, meta_info = {} )
     if File.size( file ) <= 1024
-      create_from_data( File.read( file ), meta_info )
+      create_page_from_data( File.read( file ), meta_info )
     else
       file_pos = 0
       File.open( file, 'r' ) do |fd|

@@ -48,6 +48,7 @@ module Webgen
 
     end
 
+    # :nodoc:
     def self.included( klass )
       super
       klass.extend( ClassMethods )
@@ -368,7 +369,7 @@ module Webgen
       docufile = @plugin_infos[plugin]['plugin']['docufile']
       docufile = File.join( @plugin_infos[plugin]['plugin']['dir'], docufile )
       if File.exists?( docufile )
-        page = WebPageFormat.create_from_file( docufile )
+        page = WebPageFormat.create_page_from_file( docufile )
         content = page.blocks[section].content if page.blocks.has_key?( section )
       end
       content
