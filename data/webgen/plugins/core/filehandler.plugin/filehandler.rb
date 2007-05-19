@@ -7,23 +7,37 @@ require 'webgen/languages'
 
 module Core
 
-  # The main plugin for handling files.
+  # The main webgen plugin for handling files and rendering a webgen website.
+  #
+  # = Main functionality
+  #
+  # The rendering of a website is initiated by calling the #render_website method. The plugin
+  # retrieves all plugins in the category <tt>File/</tt> which are assumed to be file handler
+  # plugins and uses the defined path patterns defined for each file handler plugin for finding the
+  # handled files. It then uses the file handler plugins to create nodes from the source files and
+  # builds the internal representation: the node tree.
+  #
+  # After every file has been processed in this way, the node tree is traversed and each node is
+  # written to the its destination location if it has changed since the last run.
+  #
+  # = Message Hooks
   #
   # The following message listening hooks (defined via symbols) are available for this plugin
-  # (see Listener):
+  # (also see Listener):
   #
-  # +before_node_created+:: called before a node is created
-  # +after_node_created+::  called after a node has been created
-  # +after_all_nodes_created+:: called after the plugin has finfished reading in all files and the
-  #                             output backing section of the meta information file has been processed
-  # +before_node_written+:: called before a node is written out
-  # +after_node_written+::  called after a node has been written out
+  # +before_node_created+::      called before a node is created
+  # +after_node_created+::       called after a node has been created
+  # +after_all_nodes_created+::  called after the plugin has finfished reading in all files and the
+  #                              output backing section of the meta information file has been processed
+  # +before_node_written+::      called before a node is written out
+  # +after_node_written+::       called after a node has been written out
   # +before_all_nodes_written+:: called before the plugin starts writing out the files
-  # +after_all_nodes_written+:: called after the plugin has finfished writing out the files
+  # +after_all_nodes_written+::  called after the plugin has finfished writing out the files
   class FileHandler
 
     include Listener
 
+    # Creates a new FileHandler plugin instance.
     def initialize
       add_msg_name( :before_node_created )
       add_msg_name( :after_node_created )
@@ -35,14 +49,17 @@ module Core
       add_msg_name( :after_webgen_run )
     end
 
+    # During the initialisation, the meta information backing file is loaded. This method is
+    # automatically called by the plugin framework.
     def init_plugin
       load_meta_info_backing_file
     end
 
-    # Returns the meta info for nodes for the given +handler+ name. If +file+ is specified, meta
-    # information from the backing file is also used if available (using files specified in the
-    # source block of the backing file). The parameter +file+ has to be an absolute path, ie.
-    # starting with a slash.
+    # Returns the meta info for nodes for the given +handler+ name. If +file_struct+ is specified,
+    # the meta information +lang+, +orderInfo+ and +title+ are updated according to the values in
+    # +file_struct+. If +file+ is specified, meta information from the backing file is also used if
+    # available (using the paths specified in the source block of the backing file). The parameter
+    # +file+ has to be an absolute path, ie.  starting with a slash.
     def meta_info_for( handler, file_struct = nil, file = nil )
       info = (@plugin_manager.plugin_infos.get( handler, 'file', 'meta_info' ) || {}).dup
       info.update( param('defaultMetaInfo')[handler] || {} )
@@ -58,19 +75,20 @@ module Core
       info
     end
 
-    # If there is already a node for the given +path+ under +parent_node+, the method returns this
-    # node or +nil+ otherwise.
-    def node_exist?( parent_node, path )
-      path = path.chomp( '/' )
-      node = parent_node.find {|n| n.path == path }
-      if node
-        log(:warn) { "There is already a node <#{node.full_path}>!" }
-      end
-      node
-    end
-
-    # Analyses the +filename+ and returns a struct with the extracted information.
-    # Test: default.png, default.en.png, default.deu.png, default.template -> extension should always be correct!
+    # Analyses the +filename+ and returns a struct with the extracted information. This struct
+    # includes the following components:
+    #
+    # :<tt>filename</tt>::  The source filename, ie. the +filename+ parameter.
+    # :<tt>orderInfo</tt>:: The order information extracted from the filename.
+    # :<tt>basename</tt>::  The basename of the file.
+    # :<tt>lang</tt>::      The language of the file.
+    # :<tt>ext</tt>::       The file extension.
+    # :<tt>title</tt>::     The title of the file (essentially the basename, but capitalized and
+    #                       with underscores and dashes converted to spaces).
+    # :<tt>cn</tt>::        The canonical name created from the file name
+    #
+    # TODO(move to test): default.png, default.en.png, default.deu.png, default.template ->
+    # extension should always be correct!
     def analyse_filename( filename )
       analysed = OpenStruct.new
       analysed.filename  = filename
@@ -91,7 +109,9 @@ module Core
 
     # Creates a node for +file+ (creating parent directories apropriately) under +parent_node+ using
     # the given +handler+. If a block is given, then the block is used to create the node which is
-    # useful if you want a custom node creation method.
+    # useful if you want to use a custom node creation method.
+    #
+    # Attention: This method has to be used by any plugin that needs to create a node!
     def create_node( file, parent_node, handler ) # :yields: file_struct, parent_node, handler, meta_info
       pathname, filename = File.split( file )
       parent_node = @plugin_manager['File/DirectoryHandler'].recursive_create_path( pathname, parent_node )
@@ -113,15 +133,23 @@ module Core
       node
     end
 
-
-    # TODO(document)
+    # Checks if the file +src_file+ has been modified since the last webgen run. If +out_file+ is
+    # specified and does not exist, this method also returns +true+.
     def file_changed?( src_file, out_file=nil )
       s_mtime = File.mtime( src_file )
       c_mtime = @plugin_manager['Core/CacheManager'].get( [:files, src_file, :mtime], s_mtime )
       !c_mtime || s_mtime > c_mtime || (out_file && !File.exists?( out_file ))
     end
 
-    # TODO(document)
+    # Checks if the +node+ has changed by executing three checks:
+    #
+    # * checks if the file has changed using file_changed? if the node has a <tt>:src</tt> node
+    #   information
+    # * checks if an optionally associated change method is available through the
+    #   <tt>:change_proc</tt> node information and executes it
+    # * checks if the meta information for the node has changed since the last run
+    #
+    # Returns +true+ if any one of these three checks returns +true+.
     def node_changed?( node )
       file_changed = (node.node_info.has_key?( :src ) ?
                       file_changed?( node.node_info[:src], (node.node_info[:no_output] ? nil : node.full_path) ) :
@@ -133,7 +161,16 @@ module Core
       file_changed || metainfo_changed || change_proc
     end
 
-    # TODO(document) Should be used to write any file to the output directory.
+    # Writes data to the file +dest+ using the options in the hash +opts+. This method has to be
+    # used by any plugin that needs to write a file to the output directory!
+    #
+    # Valid keys for the +opts+ hash are:
+    #
+    # * <tt>:src</tt>: The data is in the file specified by this key and the file
+    #   should just be copied to the destination.
+    # * <tt>:data</tt>: Contains the actual data which needs to be written to the destination.
+    #
+    # If both keys are specified, <tt>:data</tt> is discarded.
     def write_path( dest, opts = {} )
       if opts[:src]
         if File.directory?( opts[:src] )
@@ -147,9 +184,8 @@ module Core
       @plugin_manager['Core/CacheManager'].add( [:files_written], dest )
     end
 
-
     # Renders the whole website.
-    def render_site
+    def render_website
       @plugin_manager.logger.level = param( 'loggerLevel', 'Core/Configuration' )
       log(:info) { "Starting rendering of website <#{param('websiteDir', 'Core/Configuration')}>..." }
       log(:info) { "Using webgen data directory at <#{Webgen.data_dir}>" }
@@ -162,60 +198,6 @@ module Core
       dispatch_msg( :after_webgen_run )
 
       log(:info) { "Rendering of website <#{param('websiteDir', 'Core/Configuration')}> finished" }
-    end
-
-    # Reads all files from the source directory and constructs the node tree which is returned.
-    def build_tree
-      all_files = find_all_files()
-      return if all_files.empty?
-
-      files_for_handlers = find_files_for_handlers()
-
-      root_node = create_root_node()
-
-      used_files = Set.new
-      files_for_handlers.sort {|a,b| a[0] <=> b[0]}.each do |rank, handler, files|
-        log(:debug) { "Creating nodes for #{handler.plugin_name} with rank #{rank}" }
-        common = all_files & files
-        used_files += common
-        diff = files - common
-        log(:info) { "Not using these files for #{handler.plugin_name} as they do not exist or are excluded: #{diff.inspect}" } if diff.length > 0
-        common.each  do |file|
-          log(:info) { "Creating node(s) for file <#{file}>..." }
-          create_node( file.sub( /^#{root_node.node_info[:src]}/, '' ), root_node, handler )
-        end
-      end
-
-      unused_files = all_files - used_files
-      log(:info) { "No handlers found for: #{unused_files.inspect}" } if unused_files.length > 0
-
-      handle_output_backing( root_node )
-      dispatch_msg( :after_all_nodes_created, root_node )
-
-      root_node
-    end
-
-    # Recursively writes out the tree specified by +node+.
-    def write_tree( node )
-      dispatch_msg( :before_all_nodes_written, node ) if node.parent.nil?
-
-      write_node( node )
-      node.each {|child| write_tree( child ) }
-
-      dispatch_msg( :after_all_nodes_written, node ) if node.parent.nil?
-    end
-
-    # Writes out the given +node+.
-    def write_node( node )
-      dispatch_msg( :before_node_written, node )
-      changed = node_changed?( node )
-      if changed && (info = node.write_info)
-        log(:info) { "Writing <#{node.full_path}>" }
-        write_path( node.full_path, info )
-      else
-        log(:info) { "Nothing to do for: <#{node.full_path}>" }
-      end
-      dispatch_msg( :after_node_written, node, changed )
     end
 
     #######
@@ -280,6 +262,60 @@ module Core
         end
         check_node( node )
       end
+    end
+
+    # Reads all files from the source directory and constructs the node tree which is returned.
+    def build_tree
+      all_files = find_all_files()
+      return if all_files.empty?
+
+      files_for_handlers = find_files_for_handlers()
+
+      root_node = create_root_node()
+
+      used_files = Set.new
+      files_for_handlers.sort {|a,b| a[0] <=> b[0]}.each do |rank, handler, files|
+        log(:debug) { "Creating nodes for #{handler.plugin_name} with rank #{rank}" }
+        common = all_files & files
+        used_files += common
+        diff = files - common
+        log(:info) { "Not using these files for #{handler.plugin_name} as they do not exist or are excluded: #{diff.inspect}" } if diff.length > 0
+        common.each  do |file|
+          log(:info) { "Creating node(s) for file <#{file}>..." }
+          create_node( file.sub( /^#{root_node.node_info[:src]}/, '' ), root_node, handler )
+        end
+      end
+
+      unused_files = all_files - used_files
+      log(:info) { "No handlers found for: #{unused_files.inspect}" } if unused_files.length > 0
+
+      handle_output_backing( root_node )
+      dispatch_msg( :after_all_nodes_created, root_node )
+
+      root_node
+    end
+
+    # Recursively writes out the tree specified by +node+.
+    def write_tree( node )
+      dispatch_msg( :before_all_nodes_written, node ) if node.parent.nil?
+
+      write_node( node )
+      node.each {|child| write_tree( child ) }
+
+      dispatch_msg( :after_all_nodes_written, node ) if node.parent.nil?
+    end
+
+    # Writes out the given +node+.
+    def write_node( node )
+      dispatch_msg( :before_node_written, node )
+      changed = node_changed?( node )
+      if changed && (info = node.write_info)
+        log(:info) { "Writing <#{node.full_path}>" }
+        write_path( node.full_path, info )
+      else
+        log(:info) { "Nothing to do for: <#{node.full_path}>" }
+      end
+      dispatch_msg( :after_node_written, node, changed )
     end
 
     # Creates a set of all files in the source directory, removing all files which should be ignored.

@@ -1,31 +1,142 @@
 module FileHandlers
 
-  # TODO(redo): The default handler which is the super class of all file handlers. It defines methods that
-  # should be used by the subclasses to specify which files should be handled. There are two types
-  # of path patterns: constant ones defined using the class methods and dynamic ones defined using
-  # the instance methods. The dynamic path patterns should be defined during the initialization!
+  # This class serves as base class for all file handlers. Have a look a the example below to see
+  # how a basic file handler looks like.
   #
-  # During a webgen run the FileHandler retrieves all plugins which derive from the DefaultHandler
-  # and uses the constant and dynamic path patterns defined for each file handler plugin for finding
-  # the handled files.
+  # = File Handlers
   #
-  # TODO: how path patterns/default meta info are defined in plugin.yaml
+  # A file handler is a plugin that processes files in the source directory to produce output
+  # files. This can range from simply copying a file from the source to the output directory to
+  # generating a whole set of files from one input file!
+  #
+  # The files that are handled by file handler are specified via path patterns (see below). During a
+  # webgen run the Core::FileHandler plugin calls the #create_node method for each file in the source
+  # directory that matches a specified path pattern. And when it is time to write out the node, the
+  # Core::FileHandler plugin calls the #write_info method to retrieve the information about how to
+  # write out the node.
+  #
+  # This base class provides some useful default implementations of methods that are used throughout
+  # webgen, namely
+  # * #link_from
+  # * #node_for_lang.
+  #
+  # It also provides utility methods for file handler plugins:
+  # * #node_exist?
+  #
+  # = Nodes created for files
+  #
+  # The main functions of a file handler plugin are to create one or more nodes for a source file
+  # and to provide information on how to write out these nodes. To achieve this, certain information
+  # needs to be set on a node:
+  #
+  # :<tt>node_info[:processor]</tt>:: Has to be set to the file handler plugin instance. This is
+  #                                   used by the Node class: all unknown method calls are forwarded
+  #                                   to the node processor.
+  # :<tt>node_info[:src]</tt>:: Should be set to the source file from which the node is created if
+  #                             such a source file exists.
+  #
+  # Additional information that is used only for processing purposes should be stored in the
+  # #node_info hash of a node as the #meta_info hash is reserved for real node meta information.
+  #
+  # = Path Patterns and Rank
+  #
+  # Path patterns define which files are handled by a specific file handler. These patterns can
+  # either be defined in the plugin information file or dynamcially and need to have a format that
+  # <tt>Dir.glob</tt> can handle. A rank is associated with each path pattern that defines in which
+  # order the path patterns are searched for (and therefore ultimately in which order nodes are
+  # created). Path patterns with a lower rank are first search for.
+  #
+  # The section +file+ for file handler plugin in a <tt>plugin.yaml</tt> is used to define
+  # everything related to file handling. There are two keys in this section used for specifying path
+  # patterns for a file handler:
+  #
+  # :+patterns+::   The value of this key has to be an array of path patterns.
+  # :+extensions+:: The value of this key has to be an array of extensions. An extension is, for
+  #                 example, +page+ (no leading dot). This extension gets combined with the
+  #                 EXTENSION_PATH_PATTERN constant to form a valid path pattern.
+  #
+  # You can also specify a rank with a pattern or an extension: just use an array containing the
+  # rank and the pattern/extension instead of just the pattern/extension.
+  #
+  # The dynamically defined path patterns should be added during the initialization phase
+  # in the +init_plugin+ method by using the approriate methods!
+  #
+  # = Default Meta Information
+  #
+  # Each file handler can define default meta information that gets later passed to the #create_node
+  # method. This default meta information can later be overridden using the param
+  # Core::FileHandler:defaultMetaInfo.
+  #
+  # The default meta information is specified in the +file+ section of a file handler plugin in the
+  # <tt>plugin.yaml</tt> using the key +defaultMetaInfo+.
+  #
+  # = Example file handler
+  #
+  # Following is a simple file handler example which just copies files from the source to the output
+  # directory.
+  #
+  # The <tt>plugin.yaml</tt> file:
+  #
+  #   File/CopyHandler:
+  #     about:
+  #       summary: Copies files from the source directory to the output directory
+  #       author: Thomas Leitner <t_leitner@gmx.at>
+  #     plugin:
+  #       file: copyhandler.rb
+  #       load_deps: File/DefaultHandler
+  #       run_deps: Core/FileHandler
+  #       class: CopyHandler
+  #     params:
+  #       paths:
+  #         default: [**/*.css, **/*.js, **/*.jpg, **/*.png, **/*.gif]
+  #         desc: The path patterns which match the files that should get copied by this handler.
+  #
+  # The <tt>copyhandler.rb</tt> file:
+  #
+  #   class CopyHandler < DefaultHandler
+  #
+  #     def init_plugin
+  #       param( 'paths' ).each {|path| register_path_pattern( path ) }
+  #     end
+  #
+  #     def create_node( file_struct, parent, meta_info )
+  #       name = File.basename( file_struct.filename )
+  #
+  #       unless node = node_exist?( parent, name )
+  #         node = Node.new( parent, name, file_struct.cn )
+  #         node.meta_info.update( meta_info )
+  #         node.node_info[:src] = file_struct.filename
+  #         node.node_info[:processor] = self
+  #       end
+  #       node
+  #     end
+  #
+  #     def write_info( node )
+  #       {:src => node.node_info[:src] }
+  #     end
+  #
+  #   end
+  #
   class DefaultHandler
 
+    # The string used to define a pattern from an extension.
     EXTENSION_PATH_PATTERN = "**/*.%s"
+
+    # The default rank for a pattern if none specified.
     DEFAULT_RANK = 100
 
-    # Specify the path pattern which should be handled by the class. The +rank+ is used for sorting
-    # the patterns so that the creation order of nodes can be influenced. If a file is matched by
-    # more than one path pattern defined by a single file handler plugin, it is only used once for
-    # the first pattern.
+
+    # Used to specify the path pattern which should be handled by the class. The +rank+ is used for
+    # sorting the patterns so that the creation order of nodes can be influenced. If a file is
+    # matched by more than one path pattern defined by a single file handler plugin, it is only used
+    # once for the first pattern.
     def register_path_pattern( path, rank = DEFAULT_RANK )
       (@path_patterns ||= []) << [rank, path]
     end
     protected :register_path_pattern
 
-    # Specify the files handled by the class via the extension. The parameter +ext+ should be the
-    # pure extension without the dot. Also see #register_path_pattern !
+    # Used to specify the files handled by the class via the extension. The parameter +ext+ should
+    # be the pure extension without the dot. Also see #register_path_pattern !
     def register_extension( ext, rank = DEFAULT_RANK )
       register_path_pattern( EXTENSION_PATH_PATTERN % [ext], rank )
     end
@@ -44,22 +155,27 @@ module FileHandlers
       (patterns || []) + (@path_patterns || [])
     end
 
-    # TODO(adept for file_struct) Asks the plugin to create a node for the given +path+ and the +parent+, using +meta_info+ as
-    # default meta data for the node. Should return the node for the path (the newly created node
-    # or, if a node with the path already exists, the existing one) or +nil+ if the node could not
-    # be created.
+    # Asks the plugin to create a node with the information provided in +file_struct+ (see
+    # Core::FileHandler#analyse_filename) and the +parent+ node, using +meta_info+ as default meta
+    # information for the node (created using Core::FileHandler#meta_info_for). Should return the
+    # node for the path (the newly created node or, if a node with the same output path already
+    # exists, the existing one) or +nil+ if the node could not be created.
     #
     # Has to be overridden by the subclass!!!
     def create_node( file_struct, parent, meta_info )
       raise NotImplementedError
     end
 
-    # TODO(adept for return value) Asks the plugin to write out the node.
+    # Should return a hash with information on how to write out the node or +nil+ if the node should
+    # not be written. For more information about this hash have a look at
+    # Core::FileHandler#write_path.
+    #
+    # The default implementation returns +nil+.
     def write_info( node )
       nil
     end
 
-    # (TODO:adept)Returns the node with the same canonical name but in language +lang+ or, if no such node exists,
+    # Returns the node with the same canonical name but in language +lang+ or, if no such node exists,
     # an unlocalized version of the node. If no such node is found either, +nil+ is returned.
     def node_for_lang( node, lang )
       node.parent.find {|o| o.cn == node.cn && o['lang'] == lang} || node.parent.find {|o| o.cn == self.cn && o['lang'].nil?}
@@ -71,10 +187,10 @@ module FileHandlers
     # You can optionally specify additional attributes for the html element in the +attr+ Hash.
     # Also, the meta information +linkAttrs+ of the given +node+ is used, if available, to set
     # attributes. However, the +attr+ parameter takes precedence over the +linkAttrs+ meta
-    # information. If the special value +:link_text+ is present in the attributes, it will be used
-    # as the link text; otherwise the title of the +node+ will be used. Be aware that all key-value
-    # pairs with Symbol keys are removed before the attributes are written. Therefore you always
-    # need to specify general attributes with Strings!
+    # information. If the special value <tt>:link_text</tt> is present in the attributes, it will be
+    # used as the link text; otherwise the title of the +node+ will be used. Be aware that all
+    # key-value pairs with Symbol keys are removed before the attributes are written. Therefore you
+    # always need to specify general attributes with Strings!
     def link_from( node, ref_node, attr = {} )
       attr = node['linkAttrs'].merge( attr ) if node['linkAttrs'].kind_of?( Hash )
       link_text = attr[:link_text] || node['title']
@@ -84,6 +200,15 @@ module FileHandlers
       attr['href'] = ref_node.route_to( node ) if use_link
       attrs = attr.collect {|name,value| "#{name.to_s}=\"#{value}\"" }.sort.unshift( '' ).join( ' ' )
       ( use_link ? "<a#{attrs}>#{link_text}</a>" : "<span#{attrs}>#{link_text}</span>" )
+    end
+
+    # If there is already a node for the given +path+ under +parent_node+, returns this node or
+    # +nil+ otherwise.
+    def node_exist?( parent_node, path )
+      path = path.chomp( '/' )
+      node = parent_node.find {|n| n.path =~ /#{path}\/?/ }
+      log(:warn) { "There is already a node for <#{node.full_path}>" } if node
+      node
     end
 
   end

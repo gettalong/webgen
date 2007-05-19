@@ -9,7 +9,7 @@ module FileHandlers
       log(:error) { "No target url for virtual file in metainfo backing file specified: <#{struct.filename}>"} if meta_info['url'].nil?
       url = meta_info['url'] || filename
 
-      # no need to check for an existing nodes, that is already done in FileHandler#handle_output_backing
+      # no need to check for an existing node, that is already done in FileHandler#handle_output_backing
       temp_node = Node.new( parent, filename )
       resolved_node = temp_node.resolve_node( url )
       if resolved_node

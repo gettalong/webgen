@@ -1,6 +1,6 @@
 Core/FileHandler:
   about:
-    summary: Main plugin for handling the files in the source directory
+    summary: Main plugin for handling the files in the source directory/rendering.
     author: Thomas Leitner <t_leitner@gmx.at>
   plugin:
     file: filehandler.rb
@@ -17,7 +17,7 @@ Core/FileHandler:
 
 File/DefaultHandler:
   about:
-    summary: Handles virtual files specified in the meta info backing file.
+    summary: Base class for file handlers.x
     author: Thomas Leitner <t_leitner@gmx.at>
   plugin:
     file: defaulthandler.rb
@@ -25,7 +25,8 @@ File/DefaultHandler:
   params:
     linkToCurrentPage:
       default: false
-      desc: Specifies whether in menus, breadcrumb trails, etc. a real link to the current page should be used or only the link text.
+      desc: Specifies whether in menus, breadcrumb trails, etc. a real link to the current page
+            should be used or only the link text.
 
 
 File/VirtualFileHandler:
