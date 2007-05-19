@@ -13,7 +13,7 @@ module Cli
       end
 
       def execute( args )
-        @plugin_manager['Core/FileHandler'].render_site
+        @plugin_manager['Core/FileHandler'].render_website
       end
 
     end

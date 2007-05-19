@@ -17,7 +17,7 @@
            opts.separator "Options:"
            opts.on( '-t', '--template TEMPLATE', @plugin_manager['Support/WebsiteManager'].templates.keys,
                     'Specify the template which should be used' ) {|@template|}
-           opts.on( '-s', '--style STYLE', @plugin_manager['Support/WebsiteManager'].styles[:website].keys,
+           opts.on( '-s', '--style STYLE', @plugin_manager['Support/WebsiteManager'].styles['website'].keys,
                     'Specify the style which should be used' ) {|@style|}
            opts.separator ""
            opts.separator "Arguments:"
@@ -28,7 +28,7 @@
            opts.separator Utils.headline( 'Templates' )
            @plugin_manager['Support/WebsiteManager'].templates.sort.each {|name, entry| Utils.info_output( opts, name, entry.infos ) }
            opts.separator Utils.headline( 'Styles' )
-           @plugin_manager['Support/WebsiteManager'].styles[:website].sort.each {|name, entry| Utils.info_output( opts, name, entry.infos ) }
+           @plugin_manager['Support/WebsiteManager'].styles['website'].sort.each {|name, entry| Utils.info_output( opts, name, entry.infos ) }
          end
        end
 
@@ -41,10 +41,10 @@
            raise OptionParser::MissingArgument.new( 'DIR' )
          else
            files = @plugin_manager['Support/WebsiteManager'].create_website( args[0], @template )
-           files += @plugin_manager['Support/WebsiteManager'].use_style( args[0], :website, @style )
+           files += @plugin_manager['Support/WebsiteManager'].use_style( args[0], 'website', @style )
            if (0..1) === commandparser.verbosity
              puts "The following files were created:"
-             puts files.collect {|f| "- " + f }.join("\n")
+             puts files.uniq.collect {|f| "- " + f }.join("\n")
            end
          end
        end
