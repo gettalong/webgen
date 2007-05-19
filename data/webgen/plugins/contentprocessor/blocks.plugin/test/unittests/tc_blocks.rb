@@ -10,9 +10,9 @@ module ContentProcessorTests
 
     def test_process
       node = Node.new( nil, 'test' )
-      node.node_info[:page] = Page.create_from_data( "--- content\ndata" )
+      node.node_info[:page] = WebPageFormat.create_page_from_data( "--- content\ndata" )
       template = Node.new( nil, 'template' )
-      template.node_info[:page] = Page.create_from_data( "--- content, pipeline:blocks\nbefore<webgen:block name='content' />after" )
+      template.node_info[:page] = WebPageFormat.create_page_from_data( "--- content, pipeline:blocks\nbefore<webgen:block name='content' />after" )
       processors = { 'blocks' => @plugin }
 
       assert_equal( 'data', @plugin.process('<webgen:block name="content" />', {:chain=>[node]}, {}))

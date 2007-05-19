@@ -1,8 +1,6 @@
 require 'yaml'
-require 'erb'
 
-#TODO(adept docu) A single block within a page file. The content of the block gets automatically parsed for HTML
-# headers with the id attribute set and converts them into sections for later use.
+# A single block within a page object. The content of the block can be rendered using the #render method.
 class Block
 
   # The name of the block.
@@ -11,16 +9,22 @@ class Block
   # The content of the block.
   attr_reader :content
 
-  # The options set specifically for this block (includes for example the +pipeline+).
+  # The options set specifically for this block (includes, for example, the +pipeline+).
   attr_reader :options
 
-  # Creates a new block with the name +name+ and the given +content+. The content gets parsed for
-  # sections automatically.
+  # Creates a new block with the name +name+ and the given +content+ and +options+.
   def initialize( name, content, options )
     @name, @content, @options = name, content, options
   end
 
-  # context = { :chain => node_chain, :processors => {'webgentag' => WebgenTagConverter, 'erb' => ErbConverter, 'textile' => TextileConverter} }
+  # Renders the block using the provided +context+. The +context+ hash needs to provide at least the
+  # following keys
+  #
+  # <tt>:chain</tt>::      the node chain
+  # <tt>:processors</tt>:: the list of all useable content processors
+  #
+  # Uses the content processors specified in the +pipeline+ key of the +options+ attribute to do the
+  # rendering.
   def render( context )
     temp = content
     @options['pipeline'].to_s.split(/;/).each do |processor|
@@ -33,30 +37,44 @@ class Block
 end
 
 
-# Raised when during parsing of data in the WebPage Description Format if the data is invalid.
-class PageInvalid < RuntimeError; end
-
-
-#TODO(adept all docu) A Page object contains the parsed data of a file/string in the WebPage Format.
+# A Page object wraps a meta information hash and an array of blocks (class Block). It is normally
+# generated from a file or a string in WebPage Format.
 class Page
-
-  RE_META_INFO_START = /\A---(?:\n|\r|\r\n)/m
-  RE_META_INFO = /\A---(?:\n|\r|\r\n).*?(?:\n|\r|\r\n)(?=---.*?(?:\n|\r|\r\n))/m
 
   # The contents of the meta information block.
   attr_reader :meta_info
 
-  # Parses the given String +data+ and initializes a new Page object with the found values.
-  # The blocks are converted to HTML by using the provided +formatters+ hash. A key in this hash has
-  # to be a format name and the value and object which responds to the +call(content)+ method. You
-  # can set +default_meta_info+ to provide default entries for the meta information block.
+  # Creates a new Page object with the meta information provided in +meta_info+. You can either
+  # provide the blocks array via the +blocks+ parameter or you can specify a block which gets
+  # invoked the first time the blocks array is accessed.
   def initialize( meta_info = {}, blocks = nil, &block_proc )
     @meta_info = meta_info
     @blocks = blocks
     @blocks_creation_proc = block_proc
   end
 
-  def self.create_from_file( file, meta_info = {} )
+  # Returns the array of blocks for the page.
+  def blocks
+    @blocks = @blocks_creation_proc.call if @blocks.nil? && !@blocks_creation_proc.nil?
+    @blocks
+  end
+
+end
+
+
+# Raised during parsing of data in WebPage Format if the data is invalid.
+class WebPageFormatError < RuntimeError; end
+
+
+# Provides methods for creating a Page object from data in WebPage Format
+class WebPageFormat
+
+  RE_META_INFO_START = /\A---(?:\n|\r|\r\n)/m
+  RE_META_INFO = /\A---(?:\n|\r|\r\n).*?(?:\n|\r|\r\n)(?=---.*?(?:\n|\r|\r\n))/m
+
+  # Creates a new Page object from the file +file+ in WebPage Format. The +meta_info+ parameter can
+  # be used to provide default meta information.
+  def self.create_page_from_file( file, meta_info = {} )
     if File.size( file ) <= 1024
       create_from_data( File.read( file ), meta_info )
     else
@@ -70,7 +88,7 @@ class Page
           file_pos = md[0].length
         end
       end
-      self.new( meta_info ) do
+      Page.new( meta_info ) do
         blocks = ''
         File.open( file, 'r' ) do |fd|
           fd.seek( file_pos )
@@ -81,18 +99,14 @@ class Page
     end
   end
 
-  # Handle case where meta info is invalid "---\nasdfasdfsdf" (no more \n---\n)!
-  def self.create_from_data( data, meta_info = {} )
+  # Parses the given string +data+ in WebPage Format and initializes a new Page object with the
+  # information. The +meta_info+ parameter can be used to provide default meta information.
+  def self.create_page_from_data( data, meta_info = {} )
     md = /(#{RE_META_INFO})?(.*)/m.match( normalize_eol( data ) )
     raise( PageInvalid, 'Invalid structure of meta information part') if md[1].nil? && data =~ RE_META_INFO_START
     meta_info = meta_info.merge( parse_meta_info( md[1] ) ) if !md[1].nil?
     blocks = parse_blocks( md[2] || '', meta_info )
-    self.new( meta_info, blocks )
-  end
-
-  def blocks
-    @blocks = @blocks_creation_proc.call if @blocks.nil? && !@blocks_creation_proc.nil?
-    @blocks
+    Page.new( meta_info, blocks )
   end
 
   #######
@@ -122,6 +136,7 @@ class Page
   #    - [name, {format:textile, pipeline:doit}]
   #
   # test: "--- asdfasdf, asdfasd:asdfasdf,adfasdf\n" -> invalid "--- test\nasdf\n----" valid
+  # Handle case where meta info is invalid "---\nasdfasdfsdf" (no more \n---\n)!
   def self.parse_blocks( data, meta_info )
     scanned = data.scan( /(?:(?:^--- *(?:(\w+) *((?:, *\w+:[^\s,]+ *)*))?$)|\A)(.*?)(?:(?=^--- *(?:(?:\w+) *(?:(?:, *\w+:[^\s,]+ *)*))?$)|\Z)/m )
     raise( PageInvalid, 'No content blocks specified' ) if scanned.length == 0

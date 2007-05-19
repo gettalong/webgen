@@ -78,9 +78,8 @@ end
 #
 # :+content+:: This is the string which should be processed.
 #
-# :+context+:: This parameter is a hash which provides a rendering context. It provides at least the
-#              following: <tt>:chain</tt> (the node chain) and <tt>:processors</tt> (the list of all
-#              useable content processors).
+# :+context+:: This parameter is a hash which provides a rendering context. For more information
+#              about this hash have a look at the Block#render documentation.
 #
 # :+options+:: This hash is populated with options specific to the block (see Block#options)
 #
