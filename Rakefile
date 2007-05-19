@@ -73,6 +73,8 @@ rd = Rake::RDocTask.new do |rdoc|
   rdoc.options << '--line-numbers' << '--inline-source'# << '-m README' TODO
   #  rdoc.rdoc_files.include( 'README' )
   rdoc.rdoc_files.include( 'lib/**/*.rb' )
+  rdoc.rdoc_files.include( 'data/webgen/plugins/**/*.rb')
+  rdoc.rdoc_files.exclude( /tc_.*\.rb$/ )
 end
 
 Rake::TestTask.new do |t|
