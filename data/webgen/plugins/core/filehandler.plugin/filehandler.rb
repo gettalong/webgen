@@ -87,9 +87,6 @@ module Core
     # :<tt>title</tt>::     The title of the file (essentially the basename, but capitalized and
     #                       with underscores and dashes converted to spaces).
     # :<tt>cn</tt>::        The canonical name created from the file name
-    #
-    # TODO(move to test): default.png, default.en.png, default.deu.png, default.template ->
-    # extension should always be correct!
     def analyse_filename( filename )
       analysed = OpenStruct.new
       analysed.filename  = filename
