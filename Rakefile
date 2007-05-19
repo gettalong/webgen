@@ -70,8 +70,7 @@ task :doc => [:rdoc]
 rd = Rake::RDocTask.new do |rdoc|
   rdoc.rdoc_dir = 'doc/output/rdoc'
   rdoc.title    = PKG_NAME
-  rdoc.options << '--line-numbers' << '--inline-source'# << '-m README' TODO
-  #  rdoc.rdoc_files.include( 'README' )
+  rdoc.options << '--line-numbers' << '--inline-source' << '-m' << 'Webgen'
   rdoc.rdoc_files.include( 'lib/**/*.rb' )
   rdoc.rdoc_files.include( 'data/webgen/plugins/**/*.rb')
   rdoc.rdoc_files.exclude( /tc_.*\.rb$/ )
@@ -148,6 +147,7 @@ else
     s.files = PKG_FILES.to_a
     s.add_dependency( 'cmdparse', '~> 2.0.0' )
     s.add_dependency( 'redcloth', '>= 3.0.0' )
+    s.add_dependency( 'facets', '>= 1.8.0')
     s.add_dependency( 'rake' )
 
     s.require_path = 'lib'
@@ -159,7 +159,7 @@ else
 
     s.has_rdoc = true
     s.extra_rdoc_files = rd.rdoc_files.reject {|fn| fn =~ /\.rb$/}.to_a
-    s.rdoc_options = ['--line-numbers', '-m', 'README']
+    s.rdoc_options = ['--line-numbers', '-m', 'Webgen']
 
     #### Author and project details
 
