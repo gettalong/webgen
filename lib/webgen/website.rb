@@ -67,6 +67,11 @@ module Webgen
   # Represents the configuration file of a website.
   class FileConfigurator
 
+    # Creates a FileConfigurator object for the given website directory +dir+.
+    def self.for_website( dir )
+      self.new( File.join( dir, 'config.yaml' ) )
+    end
+
     # Returns the whole configuration.
     attr_reader :config
 

@@ -1,5 +1,3 @@
-require 'rbconfig'
-require 'fileutils'
 require 'cmdparse'
 require 'webgen/website'
 
@@ -41,11 +39,9 @@ module Webgen
     def parse( argv = ARGV )
       super do |level, cmd_name|
         if level == 0
-          #@config_file = Webgen::WebSite.load_config_file( @directory )
           @website = Webgen::WebSite.new( @directory )
+          @website.plugin_manager.configurators << FileConfigurator.for_website( @directory )
           @website.plugin_manager.configurators << self
-          @website.plugin_manager.configurators << FileConfigurator.new( File.join( @directory, 'config.yaml' ) ) #TODO: make creating Fileconfigurator easier (just with directory param)
-          @website.load_plugin_infos
           @website.plugin_manager.plugin_infos[%r{^Cli/Commands/}].each do |name, info|
             self.add_command( @website.plugin_manager[name] )
           end
@@ -58,8 +54,7 @@ module Webgen
 
   # Main program for the webgen CLI.
   def self.cli_main
-    cmdparser = CommandParser.new
-    cmdparser.parse
+    CommandParser.new.parse
   end
 
 end
