@@ -3,14 +3,21 @@ require 'webgen/website'
 
 module Webgen
 
+  # This is the command parser class used for handling the webgen command line interface. All CLI
+  # command plugins (see Cli::Commands) are added to this instance.
   class CommandParser < CmdParse::CommandParser
 
     VERBOSITY_UNUSED = -1
 
+    # The website directory.
     attr_reader :directory
+
+    # The created WebSite instance.
     attr_reader :website
+
+    # The user configured verbosity level. Returns -1 if the user didn't specify a verbosity setting
+    # on the command line.
     attr_reader :verbosity
-    attr_reader :config_file
 
     def initialize
       super( true )

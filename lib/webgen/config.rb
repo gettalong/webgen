@@ -1,5 +1,20 @@
 require 'rbconfig'
 
+# = Webgen Developer Documentation
+#
+# Welcome to the webgen developer documentation! You should find plenty of documentation here for
+# extending webgen with plugins!
+#
+# You will find general information about the plugin system in the documentation for
+# Webgen::PluginManager and Webgen::Plugin.
+#
+# As a general rule: If you want to develop a plugin for
+# a specific category, for example a file handler plugin, have a look at the base clase for this
+# category of plugins if such a base class is available.
+#
+# Here are some quick links for developing specific links:
+# * file handler plugins -> FileHandlers::DefaultHandler
+# * CLI command plugins -> Cli::Commands
 module Webgen
 
   VERSION = [0, 5, 0]

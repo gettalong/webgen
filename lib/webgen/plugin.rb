@@ -7,6 +7,7 @@ require 'webgen/listener'
 require 'webgen/content'
 require 'facets/core/kernel/constant'
 
+
 module Webgen
 
 
@@ -196,9 +197,10 @@ module Webgen
   #
   # == Plugin test cases
   #
-  # All Ruby source files in the directory +tests+ under a plugin bundle are considered to be test
-  # cases for the plugins included in the bundle. It is good practice to include test sothat the end
-  # user can verify if a given plugin will run correctly on his installation!
+  # All Ruby source files in the directory <tt>test/unittests</tt> under a plugin bundle are
+  # considered to be test cases for the plugins included in the bundle. It is good practice to
+  # include test sothat the end user can verify if a given plugin will run correctly on his
+  # installation!
   #
   # = Configurators
   #
