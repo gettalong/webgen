@@ -1,0 +1,27 @@
+--- documentation, pipeline:markdown
+Description
+-----------
+
+This processer uses ERB to process content. For detailed information
+about ERB have a look at its documentation by executing @ri ERB@ or the
+ruby documentation site at http://www.ruby-doc.org/!
+
+You can use the following special objects in your ERB code:
+
+* @ref_node@: The reference node which is the source of the ERB code
+  that is executed.
+* @node@: The node that gets currently rendered.
+* @chain@: The whole node chain.
+
+Here is a small usage example:
+
+  Adding 5 items dynamically:
+  <% for i in 1..5 %>
+    * item <%= i %>
+  <% end %>
+
+The second line shows the first form of the ERB tags which executes Ruby
+code but does not output anything: it just starts a @for@ loop. On the
+third line the second form of ERB tags is used to output the result of
+the Ruby code (note the equation sign!). And the fourth line completes
+the @for@ loop by adding the needed @end@ keyword.

@@ -1,0 +1,9 @@
+--- documentation, pipeline:markdown
+Description
+-----------
+
+This processes converts the content, which is assumed to be in Textile
+markup, to HTML by using the RedCloth library. For detailed information
+about Textile have a look at the [Textile Reference][1]!
+
+[1] http://hobix.com/textile/
