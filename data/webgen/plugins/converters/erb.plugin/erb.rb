@@ -1,12 +1,12 @@
-require 'erubis'
+require 'erb'
 
 module Converter
 
-  # Handles content in Textile format using RedCloth.
+  # Uses the builtin ERB to process the content.
   class Erb
 
     def convert( content, context, options )
-      Erubis::Eruby.new( content ).result( binding )
+      ERB.new( content ).result( binding )
     rescue Exception => e
       log(:error) { "Error using ERB to process content: #{e.message}" }
       raise
