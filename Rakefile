@@ -79,6 +79,14 @@ Rake::TestTask.new do |t|
   t.test_files = FileList['test/unittests/*.rb']
 end
 
+begin
+  require 'rcov/rcovtask'
+  Rcov::RcovTask.new do |t|
+    t.test_files = FileList['test/unittests/*.rb']
+  end
+rescue LoadError
+end
+
 # Developer tasks ##############################################################
 
 
