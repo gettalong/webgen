@@ -150,12 +150,18 @@ module Core
 
     # Renders the whole website.
     def render_site
+      @plugin_manager.logger.level = param( 'loggerLevel', 'Core/Configuration' )
+      log(:info) { "Starting rendering of website <#{param('websiteDir', 'Core/Configuration')}>..." }
+      log(:info) { "Using webgen data directory at <#{Webgen.data_dir}>" }
+
       tree = build_tree
       unless tree.nil?
         #@plugin_manager['Misc/TreeWalker'].execute( tree ) TODO activate again!
         write_tree( tree )
       end
       dispatch_msg( :after_webgen_run )
+
+      log(:info) { "Rendering of website <#{param('websiteDir', 'Core/Configuration')}> finished" }
     end
 
     # Reads all files from the source directory and constructs the node tree which is returned.

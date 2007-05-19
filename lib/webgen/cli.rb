@@ -43,7 +43,8 @@ module Webgen
           @website.plugin_manager.configurators << FileConfigurator.for_website( @directory )
           @website.plugin_manager.configurators << self
           @website.plugin_manager.plugin_infos[%r{^Cli/Commands/}].each do |name, info|
-            self.add_command( @website.plugin_manager[name] )
+            main_cmd = @website.plugin_manager.plugin_infos.get( name, 'cli_main_cmd' )
+            self.add_command( @website.plugin_manager[name], !main_cmd.nil? )
           end
         end
       end

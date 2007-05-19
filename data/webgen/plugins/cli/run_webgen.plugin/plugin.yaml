@@ -1,7 +1,8 @@
 Cli/Commands/RunWebgen:
   about:
-    summary: Runs webgen, ie. generates the HTML output
+    summary: Runs webgen, ie. generates the HTML files
     author: Thomas Leitner <t_leitner@gmx.at>
   plugin:
     file: run_webgen.rb
     load_deps: Cli/Utils
+  cli_main_cmd: true
