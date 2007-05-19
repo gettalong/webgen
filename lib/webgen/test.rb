@@ -70,12 +70,6 @@ module Webgen
 
     class << self
 
-      # Specifies +files+ as the plugin files which define the plugin which should be tested and its
-      # dependencies.
-      def plugin_files( files = nil )
-        (files.nil? ? @plugin_files.to_a + ['webgen/plugins/coreplugins/configuration.rb'] : @plugin_files = files )
-      end
-
       # The name of the plugin which should be tested.
       def plugin_to_test( plugin = nil )
         @plugin_name ||= nil
@@ -84,34 +78,17 @@ module Webgen
 
     end
 
-    # required stdlib files sothat no warnings etc. are shown when re-requiring files
-    require 'set'
-    require 'fileutils'
-
     def setup
-      @loader = PluginLoader.new( @wrapper = Module.new )
-
+      @manager = PluginManager.new( [self], nil )
       begin
-        self.class.plugin_files.each {|p| @loader.load_from_file( p ) }
+        @manager.load_all_plugin_bundles( File.join( Webgen.data_dir, 'plugins' ) )
       rescue Exception => e
         puts "Caught exception during loading of plugins in #setup: #{e.message} - #{e.backtrace.first}"
       end
 
-      @manager = PluginManager.new( [@loader], @loader.plugin_classes )
       if $VERBOSE
         @manager.logger = Webgen::Logger.new
         @manager.logger.level = ::Logger::DEBUG
-      end
-      @manager.plugin_config = self
-      @manager.init
-
-      if !@manager.plugins.has_key?( 'ContentConverter/Default' )
-        x = @manager.plugins['ContentConverter/Default'] = Object.new
-        def x.registered_handlers
-          formatters = Hash.new {|h, k| h[k] = proc {|c| c} }
-          def formatters.has_key?( value ); true; end
-          formatters
-        end
       end
 
       @plugin = @manager[self.class.plugin_to_test] if self.class.plugin_to_test
@@ -119,7 +96,6 @@ module Webgen
 
     def teardown
       @manager = nil
-      @loader = nil
     end
 
     def self.sample_site( filename = '' )
@@ -130,12 +106,12 @@ module Webgen
       self.class.sample_site( filename )
     end
 
-    def param_for_plugin( plugin_name, param )
-      case [plugin_name, param]
-      when ['Core/Configuration', 'srcDir'] then sample_site( Webgen::SRC_DIR )
-      when ['Core/Configuration', 'outDir'] then sample_site( 'out' )
-      when ['Core/Configuration', 'websiteDir'] then sample_site
-      else PluginParamValueNotFound
+    def param( name, plugin, cur_val )
+      case [plugin, name]
+      when ['Core/Configuration', 'srcDir'] then [true, sample_site( Webgen::SRC_DIR )]
+      when ['Core/Configuration', 'outDir'] then [true, sample_site( 'out' )]
+      when ['Core/Configuration', 'websiteDir'] then [true, sample_site]
+      else [false, cur_val]
       end
     end
 
