@@ -1,0 +1,6 @@
+--- documentation, pipeline:markdown
+Description
+-----------
+
+Provides useful methods for CLI plugins for generating headers and
+formatting text.

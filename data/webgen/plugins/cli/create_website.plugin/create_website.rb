@@ -26,9 +26,9 @@
            opts.separator "Available templates and styles:"
            opts.separator ""
            opts.separator Utils.headline( 'Templates' )
-           @plugin_manager['Support/WebsiteManager'].templates.sort.each {|name, entry| Utils.dirinfo_output( opts, name, entry ) }
+           @plugin_manager['Support/WebsiteManager'].templates.sort.each {|name, entry| Utils.info_output( opts, name, entry.infos ) }
            opts.separator Utils.headline( 'Styles' )
-           @plugin_manager['Support/WebsiteManager'].styles[:website].sort.each {|name, entry| Utils.dirinfo_output( opts, name, entry ) }
+           @plugin_manager['Support/WebsiteManager'].styles[:website].sort.each {|name, entry| Utils.info_output( opts, name, entry.infos ) }
          end
        end
 
