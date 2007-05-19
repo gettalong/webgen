@@ -1,0 +1,12 @@
+--- content, pipeline:markdown
+Description
+-----------
+
+This plugin provides caching functionality for other webgen plugins. For
+example, it is used to cache
+
+* file modification times
+* node meta information
+* created files
+
+The cached information can then be used in the next webgen run.
