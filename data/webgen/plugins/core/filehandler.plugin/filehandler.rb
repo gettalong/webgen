@@ -156,7 +156,8 @@ module Core
     # Checks if the +node+ has changed by executing three checks:
     #
     # * checks if the file has changed using file_changed? if the node has a <tt>:src</tt> node
-    #   information
+    #   information (set <tt>node.node_info[:no_output_file]</tt> to true to not check for the
+    #   existence of the output file)
     # * checks if an optionally associated change method is available through the
     #   <tt>:change_proc</tt> node information and executes it
     # * checks if the meta information for the node has changed since the last run
@@ -164,7 +165,7 @@ module Core
     # Returns +true+ if any one of these three checks returns +true+.
     def node_changed?( node )
       file_changed = (node.node_info.has_key?( :src ) ?
-                      file_changed?( node.node_info[:src], (node.node_info[:no_output] ? nil : node.full_path) ) :
+                      file_changed?( node.node_info[:src], (node.node_info[:no_output_file] ? nil : node.full_path) ) :
                       false)
       change_proc = (node.node_info.has_key?( :change_proc ) ? node.node_info[:change_proc].call( node ) : false)
       metainfo_changed = (node.meta_info != @plugin_manager['Core/CacheManager'].get( [:nodes, node.absolute_path, :metainfo], node.meta_info ))
