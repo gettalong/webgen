@@ -10,4 +10,4 @@ File/DirectoryHandler:
   file:
     patterns: [[0, '**/']]
     meta_info:
-      indexFile: index.page
+      indexFile: index.html

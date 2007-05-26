@@ -1,8 +1,35 @@
 require 'webgen/node'
+require 'facets/more/basicobject'
 
 module FileHandlers
 
   class DirectoryHandler < DefaultHandler
+
+    # Specialized delegation node for the index file of a directory. Behaves exactly like the index
+    # file node of a directory except for the #link_from and #node_for_lang methods which are altered
+    # to do the "right thing".
+    class DelegateIndexNode < BasicObject
+
+      def initialize( dir_node, index_node )
+        @dir_node = dir_node
+        @index_node = index_node
+      end
+
+      def method_missing( sym, *args, &block )
+        @index_node.send( sym, *args, &block )
+      end
+
+      def node_for_lang( lang )
+        lang_node = @index_node.node_for_lang( lang )
+        (lang_node.nil? ? nil : DelegateIndexNode.new( @dir_node, lang_node ) )
+      end
+
+      def link_from( ref_node, attr = {} )
+        attr[:link_text] ||=  @index_node['directoryName'] || @dir_node['title']
+        @index_node.link_from( ref_node, attr )
+      end
+
+    end
 
     # Specialized node for a directory.
     class DirNode < Node
@@ -14,28 +41,27 @@ module FileHandlers
       end
 
       def []( name )
-        process_dir_index if name == 'indexFile' &&
-          (!self.meta_info.has_key?( 'indexFile' ) ||
-           (!self.meta_info['indexFile'].nil? && !self.meta_info['indexFile'].kind_of?( Node ) ) )
-        super
+        return super unless name == 'indexFile'
+        resolve_dir_index unless node_info.has_key?( :indexFile )
+        node_info[:indexFile]
       end
 
       #######
       private
       #######
 
-      def process_dir_index
+      def resolve_dir_index
         indexFile = self.meta_info['indexFile']
         if indexFile.nil?
-          self['indexFile'] = nil
+          node_info[:indexFile] = nil
         else
           node = resolve_node( indexFile )
           if node
             node_info[:processor].log(:info) { "Directory index file for <#{self.full_path}> => <#{node.full_path}>" }
-            self['indexFile'] = node
+            node_info[:indexFile] = DelegateIndexNode.new( self, node )
           else
             node_info[:processor].log(:warn) { "No directory index file found for directory <#{self.full_path}>" }
-            self['indexFile'] = nil
+            node_info[:indexFile] = nil
           end
         end
       end
@@ -45,7 +71,8 @@ module FileHandlers
     # Returns a new DirNode.
     def create_node( parent, file_info )
       path = output_name( parent, file_info )
-      if parent.nil? || (node = node_exist?( parent, path, file_info.lcn )).nil?
+      # the warnings for node_exist? are suppressed because of recursive_create_path
+      if parent.nil? || (node = node_exist?( parent, path, file_info.lcn, false )).nil?
         node = DirNode.new( parent, path + '/', file_info )
         node.node_info[:processor] = self
       end
@@ -61,8 +88,8 @@ module FileHandlers
     # index file is specified, then the its correct language node is returned, else +node+ is
     # returned.
     def node_for_lang( node, lang )
-      langnode = node['indexFile'].node_for_lang( lang ) if node['indexFile']
-      langnode || node
+      lang_node = node['indexFile'].node_for_lang( lang ) if node['indexFile']
+      lang_node || (node.parent.nil? ? node : super)
     end
 
     # Recursively creates a given directory path starting from the path of +parent+ and returns the

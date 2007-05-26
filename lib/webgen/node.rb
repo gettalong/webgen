@@ -208,7 +208,7 @@ class Node
 
     node = Node.root( self )
 
-    match = nil
+    match = ''
     while !node.nil? && !path.empty?
       node = node.find {|c| match = (c =~ path) }
       path.sub!( match, '' ) unless node.nil?
