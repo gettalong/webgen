@@ -54,13 +54,18 @@ class Node
     node
   end
 
+  # Returns the localized canoncial name for the given canonical name and language.
+  def self.lcn( cn, lang )
+    if lang.nil?
+      cn
+    else
+      cn.split( '.' ).insert( 1, lang.to_s ).join( '.' )
+    end
+  end
+
   # Returns the localized canoncial name for this node.
   def lcn
-    if @meta_info['lang'].nil?
-      @cn
-    else
-      @cn.split( '.' ).insert( 1, @meta_info['lang'].to_s ).join( '.' )
-    end
+    self.class.lcn( @cn, @meta_info['lang'] )
   end
 
   # Sets a new parent for the node.
