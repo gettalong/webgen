@@ -6,8 +6,8 @@ The FileHandler plugin is the main plugin of webgen. When running webgen
 it is responsible for traversing the source directory and creating the
 internal representation of all handled files as well as writing the
 output files by using the individual file handler plugins. These file
-handler plugins reside in the File/ namespace. Also, the FileHandler is
-responsible for managing the [meta information backing
+handler plugins reside in the File/ namespace. Additionally, the
+FileHandler is responsible for managing the [meta information backing
 file](#metainfo-file).
 
 There are many different file handler plugins available, ranging from
@@ -43,17 +43,28 @@ plugins. This can be used, for example, to render an XML file as HTML
 and copy it verbatim.
 
 Internally a tree structure is created reflecting the source directory
-hierarchy and each file that will be created by webgen is represented by
-a node in the tree, as displayed in the following in image.
+hierarchy and each file that is handled by webgen. The following image
+shows how files in the source directory are related to the generated
+files in the output directory:
 
 <img src="{relocatable: /images/node_diagram.png}" alt="Internal tree
 structure" />
 
-The source directory layout is shown on the left side and the internal
-tree structure/output layout on the right. As you can see, some files
-are copied verbatim (e.g. the images), others are copied not all
-(e.g. `default.template`) and still others have multiple output files
-(e.g.  `project/documentation.page`).
+The source directory layout is shown on the left side and the output
+layout on the right. As you can see, some files are copied verbatim
+(e.g. the images), others are copied not all (e.g. `default.template`)
+and still others have multiple output files (e.g.
+`project/documentation.page`).
+
+After this internal tree structure is created, it is traversed and each
+node is processed. First the node is checked if has changed (the notion
+of 'changed' depends on the file handler plugin for this node but a node
+has changed, for example, if its meta information or the associated
+source file has changed since the last webgen run). If it has not
+changed, nothing needs to be written. Otherwise, the information needed
+to write out the node is gathered and the rendered content (depends on
+the file handler plugin, too) is written to the output file represented
+by the node.
 
 
 ### Source File Naming Convention ### {#filehandling-source}
