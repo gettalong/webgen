@@ -57,17 +57,7 @@ module FileHandlers
       result
     end
 
-    # See DefaultFileHandler#write_node.
-    #
-    # After the node has been written it is validated by the validator specified in the param
-    # +validator+.
     def write_info( node )
-      # TODO put this in a handler for after node written
-      #validator = param( 'validator' )
-      #validators = @plugin_manager['HtmlValidator/Default'].registered_handlers
-      #unless validator.nil? || validator == '' || validators[validator].nil?
-      #  validators[validator].validate_file( node.full_path )
-      #end
       begin
         {:data => render_node( node )}
       rescue Exception => e

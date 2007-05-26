@@ -7,14 +7,9 @@ File/PageHandler:
     load_deps: File/DefaultHandler
     run_deps: File/TemplateHandler
     class: FileHandlers::PageHandler
-  params:
-    validator:
-      default: nil
-      desc: The validator for checking HTML files on their validness. Set to an empty string or nil
-        to prevent checking.
   file:
     extensions: page
     meta_info:
       blocks:
         default:
-          pipeline: erb;textile
+          pipeline: erb;textile;blocks
