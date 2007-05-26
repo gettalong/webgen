@@ -28,7 +28,16 @@ File/DefaultHandler:
     linkToCurrentPage:
       default: false
       desc: Specifies whether in menus, breadcrumb trails, etc. a real link to the current page
-            should be used or only the link text.
+            or only the link text should be used.
+    defaultLangInOutputName:
+      default: false
+      desc: If true, the output file names for the default language will have the language in the file
+            name like all other page files. If false, they won't.
+    outputNameStyle:
+      default: [:basename, [., :lang], ., :ext]
+      desc: Defines how the output name should be built. The correct name will be used for the
+            :name part and the file language will be used for the :lang part. If defaultLangInFilename
+            is true, the :lang part or the subarray in which the :lang part was defined, will be omitted.
 
 
 File/VirtualFileHandler:

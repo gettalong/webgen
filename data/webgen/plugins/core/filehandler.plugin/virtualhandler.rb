@@ -4,10 +4,10 @@ module FileHandlers
   # file.
   class VirtualFileHandler < DefaultHandler
 
-    def create_node( struct, parent, meta_info )
-      filename = File.basename( struct.filename )
-      log(:error) { "No target url for virtual file in metainfo backing file specified: <#{struct.filename}>"} if meta_info['url'].nil?
-      url = meta_info['url'] || filename
+    def create_node( parent, file_info )
+      filename = File.basename( file_info.filename )
+      log(:error) { "No target url for virtual file in metainfo backing file specified: <#{file_info.filename}>"} if file_info.meta_info['url'].nil?
+      url = file_info.meta_info['url'] || filename
 
       # no need to check for an existing node, that is already done in FileHandler#handle_output_backing
       temp_node = Node.new( parent, filename )
@@ -19,7 +19,7 @@ module FileHandlers
       end
       parent.del_child( temp_node )
 
-      node.meta_info.update( meta_info )
+      node.meta_info.update( file_info.meta_info )
       node.node_info[:processor] = self
       node.node_info[:no_output] = true
       node

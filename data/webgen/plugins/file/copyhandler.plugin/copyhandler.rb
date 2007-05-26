@@ -9,16 +9,15 @@ module FileHandlers
       param( 'erbPaths' ).each {|path| register_path_pattern( path ) }
     end
 
-    def create_node( file_struct, parent, meta_info )
-      processWithErb = param( 'erbPaths' ).any? {|pattern| File.fnmatch( pattern, file_struct.filename, File::FNM_DOTMATCH )}
-      name = File.basename( file_struct.filename )
-      name = name.sub( /\.r([^.]+)$/, '.\1' ) if processWithErb
-      file_struct.cn = file_struct.cn.sub( /\.r([^.]+)$/, '.\1' ) if processWithErb
+    def create_node( parent, file_info )
+      processWithErb = param( 'erbPaths' ).any? {|pattern| File.fnmatch( pattern, file_info.filename, File::FNM_DOTMATCH )}
+      file_info.ext.sub!( /^r/, '' ) if processWithErb
+      name = output_name( parent, file_info )
 
-      unless node = node_exist?( parent, name )
-        node = Node.new( parent, name, file_struct.cn )
-        node.meta_info.update( meta_info )
-        node.node_info[:src] = file_struct.filename
+      unless node = node_exist?( parent, name, file_info.lcn )
+        node = Node.new( parent, name, file_info.cn )
+        node.meta_info.update( file_info.meta_info )
+        node.node_info[:src] = file_info.filename
         node.node_info[:processor] = self
         node.node_info[:preprocess] = processWithErb
       end

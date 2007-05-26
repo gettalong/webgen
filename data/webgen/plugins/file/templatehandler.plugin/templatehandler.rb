@@ -2,28 +2,25 @@ module FileHandlers
 
   class TemplateHandler < DefaultHandler
 
-    def create_node( file_struct, parent, meta_info )
+    def create_node( parent, file_info )
       begin
-        page = WebPageFormat.create_page_from_file( file_struct.filename, meta_info )
+        page = WebPageFormat.create_page_from_file( file_info.filename, file_info.meta_info )
       rescue WebPageFormatError => e
-        log(:error) { "Invalid page file <#{file_struct.filename}>: #{e.message}" }
+        log(:error) { "Invalid page file <#{file_info.filename}>: #{e.message}" }
         return nil
       end
+      file_info.meta_info = page.meta_info
 
-      path = File.basename( file_struct.filename )
-      unless node = node_exist?( parent, path )
-        node = Node.new( parent, path, file_struct.cn )
+      path = output_name( parent, file_info )
+      unless node = node_exist?( parent, path, file_info.lcn )
+        node = Node.new( parent, path, file_info.cn )
         node.meta_info = page.meta_info
-        node.node_info[:src] = file_struct.filename
+        node.node_info[:src] = file_info.filename
         node.node_info[:processor] = self
         node.node_info[:page] = page
         node.node_info[:no_output] = true
       end
       node
-    end
-
-    def write_info( node )
-      # do not write anything
     end
 
     # Returns the template chain for +node+.

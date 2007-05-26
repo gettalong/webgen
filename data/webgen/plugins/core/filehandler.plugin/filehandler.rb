@@ -36,6 +36,52 @@ module Core
   # +after_website_rendered+::   called after the whole website has been rendered
   class FileHandler
 
+    # Contains all information about one handled file.
+    class FileInfo
+
+      # The source filename (the analysed filename)
+      attr_accessor :filename
+      # The basename of the filename.
+      attr_accessor :basename
+      # The file extension.
+      attr_accessor :ext
+
+      # The meta information for the file.
+      attr_accessor :meta_info
+
+      def initialize( filename )
+        @meta_info = {}
+        analyse_filename( filename )
+      end
+
+      # The canonical name created from the filename (created from basename and extension).
+      def cn
+        @basename + (@ext.length > 0 ? '.' + @ext : '')
+      end
+
+      # The localized canonical name created from the filename.
+      def lcn
+        Node.lcn( cn, @meta_info['lang'] )
+      end
+
+      #######
+      private
+      #######
+
+      # Analyses the +filename+ and fills the object with the extracted information.
+      def analyse_filename( filename )
+        self.filename = filename
+        matchData = /^(?:(\d+)\.)?([^.]*?)(?:\.(\w\w\w?)(?=.))?(?:\.(.*))?$/.match( File.basename( filename ) )
+
+        self.meta_info['orderInfo'] = matchData[1].to_i
+        self.basename               = matchData[2]
+        self.meta_info['lang']      = Webgen::LanguageManager.language_for_code( matchData[3] )
+        self.ext                    = matchData[4].to_s
+
+        self.meta_info['title']     = self.basename.tr('_-', ' ').capitalize
+      end
+    end
+
     include Listener
 
     # Creates a new FileHandler plugin instance.
@@ -56,53 +102,21 @@ module Core
       load_meta_info_backing_file
     end
 
-    # Returns the meta info for nodes for the given +handler+ name. If +file_struct+ is specified,
-    # the meta information +lang+, +orderInfo+ and +title+ are updated according to the values in
-    # +file_struct+. If +file+ is specified, meta information from the backing file is also used if
-    # available (using the paths specified in the source block of the backing file). The parameter
-    # +file+ has to be an absolute path, ie.  starting with a slash.
-    def meta_info_for( handler, file_struct = nil, file = nil )
+    # Returns the meta info for nodes for the given +handler+ name. If +file_info+ is specified, the
+    # meta information of +file_info+ is used to update the meta information (results in an update
+    # from the meta information +lang+, +orderInfo+ and +title+ and probably others). If +file+ is
+    # specified, meta information from the backing file is also used if available (using the paths
+    # specified in the source block of the backing file). The parameter +file+ has to be an absolute
+    # path, ie.  starting with a slash.
+    def meta_info_for( handler, file_info = nil, file = nil )
       info = (@plugin_manager.plugin_infos.get( handler, 'file', 'meta_info' ) || {}).dup
       info.update( param('defaultMetaInfo')[handler] || {} )
-      if file_struct
-        info['lang'] = file_struct.lang
-        info['orderInfo'] = file_struct.orderInfo
-        info['title'] = file_struct.title
-      end
+      info.update( file_info.meta_info ) if file_info
       if file
         file = normalize_path( file )
         info.update( @source_backing[file] ) if @source_backing.has_key?( file )
       end
       info
-    end
-
-    # Analyses the +filename+ and returns a struct with the extracted information. This struct
-    # includes the following components:
-    #
-    # :<tt>filename</tt>::  The source filename, ie. the +filename+ parameter.
-    # :<tt>orderInfo</tt>:: The order information extracted from the filename.
-    # :<tt>basename</tt>::  The basename of the file.
-    # :<tt>lang</tt>::      The language of the file.
-    # :<tt>ext</tt>::       The file extension.
-    # :<tt>title</tt>::     The title of the file (essentially the basename, but capitalized and
-    #                       with underscores and dashes converted to spaces).
-    # :<tt>cn</tt>::        The canonical name created from the file name
-    def analyse_filename( filename )
-      analysed = OpenStruct.new
-      analysed.filename  = filename
-      matchData = /^(?:(\d+)\.)?([^.]*?)(?:\.(\w\w\w?)(?=.))?(?:\.(.*))?$/.match( File.basename( filename ) )
-
-      analysed.orderInfo = matchData[1].to_i
-      analysed.basename  = matchData[2]
-      analysed.lang      = Webgen::LanguageManager.language_for_code( matchData[3] )
-      analysed.ext       = matchData[4].to_s
-
-      analysed.cn        = analysed.basename + (analysed.ext.length > 0 ? '.' + analysed.ext : '')
-      analysed.title     = analysed.basename.tr('_-', ' ').capitalize
-
-      log(:debug) { analysed.inspect }
-
-      analysed
     end
 
     # Creates a node for +file+ (creating parent directories apropriately) under +parent_node+ using
@@ -115,14 +129,14 @@ module Core
       parent_node = @plugin_manager['File/DirectoryHandler'].recursive_create_path( pathname, parent_node )
 
       src_path = File.join( Node.root( parent_node ).node_info[:src], parent_node.absolute_path, filename )
-      file_struct = analyse_filename( src_path )
-      meta_info = meta_info_for( handler.plugin_name, file_struct, File.join( parent_node.absolute_path, filename ) )
+      file_info = FileInfo.new( src_path )
+      file_info.meta_info.update( meta_info_for( handler.plugin_name, file_info, File.join( parent_node.absolute_path, filename ) ) )
 
-      dispatch_msg( :before_node_created, file_struct, parent_node, handler, meta_info )
+      dispatch_msg( :before_node_created, file_info, parent_node, handler )
       if block_given?
-        node = yield( file_struct, parent_node, handler, meta_info )
+        node = yield( parent_node, file_info, handler )
       else
-        node = handler.create_node( file_struct, parent_node, meta_info )
+        node = handler.create_node( parent_node, file_info )
       end
       check_node( node ) unless node.nil?
 
@@ -254,9 +268,9 @@ module Core
           node.meta_info.update( data )
         else
           log(:info) { "Creating virtual node for path <#{path}>..." }
-          node = create_node( path, root, @plugin_manager['File/VirtualFileHandler'] ) do |file_struct, parent, handler, meta_info|
-            meta_info = meta_info.merge( data )
-            handler.create_node( file_struct, parent, meta_info )
+          node = create_node( path, root, @plugin_manager['File/VirtualFileHandler'] ) do |parent, file_info, handler|
+            file_info.meta_info.update( data )
+            handler.create_node( parent, file_info )
           end
         end
         check_node( node )
@@ -279,7 +293,7 @@ module Core
         used_files += common
         diff = files - common
         log(:info) { "Not using these files for #{handler.plugin_name} as they do not exist or are excluded: #{diff.inspect}" } if diff.length > 0
-        common.each  do |file|
+        common.sort {|a,b| a.length <=> b.length }.each  do |file|
           log(:info) { "Creating node(s) for file <#{file}>..." }
           create_node( file.sub( /^#{root_node.node_info[:src]}/, '' ), root_node, handler )
         end
@@ -364,8 +378,9 @@ module Core
         return nil
       end
 
-      file_struct = analyse_filename( root_path )
-      root = root_handler.create_node( file_struct, nil, meta_info_for( root_handler, file_struct, '/' ) )
+      file_info = FileInfo.new( root_path )
+      file_info.meta_info.update( meta_info_for( root_handler, file_info, '/' ) )
+      root = root_handler.create_node( nil, file_info )
       root['title'] = ''
       root.path = File.join( param( 'outDir', 'Core/Configuration' ), '/' )
       root.node_info[:src] = root_path

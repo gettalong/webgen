@@ -7,6 +7,8 @@ module FileHandlers
 
   # File handler plugin for handling page files.
   #
+  # = Message Hooks
+  #
   # The following message listening hooks (defined via symbols) are available for this plugin
   # (see Listener):
   #
@@ -18,58 +20,21 @@ module FileHandlers
     def initialize
       super
       add_msg_name( :after_node_rendered )
-      @dummy_node = Node.new( nil, 'dummy' )
-      @dummy_node.node_info[:src] = 'dummy'
     end
 
-    def create_node( file_struct, parent, meta_info )
-      begin
-        page = WebPageFormat.create_page_from_file( file_struct.filename, meta_info )
-      rescue WebPageFormatError => e
-        log(:error) { "Invalid page file <#{file_struct.filename}>: #{e.message}" }
-        return nil
-      end
-
-      page.meta_info['lang'] ||= param( 'lang', 'Core/Configuration' )
-      useLangPart  = ( param( 'defaultLangInFilename' ) || param( 'lang', 'Core/Configuration' ) != page.meta_info['lang'] )
-
-      path = create_output_name( file_struct.basename, page.meta_info['lang'], useLangPart,
-                                 page.meta_info['outputNameStyle'] || param( 'outputNameStyle' ) )
-
-      unless node = node_exist?( parent, path )
-        node = Node.new( parent, path, file_struct.cn )
-        node.meta_info = page.meta_info
-        node.node_info[:src] = file_struct.filename
-        node.node_info[:processor] = self
-        node.node_info[:page] = page
-        node.node_info[:change_proc] = proc do
-          @plugin_manager['File/TemplateHandler'].templates_for_node( node ).any? do |n|
-            @plugin_manager['Core/FileHandler'].node_changed?( n )
-          end
-        end
-      end
-      node
+    def create_node( parent, file_info )
+      page = WebPageFormat.create_page_from_file( file_info.filename, file_info.meta_info )
+      internal_create_node( parent, file_info, page )
+    rescue WebPageFormatError => e
+      log(:error) { "Invalid page file <#{file_info.filename}>: #{e.message}" }
     end
 
-    #TODO(adept code) Same functionality as +create_node+, but uses the given +data+ as content.
-    def create_node_from_data( filename, parent, data, meta_info )
-      pagename = analysed_name.name + '.' + EXTENSION
-      localizedPagename = analysed_name.name + '.' + data.meta_info['lang'] + '.' + EXTENSION
-
-      if node = parent.find {|n| n =~ localizedPagename }
-        log(:warn) do
-          "Two input files in the same language for one page, " + \
-          "using <#{node.node_info[:src]}> instead of <#{filename}>"
-        end
-      else
-        node = PageNode.new( parent, path, data  )
-        node.node_info[:src] = analysed_name.filename
-        node.node_info[:processor] = self
-        node.node_info[:pagename] = pagename
-        node.node_info[:local_pagename] = localizedPagename
-      end
-
-      node
+    # Same functionality as +create_node+, but uses the given +data+ as content.
+    def create_node_from_data( parent, file_info, data )
+      page = WebPageFormat.create_page_from_data( data, file_info.meta_info )
+      internal_create_node( parent, file_info, page )
+    rescue WebPageFormatError => e
+      log(:error) { "Invalid data provided for <#{file_info.filename}>: #{e.message}" }
     end
 
     # Renders the block called +block_name+ of the given +node+. If +use_templates+ is +true+, then
@@ -114,21 +79,25 @@ module FileHandlers
     private
     #######
 
-    def create_output_name( basename, lang, useLangPart, style )
-      style.collect do |part|
-        case part
-        when String
-          part
-        when :name
-          basename
-        when :lang
-          useLangPart ? lang : ''
-        when Array
-          part.include?( :lang ) && !useLangPart ? '' : create_output_name( basename, lang, useLangPart, part )
-        else
-          ''
+    def internal_create_node( parent, file_info, page )
+      page.meta_info['lang'] ||= param( 'lang', 'Core/Configuration' )
+      file_info.meta_info = page.meta_info
+      file_info.ext = 'html'
+      path = output_name( parent, file_info )
+
+      unless node = node_exist?( parent, path, file_info.lcn )
+        node = Node.new( parent, path, file_info.cn )
+        node.meta_info = page.meta_info
+        node.node_info[:src] = file_info.filename
+        node.node_info[:processor] = self
+        node.node_info[:page] = page
+        node.node_info[:change_proc] = proc do
+          @plugin_manager['File/TemplateHandler'].templates_for_node( node ).any? do |n|
+            @plugin_manager['Core/FileHandler'].node_changed?( n )
+          end
         end
-      end.join( '' )
+      end
+      node
     end
 
   end

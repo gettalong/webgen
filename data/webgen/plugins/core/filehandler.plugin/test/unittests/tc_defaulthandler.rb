@@ -44,7 +44,7 @@ module FileHandlerTests
     end
 
     def test_methods_for_subclasses
-      assert_raise( NotImplementedError ) { @plugin.create_node( nil, nil, nil ) }
+      assert_raise( NotImplementedError ) { @plugin.create_node( nil, nil ) }
       assert_equal( nil, @plugin.write_info( nil ) )
     end
 
@@ -92,12 +92,34 @@ module FileHandlerTests
     def test_node_exist
       root = Node.new( nil, 'root/')
       node = Node.new( root, 'path.html', 'path.page' )
+      node.meta_info['lang'] = 'de'
       dir = Node.new( root, 'dir/' )
-      assert_equal( node, @plugin.node_exist?( root, 'path.html') )
-      assert_equal( node, @plugin.node_exist?( root, 'path.html/') )
-      assert_equal( dir, @plugin.node_exist?( root, 'dir') )
-      assert_equal( dir, @plugin.node_exist?( root, 'dir/') )
-      assert_equal( nil, @plugin.node_exist?( root, 'non_existing') )
+      assert_equal( node, @plugin.node_exist?( root, 'path.html', 'path.page' ) )
+      assert_equal( node, @plugin.node_exist?( root, 'path.html/', 'path.page' ) )
+      assert_equal( nil, @plugin.node_exist?( root, 'no_path.html', 'path.page' ) )
+      assert_equal( node, @plugin.node_exist?( root, 'no_path.html', 'path.de.page' ) )
+      assert_equal( dir, @plugin.node_exist?( root, 'dir', 'dir') )
+      assert_equal( dir, @plugin.node_exist?( root, 'dir/', 'dir') )
+      assert_equal( nil, @plugin.node_exist?( root, 'non_existing', 'non') )
+    end
+
+    def test_output_name
+      root = Node.new( nil, 'root/')
+
+      @manager['Core/FileHandler'] # load Core/FileHandler
+      file_struct = @manager::Core::FileHandler::FileInfo.new( 'path.html' )
+      assert_equal( 'path.html', @plugin.output_name( root, file_struct, [:basename, ['.', :lang], '.', :ext] ) )
+      assert_equal( 'path.html', @plugin.output_name( nil, file_struct, [:basename, ['.', :lang], '.', :ext] ) )
+      file_struct = @manager::Core::FileHandler::FileInfo.new( 'path.en.html' )
+      assert_equal( 'path.html', @plugin.output_name( root, file_struct, [:basename, ['.', :lang], '.', :ext] ) )
+      file_struct = @manager::Core::FileHandler::FileInfo.new( 'path.eo.html' )
+      assert_equal( 'path.eo.html', @plugin.output_name( root, file_struct, [:basename, ['.', :lang], '.', :ext] ) )
+
+      node = Node.new( root, 'path.html' )
+      file_struct = @manager::Core::FileHandler::FileInfo.new( 'path.html' )
+      assert_equal( 'path.html', @plugin.output_name( root, file_struct, [:basename, ['.', :lang], '.', :ext] ) )
+      file_struct = @manager::Core::FileHandler::FileInfo.new( 'path.en.html' )
+      assert_equal( 'path.en.html', @plugin.output_name( root, file_struct, [:basename, ['.', :lang], '.', :ext] ) )
     end
 
   end

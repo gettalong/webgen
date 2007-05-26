@@ -7,11 +7,10 @@ module FileHandlers
     # Specialized node for a directory.
     class DirNode < Node
 
-      def initialize( parent, path, struct, meta_info = {} )
-        super( parent, path, struct.cn )
-        self.meta_info = meta_info
-        self.node_info[:src] = struct.filename
-        self['title'] = struct.title
+      def initialize( parent, path, file_info )
+        super( parent, path, file_info.cn )
+        self.meta_info = file_info.meta_info
+        self.node_info[:src] = file_info.filename
       end
 
       def []( name )
@@ -44,10 +43,10 @@ module FileHandlers
     end
 
     # Returns a new DirNode.
-    def create_node( struct, parent, meta_info )
-      filename = File.basename( struct.filename ) + '/'
-      if parent.nil? || (node = node_exist?( parent, filename )).nil?
-        node = DirNode.new( parent, filename, struct, meta_info )
+    def create_node( parent, file_info )
+      path = output_name( parent, file_info )
+      if parent.nil? || (node = node_exist?( parent, path, file_info.lcn )).nil?
+        node = DirNode.new( parent, path + '/', file_info )
         node.node_info[:processor] = self
       end
       node

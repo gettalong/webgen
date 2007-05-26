@@ -56,7 +56,7 @@ are copied verbatim (e.g. the images), others are copied not all
 (e.g.  `project/documentation.page`).
 
 
-### File Naming Convention ### {#filehandling-naming}
+### Source File Naming Convention ### {#filehandling-source}
 
 webgen assumes that the files in the source directory follow a special
 naming convention sothat meta information can be extracted correctly
@@ -69,6 +69,15 @@ from the filename:
     This part is optional and has to consist purely of the digits 0 to
     9. It's value is used for the meta information `orderInfo`. If not
     specified, it defaults to the value zero.
+
+*   `basename`
+
+    This part is used on the one hand to generate the `title` meta
+    information (but with these transformations: `_` and `-` become
+    spaces). And on the other hand, the canonical name is derived from
+    it. `basename` must not contain any dots. Also: if two files have
+    the same `basename` part, they should define the same content for
+    different languages.
 
 *   `lang`
 
@@ -85,16 +94,7 @@ from the filename:
 
     The file extension can be anything.
 
-*   `basename`
-
-    This part is used on the one hand to generate the `title` meta
-    information (but with these transformations: `_` and `-` become
-    spaces). And on the other hand, the canonical name is derived from
-    it. `basename` must not contain any dots. Also: if two files have
-    the same `basename` part, they should define the same content for
-    different languages.
-
-Following are some examples of file names:
+Following are some examples of source file names:
 
 |Filename                  | Parsed meta information
 |--------------------------|------------------------------------------------
@@ -131,6 +131,54 @@ user really only wants the file in the specified language!
 This also means that all files are not resolved using their real source
 or output names but using the (localized) canonical name! This is
 different from previous webgen versions!
+
+
+### Output File Naming ### {#filehandling-output}
+
+The output filename for a given source filename is constructed using the
+File/DefaultHandler:outputNameStyle parameter which can be individually
+(for a specific file handler plugin or a file) overwritten by using the
+meta information `outputNameStyle`. This parameter is an array which can
+have the following values:
+
+* strings (for inserting arbitrary text into output names)
+* arrays (for grouping values - only interesting for the language part)
+* symbols for inserting special values:
+  * `:basename`: the basename of the file
+  * `:lang`: the language
+  * `:ext`: the file extension
+
+Following are some examples of output file names for given source file
+names (assuming that `en` is the default language):
+
+*   `outputNameStyle=[:basename, [., :lang], ., :ext]` (the default)
+
+    *   `index.jpg` --> `index.jpg`
+
+        Since the source file is unlocalized, no language part is used
+        and the whole sub array with the `:lang` symbol is dropped.
+
+    *   `index.en.jpg` --> `index.jpg`
+
+        This happens if File/DefaultHandler:defaultLangInOutputName is
+        false and no unlocalized version of this file exists.
+
+    *   `index.en.jpg` --> `index.en.jpg`
+
+        Similar to the last example but this result occurs when there is
+        an unlocalized version of the file!
+
+    *   `index.de.jpg` --> `index.de.jpg`
+
+        Since `de` is not the default language, the language part is
+        always used!
+
+*   `outputNameStyle=[:basename, ., :ext, ., :lang]`
+
+    *   `index.jpg` --> `index.jpg.`
+
+        Be aware of the trailing dot since the `:lang` value is not
+        defined in an sub array.
 
 
 File Meta Information {#metainfo}

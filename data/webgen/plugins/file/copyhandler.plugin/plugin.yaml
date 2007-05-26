@@ -16,4 +16,3 @@ File/CopyHandler:
       desc: |
         The path patterns which match the files that should get preprocessed by ERB.
         The leading letter r is removed from the extension.
-

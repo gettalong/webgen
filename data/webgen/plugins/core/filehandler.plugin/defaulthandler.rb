@@ -152,14 +152,15 @@ module FileHandlers
       (patterns || []) + (@path_patterns ||= [])
     end
 
-    # Asks the plugin to create a node with the information provided in +file_struct+ (see
-    # Core::FileHandler#analyse_filename) and the +parent+ node, using +meta_info+ as default meta
-    # information for the node (created using Core::FileHandler#meta_info_for). Should return the
-    # node for the path (the newly created node or, if a node with the same output path already
-    # exists, the existing one) or +nil+ if the node could not be created.
+    # Asks the plugin to create a node with the information provided in +file_info+ (see
+    # Core::FileHandler::FileInfo) and the +parent+ node. The default meta information for the node
+    # can be accessed using <tt>file_info.meta_info</tt> (created using
+    # Core::FileHandler#meta_info_for). Should return the node for the path (the newly created node
+    # or, if a node with the same output path already exists, the existing one) or +nil+ if the node
+    # could not be created.
     #
     # Has to be overridden by the subclass!!!
-    def create_node( file_struct, parent, meta_info )
+    def create_node( parent, file_info )
       raise NotImplementedError
     end
 
@@ -199,13 +200,57 @@ module FileHandlers
       ( use_link ? "<a#{attrs}>#{link_text}</a>" : "<span#{attrs}>#{link_text}</span>" )
     end
 
-    # If there is already a node for the given +path+ under +parent_node+, returns this node or
-    # +nil+ otherwise.
-    def node_exist?( parent_node, path )
+    # Checks if there is already a node for the given +path+ or +lcn+ (localized canonical name)
+    # under +parent_node+ and returns this node or +nil+ otherwise.
+    def node_exist?( parent_node, path, lcn, warning = true )
       path = path.chomp( '/' )
-      node = parent_node.find {|n| n.path =~ /#{path}\/?/ }
-      log(:warn) { "There is already a node for <#{node.full_path}>" } if node
+      node = parent_node.find {|n| n.path =~ /#{path}\/?/ || n.lcn == lcn }
+      log(:warn) { "There is already a node for <#{node.full_path}> handled by #{node.node_info[:processor].plugin_name}" } if node && warning
       node
+    end
+
+    # Constructs the output file name for the given +file_info+ object. Then it is checked using the
+    # parameter +parent+ if a node with such an output name already exists. If it exists, the
+    # language part is forced to be in the output name and the resulting output name is returned.
+    #
+    # The parameter +style+ (which uses either the meta information +outputNameStyle+ from the
+    # paramter +meta_info+ or, if the former is not defined, the plugin parameter +outputNameStyle+)
+    # defines how the output name should be built (more information about this in the user
+    # documentation).
+    def output_name( parent, file_info, style = file_info.meta_info['outputNameStyle'] || param( 'outputNameStyle' ) )
+      path = construct_output_name( file_info, style )
+      if parent && node_exist?( parent, path, Node.lcn( file_info.basename, file_info.meta_info['lang'] ), false )
+        path = construct_output_name( file_info, style, true )
+      end
+      path
+    end
+
+    #######
+    private
+    #######
+
+    def construct_output_name( file_info, style, use_lang_part = nil )
+      use_lang_part = if file_info.meta_info['lang'].nil?       # unlocalized files never get a lang in the filename!
+                        false
+                      elsif use_lang_part.nil?
+                        param( 'defaultLangInOutputName' ) || param( 'lang', 'Core/Configuration' ) != file_info.meta_info['lang']
+                      else
+                        use_lang_part
+                      end
+      style.collect do |part|
+        case part
+        when String
+          part
+        when :lang
+          use_lang_part ? file_info.meta_info['lang'] : ''
+        when Symbol
+          file_info.send( part )
+        when Array
+          part.include?( :lang ) && !use_lang_part ? '' : construct_output_name( file_info, part, use_lang_part )
+        else
+          ''
+        end
+      end.join( '' )
     end
 
   end

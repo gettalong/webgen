@@ -3,7 +3,6 @@ require 'webgen/node'
 require 'webgen/config'
 
 module CoreTests
-
   class FileHandlerTest < Webgen::PluginTestCase
 
     #plugin_files [fixture_path( 'sample_plugin.rb' )]
@@ -25,25 +24,25 @@ module CoreTests
     def test_analyse_filename
       check_proc = proc do |o, fn,oi,bn,lang,ext,cn,title|
         assert_equal( fn, o.filename )
-        assert_equal( oi, o.orderInfo )
+        assert_equal( oi, o.meta_info['orderInfo'] )
         assert_equal( bn, o.basename )
-        assert_equal( lang, o.lang )
+        assert_equal( lang, o.meta_info['lang'] )
         assert_equal( ext, o.ext )
         assert_equal( cn, o.cn )
-        assert_equal( title, o.title )
+        assert_equal( title, o.meta_info['title'] )
       end
       de = Webgen::LanguageManager.language_for_code( 'de' )
       en = Webgen::LanguageManager.language_for_code( 'en' )
-      check_proc.call( @plugin.analyse_filename( '5.base_name-one.de.page'),
+      check_proc.call( @manager::Core::FileHandler::FileInfo.new( '5.base_name-one.de.page'),
                        '5.base_name-one.de.page', 5, 'base_name-one', de,
                        'page', 'base_name-one.page', 'Base name one' )
-      check_proc.call( @plugin.analyse_filename( 'default.png'),
+      check_proc.call( @manager::Core::FileHandler::FileInfo.new( 'default.png'),
                        'default.png', 0, 'default', nil, 'png', 'default.png', 'Default' )
-      check_proc.call( @plugin.analyse_filename( 'default.en.png'),
+      check_proc.call( @manager::Core::FileHandler::FileInfo.new( 'default.en.png'),
                        'default.en.png', 0, 'default', en, 'png', 'default.png', 'Default' )
-      check_proc.call( @plugin.analyse_filename( 'default.deu.png'),
+      check_proc.call( @manager::Core::FileHandler::FileInfo.new( 'default.deu.png'),
                        'default.deu.png', 0, 'default', de, 'png', 'default.png', 'Default' )
-      check_proc.call( @plugin.analyse_filename( 'default.template'),
+      check_proc.call( @manager::Core::FileHandler::FileInfo.new( 'default.template'),
                        'default.template', 0, 'default', nil, 'template', 'default.template', 'Default' )
     end
 

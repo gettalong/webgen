@@ -8,15 +8,6 @@ File/PageHandler:
     run_deps: File/TemplateHandler
     class: FileHandlers::PageHandler
   params:
-    defaultLangInFilename:
-      default: false
-      desc: If true, the output files for the default language
-        will have the language in the file name like all other page files. If false, they won't.
-    outputNameStyle:
-      default: [:name, [., :lang], .html]
-      desc: Defines how the output name should be built. The correct name will be used for the
-         :name part and the file language will be used for the :lang part. If defaultLangInFilename
-         is true, the :lang part or the subarray in which the :lang part was defined, will be omitted.
     validator:
       default: nil
       desc: The validator for checking HTML files on their validness. Set to an empty string or nil
