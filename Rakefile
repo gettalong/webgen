@@ -76,14 +76,14 @@ rd = Rake::RDocTask.new do |rdoc|
   rdoc.rdoc_files.exclude( /tc_.*\.rb$/ )
 end
 
-Rake::TestTask.new do |t|
+tt = Rake::TestTask.new do |t|
   t.test_files = FileList['test/unittests/*.rb'] + FileList['data/webgen/plugins/**/test/unittests/*.rb']
 end
 
 begin
   require 'rcov/rcovtask'
   Rcov::RcovTask.new do |t|
-    t.test_files = FileList['test/unittests/*.rb']
+    t.test_files = tt.instance_variable_get( :@test_files )
   end
 rescue LoadError
 end
