@@ -24,7 +24,6 @@ module FileHandlers
       node
     end
 
-    # Copy the file to the destination directory if it has been modified.
     def write_info( node )
       if node.node_info[:preprocess]
         {:data => ERB.new( File.read( node.node_info[:src] ) ).result( binding )}
