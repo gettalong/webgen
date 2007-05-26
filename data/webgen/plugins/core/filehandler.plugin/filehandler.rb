@@ -379,10 +379,11 @@ module Core
       end
 
       file_info = FileInfo.new( root_path )
-      file_info.meta_info.update( meta_info_for( root_handler, file_info, '/' ) )
+      file_info.meta_info.update( meta_info_for( root_handler.plugin_name, file_info, '/' ) )
       root = root_handler.create_node( nil, file_info )
       root['title'] = ''
       root.path = File.join( param( 'outDir', 'Core/Configuration' ), '/' )
+      root.cn.sub!( /.*/, '' )
       root.node_info[:src] = root_path
 
       root

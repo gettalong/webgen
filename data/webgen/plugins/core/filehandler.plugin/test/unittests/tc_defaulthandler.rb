@@ -108,18 +108,18 @@ module FileHandlerTests
 
       @manager['Core/FileHandler'] # load Core/FileHandler
       file_struct = @manager::Core::FileHandler::FileInfo.new( 'path.html' )
-      assert_equal( 'path.html', @plugin.output_name( root, file_struct, [:basename, ['.', :lang], '.', :ext] ) )
-      assert_equal( 'path.html', @plugin.output_name( nil, file_struct, [:basename, ['.', :lang], '.', :ext] ) )
+      assert_equal( 'path.html', @plugin.output_name( root, file_struct, [:basename, ['.', :lang], :ext] ) )
+      assert_equal( 'path.html', @plugin.output_name( nil, file_struct, [:basename, ['.', :lang], :ext] ) )
       file_struct = @manager::Core::FileHandler::FileInfo.new( 'path.en.html' )
-      assert_equal( 'path.html', @plugin.output_name( root, file_struct, [:basename, ['.', :lang], '.', :ext] ) )
+      assert_equal( 'path.html', @plugin.output_name( root, file_struct, [:basename, ['.', :lang], :ext] ) )
       file_struct = @manager::Core::FileHandler::FileInfo.new( 'path.eo.html' )
-      assert_equal( 'path.eo.html', @plugin.output_name( root, file_struct, [:basename, ['.', :lang], '.', :ext] ) )
+      assert_equal( 'path.eo.html', @plugin.output_name( root, file_struct, [:basename, ['.', :lang], :ext] ) )
 
       node = Node.new( root, 'path.html' )
       file_struct = @manager::Core::FileHandler::FileInfo.new( 'path.html' )
-      assert_equal( 'path.html', @plugin.output_name( root, file_struct, [:basename, ['.', :lang], '.', :ext] ) )
+      assert_equal( 'path.html', @plugin.output_name( root, file_struct, [:basename, ['.', :lang], :ext] ) )
       file_struct = @manager::Core::FileHandler::FileInfo.new( 'path.en.html' )
-      assert_equal( 'path.en.html', @plugin.output_name( root, file_struct, [:basename, ['.', :lang], '.', :ext] ) )
+      assert_equal( 'path.en.html', @plugin.output_name( root, file_struct, [:basename, ['.', :lang], :ext] ) )
     end
 
   end

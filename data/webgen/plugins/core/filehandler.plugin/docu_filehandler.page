@@ -157,12 +157,12 @@ have the following values:
 * symbols for inserting special values:
   * `:basename`: the basename of the file
   * `:lang`: the language
-  * `:ext`: the file extension
+  * `:ext`: the file extension including the leading dot
 
 Following are some examples of output file names for given source file
 names (assuming that `en` is the default language):
 
-*   `outputNameStyle=[:basename, [., :lang], ., :ext]` (the default)
+*   `outputNameStyle=[:basename, [., :lang], :ext]` (the default)
 
     *   `index.jpg` --> `index.jpg`
 
@@ -184,7 +184,7 @@ names (assuming that `en` is the default language):
         Since `de` is not the default language, the language part is
         always used!
 
-*   `outputNameStyle=[:basename, ., :ext, ., :lang]`
+*   `outputNameStyle=[:basename, :ext, ., :lang]`
 
     *   `index.jpg` --> `index.jpg.`
 
@@ -197,10 +197,18 @@ File Meta Information {#metainfo}
 
 Each file can have meta information, i.e. information about the file
 itself, associated with it, for example the title of the file, if it
-should appear in a menu and so on. Some file types allow this meta
-information to be specified directly in the file, e.g. page
-files. However, meta information can also be specified in the [meta
-information backing file](#metainfo-file).
+should appear in a menu and so on. This meta information can be
+specified in several ways, including:
+
+* File handlers can provide default meta information for their handled
+  files (which can be overridden using Core/FileHandler:defaultMetaInfo
+  parameter).
+
+* Some file types allow meta information to be specified directly in the
+  file, for example page files.
+
+* Meta information can also be specified in the [meta information
+  backing file](#metainfo-file).
 
 
 ### The `defaultMetaInfo` parameter ### {#metainfo-param}

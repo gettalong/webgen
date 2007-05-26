@@ -243,6 +243,8 @@ module FileHandlers
           part
         when :lang
           use_lang_part ? file_info.meta_info['lang'] : ''
+        when :ext
+          file_info.ext.empty? ? '' : '.' + file_info.ext
         when Symbol
           file_info.send( part )
         when Array
