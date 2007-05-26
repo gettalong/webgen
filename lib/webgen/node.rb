@@ -210,7 +210,7 @@ class Node
       break if path.empty?
     end
 
-    if !lang.nil? && !match.nil? && match != node.lcn
+    if !lang.nil? && !match.nil? && (node['lang'].nil? || match != node.lcn)
       node = node.node_for_lang( lang )
     end
 

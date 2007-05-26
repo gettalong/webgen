@@ -87,6 +87,10 @@ class NodeTest < Webgen::TestCase
     url: dir_z/file_zb
     parent: /
 
+-   url: file_l.page
+    cn: file_l.page
+    parent: /
+
 -   url: file_l.en.page
     cn: file_l.page
     parent: /
@@ -98,10 +102,6 @@ class NodeTest < Webgen::TestCase
     parent: /
     meta_info:
       lang: de
-
--   url: file_l.page
-    cn: file_l.page
-    parent: /
 
 -   url: file_ll.page
     parent: /
