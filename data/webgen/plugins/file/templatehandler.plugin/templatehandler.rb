@@ -18,7 +18,7 @@ module FileHandlers
         node.node_info[:src] = file_info.filename
         node.node_info[:processor] = self
         node.node_info[:page] = page
-        node.node_info[:no_output] = true
+        node.node_info[:no_output_file] = true
       end
       node
     end

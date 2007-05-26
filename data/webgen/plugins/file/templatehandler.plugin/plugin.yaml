@@ -9,10 +9,10 @@ File/TemplateHandler:
   params:
     defaultTemplate:
       default: default.template
-      desc: The default file name for the template file.
+      desc: The file name for the default template file for a directory.
   file:
     extensions: template
     meta_info:
       blocks:
         default:
-          pipeline: erb
+          pipeline: erb;blocks
