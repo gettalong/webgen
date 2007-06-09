@@ -10,6 +10,10 @@ module FileHandlers
     # to do the "right thing".
     class DelegateIndexNode < BasicObject
 
+      ["inspect", "instance_variable_defined?", "equal?", "respond_to?", "object_class",
+       "instance_variables", "eql?", "object_id", "instance_variable_get", "frozen?", "instance_of?",
+       "instance_variable_set", "kind_of?", "tainted?", "nil?", "is_a?"].each {|m| undef_method m rescue nil}
+
       def initialize( dir_node, index_node )
         @dir_node = dir_node
         @index_node = index_node
@@ -84,9 +88,8 @@ module FileHandlers
       {:src => node.node_info[:src]}
     end
 
-    # Return the page node for the directory +node+ using the specified language +lang+. If an
-    # index file is specified, then the its correct language node is returned, else +node+ is
-    # returned.
+    # Return the page node for the directory +node+ using the specified language +lang+. If an index
+    # file is specified, then its correct language node is returned, else +node+ is returned.
     def node_for_lang( node, lang )
       lang_node = node['indexFile'].node_for_lang( lang ) if node['indexFile']
       lang_node || (node.parent.nil? ? node : super)
