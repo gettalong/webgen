@@ -113,7 +113,7 @@ module Webgen
     # Returns the path to the sample website. If +filename+ is specified, it is appended to the
     # sample website path.
     def self.sample_site( filename = '' )
-      path_helper( :@base_fixture_path, File.join( 'sample_site', filename ) )
+      path_helper( :@base_fixture_path, filename )
     end
 
     # See self.sample_site

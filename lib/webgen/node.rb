@@ -197,9 +197,14 @@ class Node
     !temp.nil?
   end
 
-  # TODO(redo): Returns the node representing the given +path+. The path can be absolute (i.e. starting with a
+  # Returns the node representing the given +path+. The path can be absolute (i.e. starting with a
   # slash) or relative to the current node. If no node exists for the given path or it would lie
   # outside the node tree, +nil+ is returned.
+  #
+  # The method always tries to return the most general node for the given +path+. If the parameter
+  # +lang+ is not specified, an unlocalized version for the +path+ is returned, if it exists, or
+  # else simply the found node. If +lang+ is specified, then the localized version of the node for
+  # +path+ is returned or +nil+ if such a node does not exist.
   def resolve_node( path, lang = nil )
     url = self.to_url + path
 
@@ -215,7 +220,10 @@ class Node
       break if path.empty?
     end
 
-    if !lang.nil? && !match.nil? && (node['lang'].nil? || match != node.lcn)
+    uln = node.node_for_lang( nil ) if node && !node.parent.nil? && match != node.lcn
+    node = uln if uln
+
+    if !lang.nil? && !match.nil? && !node.parent.nil? && (node['lang'].nil? || match != node.lcn)
       node = node.node_for_lang( lang )
     end
 

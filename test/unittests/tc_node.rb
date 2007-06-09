@@ -246,6 +246,8 @@ class NodeTest < Webgen::TestCase
   end
 
   def test_resolve_node
+    @n.each_value {|n| n.node_info[:processor] = TestProcessor.new}
+
     assert_equal( @n['file_aa#'], @n['file_aa#'].resolve_node( '' ) )
     assert_equal( @n['file_aa#'], @n['file_aa#'].resolve_node( 'file_aa#doit' ) )
     assert_equal( @n['file_aa#'], @n['file_aa#'].resolve_node( '#doit' ) )
@@ -271,14 +273,20 @@ class NodeTest < Webgen::TestCase
     assert_equal( nil, @n['file_aa#'].resolve_node( 'file_aa#doit?tst' ) )
     assert_equal( nil, @n['file_aa#'].resolve_node( 'file_aa#doit_invalid' ) )
 
+    # Test when unlocalized node is after localized nodes
+    @n['/'].del_child( @n['file_l.page'] )
+    @n['/'].add_child( @n['file_l.page'] )
+    assert_equal( @n['file_l.page'], @n['/'].resolve_node( 'file_l.page' ) )
+    assert_equal( @n['file_l.en.page'], @n['/'].resolve_node( 'file_l.page', 'en' ) )
+
     # with lang parameter
-    @n.each_value {|n| n.node_info[:processor] = TestProcessor.new}
     assert_equal( @n['file_l.de.page'], @n['/'].resolve_node( 'file_l.de.page', 'en' ) )
     assert_equal( @n['file_l.en.page'], @n['/'].resolve_node( 'file_l.page', 'en' ) )
     assert_equal( @n['file_l.de.page'], @n['/'].resolve_node( 'file_l.page', 'de' ) )
     assert_equal( @n['file_l.page'], @n['/'].resolve_node( 'file_l.page', 'eo' ) )
     assert_equal( nil, @n['/'].resolve_node( 'file_ll.page', 'eo' ) )
     assert_equal( nil, @n['/'].resolve_node( 'file_l.eo.page' ) )
+    assert_equal( @n['file_ll.page'], @n['/'].resolve_node( 'file_ll.page' ) )
   end
 
   def test_processor_routing
