@@ -5,7 +5,7 @@ File/PageHandler:
   plugin:
     file: pagehandler.rb
     load_deps: File/DefaultHandler
-    run_deps: File/TemplateHandler
+    run_deps: [File/TemplateHandler, Core/FileHandler]
     class: FileHandlers::PageHandler
   file:
     extensions: page

@@ -38,7 +38,7 @@ module FileHandlers
     end
 
     # Renders the block called +block_name+ of the given +node+. If +use_templates+ is +true+, then
-    # the node is rendered in context of its templates.
+    # the node is rendered in context of its templates. Returns +nil+ if an error occurred.
     def render_node( node, block_name = 'content', use_templates = true )
       chain = []
       chain += @plugin_manager['File/TemplateHandler'].templates_for_node( node ) if use_templates
