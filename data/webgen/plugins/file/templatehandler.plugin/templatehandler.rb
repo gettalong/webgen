@@ -25,20 +25,20 @@ module FileHandlers
 
     # Returns the template chain for +node+.
     def templates_for_node( node, lang = node['lang'] )
-      if node.node_info[:template]
-        template_node = node.node_info[:template]
+      if node.node_info[:templates] && node.node_info[:templates][lang]
+        template_node = node.node_info[:templates][lang]
       elsif node['template'].kind_of?( String )
         template_node = node.resolve_node( node['template'], lang )
         if template_node.nil?
           log(:warn) { "Specified template '#{node['template']}' for <#{node.node_info[:src]}> not found, using default template!" }
           template_node = get_default_template( node.parent, param( 'defaultTemplate' ), lang )
         end
-        node.node_info[:template] = template_node
+        (node.node_info[:templates] ||= {})[lang] = template_node
       elsif node.meta_info.has_key?( 'template' ) && node['template'].nil?
-        template_node = node.node_info[:template] = nil
+        template_node = (node.node_info[:templates] ||= {})[lang] = nil
       else
         log(:info) { "Using default template for <#{node.node_info[:src]}>" }
-        template_node = node.node_info[:template] = get_default_template( node.parent, param( 'defaultTemplate' ), lang )
+        template_node = (node.node_info[:templates] ||= {})[lang] = get_default_template( node.parent, param( 'defaultTemplate' ), lang )
       end
 
       if template_node.nil?

@@ -25,7 +25,7 @@ class DirNodeTest < Webgen::PluginTestCase
     dir.node_info.delete(:indexFile)
 
     index = Node.new( dir, 'index.html', 'index.html' )
-
+    index.node_info[:processor] = @manager['File/DefaultHandler']
     dir['indexFile'] = 'index.html'
     assert_equal( dir['indexFile'], index  ) # order changed because sothat DelegateIndexNode#== is invoked
     dir.node_info.delete(:indexFile)
@@ -90,27 +90,25 @@ class DirectoryHandlerTest < Webgen::PluginTestCase
   def test_node_for_lang
     # directory with index file
     root = @manager['Core/FileHandler'].instance_eval { build_tree }
-    assert( root.node_for_lang( Webgen::LanguageManager.language_for_code( 'en' ) ) == root.resolve_node( 'index.en.html' ) )
-    assert( root.node_for_lang( Webgen::LanguageManager.language_for_code( 'de' ) ) == root.resolve_node( 'index.de.html' ) )
+    assert( root.node_for_lang( 'en' ) == root.resolve_node( 'index.en.html' ) )
+    assert( root.node_for_lang( 'de' ) == root.resolve_node( 'index.de.html' ) )
 
     # directory without index file
     dir1 = root.resolve_node( 'dir' )
-    assert( dir1.node_for_lang( Webgen::LanguageManager.language_for_code( 'de' ) ) == dir1 )
+    assert( dir1.node_for_lang( 'de' ) == dir1 )
   end
 
   def test_link_from
     root = @manager['Core/FileHandler'].instance_eval { build_tree }
-    de = Webgen::LanguageManager.language_for_code( 'de' )
-    en = Webgen::LanguageManager.language_for_code( 'en' )
 
     root['title'] = 'Root'
-    root.node_for_lang( en )['directoryName'] = 'RootEN'
+    root.node_for_lang( 'en' )['directoryName'] = 'RootEN'
 
     file = root.resolve_node( 'dir/file.html' )
     assert_equal( '<a href="../">Root</a>', root.link_from( file ) )
-    assert_equal( '<a href="../index.html">RootEN</a>', root.node_for_lang( en ).link_from( file ) )
+    assert_equal( '<a href="../index.html">RootEN</a>', root.node_for_lang( 'en' ).link_from( file ) )
     assert_equal( '<span>TestLink</span>',
-                  root.node_for_lang( de ).
+                  root.node_for_lang( 'de' ).
                   link_from( root.resolve_node( 'index.de.html' ), {:link_text => 'TestLink' } ) )
 
     dir = root.resolve_node( 'dir' )
