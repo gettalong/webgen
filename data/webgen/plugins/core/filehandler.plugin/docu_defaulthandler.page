@@ -9,7 +9,7 @@ as the functionality to specify path patterns.
 
 Common information valid for all file handler plugins can be found here;
 for information on how the files in the source directory are generally
-handled have a look at the Core/FileHandle#filehandling documentation!
+handled have a look at the Core/FileHandler#filehandling documentation!
 
 
 Path Patterns {#pathpattern}

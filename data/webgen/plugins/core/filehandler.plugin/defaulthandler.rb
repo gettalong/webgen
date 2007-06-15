@@ -15,6 +15,8 @@ module FileHandlers
   # Core::FileHandler plugin calls the #write_info method to retrieve the information about how to
   # write out the node.
   #
+  # Each file handler plugin has to reside under the <tt>File/</tt> namespace!
+  #
   # This base class provides some useful default implementations of methods that are used throughout
   # webgen, namely
   # * #link_from

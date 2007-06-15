@@ -18,7 +18,7 @@ Core/FileHandler:
 
 File/DefaultHandler:
   about:
-    summary: Base class for file handlers.x
+    summary: Base class for file handlers.
     author: Thomas Leitner <t_leitner@gmx.at>
   plugin:
     file: defaulthandler.rb
