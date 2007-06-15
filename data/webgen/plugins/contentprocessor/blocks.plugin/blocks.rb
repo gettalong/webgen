@@ -2,9 +2,11 @@ module ContentProcessor
 
   class Blocks
 
+    BLOCK_RE = /<webgen:block\s+name=('|")(\w+)\1\s*\/>/
+
     def process( content, context, options )
       chain = context[:chain]
-      content.gsub( /<webgen:block\s+name=('|")(\w+)\1\s*\/>/ ) do |match|
+      content.gsub( BLOCK_RE ) do |match|
         block_node = (chain.length > 1 ? chain[1] : chain[0])
         block_name = $2
         new_chain = (chain[1..-1].empty? ? chain : chain[1..-1])
