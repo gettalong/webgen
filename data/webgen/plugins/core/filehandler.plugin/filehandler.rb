@@ -346,8 +346,7 @@ module Core
       files_for_handlers = []
       @plugin_manager.plugin_infos.keys.each do |name|
         files_for_plugin = Set.new
-        if name =~ /^File\//
-          plugin = @plugin_manager[name]
+        if name =~ /^File\// && (plugin = @plugin_manager[name])
           plugin.path_patterns.each do |rank, pattern|
             files = files_for_pattern( pattern ) - files_for_plugin
             files_for_handlers << [rank, plugin, files ] unless files.empty?

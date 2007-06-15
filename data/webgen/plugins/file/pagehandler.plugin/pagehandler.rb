@@ -47,7 +47,7 @@ module FileHandlers
       if chain.first.node_info[:page].blocks.has_key?( block_name )
         processors = {}
         @plugin_manager.plugin_infos[/^ContentProcessor\//].each do |k,v|
-          processors[v['processes']] = @plugin_manager[k]
+          processors[v['processes']] = @plugin_manager[k] unless @plugin_manager[k].nil?
         end
         result = chain.first.node_info[:page].blocks[block_name].render( :chain => chain, :processors => processors )
         dispatch_msg( :after_node_rendered, result, node )
