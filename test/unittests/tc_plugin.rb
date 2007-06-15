@@ -100,10 +100,10 @@ class PluginManagerTest < Webgen::TestCase
 
     output = StringIO.new( '' )
     @manager.logger = Webgen::Logger.new( output )
-    @manager.logger.level = Logger::WARN
+    @manager.logger.level = Logger::INFO
     assert_nil( @manager['InvalidFilePlugin'] )
     output.rewind
-    assert_match( /Error while initializing InvalidFilePlugin/, output.read )
+    assert_match( /Could not initialize InvalidFilePlugin/, output.read )
   end
 
   def test_param

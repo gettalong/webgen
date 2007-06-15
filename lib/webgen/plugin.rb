@@ -353,7 +353,7 @@ module Webgen
       init_plugins( [plugin_name] ) if !@plugins.has_key?( plugin_name )
       @plugins[plugin_name]
     rescue
-      logger.info( 'PluginManager#[]' ) { "Could not initialize #{plugin_name} - not using it: " + $!.message }
+      logger.info( 'PluginManager#[]' ) { "Could not initialize #{plugin_name} - not using it: " + $!.message } if logger
       @plugins[plugin_name] = nil
     end
 
