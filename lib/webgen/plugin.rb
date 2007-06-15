@@ -205,7 +205,10 @@ module Webgen
   # The top level keys are just file globs useable by <tt>Dir.glob</tt>. All files under the plugin
   # bundle directory matching such a glob are considered to be resources. The only mandatory key for
   # such a glob is +name+ which specifies the name of the resource. This name can later be used to
-  # access it. The PluginManager performs a simple variable expansion on all values. The following
+  # access it. If it should be possible to write a resource to the output directory of a website, it
+  # also needs to have a unique value for the key +path+.
+  #
+  # The PluginManager performs a simple variable expansion on all values. The following
   # variables can be used (for the examples consider the resource
   # <tt>resources/images/emoticons/smile.png</tt>):
   #
@@ -343,10 +346,15 @@ module Webgen
     end
 
     # Returns the plugin +plugin_name+. The plugin is automatically initialized if it has not been
-    # initialized yet!
+    # initialized yet. If the plugin could not be initialized due to an error, +nil+ is returned and
+    # logged using an info message (level info because some plugins iterate over all plugins of a
+    # specific kind and only use those which can be succesfully initialized).
     def []( plugin_name )
       init_plugins( [plugin_name] ) if !@plugins.has_key?( plugin_name )
       @plugins[plugin_name]
+    rescue
+      logger.info( 'PluginManager#[]' ) { "Could not initialize #{plugin_name} - not using it: " + $!.message }
+      @plugins[plugin_name] = nil
     end
 
     # Returns the parameter +name+ for +plugin+ by using the configurators. Raises an error if no
@@ -386,7 +394,9 @@ module Webgen
       info = YAML::load( File.read( file ) )
       raise "#{file} is invalid" unless info.kind_of?( Hash )
       info.each do |name, infos|
-        raise "Plugin already defined" if @plugin_infos.has_key?( name )
+        if logger && @plugin_infos.has_key?( name )
+          logger.info('PluginManager#load_plugin_infos') { "Plugin #{name} gets re-defined" }
+        end
         @plugin_infos[name] = (infos || {})
 
         @plugin_infos[name]['plugin'] ||= {}
@@ -411,7 +421,9 @@ module Webgen
       resources.each do |res, infos|
         Dir[File.join( plugin_dir, res )].each do |res_file|
           res_infos = get_res_infos( res_file, infos.merge('src' => res_file ) )
-          raise "There is already a resource called #{res_infos['name']}" if @resources.has_key?( res_infos['name'] )
+          if logger && @resources.has_key?( res_infos['name'] )
+            logger.info('PluginManager#load_resources') { "Resoure #{res_infos['name']} gets re-defined" }
+          end
           @resources[res_infos['name']] = res_infos
           #TODO: check for duplicate output path
         end

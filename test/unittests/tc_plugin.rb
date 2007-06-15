@@ -97,6 +97,13 @@ class PluginManagerTest < Webgen::TestCase
     @manager.load_all_plugin_bundles( fixture_path )
     assert_not_nil( @manager['Test2Plugin'] )
     assert( @manager.plugins.include?( 'TestPlugin' ) )
+
+    output = StringIO.new( '' )
+    @manager.logger = Webgen::Logger.new( output )
+    @manager.logger.level = Logger::WARN
+    assert_nil( @manager['InvalidFilePlugin'] )
+    output.rewind
+    assert_match( /Error while initializing InvalidFilePlugin/, output.read )
   end
 
   def test_param
