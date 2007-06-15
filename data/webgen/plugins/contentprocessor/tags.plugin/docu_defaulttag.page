@@ -1,0 +1,9 @@
+--- documentation, pipeline:maruku
+Description
+-----------
+
+The DefaultTag can/should be used as the base plugin for tag plugins. It
+provides a default implementation of all the functionality needed by
+ContentProcessor/Tags and therefore provides a quicker way for creating
+a tag plugin.
+

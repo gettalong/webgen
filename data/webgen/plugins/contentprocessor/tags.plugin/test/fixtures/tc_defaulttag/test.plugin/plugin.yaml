@@ -1,0 +1,13 @@
+Tag/TestTag:
+  plugin:
+    load_dep: Tag/DefaultTag
+  tags: :default
+  params:
+    param1:
+      default: param1
+    param2:
+      default: ~
+      mandatory: true
+    param3:
+      default: param3
+      mandatory: default
