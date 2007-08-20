@@ -33,8 +33,8 @@ class PageHandlerTest < Webgen::PluginTestCase
     root = @manager['Core/FileHandler'].instance_eval { build_tree }
     file = root.resolve_node( 'file.de.html' )
     write_info = file.write_info
-    assert_equal( "Template\n"+
-                  "<p>Content true</p>\n"+
+    assert_equal( "Template\n\n"+
+                  "<p>Content true</p>\n\n"+
                   "Template", write_info[:data] )
   end
 
@@ -42,11 +42,11 @@ class PageHandlerTest < Webgen::PluginTestCase
     root = @manager['Core/FileHandler'].instance_eval { build_tree }
     file = root.resolve_node( 'file.de.html' )
 
-    assert_equal( "Template\n"+
-                  "<p>Content true</p>\n"+
+    assert_equal( "Template\n\n"+
+                  "<p>Content true</p>\n\n"+
                   "Template", @plugin.render_node( file ) )
     assert_equal( nil, @plugin.render_node( file, 'other' ) )
-    assert_equal( "<p>Content true</p>", @plugin.render_node( file, 'content', false ) )
+    assert_equal( "\n<p>Content true</p>\n", @plugin.render_node( file, 'content', false ) )
   end
 
 end

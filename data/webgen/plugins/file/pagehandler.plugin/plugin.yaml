@@ -12,4 +12,4 @@ File/PageHandler:
     meta_info:
       blocks:
         default:
-          pipeline: erb;textile;blocks
+          pipeline: erb;tags;maruku;blocks

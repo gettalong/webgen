@@ -15,4 +15,4 @@ File/TemplateHandler:
     meta_info:
       blocks:
         default:
-          pipeline: erb;blocks
+          pipeline: erb;tags;blocks
