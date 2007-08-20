@@ -6,7 +6,7 @@ module FileHandlers
       begin
         page = WebPageFormat.create_page_from_file( file_info.filename, file_info.meta_info )
       rescue WebPageFormatError => e
-        log(:error) { "Invalid page file <#{file_info.filename}>: #{e.message}" }
+        log(:error) { "Invalid template file <#{file_info.filename}>: #{e.message}" }
         return nil
       end
       file_info.meta_info = page.meta_info
