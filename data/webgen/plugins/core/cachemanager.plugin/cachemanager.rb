@@ -30,11 +30,17 @@ module Core
       end
     end
 
-    # Returns the value for +keys+ from the old webgen run and sets the value of +keys+ to +cur_val+
-    # for the current webgen run.
-    def get( keys, cur_val )
-      set( keys, cur_val )
-      @data[keys.join('/')]
+    # Returns the value for +keys+ from the old webgen run and optonally sets the value of +keys+ to
+    # +cur_val+ for the current webgen run. If +cur_val+ is not specified, no value is currently set
+    # for +keys+ and a value from the old webgen run exists, then this value is used for +cur_val+.
+    def get( keys, *cur_val )
+      key = keys.join('/')
+      if cur_val.empty?
+        set( keys, @data[key] ) if @data.has_key?( key) && !@new_data.has_key?( key )
+      else
+        set( keys, cur_val.first )
+      end
+      @data[key]
     end
 
     # Sets the value of +keys+ to +value+.
