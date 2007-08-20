@@ -1,0 +1,7 @@
+ContentProcessor/Maruku:
+  about:
+    summary: Converts text in Markdown format (incl. extra syntax) to HTML using Maruku
+    author: Thomas Leitner <t_leitner@gmx.at>
+  plugin:
+    file: maruku.rb
+  processes: maruku
