@@ -1,0 +1,32 @@
+--- documentation, pipeline:maruku
+Description
+-----------
+
+The feed handler uses input files in WebPage Format which provide the
+needed information for generating an ATOM or RSS feed.
+
+Following is an overview of all the meta information keys which are used
+by the plugin and the default templates:
+
+Mandatory keys:
+
+* baseURL: The base URL of the website.
+* author:  The author of the feed.
+* description: A short description of the feed.
+* pages: A pattern (or an array of patterns) which describes the pages
+         that should be included in the feed
+
+Optional keys:
+
+* title: The title of the feed.
+* link: The LCN of a node that represents the feed.
+* image: The LCN of an image that represents the feed.
+* rss: An RSS feed is created if this is set to `true`.
+* atom: An ATOM feed is created if this is set to `true`.
+* rss_version: The version of RSS that should be used.
+* numberOfItems: The number of items that should appear in the feed.
+
+The feed handler creates the feeds using templates. If these included
+templates don't fit your needs, you can override them on a feed by feed
+basis by specifying blocks called `rss_template` and/or `atom_template`
+in the feed file.
