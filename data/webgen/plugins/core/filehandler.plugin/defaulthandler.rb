@@ -200,12 +200,26 @@ module FileHandlers
     def link_from( node, ref_node, attr = {} )
       attr = node['linkAttrs'].merge( attr ) if node['linkAttrs'].kind_of?( Hash )
       link_text = attr[:link_text] || node['title']
+      context = attr[:context]
       attr.delete_if {|k,v| k.kind_of?( Symbol )}
 
       use_link = ( node != ref_node || param( 'linkToCurrentPage' ) )
       attr['href'] = ref_node.route_to( node ) if use_link
       attrs = attr.collect {|name,value| "#{name.to_s}=\"#{value}\"" }.sort.unshift( '' ).join( ' ' )
-      ( use_link ? "<a#{attrs}>#{link_text}</a>" : "<span#{attrs}>#{link_text}</span>" )
+      if !node['link_callback'].nil?
+        result = begin
+                   instance_eval(node['link_callback'])
+                 rescue
+                   log(:error) { "Error while evaluating link callback from node <#{node.node_info[:src]}>: #{$!.message}" }
+                   nil
+                 end
+      end
+      if result.nil?
+        ( use_link ? "<a#{attrs}>#{link_text}</a>" : "<span#{attrs}>#{link_text}</span>" )
+      else
+        result
+      end
+
     end
 
     # Checks if there is already a node for the given +path+ or +lcn+ (localized canonical name)
