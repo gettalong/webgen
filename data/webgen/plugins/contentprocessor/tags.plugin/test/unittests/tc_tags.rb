@@ -48,9 +48,11 @@ class TagsTest < Webgen::PluginTestCase
   end
 
   def test_registered_tags
-    assert_equal( {}, @plugin.instance_eval { registered_tags } )
+    assert( @plugin.instance_eval { registered_tags }.kind_of?(Hash) )
     @manager.load_plugin_bundle( fixture_path('test.plugin') )
-    assert_equal( {:default=>@manager['Tag/TestTag']}, @plugin.instance_eval { registered_tags } )
+    tags = @plugin.instance_eval { registered_tags }
+    assert( tags.has_key?( :default ) )
+    assert_equal( @manager['Tag/TestTag'], tags[:default] )
   end
 
   #######
