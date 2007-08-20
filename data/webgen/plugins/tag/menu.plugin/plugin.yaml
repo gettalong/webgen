@@ -1,0 +1,47 @@
+Tag/MenuBaseTag:
+  about:
+    summary: Base plugin for menu tag plugins.
+    author: Thomas Leitner <t_leitner@gmx.at>
+  plugin:
+    file: menu.rb
+    load_deps: Tag/DefaultTag
+  params:
+    divClass:
+      default: webgen-menu
+      desc: Additional CSS class for the div-tag surrounding the menu.
+    submenuClass:
+      default: webgen-menu-submenu
+      desc: Specifies the class of a submenu.
+    submenuInHierarchyClass:
+      default: webgen-menu-submenu-inhierarchy
+      desc: Specifies the class of the submenus which are in the hierarchy of the selected menu item.
+    selectedMenuitemClass:
+      default: webgen-menu-item-selected
+      desc: Specifies the class of the selected menu item.
+
+
+Tag/VerticalMenu:
+  about:
+    summary: Builds a customizable vertical menu.
+    author: Thomas Leitner <t_leitner@gmx.at>
+  plugin:
+    file: vertical.rb
+    load_deps: Tag/MenuBaseTag
+  params:
+    startLevel:
+      default: 1
+      desc: The level at which the menu starts. For example, if set to 2 the top most
+            menu items are not shown.
+    minLevels:
+      default: 1
+      desc: Specifies how many levels should be always be shown, ie. how deep the menu is.
+            For example, if minLevels = 3, then three levels are always shown at least.
+    maxLevels:
+      default: 3
+      desc: Specifies the maximum number of levels that should be shown.
+            For example, if maxLevels = 1, then only one level is shown.
+    showCurrentSubtreeOnly:
+      default: true
+      desc: True if only the current subtree should be shown in the menu.
+            If set to false, each subtree will be shown.
+  tags: verticalMenu
