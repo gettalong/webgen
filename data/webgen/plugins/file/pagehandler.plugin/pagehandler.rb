@@ -45,11 +45,8 @@ module FileHandlers
       chain << node
 
       if chain.first.node_info[:page].blocks.has_key?( block_name )
-        processors = {}
-        @plugin_manager.plugin_infos[/^ContentProcessor\//].each do |k,v|
-          processors[v['processes']] = @plugin_manager[k] unless @plugin_manager[k].nil?
-        end
-        result, used_nodes = chain.first.node_info[:page].blocks[block_name].render( :chain => chain, :processors => processors )
+        result, used_nodes = chain.first.node_info[:page].blocks[block_name].
+          render( :chain => chain, :processors => @plugin_manager['Support/Misc'].content_processors )
         dispatch_msg( :after_node_rendered, result, node )
         (used_nodes[:nodes] ||= []) << chain.first
         cache_used_nodes( node, block_name, use_templates, used_nodes )
@@ -72,8 +69,7 @@ module FileHandlers
     #######
 
     def cache_used_nodes( node, block_name, use_templates, used_nodes )
-      used_nodes[:nodes] = (used_nodes[:nodes] || []).compact.uniq.select {|n| n != node}.collect {|n| n.absolute_lcn}
-      used_nodes[:node_infos] = (used_nodes[:node_infos] || []).compact.uniq.collect! {|n| n.absolute_lcn}
+      @plugin_manager['Support/Misc'].normalize_used_nodes( used_nodes, node )
       @plugin_manager['Core/CacheManager'].set( [:nodes, node.absolute_path, :render_info, block_name, use_templates],
                                                 used_nodes )
     end
@@ -90,15 +86,8 @@ module FileHandlers
         node.node_info[:processor] = self
         node.node_info[:page] = page
         node.node_info[:change_proc] = proc do
-          fh = @plugin_manager['Core/FileHandler']
-          cm = @plugin_manager['Core/CacheManager']
-          used_nodes = cm.get( [:nodes, node.absolute_path, :render_info, 'content', true] )
-          if used_nodes
-            used_nodes[:nodes].any? {|p| n = cm.node_for_path( node, p ); n.nil? || fh.node_changed?( n ) } ||
-              used_nodes[:node_infos].any? {|p| n = cm.node_for_path( node, p ); n.nil? || fh.meta_info_changed?( n ) }
-          else
-            true
-          end
+          used_nodes = @plugin_manager['Core/CacheManager'].get( [:nodes, node.absolute_path, :render_info, 'content', true] )
+          @plugin_manager['Support/Misc'].used_nodes_changed?( used_nodes, node )
         end
       end
       node

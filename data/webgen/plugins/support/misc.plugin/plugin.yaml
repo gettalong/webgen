@@ -1,0 +1,6 @@
+Support/Misc:
+  about:
+    summary: Provides miscellaneous methods
+    author: Thomas Leitner <t_leitner@gmx.at>
+  plugin:
+    file: misc.rb

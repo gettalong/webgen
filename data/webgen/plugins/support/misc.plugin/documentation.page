@@ -1,0 +1,7 @@
+--- documentation, pipeline:maruku
+Description
+-----------
+
+The Support/Misc plugin provides miscellaneous methods for plugins that
+fit nowhere else. Therefore it is only interesting for webgen
+developers, not webgen users.
