@@ -123,6 +123,11 @@ module Core
     # the given +handler+. If a block is given, then the block is used to create the node which is
     # useful if you want to use a custom node creation method.
     #
+    # Returns one of the following:
+    # * +nil+ if no node has been created by the +handler+
+    # * a single node
+    # * an array of nodes
+    #
     # Attention: This method has to be used by any plugin that needs to create a node!
     def create_node( file, parent_node, handler ) # :yields: file_struct, parent_node, handler, meta_info
       pathname, filename = File.split( file )
@@ -134,15 +139,19 @@ module Core
 
       dispatch_msg( :before_node_created, file_info, parent_node, handler )
       if block_given?
-        node = yield( parent_node, file_info, handler )
+        nodes = yield( parent_node, file_info, handler )
       else
-        node = handler.create_node( parent_node, file_info )
+        nodes = handler.create_node( parent_node, file_info )
       end
-      check_node( node ) unless node.nil?
 
-      dispatch_msg( :after_node_created, node ) unless node.nil?
+      unless nodes.nil?
+        [nodes].flatten.each do |node|
+          check_node( node )
+          dispatch_msg( :after_node_created, node ) unless node.nil?
+        end
+      end
 
-      node
+      nodes
     end
 
     # Checks if the file +src_file+ has been modified since the last webgen run. If +out_file+ is
