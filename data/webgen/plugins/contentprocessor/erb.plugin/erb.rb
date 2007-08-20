@@ -9,9 +9,11 @@ module ContentProcessor
       chain = context[:chain]
       ref_node = chain.first
       node = chain.last
-      ERB.new( content ).result( binding )
-    rescue Exception => e
-      raise "Processing with ERB failed: #{e.message}"
+      used_nodes = {:nodes => [], :node_infos => []}
+
+      erb = ERB.new( content )
+      erb.filename = ref_node.node_info[:src] || ref_node.full_path
+      [erb.result( binding ), used_nodes]
     end
 
   end
