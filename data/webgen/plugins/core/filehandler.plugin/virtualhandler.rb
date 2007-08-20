@@ -13,13 +13,12 @@ module FileHandlers
       temp_node = Node.new( parent, filename )
       resolved_node = temp_node.resolve_node( url )
       if resolved_node
-        node = Node.new( parent, temp_node.route_to( resolved_node ), filename )
+        node = Node.new( parent, temp_node.route_to( resolved_node ), filename, file_info.meta_info )
       else
-        node = Node.new( parent, url, filename )
+        node = Node.new( parent, url, filename, file_info.meta_info )
       end
       parent.del_child( temp_node )
 
-      node.meta_info = node.meta_info.merge( file_info.meta_info )
       node.node_info[:processor] = self
       node.node_info[:no_output_file] = true
       node

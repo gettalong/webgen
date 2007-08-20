@@ -33,7 +33,7 @@ class Node
   # Initializes a new Node instance.
   #
   # +parent+::
-  #    if this parameter is +nil+, then the new node acts as root. Otherwise, +parent+ has to
+  #    If this parameter is +nil+, then the new node acts as root. Otherwise, +parent+ has to
   #    be a valid node instance.
   # +path+::
   #    The path for this node. If this node is a directory, the path must have a trailing
@@ -47,12 +47,14 @@ class Node
   #
   #    Note: a compound path like 'dir/file' is invalid if the parent node already has a child
   #    with path 'dir/'!!! (solution: just create a node with path 'file' and node 'dir/' as parent!)
-  def initialize( parent, path, canonical_name = path )
+  # +meta_info+::
+  #    A hash with meta information for the new node.
+  def initialize( parent, path, canonical_name = path, meta_info = {} )
     @parent = nil
     @path = path
     @cn = canonical_name.chomp('/')
     @node_info = Hash.new
-    @meta_info = Hash.new
+    @meta_info = meta_info
     self.parent = parent
   end
 

@@ -23,6 +23,7 @@ module FileHandlers
   # * #node_for_lang.
   #
   # It also provides utility methods for file handler plugins:
+  # * #output_name
   # * #node_exist?
   #
   # = Nodes created for files
@@ -36,6 +37,12 @@ module FileHandlers
   #                                   to the node processor.
   # :<tt>node_info[:src]</tt>:: Should be set to the source file from which the node is created if
   #                             such a source file exists.
+  # :<tt>node_info[:no_output_file]</tt>:: Has to be set to +true+ on nodes that are used during a
+  #                                        webgen run but do not produce an output file.
+  # :<tt>node_info[:change_proc]</tt>:: Can be set to a proc object which is called when the
+  #                                     Core/FileHandler plugin checks if the node has changed. If
+  #                                     the proc object returns +true+, the Core/FileHandler knows
+  #                                     that the node has changed.
   #
   # Additional information that is used only for processing purposes should be stored in the
   # #node_info hash of a node as the #meta_info hash is reserved for real node meta information.
@@ -98,13 +105,12 @@ module FileHandlers
   #       param( 'paths' ).each {|path| register_path_pattern( path ) }
   #     end
   #
-  #     def create_node( file_struct, parent, meta_info )
-  #       name = File.basename( file_struct.filename )
+  #     def create_node( parent, file_info )
+  #       name = output_name( parent, file_info )
   #
-  #       unless node = node_exist?( parent, name )
-  #         node = Node.new( parent, name, file_struct.cn )
-  #         node.meta_info.update( meta_info )
-  #         node.node_info[:src] = file_struct.filename
+  #       unless node = node_exist?( parent, name, file_info.lcn )
+  #         node = Node.new( parent, name, file_info.cn, file_info.meta_info )
+  #         node.node_info[:src] = file_info.filename
   #         node.node_info[:processor] = self
   #       end
   #       node
