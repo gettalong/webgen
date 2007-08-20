@@ -303,6 +303,22 @@ class NodeTest < Webgen::TestCase
     assert_equal( @n['file_ll.page'], @n['/'].resolve_node( 'file_ll.page' ) )
   end
 
+  def test_nodes_for_patterns
+    @n.each_value do |n|
+      n.node_info[:processor] = TestProcessor.new
+      def n.<=>(other)
+        self.lcn <=> other.lcn
+      end
+    end
+    assert_equal( [@n['/']], @n['/'].nodes_for_pattern('') )
+    assert_equal( [@n['file_ah'], @n['file_ah#'], @n['file_aa'], @n['file_aa#'],
+                   @n['file_aa#2'], @n['file_ab']].sort, @n['/'].nodes_for_pattern('**/file_a*').sort )
+    assert_equal( [@n['file_aa'], @n['file_aa#'], @n['file_aa#2'],
+                  @n['file_ab']].sort, @n['dir_a/'].nodes_for_pattern('file_a*').sort )
+    assert_equal( [@n['file_l.page'], @n['file_l.de.page'], @n['file_l.en.page'],
+                   @n['file_ll.page']].sort, @n['/'].nodes_for_pattern('file_*.page').sort )
+  end
+
   def test_processor_routing
     assert_raise( NoMethodError ) { @n['/'].return( 'hello' ) }
     @n['/'].node_info[:processor] = TestProcessor.new

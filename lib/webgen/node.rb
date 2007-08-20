@@ -254,6 +254,20 @@ class Node
     node
   end
 
+  # Returns all nodes in the subtree of the current node whose absolute localized canonical name
+  # matches the given +pattern+ (see File.fnmatch for information about the usable metacharacters).
+  def nodes_for_pattern( pattern )
+
+    def find_nodes( node, pattern )
+      nodes = []
+      nodes << node if File.fnmatch( pattern, node.absolute_lcn, File::FNM_CASEFOLD )
+      node.each {|n| nodes += find_nodes( n, pattern )}
+      nodes
+    end
+
+    find_nodes( self, absolute_lcn + pattern )
+  end
+
   # Returns the full URL (including dummy scheme and host) for use with URI classes. The returned
   # URL does not include the real path of the root node but a slash instead. So if the full path of
   # the node is 'a/b/c/d/file1' and the root node path is 'a/b/c', the URL path would be '/d/file1'.
