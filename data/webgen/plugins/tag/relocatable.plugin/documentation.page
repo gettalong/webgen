@@ -1,0 +1,46 @@
+--- documentation, pipeline:maruku
+Description
+-----------
+
+This tag ensures that the relative path to the specified path is always
+correct.
+
+It is used to change the directory part of the supplied path name and is
+most often used in template files. A relocatable tag looks like this:
+`\{relocatable: default.css}`. If this was put into a template and the
+template was used by a file in a subdirectory, then the `relocatable`
+tag would put `../default.css` into the output file; thus ensuring that
+the relative path to file is valid.
+
+> You can only use the `relocatable` tag with files/paths that are
+> handled by webgen. This should be no problem since all files in the
+> source directory are normally handled by webgen.
+{.exclamation}
+
+However, if the specified path is an absolute URL, it will just return it.
+
+Additionally, if you add an URL fragment to the path, it will also be
+checked if it exists. This can be turned off by setting the parameter
+Tag/Relocatable:resolveFragment to `false`.
+
+
+Examples
+--------
+
+<table class="examples">
+<tr>
+  <th>Usage</th><th>Output</th>
+</tr>
+<tr>
+  <td>\{relocatable: /default.css}</td>
+  <td>{relocatable: /default.css}</td>
+</tr>
+<tr>
+  <td>\{relocatable: ../core/configuration.page}</td>
+  <td>{relocatable: ../core/configuration.page}</td>
+</tr>
+<tr>
+  <td>\{relocatable: ../core}</td>
+  <td>{relocatable: ../core}</td>
+</tr>
+</table>

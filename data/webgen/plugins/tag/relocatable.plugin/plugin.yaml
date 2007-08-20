@@ -1,0 +1,15 @@
+Tag/Relocatable:
+  about:
+    summary: Prepends the correct relative path to the specified path if necessary
+    author: Thomas Leitner <t_leitner@gmx.at>
+  plugin:
+    file: relocatable.rb
+    load_deps: Tag/DefaultTag
+  params:
+    path:
+      desc: The path which should be made relocatable
+      mandatory: default
+    resolveFragment:
+      default: true
+      desc: Specifies if the fragment part (#something) in the path should also be resolved
+  tags: relocatable
