@@ -14,7 +14,7 @@ There are many different file handler plugins available, ranging from
 very simple ones, like copying a file verbatim from the source to the
 output directory, to complicated ones, like creating HTML files from
 page files or creating whole image galleries from a simple gallery
-defintion file!
+definition file!
 
 The following sections give an overview of how the [file
 handling](#filehandling) is done by webgen and how to specify and use
