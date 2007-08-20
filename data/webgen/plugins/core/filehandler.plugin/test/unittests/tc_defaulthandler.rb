@@ -91,8 +91,7 @@ module FileHandlerTests
 
     def test_node_exist
       root = Node.new( nil, 'root/')
-      node = Node.new( root, 'path.html', 'path.page' )
-      node.meta_info['lang'] = 'de'
+      node = Node.new( root, 'path.html', 'path.page', {'lang' => 'de'} )
       dir = Node.new( root, 'dir/' )
       assert_equal( node, @plugin.node_exist?( root, 'path.html', 'path.page' ) )
       assert_equal( node, @plugin.node_exist?( root, 'path.html/', 'path.page' ) )
