@@ -260,7 +260,7 @@ class Node
 
     def find_nodes( node, pattern )
       nodes = []
-      nodes << node if File.fnmatch( pattern, node.absolute_lcn, File::FNM_CASEFOLD )
+      nodes << node if File.fnmatch( pattern, node.absolute_lcn, File::FNM_CASEFOLD | File::FNM_PATHNAME )
       node.each {|n| nodes += find_nodes( n, pattern )}
       nodes
     end

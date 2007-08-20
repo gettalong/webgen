@@ -311,7 +311,7 @@ class NodeTest < Webgen::TestCase
       end
     end
     assert_equal( [@n['/']], @n['/'].nodes_for_pattern('') )
-    assert_equal( [@n['file_ah'], @n['file_ah#'], @n['file_aa'], @n['file_aa#'],
+    assert_equal( [@n['file_a'], @n['file_ah'], @n['file_ah#'], @n['file_aa'], @n['file_aa#'],
                    @n['file_aa#2'], @n['file_ab']].sort, @n['/'].nodes_for_pattern('**/file_a*').sort )
     assert_equal( [@n['file_aa'], @n['file_aa#'], @n['file_aa#2'],
                   @n['file_ab']].sort, @n['dir_a/'].nodes_for_pattern('file_a*').sort )
