@@ -14,6 +14,7 @@ module ContentProcessor
         block_name = $2
 
         if block_node.node_info[:page].blocks.has_key?( block_name )
+          log(:debug) { "Inserting rendered node <#{block_node.node_info[:src]}> into <#{chain.first.node_info[:src]}>" }
           (used_nodes[:nodes] ||= []) << block_node
           result, tmp_nodes = block_node.node_info[:page].blocks[block_name].render( context.merge( :chain => new_chain ) )
           tmp_nodes.each {|k,v| used_nodes[k] = (used_nodes[k] || []) + v}
