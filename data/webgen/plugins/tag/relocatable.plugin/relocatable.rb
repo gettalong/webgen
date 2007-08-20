@@ -40,7 +40,7 @@ module Tag
     end
 
     def resolve_path( uri, ref_node, node )
-      dest_node = ref_node.resolve_node( uri.path, node['lang'] )
+      dest_node = @plugin_manager['Core/CacheManager'].node_for_path( ref_node, uri.path, node['lang'] )
       if !dest_node.nil? && !uri.fragment.nil? && param( 'resolveFragment' )
         dest_node = dest_node.resolve_node( '#' + uri.fragment )
       end
