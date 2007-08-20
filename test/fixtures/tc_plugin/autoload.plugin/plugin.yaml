@@ -1,0 +1,4 @@
+AutoloadPlugin:
+  plugin:
+    load_deps: TestPlugin
+    autoload: true

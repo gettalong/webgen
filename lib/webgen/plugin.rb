@@ -176,6 +176,7 @@ module Webgen
   # +run_deps+:: An array of runtime dependencies of the plugin. Default value: <tt>[]</tt>
   # +docufile+:: The name of a file in WebPage Format containing documentation for the plugin.
   #              Default value: <tt>documentation.page</tt>.
+  # +autoload+:: If set to +true+, the plugin is loaded as soon as all dependencies are met.
   #
   # The +params+ section is used to define parameters for the plugin. If no default value is
   # specified, +nil+ becomes the default value.
@@ -410,6 +411,7 @@ module Webgen
 
         @plugin_infos[name]['params'] ||= {}
       end
+      autoload_plugins
     end
 
     def load_resources( plugin_dir )
@@ -447,6 +449,14 @@ module Webgen
            end
          end]
       end.flatten]
+    end
+
+    def autoload_plugins
+      @plugin_infos.each do |name, data|
+        if data['plugin']['autoload'] && !@plugins.has_key?( name )
+          init_plugins( [name] ) rescue ''
+        end
+      end
     end
 
     def load_plugin_file( file )

@@ -93,6 +93,13 @@ class PluginManagerTest < Webgen::TestCase
     assert_raise( RuntimeError ) { @manager.init_plugins( ['InvalidFilePlugin'] ) }
   end
 
+  def test_autoload
+    @manager.load_plugin_bundle( fixture_path( 'autoload.plugin' ) )
+    assert( !@manager.plugins.include?( 'AutoloadPlugin' ) )
+    @manager.load_plugin_bundle( fixture_path( 'test.plugin' ) )
+    assert( @manager.plugins.include?( 'AutoloadPlugin' ) )
+  end
+
   def test_bracket_accessor
     @manager.load_all_plugin_bundles( fixture_path )
     assert_not_nil( @manager['Test2Plugin'] )
