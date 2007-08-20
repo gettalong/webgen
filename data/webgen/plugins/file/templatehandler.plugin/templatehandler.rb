@@ -14,7 +14,7 @@ module FileHandlers
       path = output_name( parent, file_info )
       unless node = node_exist?( parent, path, file_info.lcn )
         node = Node.new( parent, path, file_info.cn )
-        node.meta_info = page.meta_info
+        node.meta_info = node.meta_info.merge( page.meta_info )
         node.node_info[:src] = file_info.filename
         node.node_info[:processor] = self
         node.node_info[:page] = page
@@ -37,7 +37,7 @@ module FileHandlers
       elsif node.meta_info.has_key?( 'template' ) && node['template'].nil?
         template_node = (node.node_info[:templates] ||= {})[lang] = nil
       else
-        log(:info) { "Using default template for <#{node.node_info[:src]}>" }
+        log(:info) { "Using default template in '#{lang}' for <#{node.node_info[:src]}>" }
         template_node = (node.node_info[:templates] ||= {})[lang] = get_default_template( node.parent, param( 'defaultTemplate' ), lang )
       end
 

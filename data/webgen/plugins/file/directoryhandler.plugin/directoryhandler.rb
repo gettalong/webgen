@@ -40,7 +40,7 @@ module FileHandlers
 
       def initialize( parent, path, file_info )
         super( parent, path, file_info.cn )
-        self.meta_info = file_info.meta_info
+        self.meta_info = self.meta_info.merge( file_info.meta_info )
         self.node_info[:src] = file_info.filename
       end
 

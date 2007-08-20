@@ -16,7 +16,7 @@ module FileHandlers
 
       unless node = node_exist?( parent, name, file_info.lcn )
         node = Node.new( parent, name, file_info.cn )
-        node.meta_info.update( file_info.meta_info )
+        node.meta_info = node.meta_info.merge( file_info.meta_info )
         node.node_info[:src] = file_info.filename
         node.node_info[:processor] = self
         node.node_info[:preprocess] = processWithErb
