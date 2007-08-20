@@ -153,6 +153,11 @@ module Core
       !c_mtime || s_mtime > c_mtime || (out_file && !File.exists?( out_file ))
     end
 
+    # Checks if the meta information of the node has changed since the last webgen run.
+    def meta_info_changed?( node )
+      (node.meta_info != @plugin_manager['Core/CacheManager'].get( [:nodes, node.absolute_lcn, :metainfo], node.meta_info ))
+    end
+
     # Checks if the +node+ has changed by executing three checks:
     #
     # * checks if the file has changed using file_changed? if the node has a <tt>:src</tt> node
@@ -168,7 +173,8 @@ module Core
                       file_changed?( node.node_info[:src], (node.node_info[:no_output_file] ? nil : node.full_path) ) :
                       false)
       change_proc = (node.node_info.has_key?( :change_proc ) ? node.node_info[:change_proc].call( node ) : false)
-      metainfo_changed = (node.meta_info != @plugin_manager['Core/CacheManager'].get( [:nodes, node.absolute_path, :metainfo], node.meta_info ))
+      metainfo_changed = meta_info_changed?( node )
+
       log(:debug) { node.full_path + ': ' + [file_changed, change_proc, metainfo_changed].inspect }
       log(:debug) { node.full_path + ': ' + node.meta_info.inspect }
       file_changed || metainfo_changed || change_proc
@@ -266,7 +272,7 @@ module Core
       @output_backing.each do |path, data|
         path = path[1..-1] if path =~ /^\//
         if node = root.resolve_node( path )
-          node.meta_info.update( data )
+          node.meta_info = node.meta_info.merge( data )
         else
           log(:info) { "Creating virtual node for path <#{path}>..." }
           node = create_node( path, root, @plugin_manager['File/VirtualFileHandler'] ) do |parent, file_info, handler|
@@ -329,6 +335,7 @@ module Core
       else
         log(:info) { "Nothing to do for: <#{node.full_path}>" }
       end
+      @plugin_manager['Core/CacheManager'].add( [:files_owned], node.full_path ) unless node.node_info[:no_output_file]
       dispatch_msg( :after_node_written, node, changed )
     end
 
@@ -381,7 +388,6 @@ module Core
       file_info = FileInfo.new( root_path )
       file_info.meta_info.update( meta_info_for( root_handler.plugin_name, file_info, '/' ) )
       root = root_handler.create_node( nil, file_info )
-      root['title'] = ''
       root.path = File.join( param( 'outDir', 'Core/Configuration' ), '/' )
       root.cn.sub!( /.*/, '' )
       root.node_info[:src] = root_path

@@ -19,7 +19,7 @@ module FileHandlers
       end
       parent.del_child( temp_node )
 
-      node.meta_info.update( file_info.meta_info )
+      node.meta_info = node.meta_info.merge( file_info.meta_info )
       node.node_info[:processor] = self
       node.node_info[:no_output_file] = true
       node
