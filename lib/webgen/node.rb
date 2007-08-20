@@ -75,6 +75,7 @@ class Node
 
   # Returns the localized canoncial name for this node.
   def lcn
+    return @precalc[:lcn] if @precalc
     self.class.lcn( @cn, @meta_info['lang'] )
   end
 
@@ -175,13 +176,7 @@ class Node
   # Matches the (localized) canonical name of the node against the given path at the beginning.
   # Returns the matched portion or +nil+. Used by #resolve_node.
   def =~( path )
-    md = if is_directory?
-           /^#{@cn}(\/|$)/ =~ path
-         elsif is_fragment?
-           /^#{@cn}$/ =~ path
-         else
-           /^(#{@cn}|#{lcn})(?=#|$)/ =~ path
-         end
+    md = (@match_pattern =~ path)
     if md then $& end
   end
 
@@ -287,8 +282,16 @@ class Node
       :full_path => full_path,
       :absolute_path => absolute_path,
       :absolute_lcn => absolute_lcn,
+      :lcn => lcn,
       :to_url => to_url
     }
+    @match_pattern = if is_directory?
+                       /^#{@cn}(\/|$)/
+                     elsif is_fragment?
+                       /^#{@cn}$/
+                     else
+                       /^(#{@cn}|#{lcn})(?=#|$)/
+                     end
   end
 
   def precalc_with_children!
