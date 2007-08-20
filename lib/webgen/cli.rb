@@ -49,6 +49,7 @@ module Webgen
           @website = Webgen::WebSite.new( @directory )
           @website.plugin_manager.configurators << FileConfigurator.for_website( @directory )
           @website.plugin_manager.configurators << self
+          @website.plugin_manager.logger.level = @website.plugin_manager.param( 'loggerLevel', 'Core/Configuration' )
           @website.plugin_manager.plugin_infos[%r{^Cli/Commands/}].each do |name, info|
             main_cmd = @website.plugin_manager.plugin_infos.get( name, 'cli_main_cmd' )
             self.add_command( @website.plugin_manager[name], !main_cmd.nil? )
