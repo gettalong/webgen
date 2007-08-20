@@ -8,6 +8,11 @@ module Core
   #
   # The parameter +keys+ for the various getter/setter method has to be an array of string/symbols
   # uniquely identifying a key.
+  #
+  # The CacheManager also provides other cache functionalities, for example:
+  # * #node_for_path can be used to retrieve the node for the given path/language pair. When
+  #   accessing this information the first time, it is cached and the following accesses are
+  #   therefore much faster.
   class CacheManager
 
     # The hash with the data from the last run
@@ -28,6 +33,7 @@ module Core
       @plugin_manager['Core/FileHandler'].add_msg_listener( :after_website_rendered ) do
         File.open( cache_file, 'wb' ) {|f| f.write( Marshal.dump( @new_data ) )}
       end
+      @node_resolve_cache = {}
     end
 
     # Returns the value for +keys+ from the old webgen run and optonally sets the value of +keys+ to
@@ -51,6 +57,16 @@ module Core
     # Adds the +value+ to the array specified by +keys+.
     def add( keys, value )
       (@new_data[keys.join('/')] ||= []) << value
+    end
+
+    # Calls <tt>node.resolve_node(path,lang)</tt> and stores this information in a (volatile) cache
+    # for subsequent access (which speeds things up quite a bit).
+    def node_for_path( node, path, lang = nil )
+      if @node_resolve_cache.has_key?([path, lang])
+        @node_resolve_cache[[path, lang]]
+      else
+        @node_resolve_cache[[path, lang]] = node.resolve_node( path, lang )
+      end
     end
 
   end

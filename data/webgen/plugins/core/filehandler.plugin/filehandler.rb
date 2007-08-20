@@ -155,7 +155,11 @@ module Core
 
     # Checks if the meta information of the node has changed since the last webgen run.
     def meta_info_changed?( node )
-      (node.meta_info != @plugin_manager['Core/CacheManager'].get( [:nodes, node.absolute_lcn, :metainfo], node.meta_info ))
+      if !node.node_info.has_key?(:node_meta_info_changed)
+        node.node_info[:node_meta_info_changed] =
+          (node.meta_info != @plugin_manager['Core/CacheManager'].get( [:nodes, node.absolute_lcn, :metainfo], node.meta_info ))
+      end
+      node.node_info[:node_meta_info_changed]
     end
 
     # Checks if the +node+ has changed by executing three checks:
@@ -169,15 +173,18 @@ module Core
     #
     # Returns +true+ if any one of these three checks returns +true+.
     def node_changed?( node )
-      file_changed = (node.node_info.has_key?( :src ) ?
-                      file_changed?( node.node_info[:src], (node.node_info[:no_output_file] ? nil : node.full_path) ) :
-                      false)
-      change_proc = (node.node_info.has_key?( :change_proc ) ? node.node_info[:change_proc].call( node ) : false)
-      metainfo_changed = meta_info_changed?( node )
+      if !node.node_info.has_key?(:node_changed)
+        file_changed = (node.node_info.has_key?( :src ) ?
+                        file_changed?( node.node_info[:src], (node.node_info[:no_output_file] ? nil : node.full_path) ) :
+                        false)
+        change_proc = (node.node_info.has_key?( :change_proc ) ? node.node_info[:change_proc].call( node ) : false)
+        metainfo_changed = meta_info_changed?( node )
 
-      log(:debug) { node.full_path + ': ' + [file_changed, change_proc, metainfo_changed].inspect }
-      log(:debug) { node.full_path + ': ' + node.meta_info.inspect }
-      file_changed || metainfo_changed || change_proc
+        log(:debug) { node.full_path + ': ' + [file_changed, change_proc, metainfo_changed].inspect }
+        log(:debug) { node.full_path + ': ' + node.meta_info.inspect }
+        node.node_info[:node_changed] = file_changed || metainfo_changed || change_proc
+      end
+      node.node_info[:node_changed]
     end
 
     # Writes data to the file +dest+ using the options in the hash +opts+. This method has to be

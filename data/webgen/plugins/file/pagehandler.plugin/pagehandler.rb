@@ -90,10 +90,12 @@ module FileHandlers
         node.node_info[:processor] = self
         node.node_info[:page] = page
         node.node_info[:change_proc] = proc do
-          used_nodes = @plugin_manager['Core/CacheManager'].get( [:nodes, node.absolute_path, :render_info, 'content', true] )
+          fileh = @plugin_manager['Core/FileHandler']
+          cachem = @plugin_manager['Core/CacheManager']
+          used_nodes = cachem.get( [:nodes, node.absolute_path, :render_info, 'content', true] )
           if used_nodes
-            used_nodes[:nodes].any? {|n| @plugin_manager['Core/FileHandler'].node_changed?( parent.resolve_node( n ) ) } ||
-              used_nodes[:node_infos].any? {|n| @plugin_manager['Core/FileHandler'].meta_info_changed?( parent.resolve_node( n ) ) }
+            used_nodes[:nodes].any? {|p| n = cachem.node_for_path( node, p ); n.nil? || fileh.node_changed?( n ) } ||
+              used_nodes[:node_infos].any? {|p| n = cachem.node_for_path( node, p ); n.nil? || fileh.meta_info_changed?( n ) }
           else
             true
           end
