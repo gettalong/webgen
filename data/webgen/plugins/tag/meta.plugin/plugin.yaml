@@ -1,0 +1,8 @@
+Tag/Meta:
+  about:
+    summary: Replaces all tags without tag plugin with their respective values from the node meta info
+    author: Thomas Leitner <t_leitner@gmx.at>
+  plugin:
+    file: meta.rb
+    load_deps: Tag/DefaultTag
+  tags: :default

@@ -5,6 +5,11 @@ class TagsTest < Webgen::PluginTestCase
 
   plugin_to_test 'ContentProcessor/Tags'
 
+  def setup
+    super
+    @manager.plugin_infos[/^Tag\//].each {|name,data| @manager.plugin_infos.delete(name)}
+  end
+
   def test_process
     content = "{test: }"
     assert_equal( ['', {}], @plugin.process( content, {:chain => [Webgen::Dummy.new]}, {} ) )
@@ -48,11 +53,9 @@ class TagsTest < Webgen::PluginTestCase
   end
 
   def test_registered_tags
-    assert( @plugin.instance_eval { registered_tags }.kind_of?(Hash) )
+    assert_equal( {}, @plugin.instance_eval { registered_tags } )
     @manager.load_plugin_bundle( fixture_path('test.plugin') )
-    tags = @plugin.instance_eval { registered_tags }
-    assert( tags.has_key?( :default ) )
-    assert_equal( @manager['Tag/TestTag'], tags[:default] )
+    assert_equal( {:default => @manager['Tag/TestTag']}, @plugin.instance_eval { registered_tags } )
   end
 
   #######
