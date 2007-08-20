@@ -25,13 +25,17 @@ class Block
   #
   # Uses the content processors specified in the +pipeline+ key of the +options+ attribute to do the
   # rendering.
+  #
+  # Returns the rendered content and a hash with the nodes used during rendering.
   def render( context )
     temp = content
+    used_nodes = {}
     @options['pipeline'].to_s.split(/;/).each do |processor|
       raise "No such content processor available: #{converter}" unless context[:processors].has_key?( processor )
-      temp = context[:processors][processor].process( temp, context, @options )
+      temp, tmp_nodes = context[:processors][processor].process( temp, context, @options )
+      tmp_nodes.each {|k,v| used_nodes[k] = (used_nodes[k] || []) + v} if tmp_nodes
     end
-    temp
+    [temp, used_nodes]
   end
 
 end

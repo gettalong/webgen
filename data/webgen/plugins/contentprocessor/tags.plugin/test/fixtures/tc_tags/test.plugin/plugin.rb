@@ -16,7 +16,7 @@ module Tag
       when 'body'
         body
       when 'bodyproc'
-        [body, true]
+        [body, {}, true]
       else
         tag
       end

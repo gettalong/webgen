@@ -49,8 +49,10 @@ module FileHandlers
         @plugin_manager.plugin_infos[/^ContentProcessor\//].each do |k,v|
           processors[v['processes']] = @plugin_manager[k] unless @plugin_manager[k].nil?
         end
-        result = chain.first.node_info[:page].blocks[block_name].render( :chain => chain, :processors => processors )
+        result, used_nodes = chain.first.node_info[:page].blocks[block_name].render( :chain => chain, :processors => processors )
         dispatch_msg( :after_node_rendered, result, node )
+        (used_nodes[:nodes] ||= []) << chain.first
+        cache_used_nodes( node, block_name, use_templates, used_nodes )
       else
         log(:error) { "Error rendering node <#{node.full_path}>: no block with name '#{block_name}'" }
       end
@@ -69,6 +71,13 @@ module FileHandlers
     private
     #######
 
+    def cache_used_nodes( node, block_name, use_templates, used_nodes )
+      used_nodes[:nodes] = (used_nodes[:nodes] || []).compact.uniq.select {|n| n != node}.collect {|n| n.absolute_lcn}
+      used_nodes[:node_infos] = (used_nodes[:node_infos] || []).compact.uniq.collect! {|n| n.absolute_lcn}
+      @plugin_manager['Core/CacheManager'].set( [:nodes, node.absolute_path, :render_info, block_name, use_templates],
+                                                used_nodes )
+    end
+
     def internal_create_node( parent, file_info, page )
       page.meta_info['lang'] ||= param( 'lang', 'Core/Configuration' )
       file_info.meta_info = page.meta_info
@@ -77,13 +86,17 @@ module FileHandlers
 
       unless node = node_exist?( parent, path, file_info.lcn )
         node = Node.new( parent, path, file_info.cn )
-        node.meta_info = page.meta_info
+        node.meta_info = node.meta_info.merge( page.meta_info )
         node.node_info[:src] = file_info.filename
         node.node_info[:processor] = self
         node.node_info[:page] = page
         node.node_info[:change_proc] = proc do
-          @plugin_manager['File/TemplateHandler'].templates_for_node( node ).any? do |n|
-            @plugin_manager['Core/FileHandler'].node_changed?( n )
+          used_nodes = @plugin_manager['Core/CacheManager'].get( [:nodes, node.absolute_path, :render_info, 'content', true] )
+          if used_nodes
+            used_nodes[:nodes].any? {|n| @plugin_manager['Core/FileHandler'].node_changed?( parent.resolve_node( n ) ) } ||
+              used_nodes[:node_infos].any? {|n| @plugin_manager['Core/FileHandler'].meta_info_changed?( parent.resolve_node( n ) ) }
+          else
+            true
           end
         end
       end

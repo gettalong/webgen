@@ -27,13 +27,14 @@ module ContentProcessor
     def process( content, context, options )
       node = context[:chain].last
       ref_node = context[:chain].first
+      used_nodes = {}
 
       if !content.kind_of?( String )
         log(:warn) { "The content in <#{ref_node.node_info[:src]}> is not a string, but a #{content.class.name}" }
         content = content.to_s
       end
 
-      return replace_tags( content, ref_node ) do |tag, params, body|
+      rendered_content = replace_tags( content, ref_node ) do |tag, params, body|
         log(:debug) { "Replacing tag #{tag} with data '#{params}' and body '#{body}' in <#{ref_node.node_info[:src]}>" }
 
         result = ''
@@ -44,14 +45,16 @@ module ContentProcessor
           rescue ArgumentError => e
             log(:error) { "Could not parse the data '#{params}' for tag #{tag} in <#{ref_node.nod_info[:src]}>: #{e.message}" }
           end
-          result, process_output = processor.process_tag( tag, body, ref_node, node )
+          result, tmp_nodes, process_output = processor.process_tag( tag, body, ref_node, node )
           processor.reset_tag_config
+          tmp_nodes.each {|k,v| used_nodes[k] = (used_nodes[k] || []) + v} if tmp_nodes
 
           result = process( result, context, options ) if process_output
         end
 
         result
       end
+      [rendered_content, used_nodes]
     end
 
     #######
