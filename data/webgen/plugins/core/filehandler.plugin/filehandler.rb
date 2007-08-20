@@ -359,7 +359,7 @@ module Core
 
     # Returns an array of files of the source directory matching +pattern+
     def files_for_pattern( pattern )
-      files = Dir[File.join( param( 'srcDir', 'Core/Configuration' ), pattern )].to_set
+      files = Dir.glob( File.join( param( 'srcDir', 'Core/Configuration' ), pattern ), File::FNM_CASEFOLD ).to_set
       files.delete( File.join( param( 'srcDir', 'Core/Configuration' ), '/' ) )
       files.collect!  do |f|
         f = f.sub( /([^.])\.{1,2}$/, '\1' ) # remove '.' and '..' from end of paths

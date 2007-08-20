@@ -63,6 +63,8 @@ module CoreTests
 =begin
 TODO make these tests go green :-)
 
+add test to see if files with upper case extensions are resolved correctly
+
     def test_find_all_files
       found_files = @plugin.instance_eval {find_all_files}
       files = find_in_sample_site {|p| p != sample_site( Webgen::SRC_DIR ) + '/' }

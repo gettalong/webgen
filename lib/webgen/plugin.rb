@@ -419,7 +419,7 @@ module Webgen
       resources = YAML::load( File.read( file ) )
       raise "#{file} is invalid" unless resources.kind_of?( Hash )
       resources.each do |res, infos|
-        Dir[File.join( plugin_dir, res )].each do |res_file|
+        Dir.glob( File.join( plugin_dir, res ), File::FNM_CASEFOLD ).each do |res_file|
           res_infos = get_res_infos( res_file, infos.merge('src' => res_file ) )
           if logger && @resources.has_key?( res_infos['name'] )
             logger.info('PluginManager#load_resources') { "Resoure #{res_infos['name']} gets re-defined" }
