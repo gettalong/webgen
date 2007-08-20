@@ -198,14 +198,18 @@ class Node
     (self_oi == other_oi ? (self['title'] || '') <=> (other['title'] || '') : self_oi <=> other_oi)
   end
 
-  # Returns the route to the given path. The parameter +path+ can be a String or a Node.
+  # Returns the route to the given path. The parameter +path+ can be a String or an object that
+  # responds to <tt>to_url</tt>.
   def route_to( other )
     my_url = self.to_url
-    other_url = case other
-                when String then my_url + other
-                when Node then other.to_url
-                else raise ArgumentError
+    other_url = if other.respond_to?(:to_url)
+                  other.to_url
+                elsif other.kind_of?(String)
+                  my_url + other.to_s
+                else
+                  raise ArgumentError, "argument has improper class"
                 end
+
     # resolve any '.' and '..' paths in the target url
     if other_url.path =~ /\/\.\.?\// && other_url.scheme == 'webgen'
       other_url.path = Pathname.new( other_url.path ).cleanpath.to_s
