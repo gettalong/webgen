@@ -29,7 +29,7 @@ module Cli
       length = width - indent
 
       paragraphs = content.split( /\n\n/ )
-      if paragraphs.length == 1
+      if (0..1) === paragraphs.length
         pattern = /^(.{0,#{length}})[ \n]/m
         lines = []
         while content.length > length

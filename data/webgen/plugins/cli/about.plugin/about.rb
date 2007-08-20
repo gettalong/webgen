@@ -68,8 +68,9 @@ module Cli
         path_patterns = (plugin =~ /^File/ ? @plugin_manager[plugin].path_patterns : nil)
         puts Utils.section( 'Path patterns', ljust ) + path_patterns.collect {|r,f| f}.inspect unless path_patterns.nil?
 
-        tag_names = infos.get( plugin, 'tags' )
+        tag_names = (plugin =~ /^Tag/ ? @plugin_manager[plugin].tags : nil)
         puts Utils.section( 'Tag names', ljust ) + tag_names.join(", ") unless tag_names.nil?
+
         puts
 
         params = infos.get( plugin, 'params' )

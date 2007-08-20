@@ -205,10 +205,9 @@ module Core
 
     # Renders the whole website.
     def render_website
-      @plugin_manager.logger.level = param( 'loggerLevel', 'Core/Configuration' )
       log(:info) { "Starting rendering of website <#{param('websiteDir', 'Core/Configuration')}>..." }
       log(:info) { "Using webgen data directory at <#{Webgen.data_dir}>" }
-      log(:debug) { "Available plugins: " + @plugin_manager.plugin_infos.keys.sort }
+      log(:debug) { "Available plugins: " + @plugin_manager.plugin_infos.keys.sort.join(', ') }
 
       tree = build_tree
       unless tree.nil?

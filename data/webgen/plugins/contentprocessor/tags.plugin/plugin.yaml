@@ -9,8 +9,8 @@ ContentProcessor/Tags:
   params:
     prefix:
       default: ''
-      descr: The string is used as a prefix to tag names to avoid name clashes when another content processor
-             uses similar markup.
+      desc: The string is used as a prefix to tag names to avoid name clashes when another content processor
+            uses similar markup.
 
 Tag/DefaultTag:
   about:
