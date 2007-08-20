@@ -114,8 +114,8 @@ class NodeTest < Webgen::TestCase
     @n = {}
     @ni.each do |info|
       @n[info['ref'] || info['url']] = Node.new( @n[info['parent']], info['url'], info['cn'] || info['url'] )
-      @n[info['ref'] || info['url']].meta_info.update( info['meta_info'] ) if info['meta_info']
-      @n[info['ref'] || info['url']].node_info.update( info['node_info'] ) if info['node_info']
+      @n[info['ref'] || info['url']].meta_info = info['meta_info'] if info['meta_info']
+      @n[info['ref'] || info['url']].node_info = info['node_info'] if info['node_info']
     end
   end
 
@@ -141,6 +141,14 @@ class NodeTest < Webgen::TestCase
     assert_equal( '/dir_a/file_aa#doit', @n['file_aa#'].absolute_path )
     @n['file_aa'].path = 'file_aaaa'
     assert_equal( '/dir_a/file_aaaa#doit', @n['file_aa#'].absolute_path )
+  end
+
+  def test_meta_info_setter
+    assert_equal( '/dir_a/file_aa#doit', @n['file_aa#'].absolute_lcn )
+    @n['file_aa'].meta_info = {'lang' => 'de'}
+    assert_equal( '/dir_a/file_aa.de#doit', @n['file_aa#'].absolute_lcn )
+    @n['file_aa']['lang'] = 'en'
+    assert_equal( '/dir_a/file_aa.en#doit', @n['file_aa#'].absolute_lcn )
   end
 
   def test_accessors
@@ -188,6 +196,12 @@ class NodeTest < Webgen::TestCase
   def test_lcn
     assert_equal( 'file_l.en.page', @n['file_l.en.page'].lcn )
     assert_equal( 'file_l.page', @n['file_l.page'].lcn )
+  end
+
+  def test_absolute_lcn
+    assert_equal( '/file_l.en.page', @n['file_l.en.page'].absolute_lcn )
+    assert_equal( '/file_l.page', @n['file_l.page'].absolute_lcn )
+    assert_equal( '/dir_a/file_aa', @n['file_aa'].absolute_lcn )
   end
 
   def test_route_to

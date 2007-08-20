@@ -3,6 +3,14 @@ require 'pathname'
 require 'webgen/composite'
 
 # The Node class is used for building the internal data structure which represents the output tree.
+#
+# This class caches information to provide fast access to some often used, computed values. These
+# values are: full_path, absolute_path, absolute_lcn and to_url. It is essential that the provided
+# accessors are always used because otherwise the cached information might be invalid. For instance,
+# the following should not be done:
+#    node.meta_info.update({:key => :value, 5 => 6})
+# Instead, the accessor should be used:
+#    node.meta_info = node.meta_info.merge({:key => :value, 5 => 6})
 class Node
 
   include Composite
@@ -20,7 +28,7 @@ class Node
   attr_accessor :node_info
 
   # Meta information associated with the node.
-  attr_accessor :meta_info
+  attr_reader :meta_info
 
   # Initializes a new Node instance.
   #
@@ -43,9 +51,9 @@ class Node
     @parent = nil
     @path = path
     @cn = canonical_name.chomp('/')
-    self.parent = parent
     @node_info = Hash.new
     @meta_info = Hash.new
+    self.parent = parent
   end
 
   # Returns the root node for +node+.
@@ -82,6 +90,12 @@ class Node
     precalc_with_children!
   end
 
+  # Sets the meta information hash for the node.
+  def meta_info=( meta_info )
+    @meta_info = meta_info
+    precalc_with_children!
+  end
+
   # Gets object +name+ from +meta_info+.
   def []( name )
     @meta_info[name]
@@ -90,6 +104,7 @@ class Node
   # Assigns +value+ to +meta_info+ called +name.
   def []=( name, value )
     @meta_info[name] = value
+    precalc_with_children! if name == 'lang'
   end
 
   # Regexp for matching absolute URLs, ie. URLs with a scheme part (also see RFC1738)
@@ -125,6 +140,14 @@ class Node
     else
       full_path.sub( /^#{Node.root( self ).path}/, '/' )
     end
+  end
+
+  # Returns the absolute localized canonical name for the node. This is similar to the
+  # #absolute_path method, but it does not use the +path+ but the +lcn+ field.
+  def absolute_lcn
+    return @precalc[:absolute_lcn] if @precalc
+
+    (@parent.nil? ? '/' : @parent.absolute_lcn + self.lcn + (is_directory? ? '/' : '') )
   end
 
   # Returns the level of the node. The level specifies how deep the node is in the hierarchy.
@@ -257,6 +280,7 @@ class Node
     @precalc = {
       :full_path => full_path,
       :absolute_path => absolute_path,
+      :absolute_lcn => absolute_lcn,
       :to_url => to_url
     }
   end
