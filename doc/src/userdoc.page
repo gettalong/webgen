@@ -27,7 +27,6 @@ command `webgen` inside the `mywebsite` directory, the website will be generated
 `output` directory where it can be viewed with any browser.
 
 
-
 ## Download & Installation
 
 
@@ -51,29 +50,29 @@ Make sure that you also install the mandatory and, if you need them, the optiona
 
 ### Dependencies
 
-* [mandatory] [cmdparse](http://cmdparse.rubyforge.org) version 2.0.0 or higher
+* (mandatory) [cmdparse](http://cmdparse.rubyforge.org) version 2.0.0 or higher
 
-* [mandatory] [facets](http://facets.rubyforge.org) version 1.8.54 or higher
+* (mandatory) [facets](http://facets.rubyforge.org) version 1.8.54 or higher
 
-* [mandatory] [maruku](http://maruku.rubyforge.org) version 0.5.5 or higher
+* (mandatory) [maruku](http://maruku.rubyforge.org) version 0.5.5 or higher
 
-* [optional] [RedCloth](http://redcloth.rubyforge.org) version 2.0.10 or higher for Textile support
+* (optional) [RedCloth](http://redcloth.rubyforge.org) version 2.0.10 or higher for Textile support
 
 
 ------------------- TODO -------------------------
-* [optional] "BlueCloth":http://www.deveiate.org version 1.0.0 or higher if you want Markdown
+* (optional) "BlueCloth":http://www.deveiate.org version 1.0.0 or higher if you want Markdown
   support
 
-* [optional] "RMagick":http://rmagick.rubyforge.org/ version 1.7.1 or higher if you want automatic
+* (optional) "RMagick":http://rmagick.rubyforge.org/ version 1.7.1 or higher if you want automatic
   thumbnail creation for image galleries
 
-* [optional] "builder":http://builder.rubyforge.org/ version 2.0.0 or higher if you want programatic
+* (optional) "builder":http://builder.rubyforge.org/ version 2.0.0 or higher if you want programatic
   HTML/XML file generation
 
-* [optional] "exifr":http://exifr.rubyforge.org/ version 0.10 or higher if you want to be able to
+* (optional) "exifr":http://exifr.rubyforge.org/ version 0.10 or higher if you want to be able to
   have EXIF information available for image galleries
 
-* [optional] "coderay":http://coderay.rubychan.de/ version 0.7.4.215 or higher if you want syntax
+* (optional) "coderay":http://coderay.rubychan.de/ version 0.7.4.215 or higher if you want syntax
   highlighting to be available for certain plugins
 ------------------- TODO -------------------------
 
@@ -114,18 +113,16 @@ command.
 {.information}
 
 ------------------- TODO -------------------------
-You can also change the website style later by using the @use website_style@ command for @webgen@, for
+You can also change the website style later by using the `use website_style` command for `webgen`, for
 example:
 
-<pre>
-  $ webgen use website_style default
-</pre>
+    $ webgen use website_style default
 
 Existing files may be overwritten by this command (after asking). However, this command is not able
 to delete previously copied website style files, so you have to remove them yourself!
 
-Have a look at the <a href="{relocatable: /examples}">examples</a> sections to see demonstrations
-for all shipped website templates and styles!
+Have a look at the examples sections (TODO:linke) to see demonstrations for all shipped website
+templates and styles!
 ------------------- TODO -------------------------
 
 Since the basic parts are now in place, you can generate the HTML files. There are two
@@ -893,9 +890,12 @@ This is described in the API documentation for the Support/WebsiteManager plugin
 
 # References
 
+
+
 ## Meta Information Reference
 
-TODO: how to make this more readable? use CSS :before and :after selectors to add Type:/Example:/...
+
+TODO: use CSS :before and :after selectors to add Type:/Example:/...
 TODO: update infos of all entries
 
 Following is a list of all the meta information items that are used in one way or another by a
@@ -908,7 +908,7 @@ description follows the same pattern:
 
 {:miref: .meta-information-ref}
 
-###  blocks
+### blocks
 
 {:miref}
 * Array of Arrays: `[[content, markdown], [sidebar, html]]`
@@ -961,13 +961,13 @@ Sets the language for the page file. Has to be a valid ISO-639-1/2 character cod
 ### linkAttrs
 
 {:miref}
-* Hash: `\{title: Hallo, class: extra}
+* Hash: `\{title: Hallo, class: extra}`
 * Any
 
 Specifies additional attribute-value pairs (in form of a Hash) that should be added to a link to the
 file/directory.
 
-### link_callback
+### link\_callback
 
 {:miref}
 * String (Ruby code):`"<a#{attrs}>#{link_text} + some text</a>"`
@@ -978,13 +978,13 @@ Can be used to customize the link generated for the node. The available variable
 node
 : The node to which the link points.
 
-ref_node
+ref\_node
 : The reference node.
 
 attrs
 : A string of compiled HTML attributes that should be on the link element.
 
-link_text
+link\_text
 : The text for the link.
 
 context
@@ -1043,123 +1043,92 @@ Sets the title for the file/directory.
 
 
 
-## metainfo.yaml Format
-
-
 ## Resource Reference
 
 
 
-h2. Resource Reference
-
-
 The following list shows all resources that are shipped with webgen and that can be used via the
-{plugin: Tag/Resource} plugin.
+Tag/Resource plugin.
 
 *Credits*:
 
-* webgen-icons-<notextile>*</notextile>: These icons were taken from the "CrystalClear" package from
-"http://www.kde-look.org/content/show.php?content=25668":http://www.kde-look.org/content/show.php?content=25668
-* webgen-emoticons-<notextile>*</notextile>: Credits for the individual emoticon packs are listed on the {plugin:
-Misc/SmileyReplacer} page
+* webgen-icons-\*: These icons were taken from the
+  [CrystalClear](http://www.kde-look.org/content/show.php?content=25668) package
+* webgen-emoticons-\*: Credits for the individual emoticon packs are listed on the Misc/SmileyReplacer page
 
-<notextile>{predefinedResources:}</notextile>
-
-
+{predefinedResources:} TODO: copy this plugin from trunk and adjust it
 
 
 ## Plugin Parameter Reference
 
 
+Each plugin can specify parameters. Here is a list of all available parameters for a quick lookup,
+ordered by category and then name (only plugins with parameters are shown!):
+
+{listPluginParameters:} TODO: copy this plugin from trunk and adjust it
 
 
-h2. Plugin Parameter Reference
-
-Each plugin can specify <a href="{relocatable: ../plugins}">parameters</a>. Here is a list of all
-available parameters for a quick lookup, ordered by category and then name (only plugins with
-parameters are shown!):
-
-<notextile>{listPluginParameters:}</notextile>
+## WebPage Format
 
 
+The WebPage Format is a custom format designed primarily for page and template files. It consists of
+an optional meta information block and one or more blocks of data; it is very simple and easy to
+use.
 
-
-
-
-## WebPage File Format
-
-
-
-h1. The WebPage Format
-
-
-The WebPage Format is a custom format designed for page and template files. It consists of one or
-more blocks of data, is very simple and easy to use.
-
-
-h2(#structure). Structure
-
+### Structure
 
 A file using the WebPage Format consists of one or more blocks which are the smallest units
 recongnized. Blocks are separated from each other through a line containing only three dashes. This
 is illustrated in the following examples which are all valid files in WebPage Format:
 
-<pre>
-Here is a block!
-</pre>
+TODO: make sure each example gets its own pre block
 
-<pre>
-This is one block of the file
-\---
-This is another block.
-</pre>
+    Here is a block!
 
-<pre>
-Block 1
-\--- block2
-Block 2
-\--- block3
-Block 3...
-</pre>
+
+    This is one block of the file
+    ---
+    This is another block.
+
+
+    Block 1
+    --- block2
+    Block 2
+    --- block3
+    Block 3...
 
 If you want to use three dashes in a block but you don't want to end the block, you have to escape
 them with a backslash character, like this:
 
-<pre>
-Block 1
-\\---
-still Block 1
-\--- block2
-Block 2
-</pre>
+    Block 1
+    \---
+    still Block 1
+    --- block2
+    Block 2
 
 All of the above examples show one kind of block, the content block. However, there may also be
 another type of block: the meta information block. Following is a short description of both kinds,
 starting with the meta information block.
 
-
-h3(#metainfo-block). Meta Information Block
-
+#### Meta Information Block
 
 Each file in WebPage Format can have zero or one meta information blocks. This block is specified at
 the beginning of the file. To tell the parser that the first block is the meta information block and
 not a content block, you have to start the file with three dashes:
 
-<pre>
-\---
-title: The title set by Meta info
-\---
-This is the content of the file
-</pre>
+    ---
+    title: The title set by Meta info
+    ---
+    This is the content of the file
 
 The above defines a meta information block and a content block. The meta information block has to be
-in YAML format and should contain key-value pairs of meta information. YAML is a simple markup
-language designed for ease of use. For more information about YAML, have a look at
-"www.yaml.org":http://www.yaml.org!
+in YAML format and should contain key-value pairs of meta information. [YAML](http://www.yaml.org)
+is a simple markup language designed for ease of use and although you define structured data with
+it, it feels like just writing a plain text document.
 
+#### Content Blocks
 
-h3(#content-blocks). Content Blocks
-
+TODO: redo this section since the structure of content blocks has changed since 0.4.x
 
 A content block is used to provide content in a specific format. Each file in WebPage Format needs
 to have at least one content block which may be empty. However, it can have as many content blocks
@@ -1167,8 +1136,8 @@ as necessary. Each content block needs to have a unique name and a format specif
 
 The name uniquely identifies a content block and is used to access it. The format specifier defines
 in which format the content block was written. The important thing is that all the formats can be
-converted into HTML/XML! There are several different formats available - have a look a the {plugin:
-ContentConverter} section.
+converted into HTML/XML! There are several different formats available - have a look a the
+ContentConverter section.
 
 There may also be defaults for the two identifiers but they can be overwritten. There are two ways
 to do this:
@@ -1178,13 +1147,11 @@ to do this:
 
 The following example uses the first technique to override the name and/or the format:
 
-<pre>
-1. content block of the file
-\--- sidebar, markdown
-2. content block of the file
-\--- other
-3. content block of the file
-</pre>
+    1. content block of the file
+    --- sidebar, markdown
+    2. content block of the file
+    --- other
+    3. content block of the file
 
 The first block has no identifieres set (there is no line with three dashes and the identifieres).
 Therefore the default values for both are used: `content` is the default block name and `default` is
@@ -1198,16 +1165,15 @@ You can also set the name and format of the content blocks by using the special 
 information. It is an array of arrays and each sub-array contains, in this order, the name of the
 block and its format. The above example can therefore also be written like this:
 
-<pre>
-\---
-blocks: [[content,default], [sidebar, markdown], [other, ~]]
-\---
-1. content block of the file
-\---
-2. content block of the file
-\---
-3. content block of the file
-</pre>
+    ---
+    blocks: [[content,default], [sidebar, markdown], [other, ~]]
+    ---
+    1. content block of the file
+    ---
+    2. content block of the file
+    ---
+    3. content block of the file
+
 
 With everything said above the example should be clear except maybe for the last sub-array. The
 first entry specifies the name, `other`, and the second the format, `~`. The tilde has a special
@@ -1222,21 +1188,22 @@ The *default format* for a block is `default` and the rules stated above for the
 the default format as well.
 
 
-h2(#tags). webgen Tags
+### webgen Tags
 
+TODO: remove this whole section since it depends on the processing pipeline??? or add a special
+section explaining the processing pipeline. ev. move this to the docu for the tags processor. or
+still better move this to its own reference section since this is a special webgen construct
 
 Tags are used to generate content. During processing of a file in WebPage Format so called 'tags'
 are replaced with dynamic content. For example, the menu you can see to the left was generated by a
 tag. This makes it easier to add or remove menu items. If the menu was not generated, you would have
 to change every file which uses the menu.
 
-
-h3(#tags-usage). Usage
-
+#### Usage
 
 Tags are defined by a special markup code. A tag has the following structure:
 
-<pre>\{tagname: {parameters}}</pre>
+    \{tagname: {parameters}}
 
 Every time a tag is found in a file, the registered plugin for the tag is called. The plugin returns
 a string which is put into the output file instead of the tag. The output a tag plugin can produce
@@ -1247,11 +1214,9 @@ file. And in contrast, the {plugin: Tag/Menu} plugin generates a whole menu tree
 If you want to use the markup code used for tags, you need to escape the tag with a backslash, like
 this:
 
-<pre>\\\{tagname: {parameters}}</pre>
+    \\\{tagname: {parameters}}
 
-
-h3(#tags-params). Parameters
-
+#### Parameters
 
 A tag can have zero or more parameters some of which are mandatory. You can see the supported
 parameters (and if they are mandatory) for each tag on the tag's plugin page. The default mandatory
@@ -1279,31 +1244,34 @@ Here some examples with tags and parameters:
 </table>
 
 
-h2(#processing). Processing
+### Processing
 
+TODO: redo this whole section
 
 There is a well defined procesing order for files in WebPage Format:
 
 * After reading in the file, it is split into the blocks.
+
 * Each content block is converted to HTML (depends on the format specifier) and the HTML sections
   are resolved (caveat: only those with an `id` attribute)
+
 * When writing out the file, the converted content is first processed with ERB (if specified to do
   so),
+
 * then webgen tags are replaced and,
+
 * finally, the result is written.
 
 The first two steps happen when the file is read and the last three when the file is written.
 
-
-h3(#proc-html). Converting to HTML
-
+#### Converting to HTML
 
 The conversion of a content block to HTML is done via the {plugin: ContentConverter} plugins. Each
 plugin is able to convert a special marked-up text to HTML.
 
+#### Evaluating ERB Tags
 
-h3(#proc-erb). Evaluating ERB Tags
-
+TODO: ev move this to the ContentProcessor/Erb documentation???
 
 The evaluation of ERB (embedded ruby) tags is optional and only done if the meta information
 `useERB` is set to `true`. The use of ERB allows to add dynamic content without using webgen tags.
@@ -1333,12 +1301,9 @@ use in your ERB code:
 converter. For example, with Textile you may need to surround the ERB code with &lt;textile&gt;
 tags!
 
-
-h3(#proc-tags). Evaluating webgen Tags
-
+#### Evaluating webgen Tags
 
 Tags have already been mentioned in the <a href="{relocatable: '#tags'}">webgen tags</a> section.
-
 
 
 
@@ -1346,15 +1311,11 @@ Tags have already been mentioned in the <a href="{relocatable: '#tags'}">webgen 
 
 
 
-h1. The Sipttra Format
+### What is sipptra?
 
-
-h2(#sipttra). What is sipptra?
-
-
-sipttra is the acronym for <b>S</b>imple <b>P</b>lain <b>T</b>ext <b>T</b>racker. It is a ticket
-tracker which stores everything inside a human readable text file. Therefore it can be used with any
-text editor and no additional program to edit it is needed.
+sipttra is the acronym for **S**imple **P**lain **T**ext **T**racker. It is a ticket tracker which
+stores everything inside a human readable text file. Therefore it can be used with any text editor
+and no additional program for editing is needed.
 
 sipttra supports categories with different types, a special milestone category and, naturally,
 tickets.
@@ -1363,17 +1324,13 @@ As everything is stored in a text file, sipttra is not intended to be used by ma
 It is a simple and easy system for one-man-projects as well as small projects with not many
 developers.
 
-
-h2(#structure). Types
-
+### Types
 
 sipttra is line and not character based. This means that it only operates on whole lines and each
 line can have a different type. This section describes the available types and the next section
 explains how these types can be used in a sipttra file.
 
-
-h3(#categories). Categories
-
+#### Categories
 
 A category has a name and a type which have to be unique among all categories. Therefore it is not
 possible to define two equal category lines in one sipttra file. Tickets can only be defined for
@@ -1383,15 +1340,11 @@ a category named bugs with type open and another category named bugs with type c
 
 A category is defined like this:
 
-<pre>
-  ### CATEGORY (type) ###
-</pre>
+    ### CATEGORY (type) ###
 
-or
+or this:
 
-<pre>
-  # CATEGORY (type) #
-</pre>
+    # CATEGORY (type) #
 
 The line has to start with one or more hashes, the category name, the category type and finally the
 same number of hashes as at the start of the line. These items have to be separated from each other
@@ -1401,32 +1354,25 @@ The tickets of a category are of the same type as the category itself. The speci
 signifies that the tickets in the category are closed, tickets from all other category types are
 considered to be open.
 
-
-h3(#milestones). Milestone Category
-
+#### Milestone Category
 
 The milestone category is defined like a normal category. However, the type in parenthesis is
 omitted, like this:
 
-<pre>
-  ### Milestones ###
-</pre>
+    ### Milestones ###
 
 A sipttra file can contain exactly one such milestone category! This is the only distinction between
 normal categories and the milestone category.
 
 
-h3(#tickets). Tickets
-
+#### Tickets
 
 Tickets are defined like this:
 
-<pre>
-   * NAME (YYYY-MM-DD) [BELONGS_TO] summary
-     further description
+    * NAME (YYYY-MM-DD) [BELONGS_TO] summary
+      further description
 
-     still in the description
-</pre>
+      still in the description
 
 Basically all parts are optional. However, if no summary is specified it is assumed to be empty. The
 name uniquely distinguishes the ticket among all tickets independent of the category. The date in
@@ -1440,16 +1386,14 @@ aware that the spaces between the individual parts are mandatory!
 
 Here are some examples for valid tickets:
 
-<pre>
-  * name1: summary
+    * name1: summary
 
-  * name2 (2007-02-15) my summary here
+    * name2 (2007-02-15) my summary here
 
-  * name3 [othername] yeah, this also works
-    with additional description
+    * name3 [othername] yeah, this also works
+      with additional description
 
-    which still belongs to ticket name3
-</pre>
+      which still belongs to ticket name3
 
 Two important attributes for tickets are defined indirectly:
 
@@ -1458,20 +1402,16 @@ Two important attributes for tickets are defined indirectly:
   category has the highest priority, the last defined ticket the lowest.
 
 Tickets for the milestone category are defined like normal tickets. However, milestone tickets must
-have a name defined!
+have a name!
 
-
-h3(#comments). Comments
-
+#### Comments
 
 Comment lines are allowed everywhere in a sipttra file! Each line which is neither a category line,
 a ticket line or a line belonging to an additional description of a ticket becomes a comment line.
 Also be aware that if a line for a ticket or category is not well structured, it automatically
 becomes a comment line.
 
-
-h2(#fileformat). The sipttra File Format
-
+### The sipttra File Format
 
 A sipttra file starts with an optional meta information part. If you want to have a meta information
 part the sipttra file has to start with three dashes on the first line. Everything till the next
@@ -1484,111 +1424,89 @@ The main part consists of the tracker definition. It is read line by line from t
 * Tickets always belong to the last defined category.
 * The same category can not be defined twice in one sipttra file!
 
-
-h2(#examples). Examples
-
+### Examples
 
 Here are some example sipttra files.
 
-<pre>
-\---
-webgen-metainfo:
-  inMenu: true
-  title: Project Status
-\---
+Example one:
 
-### Milestones ###
+    ---
+    webgen-metainfo:
+      inMenu: true
+      title: Project Status
+    ---
 
-* Feb07 (2007-02-28) Bug fixes and small enhancements
-  - include patches/requests created since 0.4.1 release
-  - add support for sipttra files, the Simple Plain Text Tracker
+    ### Milestones ###
 
-* F: Ideas and todo items for future versions
+    * Feb07 (2007-02-28) Bug fixes and small enhancements
+      - add support for sipttra files, the Simple Plain Text Tracker
 
-  This milestone holds all ideas/todo items/requests which are implemented some
-  time in the future.
+    * F: Ideas and todo items for future versions
 
+    Here could be some potential comment! :)
 
-Here could be some potential comment! :)
+    ### Features (open) ###
 
-### Features (open) ###
+    * T002 [F] another ticket
+      this is additional text
 
-* T001 [Feb07] one ticket
+    ### Features (closed) ###
 
-* T002 [F] another ticket
-  this is additional text
+    * T003 [F] and another closed ticket
 
+Example two:
 
-### Features (closed) ###
+    This are just some
+    comment lines
+    here!
 
-* T003 [F] and another closed ticket
+    ### Milestones ###
 
+    * Feb07 (2007-02-28) Bug fixes and small enhancements
 
-### Bugs (open) ###
+    Here could be some potential comment! :)
 
-* T008 [Feb07] you should really close this bug!
+    ### Features (open) ###
 
+    * T001 [Feb07] one ticket
 
-### Bugs (closed) ###
+    * T002 [Feb07] another ticket
+      this is additional text
 
-* T009 [Feb07] yeah, very cool, a closed bug!
-</pre>
+    ### Features (closed) ###
 
+    * T003 [Feb07] and another closed ticket
 
-<pre>
-This are just some
-comment lines
-here!
+    ### Bugs (open) ###
 
-### Milestones ###
+    * T008 [Feb07] you should really close this bug!
 
-* Feb07 (2007-02-28) Bug fixes and small enhancements
+    ### Bugs (closed) ###
 
-Here could be some potential comment! :)
+    * T009 [Feb07] yeah, very cool, a closed bug!
 
-### Features (open) ###
+Example three:
 
-* T001 [Feb07] one ticket
+    ### Features (open) ###
 
-* T002 [Feb07] another ticket
-  this is additional text
+    * T001 [Feb07] one ticket
 
-
-### Features (closed) ###
-
-* T003 [Feb07] and another closed ticket
-
-### Bugs (open) ###
-
-* T008 [Feb07] you should really close this bug!
+    * T002 [F] another ticket
+      this is additional text
 
 
-### Bugs (closed) ###
+    ### Features (closed) ###
 
-* T009 [Feb07] yeah, very cool, a closed bug!
-</pre>
-
-
-<pre>
-### Features (open) ###
-
-* T001 [Feb07] one ticket
-
-* T002 [F] another ticket
-  this is additional text
-
-
-### Features (closed) ###
-
-* T003 [F] and another closed ticket
-</pre>
-
-
-
+    * T003 [F] and another closed ticket
 
 
 
 ## Plugin Documentation
+
+
+
+TODO: Provide general information about plugins, how the plugin docu is structured and a link to the
+top of the plugin documentation tree
 
 
 
