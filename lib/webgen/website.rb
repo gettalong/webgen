@@ -27,7 +27,6 @@ require 'fileutils'
 require 'webgen/config'
 require 'webgen/plugin'
 
-
 module Webgen
 
   # Main class for rendering a website. The only required parameter is the webgen website directory
