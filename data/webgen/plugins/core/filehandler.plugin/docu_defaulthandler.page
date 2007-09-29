@@ -5,53 +5,9 @@ Description
 The DefaultHandler is the base plugin for all file handler plugins. It
 is also used to hold the parameters that apply to all file handler
 plugins and it provides default implementations for some methods as well
-as the functionality to specify path patterns.
+as the functionality to specify path patterns that are later used to
+match files to file handler plugins.
 
-Common information valid for all file handler plugins can be found here;
-for information on how the files in the source directory are generally
-handled have a look at the Core/FileHandler#filehandling documentation!
-
-
-Path Patterns {#pathpattern}
--------------
-
-Each file handler plugin specifies path patterns which are used to
-locate the files that the plugin can handle. Normally these patterns are
-used to match file extensions, however, they are much more powerful. For
-detailed information have a look at
-[Dir.glob](http://ruby-doc.org/core/classes/Dir.html#M002375).
-
-The path patterns that are handled by a particular file handler plugin
-are stated on its documentation page and cannot be changed for most
-plugins, eg. the File/PageHandler will always handle `.page`
-files. However, the information about how these path patterns work are
-useful for the usage of webgen because of two reasons:
-
-* so that the user knows which files will be processed by a specific
-  file handler plugin
-
-* so that the user can specify path patterns for some special file
-  handler plugins that support additional path patterns, like the
-  File/CopyHandler.
-
-Here are some example path patterns:
-
-<table class="examples" markdown='1'>
-<tr><th>Path Pattern</th><th>Result</th></tr>
-<tr>
-  <td>`*/*.html`</td>
-  <td>All files with the extension `html` in the subdirectories of the source directory</td>
-</tr>
-<tr>
-  <td>`**/*.html`</td>
-  <td>All files with the extension `html` in all directories</td>
-</tr>
-<tr>
-  <td>`**/{foo,bar}*`</td>
-  <td>All files in all directories which start with `foo` or `bar`</td>
-</tr>
-<tr>
-  <td>`**/???`</td>
-  <td>All files in all directories whose file name is exactly three characters long</td>
-</tr>
-</table>
+Users normally only have to concern themselves with the parameters of
+this plugin. If you want to develop a file handler plugin, have a look
+at the RDoc documentation for this plugin class.

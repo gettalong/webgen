@@ -2,9 +2,9 @@
 Description
 -----------
 
-This processor replaces special tags with rendered blocks. It is used,
-for example, in templates to define the places where the actual page
-contents should be.
+This processor replaces special xml tags with rendered blocks. It is
+used, for example, in templates to define the place where the actual
+page content should be.
 
 The syntax is as follows:
 
@@ -14,7 +14,7 @@ where `BLOCK_NAME` is the name of the block of the next node in the node
 chain to include (if there is only one node left in the node chain that
 node is used). The content of the block is not included verbatim but
 rendered according to its render pipeline (with the current node removed
-from the node chain unless its the only node left).
+from the node chain unless it's the only node left).
 
 
 Here is a small example: The first file is the file `default.template`

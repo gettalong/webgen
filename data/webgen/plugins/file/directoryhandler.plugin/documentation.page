@@ -5,9 +5,8 @@ Description
 The directory handler is used for handling directories, ie. it creates
 the target directories.  Additionally an index file for each directory
 can be specified which is used instead of the plain directory index for
-displaying purposes. This means that always when the directory path is
-resolved (e.g. by the Tag/Relocatable plugin) the index file is
-returned.
+displaying purposes. This means that when the directory path is resolved
+(e.g. by the Tag/Relocatable plugin) the index file is returned.
 
 The name of the index file is specified with the `indexFile` meta
 information on a directory node which has a global default provided by

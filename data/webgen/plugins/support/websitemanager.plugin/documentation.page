@@ -4,45 +4,6 @@ Description
 
 The Support/WebsiteManager plugin provides methods for working with
 webgen websites as well as some website templates and website
-styles.
-
-Currently, the following actions are supported:
-
-* creating a website based on a website template
-* copying a style to an existing website
-
-A website template defines some initial pages which should be filled
-with real data. For example, the @project@ template defines several
-pages which are useful for software projects including a features and
-about page.
-
-A style defines, for example, the basic page layout (in the case of
-website styles) or how image galleries should look like (in the case of
-gallery styles). So styles are basically used to change the appearance
-of parts (or the whole) website. This makes them a powerful tool as this
-plugin makes it easy to change a style later!
-
-Styles and website templates are defined using resources. Each such
-resource has to be a directory containing an optional README file in
-YAML format in which key-value pairs provide additional information
-about the style or website template. All other files/directories in the
-directory are copied to the root of the destination webgen website when
-the style or website template is used.
-
-The plugin uses a special naming convention to recognize website
-templates and styles:
-
-* A resource named @webgen/website/template/TEMPLATE_NAME@ is considered
-  to be a website template called TEMPLATE_NAME and can be later
-  accessed using this name.
-
-* A resource named @webgen/website/style/CATEGORY/STYLE_NAME@ is
-  considered to be a style in the category CATEGORY called
-  STYLE_NAME. There are no fixed categories, one can use anything here!
-  Again, the style can later be accessed by providing the category and
-  style name.
-
-Website template names have to be unique and style names have to be
-unique in respect to their categories!
-
-Note: all styles in the category 'website' are website styles.
+styles. This plugin is normally of no interest to a user. However, if
+you want create a new website template/style have a look at the RDoc
+documentation for this plugin.

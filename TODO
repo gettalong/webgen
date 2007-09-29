@@ -5,7 +5,7 @@ webgen-metainfo:
 
 ---
 
-The following category defines all milestones for webgen:
+Next task number: T013
 
 
 # Milestones #
@@ -18,16 +18,18 @@ The following category defines all milestones for webgen:
 
 ## Implementation (open) ##
 
-* what about fragment nodes? (created using a content processor, stored in cache, two webgen runs?)
+* T001: what about fragment nodes? (created using a content processor, stored in cache, two webgen runs?)
 
-* add easy method for getting all useable ContentConverters
+* T002: add easy method for getting all useable ContentConverters
 
-* html validator should run after file written on .html files (configurable which files)
+* T003: html validator should run after file written on .html files (configurable which files)
 
-* allow blocks processor to use a filename as argument
+* T004: allow blocks processor to use a filename as argument
 
-* add ContentConverter which searches for wg-tagname="params" attributes and replaces them (see mail from andrew pietsch)
+* T005: add ContentConverter which searches for wg-tagname="params" attributes and replaces them (see mail from andrew pietsch)
 
+* T012: extend File/CopyHandler to allow arbitrary content processing before copying
+  by encoding the to-be-used content processor into the filename, like default.erb.css or default.sass.css
 
 ### Implementation (closed) ###
 
@@ -37,9 +39,11 @@ The following category defines all milestones for webgen:
 
 ## Bugs (open) ##
 
-* see mail from andrew pietsch regarding menu issues/'tapestry.apache.org' feature
+* T006: see mail from andrew pietsch regarding menu issues/'tapestry.apache.org' feature
 
-* loggin level is assigned after plugin bundles gets loaded in cli.rb/website.rb -> need a hook or something
+* T007: logging level is assigned after plugin bundles gets loaded in cli.rb/website.rb -> need a hook or something
+
+* T011: source file naming convention does not allow files with dots in extension like .tar.gz
 
 
 ### Bugs (closed) ###
@@ -49,13 +53,13 @@ The following category defines all milestones for webgen:
 
 ## Documentation (open) ##
 
-* add glossary page
+* T008: add glossary page
 
   source file name, output file name, canonical name, localized canonical name
-  
-* describe how the path patterns used in nodes_for_pattern work in section of naming of files.
 
-* think about examples in documentation
+* T009: describe how the path patterns used in nodes_for_pattern work in section of naming of files.
+
+* T010: think about examples in documentation
 
 
 

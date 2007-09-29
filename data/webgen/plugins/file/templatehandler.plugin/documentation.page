@@ -19,7 +19,7 @@ the root directory, it is used as template for all page files that have
 no explicit template set.
 
 webgen also uses the concept of a template chain to support multiple
-templates for one page file!  For example, assume that
+templates for one page file. For example, assume that
 
 * the page file `index.page` has set the `template` meta information to
   `special.template`,
@@ -39,12 +39,12 @@ whereas the template chain for `other.page` would look like this
     default.template <= index.page
 
 The first case also means that the `special.template` is nested in the
-`default.template`! This makes it possible, for example, to create a
+`default.template`. This makes it possible, for example, to create a
 general website layout and then to create a special image gallery layout
 which uses the general one.
 
 To stop the template handler from further searching for a template, you
-explicitly need set a null template for the page or template file:
+explicitly need to set a null template for the page or template file:
 
     template: ~
 

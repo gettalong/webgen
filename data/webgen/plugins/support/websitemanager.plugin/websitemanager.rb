@@ -1,7 +1,67 @@
 module Support
 
-  # This plugin can be used to manage webgen websites. It provides access to website templates and
+  # This plugin is used for managing webgen websites. It provides access to website templates and
   # styles defined as resources and makes it easy to copy them to a webgen website.
+  #
+  # = General information
+  #
+  # Currently, the following actions are supported:
+  #
+  # * creating a website based on a website template (#create_website)
+  # * copying a style to an existing website (#use_style)
+  #
+  # A website template defines some initial pages which should be filled with real data. For
+  # example, the @project@ template defines several pages which are useful for software projects
+  # including a features and about page.
+  #
+  # A style defines, for example, the basic page layout (in the case of website styles) or how image
+  # galleries should look like (in the case of gallery styles). So styles are basically used to
+  # change the appearance of parts (or the whole) website. This makes them a powerful tool as this
+  # plugin makes it easy to change a style later!
+  #
+  # = website template and style resource naming convention
+  #
+  # Styles and website templates are defined using resources. Each such resource has to be a
+  # directory containing an optional README file in YAML format in which key-value pairs provide
+  # additional information about the style or website template. All other files/directories in the
+  # directory are copied to the root of the destination webgen website when the style or website
+  # template is used.
+  #
+  # The plugin uses a special naming convention to recognize website templates and styles:
+  #
+  # * A resource named <tt>webgen/website/template/TEMPLATE_NAME</tt> is considered to be a website
+  #   template called TEMPLATE_NAME and can be later accessed using this name.
+  #
+  # * A resource named <tt>webgen/website/style/CATEGORY/STYLE_NAME</tt> is considered to be a style
+  #   in the category CATEGORY called STYLE_NAME. There are no fixed categories, one can use
+  #   anything here!  Again, the style can later be accessed by providing the category and style
+  #   name.
+  #
+  # Website template names have to be unique and style names have to be unique in respect to their
+  # categories!
+  #
+  # Note: All styles in the category 'website' are website styles.
+  #
+  # = Creating a website template or a style
+  #
+  # First you need to create a new plugin bundle (see Webgen::PluginManager). Then create the
+  # following directory structure inside the plugin bundle:
+  #
+  #   resources/
+  #   resources/styles
+  #   resources/templates
+  #
+  # Put your new website template into <tt>resources/templates/TEMPLATE_NAME</tt> and/or your new
+  # style into <tt>resources/styles/STYLE_CATEGORY/STYLE_NAME</tt>. After that you need to add the
+  # resource definition file with the following content:
+  #
+  #   resources/templates/*/:
+  #     name: webgen/website/template/$basename
+  #   resources/styles/*/*/:
+  #     name: webgen/website/style/$dir1/$basename
+  #
+  # These lines automatically add all templates/styles in the above specified directories to the
+  # list of available templates/styles.
   class WebsiteManager
 
     # This class is used to store information about website templates and styles and also provides

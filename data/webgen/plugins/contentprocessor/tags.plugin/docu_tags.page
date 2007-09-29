@@ -45,7 +45,7 @@ A tag can be specified in one of the following ways:
 
     > The parameters defined using this syntax are actually specified
     > using a hash in YAML markup.
-    {.exclamation}
+    {.info}
 
 *   Additionally, you can use a body part with any of the above forms. To
     specify that the tag has a body part, just use two colons instead of

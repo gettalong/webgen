@@ -2,10 +2,10 @@
 Description
 -----------
 
-The meta tag is used to copy meta information verbatim to the output
-file. For example, if you define a meta information with the key
-`revision`, you can put the tag `\{revision:}` into a block of the page
-file and the value gets substituted automatically.
+The meta tag is used to copy meta information verbatim. For example, if
+you define a meta information with the key `revision`, you can put the
+tag `\{revision:}` into a block of a page file and the value gets
+substituted automatically.
 
 An every day usage example for the meta tag would be including the title
 of a page in the `head`-section of a HTML template.
