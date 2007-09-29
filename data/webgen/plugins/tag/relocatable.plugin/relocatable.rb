@@ -23,9 +23,9 @@ module Tag
           else
             result = resolve_path( uri, ref_node, node )
           end
-          log(:error) { "Could not resolve path '#{uri_string}' in <#{ref_node_info[:src]}>" } if result.empty?
+          log(:error) { "Could not resolve path '#{uri_string}' in <#{ref_node.node_info[:src]}>" } if result.empty?
         rescue URI::InvalidURIError => e
-          log(:error) { "Error while parsing path for tag relocatable in <#{ref_node_info[:src]}>: #{e.message}" }
+          log(:error) { "Error while parsing path for tag relocatable in <#{ref_node.node__info[:src]}>: #{e.message}" }
         end
       end
       result
