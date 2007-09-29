@@ -16,11 +16,11 @@
 #
 
 
-begin
-  require 'rubygems'
-  require 'rake/gempackagetask'
-rescue Exception
-end
+# load all optional developer libraries
+require 'rubygems' rescue nil
+require 'rake/gempackagetask' rescue nil
+require 'rubyforge' rescue nil
+require 'rcov/rcovtask' rescue nil
 
 require 'fileutils'
 require 'rake/clean'
@@ -28,19 +28,21 @@ require 'rake/packagetask'
 require 'rake/rdoctask'
 require 'rake/testtask'
 
+
 # General things  ##############################################################
 
-$:.push File.expand_path( File.join( File.dirname(__FILE__), 'lib' ) )
-require 'webgen/config'
+require './lib/webgen/config'
 
 PKG_NAME = "webgen"
 PKG_VERSION = Webgen::VERSION.join( '.' )
 PKG_FULLNAME = PKG_NAME + "-" + PKG_VERSION
 PKG_SUMMARY = Webgen::SUMMARY
 PKG_DESCRIPTION = Webgen::DESCRIPTION
+PKG_AUTHOR_NAME, PKG_AUTHOR_EMAIL = Webgen::AUTHOR.split(/\s?(?=<)/)
 
-SRC_RB = FileList['lib/**/*.rb']
-
+RF_NAME = PKG_NAME
+RF_DOC_PATH = 'devel'
+RF_SYNC_OPTIONS="--delete" #Used --excluded when deploying into root to not delete prior docs
 
 # The default task is run if rake is given no explicit arguments.
 desc "Default Task"
@@ -49,16 +51,13 @@ task :default => :test
 
 # End user tasks ################################################################
 
-desc "Installs the package #{PKG_NAME}"
-task :install => [:prepare] do
+desc "Install #{PKG_NAME}"
+task :install do
   ruby "setup.rb config"
   ruby "setup.rb setup"
   ruby "setup.rb install"
 end
 
-
-CLEAN.exclude( 'doc/src/documentation/plugins/core' )
-CLEAN.exclude( 'doc/output/documentation/plugins/core' )
 task :clean do
   ruby "setup.rb clean"
 end
@@ -69,60 +68,42 @@ task :doc => [:rdoc]
 
 rd = Rake::RDocTask.new do |rdoc|
   rdoc.rdoc_dir = 'doc/output/rdoc'
-  rdoc.title    = PKG_NAME
-  rdoc.options << '--line-numbers' << '--inline-source' << '-m' << 'Webgen'
+  rdoc.title = PKG_NAME
+  rdoc.main = 'Webgen'
+  rdoc.options << '--line-numbers' << '--inline-source' << '--promiscuous'
   rdoc.rdoc_files.include( 'lib/**/*.rb' )
   rdoc.rdoc_files.include( 'data/webgen/plugins/**/*.rb')
   rdoc.rdoc_files.exclude( /tc_.*\.rb$/ )
+  rdoc.rdoc_files.exclude( 'data/webgen/plugins/**/vendor/**/*.rb')
 end
 
 tt = Rake::TestTask.new do |t|
   t.test_files = FileList['test/unittests/*.rb'] + FileList['data/webgen/plugins/**/test/unittests/*.rb']
 end
 
-begin
-  require 'rcov/rcovtask'
-  Rcov::RcovTask.new do |t|
-    t.test_files = tt.instance_variable_get( :@test_files )
-  end
-rescue LoadError
-end
 
-# Developer tasks ##############################################################
+# Release tasks ##############################################################
 
 
 PKG_FILES = FileList.new( [
-                           'setup.rb',
-                           'TODO',
-                           'COPYING',
-                           'README',
                            'Rakefile',
-                           'ChangeLog',
+                           'TODO',
+                           'setup.rb',
                            'VERSION',
                            'bin/webgen',
                            'lib/**/*.rb',
                            'data/**/*',
                            'test/**/*',
-                           'doc/**/*',
-                           'man/**/*',
+                           'doc/src/**/*'
                           ]) do |fl|
-  fl.exclude( /\bsvn\b/ )
-  fl.exclude( 'doc/output' )
-end
-
-CLOBBER << "ChangeLog"
-task :gen_changelog do
-  puts "Generating Changelog file"
-  sh "svk log -r HEAD:1 -v > ChangeLog"
+  #TODO
 end
 
 CLOBBER << "VERSION"
-task :gen_version do
+file 'VERSION' do
   puts "Generating VERSION file"
   File.open( 'VERSION', 'w+' ) {|file| file.write( PKG_VERSION + "\n" )}
 end
-
-task :package => [:gen_changelog, :gen_version]
 
 Rake::PackageTask.new( PKG_NAME, PKG_VERSION ) do |p|
   p.need_tar = true
@@ -130,9 +111,7 @@ Rake::PackageTask.new( PKG_NAME, PKG_VERSION ) do |p|
   p.package_files = PKG_FILES
 end
 
-if !defined? Gem
-  puts "Package Target requires RubyGEMs"
-else
+if defined? Gem
   spec = Gem::Specification.new do |s|
 
     #### Basic information
@@ -146,7 +125,7 @@ else
 
     s.files = PKG_FILES.to_a
     s.add_dependency( 'cmdparse', '~> 2.0.0' )
-    s.add_dependency( 'redcloth', '>= 3.0.0' )
+    s.add_dependency( 'maruku', '>= 0.5.6' )
     s.add_dependency( 'facets', '>= 1.8.0')
     s.add_dependency( 'rake' )
 
@@ -159,14 +138,14 @@ else
 
     s.has_rdoc = true
     s.extra_rdoc_files = rd.rdoc_files.reject {|fn| fn =~ /\.rb$/}.to_a
-    s.rdoc_options = ['--line-numbers', '-m', 'Webgen']
+    s.rdoc_options = ['--line-numbers', '--inline-source', '--promiscuous', '--main', 'Webgen']
 
     #### Author and project details
 
-    s.author = "Thomas Leitner"
-    s.email = "t_leitner@gmx.at"
-    s.homepage = "http://webgen.rubyforge.org"
-    s.rubyforge_project = "webgen"
+    s.author = PKG_AUTHOR_NAME
+    s.email = PKG_AUTHOR_EMAIL
+    s.homepage = "http://#{RF_NAME}.rubyforge.org"
+    s.rubyforge_project = RF_NAME
   end
 
   Rake::GemPackageTask.new( spec ) do |pkg|
@@ -176,11 +155,52 @@ else
 
 end
 
-desc "Upload documentation to homepage"
-task :uploaddoc => [:doc] do
-  Dir.chdir('doc/output')
-  sh "scp -r * gettalong@rubyforge.org:/var/www/gforge-projects/#{PKG_NAME}/"
+desc "Upload documentation to Rubyforge homepage"
+task :publish_doc => [:doc] do
+  sh "rsync -avz #{RF_SYNC_OPTIONS} doc/output/ gettalong@rubyforge.org:/var/www/gforge-projects/#{RF_NAME}/#{RF_DOC_PATH}"
 end
 
+task :release => [:clean, :clobber, :package, :doc, :publish_doc]
+
+if defined? RubyForge
+  desc "Upload the release to Rubyforge"
+  task :upload_on_rubyforge => [:package] do
+    print 'Uploading files to Rubyforge for ' + PKG_FULLNAME + '...'
+    rf = RubyForge.new
+    rf.login
+
+    #TODO: read from (to be created) changes file
+    #rf.userconfig["release_notes"] =
+    #rf.userconfig["release_changes"] =
+    #rf.userconfig["preformatted"] = true
+
+    files = %w[.gem .tgz .zip].collect {|ext| "pkg/#{PKG_FULLNAME}" + ext}
+
+    rf.add_release(PKG_NAME, PKG_NAME, PKG_VERSION, *files)
+    puts 'done'
+  end
+
+  desc 'Post announcement to rubyforge.'
+  task :post_news do
+    print 'Posting announcement to Rubyforge for ' + PKG_FULLNAME + '...'
+    rf = RubyForge.new
+    rf.login
+
+    #TODO: read announcement from a doc page
+    #rf.post_news(rubyforge_name, subject, body)
+    puts "Posted to rubyforge"
+  end
+
+  task :release => [:upload_on_rubyforge, :post_news]
+end
+
+
+# Development tasks ##############################################################
+
+if defined? Gem
+  Rcov::RcovTask.new do |t|
+    t.test_files = tt.instance_variable_get( :@test_files )
+  end
+end
 
 # Helper methods ###################################################################
