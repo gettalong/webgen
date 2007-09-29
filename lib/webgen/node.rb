@@ -141,7 +141,7 @@ class Node
     elsif @path =~ ABSOLUTE_URL
       @path
     else
-      full_path.sub( /^#{Node.root( self ).path}/, '/' )
+      full_path.sub( /^#{Regexp.escape(Node.root( self ).path)}/, '/' )
     end
   end
 

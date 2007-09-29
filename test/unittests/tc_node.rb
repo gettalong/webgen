@@ -191,6 +191,9 @@ class NodeTest < Webgen::TestCase
 
     root = Node.new( nil, 'C:/webgen/output/')
     assert_equal( '/', root.absolute_path )
+
+    @n['/'].path = '/c++/test/'
+    assert_equal( '/', @n['/'].absolute_path)
   end
 
   def test_lcn

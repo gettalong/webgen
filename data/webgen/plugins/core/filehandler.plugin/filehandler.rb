@@ -317,7 +317,7 @@ module Core
         log(:info) { "Not using these files for #{handler.plugin_name} as they do not exist or are excluded: #{diff.inspect}" } if diff.length > 0
         common.sort {|a,b| a.length <=> b.length }.each  do |file|
           log(:info) { "Creating node(s) for file <#{file}>..." }
-          create_node( file.sub( /^#{root_node.node_info[:src]}/, '' ), root_node, handler )
+          create_node( file.sub( /^#{Regexp.escape(root_node.node_info[:src])}/, '' ), root_node, handler )
         end
       end
 
