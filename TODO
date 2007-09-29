@@ -1,0 +1,64 @@
+---
+webgen-metainfo:
+  inMenu: true
+  title: Project Status
+
+---
+
+The following category defines all milestones for webgen:
+
+
+# Milestones #
+
+* F: Ideas and todo items for future versions
+
+  This milestone holds all ideas/todo items/requests which are implemented some
+  time in the future.
+
+
+## Implementation (open) ##
+
+* what about fragment nodes? (created using a content processor, stored in cache, two webgen runs?)
+
+* add easy method for getting all useable ContentConverters
+
+* html validator should run after file written on .html files (configurable which files)
+
+* allow blocks processor to use a filename as argument
+
+* add ContentConverter which searches for wg-tagname="params" attributes and replaces them (see mail from andrew pietsch)
+
+
+### Implementation (closed) ###
+
+
+
+
+
+## Bugs (open) ##
+
+* see mail from andrew pietsch regarding menu issues/'tapestry.apache.org' feature
+
+* loggin level is assigned after plugin bundles gets loaded in cli.rb/website.rb -> need a hook or something
+
+
+### Bugs (closed) ###
+
+
+
+
+## Documentation (open) ##
+
+* add glossary page
+
+  source file name, output file name, canonical name, localized canonical name
+  
+* describe how the path patterns used in nodes_for_pattern work in section of naming of files.
+
+* think about examples in documentation
+
+
+
+### Documentation (closed) ###
+
+
