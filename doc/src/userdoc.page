@@ -3,7 +3,7 @@
 # Getting Started With webgen
 
 
-## Five Minute Introduction
+## One Minute Introduction
 
 
 webgen is a command line application for generating static websites. You could write a static
@@ -40,7 +40,7 @@ optional dependencies which are needed for some plugins.
 
 The latest version of webgen can always be downloaded from [webgen's Files section on
 Rubyforge](http://rubyforge.org/frs/?group_id=296). After the download the package needs to be
-decompressed and then you can install webgen using the included @setup.rb@ installation method:
+decompressed and then you can install webgen using the included `setup.rb` installation method:
 
     $ ruby setup.rb config
     $ ruby setup.rb setup
@@ -76,7 +76,7 @@ Make sure that you also install the mandatory and, if you need them, the optiona
   highlighting to be available for certain plugins
 ------------------- TODO -------------------------
 
-All the optional libraries can be installed via Rubygems (which I recommend).
+All these libraries can be installed via Rubygems (which I recommend).
 
 
 ## Tutorial: Creating a Basic Website
@@ -728,9 +728,9 @@ If you just want to change the pipeline for one block, you can do it like this:
 Use the configuration file! For example, to change the meta information `inMenu` sothat it defaults
 to `true` for all page files use the following in your configuration file:
 
-        File/PageHandler:
-          defaultMetaInfo:
-            inMenu: true
+    File/PageHandler:
+      defaultMetaInfo:
+       inMenu: true
 
 The special key `defaultMetaInfo` is available for all file handler plugins in the configuration
 file.

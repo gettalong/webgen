@@ -5,7 +5,13 @@ webgen-metainfo:
 
 ---
 
-Next task number: T013
+Next task number: T018
+
+
+Other things which need to be done:
+* ask on ruby-talk about RDoc and multiple comments for modules, how to avoid overwriting a documentation comment
+* better syntax for maruku definition lists: use defterm:: defdata???
+* update setup.rb to latest version
 
 
 # Milestones #
@@ -31,6 +37,13 @@ Next task number: T013
 * T012: extend File/CopyHandler to allow arbitrary content processing before copying
   by encoding the to-be-used content processor into the filename, like default.erb.css or default.sass.css
 
+* T014: extend Cli/Commands/About with an option to display all available parameters
+  maybe this plugin should be renamed to `plugin about` once the plugin management features are implemented
+
+* T015: add Cli/Commands/Use for applying a specific style to a website
+
+* T016: add Cli/Commands/Check for checking the configuration file and possibly other things
+
 ### Implementation (closed) ###
 
 
@@ -45,6 +58,7 @@ Next task number: T013
 
 * T011: source file naming convention does not allow files with dots in extension like .tar.gz
 
+* T017: invalid language names are not recognized in file names
 
 ### Bugs (closed) ###
 
