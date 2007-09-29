@@ -36,8 +36,9 @@ File/DefaultHandler:
     outputNameStyle:
       default: [:basename, [., :lang], :ext]
       desc: Defines how the output name should be built. The correct name will be used for the
-            :name part and the file language will be used for the :lang part. If defaultLangInFilename
+            :basename part and the file language will be used for the :lang part. If defaultLangInFilename
             is true, the :lang part or the subarray in which the :lang part was defined, will be omitted.
+            The :ext part is replaced with the correct extension.
 
 
 File/VirtualFileHandler:

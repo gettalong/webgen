@@ -62,6 +62,9 @@ module Support
   #
   # These lines automatically add all templates/styles in the above specified directories to the
   # list of available templates/styles.
+  #
+  # Note: a website style should have at least the files <tt>src/default.template</tt> and
+  # <tt>src/default.css</tt> to stay compliant with the shipped website styles.
   class WebsiteManager
 
     # This class is used to store information about website templates and styles and also provides
