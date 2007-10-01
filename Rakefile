@@ -41,7 +41,7 @@ PKG_DESCRIPTION = Webgen::DESCRIPTION
 PKG_AUTHOR_NAME, PKG_AUTHOR_EMAIL = Webgen::AUTHOR.split(/\s?(?=<)/)
 
 RF_NAME = PKG_NAME
-RF_DOC_PATH = 'devel'
+RF_DOC_PATH = PKG_VERSION
 RF_SYNC_OPTIONS="--delete" #Used --excluded when deploying into root to not delete prior docs
 
 # The default task is run if rake is given no explicit arguments.
@@ -157,7 +157,7 @@ end
 
 desc "Upload documentation to Rubyforge homepage"
 task :publish_doc => [:doc] do
-  sh "rsync -avz #{RF_SYNC_OPTIONS} doc/output/ gettalong@rubyforge.org:/var/www/gforge-projects/#{RF_NAME}/#{RF_DOC_PATH}"
+  sh "rsync -avz #{RF_SYNC_OPTIONS} doc/output/ gettalong@rubyforge.org:/var/www/gforge-projects/#{RF_NAME}/#{RF_DOC_PATH}/"
 end
 
 task :release => [:clean, :clobber, :package, :doc, :publish_doc]

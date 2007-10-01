@@ -52,6 +52,12 @@ Other things which need to be done:
 
 ## Bugs (open) ##
 
+* T018: problem with regenerating pages when a new page got added to a menu
+  doc.page (inMenu:true), index.page(inMenu:false) -> both pages are generated
+  setting inMenu:true in index.page -> only index.page is regenerated
+  -> menu plugin does not realize that new page has been added, every page where
+  the new menu item appears has to be regenerated
+
 * T006: see mail from andrew pietsch regarding menu issues/'tapestry.apache.org' feature
 
 * T007: logging level is assigned after plugin bundles gets loaded in cli.rb/website.rb -> need a hook or something
