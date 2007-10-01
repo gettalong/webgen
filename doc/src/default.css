@@ -173,13 +173,13 @@ blockquote.information {
   margin: 0; padding: 0;
 }
 #header-content li {
-  padding: 3px 12px;
   float: left;
   display: block;
   color: #FCFFF5;
   text-decoration: none;
 }
-#header-content li a {
+#header-content li a, #header-content li span {
+  display: block;
   text-decoration: none;
   padding: 3px 12px;
 }

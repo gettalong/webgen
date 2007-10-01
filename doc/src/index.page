@@ -1,0 +1,113 @@
+---
+title: Home
+directoryName: Home
+inMenu: true
+orderInfo: 10
+---
+# Welcome to the homepage of _webgen_!
+
+
+## Introduction
+
+
+webgen is a command line application for generating static websites. You could write a static
+website by hand, of course. But by using webgen you have several advantages:
+
+* The page layout is separated from the content: if you change the layout, all pages are
+  automatically updated.
+
+* The content files can be written in a markup language like Markdown or Textile.
+
+* webgen can automatically generate, for example, menus and breadcrumb trails for you.
+
+* Dynamic content can easily be added to content files.
+
+The above list should just give you a glimpse of what is possible with webgen. Have a look at the
+[features page]({relocatable: features.html}) for a more complete list.
+
+Although webgen is very powerful it is also very easy to use. A basic website can be created in just
+one step by executing `webgen create mywebsite`. This command will create the directory `mywebsite`
+which houses the newly created webgen website and some content files to start with. By running the
+command `webgen` inside the `mywebsite` directory, the website will be generated and put into the
+`output` directory where it can be viewed with any browser.
+
+Actually, this website was generated with webgen and provides an online demonstration of its
+features. For example, the menu that you can see at the top was created dynamically. For more
+information have a look at the [user documentation]({relocatable: userdoc.html})!
+
+
+## Feature requests, bugs, ...
+
+If you have an idea for a new feature for webgen, [request it][feature_request]. If you have found a
+bug, you should [report it here][bug_report]. Also, there are [forums][forum] and [mailing
+lists][ml] available if you have any questions!
+
+[feature_request]: http://rubyforge.org/tracker/?atid=1210&group_id=296&func=browse
+[bug_report]: http://rubyforge.org/tracker/?atid=1207&group_id=296&func=browse
+[forum]: http://rubyforge.org/forum/?group_id=296
+[ml]: http://rubyforge.org/mail/?group_id=296
+
+
+## Download & Installation
+
+webgen should run on any platform which supports Ruby. It has been successfully tested on the
+following platforms:
+
+* Linux with Ruby 1.8.6
+* Mac OSX with Ruby 1.8.6
+* Windows XP with Ruby 1.8.5 (1.8.6 has a bug that prevents webgen from working correctly)
+
+### Using Rubygems
+
+If you are using Rubygems, installing webgen is as simple as executing `gem install webgen`. After
+this command has finished, everything is ready for creating websites. Be sure to have a look at the
+optional dependencies which are needed for some plugins.
+
+### Manual Installation
+
+The latest version of webgen can always be downloaded from [webgen's Files section on
+Rubyforge](http://rubyforge.org/frs/?group_id=296). After the download the package needs to be
+decompressed and then you can install webgen using the included `setup.rb` installation method:
+
+    $ ruby setup.rb config
+    $ ruby setup.rb setup
+    $ ruby setup.rb install
+
+Make sure that you also install the mandatory and, if you need them, the optional dependencies.
+
+### Dependencies
+
+* (mandatory) [cmdparse](http://cmdparse.rubyforge.org) version 2.0.0 or higher
+
+* (mandatory) [facets](http://facets.rubyforge.org) version 1.8.54 or higher
+
+* (mandatory) [maruku](http://maruku.rubyforge.org) version 0.5.5 or higher
+
+* (optional) [RedCloth](http://redcloth.rubyforge.org) version 2.0.10 or higher for Textile support
+
+
+------------------- TODO -------------------------
+* (optional) "BlueCloth":http://www.deveiate.org version 1.0.0 or higher if you want Markdown
+  support
+
+* (optional) "RMagick":http://rmagick.rubyforge.org/ version 1.7.1 or higher if you want automatic
+  thumbnail creation for image galleries
+
+* (optional) "builder":http://builder.rubyforge.org/ version 2.0.0 or higher if you want programatic
+  HTML/XML file generation
+
+* (optional) "exifr":http://exifr.rubyforge.org/ version 0.10 or higher if you want to be able to
+  have EXIF information available for image galleries
+
+* (optional) "coderay":http://coderay.rubychan.de/ version 0.7.4.215 or higher if you want syntax
+  highlighting to be available for certain plugins
+------------------- TODO -------------------------
+
+All these libraries can be installed via Rubygems (which I recommend).
+
+
+## Author
+
+* *Thomas Leitner*
+* e-Mail: "t_leitner@gmx.at":mailto:t_leitner@gmx.at
+* GPG Key-Id: 0xD942E7F6
