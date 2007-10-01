@@ -1,4 +1,7 @@
-<!-- -*- outline -*- -->
+---
+title: Documentation
+inMenu: true
+---
 
 # Getting Started With webgen
 
@@ -29,6 +32,13 @@ command `webgen` inside the `mywebsite` directory, the website will be generated
 
 ## Download & Installation
 
+
+webgen should run on any platform which supports Ruby. It has been successfully tested on the
+following platforms:
+
+* Linux with Ruby 1.8.6
+* Mac OSX with Ruby 1.8.6
+* Windows XP with Ruby 1.8.5 (1.8.6 has a bug that prevents webgen from working correctly)
 
 ### Using Rubygems
 
@@ -240,8 +250,8 @@ TODO: add extra section for configuration file
 ------------------- TODO -------------------------
 There is a special key for file handler plugins: `defaultMetaInfo`. It's value should be a hash with
 the default meta information for nodes created by the plugin. The value is used to update the
-correct part of the {param: Core/FileHandler:defaultMetaInfo} parameter *if and only if* no value
-for the {param: Core/FileHandler:defaultMetaInfo} parameter has been set in the configuration file!
+correct part of the Core/FileHandler:defaultMetaInfo parameter *if and only if* no value
+for the Core/FileHandler:defaultMetaInfo parameter has been set in the configuration file!
 ------------------- TODO -------------------------
 
 
@@ -765,8 +775,7 @@ parameter!
 ### ... use embedded ruby in page/template files?
 
 TODO: rework this answer
-Have a look at the <a href="{relocatable: references/webpage_format.page#proc-erb}">ERB section</a> of
-the WebPage Format reference!
+Have a look at the ERB section of the WebPage Format reference!
 
 ### ... modify the template chain?
 
@@ -867,8 +876,9 @@ Or enable smiley replacement only on a specific page file using the meta informa
 TODO: rework this because now it is possible to specify a tag body
 
 ------------------- TODO -------------------------
-This can be done using the {plugin: Tag/IncludeFile} plugin. Make sure you have `coderay`
-installed! Here is an example which includes a syntax highlighted ruby file:
+
+This can be done using the Tag/IncludeFile plugin. Make sure you have `coderay` installed! Here is
+an example which includes a syntax highlighted ruby file:
 
   \{includeFile: {filename: happy.rb, highlight: ruby}}
 ------------------- TODO -------------------------
@@ -1056,7 +1066,7 @@ Tag/Resource plugin.
   [CrystalClear](http://www.kde-look.org/content/show.php?content=25668) package
 * webgen-emoticons-\*: Credits for the individual emoticon packs are listed on the Misc/SmileyReplacer page
 
-{predefinedResources:} TODO: copy this plugin from trunk and adjust it
+\{predefinedResources:} TODO: copy this plugin from trunk and adjust it
 
 
 ## Plugin Parameter Reference
@@ -1065,7 +1075,7 @@ Tag/Resource plugin.
 Each plugin can specify parameters. Here is a list of all available parameters for a quick lookup,
 ordered by category and then name (only plugins with parameters are shown!):
 
-{listPluginParameters:} TODO: copy this plugin from trunk and adjust it
+\{listPluginParameters:} TODO: copy this plugin from trunk and adjust it
 
 
 ## WebPage Format
@@ -1207,9 +1217,9 @@ Tags are defined by a special markup code. A tag has the following structure:
 
 Every time a tag is found in a file, the registered plugin for the tag is called. The plugin returns
 a string which is put into the output file instead of the tag. The output a tag plugin can produce
-ranges from something simple to something complex. For example, the {plugin: Tag/Meta} plugin copies
-any additional meta information specified in the file verbatim into the correct place in the output
-file. And in contrast, the {plugin: Tag/Menu} plugin generates a whole menu tree.
+ranges from something simple to something complex. For example, the Tag/Meta plugin copies any
+additional meta information specified in the file verbatim into the correct place in the output
+file. And in contrast, the Tag/Menu plugin generates a whole menu tree.
 
 If you want to use the markup code used for tags, you need to escape the tag with a backslash, like
 this:
@@ -1266,8 +1276,8 @@ The first two steps happen when the file is read and the last three when the fil
 
 #### Converting to HTML
 
-The conversion of a content block to HTML is done via the {plugin: ContentConverter} plugins. Each
-plugin is able to convert a special marked-up text to HTML.
+The conversion of a content block to HTML is done via the ContentConverter plugins. Each plugin is
+able to convert a special marked-up text to HTML.
 
 #### Evaluating ERB Tags
 
@@ -1303,7 +1313,7 @@ tags!
 
 #### Evaluating webgen Tags
 
-Tags have already been mentioned in the <a href="{relocatable: '#tags'}">webgen tags</a> section.
+Tags have already been mentioned in the webgen tags (TODO:link) section.
 
 
 
