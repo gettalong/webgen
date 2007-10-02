@@ -8,7 +8,6 @@ webgen-metainfo:
 Next task number: T018
 
 
-
 Other things which need to be done:
 * ask on ruby-talk about RDoc and multiple comments for modules, how to avoid overwriting a documentation comment
 * better syntax for maruku definition lists: use defterm:: defdata???
