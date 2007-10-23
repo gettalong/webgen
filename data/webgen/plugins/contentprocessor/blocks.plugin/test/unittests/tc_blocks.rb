@@ -15,12 +15,21 @@ module ContentProcessorTests
       template.node_info[:page] = WebPageFormat.create_page_from_data( "--- content, pipeline:blocks\nbefore<webgen:block name='content' />after" )
       processors = { 'blocks' => @plugin }
 
-      assert_equal( ['data', {:nodes => [node]}],
-                    @plugin.process('<webgen:block name="content" />', {:chain=>[node]}, {}))
-      assert_raise( RuntimeError ) { @plugin.process('<webgen:block name="nothing"/>', {:chain=>[node]}, {}) }
-      assert_equal( ['beforedataafter', {:nodes => [template, node]}],
-                    @plugin.process('<webgen:block name="content" />',
-                                    {:chain=>[node, template, node], :processors => processors}, {}))
+      context = Context.new( processors, [node] )
+      context.content = '<webgen:block name="content" />'
+      @plugin.process( context )
+      assert_equal( 'data', context.content )
+      assert_equal( [node.absolute_lcn], context.cache_info[@plugin.plugin_name])
+
+      context.content = '<webgen:block name="nothing"/>'
+      assert_raise( RuntimeError ) { @plugin.process( context) }
+
+      context.content = '<webgen:block name="content" />'
+      context.cache_info = {}
+      context.chain = [node, template, node]
+      @plugin.process( context )
+      assert_equal( 'beforedataafter', context.content )
+      assert_equal( [template.absolute_lcn, node.absolute_lcn], context.cache_info[@plugin.plugin_name])
     end
 
   end
