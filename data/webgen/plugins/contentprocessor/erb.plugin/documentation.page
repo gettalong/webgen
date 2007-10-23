@@ -12,11 +12,6 @@ You can use the following special objects in your ERB code:
   that is executed.
 * `node`: The node that gets currently rendered.
 * `chain`: The whole node chain.
-* `used_nodes`: This is a hash which should be filled with information
-  about nodes that have been used in the ERB code. The key `:nodes`
-  should have an array of nodes of which the content has been used; the
-  key `:node_infos` should have an array of nodes of which meta
-  information has been used.
 
 Here is a small usage example:
 
@@ -29,9 +24,6 @@ Here is a small usage example:
     <% node.meta_info.each do |k,v| %>
       * <%= k %> = <%= v %>
     <% end %>
-
-    Using the 'used_nodes' object:
-    <% used_nodes[:nodes] << node.resolve_node('/test.html') %>
 
 The second line shows the first form of the ERB tags which executes Ruby
 code but does not output anything: it just starts a `for` loop. On the

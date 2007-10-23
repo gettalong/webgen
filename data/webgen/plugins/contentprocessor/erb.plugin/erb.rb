@@ -5,15 +5,15 @@ module ContentProcessor
   # Uses the builtin ERB to process the content.
   class Erb
 
-    def process( content, context, options )
-      chain = context[:chain]
-      ref_node = chain.first
-      node = chain.last
-      used_nodes = {:nodes => [], :node_infos => []}
+    def process( context )
+      ref_node = context.ref_node
+      node = context.node
+      chain = context.chain
 
-      erb = ERB.new( content )
+      erb = ERB.new( context.content )
       erb.filename = ref_node.node_info[:src] || ref_node.full_path
-      [erb.result( binding ), used_nodes]
+      context.content = erb.result( binding )
+      context
     end
 
   end
