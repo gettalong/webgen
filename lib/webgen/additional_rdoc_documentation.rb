@@ -73,18 +73,9 @@ end
 # of files in WebPage Format. A content processor is invoked with the content of a block and needs
 # to return the modified content or should raise an error if something unusual happens.
 #
-# A content processor plugin needs to define a single method called +process+ which takes three
-# arguments:
-#
-# :+content+:: This is the string which should be processed.
-#
-# :+context+:: This parameter is a hash which provides a rendering context. For more information
-#              about this hash have a look at the Block#render documentation.
-#
-# :+options+:: This hash is populated with options specific to the block (see Block#options)
-#
-# The first node in the node chain is the reference node which is the source of the content (the
-# block) which should be processed.
+# A content processor plugin needs to define a single method called +process+ which takes a Context
+# object as argument, does the processing and returns it. The context object provides everything
+# needed like the to-be-processed content and the node chain.
 #
 # = Sample Plugin
 #
@@ -105,20 +96,18 @@ end
 #
 #   class SamplePlugin
 #
-#     def process( content, context, options )
-#       chain = context[:chain]
-#       ref_node = chain.first
-#       node = chain.last
+#     def process( context )
 #       if !node['replaceKey'].to_s.empty?
-#         content = content.gsub( /#{node['replaceKey']}:([\w\/.]+)/ ) do |match|
-#           dest_node = ref_node.resolve_node( $1, node['lang'] )
+#         context.content.gsub!( /#{node['replaceKey']}:([\w\/.]+)/ ) do |match|
+#           dest_node = context.ref_node.resolve_node( $1, context.node['lang'] )
 #           if dest_node
-#             dest_node.link_from( node )
+#             dest_node.link_from( context.node )
 #           else
 #             match
 #           end
 #         end
 #       end
+#       context
 #     rescue Exception => e
 #       raise "Error while replacing special key: #{e.message}"
 #     end
@@ -130,7 +119,7 @@ end
 # This sample plugin replaces special keys with links to pages. For example, if the meta information
 # +replaceKey+ is set to +testit+, the following text
 #   this is a test for a testit:index.page link!
-# with the following
+# is replaced with the following
 #   this is a test for a <a href='index.html'>Index</a> link!
 #
 # Also note how the reference node and the current node are used sothat links are correctly

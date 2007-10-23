@@ -1,5 +1,68 @@
 require 'yaml'
 
+# A Context object provides information for processing a node. This information includes
+#
+# * the whole node chain
+# * the to be processed content
+# * a list of all useable content processors
+#--
+#TODO: maybe move the Context class somewhere else???
+#++
+class Context
+
+  # The node chain which should be an array of nodes. The first node is the main template (from
+  # which the +content+ was retrieved, the +#ref_node+), then comes the sub template, the sub sub
+  # template and so on until the last node which is the current node (the +node+) that triggered the
+  # whole processing.
+  attr_accessor :chain
+
+  # The list of all useable content processors.
+  #
+  # Has to be set before the context object is passed to Block#render.
+  attr_accessor :processors
+
+  # The to be processed content. Is initially normally set in Block#render and updated by the
+  # content processors to the processed value.
+  attr_accessor :content
+
+  # The to be processed Block object. Automatically set in Block#render.
+  attr_accessor :block
+
+  # Cache information set by content processors. Can optionally be set before the context object is
+  # passed to Block#render.
+  attr_accessor :cache_info
+
+  # Creates a new Context object with the given content +processors+ and, optionally, node +chain+.
+  def initialize( processors, chain = [] )
+    @chain = chain
+    @processors = processors
+    @cache_info = {}
+  end
+
+  # Clone the current context object using the provided +attrs+ hash (keys have to be the attribute
+  # names as symbols) or the values set for this object.
+  def clone( attrs )
+    ctx = self.class.new( attrs[:processors] || processors, attrs[:chain] || chain )
+    ctx.cache_info = attrs[:cache_info] || cache_info
+    ctx.block = attrs[:block] || block
+    ctx.content = attrs[:content] || content
+    ctx
+  end
+
+  # Returns the node which triggered the processing.
+  def node
+    chain.last
+  end
+
+  # Returns the reference node, ie. the node which provided the original content for this context
+  # object.
+  def ref_node
+    chain.first
+  end
+
+end
+
+
 # A single block within a page object. The content of the block can be rendered using the #render method.
 class Block
 
@@ -17,31 +80,24 @@ class Block
     @name, @content, @options = name, content, options
   end
 
-  # Renders the block using the provided +context+. The +context+ hash needs to provide at least the
-  # following keys
+  # Renders the block using the provided Context object. Uses the content processors specified in
+  # the +pipeline+ key of the +options+ attribute to do the actual rendering.
   #
-  # <tt>:chain</tt>::      the node chain
-  # <tt>:processors</tt>:: the list of all useable content processors
-  #
-  # Uses the content processors specified in the +pipeline+ key of the +options+ attribute to do the
-  # rendering.
-  #
-  # Returns the rendered content and a hash with the nodes used during rendering.
+  # Returns the given context with the rendered content.
   def render( context )
-    temp = content
-    used_nodes = {}
+    context.content = content.dup
+    context.block = self
     @options['pipeline'].to_s.split(/;/).each do |processor|
-      raise "No such content processor available: #{converter}" unless context[:processors].has_key?( processor )
-      temp, tmp_nodes = context[:processors][processor].process( temp, context, @options )
-      tmp_nodes.each {|k,v| used_nodes[k] = (used_nodes[k] || []) + v} if tmp_nodes
+      raise "No such content processor available: #{processor}" unless context.processors.has_key?( processor )
+      context.processors[processor].process( context )
     end
-    [temp, used_nodes]
+    context
   end
 
 end
 
 
-# A Page object wraps a meta information hash and an array of blocks (class Block). It is normally
+# A Page object wraps a meta information hash and an array of Block objects. It is normally
 # generated from a file or a string in WebPage Format.
 class Page
 
@@ -93,7 +149,7 @@ class WebPageFormat
         end
       end
       Page.new( meta_info ) do
-        blocks = ''
+        blocks = {}
         File.open( file, 'r' ) do |fd|
           fd.seek( file_pos )
           blocks = parse_blocks( normalize_eol( fd.read ), meta_info )
