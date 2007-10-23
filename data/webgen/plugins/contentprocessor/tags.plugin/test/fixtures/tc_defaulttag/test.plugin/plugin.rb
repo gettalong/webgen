@@ -6,7 +6,7 @@ module Tag
       register_tag('test')
     end
 
-    def process_tag( tag, body, ref_node, node )
+    def process_tag( tag, body, context )
       case tag
       when 'body'
         body

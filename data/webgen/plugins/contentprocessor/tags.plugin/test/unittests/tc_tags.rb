@@ -11,14 +11,15 @@ class TagsTest < Webgen::PluginTestCase
   end
 
   def test_process
-    content = "{test: }"
-    assert_equal( ['', {}], @plugin.process( content, {:chain => [Webgen::Dummy.new]}, {} ) )
+    context = Context.new( {}, [Webgen::Dummy.new] )
+    context.content = "{test: }"
+    assert_equal( '', @plugin.process( context ).content )
 
     @manager.load_plugin_bundle( fixture_path('test.plugin') )
-    assert_equal( ['test', {}], @plugin.process( "{test:}", {:chain => [Webgen::Dummy.new]}, {} ) )
-    assert_equal( ['thebody', {}], @plugin.process( "{body::}thebody{body}", {:chain => [Webgen::Dummy.new]}, {} ) )
-    assert_equal( ['test {other:}other test', {}], @plugin.process( "test{bodyproc::} \\{other:}{other:} {bodyproc}test",
-                                                                    {:chain => [Webgen::Dummy.new]}, {} ) )
+    assert_equal( 'test', @plugin.process( context.clone( :content => "{test: }") ).content )
+    assert_equal( 'thebody', @plugin.process( context.clone( :content => "{body::}thebody{body}" ) ).content )
+    assert_equal( 'test {other:}other test',
+                  @plugin.process( context.clone( :content => "test{bodyproc::} \\{other:}{other:} {bodyproc}test" ) ).content )
   end
 
   def test_replace_tags

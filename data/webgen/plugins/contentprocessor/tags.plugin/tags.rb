@@ -3,13 +3,6 @@ require 'strscan'
 
 module ContentProcessor
 
-  # (TODO)This class is used for processing tags. When a content string is parsed and a tag is
-  # encountered, the registered plugin for the tag is called. If no plugin for a tag is registered
-  # but a default plugin is, the default plugin is called. Otherwise an error is raised.
-  #
-  # The default plugin can be defined by using the special key <tt>:default</tt>.
-  #
-  # * For information on how to develop tag plugins have a look at Tag::DefaultTag
   class Tags
 
     def init_plugin
@@ -17,44 +10,23 @@ module ContentProcessor
       @end_re = /(\\*)\{#{param('prefix')}(\w+)\}/
     end
 
-    # (TODO)Processes the given +content+ using the nodes in +chain+ which should be an array of nodes.
-    # The first node is the main template (from which the +content+ was retrieved, the +ref_node+),
-    # then comes the sub template, the sub sub template and so on until the last node which is the
-    # current node (the +node+) that is the reason for the whole processing.
-    #
-    # After having processed all nodes, the method returns the result as string, ie. the rendered
-    # content.
-    def process( content, context, options )
-      node = context[:chain].last
-      ref_node = context[:chain].first
-      used_nodes = {}
-
-      if !content.kind_of?( String )
-        log(:warn) { "The content in <#{ref_node.node_info[:src]}> is not a string, but a #{content.class.name}" }
-        content = content.to_s
-      end
-
-      rendered_content = replace_tags( content, ref_node ) do |tag, params, body|
-        log(:debug) { "Replacing tag #{tag} with data '#{params}' and body '#{body}' in <#{ref_node.node_info[:src]}>" }
+    def process( context )
+      replace_tags( context.content, context.ref_node ) do |tag, param_string, body|
+        log(:debug) { "Replacing tag #{tag} with data '#{param_string}' and body '#{body}' in <#{context.ref_node.node_info[:src]}>" }
 
         result = ''
         processor = processor_for_tag( tag )
         if !processor.nil?
-          begin
-            processor.set_tag_config( YAML::load( "--- #{params}" ), ref_node )
-          rescue ArgumentError => e
-            log(:error) { "Could not parse the data '#{params}' for tag #{tag} in <#{ref_node.nod_info[:src]}>: #{e.message}" }
-          end
-          result, tmp_nodes, process_output = processor.process_tag( tag, body, ref_node, node )
-          processor.reset_tag_config
-          tmp_nodes.each {|k,v| used_nodes[k] = (used_nodes[k] || []) + v} if tmp_nodes
+          processor.set_params( processor.tag_params( param_string, context.ref_node ) )
+          result, process_output = processor.process_tag( tag, body, context )
+          processor.set_params( nil )
 
-          result = process( result, context, options ) if process_output
+          result = process( context.clone( :content => result ) ).content if process_output
         end
 
         result
       end
-      [rendered_content, used_nodes]
+      context
     end
 
     #######
@@ -66,7 +38,7 @@ module ContentProcessor
                                    :params_start_pos, :params_end_pos, :body_end_pos )
 
     def replace_tags( content, node )
-      scanner = StringScanner.new( content.dup )
+      scanner = StringScanner.new( content )
       data = ProcessingStruct.new(:before_tag)
       while true
         case data.state

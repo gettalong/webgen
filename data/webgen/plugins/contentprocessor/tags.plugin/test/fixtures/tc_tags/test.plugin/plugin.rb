@@ -5,18 +5,18 @@ module Tag
       [:default]
     end
 
-    def set_tag_config(*args)
+    def set_params(*args)
     end
 
-    def reset_tag_config(*args)
+    def tag_params(*args)
     end
 
-    def process_tag( tag, body, ref_node, node )
+    def process_tag( tag, body, context )
       case tag
       when 'body'
         body
       when 'bodyproc'
-        [body, {}, true]
+        [body, true]
       else
         tag
       end

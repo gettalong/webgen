@@ -8,7 +8,7 @@ constructs (namely webgen tags) with dynamic content. This system allows
 webgen to generate menus and breadcrumb trails, include files and much
 more. webgen already comes with many tag plugins that handle simple
 things, like including a file, to advanced things, like generating a
-menu. These tag plugins reside in the {plugin: Tag} namespace.
+menu. These tag plugins reside in the Tag namespace.
 
 Each webgen tag is defined using a unique name and handled by a tag
 plugin. A tag can have zero or more parameters some of which are
@@ -16,6 +16,15 @@ mandatory. You can see the supported parameters (and if they are
 mandatory) for each tag on the page of the tag plugin which is used for
 processing the tag. The default mandatory parameter can be specified in
 a special way, see the following section.
+
+When a content string is parsed and a webgen tag is encountered, the
+registered plugin for this tag name is called. If no plugin for a tag
+exists there are two possibilities: if a default tag plugin exists, then
+this default plugin is called. Otherwise an error is raised. The default
+plugin is defined using the special tag name `:default`.
+
+For information on how to create such a tag plugin have a look at the
+API documentation of the class Tag::DefaultTag.
 
 
 Syntax for webgen Tags  {#tags}

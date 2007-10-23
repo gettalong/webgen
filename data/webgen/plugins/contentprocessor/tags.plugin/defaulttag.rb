@@ -1,21 +1,74 @@
 module Tag
 
-  # TODO Base class for all tag plugins. The base class provides a default mechanism for retrieving
-  # configuration data from either the configuration file or the tag itself.
-  # Tag plugins have to reside in the Tag/ namespace.
+  # This class serves as base class for all tag plugins. Have a look a the example below to see
+  # how a basic tag plugin looks like.
   #
-  # *Can* be used, but one can also not derive a tag plugin for it
-  # Objects must respond to set_tag_config, reset_tag_config, process_tag, tags
+  # = Tag plugins
   #
-  # Addition to params: mandatory: true/default
-  # Set the parameter +param+ as mandatory. The parameter +default+ specifies, if this parameter
-  # should be the default mandatory parameter. If only a String is supplied in a tag, its value
-  # will be assigned to the default mandatory parameter. There *should* be only one default
-  # mandatory parameter.
+  # A tag plugin is a plugin that handles specific webgen tags. webgen tags are used to add dynamic
+  # content to page and template files and are easy to use.
+  #
+  # A tag plugin can handle multiple different tags. The tags which are handled by a tag plugin can
+  # either specified in the <tt>plugin.yaml</tt> file using the key +tags+ (either one tag name or
+  # an array of tag names) or can be added by calling +register_tag+ in the plugin initialization
+  # method. The special name <tt>:default</tt> is used for the default tag plugin which is called if
+  # a tag with an unknown tag name is encountered.
+  #
+  # Derived plugins have to overwrite the method +process_tag+ which is called by
+  # ContentProcessor/Tags to the actual processing.
+  #
+  # Tag plugins *can* use this base class. If they don't derive from this class they have to provide
+  # the following methods: +set_params+, +tag_params+, +process_tag+, +tags+.
+  #
+  # Each tag plugin has to reside under the <tt>Tag/</tt> namespace!
+  #
+  # = Tag parameters
+  #
+  # Parameters for tag plugins can be set in the same way as for other plugins. Additionally, webgen
+  # tags allow the specification of the parameters in the tag definition. To support this an
+  # additional parameter attribute is used: +mandatory+. If this key is set to +true+ for a
+  # parameter, the parameter counts as mandatory and needs to be set in the tag definition. If this
+  # key is set to +default+, this means that this parameter should be the default mandatory
+  # parameter (used when only a string is provided in the tag definition). There *should*
+  # be only one default mandatory parameter.
+  #
+  # = Sample Tag Plugin
+  #
+  # Following is a simple tag plugin example which just reverses the body text and adds some
+  # information about the context to the result:
+  #
+  # The <tt>plugin.yaml</tt> file:
+  #
+  #   Tag/Reverser:
+  #     plugin:
+  #       load_deps: Tag/DefaultTag
+  #     params:
+  #       paths:
+  #         do_reverse: ~
+  #         desc: Specifies if the body should actually be reversed.
+  #         mandatory: default
+  #     tags: reverse
+  #
+  # The <tt>plugin.rb</tt> file:
+  #
+  #   module Tag
+  #
+  #   class Reverser < DefaultTag
+  #
+  #     def process_tag( tag, body, context )
+  #       result = param('do_reverse') ? body.reverse: body
+  #       result += "Node: " + context.node.absolute_lcn + " (" + context.node['title'] + ")"
+  #       result += "Reference node: " + context.ref_node.absolute_lcn
+  #       result
+  #     end
+  #
+  #   end
+  #
+  #   end
+  #
   class DefaultTag
 
     def initialize
-      @cur_config = {}
       @tags = []
     end
 
@@ -30,54 +83,41 @@ module Tag
       [@plugin_manager.plugin_infos.get( @plugin_name, 'tags' ), @tags].flatten.compact
     end
 
-    # Sets the configuration parameters for the next #process_tag call.
-    def set_tag_config( config, node )
-      @cur_config = {}
-      case config
-      when Hash
-        set_cur_config( config, node )
-
-      when String
-        set_default_mandatory_param( config, node )
-
-      when NilClass
-
-      else
-        log(:error) { "Invalid parameter type (#{config.class}) for tag '#{plugin_name}' in <#{node.node_info[:src]}>" }
+    # Returns a parameters hash with param values extracted from the +tag_config+.
+    def tag_params( tag_config, ref_node )
+      begin
+        config = YAML::load( "--- #{tag_config}" )
+      rescue ArgumentError => e
+        log(:error) { "Could not parse the tag params '#{tag_config}' in <#{ref_node.nod_info[:src]}>: #{e.message}" }
+        config = {}
       end
-
-      unless all_mandatory_params_set?
-        log(:error) { "Not all mandatory parameters for tag '#{plugin_name}' in <#{node.node_info[:src]}> set" }
-      end
+      create_params_hash( config, ref_node )
     end
 
-    # Resets the call specific tag configuration data.
-    def reset_tag_config
-      @cur_config = {}
+    # Sets the current parameter configuration to +params+.
+    def set_params( params )
+      @params = params
     end
 
     # Retrieves the parameter value for +name+. The value is taken from the current tag configuration
     # if the parameter is specified there.
     def param( name, plugin = nil )
-      if @cur_config.has_key?( name ) && plugin.nil?
-        return @cur_config[name]
-      else
-        super( name, plugin )
-      end
+      (@params && @params.has_key?(name) && plugin.nil? ? @params[name] : super)
     end
 
-    # TODO Default implementation for processing a tag. The parameter +tag+ specifies the name of the tag
+    # Default implementation for processing a tag. The parameter +tag+ specifies the name of the tag
     # which should be processed (useful for tag plugins which process different tags).
     #
-    # The +node_chain+ parameter holds all relevant nodes. The first node in the chain is always the
-    # node in which the tag was found (a template )and the last node is the current node, i.e. the
-    # page node which triggered all this. The nodes between are other template nodes.
+    # The parameter +body+ holds the optional body value for the tag.
     #
-    # The method has to return the result of the tag processing and, optionally, a modified chain
-    # (as second result). The second value is currently only returned by the block tag.
+    # The context parameter holds all relevant information for processing. Have a look at the
+    # Context class information to see what is available.
+    #
+    # The method has to return the result of the tag processing and, optionally, a boolean value
+    # specifying if the result should further be processed (ie. webgen tags replaced).
     #
     # Has to be overridden by subclasses!!!
-    def process_tag( tag, body, ref_node, node )
+    def process_tag( tag, body, context )
       raise NotImplementedError
     end
 
@@ -85,32 +125,47 @@ module Tag
     private
     #######
 
-    # Set the current configuration taking values from +config+ which has to be a Hash.
-    def set_cur_config( config, node )
+    def create_params_hash( config, node )
+      params = @plugin_manager.plugin_infos[plugin_name]['params']
+      result = case config
+               when Hash then create_from_hash( config, params, node )
+               when String then create_from_string( config, params, node )
+               when NilClass then {}
+               else
+                 log(:error) { "Invalid parameter type (#{config.class}) for tag '#{plugin_name}' in <#{node.node_info[:src]}>" }
+                 {}
+               end
+
+      unless params.all? {|k,v| !v['mandatory'] || result.has_key?( k )}
+        log(:error) { "Not all mandatory parameters for tag '#{plugin_name}' in <#{node.node_info[:src]}> set" }
+      end
+
+      result
+    end
+
+    # Returns a valid parameter hash taking values from +config+ which has to be a Hash.
+    def create_from_hash( config, params, node )
+      result = {}
       config.each do |key, value|
-        if @plugin_manager.plugin_infos[plugin_name]['params'].has_key?( key )
-          @cur_config[key] = value
+        if params.has_key?( key )
+          result[key] = value
           log(:debug) { "Setting parameter '#{key}' to '#{value}' for tag '#{plugin_name}' in <#{node.node_info[:src]}>" }
         else
           log(:warn) { "Invalid parameter '#{key}' for tag '#{plugin_name}' in <#{node.node_info[:src]}>" }
         end
       end
+      result
     end
 
-    # Set the default mandatory parameter.
-    def set_default_mandatory_param( value, node )
-      param_name, param_value = @plugin_manager.plugin_infos[plugin_name]['params'].find {|k,v| v['mandatory'] == 'default'}
+    # Returns a valid parameter hash by setting +value+ to the default mandatory parameter.
+    def create_from_string( value, params, node )
+      param_name, param_value = params.find {|k,v| v['mandatory'] == 'default'}
       if param_name.nil?
         log(:error) { "No default mandatory parameter specified for tag '#{plugin_name}' but set in <#{node.node_info[:src]}>"}
+        {}
       else
-        @cur_config[param_name] = value
+        {param_name => value}
       end
-    end
-
-    # Check if all mandatory parameters have been set
-    def all_mandatory_params_set?
-      params = @plugin_manager.plugin_infos[plugin_name]['params']
-      params.all? {|k,v| !v['mandatory'] || @cur_config.has_key?( k ) }
     end
 
   end

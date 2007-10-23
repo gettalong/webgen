@@ -7,3 +7,6 @@ provides a default implementation of all the functionality needed by
 ContentProcessor/Tags and therefore provides a quicker way for creating
 a tag plugin.
 
+For information on how to create such a tag plugin have a look at the
+API documentation of the class Tag::DefaultTag.
+
