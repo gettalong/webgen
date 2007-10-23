@@ -45,11 +45,13 @@ module FileHandlers
       chain << node
 
       if chain.first.node_info[:page].blocks.has_key?( block_name )
-        result, used_nodes = chain.first.node_info[:page].blocks[block_name].
-          render( :chain => chain, :processors => @plugin_manager['Support/Misc'].content_processors )
-        dispatch_msg( :after_node_rendered, result, node )
-        (used_nodes[:nodes] ||= []) << chain.first
-        cache_used_nodes( node, block_name, use_templates, used_nodes )
+        context = chain.first.node_info[:page].blocks[block_name].
+          render( Context.new( @plugin_manager['Support/Misc'].content_processors, chain ) )
+        (context.cache_info['ContentProcessor/Blocks'] ||= [] ) << chain.first.absolute_lcn #TODO: this should be in blocks processors
+        dispatch_msg( :after_node_rendered, context.content, node )
+        @plugin_manager['Core/CacheManager'].set( [:nodes, node.absolute_lcn, :render_info, block_name, use_templates],
+                                                  context.cache_info )
+        result = context.content
       else
         log(:error) { "Error rendering node <#{node.full_path}>: no block with name '#{block_name}'" }
       end
@@ -68,12 +70,6 @@ module FileHandlers
     private
     #######
 
-    def cache_used_nodes( node, block_name, use_templates, used_nodes )
-      @plugin_manager['Support/Misc'].normalize_used_nodes( used_nodes, node )
-      @plugin_manager['Core/CacheManager'].set( [:nodes, node.absolute_path, :render_info, block_name, use_templates],
-                                                used_nodes )
-    end
-
     def internal_create_node( parent, file_info, page )
       page.meta_info['lang'] ||= param( 'lang', 'Core/Configuration' )
       file_info.meta_info = page.meta_info
@@ -86,8 +82,8 @@ module FileHandlers
         node.node_info[:processor] = self
         node.node_info[:page] = page
         node.node_info[:change_proc] = proc do
-          used_nodes = @plugin_manager['Core/CacheManager'].get( [:nodes, node.absolute_path, :render_info, 'content', true] )
-          @plugin_manager['Support/Misc'].used_nodes_changed?( used_nodes, node )
+          cache_info = @plugin_manager['Core/CacheManager'].get( [:nodes, node.absolute_lcn, :render_info, 'content', true] )
+          cache_info.any? {|k,v| @plugin_manager[k].cache_info_changed?( v, node )} if cache_info
         end
       end
       node
