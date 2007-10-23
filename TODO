@@ -35,13 +35,11 @@ Possible optimizations:
 
 * T001: what about fragment nodes? (created using a content processor, stored in cache, two webgen runs?)
 
-* T002: add easy method for getting all useable ContentConverters
-
 * T003: html validator should run after file written on .html files (configurable which files)
 
 * T004: allow blocks processor to use a filename as argument
 
-* T005: add ContentConverter which searches for wg-tagname="params" attributes and replaces them
+* T005: add ContentProcessor which searches for wg-tagname="params" attributes and replaces them
   see mail from andrew pietsch; could hpricot be used for this?
 
 * T012: extend File/CopyHandler to allow arbitrary content processing before copying
@@ -55,6 +53,8 @@ Possible optimizations:
 
 * T019: finish vertical menu tag plugin
 
+* T002: add easy method for getting all useable ContentProcessors
+  Available now through the Support/Misc#content_processors method
 
 
 
@@ -63,8 +63,6 @@ Possible optimizations:
 * T006: see mail from andrew pietsch regarding menu issues/'tapestry.apache.org' feature
 
 * T007: logging level is assigned after plugin bundles gets loaded in cli.rb/website.rb -> need a hook or something
-
-* T011: source file naming convention does not allow files with dots in extension like .tar.gz
 
 * T017: invalid language names are not recognized in file names
 
@@ -78,6 +76,11 @@ Possible optimizations:
 
   Has been fixed by a completely remodeled Tag/VerticalMenu
 
+* T011: source file naming convention does not allow files with dots in extension like .tar.gz
+
+  Has been fixed. However, if .de.gz is a valid extension, only the .gz is recognized as extension
+  as the .de part is also a valid language identifier. So, if the first part of the extension is a
+  valid language identifier, recognizing it as language identifier takes precedence.
 
 
 ## Documentation (open) ##

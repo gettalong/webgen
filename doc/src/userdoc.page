@@ -323,8 +323,6 @@ file handler plugin, too) is written to the output file represented by the node.
 
 ### Source File Naming Convention ### {#filehandling-source}
 
-TODO: adjust section after allowing multiple dots in extension
-
 webgen assumes that the files in the source directory follow a special naming convention sothat meta
 information can be extracted correctly from the filename:
 
@@ -352,9 +350,14 @@ information can be extracted correctly from the filename:
     the File/PageHandler assumes that the file is written in the default language set via the
     Core/Configuration:lang parameter).
 
+    If the language identifier can't be matched to a valid language, it is assumed that this part
+    isn't actually a language identifier but a part of the extension. This also means that in the
+    special case where the first part of an extension is also a valid language identifier, the first
+    part is interpreted as language identifier and not as part of the extension.
+
 *   `extension`
 
-    The file extension can be anything.
+    The file extension can be anything and can include dots.
 
 Following are some examples of source file names:
 
@@ -363,10 +366,12 @@ Following are some examples of source file names:
 |`name.png`                | title: Name, language: none, orderInfo: 0, basename: name, cn: name.png
 |`name.de.png`             | title: Name, language: de, orderInfo: 0, basename: name, cn: name.png
 |`01.name_of-file.eo.page` | title: Name of file, language: eo, orderInfo: 1, basename: name_of-file, cn: name_of-file.page
+|`name.tar.bz2`            | title: Name, language: none, orderInfo: 0, basename: name, cn: name.tar.bz2
+|`name.de.tar.bz2`         | title: Name, language: de, orderInfo: 0, basename: name, cn: name.tar.bz2
 
-Notice: The first two examples define the same content for two different languages (or more exactly:
-the first one is unlocalized and the second one localized to German) as they have the same canonical
-name.
+Notice: The first two and the last two examples define the same content for two different languages
+(or more exactly: the first one is unlocalized and the second one localized to German) as they have
+the same canonical name.
 
 ### Canonical Name of a File ### {#filehandling-cn}
 

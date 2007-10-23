@@ -76,7 +76,7 @@ module Core
         self.meta_info['orderInfo'] = matchData[1].to_i
         self.basename               = matchData[2]
         self.meta_info['lang']      = Webgen::LanguageManager.language_for_code( matchData[3] )
-        self.ext                    = matchData[4].to_s
+        self.ext                    = (self.meta_info['lang'].nil? && !matchData[3].nil? ? matchData[3].to_s + '.' : '') + matchData[4].to_s
 
         self.meta_info['title']     = self.basename.tr('_-', ' ').capitalize
       end

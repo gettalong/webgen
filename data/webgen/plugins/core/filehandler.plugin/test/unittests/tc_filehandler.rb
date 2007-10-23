@@ -1,6 +1,7 @@
 require 'webgen/test'
 require 'webgen/node'
 require 'webgen/config'
+require 'fileutils'
 
 module CoreTests
   class FileHandlerTest < Webgen::PluginTestCase
@@ -33,17 +34,23 @@ module CoreTests
       end
       de = Webgen::LanguageManager.language_for_code( 'de' )
       en = Webgen::LanguageManager.language_for_code( 'en' )
-      check_proc.call( @manager::Core::FileHandler::FileInfo.new( '5.base_name-one.de.page'),
+      check_proc.call( @manager::Core::FileHandler::FileInfo.new( '5.base_name-one.de.page' ),
                        '5.base_name-one.de.page', 5, 'base_name-one', de,
                        'page', 'base_name-one.page', 'Base name one' )
-      check_proc.call( @manager::Core::FileHandler::FileInfo.new( 'default.png'),
+      check_proc.call( @manager::Core::FileHandler::FileInfo.new( 'default.png' ),
                        'default.png', 0, 'default', nil, 'png', 'default.png', 'Default' )
-      check_proc.call( @manager::Core::FileHandler::FileInfo.new( 'default.en.png'),
+      check_proc.call( @manager::Core::FileHandler::FileInfo.new( 'default.en.png' ),
                        'default.en.png', 0, 'default', en, 'png', 'default.png', 'Default' )
-      check_proc.call( @manager::Core::FileHandler::FileInfo.new( 'default.deu.png'),
+      check_proc.call( @manager::Core::FileHandler::FileInfo.new( 'default.deu.png' ),
                        'default.deu.png', 0, 'default', de, 'png', 'default.png', 'Default' )
-      check_proc.call( @manager::Core::FileHandler::FileInfo.new( 'default.template'),
+      check_proc.call( @manager::Core::FileHandler::FileInfo.new( 'default.template' ),
                        'default.template', 0, 'default', nil, 'template', 'default.template', 'Default' )
+      check_proc.call( @manager::Core::FileHandler::FileInfo.new( 'default.en.tar.bz2' ),
+                       'default.en.tar.bz2', 0, 'default', en, 'tar.bz2', 'default.tar.bz2', 'Default' )
+      check_proc.call( @manager::Core::FileHandler::FileInfo.new( 'default.tar.bz2' ),
+                       'default.tar.bz2', 0, 'default', nil, 'tar.bz2', 'default.tar.bz2', 'Default' )
+      check_proc.call( @manager::Core::FileHandler::FileInfo.new( 'default' ),
+                       'default', 0, 'default', nil, '', 'default', 'Default' )
     end
 
     def test_file_changed
