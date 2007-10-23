@@ -180,6 +180,7 @@ blockquote.information {
 }
 #header-content li a, #header-content li span {
   display: block;
+  color: #3E606F;
   text-decoration: none;
   padding: 3px 12px;
 }
