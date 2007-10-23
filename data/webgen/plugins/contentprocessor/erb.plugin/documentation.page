@@ -10,8 +10,14 @@ You can use the following special objects in your ERB code:
 
 * `ref_node`: The reference node which is the source of the ERB code
   that is executed.
+
 * `node`: The node that gets currently rendered.
+
 * `chain`: The whole node chain.
+
+* `used_nodes`: An array of nodes that can be filled by the ERB code to
+  state which nodes have been used (later used for checking if the
+  content needs to be re-rendered).
 
 Here is a small usage example:
 

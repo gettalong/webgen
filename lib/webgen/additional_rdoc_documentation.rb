@@ -77,6 +77,15 @@ end
 # object as argument, does the processing and returns it. The context object provides everything
 # needed like the to-be-processed content and the node chain.
 #
+# Also, a content processor should make use of the caching facility, if possible, to avoid the
+# unnecessary re-rendering of content. The context object provides the +cache_info+ hash for
+# this. Each plugin (this is not restricted to content processors) can add a key/value pair where
+# the key needs to be the name of the plugin and the value can be anything (useful for later
+# deciding whether re-rendering is necessary). Also, a method called <tt>cache_info_changed?</tt>
+# needs to defined which takes two arguments: the value of the key/value pair and the node for which
+# this value was cached. The method has to return +true+ if the information has changed and +false+
+# otherwise.
+#
 # = Sample Plugin
 #
 # Here is a sample content processor plugin:

@@ -17,32 +17,13 @@ module Support
       @processors
     end
 
-    # Normalizes the +used_nodes+ hash, using +node+ as reference where needed, sothat it can be
-    # correctly stored in the cache.
-    #
-    # The +used_nodes+ hash is assumed to have the following structure:
-    # <tt>used_nodes[:nodes]</tt>:: an array of nodes of which the content has been used
-    # <tt>used_nodes[:node_infos]</tt>:: an array of nodes of which the meta information
-    #                                    has been used
-    #
-    # The +used_nodes+ hash is changed in-place and can then be used in the #used_nodes_changed?
-    # method.
-    def normalize_used_nodes( used_nodes, node )
-      used_nodes[:nodes] = (used_nodes[:nodes] || []).compact.uniq.select {|n| n != node}.collect {|n| n.absolute_lcn}
-      used_nodes[:node_infos] = (used_nodes[:node_infos] || []).compact.uniq.collect! {|n| n.absolute_lcn}
-    end
-
-    # Uses a normalized +used_nodes+ hash (see #normalize_used_nodes) and checks if any node or node
-    # meta information has changed.
-    def used_nodes_changed?( used_nodes, node )
+    # Takes an array +node_lcns+ of absolute LCNs and checks if the corresponding nodes have
+    # changed. The +node+ is used for finding the specified nodes. Also, if an absolute LCN maps to
+    # +node+, it is not checked if it has changed.
+    def nodes_changed?( node_lcns, node )
       fh = @plugin_manager['Core/FileHandler']
       cm = @plugin_manager['Core/CacheManager']
-      if used_nodes
-        used_nodes[:nodes].any? {|p| n = cm.node_for_path( node, p ); n.nil? || fh.node_changed?( n ) } ||
-          used_nodes[:node_infos].any? {|p| n = cm.node_for_path( node, p ); n.nil? || fh.meta_info_changed?( n ) }
-      else
-        true
-      end
+      nodes.any? {|p| n = cm.node_for_path( node, p ); n.nil? || (n != node && fh.node_changed?( n )) }
     end
 
   end

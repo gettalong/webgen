@@ -27,9 +27,7 @@ module ContentProcessor
     end
 
     def cache_info_changed?( nodes, node )
-      fh = @plugin_manager['Core/FileHandler']
-      cm = @plugin_manager['Core/CacheManager']
-      nodes.any? {|p| n = cm.node_for_path( node, p ); n.nil? || (n != node && fh.node_changed?( n )) }
+      @plugin_manager['Support/Misc'].nodes_changed?( nodes, node )
     end
 
   end
