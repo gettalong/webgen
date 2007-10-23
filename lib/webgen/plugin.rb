@@ -81,17 +81,40 @@ module Webgen
     def param( name, plugin = nil )
       return @plugin_manager.param( name, plugin ) unless plugin.nil?
 
-      ancestors = self.class.ancestors[1..-3]
+      ancestors = plugin_ancestors
       plugin = @plugin_name
       begin
         @plugin_manager.param( name, plugin )
       rescue
-        while ancestors.size > 0 && !ancestors[0].respond_to?( :plugin_name )
-          ancestors.shift
-        end
         klass = ancestors.shift
         (klass.nil? ? raise : (plugin = klass.plugin_name; retry))
       end
+    end
+
+    # Returns an array with all the plugin ancestors (ie. super classes which are also plugins) of
+    # this plugin.
+    def plugin_ancestors
+      ancestors = self.class.ancestors[1..-3]
+      index = 0
+      while index < ancestors.size
+        if !ancestors[index].respond_to?( :plugin_name )
+          ancestors.delete_at(index)
+        else
+          index += 1
+        end
+      end
+      ancestors
+    end
+
+    # Returns a hash with all parameters for this plugin and its plugin ancestors.
+    def all_params
+      result = {}
+      ([self] + plugin_ancestors).each do |klass|
+        @plugin_manager.plugin_infos[klass.plugin_name]['params'].each do |k,v|
+          result[k] = param( k )
+        end
+      end
+      result
     end
 
   end

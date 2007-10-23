@@ -170,6 +170,16 @@ class PluginTest < Webgen::TestCase
     assert_equal( 'hello',  @manager['TestPlugin'].param( 'test', 'Test2Plugin' ) )
   end
 
+  def test_plugin_ancestors
+    assert_equal( [], @manager['Test2Plugin'].plugin_ancestors )
+    assert_equal( [@manager['Test2Plugin'].class], @manager['Test3Plugin'].plugin_ancestors )
+  end
+
+  def test_all_params
+    assert_equal( {'test' => 'hello'}, @manager['Test2Plugin'].all_params )
+    assert_equal( {'test' => 'hello'}, @manager['Test3Plugin'].all_params )
+  end
+
 end
 
 
