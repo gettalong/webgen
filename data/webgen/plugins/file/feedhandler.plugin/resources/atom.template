@@ -26,12 +26,12 @@ rss = RSS::Maker.make( 'atom' ) do |maker|
     @plugin_manager['File/FeedHandler'].mtime(a) <=> @plugin_manager['File/FeedHandler'].mtime(b)
   end.reverse[0, nr_items].each do |page|
     next if page.node_info[:page].nil?
-    used_nodes[:nodes] << page
+    used_nodes << page
 
     maker.items.new_item do |item|
       item.title = page['title']
       item.link = baseURL + page.absolute_path
-      item.description = page.node_info[:page].blocks['content'].render( context.merge(:chain => [page]) )[0][0..500]
+      item.description = page.node_info[:page].blocks['content'].render( context.clone(:chain => [page]) ).content[0..500]
       item.content_encoded = item.description
       item.date = @plugin_manager['File/FeedHandler'].mtime( page )
       item.author = page['author'] || node['author']

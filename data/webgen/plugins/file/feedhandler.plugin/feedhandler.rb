@@ -32,12 +32,12 @@ module FileHandlers
     end
 
     def write_info( node )
-      data, used_nodes = get_template_block( node.node_info[:feed_type], node ).
-        render( :chain => [node], :processors => @plugin_manager['Support/Misc'].content_processors )
-      @plugin_manager['Support/Misc'].normalize_used_nodes( used_nodes, node )
-      @plugin_manager['Core/CacheManager'].set( [:nodes, node.absolute_path, :render_info], used_nodes )
+      context = get_template_block( node.node_info[:feed_type], node ).
+        render( Context.new( @plugin_manager['Support/Misc'].content_processors, [node] ) )
 
-      {:data => data}
+      @plugin_manager['Core/CacheManager'].set( [:nodes, node.absolute_lcn, :render_info], context.cache_info )
+
+      {:data => context.content}
     end
 
     def mtime( node )
@@ -65,8 +65,8 @@ module FileHandlers
         node.node_info[:feed] = page
         node.node_info[:feed_type] = type
         node.node_info[:change_proc] = proc do
-          used_nodes = @plugin_manager['Core/CacheManager'].get( [:nodes, node.absolute_path, :render_info] )
-          @plugin_manager['Support/Misc'].used_nodes_changed?( used_nodes, node )
+          cache_info = @plugin_manager['Core/CacheManager'].get( [:nodes, node.absolute_lcn, :render_info] )
+          cache_info.any? {|k,v| @plugin_manager[k].cache_info_changed?( v, node )} if cache_info
         end
       end
       node

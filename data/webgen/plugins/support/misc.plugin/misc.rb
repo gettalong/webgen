@@ -23,7 +23,7 @@ module Support
     def nodes_changed?( node_lcns, node )
       fh = @plugin_manager['Core/FileHandler']
       cm = @plugin_manager['Core/CacheManager']
-      nodes.any? {|p| n = cm.node_for_path( node, p ); n.nil? || (n != node && fh.node_changed?( n )) }
+      node_lcns.any? {|p| n = cm.node_for_path( node, p ); n.nil? || (n != node && fh.node_changed?( n )) }
     end
 
   end
