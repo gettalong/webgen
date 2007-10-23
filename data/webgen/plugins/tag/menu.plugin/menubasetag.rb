@@ -43,19 +43,24 @@ module Tag
       def sort!
         self.children.sort! {|a,b| a.node_info[:node] <=> b.node_info[:node] }
         self.children.each {|child| child.sort! }
+        self
       end
 
       def inspect
-        @node_info[:node].to_s + " + " + children.inspect
+        @node_info[:node].absolute_lcn + " + " + children.inspect
       end
       alias_method :to_s, :inspect
+
+      def to_lcn_list
+        self.inject([]) {|temp, n| temp << n.node_info[:node].absolute_lcn; temp += ((t = n.to_lcn_list).empty? ? [] : [t]) }
+      end
 
     end
 
     # Generates the menu tree for <tt>context.node</tt> and then delegates the actual menu
     # generation to #build_menu.
     def process_tag( tag, body, context )
-      menu = @plugin_manager['Tag/MenuBaseTag'].menu_tree_for_node( context.node )
+      menu = @plugin_manager['Tag/MenuBaseTag'].menu_tree_for_lang( context.node['lang'], Node.root( context.node ) )
 
       (menu.nil? ? '' : build_menu( tag, body, context, menu ))
     end
@@ -91,11 +96,10 @@ module Tag
     end
 
     # Returns the valid menu tree for the particular +node+.
-    def menu_tree_for_node( node )
-      lang = node['lang']
+    def menu_tree_for_lang( lang, root )
       @menus ||= {}
       unless @menus[lang]
-        @menus[lang] = create_menu_tree( Node.root( node ), nil, lang )
+        @menus[lang] = create_menu_tree( root, nil, lang )
         @menus[lang].sort! if @menus[lang]
       end
       @menus[lang]

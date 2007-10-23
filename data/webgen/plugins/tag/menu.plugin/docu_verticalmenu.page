@@ -7,9 +7,7 @@ lists. However, it is very flexible due to its many parameters that let
 you decide every detail of the menu. For general information about menu
 tag plugins have a look at the documentation of Tag/MenuBaseTag.
 
-The menu is constructed using HTML lists with `ul` and `li` tags.
-However, the menu normally looks better if no discs are shown for the
-menu items (using the CSS directive `list-style-type: none`).
-
-
-
+> The menu is constructed using HTML lists with `ul` and `li` tags.
+> However, the menu normally looks better if no discs are shown for the
+> menu items (using the CSS directive `list-style-type: none`).
+{.information}

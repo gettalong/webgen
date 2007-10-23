@@ -1,0 +1,26 @@
+---
+---
+dir1/dir11/file111.html:
+  inMenu: true
+  lang: en
+
+dir1/dir11/file111.de.html:
+  inMenu: true
+
+dir1/dir11/index.html:
+  inMenu: true
+  lang: en
+
+dir1/file11.html:
+  inMenu: true
+  lang: en
+
+dir2/file21.html:
+  inMenu: true
+  lang: en
+
+file2.de.html:
+  inMenu: true
+
+index.html:
+  lang: en

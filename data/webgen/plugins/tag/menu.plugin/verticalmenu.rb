@@ -5,7 +5,7 @@ module Tag
     def build_menu( tag, body, context, menu_tree )
       tree = build_param_specific_menu_tree( context.node, menu_tree, 1 )
       if tree
-        (context.cache_info[plugin_name] ||= []) << [all_params, tree_to_lcn_list( tree )]
+        (context.cache_info[plugin_name] ||= []) << [all_params, tree.to_lcn_list]
         "<div class=\"webgen-menu-vert #{param('divClass')}\">#{create_output(context.node, tree)}</div>"
       else
         ""
@@ -55,10 +55,6 @@ module Tag
       out
     end
 
-    def tree_to_lcn_list( tree )
-      tree.collect {|c| [c.node_info[:node].absolute_lcn, tree_to_lcn_list( c )]}.flatten
-    end
-
     def cache_info_changed?( data, node )
 
       def tree_changed?( tree, lang )
@@ -67,13 +63,13 @@ module Tag
         end
       end
 
-      menu_tree = @plugin_manager['Tag/MenuBaseTag'].menu_tree_for_node( node )
+      menu_tree = @plugin_manager['Tag/MenuBaseTag'].menu_tree_for_lang( node['lang'], Node.root( node ) )
       changed = false
       data.each do |params, list|
         set_params( params )
         tree = build_param_specific_menu_tree( node, menu_tree, 1 )
         set_params( nil )
-        changed = tree.nil? || tree_changed?( tree, node['lang'] ) || tree_to_lcn_list( tree ) != list
+        changed = tree.nil? || tree_changed?( tree, node['lang'] ) || tree.to_lcn_list != list
         break if changed
       end
       changed
