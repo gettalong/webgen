@@ -9,10 +9,5 @@ File/CopyHandler:
     class: FileHandlers::CopyHandler
   params:
     paths:
-      default: [**/*.css, **/*.js, **/*.jpg, **/*.png, **/*.gif]
+      default: [**/*.css, **/*.js, **/*.jpg, **/*.png, **/*.gif, **/*.html]
       desc: The path patterns which match the files that should get copied by this handler.
-    erbPaths:
-      default:  [**/*.rhtml, **/*.rcss]
-      desc: |
-        The path patterns which match the files that should get preprocessed by ERB.
-        The leading letter r is removed from the extension.

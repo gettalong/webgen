@@ -2,21 +2,21 @@
 Description
 -----------
 
-Basically, this file handler plugin just copies files from the source to
-the output directory. However, it supports two operation modes:
+This file handler plugin copies files from the source to the output
+directory, optionally running a content processor over the content. This
+is useful, for example, for CSS stylesheets, javascript files and
+images.
 
-* All files that match the File/CopyHandler:erbPaths parameter are
-  processed with ERB and then written out. The leading letter `r` is
-  stripped from the extension (e.g. `.rhtml` becomes `.html`) in the
-  output file name. During processing with ERB the current `node` object
-  is available. This operation mode is useful, for example, for `.rhtml`
-  files (HTML with embedded ruby) or `.rcss` files (CSS files with
-  embedded ruby).
+All files that match the File/CopyHandler:paths parameter are handled by
+this plugin. If the first dot-separated part of the file extension
+contains the name of a content processor, this processor is run over the
+content of the file before it is written to the output directory. For
+example, a file named `hello.jpg` just gets copied verbatimly but a file
+named `usage.erb.html` gets preprocessed by the ContentProcessor/Erb
+plugin and written to a file named `usage.html` in the output
+directory. As you can see in this example, the processor name gets
+stripped from the file extension.
 
-* All files that match the File/CopyHandler:paths parameter are copied
-  from the source to the output directory without modification. This is
-  useful, for example, for CSS stylesheets, javascript files and images.
-
-When a file matches against both parameters, it is handled as if it
-matches only against File/CopyHandler:erbPaths, i.e. it is processed
-with ERB.
+If you want to use a specific content processor for processing a file,
+have a look at its plugin documentation which shows the unique
+identification string that needs to be used in the file extension.

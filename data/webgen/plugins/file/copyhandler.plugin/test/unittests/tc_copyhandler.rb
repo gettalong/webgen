@@ -19,11 +19,11 @@ class CopyHandlerTest < Webgen::PluginTestCase
     assert_equal( 'hallo', file['test'] )
     assert_equal( src_file, file.node_info[:src] )
     assert_equal( @plugin, file.node_info[:processor] )
-    assert_equal( false, file.node_info[:preprocess] )
+    assert_equal( nil, file.node_info[:preprocessor] )
     assert_same( file, @plugin.create_node( root, file_info ) )
 
     # ERB preprocessed file
-    src_file = File.join( @plugin.param( 'srcDir', 'Core/Configuration' ), 'embedded.rhtml' )
+    src_file = File.join( @plugin.param( 'srcDir', 'Core/Configuration' ), 'embedded.erb.html' )
     file_info = @manager::Core::FileHandler::FileInfo.new( src_file )
     file_info.meta_info.update({'hallo'=>'hallo', 'title'=>'title'})
     file = @plugin.create_node( root, file_info )
@@ -32,7 +32,7 @@ class CopyHandlerTest < Webgen::PluginTestCase
     assert_equal( 'hallo', file['hallo'] )
     assert_equal( src_file, file.node_info[:src] )
     assert_equal( @plugin, file.node_info[:processor] )
-    assert_equal( true, file.node_info[:preprocess] )
+    assert_equal( 'erb', file.node_info[:preprocessor] )
     assert_same( file, @plugin.create_node( root, file_info ) )
   end
 
@@ -41,7 +41,7 @@ class CopyHandlerTest < Webgen::PluginTestCase
 
     check_write_node( root, 'normal.jpg' )
 
-    file, write_info = check_write_node( root, 'embedded.rhtml' )
+    file, write_info = check_write_node( root, 'embedded.erb.html' )
     assert_equal( "true", write_info[:data] )
   end
 
@@ -51,7 +51,7 @@ class CopyHandlerTest < Webgen::PluginTestCase
     file = @plugin.create_node( root, file_info )
 
     write_info = file.write_info
-    if file.node_info[:preprocess]
+    if file.node_info[:preprocessor]
       assert( write_info.has_key?(:data) )
     else
       assert_equal( src_file, write_info[:src] )
