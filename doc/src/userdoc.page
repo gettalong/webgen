@@ -473,11 +473,18 @@ directory!
 The output backing section is used to apply meta information after _all_ nodes have been created and
 to create so called "virtual nodes". The paths specified in the output backing section have to be
 valid (localized) canonical names (for assigning meta info to existing nodes) or the desired output
-names (for creating virtual nodes)! If a specified path resolves to an already created node, the
-meta information is applied to this node. Otherwise, a virtual node is created with the specified
-meta information and empty content - a virtual node _never_ creates a real output file! This
-facility can be used, for example, to include links to external web pages in menus or to create a
-whole menu with custom sections and multiple references in different sections to the same node!
+names (for creating virtual nodes)! There are three different cases:
+
+* If a specified path resolves to an already created node, the meta information is applied to this
+  node.
+
+* If the path ends in an slash, a directory node is created with the meta information.
+
+* Otherwise, a virtual node is created with the specified meta information and empty content - a
+  virtual node _never_ creates a real output file!
+
+This facility can be used, for example, to include links to external web pages in menus or to create
+a whole menu with custom sections and multiple references in different sections to the same node!
 
 Following is a sample meta information backing file with explanations afterwards:
 
@@ -533,7 +540,7 @@ The output section is more interesting than the source section:
   nodes (not directory nodes) in the output section and it specifies the link target for the node.
   So, whenever a reference to `wiki.html` is requested the resolved `url` is returned. This `url`
   can be a link to an outside page or it can refer to another node, as described below. The `url` is
-  assumed to be relative to the directory the virutal node is in.
+  assumed to be relative to the directory the virtual node is in.
 
 * The third entry also specifies a virtual node linking to an external page, but one which will not
   appear in a menu. Such nodes are normally inserted into the output section so that the

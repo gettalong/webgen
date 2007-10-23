@@ -5,13 +5,19 @@ webgen-metainfo:
 
 ---
 
-Next task number: T018
+Next task number: T020
 
 
 Other things which need to be done:
 * ask on ruby-talk about RDoc and multiple comments for modules, how to avoid overwriting a documentation comment
 * better syntax for maruku definition lists: use defterm:: defdata???
 * update setup.rb to latest version
+
+Possible optimizations:
+
+* could cache local menu tree depending on lang and level of node for faster access (eg. local menu
+  tree for top level menu items would only have to be generated once)
+
 
 
 # Milestones #
@@ -24,6 +30,9 @@ Other things which need to be done:
 
 ## Implementation (open) ##
 
+* T014: extend Cli/Commands/About with an option to display all available parameters
+  maybe this plugin should be renamed to `plugin about` once the plugin management features are implemented
+
 * T001: what about fragment nodes? (created using a content processor, stored in cache, two webgen runs?)
 
 * T002: add easy method for getting all useable ContentConverters
@@ -32,13 +41,11 @@ Other things which need to be done:
 
 * T004: allow blocks processor to use a filename as argument
 
-* T005: add ContentConverter which searches for wg-tagname="params" attributes and replaces them (see mail from andrew pietsch)
+* T005: add ContentConverter which searches for wg-tagname="params" attributes and replaces them
+  see mail from andrew pietsch; could hpricot be used for this?
 
 * T012: extend File/CopyHandler to allow arbitrary content processing before copying
   by encoding the to-be-used content processor into the filename, like default.erb.css or default.sass.css
-
-* T014: extend Cli/Commands/About with an option to display all available parameters
-  maybe this plugin should be renamed to `plugin about` once the plugin management features are implemented
 
 * T015: add Cli/Commands/Use for applying a specific style to a website
 
@@ -46,17 +53,12 @@ Other things which need to be done:
 
 ### Implementation (closed) ###
 
+* T019: finish vertical menu tag plugin
 
 
 
 
 ## Bugs (open) ##
-
-* T018: problem with regenerating pages when a new page got added to a menu
-  doc.page (inMenu:true), index.page(inMenu:false) -> both pages are generated
-  setting inMenu:true in index.page -> only index.page is regenerated
-  -> menu plugin does not realize that new page has been added, every page where
-  the new menu item appears has to be regenerated
 
 * T006: see mail from andrew pietsch regarding menu issues/'tapestry.apache.org' feature
 
@@ -68,6 +70,13 @@ Other things which need to be done:
 
 ### Bugs (closed) ###
 
+* T018: problem with regenerating pages when a new page got added to a menu
+  doc.page (inMenu:true), index.page(inMenu:false) -> both pages are generated
+  setting inMenu:true in index.page -> only index.page is regenerated
+  -> menu plugin does not realize that new page has been added, every page where
+  the new menu item appears has to be regenerated
+
+  Has been fixed by a completely remodeled Tag/VerticalMenu
 
 
 
@@ -75,7 +84,7 @@ Other things which need to be done:
 
 * T008: add glossary page
 
-  source file name, output file name, canonical name, localized canonical name
+  source file name, output file name, canonical name, localized canonical name, webgen tags
 
 * T009: describe how the path patterns used in nodes_for_pattern work in section of naming of files.
 
