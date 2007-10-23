@@ -4,6 +4,7 @@ Tag/MenuBaseTag:
     author: Thomas Leitner <t_leitner@gmx.at>
   plugin:
     file: menubasetag.rb
+    docu: docu_menubasetag.page
     load_deps: Tag/DefaultTag
   params:
     divClass:
@@ -26,6 +27,7 @@ Tag/VerticalMenu:
     author: Thomas Leitner <t_leitner@gmx.at>
   plugin:
     file: verticalmenu.rb
+    docu: docu_verticalmenu.page
     load_deps: Tag/MenuBaseTag
   params:
     startLevel:

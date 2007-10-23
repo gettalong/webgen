@@ -2,12 +2,17 @@ module Tag
 
   class VerticalMenu < MenuBaseTag
 
-    def build_menu( src_node, menu_tree )
-      output, used_node_infos = submenu( src_node, menu_tree, 1 )
-      ["<div class=\"webgen-menu-vert #{param('divClass')}\">#{output}</div>", {:node_infos => used_node_infos}]
+    def build_menu( tag, body, context, menu_tree )
+      tree = build_param_specific_menu_tree( context.node, menu_tree, 1 )
+      if tree
+        (context.cache_info[plugin_name] ||= []) << [all_params, tree_to_lcn_list( tree )]
+        "<div class=\"webgen-menu-vert #{param('divClass')}\">#{create_output(context.node, tree)}</div>"
+      else
+        ""
+      end
     end
 
-    def submenu( src_node, menu_node, level )
+    def build_param_specific_menu_tree( src_node, menu_node, level )
       if menu_node.nil? \
         || level > param( 'maxLevels' ) + param( 'startLevel' ) - 1 \
         || ( ( level > param( 'minLevels' ) + param( 'startLevel' ) - 1 ) \
@@ -17,32 +22,61 @@ module Tag
              ) \
         || src_node.level < param( 'startLevel' ) \
         || (level == param('startLevel') && !src_node.in_subtree_of?( menu_node.node_info[:node] ))
-        return ''
+        return nil
       end
 
-      used_node_infos = []
-      sub_node_infos = []
-      submenus = ''
-      out = "<ul>"
+      sub_menu_tree = MenuNode.new( nil, menu_node.node_info[:node] )
+      menu_tree = MenuNode.new( nil, menu_node.node_info[:node] )
       menu_node.each do |child|
-        menu, tmp_nodes = child.has_children? ? submenu( src_node, child, level + 1 ) : ['', nil]
-        style, link = menu_item_details( src_node, child.node_info[:node] )
-        used_node_infos << child.node_info[:node]
-        used_node_infos += tmp_nodes if tmp_nodes
+        this_node = MenuNode.new( menu_tree, child.node_info[:node] )
+        sub_node = child.has_children? ? build_param_specific_menu_tree( src_node, child, level + 1 ) : nil
+        sub_node.each {|n| this_node.add_child(n); sub_menu_tree.add_child( n ) } if sub_node
+        menu_tree.add_child( this_node )
+      end
 
-        sub_node_infos += tmp_nodes if tmp_nodes
-        submenus << menu
+      if level < param( 'startLevel' )
+        sub_menu_tree
+      else
+        menu_tree
+      end
+    end
+
+    def create_output( src_node, tree )
+      out = "<ul>"
+      tree.each do |child|
+        menu = child.has_children? ? create_output( src_node, child ) : ''
+        style, link = menu_item_details( src_node, child.node_info[:node] )
+
         out << "<li #{style}>#{link}"
         out << menu
         out << "</li>"
       end
       out << "</ul>"
+      out
+    end
 
-      if level < param( 'startLevel' )
-        ['' + submenus, sub_node_infos]
-      else
-        [out, used_node_infos]
+    def tree_to_lcn_list( tree )
+      tree.collect {|c| [c.node_info[:node].absolute_lcn, tree_to_lcn_list( c )]}.flatten
+    end
+
+    def cache_info_changed?( data, node )
+
+      def tree_changed?( tree, lang )
+        tree.any? do |child|
+          tree_changed?( child, lang ) || @plugin_manager['Core/FileHandler'].meta_info_changed?( child.node_info[:node].node_for_lang( lang ) )
+        end
       end
+
+      menu_tree = @plugin_manager['Tag/MenuBaseTag'].menu_tree_for_node( node )
+      changed = false
+      data.each do |params, list|
+        set_params( params )
+        tree = build_param_specific_menu_tree( node, menu_tree, 1 )
+        set_params( nil )
+        changed = tree.nil? || tree_changed?( tree, node['lang'] ) || tree_to_lcn_list( tree ) != list
+        break if changed
+      end
+      changed
     end
 
   end

@@ -2,13 +2,33 @@ require 'webgen/node'
 
 module Tag
 
-  # Generates a menu. All page files for which the meta information +inMenu+ is set are used.
+  # This class serves as base class for menu tag plugins. A menu tag plugin is a specialized tag
+  # plugin that generates a menu.
   #
-  # The order in which the menu items are listed can be controlled via the meta information
-  # +orderInfo+.
+  # = General
+  #
+  # This base class defines some parameters which can be used in derived classes like the name of
+  # the CSS class used for the currently selected item. It also provides utility methods for derived
+  # menu tag plugins:
+  #
+  # * #menu_item_details
+  #
+  # = Menu generation
+  #
+  # This tag plugin automatically generates a valid menu tree for the node passed in the context
+  # variable of the #process method. The generated menu tree is language dependent which means that
+  # for each language a separate menu tree is generated. The order in which the menu items are
+  # listed can be controlled via the meta information +orderInfo+.
+  #
+  # = Sample Menu Tag Plugin
+  #
+  # The reference implementation for a menu tag is Tag::VerticalMenu.
+  #
   class MenuBaseTag < DefaultTag
 
-    # Specialised node class for the menu.
+    # Specialised node class for the menu. It encapsulates the original node in the node information
+    # <tt>:node</tt> for later access. This has to be done to because otherwise the tree structure
+    # of the main node tree would be corrupted.
     class MenuNode < Node
 
       def initialize( parent, node )
@@ -26,34 +46,23 @@ module Tag
       end
 
       def inspect
-        @node_info[:node]
+        @node_info[:node].to_s + " + " + children.inspect
       end
       alias_method :to_s, :inspect
 
     end
 
+    # Generates the menu tree for <tt>context.node</tt> and then delegates the actual menu
+    # generation to #build_menu.
+    def process_tag( tag, body, context )
+      menu = @plugin_manager['Tag/MenuBaseTag'].menu_tree_for_node( context.node )
 
-    def process_tag( tag, body, ref_node, node )
-      menu = @plugin_manager['Tag/MenuBaseTag'].menu_tree_for_node( node )
-
-      if menu
-        build_menu( node, menu )
-      else
-        ''
-      end
+      (menu.nil? ? '' : build_menu( tag, body, context, menu ))
     end
 
-    def build_menu( src_node, menu_tree )
+    # Does the actual generation of the menu. Has to be implemented in derived menu tag plugins!
+    def build_menu( tag, body, context, menu )
       raise NotImplementedError
-    end
-
-    def param( name, plugin = nil )
-      if defined?( @options ) && !@options.nil? && @options.kind_of?( Hash ) && @options.has_key?( name ) #&&
-        #self.class.ancestor_classes.any? {|klass| klass.config.params.has_key?( name )} #TODO use other check
-        @options[name]
-      else
-        super
-      end
     end
 
     #########
@@ -66,18 +75,22 @@ module Tag
       styles << param( 'submenuClass' ) if node.is_directory?
       styles << param( 'submenuInHierarchyClass' ) if node.is_directory? && src_node.in_subtree_of?( node )
       styles << param( 'selectedMenuitemClass' ) if node == src_node
-
       style = "class=\"#{styles.join(' ')}\"" if styles.length > 0
-      link = node.link_from( src_node, :context => {
-                               :caller => self.class.plugin_name,
-                               :selected => (node == src_node),
-                               :directory => node.is_directory?,
-                               :inHierarchy => node.is_directory? && src_node.in_subtree_of?( node )
-                             } )
+
+      context = {
+        :context => {
+          :caller => self.class.plugin_name,
+          :selected => (node == src_node),
+          :directory => node.is_directory?,
+          :inHierarchy => node.is_directory? && src_node.in_subtree_of?( node )
+        }
+      }
+      link = node.node_for_lang( src_node['lang'] ).link_from( src_node, context )
 
       return style, link
     end
 
+    # Returns the valid menu tree for the particular +node+.
     def menu_tree_for_node( node )
       lang = node['lang']
       @menus ||= {}
@@ -88,7 +101,7 @@ module Tag
       @menus[lang]
     end
 
-    # Returns a menu tree if at least one node is in the menu or +nil+ otherwise.
+    # Creates and returns a menu tree if at least one node is in the menu or +nil+ otherwise.
     def create_menu_tree( node, parent, lang )
       menu_node = MenuNode.new( parent, node )
       parent.del_child( menu_node ) if parent
