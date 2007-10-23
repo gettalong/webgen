@@ -290,7 +290,8 @@ module Core
           node.meta_info = node.meta_info.merge( data )
         else
           log(:info) { "Creating virtual node for path <#{path}>..." }
-          node = create_node( path, root, @plugin_manager['File/VirtualFileHandler'] ) do |parent, file_info, handler|
+          handler = (path =~ /\/$/ ? @plugin_manager['File/DirectoryHandler'] : @plugin_manager['File/VirtualFileHandler'])
+          node = create_node( path, root, handler ) do |parent, file_info, handler|
             file_info.meta_info.update( data )
             handler.create_node( parent, file_info )
           end
@@ -302,7 +303,6 @@ module Core
     # Reads all files from the source directory and constructs the node tree which is returned.
     def build_tree
       all_files = find_all_files()
-      return if all_files.empty?
 
       files_for_handlers = find_files_for_handlers()
 
@@ -358,7 +358,6 @@ module Core
     def find_all_files
       all_files = files_for_pattern( '**/{**,**/}' ).to_set
       param( 'ignorePaths' ).each {|pattern| all_files.subtract( files_for_pattern( pattern ) ) }
-      log(:error) { "No files found in the source directory <#{param('srcDir', 'Core/Configuration')}>" } if all_files.empty?
       all_files
     end
 

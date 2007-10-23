@@ -6,16 +6,16 @@ module FileHandlers
 
     def create_node( parent, file_info )
       filename = File.basename( file_info.filename )
-      log(:error) { "No target url for virtual file in metainfo backing file specified: <#{file_info.filename}>"} if file_info.meta_info['url'].nil?
+      log(:info) { "No explicit target url for virtual file in metainfo backing file specified: <#{file_info.filename}>"} if file_info.meta_info['url'].nil?
       url = file_info.meta_info['url'] || filename
 
       # no need to check for an existing node, that is already done in FileHandler#handle_output_backing
       temp_node = Node.new( parent, filename )
       resolved_node = temp_node.resolve_node( url )
       if resolved_node
-        node = Node.new( parent, temp_node.route_to( resolved_node ), filename, file_info.meta_info )
+        node = Node.new( parent, temp_node.route_to( resolved_node ), file_info.cn, file_info.meta_info )
       else
-        node = Node.new( parent, url, filename, file_info.meta_info )
+        node = Node.new( parent, url, file_info.cn, file_info.meta_info )
       end
       parent.del_child( temp_node )
 
