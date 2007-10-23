@@ -12,7 +12,7 @@ module Tag
   # Tag parameter: the name of the file which should be relocated
   class Relocatable < DefaultTag
 
-    def process_tag( tag, body, ref_node, node )
+    def process_tag( tag, body, context )
       uri_string = param( 'path' )
       result = ''
       unless uri_string.nil?
@@ -21,11 +21,11 @@ module Tag
           if uri.absolute?
             result = uri_string
           else
-            result = resolve_path( uri, ref_node, node )
+            result = resolve_path( uri, context.ref_node, context.node )
           end
-          log(:error) { "Could not resolve path '#{uri_string}' in <#{ref_node.node_info[:src]}>" } if result.empty?
+          log(:error) { "Could not resolve path '#{uri_string}' in <#{context.ref_node.node_info[:src]}>" } if result.empty?
         rescue URI::InvalidURIError => e
-          log(:error) { "Error while parsing path for tag relocatable in <#{ref_node.node__info[:src]}>: #{e.message}" }
+          log(:error) { "Error while parsing path for tag relocatable in <#{context.ref_node.node__info[:src]}>: #{e.message}" }
         end
       end
       result

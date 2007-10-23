@@ -7,12 +7,12 @@ module Tag
   # the values to the output file.
   class Meta < DefaultTag
 
-    def process_tag( tag, body, ref_node, node )
+    def process_tag( tag, body, context )
       output = ''
-      if node[tag]
-        output = node[tag].to_s
+      if context.node[tag]
+        output = context.node[tag].to_s
       else
-        log(:warn) { "No value for tag '#{tag}' in <#{ref_node.node_info[:src]}> found in <#{node.node_info[:src]}>" }
+        log(:warn) { "No value for tag '#{tag}' in <#{context.ref_node.node_info[:src]}> found in <#{context.node.node_info[:src]}>" }
       end
       output
     end
