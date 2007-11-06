@@ -1,0 +1,7 @@
+Cli/Commands/Bundle:
+  about:
+    summary: Manage everything releated to webgen plugin bundles
+    author: Thomas Leitner <t_leitner@gmx.at>
+  plugin:
+    file: bundle.rb
+    load_deps: Cli/Utils

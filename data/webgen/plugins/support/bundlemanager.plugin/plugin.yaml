@@ -1,0 +1,6 @@
+Support/BundleManager:
+  about:
+    summary: Provides methods for working with plugin bundles.
+    author: Thomas Leitner <t_leitner@gmx.at>
+  plugin:
+    file: bundlemanager.rb

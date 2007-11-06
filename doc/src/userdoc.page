@@ -588,7 +588,9 @@ that you need. All the developer documentation is in the RDoc API (TODO: link) d
 with sample plugins for all types of plugins (file handler plugins, tag plugins, content processor
 plugins, ...)  and detailed information about the inner workings of webgen.
 
+### Making plugin bundles available
 
+TODO: create own repository which gets added to master repo list, or send created package + info to me
 
 # How to ...
 

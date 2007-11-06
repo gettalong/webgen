@@ -154,6 +154,17 @@ module Webgen
   # * optional plugin documentation
   # * optional plugin test cases
   #
+  # == <tt>bundle.yaml</tt> - Optional: specifies information about the bundle
+  #
+  # This file is used to specify key-value pairs that describe the bundle. This information is used,
+  # for example, when the bundle gets packaged. You can add any key-value pairs to the file,
+  # however, the following have a standard meaning:
+  #
+  # +version+:: The version of the bundle, defaults to <tt>0.0.0</tt>
+  # +webgen-version+:: The version of webgen this bundle is able to run on, defaults to the used
+  #                    webgen version. You can also use a version constraint like <tt>&gt;=0.5.0</tt>.
+  # +summary+:: A short description of what the bundle contains/is used for.
+  #
   # == <tt>plugin.yaml</tt> - Specifies plugins included in bundle
   #
   # Plugins and associated information are specified in the file <tt>plugin.yaml</tt>. If this file

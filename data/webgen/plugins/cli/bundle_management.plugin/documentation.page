@@ -1,0 +1,15 @@
+--- documentation, pipeline:maruku
+Description
+-----------
+
+This CLI plugin is used for managing plugin bundles. It enables one to
+easily view a list of available bundles and install or remove them from
+the webgen website.
+
+First of all you have to update the local list of available repositories
+by using the `update` sub command. After that you can list the available
+repositories and their bundles using the `list` sub command. When you
+have decided which plugin bundle you want to install, you need to invoke
+the `install` sub command with the name of the bundle. If you don't need
+a specific bundle anymore, use the `remove` sub command to removed the
+bundle.
