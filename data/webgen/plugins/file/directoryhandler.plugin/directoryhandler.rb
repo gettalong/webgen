@@ -1,5 +1,5 @@
 require 'webgen/node'
-require 'facets/more/basicobject'
+require 'facets/basicobject'
 
 module FileHandlers
 
