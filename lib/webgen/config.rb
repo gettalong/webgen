@@ -44,4 +44,9 @@ module Webgen
     @@data_dir
   end
 
+  # Returns the user home configuration directory for webgen.
+  def self.home_dir
+    File.join( ENV['HOME'], '.webgen' )
+  end
+
 end

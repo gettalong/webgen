@@ -1,4 +1,4 @@
-require 'facets/more/ansicode'
+require 'facets/ansicode'
 require 'rbconfig'
 
 Console::ANSICode.define_ansicolor_method( :lred, '1;31' )
@@ -22,9 +22,9 @@ module Cli
 
     # Returns an array of lines which represents the text in +content+ formatted sothat no line is
     # longer than +width+ characters. The +indent+ parameter specifies the amount of spaces
-    # prepended to each line. If +first_line_unindented+ is +true+, then the first line is not
+    # prepended to each line. If +first_line_indented+ is +true+, then the first line is
     # indented.
-    def self.format( content, indent = 0, width = 72, first_line_unindented = true )
+    def self.format( content, indent = 0, first_line_indented = false, width = 72 )
       content ||= ''
       length = width - indent
 
@@ -40,14 +40,14 @@ module Cli
             str = content[0, length]
             len = length
           end
-          lines << (lines.empty? && first_line_unindented ? '' : ' '*indent) + str.gsub( /\n/, ' ' )
+          lines << (lines.empty? && !first_line_indented ? '' : ' '*indent) + str.gsub( /\n/, ' ' )
           content.slice!(0, len)
         end
-        lines << (lines.empty? && first_line_unindented ? '' : ' '*indent) + content.gsub( /\n/, ' ' ) unless content.strip.empty?
+        lines << (lines.empty? && !first_line_indented ? '' : ' '*indent) + content.gsub( /\n/, ' ' ) unless content.strip.empty?
         lines
       else
-        ((format( paragraphs.shift, indent, width, first_line_unindented ) << '') +
-         paragraphs.collect {|p| format( p, indent, width, false ) << '' }).flatten[0..-2]
+        ((format( paragraphs.shift, indent, first_line_indented, width ) << '') +
+         paragraphs.collect {|p| format( p, indent, true, width ) << '' }).flatten[0..-2]
       end
     end
 

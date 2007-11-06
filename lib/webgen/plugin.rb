@@ -5,8 +5,7 @@ require 'find'
 require 'webgen/config'
 require 'webgen/listener'
 require 'webgen/content'
-require 'facets/core/kernel/constant'
-
+require 'facets/kernel/constant'
 
 module Webgen
 
@@ -229,7 +228,8 @@ module Webgen
   # The top level keys are just file globs useable by <tt>Dir.glob</tt>. All files under the plugin
   # bundle directory matching such a glob are considered to be resources. The only mandatory key for
   # such a glob is +name+ which specifies the name of the resource. This name can later be used to
-  # access it. If it should be possible to write a resource to the output directory of a website, it
+  # access it. However, a resource should normally also have a +desc+ attribute which describes the
+  # resource. If it should be possible to write a resource to the output directory of a website, it
   # also needs to have a unique value for the key +path+.
   #
   # The PluginManager performs a simple variable expansion on all values. The following
@@ -395,7 +395,7 @@ module Webgen
 
     # TODO: redo, docu file should be in WebPage format, different sections
     # -> usage (general usage of the plugin), documentation (in-depth documentation)
-    def documentation_for( plugin, section = 'documenation', type = :text )
+    def documentation_for( plugin, section = 'documentation', type = :text )
       return '' unless @plugin_infos.has_key?( plugin )
       content = ''
       docufile = @plugin_infos[plugin]['plugin']['docufile']
@@ -432,6 +432,7 @@ module Webgen
         @plugin_infos[name]['plugin']['load_deps'] ||= []
         @plugin_infos[name]['plugin']['docufile'] ||= 'documentation.page'
 
+        @plugin_infos[name]['about'] ||= {}
         @plugin_infos[name]['params'] ||= {}
       end
       autoload_plugins

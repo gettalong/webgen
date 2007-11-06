@@ -302,6 +302,8 @@ module Core
 
     # Reads all files from the source directory and constructs the node tree which is returned.
     def build_tree
+      return nil unless File.directory?( param( 'srcDir', 'Core/Configuration' ) )
+
       all_files = find_all_files()
 
       files_for_handlers = find_files_for_handlers()

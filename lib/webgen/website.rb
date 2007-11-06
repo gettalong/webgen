@@ -52,7 +52,7 @@ module Webgen
     def initialize( directory = Dir.pwd  )
       @directory = File.expand_path( directory )
       @plugin_paths = [File.join( Webgen.data_dir, Webgen::PLUGIN_DIR ),
-                       File.join( ENV['HOME'], '.webgen', Webgen::PLUGIN_DIR ),
+                       File.join( Webgen.home_dir, Webgen::PLUGIN_DIR ),
                        File.join( @directory, Webgen::PLUGIN_DIR )] + ENV['WEBGEN_PLUGIN_BUNDLES'].to_s.split(/,/)
       reset
     end
