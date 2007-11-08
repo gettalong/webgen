@@ -95,7 +95,7 @@ module Support
       def copy_to( dest )
         files.collect do |file|
           destpath = File.join( dest, File.dirname( file.sub( /^#{@path}/, '/' ) ) )
-          FileUtils.mkdir_p( File.dirname( destpath ) )
+          FileUtils.mkdir_p( File.dirname( destpath ) ) unless File.exists?( File.dirname( destpath ) )
           if File.directory?( file )
             FileUtils.mkdir_p( File.join( destpath, File.basename( file ) ) )
           else
