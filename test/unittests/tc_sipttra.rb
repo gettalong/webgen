@@ -24,9 +24,14 @@ class TrackerTest < Webgen::TestCase
     assert_match_special( Sipttra::Tracker::TICKET_REGEXP, '* [belongs] text', [nil, nil, 'belongs', 'text'] )
     assert_match_special( Sipttra::Tracker::TICKET_REGEXP, '* (2007-02-03) text', [nil, '2007-02-03', nil, 'text'] )
     assert_match_special( Sipttra::Tracker::TICKET_REGEXP, '* title [belongs] text', ['title', nil, 'belongs', 'text'] )
+    assert_match_special( Sipttra::Tracker::TICKET_REGEXP, '* title [belongs]: text', ['title', nil, 'belongs', 'text'] )
+    assert_match_special( Sipttra::Tracker::TICKET_REGEXP, '* title: [belongs] text', ['title', nil, nil, '[belongs] text'] )
     assert_match_special( Sipttra::Tracker::TICKET_REGEXP, '* title (2007-02-03) text', ['title', '2007-02-03', nil, 'text'] )
+    assert_match_special( Sipttra::Tracker::TICKET_REGEXP, '* title: (2007-02-03) text', ['title', nil, nil, '(2007-02-03) text'] )
     assert_match_special( Sipttra::Tracker::TICKET_REGEXP, '* title (2007-02-03) [belongs] text', ['title', '2007-02-03', 'belongs', 'text'] )
+    assert_match_special( Sipttra::Tracker::TICKET_REGEXP, '* title (2007-02-03) [belongs]: text', ['title', '2007-02-03', 'belongs', 'text'] )
     assert_match_special( Sipttra::Tracker::TICKET_REGEXP, '* 0.5.0 (2007-09-21) test', ['0.5.0', '2007-09-21', nil, 'test'] )
+    assert_match_special( Sipttra::Tracker::TICKET_REGEXP, '* 0.5.0 (2007-09-21): test', ['0.5.0', '2007-09-21', nil, 'test'] )
 
     assert_match_special( Sipttra::Tracker::TICKET_REGEXP, '* t:', ['t', nil, nil, nil] )
     assert_match_special( Sipttra::Tracker::TICKET_REGEXP, '* [t]', [nil, nil, 't', nil] )
@@ -53,7 +58,7 @@ class TrackerTest < Webgen::TestCase
     assert_equal( tracker.info['tickets_todo_open_names'], tracker.category( 'TODO', 'open' ).tickets.collect {|t| t.name} )
     assert_equal( tracker.info['baap_belongs_to'], tracker.ticket( 'baap' ).belongs_to )
     assert_equal( tracker.info['M1_all_tickets'], tracker.milestone( 'M1' ).all_assigned_tickets.length )
-    #TODO: assert_equal( tracker, Sipttra::Tracker.new( tracker.to_s ) )
+    assert_equal( tracker, Sipttra::Tracker.new( tracker.to_s ) )
   end
 
 end

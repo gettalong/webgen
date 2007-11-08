@@ -205,7 +205,7 @@ module Sipttra
     DATE_REGEXP=/\((\d\d\d\d-\d\d-\d\d)\)/
     BELONGS_REGEXP=/\[(#{IDENT_REGEXP})\]/
 
-    TICKET_REGEXP=/^\*(?:\s(#{IDENT_REGEXP})(?=:|\s\[|\s\():?)?(?:\s#{DATE_REGEXP})?(?:\s#{BELONGS_REGEXP})?(?:$|\s(.*)$)/
+    TICKET_REGEXP=/^\*(?:\s(#{IDENT_REGEXP})(?=:|\s\[|\s\())?(?:\s#{DATE_REGEXP})?(?:\s#{BELONGS_REGEXP})?:?(?:$|\s(.*)$)/
     CONTENT_REGEXP=/^\s\s(.*)$/
     CATEGORY_REGEXP=/^(#+)\s{1,}([^(]*?)(?:\s*\((\w+)\))?\s{1,}\1$/
 
@@ -223,11 +223,11 @@ module Sipttra
       @info = {}
       level = 0
 
-      if data =~ /\A---\n/m
+      if data =~ /\A---\s*\n/m
         begin
-          index = data.index( "---\n", 4 ) || 0
+          index = data.index( "---\n", $~[0].length ) || 0
           @info = YAML.load( data[0...index] )
-          data = data[index..-1]
+          data = data[(index != 0 ? index + 4 : 0)..-1]
         rescue
         ensure
           @info = {} unless @info.kind_of?( Hash )
@@ -315,9 +315,14 @@ module Sipttra
       tickets.select {|t| t.category.name == name}
     end
 
+    def ==( other )
+      return false unless other.kind_of?( Tracker )
+      @info == other.info && @nodes.length == other.nodes.length && @nodes.zip( other.nodes ).all? {|sn,on| sn.to_line == on.to_line }
+    end
+
     # Returns a string representation of the tracker which can later be used by #parse .
     def to_s
-      @info.to_yaml.sub( /^---\s*\n/m, '' ) + "\n\n" + @nodes.collect {|line| line.to_line}.join( "\n" )
+      (@info.empty? ? '' : @info.to_yaml + "\n---\n" ) + @nodes.collect {|line| line.to_line}.join( "\n" )
     end
 
   end
