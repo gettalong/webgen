@@ -30,9 +30,6 @@ Possible optimizations:
 
 ## Implementation (open) ##
 
-* T014: extend Cli/Commands/About with an option to display all available parameters
-  maybe this plugin should be renamed to `plugin about` once the plugin management features are implemented
-
 * T001: what about fragment nodes? (created using a content processor, stored in cache, two webgen runs?)
 
 * T003: html validator should run after file written on .html files (configurable which files)
@@ -47,6 +44,12 @@ Possible optimizations:
 * T016: add Cli/Commands/Check for checking the configuration file and possibly other things
 
 ### Implementation (closed) ###
+
+* T014: extend Cli/Commands/About with an option to display all available parameters
+  maybe this plugin should be renamed to `plugin about` once the plugin management features are implemented
+
+  displaying all parameters can now be invoked by using an extra command option
+  command will not be renamed because the plugin management CLI commands handle bundles and not plugins
 
 * T019: finish vertical menu tag plugin
 

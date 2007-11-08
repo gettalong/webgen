@@ -174,18 +174,6 @@ for the Core/FileHandler:defaultMetaInfo parameter has been set in the configura
 
 
 
-## Plugin Management
-
-TODO: fill whole section after implementing this feature, move section eleswhere (not under tutorial)
-
-### Listing available/installed plugins
-
-### Installing and removing plugins
-
-### Showing information about plugins
-
-
-
 # In-Depth Documentation
 
 
@@ -215,7 +203,38 @@ valid:
     $ webgen about config
     $ webgen help create
 
-For more information on how the commands work have a look at the [cmdparse] documentation!
+For detailed information on how the individual commands work have a their documentation in the
+(TODO:link) plugin documentation section. Following is a short overview of the available commands:
+
+*   `about`
+
+    This command displays detailed information about installed plugins and their parameters
+
+*   `bundle`
+
+    This command is used for managing webgen plugin bundles which are used for extending webgen with
+    functionality or resources. It provides several sub commands for doing the actual work all of
+    which should be pretty self explanatory. To get started first use the `update` and then the
+    `list` command.
+
+*   `create`
+
+    Creates a basic webgen website using an (optionally specified) template and style.
+
+*   `help`
+
+    Displays usage information. Can be used to show information about a command by using the command
+    name as argument, eg. `webgen help bundle` or `webgen help bundle list`.
+
+*   `run`
+
+    Runs webgen and generates the output.
+
+*   `version`
+
+    Displays the version of webgen.
+
+
 
 [cmdparse]: http://cmdparse.rubyforge.org
 
@@ -588,7 +607,12 @@ that you need. All the developer documentation is in the RDoc API (TODO: link) d
 with sample plugins for all types of plugins (file handler plugins, tag plugins, content processor
 plugins, ...)  and detailed information about the inner workings of webgen.
 
-### Making plugin bundles available
+### Creating plugin/resource bundles
+
+TODO: provide link to API doc, explain different types of plugins available, how resources can be
+added and provide short example
+
+### Making bundles available
 
 TODO: create own repository which gets added to master repo list, or send created package + info to me
 
