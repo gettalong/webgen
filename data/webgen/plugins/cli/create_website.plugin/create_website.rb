@@ -6,13 +6,13 @@
 
        def initialize
          super( 'create', false )
-         self.short_desc = "Creates the basic directories and files for webgen."
          self.description = Utils.format( "\nIf the global verbosity level is set to 0 or 1, the created files are listed." )
          @template = 'default'
          @style = 'default'
        end
 
        def init_plugin
+         self.short_desc = @plugin_manager.plugin_infos.get( plugin_name, 'about', 'summary' )
          self.options = CmdParse::OptionParserWrapper.new do |opts|
            opts.separator "Options:"
            opts.on( '-t', '--template TEMPLATE', @plugin_manager['Support/WebsiteManager'].templates.keys,

@@ -39,9 +39,11 @@ Possible optimizations:
 * T005: add ContentProcessor which searches for wg-tagname="params" attributes and replaces them
   see mail from andrew pietsch; could hpricot be used for this?
 
-* T016: add Cli/Commands/Check for checking the configuration file and possibly other things
-
 ### Implementation (closed) ###
+
+* T016: add Cli/Commands/Check for checking the configuration file and possibly other things
+  implemented checking the configuration file and checking the loadability of all plugins,
+  other checks can be incorporated later easily
 
 * T015: add Cli/Commands/Use for applying a specific style to a website
   used name Cli/Commands/ApplyStyle since it fits better

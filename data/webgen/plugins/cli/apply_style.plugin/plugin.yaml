@@ -1,6 +1,6 @@
 Cli/Commands/ApplyStyle:
   about:
-    summary: Applies a specific style to a website.
+    summary: Apply a specific style to a website
     author: Thomas Leitner <t_leitner@gmx.at>
   plugin:
     file: apply_style.rb

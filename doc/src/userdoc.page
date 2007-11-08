@@ -226,6 +226,10 @@ For detailed information on how the individual commands work have a their docume
 
     Creates a basic webgen website using an (optionally specified) template and style.
 
+*   `check`
+
+    Checks the configuration file for validness and checks the loadability of all plugins.
+
 *   `help`
 
     Displays usage information. Can be used to show information about a command by using the command
