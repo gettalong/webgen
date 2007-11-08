@@ -91,9 +91,14 @@ module Webgen
   # list of configurators of a PluginManager instance.
   class FileConfigurator
 
+    # Returns the configuration file name for the given website directory +dir+.
+    def self.config_file( dir )
+      File.join( dir, 'config.yaml' )
+    end
+
     # Creates a FileConfigurator object for the given website directory +dir+.
     def self.for_website( dir )
-      self.new( File.join( dir, 'config.yaml' ) )
+      self.new( config_file( dir ) )
     end
 
     # Returns the whole configuration.

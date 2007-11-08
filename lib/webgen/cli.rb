@@ -47,7 +47,7 @@ module Webgen
       super do |level, cmd_name|
         if level == 0
           @website = Webgen::WebSite.new( @directory )
-          @website.plugin_manager.configurators << FileConfigurator.for_website( @directory )
+          @website.plugin_manager.configurators << FileConfigurator.for_website( @directory ) rescue nil #TODO: notify the user of this
           @website.plugin_manager.configurators << self
           @website.plugin_manager.logger.level = @website.plugin_manager.param( 'loggerLevel', 'Core/Configuration' )
           @website.plugin_manager.plugin_infos[%r{^Cli/Commands/}].each do |name, info|
