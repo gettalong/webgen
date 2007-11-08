@@ -13,7 +13,7 @@ module Sipttra
     def to_line
       ''
     end
-    
+
     def inspect
       "#<#{self.class.name}: #{to_line}>"
     end
@@ -200,7 +200,7 @@ module Sipttra
   # The tracker is used to parse sipttra files and to change the sipttra data in memory.
   class Tracker
 
-    IDENT_REGEXP=/\w[-.\w\d]*/
+    IDENT_REGEXP=/\w[-.\w]*/
 
     DATE_REGEXP=/\((\d\d\d\d-\d\d-\d\d)\)/
     BELONGS_REGEXP=/\[(#{IDENT_REGEXP})\]/

@@ -26,6 +26,7 @@ class TrackerTest < Webgen::TestCase
     assert_match_special( Sipttra::Tracker::TICKET_REGEXP, '* title [belongs] text', ['title', nil, 'belongs', 'text'] )
     assert_match_special( Sipttra::Tracker::TICKET_REGEXP, '* title (2007-02-03) text', ['title', '2007-02-03', nil, 'text'] )
     assert_match_special( Sipttra::Tracker::TICKET_REGEXP, '* title (2007-02-03) [belongs] text', ['title', '2007-02-03', 'belongs', 'text'] )
+    assert_match_special( Sipttra::Tracker::TICKET_REGEXP, '* 0.5.0 (2007-09-21) test', ['0.5.0', '2007-09-21', nil, 'test'] )
 
     assert_match_special( Sipttra::Tracker::TICKET_REGEXP, '* t:', ['t', nil, nil, nil] )
     assert_match_special( Sipttra::Tracker::TICKET_REGEXP, '* [t]', [nil, nil, 't', nil] )
