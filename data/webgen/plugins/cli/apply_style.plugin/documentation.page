@@ -1,0 +1,21 @@
+--- documentation, pipeline:maruku
+Description
+-----------
+
+This CLI plugin applies a specific style to a website. One just needs to
+specify the style type and the style name. A list of all available
+styles is shown on the help output for the command.
+
+Each style is a complete webgen website which gets copied over the
+destination website. This allows great freedom when creating a
+style. For example, it is easy to apply a website style to a webgen
+website, ie. a style that changes the default layout and appearance of a
+website. However, as styles can potentially include plugin bundles, not
+only the appearance of a website can be changed but also the
+functionality. This is used, for example, in the gallery style 'slides'
+(TODO:make sure gallery style slides is in distribution).
+
+To differentiate styles based on what they want to achieve, they are
+categorized by style types. The best known style type is the website
+style which changes the default layout of a webgen website.
+

@@ -14,4 +14,4 @@ A website style defines the appearance of the website, ie. how the page
 looks like, where the menu is, how many columns are used and so
 on. Don't worry if you don't like the website style you initially
 specified; it can later be easliy changed by using the
-Cli/Commands/UseStyle plugin.
+Cli/Commands/ApplyStyle plugin.

@@ -210,6 +210,11 @@ For detailed information on how the individual commands work have a their docume
 
     This command displays detailed information about installed plugins and their parameters
 
+*   `apply_style`
+
+    This command is used to apply a style to a website. It is most often used to apply a different
+    default website style to a website.
+
 *   `bundle`
 
     This command is used for managing webgen plugin bundles which are used for extending webgen with
