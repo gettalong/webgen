@@ -22,6 +22,8 @@ Possible optimizations:
 
 # Milestones #
 
+* 0.5.0 (2007-12-31) The next major release of webgen.
+
 * F: Ideas and todo items for future versions
 
   This milestone holds all ideas/todo items/requests which are implemented some
@@ -30,49 +32,49 @@ Possible optimizations:
 
 ## Implementation (open) ##
 
-* T001: what about fragment nodes? (created using a content processor, stored in cache, two webgen runs?)
+* T001 [F]: what about fragment nodes? (created using a content processor, stored in cache, two webgen runs?)
 
-* T003: html validator should run after file written on .html files (configurable which files)
+* T003 [F]: html validator should run after file written on .html files (configurable which files)
 
-* T004: allow blocks processor to use a filename as argument
+* T004 [F]: allow blocks processor to use a filename as argument
 
-* T005: add ContentProcessor which searches for wg-tagname="params" attributes and replaces them
+* T005 [F]: add ContentProcessor which searches for wg-tagname="params" attributes and replaces them
   see mail from andrew pietsch; could hpricot be used for this?
 
 ### Implementation (closed) ###
 
-* T016: add Cli/Commands/Check for checking the configuration file and possibly other things
+* T016 [0.5.0]: add Cli/Commands/Check for checking the configuration file and possibly other things
   implemented checking the configuration file and checking the loadability of all plugins,
   other checks can be incorporated later easily
 
-* T015: add Cli/Commands/Use for applying a specific style to a website
+* T015 [0.5.0]: add Cli/Commands/Use for applying a specific style to a website
   used name Cli/Commands/ApplyStyle since it fits better
 
-* T014: extend Cli/Commands/About with an option to display all available parameters
+* T014 [0.5.0]: extend Cli/Commands/About with an option to display all available parameters
   maybe this plugin should be renamed to `plugin about` once the plugin management features are implemented
 
   displaying all parameters can now be invoked by using an extra command option
   command will not be renamed because the plugin management CLI commands handle bundles and not plugins
 
-* T019: finish vertical menu tag plugin
+* T019 [0.5.0]: finish vertical menu tag plugin
 
-* T002: add easy method for getting all useable ContentProcessors
+* T002 [0.5.0]: add easy method for getting all useable ContentProcessors
   Available now through the Support/Misc#content_processors method
 
-* T012: extend File/CopyHandler to allow arbitrary content processing before copying
+* T012 [0.5.0]: extend File/CopyHandler to allow arbitrary content processing before copying
   by encoding the to-be-used content processor into the filename, like default.erb.css or default.sass.css
 
 
 
 ## Bugs (open) ##
 
-* T006: see mail from andrew pietsch regarding menu issues/'tapestry.apache.org' feature
+* T006 [F]: see mail from andrew pietsch regarding menu issues/'tapestry.apache.org' feature
 
-* T007: logging level is assigned after plugin bundles gets loaded in cli.rb/website.rb -> need a hook or something
+* T007 [F]: logging level is assigned after plugin bundles gets loaded in cli.rb/website.rb -> need a hook or something
 
 ### Bugs (closed) ###
 
-* T018: problem with regenerating pages when a new page got added to a menu
+* T018 [0.5.0]: problem with regenerating pages when a new page got added to a menu
   doc.page (inMenu:true), index.page(inMenu:false) -> both pages are generated
   setting inMenu:true in index.page -> only index.page is regenerated
   -> menu plugin does not realize that new page has been added, every page where
@@ -80,13 +82,13 @@ Possible optimizations:
 
   Has been fixed by a completely remodeled Tag/VerticalMenu
 
-* T011: source file naming convention does not allow files with dots in extension like .tar.gz
+* T011 [0.5.0]: source file naming convention does not allow files with dots in extension like .tar.gz
 
   Has been fixed. However, if .de.gz is a valid extension, only the .gz is recognized as extension
   as the .de part is also a valid language identifier. So, if the first part of the extension is a
   valid language identifier, recognizing it as language identifier takes precedence.
 
-* T017: invalid language names are not recognized in file names
+* T017 [0.5.0]: invalid language names are not recognized in file names
 
   Resolved after fixing issue T011. Invalid language names now become the first part of the
   extension of a file.
@@ -95,13 +97,13 @@ Possible optimizations:
 
 ## Documentation (open) ##
 
-* T008: add glossary page
+* T008 [0.5.0]: add glossary page
 
   source file name, output file name, canonical name, localized canonical name, webgen tags
 
-* T009: describe how the path patterns used in nodes_for_pattern work in section of naming of files.
+* T009 [0.5.0]: describe how the path patterns used in nodes_for_pattern work in section of naming of files.
 
-* T010: think about examples in documentation
+* T010 [0.5.0]: think about examples in documentation
 
 
 
