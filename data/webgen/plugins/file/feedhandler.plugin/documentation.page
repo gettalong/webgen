@@ -23,7 +23,7 @@ Optional keys:
 * image: The LCN of an image that represents the feed.
 * rss: An RSS feed is created if this is set to `true`.
 * atom: An ATOM feed is created if this is set to `true`.
-* rss_version: The version of RSS that should be used.
+* rss\_version: The version of RSS that should be used.
 * numberOfItems: The number of items that should appear in the feed.
 
 The feed handler creates the feeds using templates. If these included

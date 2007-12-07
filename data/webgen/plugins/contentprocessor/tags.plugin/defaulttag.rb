@@ -43,8 +43,8 @@ module Tag
   #     plugin:
   #       load_deps: Tag/DefaultTag
   #     params:
-  #       paths:
-  #         do_reverse: ~
+  #       do_reverse:
+  #         default: ~
   #         desc: Specifies if the body should actually be reversed.
   #         mandatory: default
   #     tags: reverse
@@ -132,12 +132,12 @@ module Tag
                when String then create_from_string( config, params, node )
                when NilClass then {}
                else
-                 log(:error) { "Invalid parameter type (#{config.class}) for tag '#{plugin_name}' in <#{node.node_info[:src]}>" }
+                 log(:error) { "Invalid parameter type (#{config.class}) for tag '#{plugin_name}' in <#{node.absolute_lcn}>" }
                  {}
                end
 
       unless params.all? {|k,v| !v['mandatory'] || result.has_key?( k )}
-        log(:error) { "Not all mandatory parameters for tag '#{plugin_name}' in <#{node.node_info[:src]}> set" }
+        log(:error) { "Not all mandatory parameters for tag '#{plugin_name}' in <#{node.absolute_lcn}> set" }
       end
 
       result
@@ -149,9 +149,9 @@ module Tag
       config.each do |key, value|
         if params.has_key?( key )
           result[key] = value
-          log(:debug) { "Setting parameter '#{key}' to '#{value}' for tag '#{plugin_name}' in <#{node.node_info[:src]}>" }
+          log(:debug) { "Setting parameter '#{key}' to '#{value}' for tag '#{plugin_name}' in <#{node.absolute_lcn}>" }
         else
-          log(:warn) { "Invalid parameter '#{key}' for tag '#{plugin_name}' in <#{node.node_info[:src]}>" }
+          log(:warn) { "Invalid parameter '#{key}' for tag '#{plugin_name}' in <#{node.absolute_lcn}>" }
         end
       end
       result
@@ -161,7 +161,7 @@ module Tag
     def create_from_string( value, params, node )
       param_name, param_value = params.find {|k,v| v['mandatory'] == 'default'}
       if param_name.nil?
-        log(:error) { "No default mandatory parameter specified for tag '#{plugin_name}' but set in <#{node.node_info[:src]}>"}
+        log(:error) { "No default mandatory parameter specified for tag '#{plugin_name}' but set in <#{node.absolute_lcn}>"}
         {}
       else
         {param_name => value}

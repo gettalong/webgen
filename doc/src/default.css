@@ -90,6 +90,7 @@ pre {
 code {
   font: 'Lucida Console', 'courier new', monospace;
   color: #193441;
+  font-size: 115%;
 }
 
 acronym {
@@ -188,7 +189,7 @@ blockquote.information {
   background: #FCFFF5;
   color: #A0080D;
 }
-#header-content li.webgen-menu-item-selected {
+#header-content li.webgen-menu-item-selected, #header-content li.webgen-menu-submenu-inhierarchy {
   background: #FCFFF5;
   color: #A0080D;
 }
@@ -214,28 +215,23 @@ blockquote.information {
   background-color: #91AA9D;
 }
 #sidebar ul {
-  list-style:none;
-  margin: 0;
-  padding: 5px 0 15px 0;
+  list-style: inside square;
+  margin: 0px;
+  padding: 0px;
 }
 #sidebar ul li {
-  padding: 0 10px;
+  padding: 0px;
+  margin: 0px;
+  padding-left: 1em;
+  padding-top: 0.3em;
 }
 #sidebar ul a {
-  display: block;
-  font-weight:bold;
   color: #FCFFF5;
-  height: 1.5em;
   text-decoration: none;
-  padding:.3em 0 .3em 15px;
-  border-bottom: 1px dashed #151515;
-  line-height: 1.5em;
-}
-#sidebar ul a.top{
-  border-top: 1px dashed #151515;
+  padding: .3em 0 .3em 3px;
+  line-height: 1.5ex;
 }
 #sidebar ul a:hover {
-  padding: .3em 0 .3em 10px;
   border-left: 5px solid  #193441;
   color: #193441;
 }
@@ -306,4 +302,18 @@ blockquote.information {
   font-size: 90%;
   color: #666;
   padding: 2px;
+}
+
+
+/* plugin documentation classes */
+.plugin-info .param-name {
+  color: #193441;
+}
+
+.plugin-info .param-default-value {
+  color: #A0080D;
+}
+
+.plugin-info p.param {
+  padding: 0px 0px 5px;
 }

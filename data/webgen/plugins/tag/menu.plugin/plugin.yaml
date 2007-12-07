@@ -46,4 +46,11 @@ Tag/VerticalMenu:
       default: true
       desc: True if only the current subtree should be shown in the menu.
             If set to false, each subtree will be shown.
+    useTypes:
+      default: both
+      desc: |
+        Specifies which kind of nodes are used for generating the menu: `both` (normal nodes and
+        fragment nodes are used), `normal` (only normal nodes are used), and `fragments` (only the
+        fragment nodes of the current page are used).
+
   tags: verticalMenu

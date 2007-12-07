@@ -4,11 +4,7 @@ directoryName: Home
 inMenu: true
 orderInfo: 10
 ---
-# Welcome to the homepage of _webgen_!
-
-
-## Introduction
-
+## Welcome to the homepage of _webgen_!
 
 webgen is a command line application for generating static websites. You could write a static
 website by hand, of course. But by using webgen you have several advantages:
@@ -33,7 +29,7 @@ command `webgen` inside the `mywebsite` directory, the website will be generated
 
 Actually, this website was generated with webgen and provides an online demonstration of its
 features. For example, the menu that you can see at the top was created dynamically. For more
-information have a look at the [user documentation]({relocatable: userdoc.html})!
+information have a look at the [documentation]({relocatable: /documentation/})!
 
 
 ## Feature requests, bugs, ...
@@ -79,7 +75,7 @@ Make sure that you also install the mandatory and, if you need them, the optiona
 
 * (mandatory) [cmdparse](http://cmdparse.rubyforge.org) version 2.0.0 or higher
 
-* (mandatory) [facets](http://facets.rubyforge.org) version 1.8.54 or higher
+* (mandatory) [facets](http://facets.rubyforge.org) version 2.0.2 or higher
 
 * (mandatory) [maruku](http://maruku.rubyforge.org) version 0.5.5 or higher
 
@@ -108,6 +104,6 @@ All these libraries can be installed via Rubygems (which I recommend).
 
 ## Author
 
-* *Thomas Leitner*
-* e-Mail: "t_leitner@gmx.at":mailto:t_leitner@gmx.at
+* Thomas Leitner
+* e-Mail: <t_leitner@gmx.at>
 * GPG Key-Id: 0xD942E7F6

@@ -1,0 +1,10 @@
+File/PluginDocuHandler:
+  about:
+    summary: Generates documentation pages for plugins.
+    author: Thomas Leitner <t_leitner@gmx.at>
+  plugin:
+    file: plugindocuhandler.rb
+    load_deps: File/DefaultHandler
+    class: FileHandlers::PluginDocuHandler
+  file:
+    extensions: plugindocu

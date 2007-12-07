@@ -36,11 +36,7 @@ Examples
   <td>{relocatable: /default.css}</td>
 </tr>
 <tr>
-  <td>\{relocatable: ../core/configuration.page}</td>
-  <td>{relocatable: ../core/configuration.page}</td>
-</tr>
-<tr>
-  <td>\{relocatable: ../core}</td>
-  <td>{relocatable: ../core}</td>
+  <td>\{relocatable: ../}</td>
+  <td>{relocatable: ../}</td>
 </tr>
 </table>

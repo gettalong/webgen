@@ -32,7 +32,7 @@ module FileHandlers
     # Same functionality as +create_node+, but uses the given +data+ as content.
     def create_node_from_data( parent, file_info, data )
       page = WebPageFormat.create_page_from_data( data, file_info.meta_info )
-      internal_create_node( parent, file_info, page )
+      internal_create_node( parent, file_info, page, false )
     rescue WebPageFormatError => e
       log(:error) { "Invalid data provided for <#{file_info.filename}>: #{e.message}" }
     end
@@ -70,7 +70,7 @@ module FileHandlers
     private
     #######
 
-    def internal_create_node( parent, file_info, page )
+    def internal_create_node( parent, file_info, page, is_real_file = true )
       page.meta_info['lang'] ||= param( 'lang', 'Core/Configuration' )
       file_info.meta_info = page.meta_info
       file_info.ext = 'html'
@@ -78,7 +78,7 @@ module FileHandlers
 
       unless node = node_exist?( parent, path, file_info.lcn )
         node = Node.new( parent, path, file_info.cn, page.meta_info )
-        node.node_info[:src] = file_info.filename
+        node.node_info[:src] = file_info.filename if is_real_file
         node.node_info[:processor] = self
         node.node_info[:page] = page
         node.node_info[:change_proc] = proc do

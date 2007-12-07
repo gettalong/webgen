@@ -12,7 +12,7 @@ module Tag
       if context.node[tag]
         output = context.node[tag].to_s
       else
-        log(:warn) { "No value for tag '#{tag}' in <#{context.ref_node.node_info[:src]}> found in <#{context.node.node_info[:src]}>" }
+        log(:warn) { "No value for tag '#{tag}' in <#{context.ref_node.absolute_lcn}> found in <#{context.node.absolute_lcn}>" }
       end
       output
     end

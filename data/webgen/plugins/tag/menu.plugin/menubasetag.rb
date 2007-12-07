@@ -115,7 +115,7 @@ module Tag
       end.each do |child|
         sub_node = create_menu_tree( child, menu_node, lang )
         menu_node.add_child( sub_node ) unless sub_node.nil?
-      end if node.is_directory?
+      end
 
       return menu_node.has_children? ? menu_node : ( node['inMenu'] ? menu_node : nil )
     end

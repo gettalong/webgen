@@ -1,0 +1,12 @@
+--- documentation, pipeline:maruku
+Description
+-----------
+
+This processor searches the content for all HTML header tags (`h1` -
+`h6`) and stores them in the cache. Be aware that only headers with an
+already set id are used. If you are using the `maruku` processor, this
+poses no problem since it automatically assigns header ids.
+
+The stored sections are then used on the next webgen run. Therefore
+there need to be two webgen runs to ensure that everything has been
+handled correctly.

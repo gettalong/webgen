@@ -1,0 +1,159 @@
+---
+title: Meta Information Reference
+---
+## Meta Information Reference
+
+
+TODO: use CSS :before and :after selectors to add Type:/Example:/...
+TODO: update infos of all entries
+
+Following is a list of all the meta information items that are used in one way or another by a
+plugin, be it a file handler plugin, a tag plugin or any other plugin. Each meta information
+description follows the same pattern:
+
+* First the type of value and an example value are listed.
+* Then the paths for which this item is valid are listed.
+* And at last follows a detailed description.
+
+{:miref: .meta-information-ref}
+
+### blocks
+
+{:miref}
+* Array of Arrays: `[[content, markdown], [sidebar, html]]`
+* Page/Template files
+
+Sets the name and format of content blocks. Each sub-array contains, in this order, the name of the
+block and its format.
+
+### directoryName
+
+{:miref}
+* String: `Image Directory`
+* Any
+
+Only used if set on a directory index file; specifies the title of the directory for which it is the
+index file. If it is not specified, the title of the directory will be used.
+
+### emoticonPack
+
+{:miref}
+* String: `bigeyes`
+* Page files
+
+Sets the emoticon package which should be used for the page.
+
+### fragmentsInMenu
+
+{:miref}
+* Boolean: `false`
+* Any
+
+Specifies if the fragment nodes of the node should be in the menus.
+
+### indexFile
+
+{:miref}
+* String: `getting.page`
+* Directories
+
+Sets the directory index file for the directory overriding the default value.
+
+### inMenu
+
+{:miref}
+* Boolean: `true`
+* Any
+
+Specifies if the file/directory should appear in menus.
+
+### lang
+
+{:miref}
+* String: `de`
+* Page files
+
+Sets the language for the page file. Has to be a valid ISO-639-1/2 character code for the language.
+
+### linkAttrs
+
+{:miref}
+* Hash: `\{title: Hallo, class: extra}`
+* Any
+
+Specifies additional attribute-value pairs (in form of a Hash) that should be added to a link to the
+file/directory.
+
+### link\_callback
+
+{:miref}
+* String (Ruby code):`"<a#{attrs}>#{link_text} + some text</a>"`
+* Any
+
+Can be used to customize the link generated for the node. The available variables are:
+
+node
+: The node to which the link points.
+
+ref\_node
+: The reference node.
+
+attrs
+: A string of compiled HTML attributes that should be on the link element.
+
+link\_text
+: The text for the link.
+
+context
+: An optional hash with context information. The key :caller is set to the plugin which invoked the
+  link generation, e.g. MenuStyle/Vertical or Tag/Langbar. Optional other key-value pairs are
+  provided depending on the plugin.
+
+### omitIndexFileInBreadcrumbTrail
+
+{:miref}
+* Boolean: `false`
+* Index files
+
+Controls whether the index file should appear in a breadcrumb trail despite the setting of the
+Tag/BreadcrumbTrail:omitIndexFile parameter.
+
+### orderInfo
+
+{:miref}
+* Integer: `15`
+* Any
+
+Sets the ordering information for the file/directory. The value 0 is used as default and means 'not
+set'.  You should only use numbers greater than zero. However, if you want a menu item to always
+appear as first item, it is recommended to use the value -1. When sorting nodes, the `orderInfo`
+value is used first. If the values for both compared nodes are the same, then they are sorted
+according to their `title` meta information.
+
+### outputNameStyle
+
+{:miref}
+* String: `[:name, [".", :lang], ".html"]`
+* Page files
+
+Sets a custom output name style for the specified page file only. The basename is substituted for
+the value `:name` and the language for the value `:lang`. Strings are used verbatim. If `:lang` is
+specified in a sub-array, the whole sub-array is omitted, if the parameter
+File/PageHandler:defaultLangInFilename is false.
+
+### template
+
+{:miref}
+* String: `my.template`
+* Page/Template files
+
+Sets the template for the page/template file overriding the default value. If set to `nil`, no
+template is used for the page/template file!
+
+### title
+
+{:miref}
+* String: `New Title`
+* Any
+
+Sets the title for the file/directory.

@@ -11,3 +11,7 @@ tag plugins have a look at the documentation of Tag/MenuBaseTag.
 > However, the menu normally looks better if no discs are shown for the
 > menu items (using the CSS directive `list-style-type: none`).
 {.information}
+
+It can also be used for generating an in-page content menu of all the
+header sections. Just set the parameter Tag/VerticalMenu:useTypes to
+`fragments`.

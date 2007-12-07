@@ -64,6 +64,10 @@ class NodeTest < Webgen::TestCase
     url: '#doelse'
     parent: file_aa
 
+-   ref: file_aa#3
+    url: '#dosub'
+    parent: file_aa#2
+
 -   url: file_ab
     parent: dir_a/
     meta_info:
@@ -181,6 +185,8 @@ class NodeTest < Webgen::TestCase
   def test_full_path
     assert_equal( '../out/../dir1/', @n['/'].full_path )
     assert_equal( '../out/../dir1/dir_a/file_aa', @n['file_aa'].full_path )
+    assert_equal( '../out/../dir1/dir_a/file_aa#doelse', @n['file_aa#2'].full_path )
+    assert_equal( '../out/../dir1/dir_a/file_aa#dosub', @n['file_aa#3'].full_path )
     assert_equal( 'http://localhost/file_ah#doit', @n['file_ah#'].full_path )
   end
 
@@ -199,12 +205,15 @@ class NodeTest < Webgen::TestCase
   def test_lcn
     assert_equal( 'file_l.en.page', @n['file_l.en.page'].lcn )
     assert_equal( 'file_l.page', @n['file_l.page'].lcn )
+    assert_equal( '#dosub', @n['file_aa#3'].lcn )
   end
 
   def test_absolute_lcn
     assert_equal( '/file_l.en.page', @n['file_l.en.page'].absolute_lcn )
     assert_equal( '/file_l.page', @n['file_l.page'].absolute_lcn )
     assert_equal( '/dir_a/file_aa', @n['file_aa'].absolute_lcn )
+    assert_equal( '/dir_a/file_aa#doelse', @n['file_aa#2'].absolute_lcn )
+    assert_equal( '/dir_a/file_aa#dosub', @n['file_aa#3'].absolute_lcn )
   end
 
   def test_route_to
@@ -315,8 +324,8 @@ class NodeTest < Webgen::TestCase
     end
     assert_equal( [@n['/']], @n['/'].nodes_for_pattern('') )
     assert_equal( [@n['file_a'], @n['file_ah'], @n['file_ah#'], @n['file_aa'], @n['file_aa#'],
-                   @n['file_aa#2'], @n['file_ab']].sort, @n['/'].nodes_for_pattern('**/file_a*').sort )
-    assert_equal( [@n['file_aa'], @n['file_aa#'], @n['file_aa#2'],
+                   @n['file_aa#2'], @n['file_aa#3'], @n['file_ab']].sort, @n['/'].nodes_for_pattern('**/file_a*').sort )
+    assert_equal( [@n['file_aa'], @n['file_aa#'], @n['file_aa#2'], @n['file_aa#3'],
                   @n['file_ab']].sort, @n['dir_a/'].nodes_for_pattern('file_a*').sort )
     assert_equal( [@n['file_l.page'], @n['file_l.de.page'], @n['file_l.en.page'],
                    @n['file_ll.page']].sort, @n['/'].nodes_for_pattern('file_*.page').sort )

@@ -29,14 +29,14 @@ module FileHandlers
       elsif node['template'].kind_of?( String )
         template_node = node.resolve_node( node['template'], lang )
         if template_node.nil?
-          log(:warn) { "Specified template '#{node['template']}' for <#{node.node_info[:src]}> not found, using default template!" }
+          log(:warn) { "Specified template '#{node['template']}' for <#{node.absolute_lcn}> not found, using default template!" }
           template_node = get_default_template( node.parent, param( 'defaultTemplate' ), lang )
         end
         (node.node_info[:templates] ||= {})[lang] = template_node
       elsif node.meta_info.has_key?( 'template' ) && node['template'].nil?
         template_node = (node.node_info[:templates] ||= {})[lang] = nil
       else
-        log(:info) { "Using default template in '#{lang}' for <#{node.node_info[:src]}>" }
+        log(:info) { "Using default template in '#{lang}' for <#{node.absolute_lcn}>" }
         template_node = (node.node_info[:templates] ||= {})[lang] = get_default_template( node.parent, param( 'defaultTemplate' ), lang )
       end
 

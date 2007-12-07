@@ -40,7 +40,7 @@ module FileHandlers
 
       def initialize( parent, path, file_info )
         super( parent, path, file_info.cn, file_info.meta_info )
-        self.node_info[:src] = file_info.filename
+        self.node_info[:src] = file_info.filename if File.exists?( file_info.filename )
       end
 
       def []( name )
@@ -84,7 +84,7 @@ module FileHandlers
 
     # Creates the directory (and all its parent directories if necessary).
     def write_info( node )
-      {:src => node.node_info[:src]}
+      (node.node_info[:src].nil? ? nil : {:src => node.node_info[:src]})
     end
 
     # Return the page node for the directory +node+ using the specified language +lang+. If an index

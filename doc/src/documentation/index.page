@@ -1,0 +1,36 @@
+---
+title: Overview
+inMenu: false
+---
+
+# User Documentation
+
+Depending on whether you are new to webgen, you want more information about a specific topic or read
+a reference, go to one of the following pages:
+
+* [Getting Started Guide]({relocatable: getting_started.html}): If you are new to webgen, this
+  should be your first read. It explains the usage of the CLI command and how to create your first
+  website with webgen.
+
+* [Manual]({relocatable: manual.html}): Detailed information about how webgen
+  works can be found here. After reading the Getting Started Guide, this should be the next
+  read. Have a look at the section headers to get a quick overview of what can be found here.
+
+* [FAQ]({relocatable: faq.html}): If you want to do something with webgen, but you don't know how,
+  this page is exactly for you. It provides answer to frequently asked questions. If you have a
+  question which you think should be added, just mail me.
+
+* Reference Documentation:
+
+  * [WebPage Format]({relocatable: webpage_format.html})
+  * [Sipttra Format]({relocatable: sipttra_format.html})
+  * [Meta Information Reference]({relocatable: reference_metainfo.html})
+  * [Available Resources]({relocatable: reference_resources.html})
+  * [Plugin Parameter Reference]({relocatable: reference_parameters.html})
+  * [Plugin Documentation]({relocatable: plugins/})
+
+# Developer Documentation
+
+webgen makes it easy to extend its functionality by writing plugins. All information about how to do
+this is provided in the [API documentation]({relocatable: /rdoc/index.html}). You will also find
+examples for all existing plugin types there.

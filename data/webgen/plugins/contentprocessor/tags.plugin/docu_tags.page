@@ -54,7 +54,7 @@ A tag can be specified in one of the following ways:
 
     > The parameters defined using this syntax are actually specified
     > using a hash in YAML markup.
-    {.info}
+    {.information}
 
 *   Additionally, you can use a body part with any of the above forms. To
     specify that the tag has a body part, just use two colons instead of
@@ -69,6 +69,6 @@ the tag with a backslash, like this:
     \\\{tagname: {key:value}}
 
 Another solution to this is to specify a general prefix for all webgen
-tags using the {param: ContentProcessor/Tags:prefix} parameter. Let's
-imagine that you set the prefix to `webgen:`; then this plugin will only
-process tags of the form `\{webgen:tagname: {key: value}}`.
+tags using the ContentProcessor/Tags:prefix parameter. Let's imagine
+that you set the prefix to `webgen:`; then this plugin will only process
+tags of the form `\{webgen:tagname: {key: value}}`.

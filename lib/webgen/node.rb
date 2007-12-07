@@ -4,6 +4,10 @@ require 'webgen/composite'
 
 # The Node class is used for building the internal data structure which represents the output tree.
 #
+# A node can be a directory, a file or a fragment. A directory can contain files and directories and
+# files can contain fragments. Fragments can also contain other fragments. This can be used, for
+# example, to create a menu of sections for the file.
+#
 # This class caches information to provide fast access to some often used, computed values. These
 # values are: full_path, absolute_path, absolute_lcn and to_url. It is essential that the provided
 # accessors are always used because otherwise the cached information might be invalid. For instance,
@@ -120,7 +124,10 @@ class Node
     if @path =~ ABSOLUTE_URL
       @path
     else
-      (@parent.nil? ? @path : @parent.full_path + @path)
+      parent = @parent
+      # Handle fragment nodes specially in case they are nested
+      parent = parent.parent while is_fragment? && !parent.nil? && parent.is_fragment?
+      (parent.nil? ? @path : parent.full_path + @path)
     end
   end
 
@@ -150,7 +157,11 @@ class Node
   def absolute_lcn
     return @precalc[:absolute_lcn] if @precalc
 
-    (@parent.nil? ? '/' : @parent.absolute_lcn + self.lcn + (is_directory? ? '/' : '') )
+    parent = @parent
+    # Handle fragment nodes specially in case they are nested
+    parent = parent.parent while is_fragment? && !parent.nil? && parent.is_fragment?
+
+    (parent.nil? ? '/' : parent.absolute_lcn + self.lcn + (is_directory? ? '/' : '') )
   end
 
   # Returns the level of the node. The level specifies how deep the node is in the hierarchy.

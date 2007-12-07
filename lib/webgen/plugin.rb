@@ -33,6 +33,11 @@ module Webgen
       end
     end
 
+    # Need to duplicate that message from Logger here since evil active support cripples it...
+    def format_message(severity, datetime, progname, msg)
+      (@formatter || @default_formatter).call(severity, datetime, progname, msg)
+    end
+
   end
 
 
@@ -404,16 +409,30 @@ module Webgen
       value
     end
 
-    # TODO: redo, docu file should be in WebPage format, different sections
-    # -> usage (general usage of the plugin), documentation (in-depth documentation)
-    def documentation_for( plugin, section = 'documentation', type = :text )
-      return '' unless @plugin_infos.has_key?( plugin )
-      content = ''
+    # The documentation for a plugin is in a file in WebPage Format. This method returns the
+    # documentation for +plugin+ depending on the value of +type+:
+    #
+    # <tt>:block</tt>:: Returns the Block object for the given +block+.
+    # <tt>:text</tt>::  Returns the rendered content of the +block+.
+    # <tt>:src</tt>::   Returns the filename of the documentation file.
+    def documentation_for( plugin, block = 'documentation', type = :text )
+      return nil unless @plugin_infos.has_key?( plugin )
+      content = nil
       docufile = @plugin_infos[plugin]['plugin']['docufile']
       docufile = File.join( @plugin_infos[plugin]['plugin']['dir'], docufile )
       if File.exists?( docufile )
-        page = WebPageFormat.create_page_from_file( docufile )
-        content = page.blocks[section].content if page.blocks.has_key?( section )
+        case type
+        when :block
+          page = WebPageFormat.create_page_from_file( docufile )
+          content = page.blocks[block] if page.blocks.has_key?( block )
+        when :text
+          page = WebPageFormat.create_page_from_file( docufile )
+          content = page.blocks[block].content if page.blocks.has_key?( block )
+        when :src
+          content = docufile
+        else
+          content = nil
+        end
       end
       content
     end

@@ -143,7 +143,7 @@ class WebPageFormat
         data = fd.read( 1024 )
         if data =~ RE_META_INFO_START
           data << fd.read(1024) while !(md = RE_META_INFO.match( data )) && !fd.eof?
-          raise( PageInvalid, 'Invalid structure of meta information part') if md.nil?
+          raise( WebPageFormatError, 'Invalid structure of meta information part') if md.nil?
           meta_info = meta_info.merge( parse_meta_info( normalize_eol( md[0] ) ) )
           file_pos = md[0].length
         end
@@ -163,7 +163,7 @@ class WebPageFormat
   # information. The +meta_info+ parameter can be used to provide default meta information.
   def self.create_page_from_data( data, meta_info = {} )
     md = /(#{RE_META_INFO})?(.*)/m.match( normalize_eol( data ) )
-    raise( PageInvalid, 'Invalid structure of meta information part') if md[1].nil? && data =~ RE_META_INFO_START
+    raise( WebPageFormatError, 'Invalid structure of meta information part') if md[1].nil? && data =~ RE_META_INFO_START
     meta_info = meta_info.merge( parse_meta_info( md[1] ) ) if !md[1].nil?
     blocks = parse_blocks( md[2] || '', meta_info )
     Page.new( meta_info, blocks )
@@ -180,9 +180,9 @@ class WebPageFormat
   def self.parse_meta_info( data )
     begin
       meta_info = YAML::load( data )
-      raise( PageInvalid, 'Invalid structure of meta information part') unless meta_info.kind_of?( Hash )
+      raise( WebPageFormatError, 'Invalid structure of meta information part') unless meta_info.kind_of?( Hash )
     rescue ArgumentError => e
-      raise PageInvalid, e.message
+      raise WebPageFormatError, e.message
     end
     meta_info
   end
@@ -199,14 +199,14 @@ class WebPageFormat
   # Handle case where meta info is invalid "---\nasdfasdfsdf" (no more \n---\n)!
   def self.parse_blocks( data, meta_info )
     scanned = data.scan( /(?:(?:^--- *(?:(\w+) *((?:, *\w+:[^\s,]+ *)*))?$)|\A)(.*?)(?:(?=^--- *(?:(?:\w+) *(?:(?:, *\w+:[^\s,]+ *)*))?$)|\Z)/m )
-    raise( PageInvalid, 'No content blocks specified' ) if scanned.length == 0
+    raise( WebPageFormatError, 'No content blocks specified' ) if scanned.length == 0
 
     blocks = {}
     scanned.each_with_index do |block_data, index|
       name, options, content = *block_data
-      raise( PageInvalid, "Found invalid blocks starting line" ) if content =~ /\A---/
+      raise( WebPageFormatError, "Found invalid blocks starting line" ) if content =~ /\A---/
       name = name || (meta_info['blocks']['entries'][index][0] rescue nil) || (index == 0 ? 'content' : 'block' + (index + 1).to_s)
-      raise( PageInvalid, "Same name used for more than one block: #{name}" ) if blocks.has_key?( name )
+      raise( WebPageFormatError, "Same name used for more than one block: #{name}" ) if blocks.has_key?( name )
       content ||= ''
       content.gsub!( /^(\\+)(---.*?)$/ ) {|m| "\\" * ($1.length / 2) + $2 }
       content.strip!

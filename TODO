@@ -5,7 +5,7 @@ webgen-metainfo:
 
 ---
 
-Next task number: T020
+Next task number: T032
 
 
 Other things which need to be done:
@@ -32,7 +32,27 @@ Possible optimizations:
 
 ## Implementation (open) ##
 
-* T001 [F]: what about fragment nodes? (created using a content processor, stored in cache, two webgen runs?)
+* T021 [0.5.0]: implement missing content processor RDoc, XmlBuilder
+
+* T022 [0.5.0]: implement missing content processor XmlBuilder
+
+* T023 [0.5.0]: implement missing tag breadcrumbTrail
+
+* T030 [0.5.0]: implement missing tag customVar
+
+* T024 [0.5.0]: implement missing tag date
+
+* T031 [0.5.0]: implement missing tag download
+
+* T025 [0.5.0]: implement missing tag executeCommand
+
+* T026 [0.5.0]: implement missing tag includeFile
+
+* T027 [0.5.0]: implement missing tag langBar
+
+* T028 [0.5.0]: implement missing tag sitemap
+
+* T029 [0.5.0]: implement missing tag wikilink
 
 * T003 [F]: html validator should run after file written on .html files (configurable which files)
 
@@ -42,6 +62,12 @@ Possible optimizations:
   see mail from andrew pietsch; could hpricot be used for this?
 
 ### Implementation (closed) ###
+
+* T020 [0.5.0]: implement missing content processors HAML and SASS
+
+* T001 [0.5.0]: what about fragment nodes? (created using a content processor, stored in cache, two webgen runs?)
+  implemented ContentProcessors/Fragments to deal with this, two webgen runs needed for this to work,
+  therefore webgen is run twice by default now
 
 * T016 [0.5.0]: add Cli/Commands/Check for checking the configuration file and possibly other things
   implemented checking the configuration file and checking the loadability of all plugins,

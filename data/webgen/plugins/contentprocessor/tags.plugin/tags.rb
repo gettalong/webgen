@@ -12,7 +12,7 @@ module ContentProcessor
 
     def process( context )
       replace_tags( context.content, context.ref_node ) do |tag, param_string, body|
-        log(:debug) { "Replacing tag #{tag} with data '#{param_string}' and body '#{body}' in <#{context.ref_node.node_info[:src]}>" }
+        log(:debug) { "Replacing tag #{tag} with data '#{param_string}' and body '#{body}' in <#{context.ref_node.absolute_lcn}>" }
 
         result = ''
         processor = processor_for_tag( tag )
@@ -58,7 +58,7 @@ module ContentProcessor
         when :in_start_tag
           data.brackets += (scanner[1] == '{' ? 1 : -1) while data.brackets != 0 && scanner.skip_until( BRACKETS_RE )
           if data.brackets != 0
-            log(:error) { "Unbalanced curly brackets in <#{node.node_info[:src]}>!" }
+            log(:error) { "Unbalanced curly brackets in <#{node.absolute_lcn}>!" }
             data.state = :done
           else
             data.params_end_pos = data.body_end_pos = data.end_pos = scanner.pos - 1
@@ -92,7 +92,7 @@ module ContentProcessor
             data.end_pos = scanner.pos - 1
             data.body_end_pos = scanner.pos - scanner.matched.length + scanner[1].length / 2
           else
-            log(:error) { "Invalid body part in <#{node.node_info[:src]}>!" }
+            log(:error) { "Invalid body part in <#{node.absolute_lcn}>!" }
             data.state = :done
           end
 

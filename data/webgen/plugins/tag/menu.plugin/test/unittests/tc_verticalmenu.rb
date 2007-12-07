@@ -6,6 +6,19 @@ class VerticalMenuStyleTest < Webgen::PluginTestCase
 
   def test_submenu
     root = @manager['Core/FileHandler'].instance_eval { build_tree }
+
+    create_fragment_node = lambda do |parent, name|
+      x = Node.new( parent, '#' + name )
+      x['title'] = name
+      x['inMenu'] = true
+      x.node_info[:processor] = @manager['File/DefaultHandler']
+      x
+    end
+    n = root.resolve_node('dir1/file11.en.html')
+    x = create_fragment_node.call( n, 'a1' )
+    create_fragment_node.call( x, 'a11' )
+    create_fragment_node.call( n, 'a2' )
+
     tree_en = @manager['Tag/MenuBaseTag'].instance_eval { menu_tree_for_lang( Webgen::LanguageManager.language_for_code( 'en' ), root ) }
 
     # testing minLevels and maxLevels and also checking resulting cache information
@@ -67,13 +80,29 @@ class VerticalMenuStyleTest < Webgen::PluginTestCase
     assert_equal( menu_output( '<ul><li class="webgen-menu-submenu"><a href="dir11/index.html">Dir11</a>' +
                                '<ul><li ><a href="dir11/file111.html">File111</a></li>' +
                                '<li ><a href="dir11/index.html">Index</a></li></ul></li>'+
-                               '<li class="webgen-menu-item-selected"><span>File11</span></li></ul>' ), output )
+                               '<li class="webgen-menu-item-selected"><span>File11</span>' +
+                               '<ul><li ><a href="#a1">a1</a></li><li ><a href="#a2">a2</a></li></ul>'+
+                               '</li></ul>' ), output )
     output, context = build_menu( root.resolve_node('dir1/dir11/file111.en.html'), tree_en, [2, 1, 2, true] )
     assert_equal( menu_output( '<ul><li class="webgen-menu-submenu webgen-menu-submenu-inhierarchy">' +
                                '<a href="index.html">Dir11</a>' +
                                '<ul><li class="webgen-menu-item-selected"><span>File111</span></li>'+
                                '<li ><a href="index.html">Index</a></li></ul></li>' +
                                '<li ><a href="../file11.html">File11</a></li></ul>' ), output )
+
+    # Testing menu generation with fragment nodes
+    output, context = build_menu( root.resolve_node('dir1/file11.en.html'), tree_en, [2, 2, 2, false, 'normal'] )
+    assert_equal( menu_output( '<ul><li class="webgen-menu-submenu"><a href="dir11/index.html">Dir11</a>' +
+                               '<ul><li ><a href="dir11/file111.html">File111</a></li>' +
+                               '<li ><a href="dir11/index.html">Index</a></li></ul></li>'+
+                               '<li class="webgen-menu-item-selected"><span>File11</span>' +
+                               '</li></ul>' ), output )
+    output, context = build_menu( root.resolve_node('dir1/file11.en.html'), tree_en, [1, 1, 2, false, 'fragments'] )
+    assert_equal( menu_output( '<ul><li ><a href="#a1">a1</a></li><li ><a href="#a2">a2</a></li></ul>' ), output )
+    output, context = build_menu( root.resolve_node('dir1/file11.en.html'), tree_en, [1, 2, 2, false, 'fragments'] )
+    assert_equal( menu_output( '<ul><li ><a href="#a1">a1</a>' +
+                               '<ul><li ><a href="#a11">a11</a></li></ul>' +
+                               '</li><li ><a href="#a2">a2</a></li></ul>' ), output )
   end
 
   #######
@@ -88,8 +117,9 @@ class VerticalMenuStyleTest < Webgen::PluginTestCase
     [output, context]
   end
 
-  def options_hash( startLevel, minLevels, maxLevels, subtree )
-    {'startLevel'=>startLevel, 'minLevels'=>minLevels, 'maxLevels'=>maxLevels, 'showCurrentSubtreeOnly'=>subtree}
+  def options_hash( startLevel, minLevels, maxLevels, subtree, useTypes = 'both' )
+    {'startLevel'=>startLevel, 'minLevels'=>minLevels, 'maxLevels'=>maxLevels,
+      'showCurrentSubtreeOnly'=>subtree, 'useTypes' => useTypes }
   end
 
   def menu_output( menu )

@@ -1,0 +1,36 @@
+--- documentation, pipeline:maruku
+Description
+-----------
+
+This processor converts the content, which is assumed to be in the Haml
+markup language, to valid XHTML by using the Haml library. For detailed
+information about Haml have a look at the [Haml Homepage][1]!
+
+Example
+-------
+
+Here is a short sample of a text in Haml markup:
+
+    %h1#myid This a h1 header
+
+    %p
+      You can just write
+      %b your
+      paragraphs here and
+      %a{:href => 'http://someurl.com'} link
+      them below. This is
+      %strong nice
+      format!
+
+    %blockquote.information
+      Citations are easy too.
+      Really. And you can assign them attributes.
+
+    %ul
+      %li Lists
+      %li aren't
+      %li difficult
+      %li either.
+
+
+[1]: http://haml.hamptoncatlin.com/

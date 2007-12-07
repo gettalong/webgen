@@ -6,4 +6,26 @@ This processor converts the content, which is assumed to be in Textile
 markup, to HTML by using the RedCloth library. For detailed information
 about Textile have a look at the [Textile Reference][1]!
 
-[1] http://hobix.com/textile/
+Example
+-------
+
+Here is a short sample of a text in Textile markup:
+
+    h1(#myid). This a h1 header
+
+    You can just write *your* paragraphs here and
+    "link":http://someurl.com them below. This is also
+    **nice** format!
+
+    <blockquote class='information>
+    Citations are easy too.
+    Really. And you can assign them attributes.
+    </blockquote>
+
+    * Lists
+    * aren't
+    * difficult
+    * either.
+
+
+[1]: http://hobix.com/textile/

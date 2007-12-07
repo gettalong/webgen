@@ -1,0 +1,241 @@
+---
+title: WebPage Format
+---
+## WebPage Format
+
+
+The WebPage Format is a custom format designed primarily for page and template files. It consists of
+an optional meta information block and one or more blocks of data; it is very simple and easy to
+use.
+
+### Structure
+
+A file using the WebPage Format consists of one or more blocks which are the smallest units
+recongnized. Blocks are separated from each other through a line containing only three dashes. This
+is illustrated in the following examples which are all valid files in WebPage Format:
+
+TODO: make sure each example gets its own pre block
+
+    Here is a block!
+
+
+    This is one block of the file
+    ---
+    This is another block.
+
+
+    Block 1
+    --- block2
+    Block 2
+    --- block3
+    Block 3...
+
+If you want to use three dashes in a block but you don't want to end the block, you have to escape
+them with a backslash character, like this:
+
+    Block 1
+    \---
+    still Block 1
+    --- block2
+    Block 2
+
+All of the above examples show one kind of block, the content block. However, there may also be
+another type of block: the meta information block. Following is a short description of both kinds,
+starting with the meta information block.
+
+#### Meta Information Block
+
+Each file in WebPage Format can have zero or one meta information blocks. This block is specified at
+the beginning of the file. To tell the parser that the first block is the meta information block and
+not a content block, you have to start the file with three dashes:
+
+    ---
+    title: The title set by Meta info
+    ---
+    This is the content of the file
+
+The above defines a meta information block and a content block. The meta information block has to be
+in YAML format and should contain key-value pairs of meta information. [YAML](http://www.yaml.org)
+is a simple markup language designed for ease of use and although you define structured data with
+it, it feels like just writing a plain text document.
+
+#### Content Blocks
+
+TODO: redo this section since the structure of content blocks has changed since 0.4.x
+TODO: desribe processing pipeline (maybe best in WebPage Format reference)
+
+A content block is used to provide content in a specific format. Each file in WebPage Format needs
+to have at least one content block which may be empty. However, it can have as many content blocks
+as necessary. Each content block needs to have a unique name and a format specifier.
+
+The name uniquely identifies a content block and is used to access it. The format specifier defines
+in which format the content block was written. The important thing is that all the formats can be
+converted into HTML/XML! There are several different formats available - have a look a the
+ContentConverter section.
+
+There may also be defaults for the two identifiers but they can be overwritten. There are two ways
+to do this:
+
+* you either specify the name and format of the block on the line with the three dashes
+* or you use the special meta information block to define the names and formats of all blocks.
+
+The following example uses the first technique to override the name and/or the format:
+
+    1. content block of the file
+    --- sidebar, markdown
+    2. content block of the file
+    --- other
+    3. content block of the file
+
+The first block has no identifieres set (there is no line with three dashes and the identifieres).
+Therefore the default values for both are used: `content` is the default block name and `default` is
+the default format specifier. However, these defaults can be overridden by the plugins.
+
+The second block is named `sidebar` and uses the format `markdown`. As you see, first the name of
+the block is specified and then, separated by a comma, the format specifier. The format identifier
+can be omitted as shown for the third block, the default value is then used.
+
+You can also set the name and format of the content blocks by using the special `blocks` meta
+information. It is an array of arrays and each sub-array contains, in this order, the name of the
+block and its format. The above example can therefore also be written like this:
+
+    ---
+    blocks: [[content,default], [sidebar, markdown], [other, ~]]
+    ---
+    1. content block of the file
+    ---
+    2. content block of the file
+    ---
+    3. content block of the file
+
+
+With everything said above the example should be clear except maybe for the last sub-array. The
+first entry specifies the name, `other`, and the second the format, `~`. The tilde has a special
+meaning in YAML format, namely null or empty. This means that we want to use the default format for
+the last block.
+
+The *default name* for a block is `content` and is used if no explicit name is given on the line
+with the three dashes or in the blocks meta information at the correct index. The precedence is
+(from high to low): --- line, blocks meta information, default value.
+
+The *default format* for a block is `default` and the rules stated above for the block name apply to
+the default format as well.
+
+
+### webgen Tags
+
+TODO: remove this whole section since it depends on the processing pipeline??? or add a special
+section explaining the processing pipeline. ev. move this to the docu for the tags processor. or
+still better move this to its own reference section since this is a special webgen construct
+
+Tags are used to generate content. During processing of a file in WebPage Format so called 'tags'
+are replaced with dynamic content. For example, the menu you can see to the left was generated by a
+tag. This makes it easier to add or remove menu items. If the menu was not generated, you would have
+to change every file which uses the menu.
+
+#### Usage
+
+Tags are defined by a special markup code. A tag has the following structure:
+
+    \{tagname: {parameters}}
+
+Every time a tag is found in a file, the registered plugin for the tag is called. The plugin returns
+a string which is put into the output file instead of the tag. The output a tag plugin can produce
+ranges from something simple to something complex. For example, the Tag/Meta plugin copies any
+additional meta information specified in the file verbatim into the correct place in the output
+file. And in contrast, the Tag/Menu plugin generates a whole menu tree.
+
+If you want to use the markup code used for tags, you need to escape the tag with a backslash, like
+this:
+
+    \\\{tagname: {parameters}}
+
+#### Parameters
+
+A tag can have zero or more parameters some of which are mandatory. You can see the supported
+parameters (and if they are mandatory) for each tag on the tag's plugin page. The default mandatory
+parameter can be specified in a special way, see the examples below. The format used for parsing the
+parameters is YAML.
+
+Here some examples with tags and parameters:
+
+<table class="examples">
+<tr>
+  <th>Usage</th><th>Output</th>
+</tr>
+<tr>
+  <td>`\{tagname: }`</td>
+  <td>No parameters specified</td>
+</tr>
+<tr>
+  <td>`\{tagname: test.html}`</td>
+  <td>The default mandatory parameter is set to `test.html`. This form can only be used if there is only one mandatory parameter</td>
+</tr>
+<tr>
+  <td>`\{tagname: {param1: value1, param2: value2}}`</td>
+  <td>Two parameters (param1 and param2) specified</td>
+</tr>
+</table>
+
+
+### Processing
+
+TODO: redo this whole section
+
+There is a well defined procesing order for files in WebPage Format:
+
+* After reading in the file, it is split into the blocks.
+
+* Each content block is converted to HTML (depends on the format specifier) and the HTML sections
+  are resolved (caveat: only those with an `id` attribute)
+
+* When writing out the file, the converted content is first processed with ERB (if specified to do
+  so),
+
+* then webgen tags are replaced and,
+
+* finally, the result is written.
+
+The first two steps happen when the file is read and the last three when the file is written.
+
+#### Converting to HTML
+
+The conversion of a content block to HTML is done via the ContentConverter plugins. Each plugin is
+able to convert a special marked-up text to HTML.
+
+#### Evaluating ERB Tags
+
+TODO: ev move this to the ContentProcessor/Erb documentation???
+
+The evaluation of ERB (embedded ruby) tags is optional and only done if the meta information
+`useERB` is set to `true`. The use of ERB allows to add dynamic content without using webgen tags.
+Following is an example of a file which uses ERB:
+
+<notextile>
+<pre>
+\---
+title: Test page with ERB
+useERB: true
+\---
+This page has the following meta info items:
+&lt;% node.meta_info.each do |key, value| %&gt;
+    * &lt;%=key %&gt;: &lt;%=value %&gt;
+&lt;% end %&gt;
+</pre>
+</notextile>
+
+This would output all meta information for the file. There are some objects available which you can
+use in your ERB code:
+
+* `node`: the node for the current file (normally a page file)
+* `ref_node`: the reference node, i.e. the node in which the content will be embedded (normally a
+  template file)
+
+*Caveat*: you may need to ensure that the ERB start and end tags are not processed by the content
+converter. For example, with Textile you may need to surround the ERB code with &lt;textile&gt;
+tags!
+
+#### Evaluating webgen Tags
+
+Tags have already been mentioned in the webgen tags (TODO:link) section.
+

@@ -1,0 +1,25 @@
+--- documentation, pipeline:maruku
+Description
+-----------
+
+This processor converts the content, which is assumed to be in the Sass
+meta language, to valid CSS by using the Haml library. For detailed
+information about Sass have a look at the [Haml Homepage][1]!
+
+Example
+-------
+
+Here is a short sample of a text in the Sass meta language:
+
+    #main
+      :width 90%
+      p
+        :border-style solid
+        :border-color #00f
+        a
+          :font-weight bold
+        a:hover
+          :text-decoration underline
+
+
+[1]: http://haml.hamptoncatlin.com/

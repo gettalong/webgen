@@ -1,0 +1,167 @@
+---
+title: Getting Started Guide
+---
+## Tutorial: Creating a Basic Website
+
+
+### Creating the Basic Directories
+
+webgen needs a special directory structure so that it works correctly. Basically, you have a website
+directory under which the following directories are:
+
+* `src`: The source directory in which all the source files for the website are. The name of this
+  directory cannot be changed!
+
+* `output`: This directory is created, if it does not exist, when webgen generates the HTML
+  files. All the output files are put into this directory. The name of this directory and its
+  location can be customized using the parameter Core/Configuration:outDir.
+
+* `plugins`: The extension directory (optional). You can put self-written plugin bundles into this
+  directory so that they can be used by webgen.
+
+The directory in which these directories are in is called the *website directory*.
+
+Don't worry too much about these directories since webgen is able to create the correct directory
+structure for you. By running the command `webgen create sample_site`, the website directory
+`sample_site` is created with the default website template and website style. You can naturally use
+any available template or style by passing their names to the respective options of the `create`
+command.
+
+> A *website template* provides a starting point for your website. For example, the `project`
+> template defines several pages including a features and about page.
+>
+> A *website style* defines the look and feel of your website. webgen comes with many predefined
+> styles (nearly all of them are converted open source web design styles).
+{.information}
+
+------------------- TODO -------------------------
+You can also change the website style later by using the `use website_style` command for `webgen`, for
+example:
+
+    $ webgen use website_style default
+
+Existing files may be overwritten by this command (after asking). However, this command is not able
+to delete previously copied website style files, so you have to remove them yourself!
+
+Have a look at the examples sections (TODO:linke) to see demonstrations for all shipped website
+templates and styles!
+------------------- TODO -------------------------
+
+Since the basic parts are now in place, you can generate the HTML files. There are two
+possibilities:
+
+* Either you change into the `sample_site` directory and run the command `webgen`.
+
+* Or you run webgen from any directory and specify the website directory using the `-d` option, for
+  example `webgen -d sample_site`.
+
+Easy! webgen has parsed the `src` directory and has created the HTML output. However, as we did not
+write any content yet, there is not much to see (only the default pages). So let's do that now!
+
+### Adding Content
+
+TODO: describe marukp languages (markdown, textile, rdoc), default markup language
+
+------------------- TODO -------------------------
+Meta information is specified at the beginning of a page file. Have a look at the WebPage Format
+reference to see how that is done in detail!
+------------------- TODO -------------------------
+
+When using the `create` command, webgen does not only create the needed directories but it also
+provides you with some default files, you will have at least the following ones:
+
+* `src/default.template`: The default template for the new website.
+* `src/default.css`: The default css file for the new website.
+* `src/index.page`: The index page for the root directory of the website.
+
+> *Template files* and *page files* are the heart of webgen. Template files are used to define a
+> general layout for web pages and page files define the real content. Both file types are written
+> in WebPage Format.
+{.information}
+
+The basic scaffolding is already in place. Now we only have to adapt the page file `index.page` and
+add other page files. Open the file `index.page` in your favorite text editor and change its
+content. After that create a new file, `hello.page`, in the source directory with the following
+content:
+
+    ---
+    title: Sample hello page
+    inMenu: true
+    ---
+    This is a sample page with the title "{title:}" and it is in the menu!!!
+
+Then run webgen again and open `output/index.html` to view your changes. Add page files and other
+content to your website and let it grow!
+
+### Adding Dynamic Content
+
+TODO: describe ways of adding dynamic content (tags, erb)
+
+------------------- TODO -------------------------
+Using Tags and Meta Information in Pages
+------------------- TODO -------------------------
+
+We are now going to use meta information to customize our website. Open the file `default.template`
+and add this before the `</body>` tag:
+
+    File last changed on \{filemdate: }!
+
+The part `\{filemdate: }` is called a tag. Tags are implemented using plugins and they can be used
+to insert dynamic content when webgen is run. For example, a menu can be generated with the
+`\{verticalMenu: }` tag. If webgen sees a tag during the processing of a page for which no tag
+plugin exists, it looks at the meta information of the page. If there is a meta information entry
+with the tag name, it uses that content instead. We will use this behaviour now.
+
+Open the file `hello.page` and add the following meta information:
+
+    filemdate: 10.4.2005
+
+so that `hello.page` looks like this:
+
+    ---
+    title: Sample hello page
+    inMenu: true
+    filemdate: 10.4.2005
+    ---
+    This is a sample page with the title "{title:}" and it is in the menu!!!
+
+Run webgen and view the output! The tag `\{filemdate: }` got substituted by the value specified in
+the meta information. As we have not put any meta information in the `index.page` file, a warning is
+displayed when webgen is run and no date is shown on the page!
+
+### Changing Plugin Parameters
+
+webgen provides a default configuration out of the box. If you can live with that, you do not need
+to write anything to the configuration file. However, most users need to change some configuration
+setting sometime. The configuration file is called `config.yaml` and has to be placed directly under
+the website directory. It has to be written in YAML format.
+
+Most plugins define parameters which can be configured through the configuration file. You can
+display a list of all available parameters by running `webgen about -p` (TODO: has to be implemented)
+
+> This information is also provided on this website, have a look at the TODO:ref Plugin parameter
+> reference! You can alternatively look at a plugin documentation page when you want to get
+> parameter information from one plugin only.
+{.information}
+
+The list shows sorted by the plugin name the current values and the default values for each
+parameter. Each parameter can be overridden in the configuration file by specifing the plugin name
+as top level key and each parameter and value as a key/value pair. A sample configuration file
+looks like this:
+
+    File/CopyHandler:
+      paths: ["**/*.css", "**/*.js", "**/*.jpg", "**/*.png", "**/*.gif", "**/*.zip"]
+
+    Misc/SmileyReplacer:
+      emoticonPack: crystal
+
+TODO: check plugin names before release
+
+TODO: add extra section for configuration file
+
+------------------- TODO -------------------------
+There is a special key for file handler plugins: `defaultMetaInfo`. It's value should be a hash with
+the default meta information for nodes created by the plugin. The value is used to update the
+correct part of the Core/FileHandler:defaultMetaInfo parameter *if and only if* no value
+for the Core/FileHandler:defaultMetaInfo parameter has been set in the configuration file!
+------------------- TODO -------------------------

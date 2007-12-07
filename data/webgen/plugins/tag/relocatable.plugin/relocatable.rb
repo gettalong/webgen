@@ -23,12 +23,20 @@ module Tag
           else
             result = resolve_path( uri, context.ref_node, context.node )
           end
-          log(:error) { "Could not resolve path '#{uri_string}' in <#{context.ref_node.node_info[:src]}>" } if result.empty?
+          if result.empty?
+            log(:error) { "Could not resolve path '#{uri_string}' in <#{context.ref_node.absolute_lcn}>" }
+            context.cache_info[plugin_name] = true
+          end
         rescue URI::InvalidURIError => e
-          log(:error) { "Error while parsing path for tag relocatable in <#{context.ref_node.node__info[:src]}>: #{e.message}" }
+          log(:error) { "Error while parsing path for tag relocatable in <#{context.ref_node.absolute_lcn}>: #{e.message}" }
+          context.cache_info[plugin_name] = true
         end
       end
       result
+    end
+
+    def cache_info_changed?( data, node )
+      data
     end
 
     #######

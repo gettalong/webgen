@@ -147,9 +147,9 @@ module FileHandlers
     end
     protected :register_extension
 
-    # Returns all (i.e. static and dynamic) path patterns defined for the file handler.
-    def path_patterns
-      if file_section = @plugin_manager.plugin_infos.get( @plugin_name, 'file' )
+    # Returns the static path patterns for the given plugin.
+    def static_path_patterns( name = plugin_name )
+      if file_section = @plugin_manager.plugin_infos.get( name, 'file' )
         patterns = (file_section['patterns'] || []).collect do |rank, pattern|
           (pattern.nil? ? [DEFAULT_RANK, rank] : [rank, pattern])
         end
@@ -157,7 +157,12 @@ module FileHandlers
           (ext.nil? ? [DEFAULT_RANK, EXTENSION_PATH_PATTERN % [rank]] : [rank, EXTENSION_PATH_PATTERN % [ext]])
         end
       end
-      (patterns || []) + (@path_patterns ||= [])
+      patterns
+    end
+
+    # Returns all (i.e. static and dynamic) path patterns defined for the file handler.
+    def path_patterns
+      (static_path_patterns || []) + (@path_patterns ||= [])
     end
 
     # Asks the plugin to create a node with the information provided in +file_info+ (see
@@ -210,7 +215,7 @@ module FileHandlers
         result = begin
                    instance_eval(node['link_callback'])
                  rescue
-                   log(:error) { "Error while evaluating link callback from node <#{node.node_info[:src]}>: #{$!.message}" }
+                   log(:error) { "Error while evaluating link callback from node <#{node.absolute_lcn}>: #{$!.message}" }
                    nil
                  end
       end

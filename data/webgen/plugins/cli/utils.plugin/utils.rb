@@ -25,7 +25,7 @@ module Cli
     # prepended to each line. If +first_line_indented+ is +true+, then the first line is
     # indented.
     def self.format( content, indent = 0, first_line_indented = false, width = 72 )
-      content ||= ''
+      content = (content || '').dup
       length = width - indent
 
       paragraphs = content.split( /\n\n/ )

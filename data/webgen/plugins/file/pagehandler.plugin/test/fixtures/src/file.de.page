@@ -1,1 +1,2 @@
+--- content, pipeline:erb
 Content <%= true %>

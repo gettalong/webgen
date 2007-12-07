@@ -15,10 +15,10 @@ module ContentProcessor
         block_name = $2
 
         if !block_node.node_info[:page].blocks.has_key?( block_name )
-          raise "Node <#{block_node.node_info[:src]}> has no block named '#{block_name}'"
+          raise "Node <#{block_node.absolute_lcn}> has no block named '#{block_name}'"
         end
 
-        log(:debug) { "Inserting rendered node <#{block_node.node_info[:src]}> into <#{chain.first.node_info[:src]}>" }
+        log(:debug) { "Inserting rendered node <#{block_node.absolute_lcn}> into <#{chain.first.absolute_lcn}>" }
         context.cache_info[plugin_name] << block_node.absolute_lcn
         tmp_context = block_node.node_info[:page].blocks[block_name].render( context.clone(:chain => new_chain) )
         tmp_context.content

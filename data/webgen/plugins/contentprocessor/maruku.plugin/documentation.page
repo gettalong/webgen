@@ -16,4 +16,26 @@ syntax as well as information about the extras added by Maruku.
 > syntax is easy to learn and nice to look it. Give it a try!
 {.info}
 
-[1] http://maruku.rubyforge.org/
+Example
+-------
+
+Here is a short sample of a text in Markdown+Extras markup:
+
+    # This a h1 header    {#myid}
+
+    You can just write *your* paragraphs here and
+    [link][1] them below. This is **nice** format!
+
+    > Citations are easy too.
+    > Really. And you can assign them attributes.
+    {.information}
+
+    * Lists
+    * aren't
+    * difficult
+    * either.
+
+    [1]: http://someurl.com
+
+
+[1]: http://maruku.rubyforge.org/

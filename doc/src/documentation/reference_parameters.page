@@ -1,0 +1,10 @@
+---
+title: Plugin Parameter Reference
+---
+## Plugin Parameter Reference
+
+
+Each plugin can specify parameters. Here is a list of all available parameters for a quick lookup,
+ordered by category and then name (only plugins with parameters are shown!):
+
+\{listPluginParameters:} TODO: copy this plugin from trunk and adjust it

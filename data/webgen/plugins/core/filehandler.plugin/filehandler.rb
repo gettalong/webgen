@@ -129,7 +129,7 @@ module Core
     # * an array of nodes
     #
     # Attention: This method has to be used by any plugin that needs to create a node!
-    def create_node( file, parent_node, handler ) # :yields: file_struct, parent_node, handler, meta_info
+    def create_node( file, parent_node, handler ) # :yields: parent_node, file_info, handler
       pathname, filename = File.split( file )
       parent_node = @plugin_manager['File/DirectoryHandler'].recursive_create_path( pathname, parent_node )
 
@@ -350,7 +350,7 @@ module Core
         log(:info) { "Writing <#{node.full_path}>" }
         write_path( node.full_path, info )
       else
-        log(:info) { "Nothing to do for: <#{node.full_path}>" }
+        log(:debug) { "Nothing to do for: <#{node.full_path}>" }
       end
       @plugin_manager['Core/CacheManager'].add( [:files_owned], node.full_path ) unless node.node_info[:no_output_file]
       dispatch_msg( :after_node_written, node, changed )
@@ -383,12 +383,12 @@ module Core
     # Returns an array of files of the source directory matching +pattern+
     def files_for_pattern( pattern )
       files = Dir.glob( File.join( param( 'srcDir', 'Core/Configuration' ), pattern ), File::FNM_CASEFOLD ).to_set
-      files.delete( File.join( param( 'srcDir', 'Core/Configuration' ), '/' ) )
       files.collect!  do |f|
         f = f.sub( /([^.])\.{1,2}$/, '\1' ) # remove '.' and '..' from end of paths
         f += '/' if File.directory?( f ) && ( f[-1] != ?/ )
         f
       end
+      files.delete( File.join( param( 'srcDir', 'Core/Configuration' ), '/' ) )
       files
     end
 

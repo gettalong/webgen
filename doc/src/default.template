@@ -31,15 +31,11 @@
 
       <div id="sidebar" >
 
+        <% if !node.children.empty? %>
         <h1>Contents</h1>
-        TODO: in page content menu
+        <% end %>
 
-        <h1>What people say about webgen</h1>
-
-        <blockquote>
-          <p>Here should be a good quote!</p>
-          <p class="small align-right">Nomen nescio</p>
-        </blockquote>
+        {verticalMenu: {useTypes: fragments, minLevels: 4, maxLevels: 6}}
 
         <h1>Support webgen</h1>
         <p>If you are interested in supporting webgen and would like to contribute, you are

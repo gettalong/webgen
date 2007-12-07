@@ -1,0 +1,17 @@
+---
+title: Resource Reference
+---
+## Resource Reference
+
+
+
+The following list shows all resources that are shipped with webgen and that can be used via the
+Tag/Resource plugin.
+
+*Credits*:
+
+* webgen-icons-\*: These icons were taken from the
+  [CrystalClear](http://www.kde-look.org/content/show.php?content=25668) package
+* webgen-emoticons-\*: Credits for the individual emoticon packs are listed on the Misc/SmileyReplacer page
+
+\{predefinedResources:} TODO: copy this plugin from trunk and adjust it

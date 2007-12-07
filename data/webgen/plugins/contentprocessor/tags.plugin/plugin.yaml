@@ -4,7 +4,7 @@ ContentProcessor/Tags:
     author: Thomas Leitner <t_leitner@gmx.at>
   plugin:
     file: tags.rb
-    docu_file: docu_tags.page
+    docufile: docu_tags.page
   processes: tags
   params:
     prefix:
@@ -18,4 +18,4 @@ Tag/DefaultTag:
     author: Thomas Leitner <t_leitner@gmx.at>
   plugin:
     file: defaulttag.rb
-    docu_file: docu_defaulttag.page
+    docufile: docu_defaulttag.page

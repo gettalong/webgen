@@ -14,6 +14,8 @@ module Cli
 
       def execute( args )
         @plugin_manager['Core/FileHandler'].render_website
+        # 2nd run, to ensure fragments are handled correctly, TODO: only when something has changed
+        commandparser.create_website.plugin_manager['Core/FileHandler'].render_website
       end
 
     end

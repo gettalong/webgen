@@ -1,0 +1,8 @@
+File/Svg2PngConverter:
+  about:
+    summary: Converts svg to png
+  plugin:
+    file: svg2png.rb
+    load_deps: File/DefaultHandler
+    class: Svg2PngConverter
+    nodocu: true

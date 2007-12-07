@@ -1,0 +1,29 @@
+--- documentation, pipeline:maruku
+Description
+-----------
+
+This file handler plugin creates documentation pages for plugins. The
+handled files need to be in WebPage Format. Two meta information keys
+are used:
+
+* `plugins`: One or more regular expressions pattern which specify the
+  plugins for which a documentation page should be created.
+
+* `generateIndexPage`: Set this key to the name of the file (without an
+  extension) which should hold an index of the generated plugin
+  documentation pages.
+
+The appearance of the plugin documentation pages and of the index page
+can be customized in two ways:
+
+* This plugin uses the resources `webgen/plugindocu/template` for the
+  plugin documentation pages and `webgen/plugindocu/index` for the index
+  page. Both resources need to be valid page files and need to have a
+  `content` block (because only this one is used). Therefore you can
+  change the default style by overriding these resources.
+
+* Since the files handled by this plugin need to be in WebPage Format,
+  you can embed the customized templates directly. You need to use the
+  block name `template` for overriding the appearance of the plugin
+  documentation pages and the block name `index` for overriding the
+  appearance of the index page.
