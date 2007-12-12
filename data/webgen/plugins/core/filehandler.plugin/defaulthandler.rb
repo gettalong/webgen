@@ -43,6 +43,13 @@ module FileHandlers
   #                                     Core/FileHandler plugin checks if the node has changed. If
   #                                     the proc object returns +true+, the Core/FileHandler knows
   #                                     that the node has changed.
+  #                                     <b>Caveat</b>: Checks normally add some information to the
+  #                                     cache provided by Core/CacheManager. For example, all the
+  #                                     <tt>..._changed?</tt> methods of Core/FileHandler
+  #                                     do. Therefore you need to make sure that the checks are
+  #                                     performed every time in your change proc. Otherwise, some
+  #                                     information may not be added to the cache and on the next
+  #                                     webgen run it appears to have changed.
   #
   # Additional information that is used only for processing purposes should be stored in the
   # #node_info hash of a node as the #meta_info hash is reserved for real node meta information.
