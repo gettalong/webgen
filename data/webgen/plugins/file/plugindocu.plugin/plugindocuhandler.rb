@@ -31,11 +31,12 @@ module FileHandlers
 
         old_proc = n.node_info[:change_proc]
         n.node_info[:change_proc] = proc do |node|
-          result = old_proc.call( node )
-          result ||
-            @plugin_manager['Core/FileHandler'].file_changed?( file_info.filename ) ||
-            (!page.blocks['template'] && @plugin_manager['Core/FileHandler'].file_changed?( get_resource_src( :template ) )) ||
-            (docu_block && @plugin_manager['Core/FileHandler'].file_changed?( @plugin_manager.documentation_for( name, 'documentation', :src ) ))
+          [
+           old_proc.call( node ),
+           @plugin_manager['Core/FileHandler'].file_changed?( file_info.filename ),
+           (!page.blocks['template'] && @plugin_manager['Core/FileHandler'].file_changed?( get_resource_src( :template ) )),
+           (docu_block && @plugin_manager['Core/FileHandler'].file_changed?( @plugin_manager.documentation_for( name, 'documentation', :src ) ))
+           ].any?
         end
         n
       end
@@ -47,15 +48,15 @@ module FileHandlers
         end
         n.node_info[:page].blocks['content'] = page.blocks['index'] || default_index_block
         n.node_info[:docu_plugins] = plugin_nodes
-        @plugin_manager['Core/CacheManager'].set( [:nodes, n.absolute_lcn, :plugin_docu_plugins], plugins.hash )
 
         old_proc = n.node_info[:change_proc]
         n.node_info[:change_proc] = proc do |node|
-          result = old_proc.call( node )
-          result ||
-            plugins.hash != @plugin_manager['Core/CacheManager'].get( [:nodes, node.absolute_lcn, :plugin_docu_plugins] ) ||
-            @plugin_manager['Core/FileHandler'].file_changed?( file_info.filename ) ||
-            (!page.blocks['index'] && @plugin_manager['Core/FileHandler'].file_changed?( get_resource_src( :index ) ))
+          [
+           old_proc.call( node ),
+           plugins.hash != @plugin_manager['Core/CacheManager'].get( [:nodes, node.absolute_lcn, :plugin_docu_plugins], plugins.hash ),
+           @plugin_manager['Core/FileHandler'].file_changed?( file_info.filename ),
+           (!page.blocks['index'] && @plugin_manager['Core/FileHandler'].file_changed?( get_resource_src( :index ) ))
+          ].any?
         end
       end
       nil
