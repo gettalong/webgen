@@ -1,0 +1,38 @@
+--- documentation, pipeline:maruku
+Description
+-----------
+
+The breadcrumb trail tag is used for displaying the hierarchy of the
+current page. It can be fully customized by changing the parameters:
+
+* The Tag/BreadcrumbTrail:omitLast parameter can be used to always omit
+  the last path component in the trail (which is normally the page
+  itself).
+
+* The Tag/BreadcrumbTrail:omitIndexFile parameter can be used to omit
+  the last path component if it is an index file for a directory (see
+  File/DirectoryHandler for more information about index files). This
+  behaviour can be overridden for individual index files by setting the
+  meta information `omitIndexFileInBreadcrumbTrail`.
+
+
+Examples
+--------
+
+<table class="examples">
+<tr>
+  <th>Usage</th><th>Output</th>
+</tr>
+<tr>
+  <td>\{breadcrumbTrail:}</td>
+  <td>{breadcrumbTrail:}</td>
+</tr>
+<tr>
+  <td>\{breadcrumbTrail: {separator: " HELLO "}}</td>
+  <td>{breadcrumbTrail: {separator: " HELLO "}}</td>
+</tr>
+<tr>
+  <td>\{breadcrumbTrail: {omitLast: true}}</td>
+  <td>{breadcrumbTrail: {omitLast: true}}</td>
+</tr>
+</table>

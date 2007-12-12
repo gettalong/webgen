@@ -26,6 +26,15 @@ module Support
       node_lcns.any? {|p| n = cm.node_for_path( node, p ); n.nil? || (n != node && fh.node_changed?( n )) }
     end
 
+    # Takes an array +node_lcns+ of absolute LCNs and checks if the corresponding node meta
+    # informations have changed. The +node+ is used for finding the specified nodes. Also, if an
+    # absolute LCN maps to +node+, it is not checked.
+    def nodes_meta_info_changed?( node_lcns, node )
+      fh = @plugin_manager['Core/FileHandler']
+      cm = @plugin_manager['Core/CacheManager']
+      node_lcns.any? {|p| n = cm.node_for_path( node, p ); n.nil? || (n != node && fh.meta_info_changed?( n )) }
+    end
+
   end
 
 end

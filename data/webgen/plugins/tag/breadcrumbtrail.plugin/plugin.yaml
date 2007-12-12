@@ -1,0 +1,18 @@
+Tag/BreadcrumbTrail:
+  about:
+    summary: Shows the hierarchy for the current page
+    author: Thomas Leitner <t_leitner@gmx.at>
+  plugin:
+    file: breadcrumbtrail.rb
+    load_deps: Tag/DefaultTag
+  params:
+    separator:
+      default: ' / '
+      desc: Separates the hierachy entries from each other.
+    omitLast:
+      default: false
+      desc: Omits the last path component.
+    omitIndexFile:
+      default: false
+      desc: Omits the last path component if it is an index file.
+  tags: breadcrumbTrail

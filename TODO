@@ -36,8 +36,6 @@ Possible optimizations:
 
 * T022 [0.5.0]: implement missing content processor XmlBuilder
 
-* T023 [0.5.0]: implement missing tag breadcrumbTrail
-
 * T030 [0.5.0]: implement missing tag customVar
 
 * T024 [0.5.0]: implement missing tag date
@@ -62,6 +60,8 @@ Possible optimizations:
   see mail from andrew pietsch; could hpricot be used for this?
 
 ### Implementation (closed) ###
+
+* T023 [0.5.0]: implement missing tag breadcrumbTrail
 
 * T020 [0.5.0]: implement missing content processors HAML and SASS
 
