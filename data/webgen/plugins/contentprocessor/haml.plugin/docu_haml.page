@@ -6,6 +6,13 @@ This processor converts the content, which is assumed to be in the Haml
 markup language, to valid XHTML by using the Haml library. For detailed
 information about Haml have a look at the [Haml Homepage][1]!
 
+> This plugin is only available if you have installed the [haml][1]
+> library. The preferred way to do this is via Rubygems:
+>
+>     gem install haml
+{.exclamation}
+
+
 Example
 -------
 
