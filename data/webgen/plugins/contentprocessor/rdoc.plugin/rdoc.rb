@@ -11,8 +11,9 @@ module ContentProcessor
       @formatter = SM::ToHtml.new
     end
 
-    def call( content )
-      @processor.convert( content, @formatter )
+    def process( context )
+      context.content = @processor.convert( context.content, @formatter )
+      context
     rescue Exception => e
       raise "Error converting RDOC text to HTML: {e.message}"
     end
