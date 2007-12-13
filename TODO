@@ -32,8 +32,6 @@ Possible optimizations:
 
 ## Implementation (open) ##
 
-* T021 [0.5.0]: implement missing content processor RDoc, XmlBuilder
-
 * T022 [0.5.0]: implement missing content processor XmlBuilder
 
 * T030 [0.5.0]: implement missing tag customVar
@@ -56,6 +54,8 @@ Possible optimizations:
   see mail from andrew pietsch; could hpricot be used for this?
 
 ### Implementation (closed) ###
+
+* T021 [0.5.0]: implement missing content processor RDoc
 
 * T026 [0.5.0]: implement missing tag includeFile
 
