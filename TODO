@@ -38,8 +38,6 @@ Possible optimizations:
 
 * T030 [0.5.0]: implement missing tag customVar
 
-* T024 [0.5.0]: implement missing tag date
-
 * T031 [0.5.0]: implement missing tag download
 
 * T025 [0.5.0]: implement missing tag executeCommand
@@ -60,6 +58,8 @@ Possible optimizations:
   see mail from andrew pietsch; could hpricot be used for this?
 
 ### Implementation (closed) ###
+
+* T024 [0.5.0]: implement missing tag date
 
 * T023 [0.5.0]: implement missing tag breadcrumbTrail
 
