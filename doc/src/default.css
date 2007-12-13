@@ -122,6 +122,9 @@ blockquote.information {
   background-image: url(images/information.gif);
 }
 
+blockquote pre {
+  border: none;
+}
 
 /***********************
    LAYOUT
