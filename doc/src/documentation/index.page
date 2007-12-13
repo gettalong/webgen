@@ -22,12 +22,23 @@ a reference, go to one of the following pages:
 
 * Reference Documentation:
 
-  * [WebPage Format]({relocatable: webpage_format.html})
-  * [Sipttra Format]({relocatable: sipttra_format.html})
-  * [Meta Information Reference]({relocatable: reference_metainfo.html})
-  * [Available Resources]({relocatable: reference_resources.html})
-  * [Plugin Parameter Reference]({relocatable: reference_parameters.html})
-  * [Plugin Documentation]({relocatable: plugins/})
+  * [WebPage Format]({relocatable: webpage_format.html}): Information about/Specification of the
+    format used, for example, by page and template files
+
+  * [Sipttra Format]({relocatable: sipttra_format.html}): Specification of the
+    SimplePlainTextTracker format
+
+  * [Meta Information Reference]({relocatable: reference_metainfo.html}): Descriptions for every
+    meta information key that is used by webgen or one of the shipped plugins
+
+  * [Available Resources]({relocatable: reference_resources.html}): Overview of all resources that
+    can be used on web pages.
+
+  * [Plugin Parameter Reference]({relocatable: reference_parameters.html}): Overview of all
+    parameters of all shipped plugins.
+
+  * [Plugin Documentation]({relocatable: plugins/}): Detailed information on every plugin (file
+    handler plugins, tags, content processors, ...)
 
 # Developer Documentation
 
