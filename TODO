@@ -42,8 +42,6 @@ Possible optimizations:
 
 * T025 [0.5.0]: implement missing tag executeCommand
 
-* T026 [0.5.0]: implement missing tag includeFile
-
 * T027 [0.5.0]: implement missing tag langBar
 
 * T028 [0.5.0]: implement missing tag sitemap
@@ -58,6 +56,8 @@ Possible optimizations:
   see mail from andrew pietsch; could hpricot be used for this?
 
 ### Implementation (closed) ###
+
+* T026 [0.5.0]: implement missing tag includeFile
 
 * T024 [0.5.0]: implement missing tag date
 
