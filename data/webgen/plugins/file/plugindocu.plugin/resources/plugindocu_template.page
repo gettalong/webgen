@@ -36,6 +36,7 @@ end
 <% end %>
 
 <%= infos['tags'] ? row['Handled tags', ([infos['tags']].flatten.collect {|t| t == :default ? "Default tag" : t}.join(', '))] : '' %>
+<%= infos['processes'] ? row['Processor name', infos['processes']] : '' %>
 <%= path_patterns.empty? ? '' : row['Handled paths', path_patterns.collect {|rank, path| CGI::escapeHTML( path )}.join('<br />')] %>
 
 <%= (mi = infos['file'] && infos['file']['meta_info'] ) ? row['Default Meta Information', "<pre>" + CGI::escapeHTML( mi.to_yaml.sub( /\A---\s*\n/m, '') ) + "</pre>"] : '' %>
