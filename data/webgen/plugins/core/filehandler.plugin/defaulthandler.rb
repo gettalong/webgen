@@ -238,7 +238,7 @@ module FileHandlers
     # under +parent_node+ and returns this node or +nil+ otherwise.
     def node_exist?( parent_node, path, lcn, warning = true )
       path = path.chomp( '/' )
-      node = parent_node.find {|n| n.path =~ /#{path}\/?/ || n.lcn == lcn }
+      node = parent_node.find {|n| n.path =~ /^#{path}\/?$/ || n.lcn == lcn }
       log(:warn) { "There is already a node for <#{node.full_path}> handled by #{node.node_info[:processor].plugin_name}" } if node && warning
       node
     end

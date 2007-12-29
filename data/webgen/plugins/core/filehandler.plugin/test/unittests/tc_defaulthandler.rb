@@ -1,3 +1,5 @@
+require 'webgen/test'
+
 module FileHandlerTests
 
   class DefaultHandlerTest < Webgen::PluginTestCase
@@ -95,6 +97,7 @@ module FileHandlerTests
       dir = Node.new( root, 'dir/' )
       assert_equal( node, @plugin.node_exist?( root, 'path.html', 'path.page' ) )
       assert_equal( node, @plugin.node_exist?( root, 'path.html/', 'path.page' ) )
+      assert_equal( nil, @plugin.node_exist?( root, 'html', 'path.page' ) )
       assert_equal( nil, @plugin.node_exist?( root, 'no_path.html', 'path.page' ) )
       assert_equal( node, @plugin.node_exist?( root, 'no_path.html', 'path.de.page' ) )
       assert_equal( dir, @plugin.node_exist?( root, 'dir', 'dir') )
