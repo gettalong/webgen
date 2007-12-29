@@ -1,0 +1,27 @@
+--- documentation, pipeline:maruku
+Description
+-----------
+
+The resource tag is used to include a resource either verbatim (i.e. its
+content is copied) or by its path. For more information about resources
+have a look at the Core/ResourceManager plugin.
+
+This tag is mostly used in templates to include the webgen CSS and JS
+resources.
+
+Examples
+--------
+
+<table class="examples">
+<tr>
+  <th>Usage</th><th>Output</th>
+</tr>
+<tr>
+  <td>\{resource: webgen/images/logo}</td>
+  <td>{resource: webgen/images/logo}</td>
+</tr>
+<tr>
+  <td>\{resource: {name: webgen/memory/css, insert: data}}</td>
+  <td>{resource: {name: webgen/memory/css, insert: data}}</td>
+</tr>
+</table>

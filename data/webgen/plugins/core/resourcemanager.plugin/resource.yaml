@@ -1,0 +1,9 @@
+resources/logo.png:
+  name: webgen/images/logo
+  path: /images/webgen-logo.png
+  desc: The webgen logo.
+
+resources/generated_by_webgen.png:
+  name: webgen/images/generated-by
+  path: /images/generated_by_webgen.png
+  desc: An image which can be used to show that a website was generated with webgen.

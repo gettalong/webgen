@@ -5,7 +5,7 @@ webgen-metainfo:
 
 ---
 
-Next task number: T035
+Next task number: T036
 
 
 Other things which need to be done:
@@ -50,6 +50,10 @@ Possible optimizations:
   see mail from andrew pietsch; could hpricot be used for this?
 
 ### Implementation (closed) ###
+
+* T035 [0.5.0]: implement resource access
+  resources can now be accessed via Tag/Resource again, now implemented better than in previous
+  webgen versions since nodes are now created for resources
 
 * T027 [0.5.0]: implement missing tag langBar
 

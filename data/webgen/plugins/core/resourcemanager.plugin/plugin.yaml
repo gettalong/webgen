@@ -1,0 +1,28 @@
+Core/ResourceManager:
+  about:
+    summary: Provides access to predefined resources
+    author: Thomas Leitner <t_leitner@gmx.at>
+  plugin:
+    file: resourcemanager.rb
+    load_deps: Core/FileHandler
+    docufile: docu_resourcemanager.page
+    autoload: true
+
+Tag/Resource:
+  about:
+    summary: Used for referencing resources
+    author: Thomas Leitner <t_leitner@gmx.at>
+  plugin:
+    file: resourcetag.rb
+    load_deps: Tag/DefaultTag
+    docufile: docu_resourcetag.page
+  params:
+    name:
+      default: ~
+      desc: The name of the resource
+      mandatory: default
+    insert:
+      default: :path
+      desc: 'What should be returned by the tag: the path to the resource (value :path) or the data (value :data)'
+  tags: resource
+

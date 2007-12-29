@@ -1,0 +1,19 @@
+--- documentation, pipeline:maruku
+Description
+-----------
+
+The ResourceManager plugin provides access to plugin resources, which
+are shipped with webgen, and special memory resources. For example, the
+webgen logo and the webgen-generated-by image are regarded as resources
+by webgen.
+
+A resource can either be included directly which means that the content
+of the resource is written into the output file. Or it can be referenced
+in which case only the path is written into the output file and the
+content of the resource itself is written to its predefined output
+path. Be aware that a resource is *only* written to its output path if
+it is referenced at least once (for example, by the Tag/Resource
+plugin)!
+
+A list of all available resources can be found at the Resource Reference
+page (TODO:link).
