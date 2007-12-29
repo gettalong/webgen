@@ -16,6 +16,10 @@ module Support
         end
       end
 
+      def keys
+        @processors.keys
+      end
+
       # Check if given +processor+ is available
       def has_key?( processor )
         !@plugin_manager[@processors[processor]].nil?
