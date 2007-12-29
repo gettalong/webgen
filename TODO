@@ -5,7 +5,7 @@ webgen-metainfo:
 
 ---
 
-Next task number: T036
+Next task number: T039
 
 
 Other things which need to be done:
@@ -32,6 +32,12 @@ Possible optimizations:
 
 ## Implementation (open) ##
 
+* T038 [0.5.0]: implement blog file handler
+
+* T036 [0.5.0]: implement gallery file handler
+
+* T037 [0.5.0]: implement sipttra file handler
+
 * T030 [0.5.0]: implement missing tag customVar
 
 * T031 [0.5.0]: implement missing tag download
@@ -44,12 +50,14 @@ Possible optimizations:
 
 * T003 [F]: html validator should run after file written on .html files (configurable which files)
 
-* T004 [F]: allow blocks processor to use a filename as argument
-
 * T005 [F]: add ContentProcessor which searches for wg-tagname="params" attributes and replaces them
   see mail from andrew pietsch; could hpricot be used for this?
 
 ### Implementation (closed) ###
+
+* T004 [0.5.0]: allow blocks processor to use a filename as argument
+  the blocks processor now allows an optional chain argument with cn/lcn separated by semicolons,
+  the cn/lcn are resolved and used as new chain
 
 * T035 [0.5.0]: implement resource access
   resources can now be accessed via Tag/Resource again, now implemented better than in previous
