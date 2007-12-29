@@ -39,6 +39,7 @@ class NodeTest < Webgen::TestCase
     parent: /
     meta_info:
       title: file_b
+      mtime: 2007-12-31 10:31
 
 -   ref: file_ah
     url: http://localhost/file_ah
@@ -364,6 +365,10 @@ class NodeTest < Webgen::TestCase
     assert_equal( 1, @n['file_ab'].order_info )
     assert_equal( 2, @n['file_aa'].order_info )
     assert_equal( [@n['file_ab'], @n['file_aa']], [@n['file_aa'], @n['file_ab']].sort )
+  end
+
+  def test_mtime
+    assert_equal( Time.parse('2007-12-31 10:31'), @n['file_b'].mtime )
   end
 
 end

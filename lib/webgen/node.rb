@@ -1,4 +1,5 @@
 require 'uri'
+require 'time'
 require 'pathname'
 require 'webgen/composite'
 
@@ -194,6 +195,24 @@ class Node
   # Returns the value of the meta info +orderInfo+ or +0+ if it is not set.
   def order_info
     self['orderInfo'].to_s.to_i         # nil.to_s.to_i => 0
+  end
+
+  # Returns the last modification time of this node. The modification time is calculated as
+  # follows:
+  #
+  # 1. The meta information +mtime+ is used if available
+  # 2. If the node is associated with a source file through <tt>node_info[:src]</tt>,
+  #    its modification is used.
+  # 3. The current time is used.
+  def mtime
+    if self['mtime']
+      Time.parse( self['mtime'].to_s )
+    elsif self.node_info[:src]
+      File.mtime( self.node_info[:src] )
+    else
+      log(:error) { "Could not determine modification time of <#{self.absolute_lcn}>, using current time" }
+      Time.now
+    end
   end
 
   # Sorts nodes by using the meta info +orderInfo+ of both involved nodes or, if these values are
