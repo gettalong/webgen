@@ -198,7 +198,7 @@ class WebPageFormat
   # test: "--- asdfasdf, asdfasd:asdfasdf,adfasdf\n" -> invalid "--- test\nasdf\n----" valid
   # Handle case where meta info is invalid "---\nasdfasdfsdf" (no more \n---\n)!
   def self.parse_blocks( data, meta_info )
-    scanned = data.scan( /(?:(?:^--- *(?:(\w+) *((?:, *\w+:[^\s,]+ *)*))?$)|\A)(.*?)(?:(?=^--- *(?:(?:\w+) *(?:(?:, *\w+:[^\s,]+ *)*))?$)|\Z)/m )
+    scanned = data.scan( /(?:(?:^--- *(?:(\w+) *((?:, *\w+:[^\s,]* *)*))?$)|\A)(.*?)(?:(?=^--- *(?:(?:\w+) *(?:(?:, *\w+:[^\s,]* *)*))?$)|\Z)/m )
     raise( WebPageFormatError, 'No content blocks specified' ) if scanned.length == 0
 
     blocks = {}
@@ -212,7 +212,7 @@ class WebPageFormat
       content.strip!
       options = (meta_info['blocks']['default'] rescue {}).
         merge( (meta_info['blocks']['entries'][index][1] rescue {}) ).
-        merge( (!options.nil? && Hash[*options.scan(/(\w+):([^\s,]+)/).flatten]) || {} )
+        merge( (!options.nil? && Hash[*options.scan(/(\w+):([^\s,]*)/).flatten]) || {} )
       blocks[name] = blocks[index+1] = Block.new( name, content, options )
     end
     blocks
