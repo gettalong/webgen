@@ -207,6 +207,7 @@ module Core
     #
     # If both keys are specified, <tt>:data</tt> is discarded.
     def write_path( dest, opts = {} )
+      FileUtils.makedirs( File.dirname( dest ) )
       if opts[:src]
         if File.directory?( opts[:src] )
           FileUtils.makedirs( dest )
