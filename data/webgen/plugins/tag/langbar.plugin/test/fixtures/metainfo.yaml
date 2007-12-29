@@ -1,0 +1,10 @@
+---
+---
+file1.en.html:
+  lang: en
+
+index.html:
+  lang: en
+
+index.de.html:
+  lang: de

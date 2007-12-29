@@ -1,0 +1,18 @@
+Tag/Langbar:
+  about:
+    summary: Provides links to translations of the page
+    author: Thomas Leitner <t_leitner@gmx.at>
+  plugin:
+    file: langbar.rb
+    load_deps: Tag/DefaultTag
+  params:
+    separator:
+      default: ' | '
+      desc: Separates the languages from each other.
+    showSingleLang:
+      default: true
+      desc: Should the link be shown although the page is only available in one language?
+    showOwnLang:
+      default: true
+      desc: Should the link to the currently displayed language page be shown?
+  tags: langbar

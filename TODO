@@ -38,8 +38,6 @@ Possible optimizations:
 
 * T025 [0.5.0]: implement missing tag executeCommand
 
-* T027 [0.5.0]: implement missing tag langBar
-
 * T028 [0.5.0]: implement missing tag sitemap
 
 * T029 [0.5.0]: implement missing tag wikilink
@@ -52,6 +50,8 @@ Possible optimizations:
   see mail from andrew pietsch; could hpricot be used for this?
 
 ### Implementation (closed) ###
+
+* T027 [0.5.0]: implement missing tag langBar
 
 * T022 [0.5.0]: implement missing content processor XmlBuilder
 
