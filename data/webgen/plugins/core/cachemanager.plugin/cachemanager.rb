@@ -62,10 +62,11 @@ module Core
     # Calls <tt>node.resolve_node(path,lang)</tt> and stores this information in a (volatile) cache
     # for subsequent access (which speeds things up quite a bit).
     def node_for_path( node, path, lang = nil )
-      if @node_resolve_cache.has_key?([path, lang])
-        @node_resolve_cache[[path, lang]]
+      key = ( path.starts_with?('/') ? [path, lang] : [node, path, lang] )
+      if @node_resolve_cache.has_key?( key )
+        @node_resolve_cache[key]
       else
-        @node_resolve_cache[[path, lang]] = node.resolve_node( path, lang )
+        @node_resolve_cache[key] = node.resolve_node( path, lang )
       end
     end
 
