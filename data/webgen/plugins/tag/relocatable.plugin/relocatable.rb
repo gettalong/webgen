@@ -21,7 +21,7 @@ module Tag
           if uri.absolute?
             result = uri_string
           else
-            result = resolve_path( uri, context.ref_node, context.node )
+            result = resolve_path( uri, context )
           end
           if result.empty?
             log(:error) { "Could not resolve path '#{uri_string}' in <#{context.ref_node.absolute_lcn}>" }
@@ -47,8 +47,8 @@ module Tag
       (uri.query.nil? ? '' : '?'+ uri.query ) + (uri.fragment.nil? ? '' : '#' + uri.fragment)
     end
 
-    def resolve_path( uri, ref_node, node )
-      dest_node = @plugin_manager['Core/CacheManager'].node_for_path( ref_node, uri.path, node['lang'] )
+    def resolve_path( uri, context )
+      dest_node = @plugin_manager['Core/CacheManager'].node_for_path( context.ref_node, uri.path, context.node['lang'] )
       if !dest_node.nil? && !uri.fragment.nil? && param( 'resolveFragment' )
         dest_node = dest_node.resolve_node( '#' + uri.fragment )
       end
@@ -56,7 +56,7 @@ module Tag
         ''
       else
         result = (dest_node.is_fragment? ? dest_node.parent : dest_node)
-        node.route_to( dest_node.is_fragment? ? dest_node.parent : dest_node ) + query_fragment( uri )
+        context.dest_node.route_to( dest_node.is_fragment? ? dest_node.parent : dest_node ) + query_fragment( uri )
       end
     end
 

@@ -75,7 +75,7 @@ module Tag
     #########
 
     # Returns style information (node is selected, ...) and a link from +src_node+ to +node+.
-    def menu_item_details( src_node, node )
+    def menu_item_details( src_node, node, lang )
       styles = []
       styles << param( 'submenuClass' ) if node.is_directory?
       styles << param( 'submenuInHierarchyClass' ) if node.is_directory? && src_node.in_subtree_of?( node )
@@ -90,7 +90,7 @@ module Tag
           :inHierarchy => node.is_directory? && src_node.in_subtree_of?( node )
         }
       }
-      link = node.node_for_lang( src_node['lang'] ).link_from( src_node, context )
+      link = node.node_for_lang( lang ).link_from( src_node, context )
 
       return style, link
     end

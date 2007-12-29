@@ -9,9 +9,13 @@ about ERB have a look at its documentation by executing `ri ERB` or the
 You can use the following special objects in your ERB code:
 
 * `ref_node`: The reference node which is the source of the ERB code
-  that is executed.
+  that is executed. Should be used, for example, for resolving paths.
 
-* `node`: The node that gets currently rendered.
+* `node`: The node that gets currently rendered. Should be used for
+  retrieving meta information.
+
+* `dest_node`: The node in which the result gets inserted. Should be
+  used for calculating relative paths.
 
 * `chain`: The whole node chain.
 

@@ -6,7 +6,7 @@ module Tag
       tree = build_param_specific_menu_tree( context.node, menu_tree )
       (context.cache_info[plugin_name] ||= []) << [all_params, (tree ? tree.to_lcn_list : nil)]
       if tree && !tree.children.empty?
-        "<div class=\"webgen-menu-vert #{param('divClass')}\">#{create_output(context.node, tree)}</div>"
+        "<div class=\"webgen-menu-vert #{param('divClass')}\">#{create_output(context, tree)}</div>"
       else
         ""
       end
@@ -59,11 +59,11 @@ module Tag
       end
     end
 
-    def create_output( src_node, tree )
+    def create_output( context, tree )
       out = "<ul>"
       tree.each do |child|
-        menu = child.has_children? ? create_output( src_node, child ) : ''
-        style, link = menu_item_details( src_node, child.node_info[:node] )
+        menu = child.has_children? ? create_output( context, child ) : ''
+        style, link = menu_item_details( context.dest_node, child.node_info[:node], context.node['lang'] )
 
         out << "<li #{style}>#{link}"
         out << menu

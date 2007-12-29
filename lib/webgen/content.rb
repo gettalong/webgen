@@ -13,7 +13,7 @@ class Context
   # The node chain which should be an array of nodes. The first node is the main template (from
   # which the +content+ was retrieved, the +#ref_node+), then comes the sub template, the sub sub
   # template and so on until the last node which is the current node (the +node+) that triggered the
-  # whole processing.
+  # whole rendering processing.
   attr_accessor :chain
 
   # The list of all useable content processors.
@@ -28,6 +28,9 @@ class Context
   # The to be processed Block object. Automatically set in Block#render.
   attr_accessor :block
 
+  # The destination node. See also #dest_node.
+  attr_writer :dest_node
+
   # Cache information set by content processors. Can optionally be set before the context object is
   # passed to Block#render.
   attr_accessor :cache_info
@@ -37,6 +40,7 @@ class Context
     @chain = chain
     @processors = processors
     @cache_info = {}
+    @dest_node = nil
   end
 
   # Clone the current context object using the provided +attrs+ hash (keys have to be the attribute
@@ -46,16 +50,32 @@ class Context
     ctx.cache_info = attrs[:cache_info] || cache_info
     ctx.block = attrs[:block] || block
     ctx.content = attrs[:content] || content
+    ctx.dest_node = attrs[:dest_node] || @dest_node
     ctx
   end
 
-  # Returns the node which triggered the processing.
+  # Returns the node that is ultimately rendered. This node should be used, for example, for
+  # retrieving meta information.
   def node
     chain.last
   end
 
+  # Returns the node which represents the file into which everything gets rendered. This is normally
+  # the same node as <tt>#node</tt> but can differ in special cases. For example, when rendering the
+  # contents of node called +my.page+ into the output of the node +this.page+, +this.page+ would be
+  # the +dest_node+ and +my.page+ would be the +node+.
+  #
+  # The +dest_node+ is not included in the +chain+!
+  #
+  # This node should be used as source node for calculating relative paths to other nodes.
+  def dest_node
+    @dest_node || self.node
+  end
+
   # Returns the reference node, ie. the node which provided the original content for this context
   # object.
+  #
+  # This node should be used, for example, for resolving relative paths.
   def ref_node
     chain.first
   end

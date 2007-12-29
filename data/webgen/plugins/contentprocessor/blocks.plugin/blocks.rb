@@ -22,6 +22,7 @@ module ContentProcessor
             temp_node
           end.compact
           next match if used_chain.length != paths.length
+          dest_node = context.node
         end
         block_node = used_chain.first
 
@@ -31,7 +32,7 @@ module ContentProcessor
 
         log(:debug) { "Inserting rendered node <#{block_node.absolute_lcn}> into <#{chain.first.absolute_lcn}>" }
         context.cache_info[plugin_name] << block_node.absolute_lcn
-        tmp_context = block_node.node_info[:page].blocks[block_name].render( context.clone(:chain => used_chain) )
+        tmp_context = block_node.node_info[:page].blocks[block_name].render( context.clone(:chain => used_chain, :dest_node => dest_node) )
         tmp_context.content
       end
       context

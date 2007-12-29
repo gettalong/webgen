@@ -18,7 +18,7 @@ module Tag
 
       until node.nil?
         (context.cache_info[plugin_name] ||= []) << node.absolute_lcn
-        out.push( node.node_for_lang( context.node['lang'] ).link_from( context.node, :context => { :caller => self.plugin_name } ) )
+        out.push( node.node_for_lang( context.node['lang'] ).link_from( context.dest_node, :context => { :caller => self.plugin_name } ) )
         node = node.parent
       end
 

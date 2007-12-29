@@ -8,6 +8,7 @@ module ContentProcessor
     def process( context )
       ref_node = context.ref_node
       node = context.node
+      dest_node = context.dest_node
       chain = context.chain
       used_nodes = []
 
