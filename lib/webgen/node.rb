@@ -283,8 +283,8 @@ class Node
     node
   end
 
-  # Returns all nodes in the subtree of the current node whose absolute localized canonical name
-  # matches the given +pattern+ (see File.fnmatch for information about the usable metacharacters).
+  # Returns all nodes whose absolute localized canonical name matches the given +pattern+ (see
+  # File.fnmatch for information about the usable metacharacters).
   def nodes_for_pattern( pattern )
 
     def find_nodes( node, pattern )
@@ -294,7 +294,8 @@ class Node
       nodes
     end
 
-    find_nodes( self, absolute_lcn + pattern )
+    pattern = (pattern[0] == ?/ ? pattern : File.join(absolute_lcn, pattern))
+    find_nodes( self.class.root( self ), File.expand_path( pattern ) )
   end
 
   # Returns the full URL (including dummy scheme and host) for use with URI classes. The returned

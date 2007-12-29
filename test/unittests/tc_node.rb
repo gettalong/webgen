@@ -330,6 +330,8 @@ class NodeTest < Webgen::TestCase
                   @n['file_ab']].sort, @n['dir_a/'].nodes_for_pattern('file_a*').sort )
     assert_equal( [@n['file_l.page'], @n['file_l.de.page'], @n['file_l.en.page'],
                    @n['file_ll.page']].sort, @n['/'].nodes_for_pattern('file_*.page').sort )
+    assert_equal( [@n['file_a'], @n['file_b']].sort, @n['dir_a/'].nodes_for_pattern('../file_[ab]*').sort )
+    assert_equal( [@n['file_a'], @n['file_b']].sort, @n['dir_a/'].nodes_for_pattern('/file_[ab]*').sort )
   end
 
   def test_processor_routing
