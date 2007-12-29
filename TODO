@@ -5,7 +5,7 @@ webgen-metainfo:
 
 ---
 
-Next task number: T034
+Next task number: T035
 
 
 Other things which need to be done:
@@ -101,6 +101,9 @@ Possible optimizations:
 * T007 [F]: logging level is assigned after plugin bundles gets loaded in cli.rb/website.rb -> need a hook or something
 
 ### Bugs (closed) ###
+
+* T034 [0.5.0]: fix website templates
+  templates use old textile format and old block embedding mechanism
 
 * T033 [0.5.0]: make Support/Misc:content_processors cleverer
   only load a content processor if it is needed, should decrease load time noticeably

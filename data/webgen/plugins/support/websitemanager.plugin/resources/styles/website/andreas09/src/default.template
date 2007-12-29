@@ -57,7 +57,7 @@
         </div>
 
         <div id="content">
-          {block:}
+          <webgen:block name="content" />
         </div>
         <div class="clearingdiv">&nbsp;</div>
 

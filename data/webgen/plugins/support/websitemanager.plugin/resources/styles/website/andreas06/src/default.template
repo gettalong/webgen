@@ -59,7 +59,7 @@
 
           <a id="main"></a>
           <div id="content">
-            {block: }
+            <webgen:block name="content" />
             <p class="hide"><a href="#top">Back to top</a></p>
           </div>
         </div>

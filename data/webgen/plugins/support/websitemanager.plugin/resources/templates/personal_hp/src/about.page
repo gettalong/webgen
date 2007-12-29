@@ -3,10 +3,10 @@ title: About Me
 inMenu: true
 orderInfo: 10
 ---
-h2. About Me
+## About Me
 
 Here comes a description of myself, age, where born, what I do,...
 
-h2. Curriculum Vitae
+## Curriculum Vitae
 
 My curriculum vitae.

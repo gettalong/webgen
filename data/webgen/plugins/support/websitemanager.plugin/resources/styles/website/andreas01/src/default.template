@@ -50,7 +50,7 @@
       </div>
 
       <div id="content">
-        {block:}
+        <webgen:block name="content" />
       </div>
 
       <div id="footer">

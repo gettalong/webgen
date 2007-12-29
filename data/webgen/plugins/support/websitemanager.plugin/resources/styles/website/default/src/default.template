@@ -27,7 +27,7 @@
     </div>
 
     <div id="body">
-      {block: }
+      <webgen:block name="content" />
     </div>
 
     <div id="footer" class="bar">

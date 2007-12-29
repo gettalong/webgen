@@ -32,7 +32,7 @@
         </div>
         <div class="clear"></div>
 
-        {block:}
+        <webgen:block name="content" />
       </div>
 
       <div id="sidebar">

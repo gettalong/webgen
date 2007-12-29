@@ -4,6 +4,6 @@ inMenu: true
 orderInfo: 0
 directoryName: Project XXX
 ---
-h2. Project XXX
+## Project XXX
 
 This is the first page your viewers will see!

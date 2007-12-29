@@ -12,3 +12,6 @@
 #
 # Core/Configuration:
 #   lang: de
+#
+# The available configuration parameters can be viewed with the 'about' command,
+# for example: webgen about configuration

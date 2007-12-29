@@ -25,7 +25,7 @@
 	  </div>
 
 	  <div id="content">
-		{block: }
+		<webgen:block name="content" />
 
 		<p class="readmore"><a href="styles.html">Example "Read more" link</a> &raquo;</p>
 		<p class="box"><strong>Example Note:</strong>This is a note! Check out the CSS file for other CSS classes and styles included!</p>
