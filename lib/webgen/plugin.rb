@@ -480,8 +480,10 @@ module Webgen
           if logger && @resources.has_key?( res_infos['name'] )
             logger.info('PluginManager#load_resources') { "Resoure #{res_infos['name']} gets re-defined" }
           end
+          if logger && @resources.any? {|name, data| data['path'] == res_infos['path']}
+            logger.warn('PluginManager#load_resources') { "Path for resource #{res_infos['name']} conflicts with another resource" }
+          end
           @resources[res_infos['name']] = res_infos
-          #TODO: check for duplicate output path
         end
       end
     end
