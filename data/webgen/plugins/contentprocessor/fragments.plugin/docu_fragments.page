@@ -10,3 +10,8 @@ poses no problem since it automatically assigns header ids.
 The stored sections are then used on the next webgen run. Therefore
 there need to be two webgen runs to ensure that everything has been
 handled correctly.
+
+> This content processor should sensibly only be used on page files with
+> real content. It makes no sense to use it on templates since they
+> don't provide real content.
+{.information}
