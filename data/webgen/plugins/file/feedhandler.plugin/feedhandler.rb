@@ -40,17 +40,6 @@ module FileHandlers
       {:data => context.content}
     end
 
-    def mtime( node )
-      if node['mtime']
-        Time.parse( node['mtime'] )
-      elsif node.node_info[:src]
-        File.mtime( node.node_info[:src] )
-      else
-        log(:error) { "Could not determine modification time of <#{node.full_path}>, using current time" }
-        Time.now
-      end
-    end
-
     #######
     private
     #######

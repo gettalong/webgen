@@ -23,7 +23,7 @@ rss = RSS::Maker.make( 'atom' ) do |maker|
 
   nr_items = (node['numberOfItems'].to_i == 0 ? 10 : node['numberOfItems'].to_i)
   [node['pages']].flatten.collect {|pat| Node.root( node ).nodes_for_pattern( pat )}.flatten.sort do |a,b|
-    @plugin_manager['File/FeedHandler'].mtime(a) <=> @plugin_manager['File/FeedHandler'].mtime(b)
+    a.mtime <=> b.mtime
   end.reverse[0, nr_items].each do |page|
     next if page.node_info[:page].nil?
     used_nodes << page
@@ -33,7 +33,7 @@ rss = RSS::Maker.make( 'atom' ) do |maker|
       item.link = baseURL + page.absolute_path
       item.description = page.node_info[:page].blocks['content'].render( context.clone(:chain => [page]) ).content[0..500]
       item.content_encoded = item.description
-      item.date = @plugin_manager['File/FeedHandler'].mtime( page )
+      item.date = page.mtime
       item.author = page['author'] || node['author']
       item.guid.content = item.link
       item.id = item.link

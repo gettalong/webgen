@@ -210,7 +210,6 @@ class Node
     elsif self.node_info[:src]
       File.mtime( self.node_info[:src] )
     else
-      log(:error) { "Could not determine modification time of <#{self.absolute_lcn}>, using current time" }
       Time.now
     end
   end
