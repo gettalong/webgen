@@ -4,14 +4,35 @@ module Support
   # those methods are defined that fit nowhere else.
   class Misc
 
+    # Helper class managing access to content processors. Uses lazy evaluation to only instantiate
+    # processors that are really used.
+    class ProcessorProxy
+
+      def initialize( plugin_manager )
+        @plugin_manager = plugin_manager
+        @processors = {}
+        @plugin_manager.plugin_infos[/^ContentProcessor\//].each do |k,v|
+          @processors[v['processes']] = k
+        end
+      end
+
+      # Check if given +processor+ is available
+      def has_key?( processor )
+        !@plugin_manager[@processors[processor]].nil?
+      end
+
+      # Return the +processor+.
+      def []( processor )
+        @plugin_manager[@processors[processor]]
+      end
+
+    end
+
     # Returns a hash (key=plugin name, value=plugin object) containing all available content
     # processors.
     def content_processors
       if !defined?( @processors ) || @cached_plugins_hash != @plugin_manager.plugin_infos.keys.hash
-        @processors = {}
-        @plugin_manager.plugin_infos[/^ContentProcessor\//].each do |k,v|
-          @processors[v['processes']] = @plugin_manager[k] unless @plugin_manager[k].nil?
-        end
+        @processors = ProcessorProxy.new( @plugin_manager )
         @cached_plugins_hash = @plugin_manager.plugin_infos.keys.hash
       end
       @processors

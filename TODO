@@ -5,7 +5,7 @@ webgen-metainfo:
 
 ---
 
-Next task number: T032
+Next task number: T034
 
 
 Other things which need to be done:
@@ -94,11 +94,17 @@ Possible optimizations:
 
 ## Bugs (open) ##
 
+* T032 [0.5.0]: provide better error messages, ie. include at least error.message
+
 * T006 [F]: see mail from andrew pietsch regarding menu issues/'tapestry.apache.org' feature
 
 * T007 [F]: logging level is assigned after plugin bundles gets loaded in cli.rb/website.rb -> need a hook or something
 
 ### Bugs (closed) ###
+
+* T033 [0.5.0]: make Support/Misc:content_processors cleverer
+  only load a content processor if it is needed, should decrease load time noticeably
+  on my system a default website renders in 0.533 secs instead of 1.082 secs.
 
 * T018 [0.5.0]: problem with regenerating pages when a new page got added to a menu
   doc.page (inMenu:true), index.page(inMenu:false) -> both pages are generated
