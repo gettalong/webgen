@@ -1,0 +1,16 @@
+File/BlogHandler:
+  about:
+    summary: Creates a blog interface to a collection of pages
+    author: Thomas Leitner <t_leitner@gmx.at>
+  plugin:
+    file: bloghandler.rb
+    load_deps: File/DefaultHandler
+    class: FileHandlers::BlogHandler
+  file:
+    extensions: blog
+    meta_info:
+      createMainPage: true
+      createMonthArchive: false
+      createYearArchive: false
+      createFeeds: [rss, atom]
+      nrOfEntriesOnMainPage: 10

@@ -1,0 +1,5 @@
+resources/main.template:
+  name: webgen/bloghandler/template/main
+
+resources/entry.template:
+  name: webgen/bloghandler/template/entry

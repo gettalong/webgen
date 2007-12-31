@@ -1,0 +1,10 @@
+--- content, pipeline:erb;blocks;
+<%
+  blog = node.node_info[:blog]
+  blog.pages[0, blog['nrOfEntriesOnMainPage']].each do |page|
+    next if page.node_info[:page].nil?
+%>
+<webgen:block name='content' chain='<%= blog.resolve_node(blog['entryTemplate']).absolute_lcn %>;<%= page.absolute_lcn %>' />
+<%
+  end
+%>
