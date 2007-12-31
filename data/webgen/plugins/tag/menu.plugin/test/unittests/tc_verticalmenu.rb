@@ -18,25 +18,30 @@ class VerticalMenuStyleTest < Webgen::PluginTestCase
     x = create_fragment_node.call( n, 'a1' )
     create_fragment_node.call( x, 'a11' )
     create_fragment_node.call( n, 'a2' )
+    create_fragment_node.call( root.resolve_node('dir3/file31.en.html'), 'a1' )
 
     tree_en = @manager['Tag/MenuBaseTag'].instance_eval { menu_tree_for_lang( Webgen::LanguageManager.language_for_code( 'en' ), root ) }
 
     # testing minLevels and maxLevels and also checking resulting cache information
     output, context = build_menu( root.resolve_node('index.en.html'), tree_en, [1, 1, 1, true] )
     assert_equal( menu_output( '<ul><li class="webgen-menu-submenu"><a href="dir1/">Dir1</a></li>' +
-                               '<li class="webgen-menu-submenu"><a href="dir2/">Dir2</a></li></ul>' ), output )
+                               '<li class="webgen-menu-submenu"><a href="dir2/">Dir2</a></li>' +
+                               '<li class="webgen-menu-submenu"><a href="dir3/">Dir3</a></li></ul>' ), output )
     assert_equal( [
                    root.resolve_node( 'dir1' ),
                    root.resolve_node( 'dir2' ),
+                   root.resolve_node( 'dir3' ),
                   ].collect {|n| n.absolute_lcn}, context.cache_info[@plugin.plugin_name].first[1].flatten )
 
 
     output, context = build_menu( root.resolve_node('index.en.html'), tree_en, [1, 2, 1, true] )
     assert_equal( menu_output( '<ul><li class="webgen-menu-submenu"><a href="dir1/">Dir1</a></li>' +
-                               '<li class="webgen-menu-submenu"><a href="dir2/">Dir2</a></li></ul>' ), output )
+                               '<li class="webgen-menu-submenu"><a href="dir2/">Dir2</a></li>' +
+                               '<li class="webgen-menu-submenu"><a href="dir3/">Dir3</a></li></ul>' ), output )
     assert_equal( [
                    root.resolve_node( 'dir1' ),
                    root.resolve_node( 'dir2' ),
+                   root.resolve_node( 'dir3' ),
                   ].collect {|n| n.absolute_lcn}, context.cache_info[@plugin.plugin_name].first[1].flatten )
 
 
@@ -45,13 +50,17 @@ class VerticalMenuStyleTest < Webgen::PluginTestCase
                                '<ul><li class="webgen-menu-submenu"><a href="dir1/dir11/index.html">Dir11</a></li>'+
                                '<li ><a href="dir1/file11.html">File11</a></li></ul></li>' +
                                '<li class="webgen-menu-submenu"><a href="dir2/">Dir2</a>'+
-                               '<ul><li ><a href="dir2/file21.html">File21</a></li></ul></li></ul>' ), output )
+                               '<ul><li ><a href="dir2/file21.html">File21</a></li></ul></li>'+
+                               '<li class="webgen-menu-submenu"><a href="dir3/">Dir3</a>'+
+                               '<ul><li ><a href="dir3/file31.html">File31</a></li></ul></li></ul>' ), output )
     assert_equal( [
                    root.resolve_node( 'dir1' ),
                    root.resolve_node( 'dir1/dir11' ),
                    root.resolve_node( 'dir1/file11.html' ),
                    root.resolve_node( 'dir2' ),
-                   root.resolve_node( 'dir2/file21.html' )
+                   root.resolve_node( 'dir2/file21.html' ),
+                   root.resolve_node( 'dir3' ),
+                   root.resolve_node( 'dir3/file31.html' )
                   ].collect {|n| n.absolute_lcn}, context.cache_info[@plugin.plugin_name].first[1].flatten )
 
     # testing showCurrentSubtreeOnly
@@ -59,13 +68,16 @@ class VerticalMenuStyleTest < Webgen::PluginTestCase
     assert_equal( menu_output( '<ul><li class="webgen-menu-submenu webgen-menu-submenu-inhierarchy"><a href="./">Dir1</a>'+
                                '<ul><li class="webgen-menu-submenu"><a href="dir11/index.html">Dir11</a></li>'+
                                '<li class="webgen-menu-item-selected"><span>File11</span></li></ul></li>' +
-                               '<li class="webgen-menu-submenu"><a href="../dir2/">Dir2</a></li></ul>' ), output )
+                               '<li class="webgen-menu-submenu"><a href="../dir2/">Dir2</a></li>' +
+                               '<li class="webgen-menu-submenu"><a href="../dir3/">Dir3</a></li></ul>' ), output )
     output, context = build_menu( root.resolve_node('dir1/file11.en.html'), tree_en, [1, 1, 2, false] )
     assert_equal( menu_output( '<ul><li class="webgen-menu-submenu webgen-menu-submenu-inhierarchy"><a href="./">Dir1</a>'+
                                '<ul><li class="webgen-menu-submenu"><a href="dir11/index.html">Dir11</a></li>'+
                                '<li class="webgen-menu-item-selected"><span>File11</span></li></ul></li>' +
                                '<li class="webgen-menu-submenu"><a href="../dir2/">Dir2</a>'+
-                               '<ul><li ><a href="../dir2/file21.html">File21</a></li></ul></li></ul>' ), output )
+                               '<ul><li ><a href="../dir2/file21.html">File21</a></li></ul></li>' +
+                               '<li class="webgen-menu-submenu"><a href="../dir3/">Dir3</a>'+
+                               '<ul><li ><a href="../dir3/file31.html">File31</a></li></ul></li></ul>' ), output )
 
     # testing startLevel
     output, context = build_menu( root.resolve_node('index.en.html'), tree_en, [2, 1, 1, true] )
@@ -90,13 +102,20 @@ class VerticalMenuStyleTest < Webgen::PluginTestCase
                                '<li ><a href="index.html">Index</a></li></ul></li>' +
                                '<li ><a href="../file11.html">File11</a></li></ul>' ), output )
 
-    # Testing menu generation with fragment nodes
+    # Using useTypes=normal setting
     output, context = build_menu( root.resolve_node('dir1/file11.en.html'), tree_en, [2, 2, 2, false, 'normal'] )
     assert_equal( menu_output( '<ul><li class="webgen-menu-submenu"><a href="dir11/index.html">Dir11</a>' +
                                '<ul><li ><a href="dir11/file111.html">File111</a></li>' +
                                '<li ><a href="dir11/index.html">Index</a></li></ul></li>'+
                                '<li class="webgen-menu-item-selected"><span>File11</span>' +
                                '</li></ul>' ), output )
+
+    output, context = build_menu( root.resolve_node('index.en.html'), tree_en, [1, 1, 1, true, 'normal'] )
+    assert_equal( menu_output( '<ul><li class="webgen-menu-submenu"><a href="dir1/">Dir1</a></li>' +
+                               '<li class="webgen-menu-submenu"><a href="dir2/">Dir2</a></li></ul>' ), output )
+
+
+    # Testing menu generation with fragment nodes
     output, context = build_menu( root.resolve_node('dir1/file11.en.html'), tree_en, [1, 1, 2, false, 'fragments'] )
     assert_equal( menu_output( '<ul><li ><a href="#a1">a1</a></li><li ><a href="#a2">a2</a></li></ul>' ), output )
     output, context = build_menu( root.resolve_node('dir1/file11.en.html'), tree_en, [1, 2, 2, false, 'fragments'] )

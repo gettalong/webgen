@@ -19,6 +19,10 @@ dir2/file21.html:
   inMenu: true
   lang: en
 
+dir3/file31.html:
+  inMenu: false
+  lang: en
+
 file2.de.html:
   inMenu: true
 

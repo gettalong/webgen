@@ -45,17 +45,22 @@ module Tag
       sub_menu_tree = MenuNode.new( nil, menu_node.node_info[:node] )
       menu_tree = MenuNode.new( nil, menu_node.node_info[:node] )
       menu_node.each do |child|
-        next if (param('useTypes') == 'normal' && child.node_info[:node].is_fragment?)
+        next if (param('useTypes') == 'normal' && !is_in_normal_menu_tree?( child ))
         this_node = MenuNode.new( menu_tree, child.node_info[:node] )
         sub_node = child.has_children? ? internal_build_menu_tree( src_node, child, level + 1 ) : nil
         sub_node.each {|n| this_node.add_child(n); sub_menu_tree.add_child( n ) } if sub_node
-        menu_tree.add_child( this_node )
       end
 
       if level < param( 'startLevel' )
         sub_menu_tree
       else
         menu_tree
+      end
+    end
+
+    def is_in_normal_menu_tree?( menu_node )
+      (!menu_node.node_info[:node].is_fragment? && menu_node.node_info[:node]['inMenu']) || menu_node.any? do |child|
+        is_in_normal_menu_tree?( child )
       end
     end
 
