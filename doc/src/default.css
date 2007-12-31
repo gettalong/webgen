@@ -98,7 +98,7 @@ acronym {
   border-bottom: 1px solid #777;
 }
 
-blockquote {
+blockquote.exclamation, blockquote.error, blockquote.information {
   margin: 10px 0px;
   padding: 0 0 0 40px;
   min-height: 40px;
@@ -319,4 +319,19 @@ blockquote pre {
 
 .plugin-info p.param {
   padding: 0px 0px 5px;
+}
+
+
+/* blog related classes */
+div.blog-entry {
+  margin-bottom: 15px;
+}
+
+blockquote.blog-entry-details {
+  font-size: 80%;
+  margin-bottom: 5px;
+}
+
+.blog-entry-date, .blog-entry-author {
+  font-weight: bold;
 }

@@ -22,7 +22,7 @@
       <h2 id="slogan">static website generation made easy</h2>
 
       <!-- Menu Tabs -->
-      {verticalMenu: {startLevel: 1, maxLevels: 1}}
+      {verticalMenu: {useTypes: normal, startLevel: 1, maxLevels: 1}}
 
     </div></div>
 

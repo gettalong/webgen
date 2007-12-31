@@ -190,8 +190,8 @@ information can be extracted correctly from the filename:
 
     This part is used on the one hand to generate the `title` meta information (but with `_` and `-`
     replaced by spaces). And on the other hand, the canonical name is derived from it. `basename`
-    must not contain any dots or any character from the following list: ``; / ? : ` & = + $ ,``. If
-    you do use one of them webgen may not work correctly! Also: if two files have the same
+    must not contain any dots, spaces or any character from the following list: ``; / ? * : ` & = +
+    $ ,``. If you do use one of them webgen may not work correctly! Also: if two files have the same
     `basename` part, they should define the same content but for different languages.
 
 *   `lang`

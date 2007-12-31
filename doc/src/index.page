@@ -18,6 +18,8 @@ website by hand, of course. But by using webgen you have several advantages:
 
 * Dynamic content can easily be added to content files.
 
+* webgen web sites are self contained since all generated links are relative ones.
+
 The above list should just give you a glimpse of what is possible with webgen. Have a look at the
 [features page]({relocatable: features.html}) for a more complete list.
 
@@ -81,16 +83,13 @@ Make sure that you also install the mandatory and, if you need them, the optiona
 
 * (optional) [RedCloth](http://redcloth.rubyforge.org) version 2.0.10 or higher for Textile support
 
+* (optional) [builder](http://builder.rubyforge.org/) version 2.0.0 or higher if you want support for
+  programatic HTML/XML file generation
 
 ------------------- TODO -------------------------
-* (optional) "BlueCloth":http://www.deveiate.org version 1.0.0 or higher if you want Markdown
-  support
 
 * (optional) "RMagick":http://rmagick.rubyforge.org/ version 1.7.1 or higher if you want automatic
   thumbnail creation for image galleries
-
-* (optional) "builder":http://builder.rubyforge.org/ version 2.0.0 or higher if you want programatic
-  HTML/XML file generation
 
 * (optional) "exifr":http://exifr.rubyforge.org/ version 0.10 or higher if you want to be able to
   have EXIF information available for image galleries
