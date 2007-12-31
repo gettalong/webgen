@@ -383,7 +383,7 @@ module Core
 
     # Returns an array of files of the source directory matching +pattern+
     def files_for_pattern( pattern )
-      files = Dir.glob( File.join( param( 'srcDir', 'Core/Configuration' ), pattern ), File::FNM_CASEFOLD ).to_set
+      files = Dir.glob( File.join( param( 'srcDir', 'Core/Configuration' ), pattern ), (param( 'useHiddenFiles' ) ? File::FNM_DOTMATCH : 0) | File::FNM_CASEFOLD ).to_set
       files.collect!  do |f|
         f = f.sub( /([^.])\.{1,2}$/, '\1' ) # remove '.' and '..' from end of paths
         f += '/' if File.directory?( f ) && ( f[-1] != ?/ )

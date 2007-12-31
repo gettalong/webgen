@@ -51,6 +51,8 @@ module CoreTests
                        'default.tar.bz2', 0, 'default', nil, 'tar.bz2', 'default.tar.bz2', 'Default' )
       check_proc.call( @manager::Core::FileHandler::FileInfo.new( 'default' ),
                        'default', 0, 'default', nil, '', 'default', 'Default' )
+      check_proc.call( @manager::Core::FileHandler::FileInfo.new( '.htaccess' ),
+                       '.htaccess', 0, '', nil, 'htaccess', '.htaccess', '' )
     end
 
     def test_file_changed

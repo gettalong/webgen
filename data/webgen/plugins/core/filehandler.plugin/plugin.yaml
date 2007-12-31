@@ -14,7 +14,9 @@ Core/FileHandler:
     defaultMetaInfo:
       default: {}
       desc: The keys for this hash are the names of file handlers, the values hashes with meta data.
-
+    useHiddenFiles:
+      default: false
+      desc: Specifies whether hidden files (ie. files with a leading dot) can be used by file handler plugins.
 
 File/DefaultHandler:
   about:
