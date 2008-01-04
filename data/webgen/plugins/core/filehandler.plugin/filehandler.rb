@@ -287,7 +287,9 @@ module Core
     def handle_output_backing( root )
       @output_backing.each do |path, data|
         path = path[1..-1] if path =~ /^\//
-        if node = root.resolve_node( path )
+        if path =~ /\*|\?/
+          root.nodes_for_pattern( path ).each {|n| n.meta_info = n.meta_info.merge( data ); check_node( n )}
+        elsif node = root.resolve_node( path )
           node.meta_info = node.meta_info.merge( data )
         else
           log(:info) { "Creating virtual node for path <#{path}>..." }
@@ -297,7 +299,7 @@ module Core
             handler.create_node( parent, file_info )
           end
         end
-        check_node( node )
+        check_node( node ) if node
       end
     end
 

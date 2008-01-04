@@ -5,7 +5,7 @@ webgen-metainfo:
 
 ---
 
-Next task number: T040
+Next task number: T042
 
 
 Other things which need to be done:
@@ -32,8 +32,6 @@ Possible optimizations:
 
 ## Implementation (open) ##
 
-* T039 [0.5.0]: allow assigning the same meta information to multiple nodes concurrently via meta info file
-
 * T036 [0.5.0]: implement gallery file handler
 
 * T037 [0.5.0]: implement sipttra file handler
@@ -54,6 +52,9 @@ Possible optimizations:
   see mail from andrew pietsch; could hpricot be used for this?
 
 ### Implementation (closed) ###
+
+* T039 [0.5.0]: allow assigning the same meta information to multiple nodes concurrently via meta info file
+  can only easily be done in the output section but that should be no problem
 
 * T038 [0.5.0]: implement blog file handler
   preliminary blog handler implemented, some feature like archive pages and feeds are still missing,
@@ -109,6 +110,11 @@ Possible optimizations:
 
 
 ## Bugs (open) ##
+
+* T040 [0.5.0]: make webgen run on ruby 1.9.0
+
+* T041 [0.5.0]: make error messages more detailed, error messages at first run?
+  should error messages be shown in the first of the two sequential webgen runs? what to do about this?
 
 * T032 [0.5.0]: provide better error messages, ie. include at least error.message
 

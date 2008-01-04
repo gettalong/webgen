@@ -329,9 +329,22 @@ node. Make sure that you use a valid source path, i.e. a path that resolves to a
 directory!
 
 The output backing section is used to apply meta information after _all_ nodes have been created and
-to create so called "virtual nodes". The paths specified in the output backing section have to be
-valid (localized) canonical names (for assigning meta info to existing nodes) or the desired output
-names (for creating virtual nodes)! There are three different cases:
+to create so called "virtual nodes". The paths specified in the output backing section have to be:
+
+* valid (localized) canonical names (for assigning meta info to existing nodes) or
+* a path pattern for matching against localized canonical names (for assigning meta info to multiple
+  existing nodes)
+* the desired output names (for creating virtual nodes)!
+
+The different cases are handled like this:
+
+* If a path has a `*` or a `?` in it, it is considered a path pattern and the meta information is
+  assigned to all nodes whose localized canonical name matches the pattern.
+
+  > Since the localized canonical name of the nodes are used, you need to remember that the pattern
+  > `**/*.html` sets the meta information on all nodes ending in `.html` whereas the pattern
+  > `**/*.en.html` only sets the meta information on English nodes ending in `.html.
+  {.information}
 
 * If a specified path resolves to an already created node, the meta information is applied to this
   node.
@@ -341,8 +354,9 @@ names (for creating virtual nodes)! There are three different cases:
 * Otherwise, a virtual node is created with the specified meta information and empty content - a
   virtual node _never_ creates a real output file!
 
-This facility can be used, for example, to include links to external web pages in menus or to create
-a whole menu with custom sections and multiple references in different sections to the same node!
+This facility can be used, for example, to specify meta information common to a set of nodes (for
+example, the author of blog pages), to include links to external web pages in menus or to create a
+whole menu with custom sections and multiple references in different sections to the same node!
 
 Following is a sample meta information backing file with explanations afterwards:
 
@@ -353,7 +367,7 @@ Following is a sample meta information backing file with explanations afterwards
     images:
       indexFile: ~
     ---
-    index.page:
+    index.html:
       inMenu: false
 
     wiki.html:
@@ -378,6 +392,9 @@ Following is a sample meta information backing file with explanations afterwards
       inMenu: true
       url: /otherdir/linked.de.page
 
+    **/*.html:
+      author: The Real Author
+
 The above sample meta information backing file consists of both sections: the mandatory source
 section and the optional output section. As you can see each section is described using a hash of
 hashes, i.e. the keys are paths and the values are the meta information hashes.
@@ -389,7 +406,7 @@ is specified that the `images` directory has no `indexFile`.
 The output section is more interesting than the source section:
 
 * The first entry references an existing file, therefore the meta information for that file
-  (`index.page`) is set appropriately.
+  (`index.html`) is set appropriately.
 
 * The second entry specifies that under the `root` directory a virtual node with the path
   `wiki.html` should be created (the node will be virtual as the path references no existing file).
@@ -404,9 +421,11 @@ The output section is more interesting than the source section:
   appear in a menu. Such nodes are normally inserted into the output section so that the
   Tag/Relocatable plugin can be used.
 
-* The last three entries add virtual entries to the menu to show how one page can appear in more
+* The next three entries add virtual entries to the menu to show how one page can appear in more
   than one directory: the `virtdir/index.html` links to the top level `index.page` and
   `virtdir/other.html` links to a page in another subdirectory, namely `/otherdir/linked.de.page`.
+
+* The last entry set the `author` meta information on all nodes that end with `.html`.
 
 ### Processing order ### {#metainfo-processing}
 
