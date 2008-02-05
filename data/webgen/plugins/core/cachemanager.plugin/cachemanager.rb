@@ -25,7 +25,7 @@ module Core
     def init_plugin
       cache_file = File.join( param( 'websiteDir', 'Core/Configuration' ), 'webgen.cache' )
       if File.exists?( cache_file )
-        @data = Marshal.load( File.read( cache_file ) )
+        File.open( cache_file, 'rb' ) {|f| @data = Marshal.load( f )}
       else
         @data = {}
       end
