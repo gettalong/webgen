@@ -46,7 +46,15 @@ module Webgen
 
   # Returns the user home configuration directory for webgen.
   def self.home_dir
-    File.join( ENV['HOME'], '.webgen' )
+    if ENV['HOME']
+      File.join( ENV['HOME'], '.webgen' )
+    elsif ENV['HOMEDRIVE'] && ENV['HOMEPATH']
+      File.join( ENV['HOMEDRIVE'] + ENV['HOMEPATH'], '.webgen' )
+    elsif ENV['USERPROFILE']
+      File.join( ENV['USERPROFILE'], '.webgen' )
+    else
+      raise 'Could not find home directory'
+    end
   end
 
 end
