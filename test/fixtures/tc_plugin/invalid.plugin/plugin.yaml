@@ -1,7 +1,0 @@
-InvalidDepPlugin:
-  plugin:
-    load_deps: [InvalidDep]
-
-InvalidFilePlugin:
-  plugin:
-    file: invalidfile.rb

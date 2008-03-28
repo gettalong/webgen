@@ -1,8 +1,0 @@
---- content, pipeline:erb;fragments
-<h1 id='plugin-docu'>Plugin Documentation</h1>
-
-<ul>
-<% node.node_info[:docu_plugins].each do |n| %>
-  <li><%= n.link_from( node ) %></li>
-<% end %>
-</ul>

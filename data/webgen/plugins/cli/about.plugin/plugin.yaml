@@ -1,7 +1,0 @@
-Cli/Commands/About:
-  about:
-    summary: Show various information about plugins
-    author: Thomas Leitner <t_leitner@gmx.at>
-  plugin:
-    file: about.rb
-    load_deps: Cli/Utils

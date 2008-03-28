@@ -1,9 +1,0 @@
---- documentation, pipeline:maruku
-Description
------------
-
-The Support/WebsiteManager plugin provides methods for working with
-webgen websites as well as some website templates and website
-styles. This plugin is normally of no interest to a user. However, if
-you want create a new website template/style have a look at the RDoc
-documentation for this plugin.

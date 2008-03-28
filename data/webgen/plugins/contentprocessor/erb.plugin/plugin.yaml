@@ -1,7 +1,0 @@
-ContentProcessor/Erb:
-  about:
-    summary: Renders content with ERB tags
-    author: Thomas Leitner <t_leitner@gmx.at>
-  plugin:
-    file: erb.rb
-  processes: erb

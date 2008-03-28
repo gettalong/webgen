@@ -1,6 +1,0 @@
---- documentation, pipeline:maruku
-Description
------------
-
-This file handler plugin handles virtual nodes created via the output
-backing section of the meta information backing file.

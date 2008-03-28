@@ -1,6 +1,0 @@
-Support/WebsiteManager:
-  about:
-    summary: Provides methods for working with website directories.
-    author: Thomas Leitner <t_leitner@gmx.at>
-  plugin:
-    file: websitemanager.rb

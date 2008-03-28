@@ -1,7 +1,0 @@
-Cli/Commands/Check:
-  about:
-    summary: Check configuration, available plugins and other things
-    author: Thomas Leitner <t_leitner@gmx.at>
-  plugin:
-    file: check.rb
-    load_deps: Cli/Utils

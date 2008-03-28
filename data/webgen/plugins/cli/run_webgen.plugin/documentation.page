@@ -1,7 +1,0 @@
---- documentation, pipeline:maruku
-Description
------------
-
-This is the main command for the webgen CLI which is invoked when no
-explicit command is specified. And "all" it does is: it renders the
-website specified in the global options.

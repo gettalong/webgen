@@ -1,2 +1,0 @@
-resources/*.template:
-  name: webgen/feedhandler/template/$basename_no_ext

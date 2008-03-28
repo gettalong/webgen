@@ -1,8 +1,0 @@
---- documentation, pipeline:maruku
-Description
------------
-
-The Support/BundleManager plugin provides methods for working with
-webgen bundles which are used for extending webgen with additional
-functionality or resources. Therefore this plugin is only of interest to
-a developer.

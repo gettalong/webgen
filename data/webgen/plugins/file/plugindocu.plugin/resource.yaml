@@ -1,5 +1,0 @@
-resources/plugindocu_template.page:
-  name: webgen/plugindocu/template
-
-resources/plugindocu_index.page:
-  name: webgen/plugindocu/index

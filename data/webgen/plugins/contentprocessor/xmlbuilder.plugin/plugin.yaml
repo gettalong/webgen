@@ -1,7 +1,0 @@
-ContentProcessor/XmlBuilder:
-  about:
-    summary: Converts text structured using the XML Builder library to XML
-    author: Thomas Leitner <t_leitner@gmx.at>
-  plugin:
-    file: xmlbuilder.rb
-  processes: xmlbuilder

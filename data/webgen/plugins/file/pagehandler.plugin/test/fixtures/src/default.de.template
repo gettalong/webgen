@@ -1,4 +1,0 @@
---- content, pipeline:blocks
-Template
-<webgen:block name='content' />
-Template

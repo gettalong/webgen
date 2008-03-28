@@ -1,7 +1,0 @@
-ContentProcessor/RDoc:
-  about:
-    summary: Converts text in RDoc format to HTML
-    author: Thomas Leitner <t_leitner@gmx.at>
-  plugin:
-    file: rdoc.rb
-  processes: rdoc

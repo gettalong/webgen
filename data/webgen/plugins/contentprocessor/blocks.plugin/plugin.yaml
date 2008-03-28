@@ -1,7 +1,0 @@
-ContentProcessor/Blocks:
-  about:
-    summary: Replaces special tags with rendered blocks.
-    author: Thomas Leitner <t_leitner@gmx.at>
-  plugin:
-    file: blocks.rb
-  processes: blocks
