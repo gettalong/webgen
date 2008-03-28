@@ -1,0 +1,36 @@
+#/usr/bin/env ruby
+
+require 'benchmark'
+require 'webgen/website'
+require 'pp'
+require 'optparse'
+require 'ostruct'
+
+o = OpenStruct.new
+o.logmask = nil
+
+opts = OptionParser.new do |opts|
+  opts.banner = "webgen 0.6.0\n" +
+    "Usage: webgen [options]"
+
+  opts.separator ""
+  opts.separator "Options:"
+
+  opts.on('-l logmask', '--logmask=logmask', Regexp, 'Define a mask for the logging events') do |logmask|
+    o.logmask = logmask
+  end
+end
+
+begin
+  opts.parse!(ARGV)
+  Webgen::Website.new do |config|
+    config['sourcehandler.patterns']['Webgen::SourceHandler::Copy'] << '**/*.page'
+    config['logger.mask'] = o.logmask
+  end.render
+rescue OptionParser::InvalidOption, OptionParser::InvalidArgument, OptionParser::MissingArgument => e
+  puts opts
+  puts
+  puts e.message
+  exit(-1)
+end
+
