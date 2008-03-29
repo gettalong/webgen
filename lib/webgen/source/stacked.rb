@@ -1,6 +1,6 @@
 module Webgen::Source
 
-  class Stacked < Base
+  class Stacked
 
     attr_reader :stack
 
