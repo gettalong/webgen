@@ -29,17 +29,6 @@ module Webgen
       node_info.delete(n.absolute_lcn)
     end
 
-    #TODO: doc
-    def clean(source_paths)
-      @node_access.each do |name, node|
-        if !source_paths.include?(node.node_info[:src]) ||
-            source_paths[node.node_info[:src]].changed? ||
-            node.changed?
-          delete_node(node)
-        end
-      end
-    end
-
   end
 
 end
