@@ -7,7 +7,6 @@ module Webgen
       def initialize(path, fs_path)
         super(path)
         @fs_path = fs_path
-        WebsiteAccess.website.cache[[:path, @path]] = File.mtime(@fs_path)
       end
 
       def io(&block)
@@ -23,7 +22,8 @@ module Webgen
       end
 
       def changed?
-        data = WebsiteAccess.website.cache[[:path, @path]]
+        data = WebsiteAccess.website.cache[[:fs_path, @fs_path]]
+        WebsiteAccess.website.cache[[:fs_path, @fs_path]] = File.mtime(@fs_path)
         !data || File.mtime(@fs_path) > data
       end
 
@@ -33,7 +33,11 @@ module Webgen
     attr_reader :glob
 
     def initialize(root, glob = '**/*')
-      @root = root
+      if root =~ /^[a-zA-Z]:|\//
+        @root = root
+      else
+        @root = File.join(WebsiteAccess.website.config['website.dir'], root)
+      end
       @glob = glob
     end
 

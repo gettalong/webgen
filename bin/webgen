@@ -26,6 +26,7 @@ begin
   Webgen::Website.new do |config|
     config['sourcehandler.patterns']['Webgen::SourceHandler::Copy'] << '**/*.page'
     config['logger.mask'] = o.logmask
+    config['website.dir'] = '..'
   end.render
 rescue OptionParser::InvalidOption, OptionParser::InvalidArgument, OptionParser::MissingArgument => e
   puts opts
