@@ -26,6 +26,26 @@ module Webgen
         @paths
       end
 
+      #TODO: doc
+      def clean(tree)
+        # Remove nodes w/o path, w/ changed path or where node changed
+        paths_to_delete = Set.new
+        paths_not_to_delete = Set.new
+        tree.node_access.values.each do |node|
+          if !find_all_source_paths.include?(node.node_info[:src]) ||
+              find_all_source_paths[node.node_info[:src]].changed? ||
+              node.changed?
+            tree.delete_node(node)
+            paths_not_to_delete << node.node_info[:src]
+          else
+            paths_to_delete << node.node_info[:src]
+          end
+        end
+
+        # Remove source paths
+        (paths_to_delete - paths_not_to_delete).each {|p| find_all_source_paths.delete(p)}
+      end
+
       def paths_for_handler(name)
         patterns = website.config['sourcehandler.patterns'][name]
         return [] if patterns.nil?

@@ -60,22 +60,26 @@ module Webgen
 
         shm = SourceHandler::Main.new
 
-        if File.exists?('webgen.cache')
-          cache_data, tree = Marshal.load(File.read('webgen.cache'))
+        if File.exists?(cache_file)
+          cache_data, tree = Marshal.load(File.read(cache_file))
           @cache.restore(cache_data)
-          tree.clean(shm.find_all_source_paths)
+          shm.clean(tree)
         else
           tree = Tree.new
         end
 
         shm.create_nodes_from_paths(tree)
 
-        File.open('webgen.cache', 'wb') {|f| Marshal.dump([@cache.dump, tree], f)}
+        File.open(cache_file, 'wb') {|f| Marshal.dump([@cache.dump, tree], f)}
         log(:info) {"webgen finished"}
       end
     end
 
     private
+
+    def cache_file
+      File.join(config['website.dir'], 'webgen.cache')
+    end
 
     def with_thread_var
       set_back = Thread.current[:webgen_website].nil?

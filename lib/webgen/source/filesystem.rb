@@ -7,6 +7,7 @@ module Webgen
       def initialize(path, fs_path)
         super(path)
         @fs_path = fs_path
+        WebsiteAccess.website.cache[[:fs_path, @fs_path]] = File.mtime(@fs_path)
       end
 
       def io(&block)
@@ -23,7 +24,6 @@ module Webgen
 
       def changed?
         data = WebsiteAccess.website.cache[[:fs_path, @fs_path]]
-        WebsiteAccess.website.cache[[:fs_path, @fs_path]] = File.mtime(@fs_path)
         !data || File.mtime(@fs_path) > data
       end
 
