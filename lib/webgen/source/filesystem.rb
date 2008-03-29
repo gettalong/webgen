@@ -1,6 +1,6 @@
 module Webgen
 
-  class Source::FileSystem < Source::Base
+  class Source::FileSystem
 
     class Path < Webgen::Path
 
