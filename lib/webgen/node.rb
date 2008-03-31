@@ -1,6 +1,9 @@
 module Webgen
 
-    class Node
+  class Node
+
+    include WebsiteAccess
+    include Loggable
 
     # The parent node.
     attr_reader :parent
@@ -32,6 +35,13 @@ module Webgen
     # Meta information associated with the node.
     attr_reader :meta_info
 
+    # Set by other objects to +true+ if they think the object has changed since the last run. Must
+    # not be set to +false+ once it is +true+!
+    attr_accessor :dirty
+
+    # Has the node been created or has it been read from the cache?
+    attr_accessor :created
+
     # Initializes a new Node instance.
     #
     # +parent+ (immutable)::
@@ -60,6 +70,8 @@ module Webgen
       @lang = lang.freeze
       @meta_info = meta_info
       @children = []
+      @dirty = true
+      @created = true
       init_rest
     end
 
@@ -77,7 +89,8 @@ module Webgen
     def is_fragment?; @path[0] == ?# end
 
     def changed?
-      false #TODO: change!
+      website.blackboard.dispatch_msg(:node_changed?, self) unless @dirty
+      @dirty
     end
 
     # Returns an informative representation of the node.

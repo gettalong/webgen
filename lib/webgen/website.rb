@@ -46,7 +46,7 @@ module Webgen
       with_thread_var do
         @config = Configuration.new
         load 'webgen/default_config.rb'
-        #TODO load plugin config
+        #TODO load site specific files/config
         @config_block.call(@config) if @config_block
       end
     end
@@ -63,12 +63,11 @@ module Webgen
         if File.exists?(cache_file)
           cache_data, tree = Marshal.load(File.read(cache_file))
           @cache.restore(cache_data)
-          shm.clean(tree)
         else
           tree = Tree.new
         end
 
-        shm.create_nodes_from_paths(tree)
+        shm.render(tree)
 
         File.open(cache_file, 'wb') {|f| Marshal.dump([@cache.dump, tree], f)}
         log(:info) {"webgen finished"}
