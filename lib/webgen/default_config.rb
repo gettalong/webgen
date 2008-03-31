@@ -13,11 +13,13 @@ config.sources [['/', "Webgen::Source::FileSystem", 'src']], :doc => 'One or mor
 # All things regarding source handler
 config.sourcehandler.patterns({
                                 'Webgen::SourceHandler::Copy' => ['**/*.css', '**/*.js', '**/*.html', '**/*.gif', '**/*.jpg', '**/*.png'],
-                                'Webgen::SourceHandler::Directory' => ['**/']
+                                'Webgen::SourceHandler::Directory' => ['**/'],
+                                'Webgen::SourceHandler::Metainfo' => ['**/metainfo'] #TODO: add **/*.metainfo
                               },
                               :doc => 'Source handler to path pattern map')
 config.sourcehandler.invoke({
-                              1 => ['Webgen::SourceHandler::Directory'],
+                              2 => ['Webgen::SourceHandler::Directory'],
+                              3 => ['Webgen::SourceHandler::Metainfo'],
                               5 => ['Webgen::SourceHandler::Copy']
                             },
                             :doc => 'All source handlers listed here are used by webgen and invoked according to their priority setting')
