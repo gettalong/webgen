@@ -2,8 +2,12 @@ module Webgen::SourceHandler
 
   module Base
 
+    def node_exists?(parent, path)
+      parent.children.find {|c| c.path == path.basename || c.lcn == path.lcn}
+    end
+
     def create_node(parent, path)
-      if !parent.children.any?{|c| c.path == path.basename || c.lcn == path.lcn}
+      if !node_exists?(parent, path)
         node = Webgen::Node.new(parent, path.basename, path.cn, path.lang, path.meta_info)
         node.node_info[:processor] = self
         yield(node) if block_given?

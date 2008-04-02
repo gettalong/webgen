@@ -7,7 +7,8 @@ module Webgen::SourceHandler
     include Base
     include Webgen::WebsiteAccess
 
-    #TODO: problem with cached nodes, if new metainfo file, the metainfo does not get assigned
+    #TODO: problem with adding listeners: can get added more than once
+    #TODO: problem with handlers instantiated more than once
     def initialize
       website.blackboard.add_listener(:node_changed?, method(:node_changed?))
       website.blackboard.add_listener(:before_node_created, method(:assign_meta_info))
@@ -20,9 +21,8 @@ module Webgen::SourceHandler
         #TODO: Adjust paths to be absolute ones
         node.node_info[:data] = YAML::load(path.io.read)
 
-        #TODO: Handle directories better???
         node.node_info[:data].each do |path, mi|
-          parent.tree.node_access[path].meta_info.update(mi) if path =~ /\/$/
+          (n = parent.tree.node_access[path]) && n.dirty = true
         end
         @nodes << node
       end
@@ -47,7 +47,6 @@ module Webgen::SourceHandler
 
     def node_changed?(node)
       @nodes.each do |n|
-        #p [node.absolute_lcn, n.node_info[:data].has_key?(node.absolute_lcn), n.dirty, n.object_id]
         if n.node_info[:data].has_key?(node.absolute_lcn) && n.changed?
           node.dirty = true
           return

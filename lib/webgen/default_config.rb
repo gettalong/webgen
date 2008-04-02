@@ -18,8 +18,7 @@ config.sourcehandler.patterns({
                               },
                               :doc => 'Source handler to path pattern map')
 config.sourcehandler.invoke({
-                              2 => ['Webgen::SourceHandler::Directory'],
-                              3 => ['Webgen::SourceHandler::Metainfo'],
+                              1 => ['Webgen::SourceHandler::Directory', 'Webgen::SourceHandler::Metainfo', 'Webgen::SourceHandler::Directory'],
                               5 => ['Webgen::SourceHandler::Copy']
                             },
                             :doc => 'All source handlers listed here are used by webgen and invoked according to their priority setting')

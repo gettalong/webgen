@@ -24,10 +24,9 @@ module Webgen
     # Delete the node identitied by +node_or_alcn+ from the tree.
     def delete_node(node_or_alcn)
       n = node_or_alcn.kind_of?(Node) ? node_or_alcn : node_access[alcn]
-      return if n == @root
-      #TODO: handle directories better (problem when mi in .metainfo file  gets deleted -> wrong mi in node cache!)
-      (n.dirty = true; return)if n.is_directory?
+      return if n.is_directory?
 
+      #TODO: delete children of node
       n.parent.children.delete(n)
       node_access.delete(n.absolute_lcn)
       node_info.delete(n.absolute_lcn)

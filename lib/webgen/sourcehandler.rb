@@ -23,6 +23,8 @@ module Webgen
 
         tree.node_access.each do |name, node|
           puts "#{name} (#{node.meta_info['title']})".ljust(80) + "#{node.changed? ? '' : 'not '}dirty " + node.dirty.to_s + " " + node.created.to_s
+        end
+        tree.node_access.each do |name, node|
           node.dirty = false
           node.created = false
         end
@@ -56,6 +58,7 @@ module Webgen
       def create_nodes_from_paths(tree, paths)
         website.config['sourcehandler.invoke'].sort.each do |priority, shns|
           shns.each do |shn|
+            #TODO: move the creation of classes somewhere else to reuse existing created classes
             sh = constant(shn).new
             paths_for_handler(shn, paths).sort.each do |path|
               create_nodes(tree, File.join(File.dirname(path.path), '/'), path) do |parent|
