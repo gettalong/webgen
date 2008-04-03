@@ -7,8 +7,6 @@ module Webgen::SourceHandler
     include Base
     include Webgen::WebsiteAccess
 
-    #TODO: problem with adding listeners: can get added more than once
-    #TODO: problem with handlers instantiated more than once
     def initialize
       website.blackboard.add_listener(:node_changed?, method(:node_changed?))
       website.blackboard.add_listener(:before_node_created, method(:assign_meta_info))

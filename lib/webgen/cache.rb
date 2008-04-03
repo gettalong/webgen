@@ -8,7 +8,11 @@ module Webgen
     end
 
     def [](key)
-      @old_data[key]
+      if @old_data.has_key?(key)
+        @old_data[key]
+      else
+        @new_data[key]
+      end
     end
 
     def []=(key, value)
