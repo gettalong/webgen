@@ -26,7 +26,8 @@ module Webgen
       n = node_or_alcn.kind_of?(Node) ? node_or_alcn : node_access[alcn]
       return if n.is_directory?
 
-      #TODO: delete children of node
+      n.children.each {|child| delete_node(child)}
+
       n.parent.children.delete(n)
       node_access.delete(n.absolute_lcn)
       node_info.delete(n.absolute_lcn)
