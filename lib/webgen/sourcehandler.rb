@@ -58,8 +58,7 @@ module Webgen
       def create_nodes_from_paths(tree, paths)
         website.config['sourcehandler.invoke'].sort.each do |priority, shns|
           shns.each do |shn|
-            #TODO: move the creation of classes somewhere else to reuse existing created classes
-            sh = constant(shn).new
+            sh = (website.cache[[:sourcehandler, shn]] ||= constant(shn).new)
             paths_for_handler(shn, paths).sort.each do |path|
               create_nodes(tree, File.join(File.dirname(path.path), '/'), path) do |parent|
                 sh.create_node(parent, path)
