@@ -9,8 +9,8 @@ module Webgen::SourceHandler
 
     def initialize
       website.blackboard.add_listener(:node_changed?, method(:node_changed?))
-      website.blackboard.add_listener(:before_node_created, method(:assign_meta_info))
-      website.blackboard.add_listener(:node_deleted, method(:node_deleted))
+      website.blackboard.add_listener(:before_node_created, method(:before_node_created))
+      website.blackboard.add_listener(:before_node_deleted, method(:before_node_deleted))
       @nodes = Set.new
     end
 
@@ -18,14 +18,11 @@ module Webgen::SourceHandler
       super(parent, path) do |node|
         node.node_info[:data] = {}
         YAML::load(path.io.read).each do |key, value|
-          key = File.expand_path(key =~ /\// ? key : parent.absolute_lcn + key)
+          key = File.expand_path(key =~ /^\// ? key : parent.absolute_lcn + key)
           node.node_info[:data][key] = value
         end
 
-        source_paths = website.blackboard.invoke(:source_paths)
-        parent.tree.node_access.select do |path, n|
-          node.node_info[:data].any? {|pattern, mi| source_paths[n.node_info[:src]] =~ pattern }
-        end.each {|p,n| n.dirty = true}
+        mark_all_matched_dirty(node)
 
         @nodes << node
         @nodes = @nodes.sort_by {|n| n.absolute_lcn}
@@ -43,7 +40,14 @@ module Webgen::SourceHandler
 
     private
 
-    def assign_meta_info(parent, path)
+    def mark_all_matched_dirty(node)
+      source_paths = website.blackboard.invoke(:source_paths)
+      node.tree.node_access.select do |path, n|
+        node.node_info[:data].any? {|pattern, mi| source_paths[n.node_info[:src]] =~ pattern }
+      end.each {|p,n| n.dirty = true}
+    end
+
+    def before_node_created(parent, path)
       @nodes.each do |node|
         node.node_info[:data].each do |pattern, mi|
           path.meta_info.update(mi) if path =~ pattern
@@ -61,7 +65,9 @@ module Webgen::SourceHandler
       end
     end
 
-    def node_deleted(node)
+    def before_node_deleted(node)
+      return unless node.node_info[:processor] == self
+      mark_all_matched_dirty(node)
       @nodes.delete(node)
     end
 

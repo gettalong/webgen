@@ -22,16 +22,16 @@ module Webgen
     end
 
     # Delete the node identitied by +node_or_alcn+ from the tree.
-    def delete_node(node_or_alcn)
+    def delete_node(node_or_alcn, delete_dir = false)
       n = node_or_alcn.kind_of?(Node) ? node_or_alcn : node_access[alcn]
-      return if n.is_directory?
+      return if n.nil? || n == @root || (n.is_directory? && !delete_dir)
 
       n.children.each {|child| delete_node(child)}
 
+      website.blackboard.dispatch_msg(:before_node_deleted, n)
       n.parent.children.delete(n)
       node_access.delete(n.absolute_lcn)
       node_info.delete(n.absolute_lcn)
-      website.blackboard.dispatch_msg(:node_deleted, n)
     end
 
   end
