@@ -88,6 +88,7 @@ module Webgen
     # Checks if the node is a fragment.
     def is_fragment?; @path[0] == ?# end
 
+    # Returns +true+ if the node has changed since the last webgen run.
     def changed?
       website.blackboard.dispatch_msg(:node_changed?, self) unless @dirty
       @dirty
