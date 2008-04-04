@@ -17,7 +17,7 @@ module Webgen
       end
 
       def render(tree)
-        paths = Set.new(find_all_source_paths.keys) - clean(tree) #TODO: ignored paths missing
+        paths = Set.new(find_all_source_paths.keys) - clean(tree)
         create_nodes_from_paths(tree, paths)
         paths = Set.new(find_all_source_paths.keys) - paths - clean(tree)
         create_nodes_from_paths(tree, paths)
@@ -39,7 +39,11 @@ module Webgen
                                                       [mp, constant(name).new(*args)]
                                                     end.flatten])
           @paths = {}
-          source.paths.each {|p| @paths[p.path] = p}
+          source.paths.each do |path|
+            if !(website.config['sourcehandler.ignore'].any? {|pat| File.fnmatch(pat, path, File::FNM_CASEFOLD|File::FNM_DOTMATCH)})
+              @paths[path.path] = path
+            end
+          end
           @paths.delete('/')
         end
         @paths
@@ -92,10 +96,11 @@ module Webgen
         paths_to_delete = Set.new
         paths_not_to_delete = Set.new
         tree.node_access.values.each do |node|
-          if !node.created && (!find_all_source_paths.include?(node.node_info[:src]) ||
+          deleted = !find_all_source_paths.include?(node.node_info[:src])
+          if !node.created && (deleted ||
                                find_all_source_paths[node.node_info[:src]].changed? ||
                                node.changed?)
-            tree.delete_node(node)
+            tree.delete_node(node, deleted)
             paths_not_to_delete << node.node_info[:src]
           else
             paths_to_delete << node.node_info[:src]
