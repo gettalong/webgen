@@ -11,8 +11,9 @@ module Webgen
 
       include WebsiteAccess
 
-      def intialize
+      def initialize
         website.blackboard.add_service(:create_nodes, method(:create_nodes))
+        website.blackboard.add_service(:source_paths, method(:find_all_source_paths))
       end
 
       def render(tree)
