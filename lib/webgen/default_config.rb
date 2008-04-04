@@ -14,7 +14,7 @@ config.sources [['/', "Webgen::Source::FileSystem", 'src']], :doc => 'One or mor
 config.sourcehandler.patterns({
                                 'Webgen::SourceHandler::Copy' => ['**/*.css', '**/*.js', '**/*.html', '**/*.gif', '**/*.jpg', '**/*.png'],
                                 'Webgen::SourceHandler::Directory' => ['**/'],
-                                'Webgen::SourceHandler::Metainfo' => ['**/metainfo'] #TODO: add **/*.metainfo
+                                'Webgen::SourceHandler::Metainfo' => ['**/metainfo', '**/*.metainfo']
                               },
                               :doc => 'Source handler to path pattern map')
 config.sourcehandler.invoke({

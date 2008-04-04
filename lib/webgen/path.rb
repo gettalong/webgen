@@ -7,8 +7,11 @@ module Webgen
     # The source path
     attr_accessor :path
 
-    # The basename of the path.
+    # The basename part of the path.
     attr_accessor :basename
+
+    # The directory part of the path.
+    attr_accessor :directory
 
     # The cn without the extension.
     attr_accessor :cnbase
@@ -25,7 +28,7 @@ module Webgen
     def initialize(path, &ioblock)
       @meta_info = {}
       @ioblock = ioblock if block_given?
-      analyse( path )
+      analyse(path)
     end
 
     def mount_at(mp)
@@ -54,7 +57,7 @@ module Webgen
       if lang.nil?
         cn
       else
-        cn.split( '.' ).insert( 1, lang.to_s ).join( '.' )
+        cn.split('.').insert(1, lang.to_s).join('.')
       end
     end
 
@@ -73,6 +76,10 @@ module Webgen
       end
     end
     alias_method(:eql?, :==)
+
+    def =~(pattern)
+      File.fnmatch(pattern, File.join(@directory, lcn), File::FNM_DOTMATCH|File::FNM_CASEFOLD|File::FNM_PATHNAME)
+    end
 
     def <=>(other)
       @path <=> other.path
@@ -98,9 +105,10 @@ module Webgen
     FILENAME_RE = /^(?:(\d+)\.)?([^.]*?)(?:\.(\w\w\w?)(?=.))?(?:\.(.*))?$/
 
     # Analyses the +filename+ and fills the object with the extracted information.
-    def analyse( path )
+    def analyse(path)
       @path = path
       @basename = File.basename(path)
+      @directory = File.dirname(path)
       matchData = FILENAME_RE.match(@basename)
 
       @meta_info['orderInfo'] = matchData[1].to_i
