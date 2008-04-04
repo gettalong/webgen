@@ -24,3 +24,4 @@ config.sourcehandler.invoke({
                             :doc => 'All source handlers listed here are used by webgen and invoked according to their priority setting')
 config.sourcehandler.casefold(true, :doc => 'Specifies whether path are considered to be case-sensitive')
 config.sourcehandler.usehiddenfiles(false, :doc => 'Specifies whether hidden files (those starting with a dot) are used')
+config.sourcehandler.ignore(['**/*~', '**/.svn/**'], :doc => 'Path patterns that should be ignored')
