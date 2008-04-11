@@ -22,10 +22,22 @@ module Webgen
         paths = Set.new(find_all_source_paths.keys) - paths - clean(tree)
         create_nodes_from_paths(tree, paths)
 
+        klass, *args = website.config['output']
+        output = constant(klass).new(*args)
+
         tree.node_access.each do |name, node|
-          puts "#{name} (#{node.meta_info['title']})".ljust(80) + "#{node.changed? ? '' : 'not '}dirty " + node.dirty.to_s + " " + node.created.to_s
-        end
-        tree.node_access.each do |name, node|
+          puts "#{name} (#{node.meta_info['title']})".ljust(80) + "#{node.dirty ? '' : 'not '}dirty " + node.created.to_s
+          if node.dirty && (content = node.content)
+            type = if node.is_directory?
+                     :directory
+                   elsif node.is_fragment?
+                     :fragment
+                   else
+                     :file
+                   end
+            output.write(node.absolute_path, content, type)
+            content.close if content.kind_of?(IO) && !content.closed?
+          end
           node.dirty = false
           node.created = false
         end
@@ -101,6 +113,7 @@ module Webgen
                                find_all_source_paths[node.node_info[:src]].changed? ||
                                node.changed?)
             tree.delete_node(node, deleted)
+            #TODO: delete output path
             paths_not_to_delete << node.node_info[:src]
           else
             paths_to_delete << node.node_info[:src]

@@ -131,6 +131,16 @@ module Webgen
       parent.children << self unless parent.kind_of?(Tree)
     end
 
+    # Delegates missing methods to a processor. The current node is placed into the argument array as
+    # the first argument before the method +name+ is invoked on the processor.
+    def method_missing(name, *args, &block)
+      if node_info[:processor]
+        node_info[:processor].send(name, *([self] + args), &block)
+      else
+        super
+      end
+    end
+
   end
 
 end
