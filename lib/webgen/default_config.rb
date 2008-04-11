@@ -25,3 +25,6 @@ config.sourcehandler.invoke({
 config.sourcehandler.casefold(true, :doc => 'Specifies whether path are considered to be case-sensitive')
 config.sourcehandler.usehiddenfiles(false, :doc => 'Specifies whether hidden files (those starting with a dot) are used')
 config.sourcehandler.ignore(['**/*~', '**/.svn/**'], :doc => 'Path patterns that should be ignored')
+
+# All things regarding output
+config.output ["Webgen::Output::FileSystem", 'output'], :doc => 'The class which is used to output the generated paths.'

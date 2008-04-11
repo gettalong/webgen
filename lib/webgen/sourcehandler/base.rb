@@ -15,6 +15,10 @@ module Webgen::SourceHandler
       end
     end
 
+    def content(node)
+      nil
+    end
+
   end
 
 end

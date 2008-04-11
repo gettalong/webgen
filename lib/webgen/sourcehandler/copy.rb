@@ -2,6 +2,7 @@ module Webgen::SourceHandler
 
   class Copy
 
+    include Webgen::WebsiteAccess
     include Base
 
     #TODO: path needs to be dupped before passed
@@ -19,8 +20,8 @@ module Webgen::SourceHandler
       create_node(parent, path, self)
     end
 
-    def write_info(node)
-      if node.node_info[:preprocessor]
+    def content(node)
+      if false && node.node_info[:preprocessor]
         context = Context.new( @plugin_manager['Support/Misc'].content_processors, [node] )
         context.content = File.read( node.node_info[:src] )
         context.processors[node.node_info[:preprocessor]].process( context )
@@ -28,7 +29,7 @@ module Webgen::SourceHandler
 
         {:data => context.content}
       else
-        {:src => node.node_info[:src] }
+        website.blackboard.invoke(:source_paths)[node.node_info[:src]].io
       end
     end
 
