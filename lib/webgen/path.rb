@@ -36,7 +36,7 @@ module Webgen
     end
 
     def dup
-      self.class.new(@path)
+      self.class.new(@path, &@ioblock)
     end
 
     def io(&block)
@@ -108,7 +108,7 @@ module Webgen
     def analyse(path)
       @path = path
       @basename = File.basename(path)
-      @directory = File.dirname(path)
+      @directory = File.join(File.dirname(path), '/')
       matchData = FILENAME_RE.match(@basename)
 
       @meta_info['orderInfo'] = matchData[1].to_i
