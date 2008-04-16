@@ -27,6 +27,10 @@ module Webgen
       @old_data.merge(@new_data)
     end
 
+    def instance(name, *args, &block)
+      self[[:class, name]] ||= constant(name).new(*args, &block)
+    end
+
   end
 
 end
