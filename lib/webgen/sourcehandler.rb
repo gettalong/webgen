@@ -65,7 +65,7 @@ module Webgen
           shns.each do |shn|
             sh = website.cache.instance(shn)
             paths_for_handler(shn, paths).sort.each do |path|
-              create_nodes(tree, File.join(File.dirname(path.path), '/'), path) do |parent|
+              create_nodes(tree, File.join(path.directory.split('/').collect {|p| Path.new(p).cn}.join('/'), '/'), path) do |parent|
                 sh.create_node(parent, path)
               end
             end
