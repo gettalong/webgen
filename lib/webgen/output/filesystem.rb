@@ -9,7 +9,7 @@ module Webgen::Output
     attr_reader :root
 
     def initialize(root)
-      #copied from source/filesystem.rb
+      #TODO: copied from source/filesystem.rb
       if root =~ /^[a-zA-Z]:|\//
         @root = root
       else
@@ -23,7 +23,11 @@ module Webgen::Output
 
     def delete(path)
       dest = File.join(@root, path)
-      FileUtils.rm(dest) if File.exists?(dest)
+      if File.directory?(dest)
+        FileUtils.rmdir(dest)
+      else
+        FileUtils.rm(dest)
+      end
     end
 
     def write(path, data, type = :file)
