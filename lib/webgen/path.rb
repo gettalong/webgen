@@ -32,11 +32,10 @@ module Webgen
     end
 
     def mount_at(mp)
-      self.class.new(File.join(mp, @path), &@ioblock)
-    end
-
-    def dup
-      self.class.new(@path, &@ioblock)
+      temp = dup
+      temp.path = File.join(mp, @path)
+      temp.directory = File.dirname(temp.path)
+      temp
     end
 
     def io(&block)

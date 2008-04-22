@@ -14,14 +14,6 @@ module Webgen
         File.open(@fs_path, 'r', &block)
       end
 
-      def mount_at(mp)
-        self.class.new(File.join(mp, @path), @fs_path)
-      end
-
-      def dup
-        self.class.new(@path, @fs_path)
-      end
-
       def changed?
         data = WebsiteAccess.website.cache[[:fs_path, @fs_path]]
         !data || File.mtime(@fs_path) > data

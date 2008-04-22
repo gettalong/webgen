@@ -8,7 +8,7 @@ module Webgen::SourceHandler
 
     def create_node(parent, path)
       if !node_exists?(parent, path)
-        node = Webgen::Node.new(parent, path.basename, path.cn, path.lang, path.meta_info.dup)
+        node = Webgen::Node.new(parent, path.basename, path.cn, path.lang, path.meta_info)
         node.node_info[:processor] = self
         yield(node) if block_given?
         node
