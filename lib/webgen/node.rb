@@ -42,7 +42,7 @@ module Webgen
     # Has the node been created or has it been read from the cache?
     attr_accessor :created
 
-    # Initializes a new Node instance.
+    #TODO(doc): Initializes a new Node instance.
     #
     # +parent+ (immutable)::
     #    If this parameter is +nil+, then the new node acts as root. Otherwise, +parent+ has to
@@ -107,28 +107,28 @@ module Webgen
     def init_rest
       @lcn = Path.lcn(@cn, @lang)
 
+      @tree = @parent
+      @tree = @tree.parent while !@tree.kind_of?(Tree)
+
       loc_parent = @parent
       # Handle fragment nodes specially in case they are nested
-      loc_parent = loc_parent.parent while is_fragment? && !loc_parent.kind_of?(Tree) && loc_parent.is_fragment?
+      loc_parent = loc_parent.parent while is_fragment? && loc_parent.is_fragment?
 
       @absolute_path = if @path =~ ABSOLUTE_URL
                          @path
                        else
-                         (loc_parent.kind_of?(Tree) ? @path : loc_parent.absolute_path + @path)
+                         (loc_parent == @tree ? '' : loc_parent.absolute_path + @path)
                        end
 
-      @absolute_lcn = (loc_parent.kind_of?(Tree) ? @path : loc_parent.absolute_lcn + @lcn + (is_directory? ? '/' : ''))
+      @absolute_lcn = (loc_parent == @tree ? '' : loc_parent.absolute_lcn + (loc_parent.is_directory? ? '/' : '') + @lcn)
 
-      @tree = self
-      @tree = @tree.parent while !@tree.kind_of?(Tree)
-
-      if tree.node_access.has_key?(@absolute_lcn)
+      if @tree.node_access.has_key?(@absolute_lcn)
         raise "Can't have two nodes with same absolute lcn"
       else
-        tree.node_access[@absolute_lcn] = self
+        @tree.node_access[@absolute_lcn] = self
       end
 
-      parent.children << self unless parent.kind_of?(Tree)
+      @parent.children << self unless @parent == @tree
     end
 
     # Delegates missing methods to a processor. The current node is placed into the argument array as

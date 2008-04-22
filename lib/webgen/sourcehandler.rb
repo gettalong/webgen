@@ -26,6 +26,7 @@ module Webgen
         output = constant(klass).new(*args)
 
         tree.node_access.each do |name, node|
+          next if node == tree.dummy_root
           puts "#{name} (#{node.meta_info['title']})".ljust(80) + "#{node.dirty ? '' : 'not '}dirty " + node.created.to_s
           if node.dirty && (content = node.content)
             type = if node.is_directory?
@@ -56,7 +57,6 @@ module Webgen
               @paths[path.path] = path
             end
           end
-          @paths.delete('/')
         end
         @paths
       end
@@ -77,8 +77,10 @@ module Webgen
           shns.each do |shn|
             sh = website.cache.instance(shn)
             paths_for_handler(shn, paths).sort.each do |path|
-              create_nodes(tree, File.join(path.directory.split('/').collect {|p| Path.new(p).cn}.join('/'), '/'), path) do |parent|
-                sh.create_node(parent, path)
+              parent_dir = path.directory.split('/').collect {|p| Path.new(p).cn}.join('/')
+              parent_dir = tree.dummy_root.absolute_lcn if path == '/'
+              create_nodes(tree, parent_dir, path) do |parent|
+                sh.create_node(parent, path.dup)
               end
             end
           end
@@ -104,7 +106,6 @@ module Webgen
 
       #TODO: doc
       def clean(tree)
-        # Remove nodes w/o path, w/ changed path or where node changed
         paths_to_delete = Set.new
         paths_not_to_delete = Set.new
         tree.node_access.values.each do |node|
