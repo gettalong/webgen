@@ -7,11 +7,13 @@ module Webgen::SourceHandler
     include Base
     include Webgen::WebsiteAccess
 
+    CKEY = [:metainfo, :nodes]
+
     def initialize
       website.blackboard.add_listener(:node_changed?, method(:node_changed?))
       website.blackboard.add_listener(:before_node_created, method(:before_node_created))
       website.blackboard.add_listener(:before_node_deleted, method(:before_node_deleted))
-      @nodes = Set.new
+      self.nodes ||= Set.new
     end
 
     def create_node(parent, path)
@@ -24,19 +26,13 @@ module Webgen::SourceHandler
 
         mark_all_matched_dirty(node)
 
-        @nodes << node
-        @nodes = @nodes.sort_by {|n| n.absolute_lcn}
+        self.nodes << node
+        self.nodes = self.nodes.sort_by {|n| n.absolute_lcn}
       end
     end
 
-    def marshal_dump
-      @nodes
-    end
-
-    def marshal_load(obj)
-      initialize
-      @nodes = obj
-    end
+    def nodes; website.cache.permanent[CKEY]; end
+    def nodes=(val); website.cache.permanent[CKEY] = val; end
 
     private
 
@@ -48,7 +44,7 @@ module Webgen::SourceHandler
     end
 
     def before_node_created(parent, path)
-      @nodes.each do |node|
+      self.nodes.each do |node|
         node.node_info[:data].each do |pattern, mi|
           path.meta_info.update(mi) if path =~ pattern
         end
@@ -57,7 +53,7 @@ module Webgen::SourceHandler
 
     def node_changed?(node)
       path = website.blackboard.invoke(:source_paths)[node.node_info[:src]]
-      @nodes.each do |n|
+      self.nodes.each do |n|
         if n.node_info[:data].any? {|pattern,mi| path =~ pattern} && n.changed?
           node.dirty = true
           return
@@ -66,9 +62,9 @@ module Webgen::SourceHandler
     end
 
     def before_node_deleted(node)
-      return unless node.node_info[:processor] == self
+      return unless node.node_info[:processor] == self.class.name
       mark_all_matched_dirty(node)
-      @nodes.delete(node)
+      self.nodes.delete(node)
     end
 
   end
