@@ -28,3 +28,13 @@ config.sourcehandler.ignore(['**/*~', '**/.svn/**'], :doc => 'Path patterns that
 
 # All things regarding output
 config.output ["Webgen::Output::FileSystem", 'output'], :doc => 'The class which is used to output the generated paths.'
+
+
+# All things regarding content processors
+config.contentprocessors({
+                           'maruku' => 'Webgen::ContentProcessor::Maruku'
+                         },
+                         :doc => 'Content processor name to class map')
+
+Webgen::WebsiteAccess.website.blackboard.add_service(:content_processor_names, Webgen::ContentProcessor.method(:list))
+Webgen::WebsiteAccess.website.blackboard.add_service(:content_processor, Webgen::ContentProcessor.method(:for_name))
