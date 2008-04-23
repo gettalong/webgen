@@ -38,6 +38,12 @@ module Webgen
       temp
     end
 
+    def dup
+      temp = super
+      temp.meta_info = @meta_info.dup
+      temp
+    end
+
     def io(&block)
       if @ioblock
         @ioblock.call(block)
