@@ -2,9 +2,14 @@ module Webgen
 
   class Cache
 
+    attr_reader :permanent
+    attr_reader :volatile
+
     def initialize()
       @old_data = {}
       @new_data = {}
+      @volatile = {}
+      @permanent = {}
     end
 
     def [](key)
@@ -20,15 +25,17 @@ module Webgen
     end
 
     def restore(data)
-      @old_data = data
+      @old_data, @permanent = *data
+      @permanent[:classes] && @permanent[:classes].each {|klass| instance(klass)}
     end
 
     def dump
-      @old_data.merge(@new_data)
+      [@old_data.merge(@new_data), @permanent]
     end
 
-    def instance(name, *args, &block)
-      self[[:class, name]] ||= constant(name).new(*args, &block)
+    def instance(name)
+      (@permanent[:classes] ||= Set.new) << name
+      @volatile[[:class, name]] ||= constant(name).new
     end
 
   end

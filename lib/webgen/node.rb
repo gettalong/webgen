@@ -135,7 +135,7 @@ module Webgen
     # the first argument before the method +name+ is invoked on the processor.
     def method_missing(name, *args, &block)
       if node_info[:processor]
-        node_info[:processor].send(name, *([self] + args), &block)
+        website.cache.instance(node_info[:processor]).send(name, *([self] + args), &block)
       else
         super
       end
