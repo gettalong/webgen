@@ -12,6 +12,7 @@ require 'webgen/output'
 require 'webgen/tree'
 require 'webgen/blackboard'
 require 'webgen/sourcehandler'
+require 'webgen/contentprocessor'
 require 'webgen/cache'
 
 module Webgen
