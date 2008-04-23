@@ -16,6 +16,8 @@ module Webgen::SourceHandler
       end
     end
 
+    #TODO: Also need to handle virtual nodes (after they have been introduced) that shouldn't create
+    #a real directory!!!
     def content(node)
       ''
     end
@@ -25,10 +27,6 @@ module Webgen::SourceHandler
 end
 
 __END__
-require 'webgen/node'
-require 'facets/basicobject'
-
-module FileHandlers
 
   class DirectoryHandler < DefaultHandler
 
@@ -109,7 +107,6 @@ module FileHandlers
       node
     end
 
-    # Creates the directory (and all its parent directories if necessary).
     def write_info( node )
       (node.node_info[:src].nil? ? nil : {:src => node.node_info[:src]})
     end
@@ -120,20 +117,3 @@ module FileHandlers
       lang_node = node['indexFile'].node_for_lang( lang ) if node['indexFile']
       lang_node || (node.parent.nil? ? node : super)
     end
-
-    # Recursively creates a given directory path starting from the path of +parent+ and returns the
-    # bottom most directory node.
-    def recursive_create_path( path, parent )
-      path.split( File::SEPARATOR ).each do |pathname|
-        case pathname
-        when '.' then  #do nothing
-        when '..' then parent = parent.parent
-        else parent = @plugin_manager['Core/FileHandler'].create_node( pathname, parent, self )
-        end
-      end
-      parent
-    end
-
-  end
-
-end
