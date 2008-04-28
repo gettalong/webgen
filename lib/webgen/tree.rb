@@ -1,3 +1,4 @@
+require 'webgen/websiteaccess'
 require 'webgen/node'
 
 module Webgen
@@ -6,7 +7,7 @@ module Webgen
 
     include WebsiteAccess
 
-    # The dummy root
+    # The dummy root.
     attr_reader :dummy_root
 
     # Direct access to a node via its absolute lcn.
@@ -26,12 +27,13 @@ module Webgen
       @dummy_root.children.first
     end
 
-    # Delete the node identitied by +node_or_alcn+ from the tree.
+    # Deletes the node identified by +node_or_alcn+ and all of its children from the tree. Deletes
+    # directories only if +delete_dir+ is set to +true+.
     def delete_node(node_or_alcn, delete_dir = false)
-      n = node_or_alcn.kind_of?(Node) ? node_or_alcn : node_access[alcn]
+      n = node_or_alcn.kind_of?(Node) ? node_or_alcn : node_access[node_or_alcn]
       return if n.nil? || n == @dummy_root || (n.is_directory? && !delete_dir)
 
-      n.children.each {|child| delete_node(child)}
+      n.children.each {|child| delete_node(child, true)}
 
       website.blackboard.dispatch_msg(:before_node_deleted, n)
       n.parent.children.delete(n)

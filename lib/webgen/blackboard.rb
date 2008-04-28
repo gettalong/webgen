@@ -21,7 +21,7 @@ module Webgen
 
     # Remove the given object from the dispatcher queues of the hooks specified in +msg_names+.
     def del_listener(msg_names, callable_object)
-      msg_names.each {|name| @listener[name].delete(callable_object) if @listener[name]}
+      [msg_names].flatten.each {|name| @listener[name].delete(callable_object) if @listener[name]}
     end
 
     # Dispatch the message +msg_name+ to all listeners for this message, passing the given arguments.

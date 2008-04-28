@@ -1,3 +1,5 @@
+require 'webgen/languages'
+
 module Webgen
 
   class Path
@@ -34,7 +36,7 @@ module Webgen
     def mount_at(mp)
       temp = dup
       temp.path = File.join(mp, @path)
-      temp.directory = File.dirname(temp.path)
+      temp.directory = File.join(File.dirname(temp.path), '/')
       temp
     end
 
@@ -87,7 +89,7 @@ module Webgen
     end
 
     def <=>(other)
-      @path <=> other.path
+      @path <=> other.to_str
     end
 
     def hash
@@ -118,7 +120,7 @@ module Webgen
 
       @meta_info['orderInfo'] = matchData[1].to_i
       @cnbase                 = matchData[2]
-      @lang                   = matchData[3]
+      @lang                   = Webgen::LanguageManager.language_for_code(matchData[3])
       @ext                    = (@lang.nil? && !matchData[3].nil? ? matchData[3].to_s + '.' : '') + matchData[4].to_s
 
       @meta_info['title']     = @cnbase.tr('_-', ' ').capitalize

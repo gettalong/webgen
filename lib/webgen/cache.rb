@@ -1,3 +1,6 @@
+require 'set'
+require 'facets/kernel/constant'
+
 module Webgen
 
   class Cache
