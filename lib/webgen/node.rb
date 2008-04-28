@@ -1,3 +1,7 @@
+require 'webgen/websiteaccess'
+require 'webgen/loggable'
+require 'webgen/path'
+
 module Webgen
 
   class Node

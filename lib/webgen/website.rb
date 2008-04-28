@@ -1,8 +1,6 @@
 require 'logger'
 require 'set'
 
-require 'facets/kernel/constant'
-
 require 'webgen/loggable'
 require 'webgen/configuration'
 require 'webgen/websiteaccess'

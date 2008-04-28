@@ -32,7 +32,11 @@ module Webgen
     end
 
     def [](name)
-      @data[name]
+      if @data.has_key?(name)
+        @data[name]
+      else
+        raise ArgumentError, 'No such configuration option: #{name}'
+      end
     end
 
     def []=(name, value)
