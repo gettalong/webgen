@@ -67,11 +67,11 @@ module Webgen
     #
     # Note: a compound path like 'dir/file' is invalid if the parent node already has a child
     # with path 'dir/'!!! (solution: just create a node with path 'file' and node 'dir/' as parent!)
-    def initialize(parent, path, cn = path, lang = nil, meta_info = {})
+    def initialize(parent, path, cn = path, meta_info = {})
       @parent = parent
       @path = path.freeze
       @cn = cn.chomp('/').freeze
-      @lang = lang.freeze
+      @lang = meta_info.delete('lang').freeze
       @meta_info = meta_info
       @children = []
       @dirty = true

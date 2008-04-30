@@ -23,10 +23,10 @@ class TestNode < Test::Unit::TestCase
       assert_equal({}, node.node_info)
     end
 
-    node = Webgen::Node.new(@tree.dummy_root, 'test/', 'test', 'de', {:test => :value})
+    node = Webgen::Node.new(@tree.dummy_root, 'test/', 'test', {'lang' => 'de', :test => :value})
     check_proc.call(node, @tree.dummy_root, 'test/', 'test/', 'test', 'test.de', '/test.de', 'de', {:test => :value})
 
-    child = Webgen::Node.new(node, 'somename.html', 'somename.page', 'de')
+    child = Webgen::Node.new(node, 'somename.html', 'somename.page',  {'lang' => 'de'})
     check_proc.call(child, node, 'somename.html', 'test/somename.html', 'somename.page', 'somename.de.page',
                     '/test.de/somename.de.page', 'de', {})
 
@@ -38,7 +38,7 @@ class TestNode < Test::Unit::TestCase
   end
 
   def test_type_checkers
-    node = Webgen::Node.new(@tree.dummy_root, 'test/', 'test', 'de', {:test => :value})
+    node = Webgen::Node.new(@tree.dummy_root, 'test/', 'test', {'lang' => 'de', :test => :value})
     child = Webgen::Node.new(node, 'somename.html', 'somename.page', 'de')
     frag = Webgen::Node.new(child, '#data', '#othertest')
     assert(node.is_directory?)
