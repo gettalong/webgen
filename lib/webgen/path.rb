@@ -21,9 +21,6 @@ module Webgen
     # The extension.
     attr_accessor :ext
 
-    # The language in which the content of the path is written.
-    attr_accessor :lang
-
     # Extracted meta information for the path.
     attr_accessor :meta_info
 
@@ -70,7 +67,7 @@ module Webgen
 
     # The localized canonical name created from the filename.
     def lcn
-      self.class.lcn(cn, @lang)
+      self.class.lcn(cn, @meta_info['lang'])
     end
 
     def ==(other)
@@ -120,8 +117,8 @@ module Webgen
 
       @meta_info['orderInfo'] = matchData[1].to_i
       @cnbase                 = matchData[2]
-      @lang                   = Webgen::LanguageManager.language_for_code(matchData[3])
-      @ext                    = (@lang.nil? && !matchData[3].nil? ? matchData[3].to_s + '.' : '') + matchData[4].to_s
+      @meta_info['lang']      = Webgen::LanguageManager.language_for_code(matchData[3])
+      @ext                    = (@meta_info['lang'].nil? && !matchData[3].nil? ? matchData[3].to_s + '.' : '') + matchData[4].to_s
 
       @meta_info['title']     = @cnbase.tr('_-', ' ').capitalize
     end

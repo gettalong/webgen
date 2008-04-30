@@ -8,7 +8,7 @@ class TestPath < Test::Unit::TestCase
       assert_equal(path, o.path)
       assert_equal(dir, o.directory)
       assert_equal(bn, o.cnbase)
-      assert_equal(lang, o.lang)
+      assert_equal(lang, o.meta_info['lang'])
       assert_equal(ext, o.ext)
       assert_equal(cn, o.cn)
       assert_equal(oi, o.meta_info['orderInfo'])
