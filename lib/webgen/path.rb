@@ -6,7 +6,7 @@ module Webgen
 
     include Comparable
 
-    # The source path
+    # The source path.
     attr_accessor :path
 
     # The basename part of the path.
@@ -108,7 +108,7 @@ module Webgen
 
     FILENAME_RE = /^(?:(\d+)\.)?([^.]*?)(?:\.(\w\w\w?)(?=.))?(?:\.(.*))?$/
 
-    # Analyses the +filename+ and fills the object with the extracted information.
+    # Analyses the +path+ and fills the object with the extracted information.
     def analyse(path)
       @path = path
       @basename = File.basename(path)

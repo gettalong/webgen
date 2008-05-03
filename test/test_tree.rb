@@ -36,24 +36,26 @@ class TestTree < Test::Unit::TestCase
     dir = Webgen::Node.new(root, 'testdir/')
 
     @tree.delete_node(@tree.dummy_root)
-    assert_not_nil(@tree.node_access[''])
+    assert_not_nil(@tree[''])
 
     @tree.delete_node(root)
-    assert_not_nil(@tree.node_access['/'])
+    assert_not_nil(@tree['/'])
 
     @tree.delete_node(file)
-    assert_nil(@tree.node_access['/testfile'])
+    assert_nil(@tree['/testfile'])
+    assert_nil(@tree['/testfile', :acn])
     assert_nil(@tree.node_info['/testfile'])
     assert_equal(1, root.children.size)
     assert_equal(1, nrcalls)
 
     @tree.delete_node('/', true)
-    assert_nil(@tree.node_access['/testdir'])
+    assert_nil(@tree['/testdir'])
+    assert_nil(@tree['/testdir', :acn])
     assert_nil(@tree.node_info['/testdir'])
-    assert_nil(@tree.node_access['/'])
+    assert_nil(@tree['/'])
     assert_nil(@tree.node_info['/'])
     assert_equal(3, nrcalls)
-
+  ensure
     Thread.current[:webgen_website] = nil
   end
 

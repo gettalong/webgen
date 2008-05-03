@@ -15,17 +15,17 @@ module Webgen
     # The children of this node.
     attr_reader :children
 
-    # The path of this node.
+    # The output path of this node.
     attr_reader :path
-
-    # The absolute path of this node.
-    attr_reader :absolute_path
 
     # The tree of this node.
     attr_reader :tree
 
     # The canonical name of this node.
     attr_reader :cn
+
+    # The absolute canonical name of this node.
+    attr_reader :absolute_cn
 
     # The localized canonical name of this node.
     attr_reader :lcn
@@ -79,6 +79,12 @@ module Webgen
       init_rest
     end
 
+    # Returns the meta information item for +key+.
+    def [](key)
+      @meta_info[key]
+    end
+
+    # Returns the node information hash which contains information for processing the node.
     def node_info
       tree.node_info[@absolute_lcn] ||= {}
     end
@@ -91,6 +97,9 @@ module Webgen
 
     # Checks if the node is a fragment.
     def is_fragment?; @path[0] == ?# end
+
+    # Checks if the node is the root node.
+    def is_root?; self == tree.root;  end
 
     # Returns +true+ if the node has changed since the last webgen run.
     def changed?
@@ -118,20 +127,10 @@ module Webgen
       # Handle fragment nodes specially in case they are nested
       loc_parent = loc_parent.parent while is_fragment? && loc_parent.is_fragment?
 
-      @absolute_path = if @path =~ ABSOLUTE_URL
-                         @path
-                       else
-                         (loc_parent == @tree ? '' : loc_parent.absolute_path + @path)
-                       end
-
+      @absolute_cn = (loc_parent == @tree ? '' : loc_parent.absolute_cn + (loc_parent.is_directory? ? '/' : '') + @cn)
       @absolute_lcn = (loc_parent == @tree ? '' : loc_parent.absolute_lcn + (loc_parent.is_directory? ? '/' : '') + @lcn)
 
-      if @tree.node_access.has_key?(@absolute_lcn)
-        raise "Can't have two nodes with same absolute lcn"
-      else
-        @tree.node_access[@absolute_lcn] = self
-      end
-
+      @tree.register_node(self)
       @parent.children << self unless @parent == @tree
     end
 

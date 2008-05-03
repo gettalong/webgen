@@ -6,7 +6,7 @@ module Webgen::SourceHandler
 
     def create_node(parent, path)
       path.basename += '/'
-      path.lang = nil
+      path.meta_info['lang'] = nil
       if node = node_exists?(parent, path)
         node.meta_info.clear
         node.meta_info.update(path.meta_info)
