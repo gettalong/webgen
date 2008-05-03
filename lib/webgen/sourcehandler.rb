@@ -66,7 +66,7 @@ module Webgen
         return [] if patterns.nil?
 
         options = (website.config['sourcehandler.casefold'] ? File::FNM_CASEFOLD : 0) |
-          (website.config['sourcehandler.usehiddenfiles'] ? File::FNM_DOTMATCH : 0)
+          (website.config['sourcehandler.use_hidden_files'] ? File::FNM_DOTMATCH : 0)
         find_all_source_paths.values_at(*paths).select do |path|
           patterns.any? {|pat| File.fnmatch(pat, path, options)}
         end
