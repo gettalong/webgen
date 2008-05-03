@@ -9,10 +9,9 @@ class TestNode < Test::Unit::TestCase
   end
 
   def test_initialize
-    check_proc = proc do |node, parent, path, apath, cn, lcn, alcn, lang, mi|
+    check_proc = proc do |node, parent, path, cn, lcn, alcn, lang, mi|
       assert_equal(parent, node.parent)
       assert_equal(path, node.path)
-      assert_equal(apath, node.absolute_path)
       assert_equal(cn, node.cn)
       assert_equal(lcn, node.lcn)
       assert_equal(alcn, node.absolute_lcn)
@@ -21,19 +20,20 @@ class TestNode < Test::Unit::TestCase
       assert(node.created)
       assert_equal(mi, node.meta_info)
       assert_equal({}, node.node_info)
+      mi.each {|k,v| assert_equal(v, node[k])}
     end
 
     node = Webgen::Node.new(@tree.dummy_root, 'test/', 'test', {'lang' => 'de', :test => :value})
-    check_proc.call(node, @tree.dummy_root, 'test/', 'test/', 'test', 'test.de', '/test.de', 'de', {:test => :value})
+    check_proc.call(node, @tree.dummy_root, 'test/', 'test', 'test.de', '/test.de', 'de', {:test => :value})
 
     child = Webgen::Node.new(node, 'somename.html', 'somename.page',  {'lang' => 'de'})
-    check_proc.call(child, node, 'somename.html', 'test/somename.html', 'somename.page', 'somename.de.page',
+    check_proc.call(child, node, 'somename.html', 'somename.page', 'somename.de.page',
                     '/test.de/somename.de.page', 'de', {})
 
     ['http://webgen.rubyforge.org', 'c:\\test'].each_with_index do |abspath, index|
       cn = 'test' + index.to_s + '.html'
       child = Webgen::Node.new(node, abspath, cn)
-      check_proc.call(child, node, abspath, abspath, cn, cn, '/test.de/' + cn, nil, {})
+      check_proc.call(child, node, abspath, cn, cn, '/test.de/' + cn, nil, {})
     end
   end
 
@@ -44,6 +44,8 @@ class TestNode < Test::Unit::TestCase
     assert(node.is_directory?)
     assert(child.is_file?)
     assert(frag.is_fragment?)
+    assert(node.is_root?)
+    assert(!child.is_root?)
   end
 
 end

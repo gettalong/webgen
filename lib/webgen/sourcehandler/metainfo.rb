@@ -38,7 +38,7 @@ module Webgen::SourceHandler
 
     def mark_all_matched_dirty(node)
       source_paths = website.blackboard.invoke(:source_paths)
-      node.tree.node_access.each do |path, n|
+      node.tree.node_access[:alcn].each do |path, n|
         n.dirty = true if node.node_info[:data].any? {|pattern, mi| source_paths[n.node_info[:src]] =~ pattern }
       end
     end

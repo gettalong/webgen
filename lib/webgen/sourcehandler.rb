@@ -25,7 +25,7 @@ module Webgen
         klass, *args = website.config['output']
         output = constant(klass).new(*args)
 
-        tree.node_access.each do |name, node|
+        tree.node_access[:alcn].each do |name, node|
           next if node == tree.dummy_root
           puts "#{name} (#{node.meta_info['title']})".ljust(80) + "#{node.dirty ? '' : 'not '}dirty " + node.created.to_s
           if node.dirty && (content = node.content)
@@ -91,7 +91,7 @@ module Webgen
       # from the +path+ and yields the needed parent node. After the nodes are created, it is also
       # checked if they have all needed properties.
       def create_nodes(tree, parent_path_name, path)
-        if !(parent = tree.node_access[parent_path_name])
+        if !(parent = tree[parent_path_name])
           raise "The specified parent path <#{parent_path_name}> does not exist"
         end
         website.blackboard.dispatch_msg(:before_node_created, parent, path)
@@ -108,7 +108,7 @@ module Webgen
       def clean(tree)
         paths_to_delete = Set.new
         paths_not_to_delete = Set.new
-        tree.node_access.values.each do |node|
+        tree.node_access[:alcn].values.each do |node|
           deleted = !find_all_source_paths.include?(node.node_info[:src])
           if !node.created && (deleted ||
                                find_all_source_paths[node.node_info[:src]].changed? ||
