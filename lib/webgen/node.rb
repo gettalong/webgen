@@ -15,10 +15,10 @@ module Webgen
     # The children of this node.
     attr_reader :children
 
-    # The output path of this node.
+    # The full output path of this node.
     attr_reader :path
 
-    # The tree of this node.
+    # The tree to which this node belongs.
     attr_reader :tree
 
     # The canonical name of this node.
@@ -112,6 +112,25 @@ module Webgen
       "<##{self.class.name}: alcn=#{@absolute_lcn}>"
     end
 
+    # Constructs the absolute (localized) canonical name by using the +parent+ node and +name+
+    # (which can be a cn or an lcn). The +type+ can be either +:alcn+ or +:acn+.
+    def self.absolute_name(parent, name, type)
+      if parent.kind_of?(Tree)
+        ''
+      else
+        parent = parent.parent while parent.is_fragment? # Handle fragment nodes specially in case they are nested
+        (type == :alcn ? parent.absolute_lcn : parent.absolute_cn) + (parent.is_directory? ? '/' : '') + name
+      end
+    end
+
+    # Returns the node with the same canonical name but in language +lang+ or, if no such node exists,
+    # an unlocalized version of the node. If no such node is found either, +nil+ is returned.
+    def in_lang(lang)
+      avail = @tree.node_access[:acn][@absolute_cn]
+      avail.find {|n| n.lang == lang} || avail.find {|n| n.lang.nil?}
+    end
+
+
     private
 
     # Regexp for matching absolute URLs, ie. URLs with a scheme part (also see RFC1738)
@@ -119,16 +138,11 @@ module Webgen
 
     def init_rest
       @lcn = Path.lcn(@cn, @lang)
+      @absolute_cn = self.class.absolute_name(@parent, @cn, :acn)
+      @absolute_lcn = self.class.absolute_name(@parent, @lcn, :alcn)
 
       @tree = @parent
       @tree = @tree.parent while !@tree.kind_of?(Tree)
-
-      loc_parent = @parent
-      # Handle fragment nodes specially in case they are nested
-      loc_parent = loc_parent.parent while is_fragment? && loc_parent.is_fragment?
-
-      @absolute_cn = (loc_parent == @tree ? '' : loc_parent.absolute_cn + (loc_parent.is_directory? ? '/' : '') + @cn)
-      @absolute_lcn = (loc_parent == @tree ? '' : loc_parent.absolute_lcn + (loc_parent.is_directory? ? '/' : '') + @lcn)
 
       @tree.register_node(self)
       @parent.children << self unless @parent == @tree
