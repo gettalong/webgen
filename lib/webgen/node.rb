@@ -1,6 +1,7 @@
 require 'webgen/websiteaccess'
 require 'webgen/loggable'
 require 'webgen/path'
+require 'uri'
 
 module Webgen
 
@@ -72,6 +73,7 @@ module Webgen
       @path = path.freeze
       @cn = cn.chomp('/').freeze
       @lang = meta_info.delete('lang').freeze
+      @lang = nil unless is_file?
       @meta_info = meta_info
       @children = []
       @dirty = true
@@ -123,18 +125,49 @@ module Webgen
       end
     end
 
+    # Constructs an internal URL for the given +name+ which can be a acn/alcn/path.
+    def self.url(name)
+      url = URI::parse(name)
+      url = URI::parse('webgen://webgen.localhost/') + url unless url.absolute?
+      url
+    end
+
     # Returns the node with the same canonical name but in language +lang+ or, if no such node exists,
     # an unlocalized version of the node. If no such node is found either, +nil+ is returned.
     def in_lang(lang)
       avail = @tree.node_access[:acn][@absolute_cn]
-      avail.find {|n| n.lang == lang} || avail.find {|n| n.lang.nil?}
+      avail.find do |n|
+        n = n.parent while n.is_fragment?
+        n.lang == lang
+      end || avail.find do |n|
+        n = n.parent while n.is_fragment?
+        n.lang.nil?
+      end
     end
 
 
-    private
+    # Returns the node representing the given +path+ which can be an acn/alcn. The path can be
+    # absolute (i.e. starting with a slash) or relative to the current node. If no node exists for
+    # the given path or if the path is invalid, +nil+ is returned.
+    #
+    # If the +path+ is an alcn and a node is found, it is returned. If the +path+ is an acn, the
+    # correct localized node according to +lang+ is returned or if no such node exists but an
+    # unlocalized version does, the unlocalized node is returned.
+    def resolve(path, lang = nil)
+      url = self.class.url(self.is_directory? ? File.join(@absolute_lcn, '/') : @absolute_lcn) + path
 
-    # Regexp for matching absolute URLs, ie. URLs with a scheme part (also see RFC1738)
-    ABSOLUTE_URL = /^\w[a-zA-Z0-9+.-]*:/
+      path = url.path + (url.fragment.nil? ? '' : '#' + url.fragment)
+      return nil if path =~ /^\/\.\./ || url.scheme != 'webgen' # path outside dest dir or not an internal URL (webgen://...)
+
+      node = @tree[path, :alcn]
+      if node && node.absolute_cn != path
+        node
+      else
+        (node = @tree[path, :acn]) && node.in_lang(lang)
+      end
+    end
+
+    private
 
     def init_rest
       @lcn = Path.lcn(@cn, @lang)
