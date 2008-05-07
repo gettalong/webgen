@@ -35,7 +35,7 @@ module Webgen
       if @data.has_key?(name)
         @data[name]
       else
-        raise ArgumentError, 'No such configuration option: #{name}'
+        raise ArgumentError, "No such configuration option: #{name}"
       end
     end
 
@@ -43,7 +43,7 @@ module Webgen
       if @data.has_key?(name)
         @data[name] = value
       else
-        raise ArgumentError, 'No such configuration option: #{name}'
+        raise ArgumentError, "No such configuration option: #{name}"
       end
     end
 
