@@ -23,6 +23,16 @@ config.sourcehandler.invoke({
 config.sourcehandler.casefold(true, :doc => 'Specifies whether path are considered to be case-sensitive')
 config.sourcehandler.use_hidden_files(false, :doc => 'Specifies whether hidden files (those starting with a dot) are used')
 config.sourcehandler.ignore(['**/*~', '**/.svn/**'], :doc => 'Path patterns that should be ignored')
+config.sourcehandler.default_lang_in_output_path(false, :doc => 'Specifies whether output paths in the default language should have the language in the name')
+config.sourcehandler.output_path_style([:cnbase, ['.', :lang], :ext], :doc => 'Defines how output path names are constructed from source path names')
+=begin
+TODO:put this info into the user docs
+      desc: Defines how the output name should be built. The correct name will be used for the
+            :basename part and the file language will be used for the :lang part. If defaultLangInFilename
+            is true, the :lang part or the subarray in which the :lang part was defined, will be omitted.
+            The :ext part is replaced with the correct extension.
+=end
+
 
 # All things regarding output
 config.output ["Webgen::Output::FileSystem", 'output'], :doc => 'The class which is used to output the generated paths.'
