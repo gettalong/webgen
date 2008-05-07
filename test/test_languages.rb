@@ -6,13 +6,11 @@ class TestLanguages < Test::Unit::TestCase
   def test_get_language
     assert_nil(Webgen::LanguageManager.language_for_code(nil))
 
-    lang1 = lang2 = lang3 = lang4 = nil
-    assert_nothing_raised do
-      lang1 = Webgen::LanguageManager.language_for_code('ger')
-      lang2 = Webgen::LanguageManager.language_for_code('deu')
-      lang3 = Webgen::LanguageManager.language_for_code('de')
-      lang4 = Webgen::LanguageManager.language_for_code('en')
-    end
+    lang1 = Webgen::LanguageManager.language_for_code('ger')
+    lang2 = Webgen::LanguageManager.language_for_code('deu')
+    lang3 = Webgen::LanguageManager.language_for_code('de')
+    lang4 = Webgen::LanguageManager.language_for_code('en')
+
     [lang1, lang2, lang3, lang4].each {|lang| assert_kind_of(Webgen::Language, lang)}
     assert_equal(lang1, lang2)
     assert_equal(lang3, lang2)
@@ -35,12 +33,10 @@ class TestLanguages < Test::Unit::TestCase
 
   def test_other_methods
     de = Webgen::LanguageManager.language_for_code('ger')
-    assert_nothing_raised do
-      assert_equal('de', de)
-      assert_equal(de, 'de')
-      assert_equal("de", de.to_s)
-      assert_equal("Implicitly de", "Implicitly " + de)
-    end
+    assert_equal('de', de)
+    assert_equal(de, 'de')
+    assert_equal("de", de.to_s)
+    assert_equal("Implicitly de", "Implicitly " + de)
     assert_kind_of(String, de.inspect)
   end
 
