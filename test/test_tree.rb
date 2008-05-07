@@ -1,18 +1,10 @@
 require 'test/unit'
+require 'helper'
 require 'webgen/tree'
 
-
-require 'webgen/blackboard'
-class DummyWebsite
-  attr_reader :blackboard
-
-  def initialize
-    @blackboard = Webgen::Blackboard.new
-  end
-end
-
-
 class TestTree < Test::Unit::TestCase
+
+  include Test::WebsiteHelper
 
   def test_initialize
     @tree = Webgen::Tree.new
@@ -26,9 +18,8 @@ class TestTree < Test::Unit::TestCase
   end
 
   def test_delete_node
-    website = Thread.current[:webgen_website] = DummyWebsite.new
     nrcalls = 0
-    website.blackboard.add_listener(:before_node_deleted) { nrcalls += 1 }
+    @website.blackboard.add_listener(:before_node_deleted) { nrcalls += 1 }
 
     @tree = Webgen::Tree.new
     root = Webgen::Node.new(@tree.dummy_root, '/')
@@ -55,8 +46,6 @@ class TestTree < Test::Unit::TestCase
     assert_nil(@tree['/'])
     assert_nil(@tree.node_info['/'])
     assert_equal(3, nrcalls)
-  ensure
-    Thread.current[:webgen_website] = nil
   end
 
 end
