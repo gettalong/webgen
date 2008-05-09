@@ -18,9 +18,10 @@ module Webgen
     attr_reader :node_info
 
     def initialize
+      #TODO: ev. remove default creation of [] for :acn
       @node_access = {:alcn => {}, :acn => Hash.new {|h,k| h[k] = []}, :path => {}}
       @node_info = {}
-      @dummy_root = Node.new(self, 'dummy/')
+      @dummy_root = Node.new(self, '')
     end
 
     # The root node of the tree.

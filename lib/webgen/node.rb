@@ -121,7 +121,8 @@ module Webgen
         ''
       else
         parent = parent.parent while parent.is_fragment? # Handle fragment nodes specially in case they are nested
-        (type == :alcn ? parent.absolute_lcn : parent.absolute_cn) + (parent.is_directory? ? '/' : '') + name
+        (type == :alcn ? parent.absolute_lcn : parent.absolute_cn) +
+          (parent.is_directory? || parent == parent.tree.dummy_root ? '/' : '') + name
       end
     end
 

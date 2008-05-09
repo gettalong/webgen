@@ -13,13 +13,17 @@ module Webgen::SourceHandler
     # +webgen.sourcehandler.output_path_style+) defines how the output name should be built (more
     # information about this in the user documentation).
     def output_path(parent, path, style = path.meta_info['output_path_style'] || Webgen::WebsiteAccess.website.config['sourcehandler.output_path_style'])
-      name = construct_output_path(path, style)
-      name = construct_output_path(path, style, true) if node_exists?(parent, path, name)
+      name = construct_output_path(parent, path, style)
+      name += '/'  if path.path =~ /\/$/ && name !~ /\/$/
+      if node_exists?(parent, path, name)
+        name = construct_output_path(parent, path, style, true)
+        name += '/'  if path.path =~ /\/$/ && name !~ /\/$/
+      end
       name
     end
 
     # Utility method for constructing the output name.
-    def construct_output_path(path, style, use_lang_part = nil)
+    def construct_output_path(parent, path, style, use_lang_part = nil)
       use_lang_part = if path.meta_info['lang'].nil? # unlocalized files never get a lang in the filename!
                         false
                       elsif use_lang_part.nil?
@@ -30,11 +34,12 @@ module Webgen::SourceHandler
                       end
       style.collect do |part|
         case part
-        when String then part
-        when :lang  then use_lang_part ? path.meta_info['lang'] : ''
-        when :ext   then path.ext.empty? ? '' : '.' + path.ext
-        when Symbol then path.send(part)
-        when Array  then part.include?(:lang) && !use_lang_part ? '' : construct_output_path(path, part, use_lang_part)
+        when String  then part
+        when :lang   then use_lang_part ? path.meta_info['lang'] : ''
+        when :ext    then path.ext.empty? ? '' : '.' + path.ext
+        when :parent then parent.path
+        when Symbol  then path.send(part)
+        when Array   then part.include?(:lang) && !use_lang_part ? '' : construct_output_path(parent, path, part, use_lang_part)
         else ''
         end
       end.join('')
