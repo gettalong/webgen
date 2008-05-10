@@ -19,7 +19,7 @@ module Webgen
 
     def initialize
       #TODO: ev. remove default creation of [] for :acn
-      @node_access = {:alcn => {}, :acn => Hash.new {|h,k| h[k] = []}, :path => {}}
+      @node_access = {:alcn => {}, :acn => {}, :path => {}}
       @node_info = {}
       @dummy_root = Node.new(self, '')
     end
@@ -33,7 +33,7 @@ module Webgen
     # absolute localized canonical name, if type is +acn+ then +path+ has to be an absolute
     # canonical name and if type is +path+ then +path+ needs to be an output path.
     def node(path, type = :alcn)
-      (type == :acn ? @node_access[type][path].first : @node_access[type][path])
+      (type == :acn ? @node_access[type][path] && @node_access[type][path].first : @node_access[type][path])
     end
     alias_method :[], :node
 
@@ -44,7 +44,7 @@ module Webgen
       else
         @node_access[:alcn][node.absolute_lcn] = node
       end
-      @node_access[:acn][node.absolute_cn] << node
+      (@node_access[:acn][node.absolute_cn] ||= []) << node
       if @node_access[:path].has_key?(node.path)
         raise "Can't have two nodes with same output path: #{node.path}"
       else
