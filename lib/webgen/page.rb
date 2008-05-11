@@ -51,12 +51,6 @@ module Webgen
 
     class << self
 
-      # Creates a new Page object from the file +file+ in Webgen Page Format. The +meta_info+
-      # parameter can be used to provide default meta information.
-      def from_file(file, meta_info = {})
-        from_data(File.read(file), meta_info)
-      end
-
       # Parses the given string +data+ in Webgen Page Format and initializes a new Page object with
       # the information. The +meta_info+ parameter can be used to provide default meta information.
       def from_data(data, meta_info = {})

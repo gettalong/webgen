@@ -18,7 +18,6 @@ module Webgen
     attr_reader :node_info
 
     def initialize
-      #TODO: ev. remove default creation of [] for :acn
       @node_access = {:alcn => {}, :acn => {}, :path => {}}
       @node_info = {}
       @dummy_root = Node.new(self, '')
