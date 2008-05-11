@@ -48,6 +48,11 @@ class TestSourceHandlerBase < Test::Unit::TestCase
 
     path = Webgen::Path.new('/')
     assert_equal('/', @temp.output_path(@tree.dummy_root, path, [:parent, :cnbase, ['.', :lang], :ext]))
+    assert_equal('hallo/', @temp.output_path(@tree.dummy_root, path, [:parent, 'hallo', 56]))
+  end
+
+  def test_content
+    assert_nil(@temp.content(nil))
   end
 
 end

@@ -6,22 +6,34 @@ class TestTree < Test::Unit::TestCase
 
   include Test::WebsiteHelper
 
-  def test_initialize
+  def setup
+    super
     @tree = Webgen::Tree.new
+  end
+
+  def test_initialize
     assert_not_nil(@tree.dummy_root)
   end
 
   def test_root
-    @tree = Webgen::Tree.new
     root = Webgen::Node.new(@tree.dummy_root, '/')
     assert_equal(root, @tree.root)
+  end
+
+  def test_register_node
+    # Tree#register_node is called when creating a node
+    node = Webgen::Node.new(@tree.dummy_root, 'dummy/', 'dummy')
+    assert_equal(node, @tree['/dummy', :alcn])
+    assert_equal(node, @tree['/dummy', :acn])
+    assert_equal(node, @tree['dummy/', :path])
+    assert_raises(RuntimeError) { Webgen::Node.new(@tree.dummy_root, '/', 'dummy') }
+    assert_raises(RuntimeError) { Webgen::Node.new(@tree.dummy_root, 'dummy/', 'other') }
   end
 
   def test_delete_node
     nrcalls = 0
     @website.blackboard.add_listener(:before_node_deleted) { nrcalls += 1 }
 
-    @tree = Webgen::Tree.new
     root = Webgen::Node.new(@tree.dummy_root, '/')
     file = Webgen::Node.new(root, 'testfile')
     dir = Webgen::Node.new(root, 'testdir/')

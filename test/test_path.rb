@@ -81,6 +81,14 @@ class TestPath < Test::Unit::TestCase
     assert_nil(h['test.de.page'])
   end
 
+  def test_matching
+    path = Webgen::Path.new('/dir/to/file.de.page')
+    assert(path =~ '**/*')
+    assert(path =~ '**/file.de.PAGE')
+    assert(path =~ '/dir/*/file.*.page')
+    assert(path !~ '**/*.test')
+  end
+
   def test_introspection
     p = Webgen::Path.new('test.de.page')
     assert_equal('test.de.page', p.to_s)

@@ -1,10 +1,14 @@
 require 'test/unit'
+require 'helper'
 require 'webgen/node'
 require 'webgen/tree'
 
 class TestNode < Test::Unit::TestCase
 
+  include Test::WebsiteHelper
+
   def setup
+    super
     @tree = Webgen::Tree.new
   end
 
@@ -111,6 +115,32 @@ class TestNode < Test::Unit::TestCase
     assert_equal(frag_de, node.resolve('/test/somename.page#othertest', 'de'))
     assert_equal(frag_en, node.resolve('/test/somename.en.page#othertest'))
     assert_equal(frag_de, node.resolve('/test/somename.de.page#othertest'))
+  end
+
+  def test_introspection
+    node = Webgen::Node.new(@tree.dummy_root, 'test/', 'test', {'lang' => 'de', :test => :value})
+    assert(node.inspect =~ /alcn=\/test/)
+  end
+
+  def test_changed
+    node = Webgen::Node.new(@tree.dummy_root, 'test/', 'test', {'lang' => 'de', :test => :value})
+    node.dirty = node.created = false
+
+    calls = 0
+    @website.blackboard.add_listener(:node_changed?) {|n| assert(node, n); node.dirty = true; calls += 1}
+    node.changed?
+    assert_equal(1, calls)
+    node.changed?
+    assert_equal(1, calls)
+  end
+
+  def test_method_missing
+    node = Webgen::Node.new(@tree.dummy_root, 'test/', 'test', {'lang' => 'de', :test => :value})
+    assert_raises(NoMethodError) { node.unknown }
+    obj = @website.cache.instance('Object')
+    def obj.doit(node); :value; end
+    node.node_info[:processor] = 'Object'
+    assert_equal(:value, node.doit)
   end
 
 end
