@@ -14,11 +14,12 @@ config.sources [['/', "Webgen::Source::FileSystem", 'src']], :doc => 'One or mor
 config.sourcehandler.patterns({
                                 'Webgen::SourceHandler::Copy' => ['**/*.css', '**/*.js', '**/*.html', '**/*.gif', '**/*.jpg', '**/*.png'],
                                 'Webgen::SourceHandler::Directory' => ['**/'],
-                                'Webgen::SourceHandler::Metainfo' => ['**/metainfo', '**/*.metainfo']
+                                'Webgen::SourceHandler::Metainfo' => ['**/metainfo', '**/*.metainfo'],
+                                'Webgen::SourceHandler::Template' => ['**/*.template'],
                               }, :doc => 'Source handler to path pattern map')
 config.sourcehandler.invoke({
                               1 => ['Webgen::SourceHandler::Directory', 'Webgen::SourceHandler::Metainfo', 'Webgen::SourceHandler::Directory'],
-                              5 => ['Webgen::SourceHandler::Copy']
+                              5 => ['Webgen::SourceHandler::Copy', 'Webgen::SourceHandler::Template']
                             }, :doc => 'All source handlers listed here are used by webgen and invoked according to their priority setting')
 config.sourcehandler.casefold(true, :doc => 'Specifies whether path are considered to be case-sensitive')
 config.sourcehandler.use_hidden_files(false, :doc => 'Specifies whether hidden files (those starting with a dot) are used')
@@ -32,6 +33,8 @@ TODO:put this info into the user docs
             is true, the :lang part or the subarray in which the :lang part was defined, will be omitted.
             The :ext part is replaced with the correct extension.
 =end
+
+config.sourcehandler.template.default_template('default.template', :doc => 'The name of the default template file of a directory')
 
 
 # All things regarding output
