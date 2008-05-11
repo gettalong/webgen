@@ -6,6 +6,8 @@ module Webgen
     autoload :Copy, 'webgen/sourcehandler/copy'
     autoload :Directory, 'webgen/sourcehandler/directory'
     autoload :Metainfo, 'webgen/sourcehandler/metainfo'
+    autoload :Template, 'webgen/sourcehandler/template'
+
 
     class Main
 
