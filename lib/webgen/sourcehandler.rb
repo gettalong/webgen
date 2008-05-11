@@ -38,7 +38,7 @@ module Webgen
                    else
                      :file
                    end
-            output.write(node.absolute_path, content, type)
+            output.write(node.path, content, type)
             content.close if content.kind_of?(IO) && !content.closed?
           end
           node.dirty = false
@@ -80,7 +80,6 @@ module Webgen
             sh = website.cache.instance(shn)
             paths_for_handler(shn, paths).sort.each do |path|
               parent_dir = path.directory.split('/').collect {|p| Path.new(p).cn}.join('/')
-              parent_dir = tree.dummy_root.absolute_lcn if path == '/'
               create_nodes(tree, parent_dir, path) do |parent|
                 sh.create_node(parent, path.dup)
               end

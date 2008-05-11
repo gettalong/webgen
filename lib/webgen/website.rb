@@ -1,17 +1,25 @@
+# Standard lib requires
 require 'logger'
 require 'set'
 
+# Requirements for Website
 require 'webgen/loggable'
 require 'webgen/configuration'
 require 'webgen/websiteaccess'
-require 'webgen/path'
+require 'webgen/blackboard'
+require 'webgen/cache'
+require 'webgen/tree'
+
+# Files for autoloading
 require 'webgen/source'
 require 'webgen/output'
-require 'webgen/tree'
-require 'webgen/blackboard'
 require 'webgen/sourcehandler'
 require 'webgen/contentprocessor'
-require 'webgen/cache'
+
+# Load other needed files
+require 'webgen/path'
+require 'webgen/node'
+require 'webgen/page'
 
 module Webgen
 
