@@ -61,7 +61,9 @@ module Webgen
         new(meta_info, blocks)
       end
 
+      #######
       private
+      #######
 
       def normalize_eol(data)
         data.gsub(/\r\n?/, "\n")

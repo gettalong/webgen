@@ -168,7 +168,9 @@ module Webgen
       end
     end
 
+    #######
     private
+    #######
 
     def init_rest
       @lcn = Path.lcn(@cn, @lang)

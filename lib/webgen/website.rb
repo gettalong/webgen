@@ -81,7 +81,9 @@ module Webgen
       end
     end
 
+    #######
     private
+    #######
 
     def cache_file
       File.join(config['website.dir'], 'webgen.cache')

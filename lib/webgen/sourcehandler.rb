@@ -46,7 +46,9 @@ module Webgen
         end
       end
 
+      #######
       private
+      #######
 
       def find_all_source_paths
         if !@paths
