@@ -11,6 +11,8 @@ class TestConfiguration < Test::Unit::TestCase
     @config.test.value(:other_value, :doc => true)
     assert_equal(:value, @config['test.value'])
     assert_equal({:opts => true, :doc => true}, @config.options['test.value'])
+    @config.test.other(:value)
+    assert_equal({}, @config.options['test.other'])
   end
 
   def test_get_options

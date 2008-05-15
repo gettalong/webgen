@@ -32,7 +32,7 @@ module Webgen
     attr_reader :config
 
     # The logger used for logging
-    attr_reader :logger
+    attr_accessor :logger
 
     # The blackboard used for inter-object communication
     attr_reader :blackboard

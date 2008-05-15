@@ -14,7 +14,8 @@ module Webgen
         if args.length > 0
           value = args.shift
           @config.data[@name] = value unless @config.data.has_key?(@name) # value is set only the first time
-          (@config.options[@name] ||= {}).update(*args) if args.length > 0
+          @config.options[@name] ||= {}
+          @config.options[@name].update(*args) if args.length > 0
           nil
         else
           self
