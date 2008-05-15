@@ -34,7 +34,9 @@ module Webgen::SourceHandler
     def nodes; website.cache.permanent[CKEY]; end
     def nodes=(val); website.cache.permanent[CKEY] = val; end
 
+    #######
     private
+    #######
 
     def mark_all_matched_dirty(node)
       source_paths = website.blackboard.invoke(:source_paths)
