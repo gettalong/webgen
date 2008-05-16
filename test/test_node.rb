@@ -136,7 +136,7 @@ class TestNode < Test::Unit::TestCase
 
   def test_method_missing
     node = Webgen::Node.new(@tree.dummy_root, 'test/', 'test', {'lang' => 'de', :test => :value})
-    assert_raises(NoMethodError) { node.unknown }
+    assert_raise(NoMethodError) { node.unknown }
     obj = @website.cache.instance('Object')
     def obj.doit(node); :value; end
     node.node_info[:processor] = 'Object'
