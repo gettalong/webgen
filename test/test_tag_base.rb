@@ -66,7 +66,7 @@ class TestTagBase < Test::Unit::TestCase
   end
 
   def test_call
-    assert_raises(NotImplementedError) { @obj.call(nil, nil, nil) }
+    assert_raise(NotImplementedError) { @obj.call(nil, nil, nil) }
   end
 
   def set_params(params)

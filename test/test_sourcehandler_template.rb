@@ -23,7 +23,7 @@ class TestSourceHandlerTemplate < Test::Unit::TestCase
     assert_not_nil(node.node_info[:page])
     assert_equal('test/default.template', node.path)
 
-    assert_raises(RuntimeError) { @obj.create_node(root, Webgen::Path.new('/default.template') {StringIO.new('--- dfdf\n:d_')}) }
+    assert_raise(RuntimeError) { @obj.create_node(root, Webgen::Path.new('/default.template') {StringIO.new('--- dfdf\n:d_')}) }
   end
 
   def test_templates_for_node
