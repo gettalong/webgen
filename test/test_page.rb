@@ -167,4 +167,14 @@ EOF
     assert_equal('content', d.blocks['content'].content)
   end
 
+  def test_meta_info_dupped
+    mi = {'key' => 'value'}
+    d = Webgen::Page.from_data("---\ntitle: test\n---\ncontent", mi)
+    assert_equal({'title' => 'test', 'key' => 'value'}, d.meta_info)
+    assert_not_same(mi, d.meta_info)
+    d = Webgen::Page.from_data("content", mi)
+    assert_equal({'key' => 'value'}, d.meta_info)
+    assert_not_same(mi, d.meta_info)
+  end
+
 end
