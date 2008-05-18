@@ -12,7 +12,7 @@ module Webgen::SourceHandler
     # path's meta information hash or, if the former is not defined, the configuration value
     # +webgen.sourcehandler.output_path_style+) defines how the output name should be built (more
     # information about this in the user documentation).
-    def output_path(parent, path, style = path.meta_info['output_path_style'] || Webgen::WebsiteAccess.website.config['sourcehandler.output_path_style'])
+    def output_path(parent, path, style = path.meta_info['output_path_style'])
       name = construct_output_path(parent, path, style)
       name += '/'  if path.path =~ /\/$/ && name !~ /\/$/
       if node_exists?(parent, path, name)

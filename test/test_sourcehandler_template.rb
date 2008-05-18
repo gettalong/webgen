@@ -17,13 +17,13 @@ class TestSourceHandlerTemplate < Test::Unit::TestCase
 
   def test_create_node
     root = Webgen::Node.new(Webgen::Tree.new.dummy_root, 'test/', 'test', {'lang' => 'de', :test => :value})
-    node = @obj.create_node(root, Webgen::Path.new('/default.template') {StringIO.new('')})
+    node = @obj.create_node(root, path_with_meta_info('/default.template') {StringIO.new('')})
 
     assert_not_nil(node)
     assert_not_nil(node.node_info[:page])
     assert_equal('test/default.template', node.path)
 
-    assert_raise(RuntimeError) { @obj.create_node(root, Webgen::Path.new('/default.template') {StringIO.new('--- dfdf\n:d_')}) }
+    assert_raise(RuntimeError) { @obj.create_node(root, path_with_meta_info('/default.template') {StringIO.new('--- dfdf\n:d_')}) }
   end
 
   def test_templates_for_node

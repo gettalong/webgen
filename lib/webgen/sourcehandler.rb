@@ -82,23 +82,29 @@ module Webgen
             sh = website.cache.instance(shn)
             paths_for_handler(shn, paths).sort.each do |path|
               parent_dir = path.directory.split('/').collect {|p| Path.new(p).cn}.join('/')
-              create_nodes(tree, parent_dir, path) do |parent|
-                sh.create_node(parent, path.dup)
-              end
+              create_nodes(tree, parent_dir, path, sh)
             end
           end
         end
       end
 
-      # Prepares everything to create nodes under the absolute lcn path +parent_path_name+ in the +tree
-      # from the +path+ and yields the needed parent node. After the nodes are created, it is also
-      # checked if they have all needed properties.
-      def create_nodes(tree, parent_path_name, path)
+      # Prepares everything to create nodes under the absolute lcn path +parent_path_name+ in the
+      # +tree from the +path+ using the +source_handler+. If a block is given, the actual creation
+      # of the nodes is deferred to it. After the nodes are created, it is also checked if they have
+      # all needed properties.
+      def create_nodes(tree, parent_path_name, path, source_handler) #:yields: parent, path
         if !(parent = tree[parent_path_name])
           raise "The specified parent path <#{parent_path_name}> does not exist"
         end
+        path = path.dup
+        path.meta_info.update(website.config['sourcehandler.default_meta_info'][:all])
+        path.meta_info.update(website.config['sourcehandler.default_meta_info'][source_handler.class.name] || {})
         website.blackboard.dispatch_msg(:before_node_created, parent, path)
-        *nodes = yield(parent)
+        *nodes = if block_given?
+                   yield(parent, path)
+                 else
+                   source_handler.create_node(parent, path.dup)
+                 end
         nodes.compact.each do |node|
           node.node_info[:src] = path.path
           website.blackboard.dispatch_msg(:after_node_created, node)
