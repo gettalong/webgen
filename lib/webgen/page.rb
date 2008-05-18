@@ -56,7 +56,7 @@ module Webgen
       def from_data(data, meta_info = {})
         md = /(#{RE_META_INFO})?(.*)/m.match(normalize_eol(data))
         raise(WebgenPageFormatError, 'Invalid structure of meta information part') if md[1].nil? && data =~ RE_META_INFO_START
-        meta_info = meta_info.merge(parse_meta_info(md[1])) if !md[1].nil?
+        meta_info = meta_info.merge(md[1].nil? ? {} : parse_meta_info(md[1]))
         blocks = parse_blocks(md[2] || '', meta_info)
         new(meta_info, blocks)
       end
