@@ -11,8 +11,8 @@ class TestSourceHandlerBase < Test::Unit::TestCase
 
   def setup
     super
-    @temp = Object.new
-    @temp.extend(Webgen::SourceHandler::Base)
+    @obj = Object.new
+    @obj.extend(Webgen::SourceHandler::Base)
   end
 
   def test_node_exists
@@ -21,10 +21,10 @@ class TestSourceHandlerBase < Test::Unit::TestCase
     child_de = Webgen::Node.new(node, 'test/somename.html', 'somename.page', {'lang' => 'de'})
     frag_de = Webgen::Node.new(child_de, '#data1', '#othertest')
 
-    assert_equal(child_de, @temp.node_exists?(node, Webgen::Path.new('somename.de.page')))
-    assert_equal(child_de, @temp.node_exists?(node, Webgen::Path.new('other.page'), @temp.output_path(node, Webgen::Path.new('somename.html'))))
-    assert_equal(frag_de, @temp.node_exists?(child_de, Webgen::Path.new('#othertest')))
-    assert_equal(nil, @temp.node_exists?(node, Webgen::Path.new('unknown')))
+    assert_equal(child_de, @obj.node_exists?(node, path_with_meta_info('somename.de.page')))
+    assert_equal(child_de, @obj.node_exists?(node, path_with_meta_info('other.page'), @obj.output_path(node, path_with_meta_info('somename.html'))))
+    assert_equal(frag_de, @obj.node_exists?(child_de, path_with_meta_info('#othertest')))
+    assert_equal(nil, @obj.node_exists?(node, path_with_meta_info('unknown')))
   end
 
   def test_output_path
@@ -32,27 +32,27 @@ class TestSourceHandlerBase < Test::Unit::TestCase
     node = Webgen::Node.new(@tree.dummy_root, 'test/', 'test', {'lang' => 'de', :test => :value})
 
     path = Webgen::Path.new('path.html')
-    assert_equal('test/path.html', @temp.output_path(node, path, [:parent, :cnbase, ['.', :lang], :ext]))
+    assert_equal('test/path.html', @obj.output_path(node, path, [:parent, :cnbase, ['.', :lang], :ext]))
     path = Webgen::Path.new('path.en.html')
-    assert_equal('test/path.html', @temp.output_path(node, path, [:parent, :cnbase, ['.', :lang], :ext]))
+    assert_equal('test/path.html', @obj.output_path(node, path, [:parent, :cnbase, ['.', :lang], :ext]))
     path = Webgen::Path.new('path.eo.html')
-    assert_equal('test/path.eo.html', @temp.output_path(node, path, [:parent, :cnbase, ['.', :lang], :ext]))
+    assert_equal('test/path.eo.html', @obj.output_path(node, path, [:parent, :cnbase, ['.', :lang], :ext]))
     path = Webgen::Path.new('dir/')
-    assert_equal('test/dir/', @temp.output_path(node, path, [:parent, :cnbase, ['.', :lang], :ext]))
+    assert_equal('test/dir/', @obj.output_path(node, path, [:parent, :cnbase, ['.', :lang], :ext]))
 
     other = Webgen::Node.new(node, 'test/path.html', 'other.page')
     path = Webgen::Path.new('path.html')
-    assert_equal('test/path.html', @temp.output_path(node, path, [:parent, :cnbase, ['.', :lang], :ext]))
+    assert_equal('test/path.html', @obj.output_path(node, path, [:parent, :cnbase, ['.', :lang], :ext]))
     path = Webgen::Path.new('path.en.html')
-    assert_equal('test/path.en.html', @temp.output_path(node, path, [:parent, :cnbase, ['.', :lang], :ext]))
+    assert_equal('test/path.en.html', @obj.output_path(node, path, [:parent, :cnbase, ['.', :lang], :ext]))
 
     path = Webgen::Path.new('/')
-    assert_equal('/', @temp.output_path(@tree.dummy_root, path, [:parent, :cnbase, ['.', :lang], :ext]))
-    assert_equal('hallo/', @temp.output_path(@tree.dummy_root, path, [:parent, 'hallo', 56]))
+    assert_equal('/', @obj.output_path(@tree.dummy_root, path, [:parent, :cnbase, ['.', :lang], :ext]))
+    assert_equal('hallo/', @obj.output_path(@tree.dummy_root, path, [:parent, 'hallo', 56]))
   end
 
   def test_content
-    assert_nil(@temp.content(nil))
+    assert_nil(@obj.content(nil))
   end
 
 end
