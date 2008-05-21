@@ -52,6 +52,14 @@ class TestNode < Test::Unit::TestCase
     assert(!child.is_root?)
   end
 
+  def test_meta_info_assignment
+    node = Webgen::Node.new(@tree.dummy_root, 'test/', 'test', {'lang' => 'de', :test => :value})
+    node[:test] = :newvalue
+    node[:other] = :value
+    assert_equal(:newvalue, node[:test])
+    assert_equal(:value, node[:other])
+  end
+
   def test_in_lang
     node = Webgen::Node.new(@tree.dummy_root, 'test/', 'test', {'lang' => 'de', :test => :value})
     child_de = Webgen::Node.new(node, 'somename.html', 'somename.page', {'lang' => 'de'})
@@ -85,8 +93,9 @@ class TestNode < Test::Unit::TestCase
     child_en = Webgen::Node.new(node, 'somename1.html', 'somename.page', {'lang' => 'en'})
     other = Webgen::Node.new(node, 'other.html', 'other.page', {})
     other_en = Webgen::Node.new(node, 'other1.html', 'other.page', {'lang' => 'en'})
-    frag_en = Webgen::Node.new(child_en, '#data', '#othertest')
+    frag_en = Webgen::Node.new(child_en, '/some/fullpath.html#data', '#othertest')
     frag_de = Webgen::Node.new(child_de, '#data1', '#othertest')
+    frag_nest_en = Webgen::Node.new(frag_en, '#nested', '#nestedpath')
 
     [node, child_de, child_en, other].each do |n|
       assert_equal(nil, n.resolve('somename.page', nil))
@@ -109,6 +118,7 @@ class TestNode < Test::Unit::TestCase
 
     assert_equal(frag_en, child_en.resolve('#othertest', 'de'))
     assert_equal(frag_en, child_en.resolve('#othertest', nil))
+    assert_equal(frag_nest_en, child_en.resolve('#nestedpath', nil))
 
     assert_equal(nil, node.resolve('/test/somename.page#othertest', nil))
     assert_equal(frag_en, node.resolve('/test/somename.page#othertest', 'en'))
