@@ -47,7 +47,10 @@ module Webgen
     # Has the node been created or has it been read from the cache?
     attr_accessor :created
 
-    #TODO(doc): Initializes a new Node instance.
+    #TODO(doc)
+    # path needs to contain full path (including parent), trailing slash of path indicates directory
+    # if cn starts with a #, it indicates a fragment
+    #: Initializes a new Node instance.
     #
     # +parent+ (immutable)::
     #    If this parameter is +nil+, then the new node acts as root. Otherwise, +parent+ has to
@@ -86,6 +89,11 @@ module Webgen
       @meta_info[key]
     end
 
+    # Assigns +value+ to the meta information item for +key+.
+    def []=(key, value)
+      @meta_info[key] = value
+    end
+
     # Returns the node information hash which contains information for processing the node.
     def node_info
       tree.node_info[@absolute_lcn] ||= {}
@@ -98,7 +106,7 @@ module Webgen
     def is_file?; !is_directory? && !is_fragment?; end
 
     # Checks if the node is a fragment.
-    def is_fragment?; @path[0] == ?# end
+    def is_fragment?; @cn[0] == ?# end
 
     # Checks if the node is the root node.
     def is_root?; self == tree.root;  end
