@@ -8,7 +8,7 @@ class TestBlackboard < Test::Unit::TestCase
   end
 
   def test_add_listener
-    assert_raise(RuntimeError) { @blackboard.add_listener(:test, nil) }
+    assert_raise(ArgumentError) { @blackboard.add_listener(:test, nil) }
     assert_raise(ArgumentError) { @blackboard.add_listener(:test, 'not callable') }
     @blackboard.add_listener([:test, :other], proc { throw :called })
     assert_throws(:called) { @blackboard.dispatch_msg(:test) }
@@ -39,12 +39,13 @@ class TestBlackboard < Test::Unit::TestCase
     @blackboard.add_service(:test) { throw :called }
     assert_throws(:called) { @blackboard.invoke(:test) }
     @blackboard.del_service(:test)
-    assert_nothing_thrown { @blackboard.invoke(:test) }
+    assert_raise(ArgumentError) { @blackboard.invoke(:test) }
   end
 
   def test_invoke
     @blackboard.add_service(:test) { throw :called }
     assert_throws(:called) { @blackboard.invoke(:test) }
+    assert_raise(ArgumentError) { @blackboard.invoke(:unknown) }
   end
 
 end

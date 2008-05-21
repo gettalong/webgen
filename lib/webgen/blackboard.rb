@@ -15,7 +15,7 @@ module Webgen
         raise ArgumentError, "The listener needs to respond to 'call'" unless callable_object.respond_to?(:call)
         [msg_names].flatten.compact.each {|name| (@listener[name] ||= []) << callable_object}
       else
-        raise "You have to provide a callback object or a block"
+        raise ArgumentError, "You have to provide a callback object or a block"
       end
     end
 
@@ -48,7 +48,11 @@ module Webgen
 
     # Invoke the service called +service_name+ with the given arguments.
     def invoke(service_name, *args)
-      @services[service_name].call(*args) if @services.has_key?(service_name)
+      if @services.has_key?(service_name)
+        @services[service_name].call(*args)
+      else
+        raise ArgumentError, "No such service named '#{service_name}' available"
+      end
     end
 
   end
