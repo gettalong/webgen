@@ -7,7 +7,8 @@ module Webgen
     autoload :Directory, 'webgen/sourcehandler/directory'
     autoload :Metainfo, 'webgen/sourcehandler/metainfo'
     autoload :Template, 'webgen/sourcehandler/template'
-
+    autoload :Page, 'webgen/sourcehandler/page'
+    autoload :Fragment, 'webgen/sourcehandler/fragment'
 
     class Main
 
