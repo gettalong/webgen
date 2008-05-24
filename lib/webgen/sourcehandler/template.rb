@@ -11,10 +11,6 @@ module Webgen::SourceHandler
     include Webgen::Loggable
     include Base
 
-    def initialize
-      website.blackboard.add_service(:templates_for_node, method(:templates_for_node))
-    end
-
     def create_node(parent, path)
       #TODO: eventually create helper method for creating a page from a path
       begin

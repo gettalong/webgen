@@ -1,4 +1,5 @@
-config = Webgen::WebsiteAccess.website.config
+website = Webgen::WebsiteAccess.website
+config = website.config
 
 # General configuration parameters
 config.website.dir('.', :doc => 'The website directory, always needs to be set! Defaults to current working directory')
@@ -39,6 +40,8 @@ config.sourcehandler.default_meta_info({
                                        }, :doc => "Default meta information for all nodes and for nodes belonging to a specific source handler")
 
 config.sourcehandler.template.default_template('default.template', :doc => 'The name of the default template file of a directory')
+
+website.autoload_service(:templates_for_node, 'Webgen::SourceHandler::Template')
 
 
 # All things regarding output
