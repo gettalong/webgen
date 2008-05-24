@@ -12,7 +12,7 @@ module Webgen
       @old_data = {}
       @new_data = {}
       @volatile = {}
-      @permanent = {}
+      @permanent = {:classes => []}
     end
 
     def [](key)
@@ -29,7 +29,7 @@ module Webgen
 
     def restore(data)
       @old_data, @permanent = *data
-      @permanent[:classes] && @permanent[:classes].each {|klass| instance(klass)}
+      @permanent[:classes].each {|klass| instance(klass)}
     end
 
     def dump
@@ -37,7 +37,7 @@ module Webgen
     end
 
     def instance(name)
-      (@permanent[:classes] ||= Set.new) << name
+      @permanent[:classes] << name unless @permanent[:classes].include?(name)
       @volatile[[:class, name]] ||= constant(name).new
     end
 
