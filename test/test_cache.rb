@@ -42,6 +42,8 @@ class TestCache < Test::Unit::TestCase
     obj = @cache.instance('Hash')
     assert_kind_of(Hash, obj)
     assert_equal(obj, @cache.instance('Hash'))
+    @cache.instance('Array')
+    assert_equal(['Hash', 'Array'], @cache.permanent[:classes])
     dump_and_restore
     assert_not_nil(@cache.volatile[[:class, 'Hash']])
   end
