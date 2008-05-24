@@ -17,10 +17,11 @@ config.sourcehandler.patterns({
                                 'Webgen::SourceHandler::Directory' => ['**/'],
                                 'Webgen::SourceHandler::Metainfo' => ['**/metainfo', '**/*.metainfo'],
                                 'Webgen::SourceHandler::Template' => ['**/*.template'],
+                                'Webgen::SourceHandler::Page' => ['**/*.page'],
                               }, :doc => 'Source handler to path pattern map')
 config.sourcehandler.invoke({
                               1 => ['Webgen::SourceHandler::Directory', 'Webgen::SourceHandler::Metainfo', 'Webgen::SourceHandler::Directory'],
-                              5 => ['Webgen::SourceHandler::Copy', 'Webgen::SourceHandler::Template']
+                              5 => ['Webgen::SourceHandler::Copy', 'Webgen::SourceHandler::Template', 'Webgen::SourceHandler::Page']
                             }, :doc => 'All source handlers listed here are used by webgen and invoked according to their priority setting')
 config.sourcehandler.casefold(true, :doc => 'Specifies whether path are considered to be case-sensitive')
 config.sourcehandler.use_hidden_files(false, :doc => 'Specifies whether hidden files (those starting with a dot) are used')
@@ -36,12 +37,18 @@ TODO:put this info into the user docs
 config.sourcehandler.default_meta_info({
                                          :all => {
                                            'output_path_style' => [:parent, :cnbase, ['.', :lang], :ext]
+                                         },
+                                         'Webgen::SourceHandler::Page' => {
+                                           'fragments_in_menu' => true
                                          }
                                        }, :doc => "Default meta information for all nodes and for nodes belonging to a specific source handler")
 
 config.sourcehandler.template.default_template('default.template', :doc => 'The name of the default template file of a directory')
 
 website.autoload_service(:templates_for_node, 'Webgen::SourceHandler::Template')
+
+website.autoload_service(:create_fragment_nodes, 'Webgen::SourceHandler::Fragment')
+website.autoload_service(:parse_html_headers, 'Webgen::SourceHandler::Fragment')
 
 
 # All things regarding output
