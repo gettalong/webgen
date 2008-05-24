@@ -48,6 +48,12 @@ module Webgen
       @config_block = block
     end
 
+    # Defines a service +service_name+ provided by the instance of +klass+. The parameter +method+
+    # needs to define the method which should be invoked when the service is invoked.
+    def autoload_service(service_name, klass, method = service_name)
+      blackboard.add_service(service_name) {|*args| cache.instance(klass).send(method, *args)}
+    end
+
     # Loads all plugin and configuration information.
     def init
       with_thread_var do
