@@ -22,9 +22,7 @@ module Webgen::SourceHandler
     def content(node)
       io = website.blackboard.invoke(:source_paths)[node.node_info[:src]].io
       if node.node_info[:preprocessor]
-        #TODO: need to pass in the node in the options -> redo this once a content processors needs
-        #this functionality
-        context = Webgen::ContentProcessor::Context.new(io.read)
+        context = Webgen::ContentProcessor::Context.new(io.read, :chain => [node])
         website.blackboard.invoke(:content_processor, node.node_info[:preprocessor]).call(context)
         context.content
       else
