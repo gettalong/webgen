@@ -18,7 +18,7 @@ class TestSourceHandlerPage < Test::Unit::TestCase
     @obj = Webgen::SourceHandler::Page.new
     @root = Webgen::Node.new(Webgen::Tree.new.dummy_root, 'test/', 'test')
     @path = path_with_meta_info('/index.page') {StringIO.new('content')}
-    @path.meta_info.update({'lang'=>'eo', 'test'=>'yes', 'orderInfo'=>6})
+    @path.meta_info.update({'lang'=>'eo', 'test'=>'yes', 'order_info'=>6})
   end
 
   def test_create_node
@@ -29,7 +29,7 @@ class TestSourceHandlerPage < Test::Unit::TestCase
     assert_equal(@obj.class.name, node.node_info[:processor])
     assert_equal('Index', node['title'])
     assert_equal('yes', node['test'])
-    assert_equal(6, node['orderInfo'])
+    assert_equal(6, node['order_info'])
     assert_equal(Webgen::LanguageManager.language_for_code('epo'), node.lang)
 
     assert_nil(@obj.create_node(@root, @path.dup))
