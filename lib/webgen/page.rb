@@ -24,7 +24,7 @@ module Webgen
     #
     # Returns the given context with the rendered content.
     def render(context)
-      context.content = @content.dup
+      context[:content] = @content.dup
       context[:block] = self
       @options['pipeline'].to_s.split(/,/).each do |processor|
         raise "No such content processor available: #{processor}" unless context[:processors].has_key?(processor)
