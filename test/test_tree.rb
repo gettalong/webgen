@@ -16,7 +16,7 @@ class TestTree < Test::Unit::TestCase
   end
 
   def test_root
-    root = Webgen::Node.new(@tree.dummy_root, '/')
+    root = Webgen::Node.new(@tree.dummy_root, '/', '/')
     assert_equal(root, @tree.root)
   end
 
@@ -34,9 +34,9 @@ class TestTree < Test::Unit::TestCase
     nrcalls = 0
     @website.blackboard.add_listener(:before_node_deleted) { nrcalls += 1 }
 
-    root = Webgen::Node.new(@tree.dummy_root, '/')
-    file = Webgen::Node.new(root, 'testfile')
-    dir = Webgen::Node.new(root, 'testdir/')
+    root = Webgen::Node.new(@tree.dummy_root, '/', '/')
+    file = Webgen::Node.new(root, 'testfile', 'testfile')
+    dir = Webgen::Node.new(root, 'testdir/', 'testdir')
 
     @tree.delete_node(@tree.dummy_root)
     assert_not_nil(@tree[''])

@@ -28,9 +28,9 @@ class TestSourceHandlerTemplate < Test::Unit::TestCase
 
   def test_templates_for_node
     root = Webgen::Node.new(Webgen::Tree.new.dummy_root, 'test/', 'test', {'lang' => 'de', :test => :value})
-    default_template = Webgen::Node.new(root, 'default.template')
+    default_template = Webgen::Node.new(root, 'default.template', 'default.template')
     default_de_template = Webgen::Node.new(root, 'default.de.template', 'default.template', {'lang' => 'de'})
-    other_template = Webgen::Node.new(root, 'other.template')
+    other_template = Webgen::Node.new(root, 'other.template', 'other.template')
     stopped_template = Webgen::Node.new(root, 'stopped.html', 'stopped.page', { 'template' => nil})
     invalid_template = Webgen::Node.new(root, 'invalid.template', 'invalid.template', {'template' => 'invalidity'})
     chained_template = Webgen::Node.new(root, 'chained.template', 'chained.template', {'template' => 'other.template'})
@@ -49,8 +49,8 @@ class TestSourceHandlerTemplate < Test::Unit::TestCase
 
   def test_default_template
     root = Webgen::Node.new(Webgen::Tree.new.dummy_root, 'test/', 'test', {'lang' => 'de', :test => :value})
-    dir = Webgen::Node.new(root, 'dir/')
-    template = Webgen::Node.new(root, 'default.template')
+    dir = Webgen::Node.new(root, 'dir/', 'dir')
+    template = Webgen::Node.new(root, 'default.template', 'default.template')
 
     assert_equal(template, @obj.default_template(root, nil))
     assert_equal(template, @obj.default_template(dir, nil))
