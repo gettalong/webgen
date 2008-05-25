@@ -63,6 +63,12 @@ class TestTagBase < Test::Unit::TestCase
     assert_equal('test3', @obj.param('testtagbase.testtag.param3'))
     output.rewind; assert_no_match(/Not all mandatory parameters/, output.read)
     output.rewind; assert_match(/Invalid parameter 'invalid'/, output.read)
+
+    @website.config.data.delete('testtagbase.testtag.param3')
+    @website.config.options.delete('testtagbase.testtag.param3')
+    output.string = ''
+    set_params('default_value')
+    output.rewind; assert_match(/No default mandatory parameter specified for tag/, output.read)
   end
 
   def test_call

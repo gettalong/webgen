@@ -1,4 +1,6 @@
 require 'yaml'
+require 'webgen/sourcehandler/base'
+require 'webgen/websiteaccess'
 
 module Webgen::SourceHandler
 

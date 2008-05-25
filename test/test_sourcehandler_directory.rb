@@ -18,5 +18,8 @@ class TestSourceHandlerDirectory < Test::Unit::TestCase
     assert_equal(:other, node[:key])
   end
 
+  def test_content
+    assert_equal('', Webgen::SourceHandler::Directory.new.content(nil))
+  end
 
 end

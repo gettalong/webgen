@@ -150,7 +150,7 @@ module Webgen::Tag::Base
   def create_from_string(value, params, node)
     param_name = params.find {|k| website.config.options[k][:mandatory] == 'default'}
     if param_name.nil?
-      log(:error) { "No default mandatory parameter specified for tag '#{plugin_name}' but set in <#{node.absolute_lcn}>"}
+      log(:error) { "No default mandatory parameter specified for tag '#{self.class.name}' but set in <#{node.absolute_lcn}>"}
       {}
     else
       {param_name => value}
