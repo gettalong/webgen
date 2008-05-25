@@ -20,7 +20,7 @@ module Webgen
     def initialize
       @node_access = {:alcn => {}, :acn => {}, :path => {}}
       @node_info = {}
-      @dummy_root = Node.new(self, '')
+      @dummy_root = Node.new(self, '', '')
     end
 
     # The root node of the tree.
