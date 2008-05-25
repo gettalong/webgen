@@ -32,7 +32,7 @@ module Webgen::SourceHandler
                       else
                         use_lang_part
                       end
-      style.collect do |part|
+      result = style.collect do |part|
         case part
         when String  then part
         when :lang   then use_lang_part ? path.meta_info['lang'] : ''
@@ -42,7 +42,8 @@ module Webgen::SourceHandler
         when Array   then part.include?(:lang) && !use_lang_part ? '' : construct_output_path(parent, path, part, use_lang_part)
         else ''
         end
-      end.join('')
+      end
+      result.join('')
     end
     private :construct_output_path
 

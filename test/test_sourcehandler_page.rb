@@ -3,6 +3,19 @@ require 'helper'
 require 'webgen/sourcehandler/page'
 require 'stringio'
 
+class TestBlock < Test::Unit::TestCase
+
+  def test_render
+    block = Webgen::Block.new('content', 'some content', {'pipeline' => 'test'})
+    context = {:processors => {}}
+    assert_raise(RuntimeError) { block.render(context) }
+    context[:processors]['test'] = lambda {|context| context[:content] = context[:content].reverse + context[:block].name }
+    assert_equal('some content'.reverse + 'content', block.render(context)[:content])
+  end
+
+end
+
+
 class TestSourceHandlerPage < Test::Unit::TestCase
 
   include Test::WebsiteHelper
@@ -33,6 +46,8 @@ class TestSourceHandlerPage < Test::Unit::TestCase
     assert_equal(Webgen::LanguageManager.language_for_code('epo'), node.lang)
 
     assert_nil(@obj.create_node(@root, @path.dup))
+
+    assert_raise(RuntimeError) { @obj.create_node(@root, path_with_meta_info('/other.page') { StringIO.new("---\:dfk")}) }
   end
 
   def test_content
