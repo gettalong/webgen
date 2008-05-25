@@ -32,7 +32,7 @@ class TestContentProcessorTags < Test::Unit::TestCase
   end
 
   def test_call
-    context = Webgen::ContentProcessor::Context.new('', :chain => [Webgen::Tree.new.dummy_root])
+    context = Webgen::ContentProcessor::Context.new(:chain => [Webgen::Tree.new.dummy_root])
     context.content = "{test: }"
     assert_equal('', @obj.call(context).content)
 
