@@ -40,7 +40,6 @@ module Webgen
                      :file
                    end
             output.write(node.path, content, type)
-            content.close if content.kind_of?(IO) && !content.closed?
           end
           node.dirty = false
           node.created = false

@@ -38,7 +38,7 @@ class TestSourceHandlerCopy < Test::Unit::TestCase
       {'/default.css' => path_with_meta_info('/default.css') {StringIO.new('# header')}}
     end
     @without.node_info[:src] = @with.node_info[:src] = '/default.css'
-    assert_kind_of(StringIO, @without.content)
+    assert_kind_of(Webgen::Path::SourceIO, @without.content)
     assert_equal('# header'.reverse, @with.content)
   end
 
