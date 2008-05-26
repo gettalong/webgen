@@ -1,3 +1,6 @@
+require 'webgen/websiteaccess'
+require 'webgen/path'
+
 module Webgen
 
   class Source::FileSystem
@@ -5,18 +8,14 @@ module Webgen
     class Path < Webgen::Path
 
       def initialize(path, fs_path)
-        super(path)
+        super(path) { File.open(fs_path, 'r') }
         @fs_path = fs_path
         WebsiteAccess.website.cache[[:fs_path, @fs_path]] = File.mtime(@fs_path)
       end
 
-      def io(&block)
-        File.open(@fs_path, 'r', &block)
-      end
-
       def changed?
         data = WebsiteAccess.website.cache[[:fs_path, @fs_path]]
-        !data || File.mtime(@fs_path) > data
+        File.mtime(@fs_path) >= data
       end
 
     end

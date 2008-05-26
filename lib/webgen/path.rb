@@ -4,6 +4,27 @@ module Webgen
 
   class Path
 
+    class SourceIO
+
+      def initialize(&block)
+        @block = block
+        raise ArgumentError, 'Need to provide a block which returns an IO object' if @block.nil?
+      end
+
+      def stream
+        io = @block.call
+        yield(io)
+      ensure
+        io.close
+      end
+
+      def data
+        stream {|io| io.read}
+      end
+
+    end
+
+
     include Comparable
 
     # The source path.
@@ -26,7 +47,7 @@ module Webgen
 
     def initialize(path, &ioblock)
       @meta_info = {}
-      @ioblock = ioblock if block_given?
+      @io = SourceIO.new(&ioblock) if block_given?
       analyse(path)
     end
 
@@ -43,11 +64,11 @@ module Webgen
       temp
     end
 
-    def io(&block)
-      if @ioblock
-        @ioblock.call(block)
+    def io
+      if @io
+        @io
       else
-         raise "No IO object defined for the path #{self}"
+        raise "No IO object defined for the path #{self}"
       end
     end
 

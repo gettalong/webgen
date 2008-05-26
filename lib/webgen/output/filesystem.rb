@@ -39,7 +39,9 @@ module Webgen::Output
         if data.kind_of?(String)
           File.open(dest, 'wb') {|f| f.write(data) }
         else
-          File.open(dest, 'wb') {|f| FileUtils.copy_stream(data, f) }
+          data.stream do |source|
+            File.open(dest, 'wb') {|f| FileUtils.copy_stream(source, f) }
+          end
         end
       else
         raise "Unsupported path type '#{type}' for #{path}"

@@ -51,8 +51,9 @@ class TestPath < Test::Unit::TestCase
   def test_io
     p = Webgen::Path.new('test.de.page')
     assert_raise(RuntimeError) { p.io }
-    p = Webgen::Path.new('test.de.page') { throw :called }
-    assert_throws(:called) { p.io }
+    p = Webgen::Path.new('test.de.page') { StringIO.new('hallo') }
+    assert_equal('hallo', p.io.data)
+    assert_equal('hallo', p.io.stream {|f| f.read })
   end
 
   def test_lcn
