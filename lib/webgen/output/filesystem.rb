@@ -24,7 +24,7 @@ module Webgen::Output
     def delete(path)
       dest = File.join(@root, path)
       if File.directory?(dest)
-        FileUtils.rmdir(dest)
+        FileUtils.rm_rf(dest)
       else
         FileUtils.rm(dest)
       end
