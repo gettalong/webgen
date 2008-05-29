@@ -155,7 +155,7 @@ EOF
 
   def test_default_values
     valid = YAML::load(VALID)
-    d = Webgen::Page.from_data(valid[0]['in'], 'blocks' => {'1' => { 'name' => 'other1'}, '2' => { 'name' => 'block7'}})
+    d = Webgen::Page.from_data(valid[0]['in'], 'blocks' => {1 => { 'name' => 'other1'}, 2 => { 'name' => 'block7'}})
     assert_equal({'key' => 'value'}, d.meta_info)
     assert_equal('other1', d.blocks[1].name)
     assert_equal('block7', d.blocks[2].name)
