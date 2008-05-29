@@ -122,6 +122,11 @@ module Webgen
       "<##{self.class.name}: alcn=#{@absolute_lcn}>"
     end
 
+    # Returns +true+ if the alcn matches the pattern. See File.fnmatch for useable patterns.
+    def =~(pattern)
+      File.fnmatch(pattern, @absolute_lcn, File::FNM_DOTMATCH|File::FNM_CASEFOLD|File::FNM_PATHNAME)
+    end
+
     # Constructs the absolute (localized) canonical name by using the +parent+ node and +name+
     # (which can be a cn or an lcn). The +type+ can be either +:alcn+ or +:acn+.
     def self.absolute_name(parent, name, type)
