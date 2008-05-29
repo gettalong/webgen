@@ -40,6 +40,9 @@ config.sourcehandler.default_meta_info({
                                          },
                                          'Webgen::SourceHandler::Page' => {
                                            'fragments_in_menu' => true
+                                         },
+                                         'Webgen::SourceHandler::Metainfo' => {
+                                           'blocks' => {1 => {'name' => 'paths'}, 2 => {'name' => 'alcn'}}
                                          }
                                        }, :doc => "Default meta information for all nodes and for nodes belonging to a specific source handler")
 
