@@ -90,7 +90,7 @@ module Webgen
           raise(WebgenPageFormatError, "Found invalid blocks starting line") if content =~ /\A---/ || md.nil?
           options = Hash[*md[1].to_s.scan(/(\w+):([^\s]*)/).flatten]
           options = (meta_info['blocks']['default'] || {} rescue {}).
-            merge((meta_info['blocks'][(index+1).to_s] || {} rescue {})).
+            merge((meta_info['blocks'][index+1] || {} rescue {})).
             merge(options)
 
           name = options.delete('name') || (index == 0 ? 'content' : 'block' + (index + 1).to_s)
