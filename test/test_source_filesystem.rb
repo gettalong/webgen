@@ -13,7 +13,7 @@ class TestSourceFileSystemPath < Test::Unit::TestCase
 
   def test_changed?
     path = Webgen::Source::FileSystem::Path.new('/test.rb', __FILE__)
-    assert(path.changed?)
+    assert(!path.changed?)
     @website.cache.instance_eval { @old_data[[:fs_path, __FILE__]] = File.mtime(__FILE__) - 1 }
     assert(path.changed?)
     @website.cache.instance_eval { @old_data[[:fs_path, __FILE__]] = File.mtime(__FILE__) + 1 }

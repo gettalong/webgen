@@ -15,7 +15,7 @@ module Webgen
 
       def changed?
         data = WebsiteAccess.website.cache[[:fs_path, @fs_path]]
-        File.mtime(@fs_path) >= data
+        File.mtime(@fs_path) > data
       end
 
     end
