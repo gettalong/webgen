@@ -55,4 +55,14 @@ class TestSourceHandlerBase < Test::Unit::TestCase
     assert_nil(@obj.content(nil))
   end
 
+  def test_page_from_path
+    path = path_with_meta_info('/other.page', {'key' => 'value'}) { StringIO.new("---\nkey: value1\n---\ncontent")}
+    page = @obj.page_from_path(path)
+    assert_equal('content', page.blocks['content'].content)
+    assert_equal('value1', path.meta_info['key'])
+
+    path = path_with_meta_info('/other.page') { StringIO.new("---\:dfk")}
+    assert_raise(RuntimeError) { @obj.page_from_path(path) }
+  end
+
 end

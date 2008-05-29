@@ -12,17 +12,9 @@ module Webgen::SourceHandler
     include Base
 
     def create_node(parent, path)
-      #TODO: eventually create helper method for creating a page from a path
-      begin
-        page = Webgen::Page.from_data(path.io.data, path.meta_info)
-      rescue Webgen::WebgenPageFormatError => e
-        raise "Error reading source path <#{path}>: #{e.message}"
-      end
-      path.meta_info = page.meta_info
+      page = page_from_path(path)
       super(parent, path) do |node|
         node.node_info[:page] = page
-        #TODO: maybe the following is still needed, check later
-        #node.node_info[:no_output_file] = true
       end
     end
 
