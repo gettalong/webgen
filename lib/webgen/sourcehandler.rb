@@ -118,6 +118,8 @@ module Webgen
         paths_to_delete = Set.new
         paths_not_to_delete = Set.new
         tree.node_access[:alcn].values.each do |node|
+          next if node == tree.dummy_root
+
           deleted = !find_all_source_paths.include?(node.node_info[:src])
           if !node.created && (deleted ||
                                find_all_source_paths[node.node_info[:src]].changed? ||
