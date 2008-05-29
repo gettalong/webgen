@@ -12,12 +12,7 @@ module Webgen::SourceHandler
     include Base
 
     def create_node(parent, path)
-      begin
-        page = Webgen::Page.from_data(path.io.data, path.meta_info)
-      rescue Webgen::WebgenPageFormatError => e
-        raise "Error reading source path <#{path}>: #{e.message}"
-      end
-      path.meta_info = page.meta_info
+      page = page_from_path(path)
       path.meta_info['lang'] ||= website.config['website.lang']
       path.ext = 'html' if path.ext == 'page'
 

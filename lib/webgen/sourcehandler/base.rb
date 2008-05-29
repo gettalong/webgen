@@ -47,10 +47,14 @@ module Webgen::SourceHandler
     end
     private :construct_output_path
 
+    # Checks if the node alcn and output path which would be created by <tt>create_node(parent,
+    # path)</tt> exists. The +output_path+ to check for can individually be set.
     def node_exists?(parent, path, output_path = self.output_path(parent, path))
       parent.tree[Webgen::Node.absolute_name(parent, path.lcn, :alcn)] || parent.tree[output_path, :path]
     end
 
+    # Creates and returns a node under +parent+ from +path+ if it does not already exists. The
+    # created node is yielded if a block is given.
     def create_node(parent, path)
       opath = output_path(parent, path)
       if !node_exists?(parent, path, opath)
@@ -61,8 +65,21 @@ module Webgen::SourceHandler
       end
     end
 
+    # The default +content+ method which just returns +nil+.
     def content(node)
       nil
+    end
+
+    # Utility method for creating a +Webgen::Page+ object from the +path+. Also updates
+    # <tt>path.meta_info</tt> with the meta info from the page.
+    def page_from_path(path)
+      begin
+        page = Webgen::Page.from_data(path.io.data, path.meta_info)
+      rescue Webgen::WebgenPageFormatError => e
+        raise "Error reading source path <#{path}>: #{e.message}"
+      end
+      path.meta_info = page.meta_info
+      page
     end
 
   end

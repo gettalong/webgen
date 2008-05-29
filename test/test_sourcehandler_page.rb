@@ -46,8 +46,6 @@ class TestSourceHandlerPage < Test::Unit::TestCase
     assert_equal(Webgen::LanguageManager.language_for_code('epo'), node.lang)
 
     assert_nil(@obj.create_node(@root, @path.dup))
-
-    assert_raise(RuntimeError) { @obj.create_node(@root, path_with_meta_info('/other.page') { StringIO.new("---\:dfk")}) }
   end
 
   def test_content
