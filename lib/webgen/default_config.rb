@@ -61,7 +61,8 @@ config.output ["Webgen::Output::FileSystem", 'output'], :doc => 'The class which
 # All things regarding content processors
 config.contentprocessor.map({
                               'maruku' => 'Webgen::ContentProcessor::Maruku',
-                              'tags' => 'Webgen::ContentProcessor::Tags'
+                              'tags' => 'Webgen::ContentProcessor::Tags',
+                              'blocks' => 'Webgen::ContentProcessor::Blocks'
                             }, :doc => 'Content processor name to class map')
 
 Webgen::WebsiteAccess.website.blackboard.add_service(:content_processor_names, Webgen::ContentProcessor.method(:list))
