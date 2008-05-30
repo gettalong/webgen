@@ -30,6 +30,9 @@ class TestContentProcessorContext < Test::Unit::TestCase
     assert_equal(:value, @context[:key])
     @context[:key] = :newvalue
     assert_equal(:newvalue, @context[:key])
+    assert_equal(:last, @context.dest_node)
+    @context[:dest_node] = :other
+    assert_equal(:other, @context.dest_node)
   end
 
 end
