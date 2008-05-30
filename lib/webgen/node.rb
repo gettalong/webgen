@@ -2,6 +2,7 @@ require 'webgen/websiteaccess'
 require 'webgen/loggable'
 require 'webgen/path'
 require 'uri'
+require 'set'
 
 module Webgen
 
@@ -111,8 +112,10 @@ module Webgen
     # Checks if the node is the root node.
     def is_root?; self == tree.root;  end
 
-    # Returns +true+ if the node has changed since the last webgen run.
+    # Returns +true+ if the node has changed since the last webgen run and set +dirty+
+    # appropriately.
     def changed?
+      @dirty = node_info[:used_nodes].any? {|n| n != @absolute_lcn && (!tree[n] || tree[n].changed?)} unless @dirty
       website.blackboard.dispatch_msg(:node_changed?, self) unless @dirty
       @dirty
     end
@@ -195,6 +198,8 @@ module Webgen
 
       @tree.register_node(self)
       @parent.children << self unless @parent == @tree
+
+      self.node_info[:used_nodes] = Set.new
     end
 
     # Delegates missing methods to a processor. The current node is placed into the argument array as
