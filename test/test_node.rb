@@ -23,7 +23,7 @@ class TestNode < Test::Unit::TestCase
       assert(node.dirty)
       assert(node.created)
       assert_equal(mi, node.meta_info)
-      assert_equal({}, node.node_info)
+      assert_equal({:used_nodes => Set.new}, node.node_info)
       mi.each {|k,v| assert_equal(v, node[k])}
     end
 
@@ -140,6 +140,13 @@ class TestNode < Test::Unit::TestCase
     @website.blackboard.add_listener(:node_changed?) {|n| assert(node, n); node.dirty = true; calls += 1}
     node.changed?
     assert_equal(1, calls)
+    node.changed?
+    assert_equal(1, calls)
+
+    node.dirty = false
+    node.node_info[:used_nodes] << node.absolute_lcn
+    node.node_info[:used_nodes] << 'unknown alcn'
+    node.node_info[:used_nodes] << @tree.dummy_root.absolute_lcn
     node.changed?
     assert_equal(1, calls)
   end
