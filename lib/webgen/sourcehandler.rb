@@ -82,6 +82,7 @@ module Webgen
             sh = website.cache.instance(shn)
             paths_for_handler(shn, paths).sort.each do |path|
               parent_dir = path.directory.split('/').collect {|p| Path.new(p).cn}.join('/')
+              parent_dir += '/' if path != '/' && parent_dir == ''
               create_nodes(tree, parent_dir, path, sh)
             end
           end
