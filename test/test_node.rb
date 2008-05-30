@@ -169,4 +169,10 @@ class TestNode < Test::Unit::TestCase
     assert(node !~ '**/*.test')
   end
 
+  def test_absolute_name
+    root = Webgen::Node.new(@tree.dummy_root, '/', '/')
+    node = Webgen::Node.new(root, 'somepath', 'somefile.html', {'lang' => 'de'})
+    assert_equal('/somefile.de.html', node.absolute_lcn)
+  end
+
 end
