@@ -3,6 +3,7 @@ require 'webgen/loggable'
 require 'webgen/path'
 require 'uri'
 require 'set'
+require 'pathname'
 
 module Webgen
 
@@ -149,6 +150,7 @@ module Webgen
       url
     end
 
+
     # Returns the node with the same canonical name but in language +lang+ or, if no such node exists,
     # an unlocalized version of the node. If no such node is found either, +nil+ is returned.
     def in_lang(lang)
@@ -161,7 +163,6 @@ module Webgen
         n.lang.nil?
       end
     end
-
 
     # Returns the node representing the given +path+ which can be an acn/alcn. The path can be
     # absolute (i.e. starting with a slash) or relative to the current node. If no node exists for
@@ -182,6 +183,26 @@ module Webgen
       else
         (node = @tree[path, :acn]) && node.in_lang(lang)
       end
+    end
+
+    # Returns the relative path to the given path +other+. The parameter +other+ can be a Node or a
+    # String.
+    def route_to(other)
+      my_url = self.class.url(@path)
+      other_url = if other.kind_of?(Node)
+                    self.class.url(other.path)
+                  elsif other.kind_of?(String)
+                    my_url + other
+                  else
+                    raise ArgumentError, "improper class for argument"
+                  end
+
+      # resolve any '.' and '..' paths in the target url
+      if other_url.path =~ /\/\.\.?\// && other_url.scheme == 'webgen'
+        other_url.path = Pathname.new(other_url.path).cleanpath.to_s
+      end
+      route = my_url.route_to(other_url).to_s
+      (route == '' ? File.basename(self.path) : route)
     end
 
     #######
