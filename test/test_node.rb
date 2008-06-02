@@ -12,6 +12,24 @@ class TestNode < Test::Unit::TestCase
     @tree = Webgen::Tree.new
   end
 
+  def create_default_nodes
+    {
+      :root => node = Webgen::Node.new(@tree.dummy_root, '/', '/'),
+      :somename_en => child_en = Webgen::Node.new(node, '/somename.en.html', 'somename.page', {'lang' => 'en'}),
+      :somename_de => child_de = Webgen::Node.new(node, '/somename.de.html', 'somename.page', {'lang' => 'de'}),
+      :other => Webgen::Node.new(node, '/other.html', 'other.page', {}),
+      :other_en => Webgen::Node.new(node, '/other1.html', 'other.page', {'lang' => 'en'}),
+      :somename_en_frag => frag_en = Webgen::Node.new(child_en, '/somename.en.html#data', '#othertest'),
+      :somename_de_frag => Webgen::Node.new(child_de, '/somename.de.html#data1', '#othertest'),
+      :somename_en_fragnest => Webgen::Node.new(frag_en, '/somename.en.html#nested', '#nestedpath'),
+      :dir => dir = Webgen::Node.new(node, '/dir/', 'dir/'),
+      :dir_file => dir_file = Webgen::Node.new(dir, '/dir/file.html', 'file.html'),
+      :dir_file_frag => Webgen::Node.new(dir_file, '/dir/file.html#frag', '#frag'),
+      :dir2 => dir2 = Webgen::Node.new(node, '/dir2/', 'dir2/'),
+      :dir2_file => Webgen::Node.new(dir2, '/dir2/file.html', 'file.html'),
+    }
+  end
+
   def test_initialize
     check_proc = proc do |node, parent, path, cn, lcn, alcn, lang, mi|
       assert_equal(parent, node.parent)
@@ -42,14 +60,12 @@ class TestNode < Test::Unit::TestCase
   end
 
   def test_type_checkers
-    node = Webgen::Node.new(@tree.dummy_root, 'test/', 'test', {'lang' => 'de', :test => :value})
-    child = Webgen::Node.new(node, 'somename.html', 'somename.page', {'lang' => 'de'})
-    frag = Webgen::Node.new(child, '#data', '#othertest')
-    assert(node.is_directory?)
-    assert(child.is_file?)
-    assert(frag.is_fragment?)
-    assert(node.is_root?)
-    assert(!child.is_root?)
+    nodes = create_default_nodes
+    assert(nodes[:root].is_directory?)
+    assert(nodes[:somename_en].is_file?)
+    assert(nodes[:somename_en_frag].is_fragment?)
+    assert(nodes[:root].is_root?)
+    assert(!nodes[:somename_en].is_root?)
   end
 
   def test_meta_info_assignment
@@ -61,70 +77,56 @@ class TestNode < Test::Unit::TestCase
   end
 
   def test_in_lang
-    node = Webgen::Node.new(@tree.dummy_root, 'test/', 'test', {'lang' => 'de', :test => :value})
-    child_de = Webgen::Node.new(node, 'somename.html', 'somename.page', {'lang' => 'de'})
-    child_en = Webgen::Node.new(node, 'somename1.html', 'somename.page', {'lang' => 'en'})
-    other = Webgen::Node.new(node, 'other.html', 'other.page', {})
-    other_en = Webgen::Node.new(node, 'other1.html', 'other.page', {'lang' => 'en'})
-    frag_en = Webgen::Node.new(child_en, '#data', '#othertest')
-    frag_de = Webgen::Node.new(child_de, '#data1', '#othertest')
+    nodes = create_default_nodes
 
-    assert_equal(child_de, child_en.in_lang('de'))
-    assert_equal(child_en, child_en.in_lang('en'))
-    assert_equal(child_en, child_de.in_lang('en'))
-    assert_equal(nil, child_de.in_lang('fr'))
-    assert_equal(nil, child_en.in_lang(nil))
+    assert_equal(nodes[:somename_de], nodes[:somename_en].in_lang('de'))
+    assert_equal(nodes[:somename_en], nodes[:somename_en].in_lang('en'))
+    assert_equal(nodes[:somename_en], nodes[:somename_de].in_lang('en'))
+    assert_equal(nil, nodes[:somename_de].in_lang('fr'))
+    assert_equal(nil, nodes[:somename_en].in_lang(nil))
 
-    assert_equal(other_en, other.in_lang('en'))
-    assert_equal(other, other.in_lang('de'))
-    assert_equal(other, other.in_lang(nil))
-    assert_equal(other, other_en.in_lang(nil))
-    assert_equal(other, other_en.in_lang('de'))
+    assert_equal(nodes[:other_en], nodes[:other].in_lang('en'))
+    assert_equal(nodes[:other], nodes[:other].in_lang('de'))
+    assert_equal(nodes[:other], nodes[:other].in_lang(nil))
+    assert_equal(nodes[:other], nodes[:other_en].in_lang(nil))
+    assert_equal(nodes[:other], nodes[:other_en].in_lang('de'))
 
-    assert_equal(nil, frag_en.in_lang(nil))
-    assert_equal(frag_en, frag_en.in_lang('en'))
-    assert_equal(frag_de, frag_en.in_lang('de'))
+    assert_equal(nil, nodes[:somename_en_frag].in_lang(nil))
+    assert_equal(nodes[:somename_en_frag], nodes[:somename_en_frag].in_lang('en'))
+    assert_equal(nodes[:somename_de_frag], nodes[:somename_en_frag].in_lang('de'))
   end
 
   def test_resolve
-    #TODO: remove duplication
-    node = Webgen::Node.new(@tree.dummy_root, 'test/', 'test', {'lang' => 'de', :test => :value})
-    child_de = Webgen::Node.new(node, 'somename.html', 'somename.page', {'lang' => 'de'})
-    child_en = Webgen::Node.new(node, 'somename1.html', 'somename.page', {'lang' => 'en'})
-    other = Webgen::Node.new(node, 'other.html', 'other.page', {})
-    other_en = Webgen::Node.new(node, 'other1.html', 'other.page', {'lang' => 'en'})
-    frag_en = Webgen::Node.new(child_en, '/some/fullpath.html#data', '#othertest')
-    frag_de = Webgen::Node.new(child_de, '#data1', '#othertest')
-    frag_nest_en = Webgen::Node.new(frag_en, '#nested', '#nestedpath')
+    nodes = create_default_nodes
 
-    [node, child_de, child_en, other].each do |n|
+    [nodes[:root], nodes[:somename_de], nodes[:somename_en], nodes[:other]].each do |n|
       assert_equal(nil, n.resolve('somename.page', nil))
-      assert_equal(child_en, n.resolve('somename.page', 'en'))
-      assert_equal(child_de, n.resolve('somename.page', 'de'))
+      assert_equal(nodes[:somename_en], n.resolve('somename.page', 'en'))
+      assert_equal(nodes[:somename_de], n.resolve('somename.page', 'de'))
       assert_equal(nil, n.resolve('somename.page', 'fr'))
-      assert_equal(child_en, n.resolve('somename.en.page', nil))
-      assert_equal(child_en, n.resolve('somename.en.page', 'en'))
-      assert_equal(child_en, n.resolve('somename.en.page', 'de'))
+      assert_equal(nodes[:somename_en], n.resolve('somename.en.page', nil))
+      assert_equal(nodes[:somename_en], n.resolve('somename.en.page', 'en'))
+      assert_equal(nodes[:somename_en], n.resolve('somename.en.page', 'de'))
       assert_equal(nil, n.resolve('somename.fr.page', 'de'))
 
-      assert_equal(other, n.resolve('other.page', nil))
-      assert_equal(other, n.resolve('other.page', 'fr'))
-      assert_equal(other_en, n.resolve('other.page', 'en'))
-      assert_equal(other_en, n.resolve('other.en.page', nil))
-      assert_equal(other_en, n.resolve('other.en.page', 'de'))
+      assert_equal(nodes[:other], n.resolve('other.page', nil))
+      assert_equal(nodes[:other], n.resolve('other.page', 'fr'))
+      assert_equal(nodes[:other_en], n.resolve('other.page', 'en'))
+      assert_equal(nodes[:other_en], n.resolve('other.en.page', nil))
+      assert_equal(nodes[:other_en], n.resolve('other.en.page', 'de'))
       assert_equal(nil, n.resolve('other.fr.page', nil))
       assert_equal(nil, n.resolve('other.fr.page', 'en'))
     end
 
-    assert_equal(frag_en, child_en.resolve('#othertest', 'de'))
-    assert_equal(frag_en, child_en.resolve('#othertest', nil))
-    assert_equal(frag_nest_en, child_en.resolve('#nestedpath', nil))
+    assert_equal(nodes[:somename_en_frag], nodes[:somename_en].resolve('#othertest', 'de'))
+    assert_equal(nodes[:somename_en_frag], nodes[:somename_en].resolve('#othertest', nil))
+    assert_equal(nodes[:somename_en_fragnest], nodes[:somename_en].resolve('#nestedpath', nil))
 
-    assert_equal(nil, node.resolve('/test/somename.page#othertest', nil))
-    assert_equal(frag_en, node.resolve('/test/somename.page#othertest', 'en'))
-    assert_equal(frag_de, node.resolve('/test/somename.page#othertest', 'de'))
-    assert_equal(frag_en, node.resolve('/test/somename.en.page#othertest'))
-    assert_equal(frag_de, node.resolve('/test/somename.de.page#othertest'))
+    assert_equal(nil, nodes[:root].resolve('/somename.page#othertest', nil))
+    assert_equal(nodes[:somename_en_frag], nodes[:root].resolve('/somename.page#othertest', 'en'))
+    assert_equal(nodes[:somename_de_frag], nodes[:root].resolve('/somename.page#othertest', 'de'))
+    assert_equal(nodes[:somename_en_frag], nodes[:root].resolve('/somename.en.page#othertest'))
+    assert_equal(nodes[:somename_de_frag], nodes[:root].resolve('/somename.de.page#othertest'))
   end
 
   def test_introspection
@@ -173,6 +175,37 @@ class TestNode < Test::Unit::TestCase
     root = Webgen::Node.new(@tree.dummy_root, '/', '/')
     node = Webgen::Node.new(root, 'somepath', 'somefile.html', {'lang' => 'de'})
     assert_equal('/somefile.de.html', node.absolute_lcn)
+  end
+
+  def test_route_to
+    nodes = create_default_nodes
+
+    #arg is Node
+    assert_equal('somename.en.html', nodes[:somename_en].route_to(nodes[:somename_en]))
+    assert_equal('somename.de.html', nodes[:somename_en_frag].route_to(nodes[:somename_de]))
+    assert_equal('file.html#frag', nodes[:dir].route_to(nodes[:dir_file_frag]))
+    assert_equal('#frag', nodes[:dir_file].route_to(nodes[:dir_file_frag]))
+    assert_equal('../dir2/file.html', nodes[:dir_file_frag].route_to(nodes[:dir2_file]))
+    assert_equal('../dir2/file.html', nodes[:dir_file].route_to(nodes[:dir2_file]))
+
+    assert_equal('./', nodes[:somename_en].route_to(nodes[:root]))
+    assert_equal('../', nodes[:dir].route_to(nodes[:root]))
+    assert_equal('dir/', nodes[:somename_en].route_to(nodes[:dir]))
+
+    #arg is String
+    assert_equal('somename.en.html', nodes[:somename_en].route_to('somename.en.html'))
+    assert_equal('../other.html', nodes[:dir_file].route_to('/other.html'))
+    assert_equal('../other', nodes[:dir_file].route_to('../other'))
+    assert_equal('document/file2', nodes[:dir_file_frag].route_to('document/file2'))
+    assert_equal('ftp://test', nodes[:dir].route_to('ftp://test'))
+
+    #test args with '..' and '.': either too many of them or absolute path given
+    assert_equal('../dir2', nodes[:dir_file].route_to('../../../dir2/./'))
+    assert_equal('../file', nodes[:dir_file].route_to('/dir/../file'))
+    assert_equal('file', nodes[:dir_file].route_to('dir/../file'))
+
+    #arg is something else
+    assert_raise(ArgumentError) { nodes[:root].route_to(5) }
   end
 
 end
