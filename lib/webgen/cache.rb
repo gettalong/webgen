@@ -36,9 +36,13 @@ module Webgen
       [@old_data.merge(@new_data), @permanent]
     end
 
+    def reset_volatile_cache
+      @volatile = {:classes => @volatile[:classes]}
+    end
+
     def instance(name)
       @permanent[:classes] << name unless @permanent[:classes].include?(name)
-      @volatile[[:class, name]] ||= constant(name).new
+      (@volatile[:classes] ||= {})[name] ||= constant(name).new
     end
 
   end
