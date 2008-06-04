@@ -38,6 +38,9 @@ config.sourcehandler.default_meta_info({
                                          :all => {
                                            'output_path_style' => [:parent, :cnbase, ['.', :lang], :ext]
                                          },
+                                         'Webgen::SourceHandler::Directory' => {
+                                           'index_path' => 'index.html'
+                                         },
                                          'Webgen::SourceHandler::Page' => {
                                            'fragments_in_menu' => true
                                          },

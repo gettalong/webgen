@@ -25,8 +25,8 @@ class TestNode < Test::Unit::TestCase
       :dir => dir = Webgen::Node.new(node, '/dir/', 'dir/'),
       :dir_file => dir_file = Webgen::Node.new(dir, '/dir/file.html', 'file.html'),
       :dir_file_frag => Webgen::Node.new(dir_file, '/dir/file.html#frag', '#frag'),
-      :dir2 => dir2 = Webgen::Node.new(node, '/dir2/', 'dir2/'),
-      :dir2_file => Webgen::Node.new(dir2, '/dir2/file.html', 'file.html'),
+      :dir2 => dir2 = Webgen::Node.new(node, '/dir2/', 'dir2/', {'index_path' => 'index.html'}),
+      :dir2_index_en => Webgen::Node.new(dir2, '/dir2/index.html', 'index.html', {'lang' => 'en'}),
     }
   end
 
@@ -127,6 +127,9 @@ class TestNode < Test::Unit::TestCase
     assert_equal(nodes[:somename_de_frag], nodes[:root].resolve('/somename.page#othertest', 'de'))
     assert_equal(nodes[:somename_en_frag], nodes[:root].resolve('/somename.en.page#othertest'))
     assert_equal(nodes[:somename_de_frag], nodes[:root].resolve('/somename.de.page#othertest'))
+
+    assert_equal(nil, nodes[:dir2].resolve('index.html'))
+    assert_equal(nodes[:dir2_index_en], nodes[:dir2].resolve('index.html', 'en'))
   end
 
   def test_introspection
@@ -185,8 +188,8 @@ class TestNode < Test::Unit::TestCase
     assert_equal('somename.de.html', nodes[:somename_en_frag].route_to(nodes[:somename_de]))
     assert_equal('file.html#frag', nodes[:dir].route_to(nodes[:dir_file_frag]))
     assert_equal('#frag', nodes[:dir_file].route_to(nodes[:dir_file_frag]))
-    assert_equal('../dir2/file.html', nodes[:dir_file_frag].route_to(nodes[:dir2_file]))
-    assert_equal('../dir2/file.html', nodes[:dir_file].route_to(nodes[:dir2_file]))
+    assert_equal('../dir2/index.html', nodes[:dir_file_frag].route_to(nodes[:dir2_index_en]))
+    assert_equal('../dir2/index.html', nodes[:dir_file].route_to(nodes[:dir2_index_en]))
 
     assert_equal('./', nodes[:somename_en].route_to(nodes[:root]))
     assert_equal('../', nodes[:dir].route_to(nodes[:root]))
@@ -206,6 +209,19 @@ class TestNode < Test::Unit::TestCase
 
     #arg is something else
     assert_raise(ArgumentError) { nodes[:root].route_to(5) }
+  end
+
+  def test_routing_node
+    nodes = create_default_nodes
+
+    assert_equal(nodes[:somename_en], nodes[:somename_en].routing_node('en'))
+
+    assert_equal(nodes[:dir], nodes[:dir].routing_node('en'))
+    assert_equal(nodes[:dir2_index_en], nodes[:dir2].routing_node('en'))
+    assert_equal(nodes[:dir2_index_en], nodes[:dir2].routing_node('en'))
+    @website.cache.volatile.clear
+    nodes[:dir2].meta_info['index_path'] = 'unknown'
+    assert_equal(nodes[:dir2], nodes[:dir2].routing_node('en'))
   end
 
 end
