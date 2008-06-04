@@ -35,7 +35,10 @@ module Webgen
         tree.node_access[:alcn].each do |name, node|
           next if node == tree.dummy_root
           puts "#{name} (#{node.meta_info['title']})".ljust(80) + "#{node.dirty ? '' : 'not '}dirty " + node.created.to_s
-          if node.dirty && (content = node.content)
+          if node.dirty
+            node.dirty = false
+            node.created = false
+            content = node.content
             type = if node.is_directory?
                      :directory
                    elsif node.is_fragment?
@@ -43,10 +46,8 @@ module Webgen
                    else
                      :file
                    end
-            output.write(node.path, content, type)
+            output.write(node.path, content, type) if content
           end
-          node.dirty = false
-          node.created = false
         end
       end
 
