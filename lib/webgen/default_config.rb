@@ -71,5 +71,10 @@ config.contentprocessor.map({
 Webgen::WebsiteAccess.website.blackboard.add_service(:content_processor_names, Webgen::ContentProcessor.method(:list))
 Webgen::WebsiteAccess.website.blackboard.add_service(:content_processor, Webgen::ContentProcessor.method(:for_name))
 
+# All things regarding tags
 config.contentprocessor.tags.prefix('', :doc => 'The prefix used for tag names to avoid name clashes when another content processor uses similar markup.')
-config.contentprocessor.tags.map({}, :doc => 'Tag processor name to class map')
+config.contentprocessor.tags.map({
+                                   'relocatable' => 'Webgen::Tag::Relocatable'
+                                 }, :doc => 'Tag processor name to class map')
+
+config.tag.relocatable.path(nil, :doc => 'The path which should be made relocatable', :mandatory => 'default')
