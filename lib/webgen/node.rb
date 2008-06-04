@@ -190,7 +190,7 @@ module Webgen
     def route_to(other)
       my_url = self.class.url(@path)
       other_url = if other.kind_of?(Node)
-                    self.class.url(other.path)
+                    self.class.url(other.routing_node(@lang).path)
                   elsif other.kind_of?(String)
                     my_url + other
                   else
@@ -203,6 +203,34 @@ module Webgen
       end
       route = my_url.route_to(other_url).to_s
       (route == '' ? File.basename(self.path) : route)
+    end
+
+    # Returns the routing node in language +lang+ which is the node that is used when routing to
+    # this node. The returned node can differ from the node itself in case of a directory where the
+    # routing node is the directory index node.
+    def routing_node(lang)
+      if !is_directory?
+        self
+      else
+        key = [absolute_lcn, :index_node, lang]
+        vcache = website.cache.volatile
+        return vcache[key] if vcache.has_key?(key)
+
+        index_path = self.meta_info['index_path']
+        if index_path.nil?
+          vcache[key] = self
+        else
+          index_node = resolve(index_path, lang)
+          if index_node
+            vcache[key] = index_node
+            log(:info) { "Directory index path for <#{absolute_lcn}> => <#{index_node.absolute_lcn}>" }
+          else
+            vcache[key] = self
+            log(:warn) { "No directory index path found for directory <#{absolute_lcn}>" }
+          end
+        end
+        vcache[key]
+      end
     end
 
     #######
