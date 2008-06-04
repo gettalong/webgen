@@ -29,6 +29,7 @@ class TestContentProcessorTags < Test::Unit::TestCase
   def setup
     super
     @obj = Webgen::ContentProcessor::Tags.new
+    @website.config['contentprocessor.tags.map'].delete(:default)
   end
 
   def test_call
