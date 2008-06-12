@@ -58,6 +58,11 @@ class TestTree < Test::Unit::TestCase
     assert_nil(@tree['/'])
     assert_nil(@tree.node_info['/'])
     assert_equal(3, nrcalls)
+
+    Webgen::Node.new(root, 'testfile', 'testfile')
+    Webgen::Node.new(root, 'testdir/', 'testdir')
+    @tree.delete_node(root, true)
+    assert_equal([@tree.dummy_root], @tree.node_access[:alcn].values)
   end
 
 end
