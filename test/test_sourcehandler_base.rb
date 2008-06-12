@@ -31,23 +31,31 @@ class TestSourceHandlerBase < Test::Unit::TestCase
     @tree = Webgen::Tree.new
     node = Webgen::Node.new(@tree.dummy_root, 'test/', 'test', {'lang' => 'de', :test => :value})
 
+    output_path_style = [:parent, :cnbase, ['.', :lang], :ext]
+
     path = Webgen::Path.new('path.html')
-    assert_equal('test/path.html', @obj.output_path(node, path, [:parent, :cnbase, ['.', :lang], :ext]))
+    assert_equal('test/path.html', @obj.output_path(node, path, output_path_style))
     path = Webgen::Path.new('path.en.html')
-    assert_equal('test/path.html', @obj.output_path(node, path, [:parent, :cnbase, ['.', :lang], :ext]))
+    assert_equal('test/path.html', @obj.output_path(node, path, output_path_style))
     path = Webgen::Path.new('path.eo.html')
-    assert_equal('test/path.eo.html', @obj.output_path(node, path, [:parent, :cnbase, ['.', :lang], :ext]))
+    assert_equal('test/path.eo.html', @obj.output_path(node, path, output_path_style))
     path = Webgen::Path.new('dir/')
-    assert_equal('test/dir/', @obj.output_path(node, path, [:parent, :cnbase, ['.', :lang], :ext]))
+    assert_equal('test/dir/', @obj.output_path(node, path, output_path_style))
 
     other = Webgen::Node.new(node, 'test/path.html', 'other.page')
     path = Webgen::Path.new('path.html')
-    assert_equal('test/path.html', @obj.output_path(node, path, [:parent, :cnbase, ['.', :lang], :ext]))
+    assert_equal('test/path.html', @obj.output_path(node, path, output_path_style))
     path = Webgen::Path.new('path.en.html')
-    assert_equal('test/path.en.html', @obj.output_path(node, path, [:parent, :cnbase, ['.', :lang], :ext]))
+    assert_equal('test/path.en.html', @obj.output_path(node, path, output_path_style))
+
+    path = Webgen::Path.new('#frag')
+    assert_equal('test/path.html#frag', @obj.output_path(other, path, output_path_style))
+    frag = Webgen::Node.new(other, 'test/path.html#frag', '#frag')
+    path = Webgen::Path.new('#frag1')
+    assert_equal('test/path.html#frag1', @obj.output_path(frag, path, output_path_style))
 
     path = Webgen::Path.new('/')
-    assert_equal('/', @obj.output_path(@tree.dummy_root, path, [:parent, :cnbase, ['.', :lang], :ext]))
+    assert_equal('/', @obj.output_path(@tree.dummy_root, path, output_path_style))
     assert_equal('hallo/', @obj.output_path(@tree.dummy_root, path, [:parent, 'hallo', 56]))
   end
 
