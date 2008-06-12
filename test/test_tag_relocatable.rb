@@ -19,9 +19,10 @@ class TestTagRelocatable < Test::Unit::TestCase
 
   def test_call
     root = Webgen::Node.new(Webgen::Tree.new.dummy_root, '/', '/')
-    node = Webgen::Node.new(root, '/file.html', 'file.html')
+    node = Webgen::Node.new(root, '/file.html', 'file.html', {'lang' => 'en'})
     dir = Webgen::Node.new(root, '/dir/', 'dir/', 'index_path' => "index.html")
-    file = Webgen::Node.new(dir, '/dir/file.html', 'file.html')
+    file = Webgen::Node.new(dir, '/dir/file.html', 'file.html', {'lang' => 'en'})
+    Webgen::Node.new(dir, '/dir/other.de.html', 'other.html', {'lang' => 'de'})
     Webgen::Node.new(file, '/dir/file.html#fragment', '#fragment')
     dir2 = Webgen::Node.new(root, '/dir2/', 'dir2/', 'index_path' => "index.html")
     Webgen::Node.new(dir2, '/dir2/index.html', 'index.html')
@@ -31,6 +32,8 @@ class TestTagRelocatable < Test::Unit::TestCase
     # basic node resolving
     @obj.set_params('tag.relocatable.path' => 'dir/file.html')
     assert_equal('dir/file.html', call(context))
+    @obj.set_params('tag.relocatable.path' => 'dir/other.html')
+    assert_equal('', call(context))
 
     # non-existing fragments
     @obj.set_params('tag.relocatable.path' => 'file.html#hallo')

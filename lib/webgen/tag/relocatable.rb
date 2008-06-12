@@ -43,7 +43,7 @@ module Webgen::Tag
     #######
 
     def resolve_path(uri, context)
-      dest_node = context.ref_node.resolve(uri, context.dest_node['lang'])
+      dest_node = context.ref_node.resolve(uri, context.dest_node.lang)
       (dest_node ? context.dest_node.route_to(dest_node) : '')
     end
 
