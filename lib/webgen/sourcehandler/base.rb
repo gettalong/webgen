@@ -37,7 +37,7 @@ module Webgen::SourceHandler
         when String  then part
         when :lang   then use_lang_part ? path.meta_info['lang'] : ''
         when :ext    then path.ext.empty? ? '' : '.' + path.ext
-        when :parent then parent.path
+        when :parent then temp = parent; temp = temp.parent while temp.is_fragment?; temp.path
         when Symbol  then path.send(part)
         when Array   then part.include?(:lang) && !use_lang_part ? '' : construct_output_path(parent, path, part, use_lang_part)
         else ''
