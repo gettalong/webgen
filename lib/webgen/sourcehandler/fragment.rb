@@ -46,16 +46,16 @@ module Webgen::SourceHandler
 
     # Creates nested fragment nodes under +parent+ from +sections+ (which can be created using
     # +parse_html_headers+). The meta information +in_menu+ of the fragment nodes is set to the
-    # parameter +in_menu+ and the meta info +order_info+ is calculated from the base +oi+ value.
-    def create_fragment_nodes(sections, parent, in_menu, oi = 1000 )
+    # parameter +in_menu+ and the meta info +sort_info+ is calculated from the base +si+ value.
+    def create_fragment_nodes(sections, parent, in_menu, si = 1000 )
       sections.each do |level, id, title, sub_sections|
         node = website.blackboard.invoke(:create_nodes, parent.tree, parent.absolute_lcn,
                                          Webgen::Path.new('#' + id), self).first
         node['title'] = title
         node['in_menu'] = in_menu
-        node['order_info'] = oi = oi.succ
+        node['sort_info'] = si = si.succ
         node.node_info[:src] = parent.node_info[:src]
-        create_fragment_nodes(sub_sections, node, in_menu, oi.succ)
+        create_fragment_nodes(sub_sections, node, in_menu, si.succ)
       end
     end
 
