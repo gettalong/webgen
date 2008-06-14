@@ -59,6 +59,7 @@ module Webgen::SourceHandler
       opath = output_path(parent, path)
       if !node_exists?(parent, path, opath)
         node = Webgen::Node.new(parent, opath, path.cn, path.meta_info)
+        node.node_info[:src] = path.path
         node.node_info[:processor] = self.class.name
         yield(node) if block_given?
         node
