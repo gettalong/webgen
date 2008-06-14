@@ -15,18 +15,18 @@ class TestNode < Test::Unit::TestCase
   def create_default_nodes
     {
       :root => node = Webgen::Node.new(@tree.dummy_root, '/', '/'),
-      :somename_en => child_en = Webgen::Node.new(node, '/somename.en.html', 'somename.page', {'lang' => 'en'}),
+      :somename_en => child_en = Webgen::Node.new(node, '/somename.en.html', 'somename.page', {'lang' => 'en', 'title' => 'somename'}),
       :somename_de => child_de = Webgen::Node.new(node, '/somename.de.html', 'somename.page', {'lang' => 'de'}),
       :other => Webgen::Node.new(node, '/other.html', 'other.page', {}),
       :other_en => Webgen::Node.new(node, '/other1.html', 'other.page', {'lang' => 'en'}),
-      :somename_en_frag => frag_en = Webgen::Node.new(child_en, '/somename.en.html#data', '#othertest'),
-      :somename_de_frag => Webgen::Node.new(child_de, '/somename.de.html#data1', '#othertest'),
-      :somename_en_fragnest => Webgen::Node.new(frag_en, '/somename.en.html#nested', '#nestedpath'),
+      :somename_en_frag => frag_en = Webgen::Node.new(child_en, '/somename.en.html#frag', '#othertest', {'title' => 'frag'}),
+      :somename_de_frag => Webgen::Node.new(child_de, '/somename.de.html#frag', '#othertest'),
+      :somename_en_fragnest => Webgen::Node.new(frag_en, '/somename.en.html#fragnest', '#nestedpath'),
       :dir => dir = Webgen::Node.new(node, '/dir/', 'dir/'),
       :dir_file => dir_file = Webgen::Node.new(dir, '/dir/file.html', 'file.html'),
       :dir_file_frag => Webgen::Node.new(dir_file, '/dir/file.html#frag', '#frag'),
-      :dir2 => dir2 = Webgen::Node.new(node, '/dir2/', 'dir2/', {'index_path' => 'index.html'}),
-      :dir2_index_en => Webgen::Node.new(dir2, '/dir2/index.html', 'index.html', {'lang' => 'en'}),
+      :dir2 => dir2 = Webgen::Node.new(node, '/dir2/', 'dir2/', {'index_path' => 'index.html', 'title' => 'dir2'}),
+      :dir2_index_en => Webgen::Node.new(dir2, '/dir2/index.html', 'index.html', {'lang' => 'en', 'routed_title' => 'routed'}),
     }
   end
 
@@ -130,6 +130,9 @@ class TestNode < Test::Unit::TestCase
 
     assert_equal(nil, nodes[:dir2].resolve('index.html'))
     assert_equal(nodes[:dir2_index_en], nodes[:dir2].resolve('index.html', 'en'))
+
+    assert_equal(nodes[:dir], nodes[:somename_en].resolve('/dir/'))
+    assert_equal(nodes[:root], nodes[:somename_en].resolve('/'))
   end
 
   def test_introspection
@@ -223,5 +226,76 @@ class TestNode < Test::Unit::TestCase
     nodes[:dir2].meta_info['index_path'] = 'unknown'
     assert_equal(nodes[:dir2], nodes[:dir2].routing_node('en'))
   end
+
+  def test_comparision_op
+    nodes = create_default_nodes
+    nodes[:somename_en]['title'] = 'somename'
+    nodes[:other_en]['title'] = 'other'
+
+    assert_equal(0, nodes[:somename_en] <=> nodes[:somename_en])
+    assert_equal(1, nodes[:somename_en] <=> nodes[:other_en])
+    assert_equal(-1, nodes[:other_en] <=> nodes[:somename_en])
+    nodes[:other_en]['sort_info'] = 1
+    assert_equal(-1, nodes[:somename_en] <=> nodes[:other_en])
+  end
+
+  def test_level
+    nodes = create_default_nodes
+    assert_equal(0, nodes[:root].level)
+    assert_equal(1, nodes[:dir].level)
+    assert_equal(2, nodes[:dir_file].level)
+    assert_equal(3, nodes[:dir_file_frag].level)
+  end
+
+  def test_in_subtree_of
+    nodes = create_default_nodes
+
+    assert(nodes[:somename_en].in_subtree_of?(nodes[:root]))
+    assert(nodes[:dir].in_subtree_of?(nodes[:root]))
+
+    assert(nodes[:dir_file].in_subtree_of?(nodes[:dir]))
+
+    assert(nodes[:dir_file_frag].in_subtree_of?(nodes[:root]))
+    assert(nodes[:dir_file_frag].in_subtree_of?(nodes[:dir]))
+    assert(nodes[:dir_file_frag].in_subtree_of?(nodes[:dir_file]))
+
+    assert(!nodes[:dir2_index_en].in_subtree_of?(nodes[:dir]))
+    assert(!nodes[:somename_en].in_subtree_of?(nodes[:dir]))
+    assert(!nodes[:somename_en].in_subtree_of?(nodes[:dir_file]))
+    assert(!nodes[:dir_file].in_subtree_of?(nodes[:dir2_index_en]))
+  end
+
+  def test_link_to
+    nodes = create_default_nodes
+
+    # general tests
+    assert_equal('<a href="#frag">frag</a>',
+                 nodes[:somename_en].link_to(nodes[:somename_en_frag]))
+    assert_equal('<a href="#frag">link_text</a>',
+                 nodes[:somename_en].link_to(nodes[:somename_en_frag], :link_text => 'link_text'))
+    assert_equal('<a attr1="val1" href="#frag">frag</a>',
+                 nodes[:somename_en].link_to(nodes[:somename_en_frag], 'attr1' => 'val1'))
+    assert_equal('<a href="#frag">frag</a>',
+                 nodes[:somename_en].link_to(nodes[:somename_en_frag], :attr1 => 'val1'))
+
+    nodes[:somename_en_frag]['link_attrs'] = {:link_text => 'Default Text', 'class'=>'help'}
+    assert_equal('<a attr1="val1" class="help" href="#frag">link_text</a>',
+                 nodes[:somename_en].link_to(nodes[:somename_en_frag], :link_text => 'link_text', 'attr1' => 'val1'))
+
+    # links to directories
+    assert_equal('<a href="dir2/">dir2</a>',
+                 nodes[:somename_de].link_to(nodes[:dir2]))
+    assert_equal('<a href="dir2/index.html">routed</a>',
+                 nodes[:somename_en].link_to(nodes[:dir2]))
+
+    # varying the website.link_to_current_page option
+    @website.config['website.link_to_current_page'] = true
+    assert_equal('<a class="help" href="#frag">Default Text</a>',
+                 nodes[:somename_en_frag].link_to(nodes[:somename_en_frag]))
+    @website.config['website.link_to_current_page'] = false
+    assert_equal('<span class="help">Default Text</span>',
+                 nodes[:somename_en_frag].link_to(nodes[:somename_en_frag]))
+  end
+
 
 end

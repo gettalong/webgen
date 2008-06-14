@@ -36,6 +36,9 @@ module Webgen
     # The absolute localized canonical name of this node.
     attr_reader :absolute_lcn
 
+    # The level of the node. The level specifies how deep the node is in the hierarchy.
+    attr_reader :level
+
     # The language of this node.
     attr_reader :lang
 
@@ -131,6 +134,14 @@ module Webgen
       File.fnmatch(pattern, @absolute_lcn, File::FNM_DOTMATCH|File::FNM_CASEFOLD|File::FNM_PATHNAME)
     end
 
+    # Sorts nodes by using the meta info +sort_info+ of both involved nodes or, if these values are
+    # equal, by the meta info +title+.
+    def <=>(other)
+      self_so = self['sort_info'].to_s.to_i
+      other_so = other['sort_info'].to_s.to_i
+      (self_so == other_so ? (self['title'] || '') <=> (other['title'] || '') : self_so <=> other_so)
+    end
+
     # Constructs the absolute (localized) canonical name by using the +parent+ node and +name+
     # (which can be a cn or an lcn). The +type+ can be either +:alcn+ or +:acn+.
     def self.absolute_name(parent, name, type)
@@ -150,6 +161,14 @@ module Webgen
       url
     end
 
+
+    # Checks if the this node is in the subtree which is spanned by +node+. The check is performed
+    # using only the +parent+ information of the involved nodes, NOT the actual path/alcn values!
+    def in_subtree_of?(node)
+      temp = self
+      temp = temp.parent while temp != tree.dummy_root && temp != node
+      temp != tree.dummy_root
+    end
 
     # Returns the node with the same canonical name but in language +lang+ or, if no such node exists,
     # an unlocalized version of the node. If no such node is found either, +nil+ is returned.
@@ -175,6 +194,7 @@ module Webgen
       url = self.class.url(self.is_directory? ? File.join(@absolute_lcn, '/') : @absolute_lcn) + path
 
       path = url.path + (url.fragment.nil? ? '' : '#' + url.fragment)
+      path.chomp!('/') unless path == '/'
       return nil if path =~ /^\/\.\./ || url.scheme != 'webgen' # path outside dest dir or not an internal URL (webgen://...)
 
       node = @tree[path, :alcn]
@@ -233,6 +253,27 @@ module Webgen
       end
     end
 
+    # Returns a HTML link from this node to the +node+ or, if this node and +node+ are the same and
+    # the parameter +website.link_to_current_page+ is +false+, a +span+ element with the link text.
+    #
+    # You can optionally specify additional attributes for the HTML element in the +attr+ Hash.
+    # Also, the meta information +link_attrs+ of the given +node+ is used, if available, to set
+    # attributes. However, the +attr+ parameter takes precedence over the +link_attrs+ meta
+    # information. If the special value <tt>:link_text</tt> is present in the attributes, it will be
+    # used as the link text; otherwise the title of the +node+ will be used. Be aware that all
+    # key-value pairs with Symbol keys are removed before the attributes are written. Therefore you
+    # always need to specify general attributes with Strings!
+    def link_to(node, attr = {})
+      attr = node['link_attrs'].merge(attr) if node['link_attrs'].kind_of?(Hash)
+      link_text = attr[:link_text] || node.routing_node(@lang)['routed_title'] || node['title']
+      attr.delete_if {|k,v| k.kind_of?(Symbol)}
+
+      use_link = (node != self || website.config['website.link_to_current_page'])
+      attr['href'] = self.route_to(node) if use_link
+      attrs = attr.collect {|name,value| "#{name.to_s}=\"#{value}\"" }.sort.unshift('').join(' ')
+      (use_link ? "<a#{attrs}>#{link_text}</a>" : "<span#{attrs}>#{link_text}</span>")
+    end
+
     #######
     private
     #######
@@ -242,8 +283,9 @@ module Webgen
       @absolute_cn = self.class.absolute_name(@parent, @cn, :acn)
       @absolute_lcn = self.class.absolute_name(@parent, @lcn, :alcn)
 
+      @level = -1
       @tree = @parent
-      @tree = @tree.parent while !@tree.kind_of?(Tree)
+      (@level += 1; @tree = @tree.parent) while !@tree.kind_of?(Tree)
 
       @tree.register_node(self)
       @parent.children << self unless @parent == @tree
