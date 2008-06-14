@@ -10,11 +10,11 @@ module Webgen::Tag
     def call(tag, body, context)
       output = ''
       if tag == 'lang'
-        output = context.dest_node.lang
-      elsif context.dest_node[tag]
-        output = context.dest_node[tag].to_s
+        output = context.content_node.lang
+      elsif context.content_node[tag]
+        output = context.content_node[tag].to_s
       else
-        log(:warn) { "No value for tag '#{tag}' in <#{context.ref_node.absolute_lcn}> found in <#{context.dest_node.absolute_lcn}>" }
+        log(:warn) { "No value for tag '#{tag}' in <#{context.ref_node.absolute_lcn}> found in <#{context.content_node.absolute_lcn}>" }
       end
       output
     end
