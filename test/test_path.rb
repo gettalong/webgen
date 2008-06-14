@@ -11,7 +11,7 @@ class TestPath < Test::Unit::TestCase
       assert_equal(lang, o.meta_info['lang'])
       assert_equal(ext, o.ext)
       assert_equal(cn, o.cn)
-      assert_equal(oi, o.meta_info['order_info'])
+      assert_equal(oi, o.meta_info['sort_info'])
       assert_equal(title, o.meta_info['title'])
     end
     check_proc.call(Webgen::Path.new('5.base_name-one.de.page'),
