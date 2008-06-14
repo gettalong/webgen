@@ -4,6 +4,7 @@ config = website.config
 # General configuration parameters
 config.website.dir('.', :doc => 'The website directory, always needs to be set! Defaults to current working directory')
 config.website.lang('en', :doc => 'The default language used for the website')
+config.website.link_to_current_page(false, :doc => 'Specifies whether links to the current page should be used')
 
 # All things regarding logging
 config.logger.mask(nil, :doc => 'Only show logging events which match the regexp mask')
@@ -75,7 +76,14 @@ Webgen::WebsiteAccess.website.blackboard.add_service(:content_processor, Webgen:
 config.contentprocessor.tags.prefix('', :doc => 'The prefix used for tag names to avoid name clashes when another content processor uses similar markup.')
 config.contentprocessor.tags.map({
                                    'relocatable' => 'Webgen::Tag::Relocatable',
+                                   'menu' => 'Webgen::Tag::Menu',
                                    :default => 'Webgen::Tag::Metainfo'
                                  }, :doc => 'Tag processor name to class map')
 
 config.tag.relocatable.path(nil, :doc => 'The path which should be made relocatable', :mandatory => 'default')
+
+config.tag.menu.start_level(1, :doc => 'The level at which the menu starts.')
+config.tag.menu.min_levels(1, :doc => 'The minimum number of menu levels that should always be shown.')
+config.tag.menu.max_levels(3, :doc => 'The maximum number of menu levels that should be shown.')
+config.tag.menu.show_current_subtree_only(true, :doc => 'Specifies whether only the current subtree should be shown.')
+config.tag.menu.used_nodes('all', :doc => 'Specifies the kind of nodes that should be used: all, files, or fragments')
