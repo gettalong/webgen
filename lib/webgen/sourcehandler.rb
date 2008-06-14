@@ -32,7 +32,7 @@ module Webgen
         # Remove any already set volatile information
         website.cache.reset_volatile_cache
 
-        tree.node_access[:alcn].each do |name, node|
+        tree.node_access[:alcn].sort.each do |name, node|
           next if node == tree.dummy_root
           puts "#{name} (#{node.meta_info['title']})".ljust(80) + "#{node.dirty ? '' : 'not '}dirty " + node.created.to_s
           if node.dirty
@@ -112,7 +112,6 @@ module Webgen
                    source_handler.create_node(parent, path.dup)
                  end
         nodes.compact.each do |node|
-          node.node_info[:src] = path.path
           website.blackboard.dispatch_msg(:after_node_created, node)
         end
         nodes
@@ -123,16 +122,16 @@ module Webgen
       def clean(tree)
         paths_to_delete = Set.new
         paths_not_to_delete = Set.new
-        tree.node_access[:alcn].values.each do |node|
-          next if node == tree.dummy_root
+        tree.node_access[:alcn].each do |alcn, node|
+          next if node == tree.dummy_root || tree[alcn].nil?
 
           deleted = !find_all_source_paths.include?(node.node_info[:src])
           if !node.created && (deleted ||
                                find_all_source_paths[node.node_info[:src]].changed? ||
                                node.changed?)
+            paths_not_to_delete << node.node_info[:src]
             tree.delete_node(node, deleted)
             #TODO: delete output path
-            paths_not_to_delete << node.node_info[:src]
           else
             paths_to_delete << node.node_info[:src]
           end
