@@ -24,7 +24,6 @@ end
 begin
   opts.parse!(ARGV)
   Webgen::Website.new do |config|
-    config['sourcehandler.patterns']['Webgen::SourceHandler::Copy'] << '**/*.page'
     config['logger.mask'] = o.logmask
     config['website.dir'] = '..'
   end.render
