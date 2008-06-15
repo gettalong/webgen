@@ -43,7 +43,11 @@ config.sourcehandler.default_meta_info({
                                            'index_path' => 'index.html'
                                          },
                                          'Webgen::SourceHandler::Page' => {
-                                           'fragments_in_menu' => true
+                                           'fragments_in_menu' => true,
+                                           'blocks' => {'default' => {'pipeline' => 'tags,maruku,blocks'}}
+                                         },
+                                         'Webgen::SourceHandler::Template' => {
+                                           'blocks' => {'default' => {'pipeline' => 'tags,blocks'}}
                                          },
                                          'Webgen::SourceHandler::Metainfo' => {
                                            'blocks' => {1 => {'name' => 'paths'}, 2 => {'name' => 'alcn'}}
