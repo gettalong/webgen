@@ -21,10 +21,12 @@ module Webgen
 
       def render(tree)
         # Add new and changed nodes, remove nodes of deleted paths
-        paths = Set.new(find_all_source_paths.keys) - clean(tree)
-        create_nodes_from_paths(tree, paths)
-        paths = Set.new(find_all_source_paths.keys) - paths - clean(tree)
-        create_nodes_from_paths(tree, paths)
+        used_paths = Set.new
+        paths = Set.new([nil])
+        while paths.length > 0
+          used_paths += (paths = Set.new(find_all_source_paths.keys) - used_paths - clean(tree))
+          create_nodes_from_paths(tree, paths)
+        end
 
         klass, *args = website.config['output']
         output = constant(klass).new(*args)
