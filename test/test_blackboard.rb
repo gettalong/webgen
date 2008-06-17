@@ -42,10 +42,17 @@ class TestBlackboard < Test::Unit::TestCase
     assert_raise(ArgumentError) { @blackboard.invoke(:test) }
   end
 
+  def service
+    yield :test
+  end
+
   def test_invoke
     @blackboard.add_service(:test) { throw :called }
     assert_throws(:called) { @blackboard.invoke(:test) }
     assert_raise(ArgumentError) { @blackboard.invoke(:unknown) }
+
+    @blackboard.add_service(:other, method(:service))
+    assert_throws(:test) { @blackboard.invoke(:other) {|p| throw p}}
   end
 
 end

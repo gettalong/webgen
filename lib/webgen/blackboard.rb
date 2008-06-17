@@ -47,9 +47,9 @@ module Webgen
     end
 
     # Invoke the service called +service_name+ with the given arguments.
-    def invoke(service_name, *args)
+    def invoke(service_name, *args, &block)
       if @services.has_key?(service_name)
-        @services[service_name].call(*args)
+        @services[service_name].call(*args, &block)
       else
         raise ArgumentError, "No such service named '#{service_name}' available"
       end
