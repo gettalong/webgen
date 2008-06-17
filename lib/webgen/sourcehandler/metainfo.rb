@@ -25,7 +25,7 @@ module Webgen::SourceHandler
         [[:mi_paths, 'paths'], [:mi_alcn, 'alcn']].each do |mi_key, block_name|
           node.node_info[mi_key] = {}
           YAML::load(page.blocks[block_name].content).each do |key, value|
-            key = File.expand_path(key =~ /^\// ? key : parent.absolute_lcn + key)
+            key = File.expand_path(key =~ /^\// ? key : File.join(parent.absolute_lcn, key))
             node.node_info[mi_key][key.chomp('/')] = value
           end if page.blocks.has_key?(block_name)
         end
