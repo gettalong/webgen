@@ -6,7 +6,6 @@ module Webgen
   class Cache
 
     attr_reader :permanent
-    attr_reader :volatile
 
     def initialize()
       @old_data = {}
@@ -36,8 +35,12 @@ module Webgen
       [@old_data.merge(@new_data), @permanent]
     end
 
-    def reset_volatile_cache
-      @volatile = {:classes => @volatile[:classes]}
+    def volatile
+      (@volatile[:enabled] ? @volatile : {})
+    end
+
+    def enable_volatile_cache
+      @volatile[:enabled] = true
     end
 
     def instance(name)
