@@ -10,7 +10,8 @@ module Webgen::SourceHandler
       if node = node_exists?(parent, path)
         node.meta_info.clear
         node.meta_info.update(path.meta_info)
-        nil
+        node.dirty = true
+        node
       else
         super(parent, path)
       end
