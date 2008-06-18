@@ -91,7 +91,6 @@ class TestTagMenu < Test::Unit::TestCase
 
     nodes.each {|k,v| v.dirty = false}
     nodes[:file11_en_f2]['in_menu'] = false
-    @website.cache.reset_volatile_cache
     @website.blackboard.dispatch_msg(:node_changed?, nodes[:file11_en])
     assert(nodes[:file11_en].dirty)
   end

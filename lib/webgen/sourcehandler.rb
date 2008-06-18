@@ -31,8 +31,8 @@ module Webgen
         klass, *args = website.config['output']
         output = constant(klass).new(*args)
 
-        # Remove any already set volatile information
-        website.cache.reset_volatile_cache
+        # Enable permanent (till end of run) storing of volatile information
+        website.cache.enable_volatile_cache
 
         tree.node_access[:alcn].sort.each do |name, node|
           next if node == tree.dummy_root

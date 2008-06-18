@@ -42,7 +42,7 @@ class TestSourceHandlerTemplate < Test::Unit::TestCase
     assert_equal([default_de_template, other_template], @obj.templates_for_node(german_file))
 
     root.tree.delete_node(default_template)
-    assert_equal([default_template], @obj.templates_for_node(other_template))
+    assert_equal([], @obj.templates_for_node(other_template))
   end
 
   def test_default_template
