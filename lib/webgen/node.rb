@@ -195,7 +195,7 @@ module Webgen
 
       path = url.path + (url.fragment.nil? ? '' : '#' + url.fragment)
       path.chomp!('/') unless path == '/'
-      return nil if path =~ /^\/\.\./ || url.scheme != 'webgen' # path outside dest dir or not an internal URL (webgen://...)
+      return nil if path =~ /^\/\.\./
 
       node = @tree[path, :alcn]
       if node && node.absolute_cn != path
