@@ -1,8 +1,11 @@
 require 'webgen/websiteaccess'
+require 'webgen/loggable'
 
 module Webgen::SourceHandler
 
   module Base
+
+    include Webgen::Loggable
 
     # Constructs the output name for the given +path+. Then it is checked using the parameter
     # +parent+ if a node with such an output name already exists. If it exists, the language part is
@@ -50,7 +53,7 @@ module Webgen::SourceHandler
     # Checks if the node alcn and output path which would be created by <tt>create_node(parent,
     # path)</tt> exists. The +output_path+ to check for can individually be set.
     def node_exists?(parent, path, output_path = self.output_path(parent, path))
-      parent.tree[Webgen::Node.absolute_name(parent, path.lcn, :alcn)] || parent.tree[output_path, :path]
+      parent.tree[Webgen::Node.absolute_name(parent, path.lcn, :alcn)] || (!path.meta_info['no_output'] && parent.tree[output_path, :path])
     end
 
     # Creates and returns a node under +parent+ from +path+ if it does not already exists. The
@@ -62,6 +65,8 @@ module Webgen::SourceHandler
         node.node_info[:processor] = self.class.name
         yield(node) if block_given?
         node
+      else
+        log(:warn) { "Node already exists: output path = #{output_path} | alcn = #{Webgen::Node.absolute_name(parent, path.lcn, :alcn)}"}
       end
     end
 

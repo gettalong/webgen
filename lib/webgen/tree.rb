@@ -45,7 +45,7 @@ module Webgen
       end
       (@node_access[:acn][node.absolute_cn] ||= []) << node
       if @node_access[:path].has_key?(node.path)
-        raise "Can't have two nodes with same output path: #{node.path}"
+        raise "Can't have two nodes with same output path: #{node.path}" unless node['no_output']
       else
         @node_access[:path][node.path] = node
       end
