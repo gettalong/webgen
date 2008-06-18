@@ -9,6 +9,7 @@ module Webgen
     autoload :Template, 'webgen/sourcehandler/template'
     autoload :Page, 'webgen/sourcehandler/page'
     autoload :Fragment, 'webgen/sourcehandler/fragment'
+    autoload :Virtual, 'webgen/sourcehandler/virtual'
 
     class Main
 
