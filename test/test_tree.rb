@@ -28,6 +28,7 @@ class TestTree < Test::Unit::TestCase
     assert_equal(node, @tree['dummy/', :path])
     assert_raise(RuntimeError) { Webgen::Node.new(@tree.dummy_root, '/', 'dummy') }
     assert_raise(RuntimeError) { Webgen::Node.new(@tree.dummy_root, 'dummy/', 'other') }
+    assert_nothing_raised { Webgen::Node.new(@tree.dummy_root, 'dummy/', 'unknown', {'no_output' => true}) }
   end
 
   def test_delete_node

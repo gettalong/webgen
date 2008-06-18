@@ -23,6 +23,8 @@ class TestSourceHandlerBase < Test::Unit::TestCase
 
     assert_equal(child_de, @obj.node_exists?(node, path_with_meta_info('somename.de.page')))
     assert_equal(child_de, @obj.node_exists?(node, path_with_meta_info('other.page'), @obj.output_path(node, path_with_meta_info('somename.html'))))
+    assert_equal(false, @obj.node_exists?(node, path_with_meta_info('somename.en.page', {'no_output' => true}),
+                                          @obj.output_path(node, path_with_meta_info('somename.html'))))
     assert_equal(frag_de, @obj.node_exists?(child_de, path_with_meta_info('#othertest')))
     assert_equal(nil, @obj.node_exists?(node, path_with_meta_info('unknown')))
   end
