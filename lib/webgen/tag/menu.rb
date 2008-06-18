@@ -62,7 +62,7 @@ module Webgen::Tag
       @inside_node_changed = true  #TODO: better solution for this race condition?
       node.node_info[:tag_menu_menus].each do |params, cn_alcn, cached_tree|
         cn = node.tree[cn_alcn]
-        menu_tree = menu_tree_for_lang(cn.lang, cn.tree.root, false)
+        menu_tree = menu_tree_for_lang(cn.lang, cn.tree.root)
 
         set_params(params)
         tree = build_specific_menu_tree(cn, menu_tree)
@@ -151,8 +151,8 @@ module Webgen::Tag
     end
 
     # Returns the menu tree for the language +lang+.
-    def menu_tree_for_lang(lang, root, use_cache = true)
-      menus = (use_cache ? (website.cache.volatile[:menutrees] ||= {}) : {})
+    def menu_tree_for_lang(lang, root)
+      menus = (website.cache.volatile[:menutrees] ||= {})
       unless menus[lang]
         menus[lang] = create_menu_tree(root, nil, lang)
         menus[lang].sort! if menus[lang]
