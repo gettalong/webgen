@@ -40,7 +40,7 @@ module Webgen
           if node.dirty
             node.dirty = false
             node.created = false
-            content = node.content
+            content = node.content unless node['no_output']
             type = if node.is_directory?
                      :directory
                    elsif node.is_fragment?

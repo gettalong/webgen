@@ -1,5 +1,6 @@
 require 'test/unit'
 require 'webgen/path'
+require 'stringio'
 
 class TestPath < Test::Unit::TestCase
 
