@@ -19,10 +19,12 @@ config.sourcehandler.patterns({
                                 'Webgen::SourceHandler::Metainfo' => ['**/metainfo', '**/*.metainfo'],
                                 'Webgen::SourceHandler::Template' => ['**/*.template'],
                                 'Webgen::SourceHandler::Page' => ['**/*.page'],
+                                'Webgen::SourceHandler::Virtual' => ['**/virtual', '**/*.virtual']
                               }, :doc => 'Source handler to path pattern map')
 config.sourcehandler.invoke({
                               1 => ['Webgen::SourceHandler::Directory', 'Webgen::SourceHandler::Metainfo', 'Webgen::SourceHandler::Directory'],
-                              5 => ['Webgen::SourceHandler::Copy', 'Webgen::SourceHandler::Template', 'Webgen::SourceHandler::Page']
+                              5 => ['Webgen::SourceHandler::Copy', 'Webgen::SourceHandler::Template', 'Webgen::SourceHandler::Page'],
+                              9 => ['Webgen::SourceHandler::Virtual']
                             }, :doc => 'All source handlers listed here are used by webgen and invoked according to their priority setting')
 config.sourcehandler.casefold(true, :doc => 'Specifies whether path are considered to be case-sensitive')
 config.sourcehandler.use_hidden_files(false, :doc => 'Specifies whether hidden files (those starting with a dot) are used')
