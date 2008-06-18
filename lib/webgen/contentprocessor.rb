@@ -3,9 +3,10 @@ module Webgen
   module ContentProcessor
 
     autoload :Context, 'webgen/contentprocessor/context'
-    autoload :Maruku, 'webgen/contentprocessor/maruku'
     autoload :Tags, 'webgen/contentprocessor/tags'
     autoload :Blocks, 'webgen/contentprocessor/blocks'
+    autoload :Maruku, 'webgen/contentprocessor/maruku'
+    autoload :RedCloth, 'webgen/contentprocessor/redcloth'
 
     def self.list
       WebsiteAccess.website.config['contentprocessor.map'].keys
