@@ -28,7 +28,8 @@ module Webgen
 
     include Loggable
 
-    # The website configuration
+    # The website configuration. Can only be used after #init has been called (which is done in
+    # #render).
     attr_reader :config
 
     # The logger used for logging
@@ -37,14 +38,15 @@ module Webgen
     # The blackboard used for inter-object communication
     attr_reader :blackboard
 
-    # A cache to store information that should be available between runs.
+    # A cache to store information that should be available between runs. Should only be used during
+    # rendering as the cache gets restored before rendering and save afterwards!
     attr_reader :cache
 
     # Creates a new webgen website. You can provide a block (has to take the configuration object as
     # parameter) for adjusting the configuration values.
     def initialize(&block)
       @blackboard = Blackboard.new
-      @cache = Cache.new
+      @cache = nil
       @config_block = block
     end
 
@@ -67,22 +69,15 @@ module Webgen
     # Render the website.
     def render
       with_thread_var do
-        @logger = Logger.new(STDERR) unless @logger
+        @logger = Logger.new(STDERR) unless defined?(@logger)
         init
         log(:info) {"Starting webgen..."}
 
         shm = SourceHandler::Main.new
-
-        if File.exists?(cache_file)
-          cache_data, tree = Marshal.load(File.read(cache_file))
-          @cache.restore(cache_data)
-        else
-          tree = Tree.new
-        end
-
+        tree = restore_tree_and_cache
         shm.render(tree)
+        save_tree_and_cache(tree)
 
-        File.open(cache_file, 'wb') {|f| Marshal.dump([@cache.dump, tree], f)}
         log(:info) {"webgen finished"}
       end
     end
@@ -91,8 +86,28 @@ module Webgen
     private
     #######
 
-    def cache_file
-      File.join(config['website.dir'], 'webgen.cache')
+    def restore_tree_and_cache
+      @cache = Cache.new
+      tree = Tree.new
+      data = if config['website.cache'].first == :file
+               cache_file = File.join(config['website.dir'], config['website.cache'].last)
+               File.read(cache_file) if File.exists?(cache_file)
+             else
+               config['website.cache'].last
+             end
+      cache_data, tree = Marshal.load(data) rescue nil
+      @cache.restore(cache_data) if cache_data
+      tree
+    end
+
+    def save_tree_and_cache(tree)
+      cache_data = [@cache.dump, tree]
+      if config['website.cache'].first == :file
+        cache_file = File.join(config['website.dir'], config['website.cache'].last)
+        File.open(cache_file, 'wb') {|f| Marshal.dump(cache_data, f)}
+      else
+        config['website.cache'][1] = Marshal.dump(cache_data)
+      end
     end
 
     def with_thread_var
