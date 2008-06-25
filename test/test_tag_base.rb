@@ -65,7 +65,7 @@ class TestTagBase < Test::Unit::TestCase
     output.rewind; assert_match(/Invalid parameter 'invalid'/, output.read)
 
     @website.config.data.delete('testtagbase.testtag.param3')
-    @website.config.options.delete('testtagbase.testtag.param3')
+    @website.config.meta_info.delete('testtagbase.testtag.param3')
     output.string = ''
     set_params('default_value')
     output.rewind; assert_match(/No default mandatory parameter specified for tag/, output.read)

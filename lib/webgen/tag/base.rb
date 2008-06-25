@@ -126,7 +126,7 @@ module Webgen::Tag::Base
                {}
              end
 
-    unless params.all? {|k| !website.config.options[k][:mandatory] || result.has_key?(k)}
+    unless params.all? {|k| !website.config.meta_info[k][:mandatory] || result.has_key?(k)}
       log(:error) { "Not all mandatory parameters for tag '#{self.class.name}' in <#{node.absolute_lcn}> set" }
     end
 
@@ -150,7 +150,7 @@ module Webgen::Tag::Base
 
   # Return a valid parameter hash by setting +value+ to the default mandatory parameter.
   def create_from_string(value, params, node)
-    param_name = params.find {|k| website.config.options[k][:mandatory] == 'default'}
+    param_name = params.find {|k| website.config.meta_info[k][:mandatory] == 'default'}
     if param_name.nil?
       log(:error) { "No default mandatory parameter specified for tag '#{self.class.name}' but set in <#{node.absolute_lcn}>"}
       {}
