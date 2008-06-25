@@ -1,6 +1,6 @@
 require 'webgen/websiteaccess'
 require 'webgen/loggable'
-require 'webgen/page'
+require 'webgen/sourcehandler/base'
 
 module Webgen::SourceHandler
 
@@ -11,6 +11,7 @@ module Webgen::SourceHandler
     include Webgen::Loggable
     include Base
 
+    # Create a template node in +parent+ for +path+.
     def create_node(parent, path)
       page = page_from_path(path)
       super(parent, path) do |node|
@@ -18,7 +19,7 @@ module Webgen::SourceHandler
       end
     end
 
-    # Returns the template chain for +node+.
+    # Return the template chain for +node+.
     def templates_for_node(node, lang = node.lang)
       cached_template = (website.cache.volatile[[node.absolute_lcn, :templates]] ||= {})
       if cached_template[lang]
@@ -44,7 +45,7 @@ module Webgen::SourceHandler
       end
     end
 
-    # Returns the default template for the directory node +dir+. If the template node is not found,
+    # Return the default template for the directory node +dir+. If the template node is not found,
     # the parent directories are searched.
     def default_template(dir_node, lang)
       template_node = dir_node.resolve(website.config['sourcehandler.template.default_template'], lang)

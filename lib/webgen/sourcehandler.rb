@@ -1,5 +1,9 @@
 module Webgen
 
+  # Namespace for all classes that handle source paths.
+  #
+  # Have a look at Webgen::SourceHandler::Base for details on how to implement a source handler
+  # class.
   module SourceHandler
 
     autoload :Base, 'webgen/sourcehandler/base'
@@ -11,15 +15,22 @@ module Webgen
     autoload :Fragment, 'webgen/sourcehandler/fragment'
     autoload :Virtual, 'webgen/sourcehandler/virtual'
 
+    # This class is used by Website to do the actual rendering of the website. It
+    #
+    # * collects all source paths using the source classes
+    # * creates nodes using the source handler classes
+    # * writes changed nodes out using an output class
     class Main
 
       include WebsiteAccess
 
-      def initialize
+      def initialize #:nodoc:
         website.blackboard.add_service(:create_nodes, method(:create_nodes))
         website.blackboard.add_service(:source_paths, method(:find_all_source_paths))
       end
 
+      # Render the nodes provided in the +tree+. Before the actual rendering is done, the sources
+      # are checked (nodes for deleted sources are deleted, nodes for new and changed sources).
       def render(tree)
         # Add new and changed nodes, remove nodes of deleted paths
         used_paths = Set.new
@@ -58,6 +69,7 @@ module Webgen
       private
       #######
 
+      # Return a hash with all source paths.
       def find_all_source_paths
         if !@paths
           source = Webgen::Source::Stacked.new(Hash[*website.config['sources'].collect do |mp, name, *args|
@@ -73,6 +85,7 @@ module Webgen
         @paths
       end
 
+      # Return only the subset of +paths+ which are handled by the source handler +name+.
       def paths_for_handler(name, paths)
         patterns = website.config['sourcehandler.patterns'][name]
         return [] if patterns.nil?
@@ -84,6 +97,7 @@ module Webgen
         end
       end
 
+      # Use the source handlers to create nodes for the +paths+ in the +tree+.
       def create_nodes_from_paths(tree, paths)
         website.config['sourcehandler.invoke'].sort.each do |priority, shns|
           shns.each do |shn|
@@ -97,7 +111,7 @@ module Webgen
         end
       end
 
-      # Prepares everything to create nodes under the absolute lcn path +parent_path_name+ in the
+      # Prepare everything to create nodes under the absolute lcn path +parent_path_name+ in the
       # +tree from the +path+ using the +source_handler+. If a block is given, the actual creation
       # of the nodes is deferred to it. After the nodes are created, it is also checked if they have
       # all needed properties.
@@ -121,7 +135,8 @@ module Webgen
       end
 
 
-      #TODO: doc
+      # Clean the +tree+ by deleting nodes which have changed or which don't have an associated
+      # source anymore.
       def clean(tree)
         paths_to_delete = Set.new
         paths_not_to_delete = Set.new

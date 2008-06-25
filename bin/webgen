@@ -23,7 +23,7 @@ end
 
 begin
   opts.parse!(ARGV)
-  Webgen::Website.new do |config|
+  Webgen::Website.new(Logger.new(STDERR)) do |config|
     config['logger.mask'] = o.logmask
     config['website.dir'] = '..'
   end.render

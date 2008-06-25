@@ -21,42 +21,45 @@ require 'webgen/path'
 require 'webgen/node'
 require 'webgen/page'
 
+
+# The Webgen namespace houses all classes/modules used by webgen.
 module Webgen
 
-  # Used to render a website.
+  # Represents a webgen website and is used to render it.
   class Website
 
     include Loggable
 
-    # The website configuration. Can only be used after #init has been called (which is done in
-    # #render).
+    # The website configuration. Can only be used after #init has been called (which is
+    # automatically done in #render).
     attr_reader :config
 
-    # The logger used for logging
+    # The logger used for logging. If none is set, logging is disabled.
     attr_accessor :logger
 
-    # The blackboard used for inter-object communication
+    # The blackboard used for inter-object communication.
     attr_reader :blackboard
 
     # A cache to store information that should be available between runs. Should only be used during
-    # rendering as the cache gets restored before rendering and save afterwards!
+    # rendering as the cache gets restored before rendering and saved afterwards!
     attr_reader :cache
 
-    # Creates a new webgen website. You can provide a block (has to take the configuration object as
-    # parameter) for adjusting the configuration values.
+    # Create a new webgen website. You can provide a block (has to take the configuration object as
+    # parameter) for adjusting the configuration values during the initialization.
     def initialize(&block)
       @blackboard = Blackboard.new
       @cache = nil
       @config_block = block
     end
 
-    # Defines a service +service_name+ provided by the instance of +klass+. The parameter +method+
+    # Define a service +service_name+ provided by the instance of +klass+. The parameter +method+
     # needs to define the method which should be invoked when the service is invoked.
     def autoload_service(service_name, klass, method = service_name)
       blackboard.add_service(service_name) {|*args| cache.instance(klass).send(method, *args)}
     end
 
-    # Loads all plugin and configuration information.
+    # Initialize the configuration object and load the default configuration as well as website
+    # specific configurations.
     def init
       with_thread_var do
         @config = Configuration.new
@@ -69,7 +72,6 @@ module Webgen
     # Render the website.
     def render
       with_thread_var do
-        @logger = Logger.new(STDERR) unless defined?(@logger)
         init
         log(:info) {"Starting webgen..."}
 
@@ -86,6 +88,7 @@ module Webgen
     private
     #######
 
+    # Restore the tree and the cache from +website.cache+ and returns the Tree object.
     def restore_tree_and_cache
       @cache = Cache.new
       tree = Tree.new
@@ -100,6 +103,7 @@ module Webgen
       tree
     end
 
+    # Save the +tree+ and the +@cache+ to +website.cache+.
     def save_tree_and_cache(tree)
       cache_data = [@cache.dump, tree]
       if config['website.cache'].first == :file
@@ -110,6 +114,7 @@ module Webgen
       end
     end
 
+    # Set a thread variable for easy access to the website during rendering.
     def with_thread_var
       set_back = Thread.current[:webgen_website].nil?
       Thread.current[:webgen_website] = self

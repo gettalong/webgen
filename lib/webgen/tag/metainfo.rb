@@ -7,6 +7,7 @@ module Webgen::Tag
 
     include Base
 
+    # Return the meta information key specified in +tag+ of the content node.
     def call(tag, body, context)
       output = ''
       if tag == 'lang'

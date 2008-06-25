@@ -9,12 +9,11 @@ module Webgen::Tag
   # template would be invalid.
   #
   # By using the +relocatable+ tag you ensure that the path stays valid.
-  #
-  # Tag parameter: the name of the file which should be relocated
   class Relocatable
 
     include Webgen::Tag::Base
 
+    # Return the relativized path for the path provided in the tag definition.
     def call(tag, body, context)
       uri_string = param('tag.relocatable.path')
       result = ''
@@ -42,6 +41,8 @@ module Webgen::Tag
     private
     #######
 
+    # Resolve the path +uri+ using the reference node and return the correct relative path from the
+    # destination node.
     def resolve_path(uri, context)
       dest_node = context.ref_node.resolve(uri, context.dest_node.lang)
       (dest_node ? context.dest_node.route_to(dest_node) : '')

@@ -1,13 +1,23 @@
 module Webgen
 
+  # A blackboard object provides two features for inter-object communication:
+  #
+  # * services: An object can add a service to the blackboard which can be called by any other
+  #             object by just specifing the service name. Therefore it is easy to change the
+  #             underlying implementation of the service and there are no hard dependencies on
+  #             specific class or method names.
+  #
+  # * listeners: Objects may register themselves for specific messsage names and get notified when
+  #              such a message gets dispatched.
   class Blackboard
 
+    # Create a new Blackboard object.
     def initialize
       @listener = {}
       @services = {}
     end
 
-    # Adds the +callable_object+ or the given block as listener for messages +msg_names+ (one
+    # Add the +callable_object+ or the given block as listener for the messages +msg_names+ (one
     # message name or an array of message names).
     def add_listener(msg_names = nil, callable_object = nil, &block)
       callable_object = callable_object || block
@@ -19,18 +29,21 @@ module Webgen
       end
     end
 
-    # Remove the given object from the dispatcher queues of the hooks specified in +msg_names+.
+    # Remove the given object from the dispatcher queues of the message names specified in
+    # +msg_names+.
     def del_listener(msg_names, callable_object)
       [msg_names].flatten.each {|name| @listener[name].delete(callable_object) if @listener[name]}
     end
 
-    # Dispatch the message +msg_name+ to all listeners for this message, passing the given arguments.
+    # Dispatch the message +msg_name+ to all listeners for this message, passing the given
+    # arguments.
     def dispatch_msg(msg_name, *args)
       return unless @listener[msg_name]
       @listener[msg_name].each {|obj| obj.call(*args)}
     end
 
-    # Add a service named +service_name+ to the blackboard.
+    # Add a service named +service_name+ provided by the +callable_object+ or a block to the
+    # blackboard.
     def add_service(service_name, callable_object = nil, &block)
       callable_object = callable_object || block
       if @services.has_key?(service_name)

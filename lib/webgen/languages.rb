@@ -6,10 +6,13 @@ module Webgen
 
     include Comparable
 
+    # An array containing the language codes for the language.
     attr_reader :codes
+
+    # The english description of the language.
     attr_reader :description
 
-    # Creates a new language. +codes+ has to be an array containing three strings: the three letter
+    # Create a new language. +codes+ has to be an array containing three strings: the three letter
     # code, the alternative three letter code and the two letter code. If one is not available for
     # the language, it has to be +nil+.
     def initialize(codes, description)
@@ -39,11 +42,11 @@ module Webgen
 
     alias_method :to_str, :to_s
 
-    def inspect
+    def inspect #:nodoc:
       "#<Language codes=#{codes.inspect} description=#{description.inspect}>"
     end
 
-    def <=>(other)
+    def <=>(other) #:nodoc:
       self.to_s <=> other.to_s
     end
 
@@ -53,17 +56,17 @@ module Webgen
   # Used for managing human languages.
   module LanguageManager
 
-    # Returns a +Language+ object for the given language code or +nil+ if no such object exists.
+    # Return a +Language+ object for the given language code or +nil+ if no such object exists.
     def self.language_for_code(code)
       languages[code]
     end
 
-    # Returns an array of +Language+ objects whose description match the given +text+.
+    # Return an array of +Language+ objects whose description match the given +text+.
     def self.find_language(text)
       languages.values.find_all {|lang| /.*#{Regexp.escape(text)}.*/i =~ lang.description}.uniq.sort
     end
 
-    # Returns all available languages as a Hash. The keys are the language codes and the values are
+    # Return all available languages as a Hash. The keys are the language codes and the values are
     # the +Language+ objects for them.
     def self.languages
       unless defined?(@@languages)

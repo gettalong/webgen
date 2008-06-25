@@ -1,15 +1,23 @@
 module Webgen
 
+  # Stores the configuration for a webgen website.
+  #
+  # Configuration options should be created like this:
+  #
+  #   config.my.new.config 'value', :doc => 'some', :meta => 'info'
+  #
+  # and later accessed or set using the accessor methods #[] and #[]=.
   class Configuration
 
+    # Helper class for providing an easy method to define configuration options.
     class MethodChain
 
-      def initialize(config)
+      def initialize(config) #:nodoc:
         @config = config
         @name = ''
       end
 
-      def method_missing(id, *args)
+      def method_missing(id, *args) #:nodoc:
         @name += (@name.empty? ? '' : '.') + id.id2name.sub(/(!|=)$/,'')
         if args.length > 0
           value = args.shift
@@ -24,14 +32,19 @@ module Webgen
 
     end
 
+    # The hash which stores the meta info for the configuration options.
     attr_reader :options
+
+    # The configuration options hash.
     attr_reader :data
 
+    # Create a new Configuration object.
     def initialize
       @data = {}
       @options = {}
     end
 
+    # Return the configuration option +name+.
     def [](name)
       if @data.has_key?(name)
         @data[name]
@@ -40,6 +53,7 @@ module Webgen
       end
     end
 
+    # Set the configuration option +name+ to the provided +value+.
     def []=(name, value)
       if @data.has_key?(name)
         @data[name] = value
@@ -48,7 +62,7 @@ module Webgen
       end
     end
 
-    def method_missing(id, *args)
+    def method_missing(id, *args) #:nodoc:
       MethodChain.new(self).method_missing(id, *args)
     end
 

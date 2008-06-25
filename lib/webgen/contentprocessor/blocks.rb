@@ -2,12 +2,14 @@ require 'webgen/loggable'
 
 module Webgen::ContentProcessor
 
+  # Replaces special xml tags with the rendered content of a node.
   class Blocks
 
     include Webgen::Loggable
 
     BLOCK_RE = /<webgen:block\s+name=('|")(\w+)\1\s*(?:\schain=('|")([^'"]+)\3\s*)?\s*\/>/
 
+    # Replace that webgen:block xml tags with the rendered content of a node.
     def call(context)
       chain = context[:chain]
       new_chain = (chain.length > 1 ? chain[1..-1] : chain)

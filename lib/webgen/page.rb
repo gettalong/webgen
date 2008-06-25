@@ -14,12 +14,12 @@ module Webgen
     # The options set specifically for this block.
     attr_reader :options
 
-    # Creates a new block with the name +name+ and the given +content+ and +options+.
+    # Create a new block with the name +name+ and the given +content+ and +options+.
     def initialize(name, content, options)
       @name, @content, @options = name, content, options
     end
 
-    # Renders the block using the provided context object. Uses the content processors specified in
+    # Render the block using the provided context object. Uses the content processors specified in
     # the +pipeline+ key of the +options+ attribute to do the actual rendering.
     #
     # Returns the given context with the rendered content.
@@ -36,7 +36,7 @@ module Webgen
   end
 
 
-  # Raised during parsing of data in WebgenPage Format if the data is invalid.
+  # Raised during parsing of data in Webgen Page Format if the data is invalid.
   class WebgenPageFormatError < RuntimeError; end
 
   # A Page object wraps a meta information hash and an array of Block objects. It is normally
@@ -51,7 +51,7 @@ module Webgen
 
     class << self
 
-      # Parses the given string +data+ in Webgen Page Format and initializes a new Page object with
+      # Parse the given string +data+ in Webgen Page Format and initialize a new Page object with
       # the information. The +meta_info+ parameter can be used to provide default meta information.
       def from_data(data, meta_info = {})
         md = /(#{RE_META_INFO})?(.*)/m.match(normalize_eol(data))
@@ -65,10 +65,12 @@ module Webgen
       private
       #######
 
+      # Normalize the end-of-line encodings to Unix style.
       def normalize_eol(data)
         data.gsub(/\r\n?/, "\n")
       end
 
+      # Parse the meta info string +data+ and return the hash with the meta information.
       def parse_meta_info(data)
         begin
           meta_info = YAML::load(data)
@@ -79,6 +81,8 @@ module Webgen
         meta_info
       end
 
+      # Parse all blocks in +data+ and return them. Meta information can be provided in +meta_info+
+      # which is used for setting the block names and options.
       def parse_blocks(data, meta_info)
         scanned = data.scan(RE_BLOCKS)
         raise(WebgenPageFormatError, 'No content blocks specified') if scanned.length == 0
@@ -110,10 +114,10 @@ module Webgen
     # The contents of the meta information block.
     attr_reader :meta_info
 
-    # Returns the array of blocks for the page.
+    # The array of blocks for the page.
     attr_reader :blocks
 
-    # Creates a new Page object with the meta information provided in +meta_info+ and the given
+    # Create a new Page object with the meta information provided in +meta_info+ and the given
     # +blocks+.
     def initialize(meta_info = {}, blocks = nil)
       @meta_info = meta_info

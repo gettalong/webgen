@@ -4,16 +4,21 @@ require 'webgen/tag'
 
 module Webgen::ContentProcessor
 
+  # Processes special webgen tags to provide dynamic content.
+  #
+  # webgen tags are an easy way to add dynamically generated content to websites, for example menus
+  # or breadcrumb trails.
   class Tags
 
     include Webgen::WebsiteAccess
     include Webgen::Loggable
 
-    def initialize
+    def initialize #:nodoc:
       @start_re = /(\\*)\{#{website.config['contentprocessor.tags.prefix']}(\w+)(::?)/
       @end_re = /(\\*)\{#{website.config['contentprocessor.tags.prefix']}(\w+)\}/
     end
 
+    # Replace all webgen tags in the content of +context+ with the rendered content.
     def call(context)
       replace_tags(context.content, context.ref_node) do |tag, param_string, body|
         log(:debug) { "Replacing tag #{tag} with data '#{param_string}' and body '#{body}' in <#{context.ref_node.absolute_lcn}>" }
@@ -41,7 +46,10 @@ module Webgen::ContentProcessor
     ProcessingStruct = Struct.new(:state, :tag, :simple_tag, :backslashes, :brackets, :start_pos, :end_pos,
                                   :params_start_pos, :params_end_pos, :body_end_pos)
 
-    def replace_tags(content, node)
+    # Return the +content+ provided by +node+ with all webgen tags replaced. When a webgen tag is
+    # encountered by the parser, the method yields all found information and substitutes the
+    # returned string for the tag.
+    def replace_tags(content, node) #:yields: tag_name, param_string, body
       scanner = StringScanner.new(content)
       data = ProcessingStruct.new(:before_tag)
       while true
@@ -107,7 +115,7 @@ module Webgen::ContentProcessor
       scanner.string
     end
 
-    # Returns the tag processor for +tag+ or +nil+ if +tag+ is unknown.
+    # Return the tag processor for +tag+ or +nil+ if +tag+ is unknown.
     def processor_for_tag(tag)
       map = website.config['contentprocessor.tags.map']
       klass = if map.has_key?(tag)
