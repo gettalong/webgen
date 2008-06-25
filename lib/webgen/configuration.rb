@@ -22,8 +22,8 @@ module Webgen
         if args.length > 0
           value = args.shift
           @config.data[@name] = value unless @config.data.has_key?(@name) # value is set only the first time
-          @config.options[@name] ||= {}
-          @config.options[@name].update(*args) if args.length > 0
+          @config.meta_info[@name] ||= {}
+          @config.meta_info[@name].update(*args) if args.length > 0
           nil
         else
           self
@@ -33,7 +33,7 @@ module Webgen
     end
 
     # The hash which stores the meta info for the configuration options.
-    attr_reader :options
+    attr_reader :meta_info
 
     # The configuration options hash.
     attr_reader :data
@@ -41,7 +41,7 @@ module Webgen
     # Create a new Configuration object.
     def initialize
       @data = {}
-      @options = {}
+      @meta_info = {}
     end
 
     # Return the configuration option +name+.

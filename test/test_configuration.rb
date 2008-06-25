@@ -7,12 +7,12 @@ class TestConfiguration < Test::Unit::TestCase
     @config = Webgen::Configuration.new
     @config.test.value(:value, :opts => true)
     assert_equal(:value, @config['test.value'])
-    assert_equal({:opts => true}, @config.options['test.value'])
+    assert_equal({:opts => true}, @config.meta_info['test.value'])
     @config.test.value(:other_value, :doc => true)
     assert_equal(:value, @config['test.value'])
-    assert_equal({:opts => true, :doc => true}, @config.options['test.value'])
+    assert_equal({:opts => true, :doc => true}, @config.meta_info['test.value'])
     @config.test.other(:value)
-    assert_equal({}, @config.options['test.other'])
+    assert_equal({}, @config.meta_info['test.other'])
   end
 
   def test_get_options
