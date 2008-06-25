@@ -1,6 +1,5 @@
 require 'webgen/websiteaccess'
-require 'webgen/loggable'
-require 'webgen/page'
+require 'webgen/sourcehandler/base'
 
 module Webgen::SourceHandler
 
@@ -8,9 +7,9 @@ module Webgen::SourceHandler
   class Page
 
     include Webgen::WebsiteAccess
-    include Webgen::Loggable
     include Base
 
+    # Create a page file from +parent+ and +path+.
     def create_node(parent, path)
       page = page_from_path(path)
       path.meta_info['lang'] ||= website.config['website.lang']
@@ -24,9 +23,9 @@ module Webgen::SourceHandler
       end
     end
 
-    # Renders the block called +block_name+ of the given +node+. The parameter +templates+ is set to
+    # Render the block called +block_name+ of the given +node+. The parameter +templates+ is set to
     # the default template chain for the given +node+ but you can assign a custom template chain (an
-    # array of template nodes) if need arises. Returns +nil+ if an error occurred.
+    # array of template nodes) if need arises. Return +nil+ if an error occurred.
     def render_node(node, block_name = 'content', templates = website.blackboard.invoke(:templates_for_node, node))
       chain = [templates, node].flatten
 

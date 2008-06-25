@@ -2,15 +2,23 @@ require 'webgen/languages'
 
 module Webgen
 
+  # A path object provides information about a specific path as well as methods for accessing its
+  # content.
+  #
+  # A webgen source class needs to derive a specialized path class from this class and implement an
+  # approriate #changed? method.
   class Path
 
+    # Helper class for easy access to the content of a path.
     class SourceIO
 
+      # Create a new SourceIO object. A block has to be specified that returns an IO object.
       def initialize(&block)
         @block = block
         raise ArgumentError, 'Need to provide a block which returns an IO object' if @block.nil?
       end
 
+      # Provide direct access to the wrapped IO object.
       def stream
         io = @block.call
         yield(io)
@@ -18,6 +26,7 @@ module Webgen
         io.close
       end
 
+      # Return the content of the wrapped IO object as string.
       def data
         stream {|io| io.read}
       end
@@ -27,7 +36,7 @@ module Webgen
 
     include Comparable
 
-    # The source path.
+    # The full source path.
     attr_accessor :path
 
     # The basename part of the path.
@@ -36,7 +45,7 @@ module Webgen
     # The directory part of the path.
     attr_accessor :directory
 
-    # The cn without the extension.
+    # The canonical name without the extension.
     attr_accessor :cnbase
 
     # The extension.
@@ -45,12 +54,15 @@ module Webgen
     # Extracted meta information for the path.
     attr_accessor :meta_info
 
+    # Create a new Path object for +path+. The optional block needs to return an IO object for the
+    # content of the path.
     def initialize(path, &ioblock)
       @meta_info = {}
       @io = SourceIO.new(&ioblock) if block_given?
       analyse(path)
     end
 
+    # Mount this path at the mount point +mp+ and return the new path object.
     def mount_at(mp)
       temp = dup
       temp.path = File.join(mp, @path)
@@ -58,12 +70,14 @@ module Webgen
       temp
     end
 
+    # Duplicate the path object.
     def dup
       temp = super
       temp.meta_info = @meta_info.dup
       temp
     end
 
+    # The IO object associated with the path.
     def io
       if @io
         @io
@@ -77,7 +91,7 @@ module Webgen
       @cnbase + (@ext.length > 0 ? '.' + @ext : '')
     end
 
-    # Utility method for creating the lcn from cn and the language.
+    # Utility method for creating the lcn from +cn+ and the language +lang+.
     def self.lcn(cn, lang)
       if lang.nil?
         cn
@@ -91,6 +105,7 @@ module Webgen
       self.class.lcn(cn, @meta_info['lang'])
     end
 
+    # Compare this object to another Path or a String.
     def ==(other)
       if other.kind_of?(Path)
         other.path == @path
@@ -102,24 +117,28 @@ module Webgen
     end
     alias_method(:eql?, :==)
 
+    # Return +true+ if the localized path matches the given +pattern+. For information on which
+    # patterns are supported, have a look at the documentation of File.fnmatch.
     def =~(pattern)
       File.fnmatch(pattern, File.join(@directory, lcn), File::FNM_DOTMATCH|File::FNM_CASEFOLD|File::FNM_PATHNAME)
     end
 
+    # Implemented sothat a Path looks like a String when used as key in a hash.
     def <=>(other)
       @path <=> other.to_str
     end
 
+    # Implemented sothat a Path looks like a String when used as key in a hash.
     def hash
       @path.hash
     end
 
-    def to_s
+    def to_s #:nodoc:
       @path.dup
     end
     alias_method :to_str, :to_s
 
-    def inspect
+    def inspect #:nodoc:
       "#<Path: #{@path}>"
     end
 
@@ -129,7 +148,7 @@ module Webgen
 
     FILENAME_RE = /^(?:(\d+)\.)?([^.]*?)(?:\.(\w\w\w?)(?=.))?(?:\.(.*))?$/
 
-    # Analyses the +path+ and fills the object with the extracted information.
+    # Analyse the +path+ and fill the object with the extracted information.
     def analyse(path)
       @path = path
       @basename = File.basename(path)

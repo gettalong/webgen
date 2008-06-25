@@ -2,10 +2,14 @@ require 'webgen/sourcehandler/base'
 
 module Webgen::SourceHandler
 
+  # Handles directory source paths.
   class Directory
 
     include Base
 
+    # Creation of directory nodes is special because once they are created, they are only deleted
+    # when the source path gets deleted. Otherwise, only the meta information of the node gets
+    # updated.
     def create_node(parent, path)
       if node = node_exists?(parent, path)
         node.meta_info.clear
@@ -17,8 +21,7 @@ module Webgen::SourceHandler
       end
     end
 
-    #TODO: Also need to handle virtual nodes (after they have been introduced) that shouldn't create
-    #a real directory!!!
+    # Return an empty string to signal that the directory should be written to the output.
     def content(node)
       ''
     end

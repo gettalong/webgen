@@ -2,12 +2,16 @@ require 'fileutils'
 
 module Webgen::Output
 
+  # This class is used to write rendered nodes out to the file system.
   class FileSystem
 
     include Webgen::WebsiteAccess
 
+    # The root path, ie. the path to which the root node gets rendered.
     attr_reader :root
 
+    # Create a new object with the given +root+ path. If +root+ is not absolute, it is taken
+    # relative to +website.dir+ parameter.
     def initialize(root)
       #TODO: copied from source/filesystem.rb
       if root =~ /^[a-zA-Z]:|\//
@@ -17,10 +21,12 @@ module Webgen::Output
       end
     end
 
+    # Return +true+ if the given path exists.
     def exists?(path)
       File.exists?(File.join(@root, path))
     end
 
+    # Delete the given +path+
     def delete(path)
       dest = File.join(@root, path)
       if File.directory?(dest)
@@ -30,6 +36,8 @@ module Webgen::Output
       end
     end
 
+    # Write the +data+ to the given +path+. The +type+ parameter specifies the type of the path to
+    # be created which can either be <tt>:file</tt> or <tt>:directory</tt>.
     def write(path, data, type = :file)
       dest = File.join(@root, path)
       FileUtils.makedirs(File.dirname(dest))

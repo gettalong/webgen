@@ -4,11 +4,16 @@ require 'webgen/websiteaccess'
 
 module Webgen::SourceHandler
 
+  # Handles files which contain specifications for "virtual" nodes, ie. nodes that don't have real
+  # source path.
+  #
+  # This can be used, for example, to provide multiple links to the same node.
   class Virtual
 
     include Base
     include Webgen::WebsiteAccess
 
+    # Create all virtual nodes under +parent+ which are specified in +path+.
     def create_node(parent, path)
       page = page_from_path(path)
       nodes = []
@@ -35,6 +40,7 @@ module Webgen::SourceHandler
     private
     #######
 
+    # Create the needed parent directories for a virtual node.
     def create_directories(parent, dirname, path)
       dirname.sub(/^\//, '').split('/').each do |dir|
         parent = create_directory(parent, File.join(parent.absolute_lcn, dir), path)
@@ -42,6 +48,7 @@ module Webgen::SourceHandler
       parent
     end
 
+    # Create a virtual directory if it does not already exist.
     def create_directory(parent, dir, path, meta_info = nil)
       dir_handler = website.cache.instance('Webgen::SourceHandler::Directory')
       website.blackboard.invoke(:create_nodes, parent.tree, parent.absolute_lcn,

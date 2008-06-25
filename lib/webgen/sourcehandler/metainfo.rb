@@ -4,6 +4,7 @@ require 'webgen/websiteaccess'
 
 module Webgen::SourceHandler
 
+  # Handles meta information files which provide meta information for other files.
   class Metainfo
 
     include Base
@@ -11,6 +12,7 @@ module Webgen::SourceHandler
 
     CKEY = [:metainfo, :nodes]
 
+    # Upon creation the object registers itself as listener for some node hooks.
     def initialize
       website.blackboard.add_listener(:node_changed?, method(:node_changed?))
       website.blackboard.add_listener(:before_node_created, method(:before_node_created))
@@ -19,6 +21,7 @@ module Webgen::SourceHandler
       self.nodes ||= Set.new
     end
 
+    # Create a meta info node from +parent+ and +path+.
     def create_node(parent, path)
       page = page_from_path(path)
       super(parent, path) do |node|
@@ -37,13 +40,20 @@ module Webgen::SourceHandler
       end
     end
 
-    def nodes; website.cache.permanent[CKEY]; end
-    def nodes=(val); website.cache.permanent[CKEY] = val; end
+    def nodes #:nodoc:
+      website.cache.permanent[CKEY]
+    end
+
+    def nodes=(val) #:nodoc:
+      website.cache.permanent[CKEY] = val
+    end
 
     #######
     private
     #######
 
+    # Mark all nodes that are matched by a path or an alcn specifcation in the meta info node +node+
+    # as dirty.
     def mark_all_matched_dirty(node)
       source_paths = website.blackboard.invoke(:source_paths)
       node.tree.node_access[:alcn].each do |path, n|
@@ -52,6 +62,7 @@ module Webgen::SourceHandler
       end
     end
 
+    # Update the meta info of matched path before a node is created.
     def before_node_created(parent, path)
       self.nodes.each do |node|
         node.node_info[:mi_paths].each do |pattern, mi|
@@ -60,6 +71,7 @@ module Webgen::SourceHandler
       end
     end
 
+    # Update the meta information of a matched alcn after the node has been created.
     def after_node_created(node)
       self.nodes.each do |n|
         n.node_info[:mi_alcn].each do |pattern, mi|
@@ -68,6 +80,8 @@ module Webgen::SourceHandler
       end
     end
 
+    # Check if the +node+ has meta information from any meta info node and if so, if the meta info
+    # node in question has changed.
     def node_changed?(node)
       return if self.nodes.include?(node)
       path = website.blackboard.invoke(:source_paths)[node.node_info[:src]]
@@ -81,6 +95,7 @@ module Webgen::SourceHandler
       end
     end
 
+    # Delete the meta info node +node+ from the internal array.
     def before_node_deleted(node)
       return unless node.node_info[:processor] == self.class.name
       mark_all_matched_dirty(node)

@@ -7,6 +7,7 @@ require 'pathname'
 
 module Webgen
 
+  # Represents a file, a directory or a fragment. A node always belongs to a Tree.
   class Node
 
     include WebsiteAccess
@@ -52,30 +53,25 @@ module Webgen
     # Has the node been created or has it been read from the cache?
     attr_accessor :created
 
-    #TODO(doc)
-    # path needs to contain full path (including parent), trailing slash of path indicates directory
-    # if cn starts with a #, it indicates a fragment
-    #: Initializes a new Node instance.
+    # Create a new Node instance.
     #
     # +parent+ (immutable)::
-    #    If this parameter is +nil+, then the new node acts as root. Otherwise, +parent+ has to
-    #    be a valid node instance.
+    #    The parent node under which this nodes should be created.
     # +path+ (immutable)::
-    #    The path for this node. If this node is a directory, the path must have a trailing
-    #    slash ('dir/'). If it is a fragment, the hash sign must be the first character of the
-    #    path ('#fragment'). A compound path like 'dir/file#fragment' is also allowed as are
-    #    absolute paths like 'http://myhost.com/'.
-    # +canonical_name+ (immutable)::
-    #    The canonical name used for resolving this node. Needs to be of the form 'basename.ext'
-    #    or 'basename' where +basename+ does not contain any dots. Also, the 'basename' must not
-    #    include a language part! If not set, the +path+ is used as canonical name.
-    # +lang+ (immutable)::
-    #    The language of the node. If not set, the node is language independent.
+    #    The full output path for this node. If this node is a directory, the path must have a
+    #    trailing slash (<tt>dir/</tt>). If it is a fragment, the hash sign must be the first
+    #    character of the path (<tt>#fragment</tt>). This can also be an absolute path like
+    #    <tt>http://myhost.com/</tt>.
+    # +cn+ (immutable)::
+    #    The canonical name for this node. Needs to be of the form <tt>basename.ext</tt> or
+    #    <tt>basename</tt> where +basename+ does not contain any dots. Also, the +basename+ must not
+    #    include a language part!
     # +meta_info+::
     #    A hash with meta information for the new node.
     #
-    # Note: a compound path like 'dir/file' is invalid if the parent node already has a child
-    # with path 'dir/'!!! (solution: just create a node with path 'file' and node 'dir/' as parent!)
+    # The language of a node is taken from the meta information +lang+ and the entry is deleted from
+    # the meta information hash. The language cannot be changed afterwards! If no +lang+ key is
+    # found, the node is language neutral.
     def initialize(parent, path, cn, meta_info = {})
       @parent = parent
       @path = path.freeze
@@ -89,52 +85,52 @@ module Webgen
       init_rest
     end
 
-    # Returns the meta information item for +key+.
+    # Return the meta information item for +key+.
     def [](key)
       @meta_info[key]
     end
 
-    # Assigns +value+ to the meta information item for +key+.
+    # Assign +value+ to the meta information item for +key+.
     def []=(key, value)
       @meta_info[key] = value
     end
 
-    # Returns the node information hash which contains information for processing the node.
+    # Return the node information hash which contains information for processing the node.
     def node_info
       tree.node_info[@absolute_lcn] ||= {}
     end
 
-    # Checks if the node is a directory.
+    # Check if the node is a directory.
     def is_directory?; @path[-1] == ?/; end
 
-    # Checks if the node is a file.
+    # Check if the node is a file.
     def is_file?; !is_directory? && !is_fragment?; end
 
-    # Checks if the node is a fragment.
+    # Check if the node is a fragment.
     def is_fragment?; @cn[0] == ?# end
 
-    # Checks if the node is the root node.
+    # Check if the node is the root node.
     def is_root?; self == tree.root;  end
 
-    # Returns +true+ if the node has changed since the last webgen run and set +dirty+
-    # appropriately.
+    # Return +true+ if the node has changed since the last webgen run. If it has changed, +dirty+ is
+    # set to +true+.
     def changed?
       @dirty = node_info[:used_nodes].any? {|n| n != @absolute_lcn && (!tree[n] || tree[n].changed?)} unless @dirty
       website.blackboard.dispatch_msg(:node_changed?, self) unless @dirty
       @dirty
     end
 
-    # Returns an informative representation of the node.
+    # Return an informative representation of the node.
     def inspect
       "<##{self.class.name}: alcn=#{@absolute_lcn}>"
     end
 
-    # Returns +true+ if the alcn matches the pattern. See File.fnmatch for useable patterns.
+    # Return +true+ if the alcn matches the pattern. See File.fnmatch for useable patterns.
     def =~(pattern)
       File.fnmatch(pattern, @absolute_lcn, File::FNM_DOTMATCH|File::FNM_CASEFOLD|File::FNM_PATHNAME)
     end
 
-    # Sorts nodes by using the meta info +sort_info+ of both involved nodes or, if these values are
+    # Sort nodes by using the meta info +sort_info+ of both involved nodes or, if these values are
     # equal, by the meta info +title+.
     def <=>(other)
       self_so = self['sort_info'].to_s.to_i
@@ -142,8 +138,8 @@ module Webgen
       (self_so == other_so ? (self['title'] || '') <=> (other['title'] || '') : self_so <=> other_so)
     end
 
-    # Constructs the absolute (localized) canonical name by using the +parent+ node and +name+
-    # (which can be a cn or an lcn). The +type+ can be either +:alcn+ or +:acn+.
+    # Construct the absolute (localized) canonical name by using the +parent+ node and +name+ (which
+    # can be a cn or an lcn). The +type+ can be either +:alcn+ or +:acn+.
     def self.absolute_name(parent, name, type)
       if parent.kind_of?(Tree)
         ''
@@ -154,7 +150,7 @@ module Webgen
       end
     end
 
-    # Constructs an internal URL for the given +name+ which can be a acn/alcn/path.
+    # Construct an internal URL for the given +name+ which can be a acn/alcn/path.
     def self.url(name)
       url = URI::parse(name)
       url = URI::parse('webgen://webgen.localhost/') + url unless url.absolute?
@@ -162,7 +158,7 @@ module Webgen
     end
 
 
-    # Checks if the this node is in the subtree which is spanned by +node+. The check is performed
+    # Check if the this node is in the subtree which is spanned by +node+. The check is performed
     # using only the +parent+ information of the involved nodes, NOT the actual path/alcn values!
     def in_subtree_of?(node)
       temp = self
@@ -170,8 +166,9 @@ module Webgen
       temp != tree.dummy_root
     end
 
-    # Returns the node with the same canonical name but in language +lang+ or, if no such node exists,
-    # an unlocalized version of the node. If no such node is found either, +nil+ is returned.
+    # Return the node with the same canonical name but in language +lang+ or, if no such node
+    # exists, an unlocalized version of the node. If no such node is found either, +nil+ is
+    # returned.
     def in_lang(lang)
       avail = @tree.node_access[:acn][@absolute_cn]
       avail.find do |n|
@@ -183,7 +180,7 @@ module Webgen
       end
     end
 
-    # Returns the node representing the given +path+ which can be an acn/alcn. The path can be
+    # Return the node representing the given +path+ which can be an acn/alcn. The path can be
     # absolute (i.e. starting with a slash) or relative to the current node. If no node exists for
     # the given path or if the path is invalid, +nil+ is returned.
     #
@@ -205,7 +202,7 @@ module Webgen
       end
     end
 
-    # Returns the relative path to the given path +other+. The parameter +other+ can be a Node or a
+    # Return the relative path to the given path +other+. The parameter +other+ can be a Node or a
     # String.
     def route_to(other)
       my_url = self.class.url(@path)
@@ -225,8 +222,8 @@ module Webgen
       (route == '' ? File.basename(self.path) : route)
     end
 
-    # Returns the routing node in language +lang+ which is the node that is used when routing to
-    # this node. The returned node can differ from the node itself in case of a directory where the
+    # Return the routing node in language +lang+ which is the node that is used when routing to this
+    # node. The returned node can differ from the node itself in case of a directory where the
     # routing node is the directory index node.
     def routing_node(lang)
       if !is_directory?
@@ -253,8 +250,9 @@ module Webgen
       end
     end
 
-    # Returns a HTML link from this node to the +node+ or, if this node and +node+ are the same and
-    # the parameter +website.link_to_current_page+ is +false+, a +span+ element with the link text.
+    # Return a HTML link from this node to the +node+ or, if this node and +node+ are the same and
+    # the parameter <tt>website.link_to_current_page</tt> is +false+, a +span+ element with the link
+    # text.
     #
     # You can optionally specify additional attributes for the HTML element in the +attr+ Hash.
     # Also, the meta information +link_attrs+ of the given +node+ is used, if available, to set
@@ -278,6 +276,7 @@ module Webgen
     private
     #######
 
+    # Do the rest of the initialization.
     def init_rest
       @lcn = Path.lcn(@cn, @lang)
       @absolute_cn = self.class.absolute_name(@parent, @cn, :acn)
@@ -293,7 +292,7 @@ module Webgen
       self.node_info[:used_nodes] = Set.new
     end
 
-    # Delegates missing methods to a processor. The current node is placed into the argument array as
+    # Delegate missing methods to a processor. The current node is placed into the argument array as
     # the first argument before the method +name+ is invoked on the processor.
     def method_missing(name, *args, &block)
       if node_info[:processor]

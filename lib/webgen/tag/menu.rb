@@ -3,7 +3,7 @@ require 'webgen/tag'
 
 module Webgen::Tag
 
-  # Generates a very configurable menu
+  # Generates a menu that can be configured extensively.
   class Menu
 
     include Webgen::WebsiteAccess
@@ -12,34 +12,41 @@ module Webgen::Tag
     # Special menu node class. It encapsulates the original node for later access.
     class MenuNode
 
+      # Array of the child nodes.
       attr_reader :children
+
+      # The parent node.
       attr_reader :parent
+
+      # The encapsulated node.
       attr_reader :node
 
+      # Create a new menu node under +parent+ for the real node +node+.
       def initialize(parent, node)
         @parent = parent
         @node = node
         @children = []
       end
 
-      # Sorts recursively all children of the node depending on their order value. If two order
-      # values are equal, sort the items using their title.
+      # Sort recursively all children of the node using the wrapped nodes.
       def sort!
         self.children.sort! {|a,b| a.node <=> b.node}
         self.children.each {|child| child.sort!}
         self
       end
 
+      # Return the menu tree under the node as nested list of alcn values.
       def to_lcn_list
         self.children.inject([]) {|temp, n| temp << n.node.absolute_lcn; temp += ((t = n.to_lcn_list).empty? ? [] : [t]) }
       end
 
     end
 
-    def initialize
+    def initialize #:nodoc:
       website.blackboard.add_listener(:node_changed?, method(:node_changed?))
     end
 
+    # Generate the menu.
     def call(tag, body, context)
       tree = specific_menu_tree_for(context.content_node)
 
@@ -55,7 +62,7 @@ module Webgen::Tag
     protected
     #########
 
-    # Checks if the menus for node have changed.
+    # Check if the menus for +node+ have changed.
     def node_changed?(node)
       return if !node.node_info[:tag_menu_menus] || @inside_node_changed
 
@@ -87,7 +94,7 @@ module Webgen::Tag
       build_specific_menu_tree(content_node, tree)
     end
 
-    # Builds a menu tree for +content_node+ from the tree +menu_node+.
+    # Build a menu tree for +content_node+ from the tree +menu_node+.
     def build_specific_menu_tree(content_node, menu_node, level = 1)
       if menu_node.nil? \
         || level > param('tag.menu.max_levels') + param('tag.menu.start_level') - 1 \
@@ -116,12 +123,12 @@ module Webgen::Tag
       end
     end
 
-    # Returns +true+ if +menu_node+ is in the menu tree without fragment nodes.
+    # Return +true+ if +menu_node+ is in the menu tree without fragment nodes.
     def is_in_menu_tree_of_files?(menu_node)
       (!menu_node.node.is_fragment? && menu_node.node['in_menu']) || menu_node.children.any? {|c| is_in_menu_tree_of_files?(c)}
     end
 
-    # Creates the HTML menu of the +tree+ using the provided +context+.
+    # Create the HTML menu of the +tree+ using the provided +context+.
     def create_output(context, tree)
       out = "<ul>"
       tree.children.each do |child|
@@ -136,7 +143,7 @@ module Webgen::Tag
       out
     end
 
-    # Returns style information (node is selected, ...) and a link from +dest_node+ to +node+.
+    # Return style information (node is selected, ...) and a link from +dest_node+ to +node+.
     def menu_item_details(dest_node, node, lang)
       styles = []
       styles << 'webgen-menu-submenu' if node.is_directory? || (node.is_fragment? && node.children.length > 0)
@@ -150,7 +157,7 @@ module Webgen::Tag
       [style, link]
     end
 
-    # Returns the menu tree for the language +lang+.
+    # Return the menu tree for the language +lang+.
     def menu_tree_for_lang(lang, root)
       menus = (website.cache.volatile[:menutrees] ||= {})
       unless menus[lang]
@@ -160,7 +167,7 @@ module Webgen::Tag
       menus[lang]
     end
 
-    # Creates and returns a menu tree if at least one node is in the menu or +nil+ otherwise.
+    # Create and return a menu tree if at least one node is in the menu or +nil+ otherwise.
     def create_menu_tree(node, parent, lang)
       menu_node = MenuNode.new(parent, node)
 

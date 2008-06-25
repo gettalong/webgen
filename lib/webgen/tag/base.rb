@@ -15,11 +15,11 @@ require 'webgen/websiteaccess'
 # with the tag class. The special name <tt>:default</tt> is used for the default tag class which is
 # called if a tag with an unknown tag name is encountered.
 #
-# The only method needed to be written is +call+ which is called by tags content processor to the
-# actual processing.
+# The only method needed to be written is +call+ which is called by the tags content processor to
+# the actual processing. And the +initialize+ method must not take any parameters!
 #
-# Tag class *can* also choose to not use this module. If they don't use it they have to provide the
-# following methods: +set_params+, +create_tag_params+, +call+.
+# Tag classes *can* also choose to not use this module. If they don't use it they have to provide
+# the following methods: +set_params+, +create_tag_params+, +call+.
 #
 # = Tag parameters
 #
@@ -35,9 +35,9 @@ require 'webgen/websiteaccess'
 # = Sample Tag Class
 #
 # Following is a simple tag class example which just reverses the body text and adds some
-# information about the context to the result:
-#
-#   module Webgen::Tag
+# information about the context to the result. Note that the class does not reside in the
+# Webgen::Tag namespace and that the configuration entry is therefore also not under the
+# <tt>tag.</tt> namespace.
 #
 #   class Reverser
 #
@@ -52,17 +52,15 @@ require 'webgen/websiteaccess'
 #
 #   end
 #
-#   end
-#
-#   WebsiteAccess.website.config.tag.reverser.do_reverse nil, :mandatory => default
-#   WebsiteAccess.website.config['contentprocessor.tags.map']['reverse'] = 'Webgen::Tag::Reverser'
+#   WebsiteAccess.website.config.reverser.do_reverse nil, :mandatory => default
+#   WebsiteAccess.website.config['contentprocessor.tags.map']['reverse'] = 'Reverser'
 #
 module Webgen::Tag::Base
 
   include Webgen::Loggable
   include Webgen::WebsiteAccess
 
-  # Returns a hash with parameter values extracted from the string +tag_config+.
+  # Return a hash with parameter values extracted from the string +tag_config+.
   def create_tag_params(tag_config, ref_node)
     begin
       config = YAML::load("--- #{tag_config}")
@@ -73,13 +71,13 @@ module Webgen::Tag::Base
     create_params_hash(config, ref_node)
   end
 
-  # Sets the current parameter configuration to +params+.
+  # Set the current parameter configuration to +params+.
   def set_params(params)
     @params = params
   end
 
-  # Retrieves the parameter value for +name+. The value is taken from the current parameter
-  # configuration if the parameter is specified there and from the website configuration otherwise.
+  # Retrieve the parameter value for +name+. The value is taken from the current parameter
+  # configuration if the parameter is specified there or from the website configuration otherwise.
   def param(name)
     (@params && @params.has_key?(name) ? @params[name] : website.config[name])
   end
@@ -89,7 +87,7 @@ module Webgen::Tag::Base
   #
   # The parameter +body+ holds the optional body value for the tag.
   #
-  # The context parameter holds all relevant information for processing. Have a look at the
+  # The +context+ parameter holds all relevant information for processing. Have a look at the
   # Webgen::ContentProcessor::Context class to see what is available.
   #
   # The method has to return the result of the tag processing and, optionally, a boolean value
@@ -104,15 +102,19 @@ module Webgen::Tag::Base
   private
   #######
 
+  # The base part of the configuration name. This is normally the class name without the Webgen
+  # module downcased and all "::" substituted with "." (e.g. Webgen::Tag::Menu -> tag.menu).
   def tag_config_base
     self.class.name.gsub('::', '.').gsub(/^Webgen\./, '').downcase
   end
 
+  # Return the list of all parameters for the tag class.
   def tag_params_list
     regexp = /^#{tag_config_base}/
     website.config.data.keys.select {|key| key =~ regexp}
   end
 
+  # Create the parameter hash from +config+ which needs to be a Hash, a String or +nil+.
   def create_params_hash(config, node)
     params = tag_params_list
     result = case config
@@ -131,7 +133,7 @@ module Webgen::Tag::Base
     result
   end
 
-  # Returns a valid parameter hash taking values from +config+ which has to be a Hash.
+  # Return a valid parameter hash taking values from +config+ which has to be a Hash.
   def create_from_hash(config, params, node)
     result = {}
     config.each do |key, value|
@@ -146,7 +148,7 @@ module Webgen::Tag::Base
     result
   end
 
-  # Returns a valid parameter hash by setting +value+ to the default mandatory parameter.
+  # Return a valid parameter hash by setting +value+ to the default mandatory parameter.
   def create_from_string(value, params, node)
     param_name = params.find {|k| website.config.options[k][:mandatory] == 'default'}
     if param_name.nil?

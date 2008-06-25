@@ -13,13 +13,12 @@ module Webgen
 
     end
 
-    # :nodoc:
-    def self.included(klass)
+    def self.included(klass) #:nodoc:
       super
       klass.extend(ClassMethods)
     end
 
-    # Returns the current website object.
+    # Return the current website object or +nil+.
     def website
       Thread.current[:webgen_website]
     end

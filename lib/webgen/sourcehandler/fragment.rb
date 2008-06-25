@@ -13,9 +13,11 @@ module Webgen::SourceHandler
     HTML_HEADER_REGEXP = /<h([123456])(?:>|\s([^>]*)>)(.*?)<\/h\1\s*>/i
     HTML_ATTR_REGEXP = /\s*(\w+)\s*=\s*('|")([^\2]+)\2\s*/
 
-    # Parses the String +content+ for headers +h1+, ..., +h6+ but only uses those headers which have
-    # an +id+ attribute. Then it generates a list of arrays with entries <tt>level, id, title, sub
-    # sections</tt> where <tt>sub sections</tt> is such a list again.
+    # Parse the string +content+ for headers +h1+, ..., +h6+ and return the found, nested sections.
+    #
+    # Only those headers are used which have an +id+ attribute set. The method returns a list of
+    # arrays with entries <tt>level, id, title, sub sections</tt> where <tt>sub sections</tt> is
+    # such a list again.
     def parse_html_headers(content)
       sections = []
       stack = []
@@ -44,7 +46,7 @@ module Webgen::SourceHandler
       sections
     end
 
-    # Creates nested fragment nodes under +parent+ from +sections+ (which can be created using
+    # Create nested fragment nodes under +parent+ from +sections+ (which can be created using
     # +parse_html_headers+). The meta information +in_menu+ of the fragment nodes is set to the
     # parameter +in_menu+ and the meta info +sort_info+ is calculated from the base +si+ value.
     def create_fragment_nodes(sections, parent, in_menu, si = 1000 )
