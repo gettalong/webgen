@@ -54,13 +54,15 @@ module Webgen::SourceHandler
       website.blackboard.invoke(:create_nodes, parent.tree, parent.absolute_lcn,
                                 Webgen::Path.new(File.join(dir, '/')),
                                 dir_handler) do |par, temp_path|
+        node = nil
         if (node = dir_handler.node_exists?(par, temp_path)) && (!meta_info || node.node_info[:src] != path.path)
-          parent = node
+          parent, node = node, nil
         else
           temp_path.meta_info.update(meta_info) if meta_info
-          parent = dir_handler.create_node(par, temp_path)
+          parent = node = dir_handler.create_node(par, temp_path)
           parent.node_info[:src] = path.path
         end
+        node
       end
       parent
     end
