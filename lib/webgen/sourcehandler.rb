@@ -72,9 +72,9 @@ module Webgen
       # Return a hash with all source paths.
       def find_all_source_paths
         if !@paths
-          source = Webgen::Source::Stacked.new(Hash[*website.config['sources'].collect do |mp, name, *args|
-                                                      [mp, constant(name).new(*args)]
-                                                    end.flatten])
+          source = Webgen::Source::Stacked.new(website.config['sources'].collect do |mp, name, *args|
+                                                 [mp, constant(name).new(*args)]
+                                               end)
           @paths = {}
           source.paths.each do |path|
             if !(website.config['sourcehandler.ignore'].any? {|pat| File.fnmatch(pat, path, File::FNM_CASEFOLD|File::FNM_DOTMATCH)})
