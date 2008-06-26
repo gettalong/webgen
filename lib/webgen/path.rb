@@ -66,7 +66,11 @@ module Webgen
     def mount_at(mp)
       temp = dup
       temp.path = File.join(mp, @path)
-      temp.directory = File.join(File.dirname(temp.path), '/')
+      if @path == '/'
+        temp.send(:analyse, temp.path)
+      else
+        temp.directory = File.join(File.dirname(temp.path), '/')
+      end
       temp
     end
 
