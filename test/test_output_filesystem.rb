@@ -22,6 +22,8 @@ class TestOutputFileSystem < Test::Unit::TestCase
     assert_equal(File.join(@website.config['website.dir'], 'test'), output.root)
     output = Webgen::Output::FileSystem.new('/tmp/hallo')
     assert_equal('/tmp/hallo', output.root)
+    output = Webgen::Output::FileSystem.new('../hallo')
+    assert_equal(File.join(@website.config['website.dir'], '../hallo'), output.root)
   end
 
   def test_file_methods

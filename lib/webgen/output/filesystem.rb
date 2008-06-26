@@ -14,7 +14,7 @@ module Webgen::Output
     # relative to +website.dir+ parameter.
     def initialize(root)
       #TODO: copied from source/filesystem.rb
-      if root =~ /^[a-zA-Z]:|\//
+      if root =~ /^([a-zA-Z]:|\/)/
         @root = root
       else
         @root = File.join(website.config['website.dir'], root)
