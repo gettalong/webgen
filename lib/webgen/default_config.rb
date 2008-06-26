@@ -66,7 +66,7 @@ website.autoload_service(:parse_html_headers, 'Webgen::SourceHandler::Fragment')
 
 
 # All things regarding output
-config.output ["Webgen::Output::FileSystem", 'output'], :doc => 'The class which is used to output the generated paths.'
+config.output ["Webgen::Output::FileSystem", 'out'], :doc => 'The class which is used to output the generated paths.'
 
 
 # All things regarding content processors
