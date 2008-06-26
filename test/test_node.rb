@@ -169,11 +169,12 @@ class TestNode < Test::Unit::TestCase
   end
 
   def test_matching
-    root = Webgen::Node.new(@tree.dummy_root, 'test/', 'test', {'lang' => 'de', :test => :value})
-    node = Webgen::Node.new(root, 'somepath', 'somefile.html', {'lang' => 'de'})
+    root = Webgen::Node.new(@tree.dummy_root, '/', '/')
+    node = Webgen::Node.new(root, 'somefile.de.html', 'somefile.html', {'lang' => 'de'})
     assert(node =~ '**/*')
     assert(node =~ '**/somefile.de.HTML')
-    assert(node =~ '/test/**/somefile.*.html')
+    assert(node =~ '/**/somefile.*.html')
+    assert(node !~ '/somefile.html')
     assert(node !~ '**/*.test')
   end
 
