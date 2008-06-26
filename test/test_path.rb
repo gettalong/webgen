@@ -33,6 +33,11 @@ class TestPath < Test::Unit::TestCase
                     'default', './', 'default', nil, '', 'default', 0, 'Default')
     check_proc.call(Webgen::Path.new('.htaccess'),
                     '.htaccess', './', '', nil, 'htaccess', '.htaccess', 0, '')
+
+    check_proc.call(Webgen::Path.new('/'),
+                    '/', '/', '/', nil, '', '/', 0, '/')
+    check_proc.call(Webgen::Path.new('/dir/'),
+                    '/dir/', '/', 'dir', nil, '', 'dir', 0, 'Dir')
   end
 
   def test_mount_at
@@ -40,6 +45,13 @@ class TestPath < Test::Unit::TestCase
     p = p.mount_at('/somedir')
     assert_equal('/somedir/test.de.page', p.path)
     assert_equal('/somedir/', p.directory)
+
+    p = Webgen::Path.new('/')
+    p = p.mount_at('/somedir')
+    assert_equal('/somedir/', p.path)
+    assert_equal('/', p.directory)
+    assert_equal('somedir', p.cn)
+    assert_equal('Somedir', p.meta_info['title'])
   end
 
   def test_dup
