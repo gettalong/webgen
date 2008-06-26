@@ -42,6 +42,9 @@ class TestSourceFileSystem < Test::Unit::TestCase
 
     source = Webgen::Source::FileSystem.new('c:/tmp/hallo')
     assert_equal('c:/tmp/hallo', source.root)
+
+    source = Webgen::Source::FileSystem.new('../hallo')
+    assert_equal(File.join(@website.config['website.dir'], '../hallo'), source.root)
   end
 
   def test_paths

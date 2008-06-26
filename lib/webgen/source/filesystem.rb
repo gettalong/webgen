@@ -33,7 +33,7 @@ module Webgen
 
     # Create a new file system source for the root path +root+ using the provided +glob+.
     def initialize(root, glob = '**/*')
-      if root =~ /^[a-zA-Z]:|\//
+      if root =~ /^([a-zA-Z]:|\/)/
         @root = root
       else
         @root = File.join(WebsiteAccess.website.config['website.dir'], root)
