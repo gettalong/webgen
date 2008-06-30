@@ -17,6 +17,7 @@ module Webgen
     autoload :Base, 'webgen/source/base'
     autoload :FileSystem, 'webgen/source/filesystem'
     autoload :Stacked, 'webgen/source/stacked'
+    autoload :Resource, 'webgen/source/resource'
 
   end
 
