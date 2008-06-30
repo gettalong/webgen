@@ -25,6 +25,18 @@ require 'webgen/page'
 # The Webgen namespace houses all classes/modules used by webgen.
 module Webgen
 
+  # Returns the data directory for webgen.
+  def self.data_dir
+    unless defined?(@@data_dir)
+      require 'rbconfig'
+      @@data_dir = File.expand_path(File.join(File.dirname(__FILE__), '..', '..', 'data', 'webgen'))
+      @@data_dir = File.expand_path(File.join(Config::CONFIG["datadir"], "webgen")) if !File.exists?(@@data_dir)
+      raise "Could not find webgen data directory! This is a bug, report it please!" unless File.directory?(@@data_dir)
+    end
+    @@data_dir
+  end
+
+
   # Represents a webgen website and is used to render it.
   class Website
 
@@ -34,37 +46,48 @@ module Webgen
     # automatically done in #render).
     attr_reader :config
 
-    # The logger used for logging. If none is set, logging is disabled.
-    attr_accessor :logger
-
-    # The blackboard used for inter-object communication.
+    # The blackboard used for inter-object communication. Can only be used after #init has been
+    # called.
     attr_reader :blackboard
 
     # A cache to store information that should be available between runs. Should only be used during
     # rendering as the cache gets restored before rendering and saved afterwards!
     attr_reader :cache
 
-    # Create a new webgen website. You can provide a block (has to take the configuration object as
-    # parameter) for adjusting the configuration values during the initialization.
-    def initialize(&block)
-      @blackboard = Blackboard.new
+    # The logger used for logging. If none is set, logging is disabled.
+    attr_accessor :logger
+
+    # The website directory.
+    attr_reader :directory
+
+    # Create a new webgen website for the website in the directory +dir+. You can provide a
+    # block (has to take the configuration object as parameter) for adjusting the configuration
+    # values during the initialization.
+    def initialize(dir, &block)
+      @blackboard = nil
       @cache = nil
       @config_block = block
+      @directory = dir
     end
 
     # Define a service +service_name+ provided by the instance of +klass+. The parameter +method+
-    # needs to define the method which should be invoked when the service is invoked.
+    # needs to define the method which should be invoked when the service is invoked. Can only be
+    # used after #init has been called.
     def autoload_service(service_name, klass, method = service_name)
       blackboard.add_service(service_name) {|*args| cache.instance(klass).send(method, *args)}
     end
 
-    # Initialize the configuration object and load the default configuration as well as website
-    # specific configurations.
+    # Initialize the configuration and blackboard objects and load the default configuration as well
+    # as website specific extension files. An already existing configuration/blackboard is deleted!
     def init
       with_thread_var do
+        @blackboard = Blackboard.new
         @config = Configuration.new
+
         load 'webgen/default_config.rb'
-        #TODO load site specific files/config
+        @config['website.dir'] = @directory.to_s
+        Dir.glob(File.join(@config['website.dir'], 'ext', '**/*_init.rb')) {|f| load(f) }
+
         @config_block.call(@config) if @config_block
       end
     end
