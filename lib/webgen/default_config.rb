@@ -10,6 +10,36 @@ config.website.link_to_current_page(false, :doc => 'Specifies whether links to t
 # All things regarding logging
 config.logger.mask(nil, :doc => 'Only show logging events which match the regexp mask')
 
+
+# All things regarding resources
+config.resources({}, :doc => 'A mapping from resource names to source identifiers')
+
+resources = YAML::load(File.read(File.join(Webgen.data_dir, 'resources.yaml')))
+resources.each do |res_path_template, res_name|
+  Dir.glob(File.join(Webgen.data_dir, res_path_template), File::FNM_CASEFOLD).each do |res_path|
+    substs = Hash.new {|h,k| h[k] = "$" + k }
+    substs.merge!({
+                    'basename' => File.basename(res_path),
+                    'basename_no_ext' => File.basename(res_path, '.*'),
+                    'extname' => File.extname(res_path)[1..-1],
+                    :dirnames => File.dirname(res_path).split(File::SEPARATOR),
+                  })
+    name = res_name.to_s.gsub(/\$\w+/) do |m|
+      if m =~ /^\$dir(\d+)$/
+        substs[:dirnames][-($1.to_i)]
+      else
+        substs[m[1..-1]]
+      end
+    end
+    config['resources'][name] = if File.directory?(res_path)
+                                  ["Webgen::Source::FileSystem", res_path]
+                                else
+                                  ["Webgen::Source::FileSystem", File.dirname(res_path), File.basename(res_path)]
+                                 end
+  end
+end
+
+
 # All things regarding sources
 config.sources [['/', "Webgen::Source::FileSystem", 'src']], :doc => 'One or more sources from which files are read, relative to website directory'
 
