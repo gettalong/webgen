@@ -50,9 +50,12 @@ module Webgen
     # called.
     attr_reader :blackboard
 
-    # A cache to store information that should be available between runs. Should only be used during
-    # rendering as the cache gets restored before rendering and saved afterwards!
+    # A cache to store information that should be available between runs. Can only be used after
+    # #init has been called.
     attr_reader :cache
+
+    # The internal data structure used to store information about individual nodes.
+    attr_reader :tree
 
     # The logger used for logging. If none is set, logging is disabled.
     attr_accessor :logger
@@ -63,9 +66,10 @@ module Webgen
     # Create a new webgen website for the website in the directory +dir+. You can provide a
     # block (has to take the configuration object as parameter) for adjusting the configuration
     # values during the initialization.
-    def initialize(dir, &block)
+    def initialize(dir, logger=nil,  &block)
       @blackboard = nil
       @cache = nil
+      @logger = logger
       @config_block = block
       @directory = dir
     end
@@ -77,34 +81,45 @@ module Webgen
       blackboard.add_service(service_name) {|*args| cache.instance(klass).send(method, *args)}
     end
 
-    # Initialize the configuration and blackboard objects and load the default configuration as well
-    # as website specific extension files. An already existing configuration/blackboard is deleted!
+    # Initialize the configuration, blackboard and cache objects and load the default configuration
+    # as well as website specific extension files. An already existing configuration/blackboard is
+    # deleted!
     def init
-      with_thread_var do
+      execute_in_env do
         @blackboard = Blackboard.new
         @config = Configuration.new
 
         load 'webgen/default_config.rb'
         @config['website.dir'] = @directory.to_s
-        Dir.glob(File.join(@config['website.dir'], 'ext', '**/*_init.rb')) {|f| load(f) }
+        Dir.glob(File.join(@config['website.dir'], 'ext', '**/init.rb')) {|f| load(f) }
 
         @config_block.call(@config) if @config_block
+        restore_tree_and_cache
       end
     end
 
     # Render the website.
     def render
-      with_thread_var do
+      execute_in_env do
         init
         log(:info) {"Starting webgen..."}
 
         shm = SourceHandler::Main.new
-        tree = restore_tree_and_cache
-        shm.render(tree)
-        save_tree_and_cache(tree)
+        shm.render(@tree)
+        save_tree_and_cache
 
         log(:info) {"webgen finished"}
       end
+    end
+
+    # The provided block is executed within a proper environment sothat any object can access the
+    # Website object.
+    def execute_in_env
+      set_back = Thread.current[:webgen_website].nil?
+      Thread.current[:webgen_website] = self
+      yield
+    ensure
+      Thread.current[:webgen_website] = nil if set_back
     end
 
     #######
@@ -114,36 +129,26 @@ module Webgen
     # Restore the tree and the cache from +website.cache+ and returns the Tree object.
     def restore_tree_and_cache
       @cache = Cache.new
-      tree = Tree.new
+      @tree = Tree.new
       data = if config['website.cache'].first == :file
                cache_file = File.join(config['website.dir'], config['website.cache'].last)
                File.read(cache_file) if File.exists?(cache_file)
              else
                config['website.cache'].last
              end
-      cache_data, tree = Marshal.load(data) rescue nil
+      cache_data, @tree = Marshal.load(data) rescue nil
       @cache.restore(cache_data) if cache_data
-      tree
     end
 
-    # Save the +tree+ and the +@cache+ to +website.cache+.
-    def save_tree_and_cache(tree)
-      cache_data = [@cache.dump, tree]
+    # Save the +tree+ and the +cache+ to +website.cache+.
+    def save_tree_and_cache
+      cache_data = [@cache.dump, @tree]
       if config['website.cache'].first == :file
         cache_file = File.join(config['website.dir'], config['website.cache'].last)
         File.open(cache_file, 'wb') {|f| Marshal.dump(cache_data, f)}
       else
         config['website.cache'][1] = Marshal.dump(cache_data)
       end
-    end
-
-    # Set a thread variable for easy access to the website during rendering.
-    def with_thread_var
-      set_back = Thread.current[:webgen_website].nil?
-      Thread.current[:webgen_website] = self
-      yield
-    ensure
-      Thread.current[:webgen_website] = nil if set_back
     end
 
   end

@@ -12,6 +12,7 @@ class TestWebsite < Test::Unit::TestCase
     assert_nil(ws.blackboard)
     assert_nil(ws.cache)
     assert_nil(ws.config)
+    assert_nil(ws.tree)
     assert_equal('dir', ws.directory)
     assert_throws(:called) { ws.init }
     assert_nil(Thread.current[:webgen_website])
@@ -31,6 +32,9 @@ class TestWebsite < Test::Unit::TestCase
     ws = Webgen::Website.new('hallo')
     ws.init
     assert_not_nil(ws.config)
+    assert_not_nil(ws.blackboard)
+    assert_not_nil(ws.cache)
+    assert_not_nil(ws.tree)
     assert_equal('hallo', ws.config['website.dir'])
   end
 
@@ -41,6 +45,12 @@ class TestWebsite < Test::Unit::TestCase
     ws.logger = nil
     ws.render
     assert(ws.config['website.cache'][1].length > 0)
+  end
+
+  def test_execute_in_env
+    ws = Webgen::Website.new('hallo')
+    assert_nil(Webgen::WebsiteAccess.website)
+    ws.execute_in_env { assert_not_nil(Webgen::WebsiteAccess.website) }
   end
 
 end
