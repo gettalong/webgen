@@ -1,0 +1,354 @@
+/* andreas06 - an open source xhtml/css website layout by Andreas Viklund - http://andreasviklund.com . Free to use for any purpose as long as the proper credits are given for the original design work.
+
+Version: 1.1, November 28, 2005 */
+
+body{
+background:#e0e0e0 url(images/bodybg.gif) repeat-x;
+color:#505050;
+font:76% Georgia,Verdana,Tahoma,Arial,sans-serif;
+margin:0;
+padding:0;
+text-align:center;
+}
+
+p{
+line-height:1.5em;
+margin:0 0 15px;
+}
+
+a{
+color:#fa9035;
+font-weight:700;
+text-decoration:none;
+}
+
+a:hover{
+color:#d04a10;
+}
+
+hr{
+height:1px;
+margin:10px 0;
+width:98%;
+}
+
+dt{
+font-weight:700;
+}
+
+dd{
+margin:1px 0 12px 15px;
+}
+
+#container{
+background:#c0c0c0 url(images/bodybg.gif) repeat-x;
+margin:0 auto;
+text-align:left;
+width:752px;
+}
+
+#sitename{
+background:url(images/leaves.jpg) top center no-repeat;
+color:#ffffff;
+font-weight:400;
+height:80px;
+margin:0 20px 10px 0;
+text-align:center;
+}
+
+#sitename h1{
+font-size:2.2em;
+margin:0;
+padding-top:20px;
+}
+
+#sitename span{
+font-size:1.6em;
+letter-spacing:-1px;
+margin:0;
+}
+
+#nav{
+background:url(images/greypx.gif) bottom left repeat-x;
+float:left;
+width:752px;
+}
+
+#nav ul, #nav li{
+list-style:none;
+margin:0;
+padding:0;
+}
+
+#nav a, #nav span {
+background:url(images/tabs.gif) no-repeat 100% 0;
+color:#808080;
+display:block;
+font-size:1.2em;
+font-weight: 700;
+letter-spacing:-1px;
+padding:7px 20px 4px 11px;
+text-decoration:none;
+}
+
+#nav a:hover{
+color:#505050;
+}
+
+#nav li{
+background:url(images/tabs.gif) no-repeat 0 0;
+float:left;
+margin:0 4px 0 0;
+padding:0 0 0 9px;
+}
+
+#nav li.webgen-menu-item-selected, #nav li.webgen-menu-submenu-inhierarchy {
+background:url(images/tabs.gif) no-repeat 0 -41px;
+}
+
+#nav li.webgen-menu-item-selected a, #nav li.webgen-menu-submenu-inhierarchy a, #nav li.webgen-menu-item-selected span {
+background:url(images/tabs.gif) no-repeat 100% -41px;
+color:#303030;
+padding:7px 20px 5px 11px;
+}
+
+#wrap1{
+background:#ffffff url(images/innerbg.gif) repeat-y;
+border-bottom:1px solid #808080;
+border-left:1px solid #808080;
+border-right:1px solid #808080;
+clear:both;
+padding:0;
+width:750px;
+}
+
+#wrap2{
+background:url(images/header.jpg) top left no-repeat;
+padding:10px;
+width:730px;
+}
+
+#header{
+height:30px;
+position:relative;
+width:730px;
+}
+
+#header h1{
+float:left;
+font-size:1.4em;
+margin:0;
+width:180px;
+}
+
+#topbox{
+color:#808080;
+margin:0 0 4px;
+text-align:right;
+}
+
+#topbox a{
+color:#d04a10;
+}
+
+#topbox a:hover{
+text-decoration:underline;
+}
+
+#leftside{
+float:left;
+margin:-15px 0 0;
+width:145px;
+}
+
+#leftside h1{
+font-size:1.4em;
+font-weight:400;
+}
+
+#rightside{
+float:right;
+margin:40px 15px 20px 0;
+width:130px;
+}
+
+#rightside h1{
+font-size:1.4em;
+font-weight:400;
+margin:0 0 12px;
+}
+
+#rightside p{
+font-size:0.9em;
+margin:2px 0 12px 10px;
+}
+
+#rightside img{
+border:1px solid #fa9035;
+margin:10px 0 5px 5px;
+padding:2px;
+}
+
+#content{
+margin:45px 160px 0 180px;
+}
+
+#contentalt{
+margin:45px 15px 0 180px;
+}
+
+#content p,#contentalt p{
+margin:8px 0 0 10px;
+}
+
+#content h1,#contentalt h1{
+color:#505050;
+font-size:2em;
+font-weight:400;
+margin:15px 0 10px;
+padding:0;
+}
+
+#content h2,#contentalt h2{
+color:#505050;
+font-size:1.5em;
+font-weight:400;
+margin:20px 0 10px;
+padding:0;
+}
+
+#content img,#contentalt img{
+border:1px solid #fa9035;
+float:left;
+margin:5px 15px 6px;
+}
+
+#footer{
+clear:both;
+color:#a0a0a0;
+font-size:0.9em;
+height:26px;
+margin-top:20px;
+padding:1px;
+text-align:right;
+width:730px;
+}
+
+#footer a{
+color:#a0a0a0;
+font-weight:400;
+}
+
+#footer a:hover{
+color:#a0a0a0;
+text-decoration:underline;
+}
+
+.menublock{
+margin-bottom:10px;
+}
+
+#leftside .webgen-menu ul {
+margin: 0px;
+padding: 0px;
+list-style-type: none;
+}
+
+#leftside .webgen-menu li {
+margin: 0px;
+padding: 0px;
+}
+
+.nav, #leftside .webgen-menu ul a {
+color:#d04a10;
+display:block;
+font-size:1.1em;
+font-weight:700;
+margin-bottom:1px;
+padding:2px 2px 2px 10px;
+position:relative;
+text-decoration:none;
+width:125px;
+}
+
+.nav:hover, #leftside .webgen-menu ul a:hover {
+border:1px solid #fa9035;
+color:#505050;
+padding:1px 1px 1px 9px;
+}
+
+.sub, #leftside .webgen-menu ul ul a {
+font-size:0.9em;
+margin-left:20px;
+padding:1px 1px 1px 6px;
+width:105px;
+}
+
+.sub:hover, #leftside .webgen-menu ul ul a {
+border:1px solid #fa9035;
+color:#505050;
+padding:0 0 0 5px;
+}
+
+.intro{
+font-weight:700;
+}
+
+.active{
+border:1px solid #fa9035;
+padding:1px 1px 1px 9px;
+}
+
+.box{
+background:#f8f8f8 url(images/boxbg.gif) top left repeat-y;
+border:1px solid #d0d4d4;
+color:#505050;
+margin:15px auto;
+padding:10px 10px 10px 20px;
+width:75%;
+}
+
+.photo{
+margin:5px auto 15px;
+padding:5px;
+}
+
+.smallcaps{
+font-variant:small-caps;
+}
+
+.mini{
+color:#a0a0a0;
+font-size:0.75em;
+font-weight:400;
+line-height:1.2em;
+margin:20px 0 10px 8px;
+}
+
+.small{
+font-size:0.85em;
+}
+
+.large{
+font-size:1.4em;
+}
+
+.soft{
+color:#808080;
+}
+
+.normal{
+font-weight:400;
+}
+
+.sharp{
+color:#101010;
+}
+
+.center{
+text-align:center;
+}
+
+.hide{
+display:none;
+}
