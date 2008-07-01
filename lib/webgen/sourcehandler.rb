@@ -40,8 +40,7 @@ module Webgen
           create_nodes_from_paths(tree, paths)
         end
 
-        klass, *args = website.config['output']
-        output = constant(klass).new(*args)
+        output = website.blackboard.invoke(:output_instance)
 
         # Enable permanent (till end of run) storing of volatile information
         website.cache.enable_volatile_cache

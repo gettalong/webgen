@@ -20,6 +20,12 @@ module Webgen
 
     autoload :FileSystem, 'webgen/output/filesystem'
 
+    # Returns an instance of the configured output class.
+    def self.instance
+      klass, *args = WebsiteAccess.website.config['output']
+      Object.constant(klass).new(*args)
+    end
+
   end
 
 end
