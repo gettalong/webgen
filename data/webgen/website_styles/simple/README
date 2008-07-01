@@ -1,0 +1,6 @@
+description:
+  Provides a minimalistic default style. The style defines a horizontal header, a horizontal bar with
+  the breadcrumb trail and the language menu, then a menu on the left and a footer.
+
+author:
+  Thomas Leitner

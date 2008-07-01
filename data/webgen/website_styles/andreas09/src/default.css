@@ -1,0 +1,308 @@
+/* andreas09 v1.0 (Dec 10th 2005) - An open source template by Andreas Viklund - http://andreasviklund.com. Free to use for any purpose as long as the proper credits are given to the original author. */
+
+body {
+background:#8b8b8b;
+color:#303030;
+font:76% Verdana,Tahoma,Arial,sans-serif;
+margin:0;
+padding:0;
+text-align:center;
+}
+
+a {
+color:#505050;
+font-weight:bold;
+text-decoration:none;
+}
+
+a:hover {
+color:#808080;
+text-decoration:underline;
+}
+
+p {
+line-height:1.5em;
+margin:0 0 15px;
+}
+
+/*** Main container ***/
+
+#container {
+background:#f0f0f0 url(images/bodybg.jpg) repeat-x;
+color:#303030;
+margin:0;
+min-width:770px;
+padding:0;
+text-align:left;
+width:100%;
+}
+
+/*** Header section ***/
+
+#sitename {
+color:#ffffff;
+height:92px;
+margin:0 20px 10px;
+text-align:left;
+}
+
+#sitename h1,#sitename h2 {
+font-weight:400;
+letter-spacing:-2px;
+margin:0;
+padding:0;
+}
+
+#sitename h1 {
+font-size:2.4em;
+padding-top:20px;
+}
+
+#sitename h2 {
+font-size:1.6em;
+}
+
+/*** Horizontal menu ***/
+
+#mainmenu {
+float:left;
+margin-bottom:25px;
+}
+
+#mainmenu ul {
+font-size:16px;
+margin:0;
+padding:0;
+}
+
+#mainmenu li {
+float:left;
+height:35px;
+list-style:none;
+margin:0;
+padding:0;
+}
+
+#mainmenu a, #mainmenu span {
+border-right:1px solid #b0b0b0;
+color:#606060;
+display:block;
+font-size:0.7em;
+padding:11px 10px 10px;
+text-transform:uppercase;
+}
+
+#mainmenu a:hover {
+background:#f0f0f0 url(images/menuhover.jpg) top left repeat-x;
+color:#505050;
+text-decoration:none;
+}
+
+#mainmenu .webgen-menu-item-selected a, #mainmenu .webgen-menu-item-selected span {
+background:#f0f0f0 url(images/menuhover.jpg) top left repeat-x;
+color:#505050;
+text-decoration:none;
+}
+
+/*** Content wrap ***/
+
+#wrap {
+clear:both;
+font-size:0.9em;
+padding:0;
+}
+
+/*** Sidebars ***/
+
+#leftside,#rightside {
+margin:0;
+padding:0 10px 10px;
+width:165px;
+}
+
+#leftside {
+float:left;
+margin-right:10px;
+}
+
+#rightside {
+float:right;
+margin-left:10px;
+}
+
+#leftside h1,#rightside h1 {
+color:#505050;
+font-size:1.6em;
+font-weight:bold;
+letter-spacing:-1px;
+margin:0 0 12px;
+}
+
+#leftside h2,#rightside h2 {
+font-size:1.1em;
+margin:0 0 20px;
+}
+
+#leftside p,#rightside p {
+font-size:0.9em;
+line-height:1.4em;
+margin:0 0 16px 10px;
+}
+
+.linklist {
+list-style:none;
+margin:0 0 16px 10px;
+padding:0;
+}
+
+.linklist li {margin-bottom:0.7em;}
+
+/*** Sidebar menu ***/
+
+.webgen-menu-section ul {
+  margin: 0 0 16px 10px;
+  padding: 0px;
+  list-style: none;
+}
+
+.nav, .webgen-menu-section a {
+background:#e8e9ea;
+border:1px solid #b0b0b0;
+color:#606060;
+display:block;
+margin-top:8px;
+padding:5px 4px 4px 10px;
+position:relative;
+text-transform:uppercase;
+width:140px;
+}
+
+.nav:hover, .webgen-menu-section a:hover, .webgen-menu-section li.webgen-menu-item-selected a, .webgen-menu-section li.webgen-menu-submenu-inhierarchy a, .active {
+background:#f8f9fa;
+border:1px solid #909090;
+color:#303030;
+text-decoration:none;
+}
+
+.sub {
+font-size:0.8em;
+letter-spacing:1px;
+margin:3px 0 2px 10px;
+padding:4px 2px 2px 8px;
+width:125px;
+}
+
+/*** Content ***/
+
+#navbar {
+  height: 15px;
+  margin-bottom: 5px;
+  padding: 2px;
+}
+
+.rightbox {
+  float: right;
+  padding-left: 10px;
+}
+
+.leftbox {
+  float: left;
+  padding-right: 10px;
+}
+
+#content,#contentalt {
+background-color:#fafcff;
+border:1px solid #909090;
+color:#2a2a2a;
+padding:15px 20px 5px;
+}
+
+#content {margin:0 200px;}
+#contentalt {margin:0 200px 0 20px;}
+
+#content h1,#content h2,#contentalt h1,#contentalt h2 {
+background-color:inherit;
+color:#606060;
+font-size:1.8em;
+font-weight:bold;
+letter-spacing:-1px;
+margin:0 0 15px;
+padding:0;
+}
+
+#content h2,#contentalt h2 {
+font-size:1.6em;
+margin-bottom:10px;
+}
+
+#content img,#contentalt img {
+border:1px solid #b0b0b0;
+float:left;
+margin:5px 15px 6px;
+padding:5px;
+}
+
+/*** Footer ***/
+
+#footer {
+background:#8b8b8b url(images/footerbg.jpg) top left repeat-x;
+clear:both;
+color:#d0d0d0;
+font-size:0.9em;
+font-weight:bold;
+margin:0;
+padding:20px 0;
+text-align:center;
+width:100%;
+}
+
+#footer a {
+color:#d0d0d0;
+font-weight:bold;
+}
+
+/*** Various classes ***/
+
+.thumbnail {
+background:#fafbfc;
+border:1px solid #b0b0b0;
+margin:0 0 10px 10px;
+padding:5px;
+}
+
+.searchform {margin:0;}
+
+.searchbox {
+background:#f0f0f0;
+border:1px solid #b0b0b0;
+margin:0 4px 0 0;
+width:100px;
+}
+
+.searchbutton {
+background:#f0f0f0;
+border:1px solid #b0b0b0;
+}
+
+.clearingdiv {
+clear:both;
+height:30px;
+width:1px;
+}
+
+.hide {display:none;}
+
+/*** Text format ***/
+
+.intro {
+font-size:1.1em;
+font-weight:bold;
+letter-spacing:-1px;
+}
+
+.small {font-size:0.8em;}
+.large {font-size:1.4em;}
+.center {text-align:center;}
+.right {text-align:right;}
+
+/*** End of file ***/

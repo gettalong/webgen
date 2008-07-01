@@ -1,0 +1,290 @@
+/* andreas00 - an open source xhtml/css website layout by Andreas Viklund  - http://andreasviklund.com . Free to use for any purpose as long as the proper credits are given to the original author.
+Version: 1.1 (Apr 20, 2006) */
+
+/***** Body and main container *****/
+
+body {
+margin:0 auto;padding:0;font:76% Verdana,Tahoma,Arial,sans-serif;background:#eaeaea url(images/bg.gif) top center repeat-y;color:#3a3a3a;
+}
+
+#wrap {
+background-color:#ffffff;color:#303030;margin:0 auto;padding:1px 5px;width:760px;
+}
+
+/***** Header *****/
+
+#header {
+color:#505050;background:#ffffff url(images/front.jpg) bottom left no-repeat;height:250px;margin:0 0 10px 0;padding:0;
+}
+
+#header h1 {
+font-size:2.5em;font-weight:normal;letter-spacing:-2px;margin:0 0 4px 15px;padding:15px 0 0 0;
+}
+
+#header h1 a,#header h1 a:hover {
+padding:0;
+}
+
+#header p {
+font-size:1.1em;letter-spacing:-1px;margin:0 0 20px 15px;padding:0 0 0 3px;
+}
+
+/***** Left sidebar *****/
+
+#avmenu {
+clear:left;float:left;width:150px;margin:0 0 10px 0;padding:0;
+}
+
+#avmenu ul {
+list-style:none;width:150px;margin:0 0 20px 0;padding:0;
+}
+
+#avmenu li {
+margin-bottom:5px;
+}
+
+#avmenu li a, #avmenu li span {
+font-weight:bold;height:20px;text-decoration:none;color:#505050;display:block;padding:6px 0 0 10px;background:#f4f4f4 url(images/menubg.gif) bottom left repeat-x;border-top:1px solid #d8d8d8;border-right:1px solid #d8d8d8;border-bottom:1px solid #d8d8d8;border-left:4px solid #cccccc;
+}
+
+#avmenu li a:hover, #avmenu li a.current, #avmenu li.webgen-menu-item-selected a, #avmenu li.webgen-menu-item-selected span {
+background:#eaeaea url(images/menubg2.gif) bottom left repeat-x;color:#505050;border-top:1px solid #b0b0b0;border-right:1px solid #b0b0b0;border-bottom:1px solid #b0b0b0;border-left:4px solid #505050;
+}
+
+#avmenu ul ul {
+margin:5px 0 5px 15px;font-size:0.9em;width:135px;
+}
+
+#avmenu ul ul a {
+height:16px;margin:0;padding:4px 0 0 8px;
+}
+
+#avmenu h2 {
+font-size:1.5em;font-weight:normal;
+}
+
+/***** Right sidebar *****/
+
+#extras {
+float:right;width:130px;margin:0 0 10px 0;padding:0;font-size:0.9em;
+}
+
+#extras p, #extras ul {
+margin:0 0 1.5em 0;line-height:1.3em;padding:0;
+}
+
+#extras a {
+font-weight:bold;
+}
+
+#extras li {
+list-style:none;margin:0 0 6px 0;padding:0;
+}
+
+#extras h2 {
+font-size:1.6em;font-weight:normal;margin:0 0 6px 0;;letter-spacing:-1px;
+}
+
+/***** Main content *****/
+
+#content {
+margin:10px 140px 10px 160px;padding:0;line-height:1.5em;text-align:left;
+}
+
+#contentwide {
+margin:10px 0 10px 160px;padding:0;line-height:1.5em;text-align:left;
+}
+
+#contentfull {
+margin:10px 10px 10px 10px;padding:2px 0 0 0;line-height:1.5em;text-align:left;
+}
+
+#content h2, #contentwide h2, #contentfull h2 {
+font-size:1.8em;letter-spacing:-1px;font-weight:normal;margin:8px 0 10px 0;padding:0;
+}
+
+#content h3, #contentwide h3, #contentfull h3 {
+font-size:1.5em;font-weight:normal;margin:6px 0 6px 0;padding:0;
+}
+
+#content img, #contentwide img, #contentfull img {
+padding:1px;display:inline;background:#cccccc;color:#303030;border:4px solid #f0f0f0;
+}
+
+#content a, #contentwide a, #contentfull a {
+font-weight:bold;
+}
+
+#content ul, #content ol,
+#contentwide ul, #contentwide ol,
+#contentfull ul, #contentfull ol {
+margin:0 0 16px 20px;
+padding:0;
+}
+
+#content ul ul, #content ol ol,
+#contentwide ul ul, #contentwide ol ol,
+#contentfull ul ul, #contentfull ol ol {
+margin:2px 0 2px 20px;
+}
+
+#content li, #contentwide li, #contentfull li {
+margin:0 0 2px 10px;
+padding:0 0 0 4px;
+}
+
+/***** Footer *****/
+
+#footer {
+clear:both;margin:0 auto;padding:8px 0;border-top:2px solid #dadada;width:760px;text-align:center;color:#808080;background-color:#ffffff;font-size:0.9em;
+}
+
+#footer p {
+padding:0;margin:0;
+}
+
+#footer a {
+color:#808080;background-color:inherit;text-decoration:none;
+}
+
+#footer a:hover {
+text-decoration:underline;
+}
+
+/***** Various tags *****/
+
+a {
+text-decoration:none;color:#505050;background-color:inherit;
+}
+
+a:hover {
+text-decoration:underline;color:#286ea0;background-color:inherit;
+}
+
+a img {
+border:0;
+}
+
+p {
+margin:0 0 16px 0;
+}
+
+blockquote {
+border-top:1px solid #d8d8d8;border-right:1px solid #d8d8d8;border-bottom:1px solid #d8d8d8;border-left:4px solid #cccccc;margin:16px;padding:7px 7px 7px 11px;background:#f4f4f4 url(images/menubg.gif) bottom left repeat-x;color:#505050;
+}
+
+blockquote p {
+font-size:1.1em;line-height:1.3em;margin:0;
+}
+
+/***** Table styles *****/
+
+table {
+margin:0 0 16px 0;padding:0;line-height:1.3em;border-collapse:collapse;border:1px solid #d8d8d8;
+}
+
+caption {
+text-align:left;font-size:1.5em;font-weight:normal;margin:0;padding:6px 0 8px 0;
+}
+
+th {
+padding:7px;text-align:left;background:#eaeaea url(images/menubg2.gif) bottom left repeat-x;color:#505050;
+}
+
+td {
+padding:7px;font-size:0.9em;text-align:left;background:#f4f4f4 url(images/menubg.gif) bottom left repeat-x;color:#303030;
+}
+
+/***** Form styles *****/
+
+.button {
+border-top:1px solid #d8d8d8;border-right:1px solid #d8d8d8;border-bottom:1px solid #d8d8d8;border-left:4px solid #cccccc;margin:0 0 15px 0;padding:7px 7px 7px 11px;background:#f4f4f4 url(images/menubg.gif) bottom left repeat-x;color:#505050;font-weight:bold;width:120px;
+}
+
+input, textarea {
+border:1px solid #cccccc;font-family:Verdana,Tahoma,Arial,Sans-Serif;font-size:1em;margin:0;padding:4px;
+}
+
+label {
+margin:2px;
+}
+
+input {
+width:200px;
+}
+
+textarea {
+width:400px;
+}
+
+/***** Search box *****/
+
+#searchbox {
+padding:0;margin:6px 0 16px 0;
+}
+
+#searchform {
+background:#ffffff;border:1px solid #cccccc;color:#505050;font-size:0.9em;padding:4px;width:116px;
+}
+
+#searchbox label {
+display:none;
+}
+
+/***** Various classes *****/
+
+.left {
+margin:10px 10px 5px 0;float:left;
+}
+
+.right {
+margin:10px 0 5px 10px;float:right;
+}
+
+.announce {
+margin:10px 0 10px 0;padding:10px 10px 5px 10px;width:105px;color:#505050;background:#f4f4f4 url(images/menubg.gif) bottom left repeat-x;border-top:1px solid #d8d8d8;border-right:1px solid #d8d8d8;border-bottom:1px solid #d8d8d8;border-left:4px solid #cccccc;line-height:1.3em;
+}
+
+.announce a {
+font-weight:bold;
+}
+
+.announce p {
+font-size:0.9em;
+}
+
+.announce h2 {
+margin:0 0 10px 0;padding:0;
+}
+
+#avmenu .announce {
+width:125px;
+}
+
+.textright {
+text-align:right;margin:-10px 0 4px 0;
+}
+
+.center {
+text-align:center;
+}
+
+.small {
+font-size:0.8em;
+}
+
+.large {
+font-size:1.3em;
+}
+
+.bold {
+font-weight:bold;
+}
+
+.highlighted {
+padding:3px;background-color:#f0f0f0;color:#303030;border:1px solid #b0b0b0;
+}
+
+.hide {
+display:none;
+}

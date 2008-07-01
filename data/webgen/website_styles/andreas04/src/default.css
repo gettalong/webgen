@@ -1,0 +1,290 @@
+/* andreas04 - an open source xhtml/css website layout by Andreas Viklund - http://andreasviklund.com . Free to use for any purpose as long as the proper credits are given for the original design work.
+Version: 1.5, July 15, 2006 */
+
+body{
+margin:0;
+padding:0;
+font:76% tahoma,verdana,sans-serif;
+background:#e6e6e6 url(images/bodybg.png) repeat-x;
+color:#333;
+text-align:center;
+}
+
+a{
+text-decoration:none;
+color:#269;
+font-weight:bold;
+}
+
+a:hover{
+text-decoration:underline;
+}
+
+p{
+margin:0 0 15px 0;
+line-height:1.5em;
+}
+
+h1,h2,h3,h4{
+margin:0;
+padding:0;
+font-weight:normal;
+}
+
+h1{
+font-size:3.2em;
+letter-spacing:-3px;
+color:#567;
+margin:12px 0 5px 20px;
+}
+
+h1 a:hover{
+text-decoration:none;
+}
+
+h2{
+font-size:1.8em;
+letter-spacing:-1px;
+margin:-10px 0 0 50px;
+color:#888;
+}
+
+h3{
+color: #555;
+font-size:1.4em;
+margin:1em 0 0.5em 0.5em;
+}
+
+h4{
+font-size:1.2em;
+font-weight:bold;
+}
+
+#container{
+width:92%;
+min-width:700px;
+padding:0 20px;
+margin:0 auto;
+background:#f0f0f0 url(images/contentbg.png) repeat-x;
+color:#333;
+text-align:left;
+border-left:1px solid #eef;
+border-right:1px solid #eef;
+}
+
+#sitetitle{
+float:left;
+height:100px;
+background:url(images/globe.gif) no-repeat; /* Delete this line to remove the animated globe */
+width: 42%;
+color: #333;
+}
+
+#sitetitle a{
+color:#567;
+font-weight:normal;
+}
+
+#sitetitle a:hover{
+color:#269;
+}
+
+#menu{
+height:71px;
+padding-top:35px;
+text-align: right;
+}
+
+#menu .webgen-menu ul, #menu .webgen-menu li {
+display: inline;
+margin: 0px;
+padding: 0px;
+}
+
+#menu a, #menu span {
+margin:0;
+height:100px;
+padding:35px 6px 41px 6px;
+font-size:1.6em;
+font-weight:normal;
+letter-spacing:-1px;
+color: #888;
+}
+
+#menu a:hover, #menu li.webgen-menu-item-selected span, #menu li.webgen-menu-item-selected a {
+color:#269;
+text-decoration:none;
+background: #fff url(images/menuhover.png) repeat-x;
+padding:35px 5px 41px 5px;
+border-left: 1px solid #eee;
+border-right: 1px solid #eee;
+}
+
+#content{
+margin-top:30px;
+width:100%;
+clear:both;
+background:url(images/globebottom.gif) bottom left no-repeat;
+}
+
+#content h2{
+margin:0 0 10px 0;
+color:#555;
+border-bottom:2px solid #abb;
+}
+
+#content h2 a{
+color:#555;
+font-weight:normal;
+}
+
+#content h2 a:hover{
+color:#269;
+text-decoration:none;
+background:none;
+}
+
+#content p{
+margin:0 0.5em 1.2em 0.5em;
+}
+
+#left{
+width:68%;
+float:left;
+}
+
+#right{
+margin-left:70%;
+margin-top:-15px;
+}
+
+#right h2{
+margin:0 0 8px 0;
+padding:12px 0 0 0;
+font-size:1.6em;
+}
+
+#footer{
+clear:both;
+padding:10px 0 12px 24px;
+text-align:left;
+color:#888;
+}
+
+#footer a{
+color:#888;
+font-weight:normal;
+}
+
+#footer span{
+color:#aaa;
+font-size:2em;
+letter-spacing:-2px;
+}
+
+.entry{
+position:relative;
+margin:0 0 20px 0;
+border:2px solid #fff;
+background:#eee url(images/entrybg.png) repeat-x;
+color:#333;
+padding:10px 10px 0 10px;
+}
+
+.entry a:hover, .intro a:hover{
+text-decoration:none;
+padding-bottom:2px;
+background:url(images/flash2.gif) bottom left repeat-x; /* Delete this line to remove the flashing underline for regular links */
+}
+
+.link{
+color:#269;
+background:url(images/linkarrow.gif) left no-repeat;
+display:block;
+margin:4px 0 0 0;
+padding:2px 1em;
+}
+
+.link:hover{
+color:#48b;
+background:url(images/blinkarrow.gif) left no-repeat; /* Delete this line to remove the blinking arrows by the links */
+text-decoration:none;
+}
+
+.thumbs img{
+position:relative;
+padding:3px;
+margin:0 2px 2px 0;
+border:1px solid #fff;
+background-color:#ddd;
+color: #555;
+}
+
+.thumbs img:hover{
+background: url(images/flash.gif); /* Delete this line to remove the blinkingblue frame around the thumbnails */
+}
+
+.entryphoto{
+margin:5px 10px 10px 0;
+float:left;
+padding:3px;
+border:1px solid #fff;
+background-color:#ddd;
+color:#333;
+}
+
+.meta{
+clear:both;
+border-top: 2px solid #ccc;
+padding: 5px 1px 0 0;
+margin:10px 0 0 0;
+text-align:right;
+font-size:0.9em;
+color: #567;
+}
+
+.pagenav{
+color: #888;
+text-align:center;
+}
+
+.entry img{
+position:relative;
+}
+
+.subcontainer {
+width:98%;
+}
+
+.rightsub{
+float:left;
+width:45%;
+padding:0;
+}
+
+.rightsub2{
+margin-left:50%;
+padding:0;
+}
+
+.date{
+display:block;
+float:left;
+font-weight:bold;
+}
+
+.right{
+text-align:right;
+}
+
+.center{
+text-align:center;
+}
+
+.clear{
+clear:both;
+}
+
+.hide{
+display:none;
+}
