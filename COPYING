@@ -1,0 +1,10 @@
+webgen is copyrighted free software by Thomas Leitner <t_leitner@gmx.at>.
+You can redistribute it and/or modify it under the terms of the GPL
+version 2 (see the file GPL).
+
+However, the webgen distribution contains some data files that have a
+different license. These files/directories are listed here:
+
+data/webgen/website_style/*:
+  The copyright information for each included website styles can be
+  found in the README file of the website style.
