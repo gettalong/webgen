@@ -237,7 +237,10 @@ class TestNode < Test::Unit::TestCase
     assert_equal(1, nodes[:somename_en] <=> nodes[:other_en])
     assert_equal(-1, nodes[:other_en] <=> nodes[:somename_en])
     nodes[:other_en]['sort_info'] = 1
-    assert_equal(-1, nodes[:somename_en] <=> nodes[:other_en])
+    assert_equal(1, nodes[:somename_en] <=> nodes[:other_en])
+    nodes[:other_en]['sort_info'] = '2008-06-28'
+    nodes[:somename_en]['sort_info'] = '2008-06-29'
+    assert_equal(1, nodes[:somename_en] <=> nodes[:other_en])
   end
 
   def test_level

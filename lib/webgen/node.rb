@@ -130,12 +130,16 @@ module Webgen
       File.fnmatch(pattern, @absolute_lcn, File::FNM_DOTMATCH|File::FNM_CASEFOLD|File::FNM_PATHNAME)
     end
 
-    # Sort nodes by using the meta info +sort_info+ of both involved nodes or, if these values are
-    # equal, by the meta info +title+.
+    # Sort nodes by using the meta info +sort_info+ (or +title+ if +sort_info+ is not set) of both
+    # involved nodes.
     def <=>(other)
-      self_so = self['sort_info'].to_s.to_i
-      other_so = other['sort_info'].to_s.to_i
-      (self_so == other_so ? (self['title'] || '') <=> (other['title'] || '') : self_so <=> other_so)
+      self_so = (self['sort_info'] && self['sort_info'].to_s) || self['title'] || ''
+      other_so = (other['sort_info'] && other['sort_info'].to_s) || other['title'] || ''
+      if self_so !~ /\D/ && other_so !~ /\D/
+        self_so = self_so.to_i
+        other_so = other_so.to_i
+      end
+      self_so <=> other_so
     end
 
     # Construct the absolute (localized) canonical name by using the +parent+ node and +name+ (which
