@@ -98,12 +98,18 @@ EOF
                             'Rakefile',
                             'setup.rb',
                             'VERSION',
+                            'AUTHORS',
+                            'THANKS',
+                            'COPYING',
+                            'GPL',
                             'bin/webgen',
+                            'data/**/*'
+                            'doc/**/*',
                             'lib/**/*.rb',
+                            'man/man1/webgen.1',
+                            'misc/**/*'
                             'test/test_*.rb',
                             'test/helper.rb',
-                            'doc/**/*',
-                            'data/**/*'
                            ]) do |fl|
     fl.exclude('data/**/.gitignore')
   end
