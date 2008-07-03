@@ -13,6 +13,11 @@ module Webgen
       end
     end
 
+    # Shortcut for writing a line to the normal log output.
+    def puts(*args)
+      (args.last == :verbose ? log(:verbose) { args[0..-2].join } : log(:stdout) { args.join })
+    end
+
   end
 
 end
