@@ -1,6 +1,7 @@
 require 'test/unit'
 require 'webgen/website'
-
+require 'tmpdir'
+require 'fileutils'
 
 class TestWebsite < Test::Unit::TestCase
 
@@ -51,6 +52,31 @@ class TestWebsite < Test::Unit::TestCase
     ws = Webgen::Website.new('hallo')
     assert_nil(Webgen::WebsiteAccess.website)
     ws.execute_in_env { assert_not_nil(Webgen::WebsiteAccess.website) }
+  end
+
+  def test_read_config_file
+    dir = File.join(Dir.tmpdir, 'webgen-' + Process.pid.to_s)
+    FileUtils.mkdir_p(dir)
+
+    ws = Webgen::Website.new(dir)
+    ws.init
+    assert_equal('', ws.logger.log_output)
+    FileUtils.touch(File.join(dir, 'config.yml'))
+    ws.init
+    assert_match(/spelling error/, ws.logger.log_output)
+
+    File.open(File.join(dir, 'config.yaml'), 'w+') {|f| f.write('- unknown')}
+    assert_raise(Webgen::Website::ConfigFileInvalid) { ws.init }
+
+    File.open(File.join(dir, 'config.yaml'), 'w+') {|f| f.write('webgen.unknown: doit')}
+    assert_raise(Webgen::Website::ConfigFileInvalid) { ws.init }
+
+    File.open(File.join(dir, 'config.yaml'), 'w+') {|f| f.write("website.lang: de\ndefault_meta_info: {:all: {hallo: du}}")}
+    ws.init
+    assert_equal('de', ws.config['website.lang'])
+    assert_equal('du', ws.config['sourcehandler.default_meta_info'][:all]['hallo'])
+  ensure
+    FileUtils.rm_rf(dir)
   end
 
 end
