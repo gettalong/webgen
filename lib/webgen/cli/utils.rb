@@ -10,7 +10,7 @@ module Webgen::CLI
   class Utils
 
     USE_ANSI_COLORS = !Config::CONFIG['arch'].include?('mswin32')
-    DEFAULT_WIDTH = %x{stty size}.split.collect {|n| n.to_i }.last
+    DEFAULT_WIDTH = %x{stty size}.split.collect {|n| n.to_i }.last rescue 72
 
     # Used for dynamically formatting the text (setting color, bold face, ...).
     def self.method_missing(id, text = nil)
