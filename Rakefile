@@ -28,8 +28,9 @@ require 'rake/testtask'
 require 'rake/packagetask'
 require 'rake/rdoctask'
 
-require './lib/webgen/version'
-require './lib/webgen/page'
+$:.unshift('lib')
+require 'webgen/version'
+require 'webgen/page'
 
 # End user tasks ################################################################
 
@@ -103,11 +104,11 @@ EOF
                             'COPYING',
                             'GPL',
                             'bin/webgen',
-                            'data/**/*'
+                            'data/**/*',
                             'doc/**/*',
                             'lib/**/*.rb',
                             'man/man1/webgen.1',
-                            'misc/**/*'
+                            'misc/**/*',
                             'test/test_*.rb',
                             'test/helper.rb',
                            ]) do |fl|
