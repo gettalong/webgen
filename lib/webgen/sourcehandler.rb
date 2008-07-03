@@ -1,3 +1,6 @@
+require 'webgen/loggable'
+require 'benchmark'
+
 module Webgen
 
   # Namespace for all classes that handle source paths.
@@ -23,6 +26,7 @@ module Webgen
     class Main
 
       include WebsiteAccess
+      include Loggable
 
       def initialize #:nodoc:
         website.blackboard.add_service(:create_nodes, method(:create_nodes))
@@ -33,35 +37,41 @@ module Webgen
       # are checked (nodes for deleted sources are deleted, nodes for new and changed sources).
       def render(tree)
         # Add new and changed nodes, remove nodes of deleted paths
-        used_paths = Set.new
-        paths = Set.new([nil])
-        while paths.length > 0
-          used_paths += (paths = Set.new(find_all_source_paths.keys) - used_paths - clean(tree))
-          create_nodes_from_paths(tree, paths)
+        puts "Generating tree..."
+        time = Benchmark.measure do
+          used_paths = Set.new
+          paths = Set.new([nil])
+          while paths.length > 0
+            used_paths += (paths = Set.new(find_all_source_paths.keys) - used_paths - clean(tree))
+            create_nodes_from_paths(tree, paths)
+          end
         end
+        puts "...done in " + time.total.to_s + ' seconds'
 
         output = website.blackboard.invoke(:output_instance)
 
         # Enable permanent (till end of run) storing of volatile information
         website.cache.enable_volatile_cache
 
-        tree.node_access[:alcn].sort.each do |name, node|
-          next if node == tree.dummy_root
-          puts "#{name} (#{node.meta_info['title']})".ljust(80) + "#{node.dirty ? '' : 'not '}dirty " + node.created.to_s
-          if node.dirty
-            node.dirty = false
-            node.created = false
-            content = node.content unless node['no_output']
-            type = if node.is_directory?
-                     :directory
-                   elsif node.is_fragment?
-                     :fragment
-                   else
-                     :file
-                   end
-            output.write(node.path, content, type) if content
+        puts "Writing changed nodes..."
+        time = Benchmark.measure do
+          tree.node_access[:alcn].sort.each do |name, node|
+            next if node == tree.dummy_root || !node.dirty
+            node.dirty = node.created = false
+            if !node['no_output'] && (content = node.content)
+              puts " "*4 + name, :verbose
+              type = if node.is_directory?
+                       :directory
+                     elsif node.is_fragment?
+                       :fragment
+                     else
+                       :file
+                     end
+              output.write(node.path, content, type)
+            end
           end
         end
+        puts "...done in " + time.total.to_s + ' seconds'
       end
 
       #######

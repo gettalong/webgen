@@ -4,6 +4,7 @@ require 'set'
 
 # Requirements for Website
 require 'webgen/loggable'
+require 'webgen/logger'
 require 'webgen/configuration'
 require 'webgen/websiteaccess'
 require 'webgen/blackboard'
@@ -57,7 +58,7 @@ module Webgen
     # The internal data structure used to store information about individual nodes.
     attr_reader :tree
 
-    # The logger used for logging. If none is set, logging is disabled.
+    # The logger used for logging. If set to +nil+, logging is disabled.
     attr_accessor :logger
 
     # The website directory.
@@ -66,7 +67,7 @@ module Webgen
     # Create a new webgen website for the website in the directory +dir+. You can provide a
     # block (has to take the configuration object as parameter) for adjusting the configuration
     # values during the initialization.
-    def initialize(dir, logger=nil,  &block)
+    def initialize(dir, logger=Webgen::Logger.new($stdout, false), &block)
       @blackboard = nil
       @cache = nil
       @logger = logger
@@ -102,13 +103,17 @@ module Webgen
     def render
       execute_in_env do
         init
-        log(:info) {"Starting webgen..."}
 
+        puts "Starting webgen..."
         shm = SourceHandler::Main.new
         shm.render(@tree)
         save_tree_and_cache
+        puts "Finished"
 
-        log(:info) {"webgen finished"}
+        if @logger && @logger.log_output.length > 0
+          puts "\nLog messages:"
+          puts @logger.log_output
+        end
       end
     end
 
