@@ -7,8 +7,7 @@ module Test
 
     def setup
       super
-      @website = Webgen::Website.new('.')
-      @website.instance_eval { @cache = Webgen::Cache.new }
+      @website = Webgen::Website.new('test', nil)
       @website.init
       Thread.current[:webgen_website] = @website
     end
