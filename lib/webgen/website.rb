@@ -41,6 +41,9 @@ module Webgen
   # Represents a webgen website and is used to render it.
   class Website
 
+    # Raised when the configuration file of the website is invalid.
+    class ConfigFileInvalid < RuntimeError; end
+
     include Loggable
 
     # The website configuration. Can only be used after #init has been called (which is
@@ -92,17 +95,19 @@ module Webgen
 
         load 'webgen/default_config.rb'
         @config['website.dir'] = @directory.to_s
-        Dir.glob(File.join(@config['website.dir'], 'ext', '**/init.rb')) {|f| load(f) }
+        Dir.glob(File.join(@config['website.dir'], 'ext', '**/init.rb')) {|f| load(f)}
+        read_config_file
 
         @config_block.call(@config) if @config_block
         restore_tree_and_cache
       end
+      self
     end
 
-    # Render the website.
+    # Render the website (after calling #init if the website is not already initialized).
     def render
       execute_in_env do
-        init
+        init unless @config
 
         puts "Starting webgen..."
         shm = SourceHandler::Main.new
@@ -153,6 +158,30 @@ module Webgen
         File.open(cache_file, 'wb') {|f| Marshal.dump(cache_data, f)}
       else
         config['website.cache'][1] = Marshal.dump(cache_data)
+      end
+    end
+
+    # Update the configuration object for the website with infos found in the configuration file.
+    def read_config_file
+      file = File.join(@config['website.dir'], 'config.yaml')
+      if File.exists?(file)
+        begin
+          config = YAML::load(File.read(file)) || {}
+          raise 'Structure of config file is not valid, has to be a Hash' if !config.kind_of?(Hash)
+          config.each do |key, value|
+            if key == 'default_meta_info'
+              value.each do |klass_name, options|
+                @config['sourcehandler.default_meta_info'][klass_name].update(options)
+              end
+            else
+              @config[key] = value
+            end
+          end
+        rescue RuntimeError, ArgumentError => e
+          raise ConfigFileInvalid, "Configuration invalid: " + e.message
+        end
+      elsif File.exists?(File.join(@config['website.dir'], 'config.yml'))
+        log(:warn) { "No configuration file called config.yaml found (there is a config.yml - spelling error?)" }
       end
     end
 
