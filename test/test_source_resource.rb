@@ -12,7 +12,7 @@ class TestSourceResource < Test::Unit::TestCase
   end
 
   def test_paths
-    @website.config['resources']['test-resource'] = ['Webgen::Source::FileSystem', File.dirname(__FILE__), File.basename(__FILE__)]
+    @website.config['resources']['test-resource'] = ['Webgen::Source::FileSystem', '.', File.basename(__FILE__)]
     source = Webgen::Source::Resource.new('test-*')
     assert_equal(1, source.paths.length)
     assert(source.paths.include?(Webgen::Path.new('/test_source_resource.rb')))
