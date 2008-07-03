@@ -44,7 +44,7 @@ module Webgen
   # Website template names have to be unique and style names have to be unique in respect to their
   # categories!
   #
-  # Note: All styles in the category 'website' are website styles.
+  # Note: All styles without a category or which are in the category 'website' are website styles.
   class WebsiteManager
 
     # A hash with the available website templates (mapping name to infos).

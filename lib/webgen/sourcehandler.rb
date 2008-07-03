@@ -46,7 +46,7 @@ module Webgen
             create_nodes_from_paths(tree, paths)
           end
         end
-        puts "...done in " + time.total.to_s + ' seconds'
+        puts "...done in " + ('%2.4f' % time.real) + ' seconds'
 
         output = website.blackboard.invoke(:output_instance)
 
@@ -71,7 +71,7 @@ module Webgen
             end
           end
         end
-        puts "...done in " + time.total.to_s + ' seconds'
+        puts "...done in " + ('%2.4f' % time.real) + ' seconds'
       end
 
       #######
