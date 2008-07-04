@@ -122,6 +122,30 @@ module Webgen
       end
     end
 
+    # Clean the website directory from all generated output files (including the cache file). If
+    # +del_outdir+ is +true+, then the base output directory is also deleted. When a delete
+    # operation fails, the error is silently ignored and the clean operation continues.
+    #
+    # Note: Uses the configured output instance for the operations!
+    def clean(del_outdir = false)
+      init
+      execute_in_env do
+        output = @blackboard.invoke(:output_instance)
+        @tree.node_access[:alcn].each do |name, node|
+          next if node.is_fragment? || node['no_output'] || node.path == '/' || node == @tree.dummy_root
+          output.delete(node.path) rescue nil
+        end
+
+        if @config['website.cache'].first == :file
+          FileUtils.rm(File.join(@config['website.dir'], @config['website.cache'].last)) rescue nil
+        end
+
+        if del_outdir
+          output.delete('/') rescue nil
+        end
+      end
+    end
+
     # The provided block is executed within a proper environment sothat any object can access the
     # Website object.
     def execute_in_env

@@ -40,10 +40,9 @@ class TestWebsite < Test::Unit::TestCase
   end
 
   def test_render
-    ws = Webgen::Website.new(File.dirname(__FILE__)) do |config|
+    ws = Webgen::Website.new(File.dirname(__FILE__), nil) do |config|
       config['website.cache'] = [:string, '']
     end
-    ws.logger = nil
     ws.render
     assert(ws.config['website.cache'][1].length > 0)
   end
@@ -77,6 +76,22 @@ class TestWebsite < Test::Unit::TestCase
     assert_equal('du', ws.config['sourcehandler.default_meta_info'][:all]['hallo'])
   ensure
     FileUtils.rm_rf(dir)
+  end
+
+  def test_clean
+    dir = File.join(Dir.tmpdir, 'webgen-' + Process.pid.to_s)
+    FileUtils.mkdir_p(dir)
+    FileUtils.mkdir_p(File.join(dir, 'src'))
+    FileUtils.touch(File.join(dir, 'src', 'test.jpg'))
+
+    ws = Webgen::Website.new(dir, nil)
+    ws.render
+    assert(File.exists?(File.join(dir, 'out', 'test.jpg')))
+    ws.clean
+    assert(!File.exists?(File.join(dir, 'out', 'test.jpg')))
+    assert(File.directory?(File.join(dir, 'out')))
+    ws.clean(true)
+    assert(!File.directory?(File.join(dir, 'out')))
   end
 
 end
