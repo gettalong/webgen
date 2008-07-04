@@ -29,6 +29,7 @@ require 'rake/packagetask'
 require 'rake/rdoctask'
 
 $:.unshift('lib')
+require 'webgen/webgentask'
 require 'webgen/version'
 require 'webgen/page'
 
@@ -51,19 +52,17 @@ desc "Build the whole user documentation"
 task :doc => [:rdoc, :htmldoc]
 
 desc "Generate the HTML documentation"
-task :htmldoc do
-  $:.unshift('./lib')
-  require 'webgen/website'
-  Webgen::Website.new('.') do |config|
+Webgen::WebgenTask.new('htmldoc') do |site|
+  site.clobber_outdir = true
+  site.config_block = lambda do |config|
     config['sources'] = [['/', "Webgen::Source::FileSystem", 'doc'],
                          ['/', "Webgen::Source::FileSystem", 'misc', 'default.*'],
                          ['/', "Webgen::Source::FileSystem", 'misc', 'htmldoc.metainfo'],
                          ['/', "Webgen::Source::FileSystem", 'misc', 'htmldoc.virtual'],
                          ['/', "Webgen::Source::FileSystem", 'misc', 'images/**/*']]
     config['output'] = ['Webgen::Output::FileSystem', 'htmldoc']
-  end.render
+  end
 end
-CLOBBER << ['webgen.cache', 'htmldoc']
 
 rd = Rake::RDocTask.new do |rdoc|
   rdoc.rdoc_dir = 'htmldoc/rdoc'
@@ -217,16 +216,15 @@ EOF
   end
 
   desc 'Generates the webgen website'
-  task :website do
-    $:.unshift('./lib')
-    require 'webgen/website'
-    Webgen::Website.new('website') do |config|
+  Webgen::WebgenTask.new(:website) do |site|
+    site.directory = 'website'
+    site.clobber_outdir = true
+    site.config_block = lambda do |config|
       config['sources'] += [['/documentation/', 'Webgen::Source::FileSystem', '../doc'],
                             ['/', "Webgen::Source::FileSystem", '../misc', 'default.css'],
                             ['/', "Webgen::Source::FileSystem", '../misc', 'images/**/*']]
-    end.render
+    end
   end
-  CLOBBER << ['website/webgen.cache', 'website/out']
 
   desc "Upload the webgen website to Rubyforge"
   task :publish_website => [:website] do
