@@ -44,7 +44,7 @@ module Webgen
     # Return all paths under #root which match #glob.
     def paths
       @paths ||= Dir.glob(File.join(@root, @glob), File::FNM_DOTMATCH|File::FNM_CASEFOLD).to_set.collect! do |f|
-        temp = File.expand_path(f.sub(/^#{@root}\/?/, '/'))
+        temp = File.expand_path(f.sub(/^#{Regexp.escape(@root)}\/?/, '/'))
         temp += '/' if File.directory?(f) && temp[-1] != ?/
         path = Path.new(temp, f)
         path
