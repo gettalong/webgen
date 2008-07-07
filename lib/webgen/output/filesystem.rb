@@ -11,13 +11,13 @@ module Webgen::Output
     attr_reader :root
 
     # Create a new object with the given +root+ path. If +root+ is not absolute, it is taken
-    # relative to +website.dir+ parameter.
+    # relative to the website directory.
     def initialize(root)
       #TODO: copied from source/filesystem.rb
       if root =~ /^([a-zA-Z]:|\/)/
         @root = root
       else
-        @root = File.join(website.config['website.dir'], root)
+        @root = File.join(website.directory, root)
       end
     end
 

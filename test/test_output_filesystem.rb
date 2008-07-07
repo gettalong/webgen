@@ -10,20 +10,23 @@ class TestOutputFileSystem < Test::Unit::TestCase
 
   def setup
     super
-    @website.config['website.dir'] = File.join(Dir.tmpdir, 'test_webgen')
+    @website = Webgen::Website.new(File.join(Dir.tmpdir, 'test_webgen'), nil)
+    @website.init
+    Thread.current[:webgen_website] = @website
   end
 
   def teardown
+    super
     FileUtils.rm_rf(File.join(Dir.tmpdir, 'test_webgen'))
   end
 
   def test_initialize
     output = Webgen::Output::FileSystem.new('test')
-    assert_equal(File.join(@website.config['website.dir'], 'test'), output.root)
+    assert_equal(File.join(@website.directory, 'test'), output.root)
     output = Webgen::Output::FileSystem.new('/tmp/hallo')
     assert_equal('/tmp/hallo', output.root)
     output = Webgen::Output::FileSystem.new('../hallo')
-    assert_equal(File.join(@website.config['website.dir'], '../hallo'), output.root)
+    assert_equal(File.join(@website.directory, '../hallo'), output.root)
   end
 
   def test_file_methods

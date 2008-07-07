@@ -94,8 +94,7 @@ module Webgen
         @config = Configuration.new
 
         load 'webgen/default_config.rb'
-        @config['website.dir'] = @directory.to_s
-        Dir.glob(File.join(@config['website.dir'], 'ext', '**/init.rb')) {|f| load(f)}
+        Dir.glob(File.join(@directory, 'ext', '**/init.rb')) {|f| load(f)}
         read_config_file
 
         @config_block.call(@config) if @config_block
@@ -137,7 +136,7 @@ module Webgen
         end
 
         if @config['website.cache'].first == :file
-          FileUtils.rm(File.join(@config['website.dir'], @config['website.cache'].last)) rescue nil
+          FileUtils.rm(File.join(@directory, @config['website.cache'].last)) rescue nil
         end
 
         if del_outdir
@@ -165,7 +164,7 @@ module Webgen
       @cache = Cache.new
       @tree = Tree.new
       data = if config['website.cache'].first == :file
-               cache_file = File.join(config['website.dir'], config['website.cache'].last)
+               cache_file = File.join(@directory, config['website.cache'].last)
                File.read(cache_file) if File.exists?(cache_file)
              else
                config['website.cache'].last
@@ -178,7 +177,7 @@ module Webgen
     def save_tree_and_cache
       cache_data = [@cache.dump, @tree]
       if config['website.cache'].first == :file
-        cache_file = File.join(config['website.dir'], config['website.cache'].last)
+        cache_file = File.join(@directory, config['website.cache'].last)
         File.open(cache_file, 'wb') {|f| Marshal.dump(cache_data, f)}
       else
         config['website.cache'][1] = Marshal.dump(cache_data)
@@ -187,7 +186,7 @@ module Webgen
 
     # Update the configuration object for the website with infos found in the configuration file.
     def read_config_file
-      file = File.join(@config['website.dir'], 'config.yaml')
+      file = File.join(@directory, 'config.yaml')
       if File.exists?(file)
         begin
           config = YAML::load(File.read(file)) || {}
@@ -204,7 +203,7 @@ module Webgen
         rescue RuntimeError, ArgumentError => e
           raise ConfigFileInvalid, "Configuration invalid: " + e.message
         end
-      elsif File.exists?(File.join(@config['website.dir'], 'config.yml'))
+      elsif File.exists?(File.join(@directory, 'config.yml'))
         log(:warn) { "No configuration file called config.yaml found (there is a config.yml - spelling error?)" }
       end
     end

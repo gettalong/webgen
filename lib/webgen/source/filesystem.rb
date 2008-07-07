@@ -36,7 +36,7 @@ module Webgen
       if root =~ /^([a-zA-Z]:|\/)/
         @root = root
       else
-        @root = File.join(WebsiteAccess.website.config['website.dir'], root)
+        @root = File.join(WebsiteAccess.website.directory, root)
       end
       @glob = glob
     end
