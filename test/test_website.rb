@@ -20,7 +20,7 @@ class TestWebsite < Test::Unit::TestCase
   end
 
   def test_autoload_service
-    ws = Webgen::Website.new(nil)
+    ws = Webgen::Website.new('unknown', nil)
     ws.init
     ws.instance_eval { @cache = Webgen::Cache.new }
     ws.autoload_service('[]', 'Hash')
@@ -36,7 +36,6 @@ class TestWebsite < Test::Unit::TestCase
     assert_not_nil(ws.blackboard)
     assert_not_nil(ws.cache)
     assert_not_nil(ws.tree)
-    assert_equal('hallo', ws.config['website.dir'])
   end
 
   def test_render

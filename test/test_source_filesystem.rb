@@ -28,7 +28,9 @@ class TestSourceFileSystem < Test::Unit::TestCase
 
   def setup
     super
-    @website.config['website.dir'] = File.join(File.dirname(__FILE__), '..')
+    @website = Webgen::Website.new(File.join(File.dirname(__FILE__), '..'), nil)
+    @website.init
+    Thread.current[:webgen_website] = @website
   end
 
   def test_initialize
@@ -44,7 +46,7 @@ class TestSourceFileSystem < Test::Unit::TestCase
     assert_equal('c:/tmp/hallo', source.root)
 
     source = Webgen::Source::FileSystem.new('../hallo')
-    assert_equal(File.join(@website.config['website.dir'], '../hallo'), source.root)
+    assert_equal(File.join(@website.directory, '../hallo'), source.root)
   end
 
   def test_paths
