@@ -1,0 +1,8 @@
+--- name:alcn
+/documentation/:
+  in_menu: true
+  sort_info: 30
+
+/news/:
+  in_menu: true
+  sort_info: 35

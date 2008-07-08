@@ -1,0 +1,328 @@
+---
+title: Configuration Option Reference
+in_menu: false
+---
+
+# Configuration Option Reference
+
+This reference describes all available configurations that can be set via the configuration file
+(or, if you want to have more control, via an extension file).
+
+## General Options
+
+*   ### `website.lang`
+
+    Specifies the default language of the website. The default language is assigned, for example, to
+    page files for which a language is not explicitly specified.
+
+    * Syntax: `LANGUAGE` where `LANGUAGE` is a ISO-639-1/2 two or three letter language code
+
+    * Examples:
+
+          website.lang: deu
+          website.lang: fr
+
+
+*   ### `website.link_to_current_page`
+
+    If this option is set to `true`, automatically generated links from a page to itself are
+    used. Otherwise, only the title of the page is shown.
+
+    * Syntax: `BOOLEAN` where `BOOLEAN` is `true` or `false`
+
+    * Examples:
+
+          website.link_to_current_page: false
+
+
+*   ### `website.cache`
+
+    Specifies the type and location of the cache. Two types are currently supported: `:file` and
+    `:string`. The file cache type stores the cache in a file relative to the website directory. The
+    string cache type stores the cache directly in the second part of the configuration option (this
+    is only useful when webgen is used as a library).
+
+    * Syntax: `[TYPE, LOCATION]` where `TYPE` is one of `:file` or `:string`
+
+    * Examples:
+
+          website.cache: [:file, my.cache]
+
+
+## Source and Output Specific Options
+
+*   ### `sources`
+
+    Specifies one or more sources from which paths are read. This can also be used, for example, to
+    additionally add other directories as source directories that may or may not be located in the
+    website directory.
+
+    * Syntax: `[[MOUNT POINT, NAME, ARG1, ARG2, ...], ...]` where `MOUNT POINT` is the path under
+      which the source should be mounted, `NAME` is the name of the source class (for example,
+      `Webgen::Source::FileSystem`) and `ARG1`, `ARG2` and so on are the parameters for the source
+      class. The supported parameters can be found in the documentation for each source class.
+
+    * Examples:
+
+          sources: [[/, Webgen::Source::FileSystem, src], [/, Webgen::Source::FileSystem, /mnt/pictures, **/*.jpg]
+
+
+*   ### `output`
+
+    Specifies the output class that should be used for writing out the generated paths.
+
+    * Syntax: `[NAME, ARG1, ARG2, ...]` where `NAME` is the name of the output class (for example,
+      `Webgen::Output::FileSystem`) and `ARG1`, `ARG2` and so on are the parameters for the output
+      class. The supported parameters can be found in the documentation for each output class.
+
+    * Examples:
+
+          output: [Webgen::Output::FileSystem, custom_out]
+
+
+*   ### `sourcehandler.patterns`
+
+    Specifies the path patterns that are used by the individual source handlers. This configuration
+    option is not normally set in the configuration file but in an extension file
+    (e.g. `ext/init.rb`) because otherwise the default entries would be overwritten.
+
+    * Syntax: `\{NAME: [PATTERN, PATTERN, ...], ...}` where `NAME` is the
+      name the name of a source handler and `PATTERN` are one or more path patterns.
+
+    * Examples (for `ext/init.rb`):
+
+          config.sourcehandler.patterns['Webgen::SourceHandler::Copy'] << '**/*.swf'
+
+
+*   ### `sourcehandler.invoke`
+
+    Specifies the invocation order of the various source handlers. This configuration option should
+    normally only be used by extensions to register their source handlers!
+
+    * Syntax: `\{ORDER: [NAME, ...], ...}` where `ORDER` is a number identifying the priority of the
+      invocation (source handlers with a lower `ORDER` setting are executed earlier than ones with a
+      higher `ORDER` setting) and `NAME` is the name of a source handler.
+
+    * Examples (for `ext/init.rb`):
+
+          config.sourcehandler.invoke[5] << 'Extension::MyNewSourceHandler'
+
+
+*   ### `sourcehandler.casefold`
+
+    Specifies whether path names should be considered case-sensitive (set to `false`) or
+    case-insensitive (set to `true`).
+
+    * Syntax: `BOOLEAN` where `BOOLEAN` is either `true` or `false`
+
+    * Examples:
+
+          sourcehandler.casefold: true
+
+
+*   ### `sourcehandler.use_hidden_files`
+
+    Specifies whether hidden files (those starting with a dot) should be used.
+
+    * Syntax: `BOOLEAN` where `BOOLEAN` is either `true` or `false`
+
+    * Examples:
+
+          sourcehandler.use_hidden_files: true
+
+
+*   ### `sourcehandler.ignore`
+
+    Specifies path patterns that should be ignored. All paths that match at least one of the
+    patterns are never used.
+
+    * Syntax: `[PATTERN, ...]` where `PATTERN` is a valid path pattern.
+
+    * Examples:
+
+          sourcehandler.ignore: [**/*~, **/CVS/**]
+
+
+*   ### `sourcehandler.default_lang_in_output_path`
+
+    Specifies whether output paths in the default language should have the language code in their
+    name.
+
+    * Syntax: `BOOLEAN` where `BOOLEAN` is either `true` or `false`
+
+    * Examples:
+
+          sourcehandler.default_lang_in_output_path: true
+
+
+*   ### `sourcehandler.default_meta_info`
+
+    Specifies default meta information for all source handlers or for specific ones. The
+    configuration file provides a shortcut for setting meta information items using the special
+    `default_meta_info` key (see the examples).
+
+    * Syntax: `\{NAME: {MI_KEY: MI_VALUE, ...}, ...}` where `NAME` is either the name of a source
+      handler or the special key `:all` which sets default meta info for all source handlers.
+
+    * Examples:
+
+          default_meta_info:
+            :all:
+              output_path_style: [:parent, :cnbase, :lang, :ext]
+            Webgen::SourceHandler::Page:
+              in_menu: true
+
+
+*   ### `sourcehandler.template.default_template`
+
+    Specifies the name of the default template file of a directory. This template is used as
+    fallback when no specific template is specified.
+
+    * Syntax: `PATH` where `PATH` is the absolute localized canonical name of the default template.
+
+    * Examples:
+
+          sourcehandler.template.default_template: other.template
+
+
+## Content Processor Specific Options
+
+*   ### `contentprocessor.map`
+
+    This configuration option maps short names for content processor to their class names. The short
+    names are used, for example, in the procesing pipeline of a content block of a file in Webgen
+    Page Format. This configuration option is normally only used by extensions to register the short
+    name of a content processor!
+
+    * Syntax: `\{SHORT: NAME, ...}` where `SHORT` is the short name of the content processor class
+      `NAME`.
+
+    * Examples (for `ext/init.rb`):
+
+          config['contentprocessor.map']['newcp'] = 'Extension::MyNewContentProcessor'
+
+
+*   ### `contentprocessor.tags.prefix`
+
+    Specifies the optional prefix that is used for tag names to avoid name clashes when another
+    content processor uses similar markup.
+
+    * Syntax: `PREFIX` where `PREFIX` is the prefix name.
+
+    * Examples:
+
+          contentprocessor.tags.prefix: webgen
+          contentprocessor.tags.prefix: tag
+
+
+*   ### `contentprocessor.tags.map`
+
+    This configuration option maps short names for tag classes to tag class names. The short names
+    are used in page and template files to specify the tag. This configuration option is normally
+    only used by extensions to register the short name of a content processor.
+
+    * Syntax: `\{SHORT: NAME, ...}` where `SHORT` is the short name of the tag class `NAME`.
+
+    * Examples (for `ext/init.rb`):
+
+          config['contentprocessor.tags.map']['highlight'] = 'Extension::MyHighlightingTag'
+
+
+## Tag Specific Options
+
+These options are not normally set in the configuration file but given directly as options to the
+respective tag classes. Therefore, all examples in this section show the use of these options in
+files in Webgen Page Format.
+
+*   ### `tag.relocatable.path`
+
+    The default mandatory configuration option for Tag::Relocatable that specifies the path that
+    should be made relocatable.
+
+    * Syntax: `PATH` where `PATH` is a (localized) canonical name.
+
+    * Examples:
+
+          <a href="\{relocatable: ../features.html}">Some Path</a>
+
+
+*   ### `tag.menu.used_nodes`
+
+    Specifies the type of nodes that should be used for menu generation. If `all` is specified then
+    all available menu nodes are used, if `files` is specified then only menu nodes that represent
+    files or directories are used and if `fragments` is specified then only the fragment nodes of
+    the displayed file are used.
+
+    * Syntax: `TYPE` where `TYPE` is one of `all`, `files` or `fragments`
+
+    * Examples:
+
+          Show the fragment node menu: \{menu: {used_nodes: fragments}}
+
+
+*   ### `tag.menu.start_level`
+
+    Specifies the start level for the menu. All nodes with a lower level than this number are not
+    shown in the menu.
+
+    * Syntax: `LEVEL` where `LEVEL` is a number that is greater or equal to one.
+
+    * Examples:
+
+          Menu starting at level 2: \{menu: {start_level: 2}}
+
+
+*   ### `tag.menu.min_levels`
+
+    Specifies the minimum number of levels that should always be shown. For example, if this is set
+    to `2` then two menu levels are always shown.
+
+    * Syntax: `LEVEL` where `LEVEL` is a number that is greater or equal to one.
+
+    * Examples:
+
+          Menu that always shows at least 2 levels : \{menu: {min_levels: 2}}
+
+
+*   ### `tag.menu.max_levels`
+
+    Specifies the maximum number of levels that should be shown even if there would be more. For
+    example, if this is set to `2` then there are only shown at most two menu levels.
+
+    * Syntax: `LEVEL` where `LEVEL` is a number that is greater or equal to one.
+
+    * Examples:
+
+          Menu that always shows at most 2 levels : \{menu: {max_levels: 2}}
+
+
+*   ### `tag.menu.show_current_subtree_only`
+
+    Specifies whether only the current subtree (ie. the subtree in which the node is that is
+    displayed) should be shown in the menu or all subtrees. This option takes effect when there are
+    at least two menu levels visible.
+
+    * Syntax: `BOOLEAN` where `BOOLEAN` is either `true` or `false`.
+
+    * Examples:
+
+          Showing all subtrees: \{menu: {show_current_subtree_only: false}}
+
+---
+
+## Miscelleanous Configuration Options
+
+*   ### `resources`
+
+    A map from resource names to resource identifiers. Should only be used by extensions and not be
+    set in the configuration file.
+
+    * Syntax: `NAME` TODO
+
+# All things regarding logging
+config.logger.mask(nil, :doc => 'Only show logging events which match the regexp mask')
+
+
+
+
+

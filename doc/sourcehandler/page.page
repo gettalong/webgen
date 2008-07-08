@@ -1,0 +1,32 @@
+---
+title: Webgen::SourceHandler::Page
+---
+
+> TODO: this needs to be redone!
+{.exclamation}
+
+
+### Processing
+
+TODO: redo this whole section
+
+There is a well defined procesing order for files in WebPage Format:
+
+* After reading in the file, it is split into the blocks.
+
+* Each content block is converted to HTML (depends on the format specifier) and the HTML sections
+  are resolved (caveat: only those with an `id` attribute)
+
+* When writing out the file, the converted content is first processed with ERB (if specified to do
+  so),
+
+* then webgen tags are replaced and,
+
+* finally, the result is written.
+
+The first two steps happen when the file is read and the last three when the file is written.
+
+#### Converting to HTML
+
+The conversion of a content block to HTML is done via the ContentConverter plugins. Each plugin is
+able to convert a special marked-up text to HTML.

@@ -1,0 +1,130 @@
+---
+title: Getting Started Guide
+---
+## Tutorial: Creating a Basic Website
+
+
+### Creating the Basic Directories
+
+webgen needs a special directory structure so that it works out of the box. Basically, you have a
+website directory under which the following directories are located:
+
+* `src`: The source directory in which all the source files for the website are.
+
+* `out`: This directory is created, if it does not exist, when webgen generates the HTML files. All
+  the output files are put into this directory.
+
+* `ext`: The extension directory (optional). You can put self-written extensions into this directory
+  so that they are used by webgen.
+
+The directory in which these directories are in is called the *website directory*.
+
+Don't worry too much about these directories since webgen is able to create the correct directory
+structure for you. By running the command `webgen create sample_site`, the website directory
+`sample_site` is created with the default website template and website style. You can naturally use
+any available template or style by passing their names to the respective options of the `create`
+command.
+
+> A *website template* provides a starting point for your website. For example, the `project`
+> template defines several pages including a features and about page.
+>
+> A *website style* defines the look and feel of your website. webgen comes with many predefined
+> styles (nearly all of them are converted open source web design styles).
+{.information}
+
+Don't worry if you don't like the used website style - you can easily change it later. Have a look
+at [the examples section](0.4.x/examples/website_styles/index.html) (note: these are still the
+example from the previous version of webgen but the styles haven't changed) to see demonstrations
+for all shipped website templates and styles!
+
+Since the basic parts are now in place, you can generate the HTML files. There are two
+possibilities:
+
+* Either you change into the `sample_site` directory and run the command `webgen`.
+
+* Or you run webgen from any directory and specify the website directory using the `-d` option, for
+  example `webgen -d sample_site`.
+
+Easy! webgen has used all files in the `src` directory and created the HTML output in the directory
+`out`. Since webgen automatically creates relative links, you can just open the `index.html` file
+and you will have a fully functional website - no web server needed! However, as we did not write
+any content yet, there is not much to see (only the default pages). So let's do that now!
+
+
+### Adding Content
+
+When using the `create` command, webgen does not only create the needed directories but it also
+provides you with some default files, you will normally have at least the following ones:
+
+* `src/default.template`: The default template for the new website.
+* `src/default.css`: The default css file for the new website.
+* `src/index.page`: The index file for the root directory of the website.
+* `config.yaml`: The configuration file for setting configuration options.
+
+> *Template files* and *page files* are the heart of webgen. Template files are used to define a
+> general layout for web pages and page files define the real content. Both file types are written
+> in [Webgen Page Format]({relocatable: webgen_page_format.html}). Page files are normally written
+> in a markup language like Markdown or Textile which is easier to learn and edit for non-technical
+> persons.
+{.information}
+
+The basic scaffolding is already in place. Now we only have to adapt the page file `index.page` and
+add other page files.
+
+All page files are written using the Webgen Page Format. Basically, you have an optional meta
+information block at the beginning of the file and one or more content blocks. Blocks are separated
+by three dashes (ie. `---`) on a separate line and if you want to have a meta information block you
+need to have a block separator line at the beginning of your file.
+
+Open the file `index.page` in your favorite text editor and change its content (ie. the first
+content block). After that create a new file, `hello.page`, in the source directory with the
+following content:
+
+    ---
+    title: Sample hello page
+    in_menu: true
+    ---
+    This is a sample page with the title "\{title:}" and it is in the menu!!!
+
+We define two meta information items (namely `title` and `in_menu`) and added some content to the
+first content block. Run webgen again and open `out/index.html` to view your changes. Add
+page files and other content to your website and let it grow!
+
+
+### Adding Dynamic Content
+
+A static website is, as the name implies, static. However, since we generate the website it is
+possible to add some dynamicity to it. For example, it gets very tedious to update menu links every
+time we add a file that should be in the menu.
+
+Therefore webgen provides two ways to add dynamic content out of the box:
+
+* *ERB*: This term stands for "embedded ruby". It means that you can embed ruby statements in page
+   and templates files that get evaluated when the files are rendered.
+
+* *webgen tags*: These are a way to add dynamic content without knowing a programming language
+   (although limiting you to the existing tags). You just state what tag you want to use and it does
+   its job. For example, there exists a very flexible menu generation tag.
+
+You have already encountered a webgen tag in the last section when you created the `hello.page`
+file: the `\{title:}` part. webgen tags can generally be specified like this: `\{tagname: {param:
+value, param2: value2}}`. For detailed information on tags have a look at the
+[Webgen::ContentProcessor::Tags]({relocatable: contentprocessor/tags.html}) documentation.
+
+
+### Setting configuration options
+
+webgen provides a default configuration out of the box. If you can live with that, you do not need
+to change any configuration option. However, most users need to change some configuration option
+sometime. The configuration file is called `config.yaml` and has to be placed directly under the
+website directory. It uses YAML as file format.
+
+> Have a look at the [Configuration Options Reference]({relocatable: reference_configuration.html})
+> to get an overview over all available configuration options.
+{.information}
+
+Each configuration option can be set in the configuration file by specifing the configuration option
+name and the new value as a key/value pair. A sample configuration file looks like this:
+
+    website.lang: de
+    website.link_to_current_page: true
