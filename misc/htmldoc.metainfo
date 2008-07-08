@@ -1,0 +1,22 @@
+--- name:alcn
+index.*.html:
+  in_menu: true
+  sort_info: 10
+
+getting_started.*.html:
+  in_menu: true
+  sort_info: 20
+
+manual.*.html:
+  in_menu: true
+  sort_info: 30
+
+faq.*.html:
+  in_menu: true
+  sort_info: 40
+
+extensions.*.html:
+  in_menu: true
+  sort_info: 50
+
+

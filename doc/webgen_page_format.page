@@ -1,0 +1,126 @@
+---
+title: Webgen Page Format
+---
+## Webgen Page Format
+
+The Webgen Page Format is a custom format designed primarily for page and template files. It
+consists of an optional meta information block and one or more blocks of data; it is very simple and
+easy to use.
+
+## Structure
+
+A file using the Webgen Page Format consists of one or more blocks which are the smallest units
+recongnized. Blocks are separated from each other through a line containing three dashes. This is
+illustrated in the following examples which are all valid files in WebPage Format:
+
+Example 1:
+
+    Here is a block!
+
+Example 2:
+
+    This is one block of the file
+    ---
+    This is another block.
+
+Example 3:
+
+    Block 1
+    --- name:block2
+    Block 2
+    --- name:block3
+    Block 3...
+
+If you want to use three dashes in a block but you don't want to end the block, you have to escape
+them with a backslash character, like this:
+
+    Block 1
+    \---
+    still Block 1
+    --- name:block2
+    Block 2
+
+All of the above examples show one kind of block, the content block. However, there may also be
+another type of block: the meta information block. Following is a short description of both kinds,
+starting with the meta information block.
+
+
+### Meta Information Block
+
+Each file in Webgen Page Format can have zero or one meta information blocks. This block is
+specified at the beginning of the file. To tell the parser that the first block is the meta
+information block and not a content block, you have to start the file with three dashes:
+
+    ---
+    title: The title set by Meta info
+    ---
+    This is the content of the file
+
+The above defines a meta information block and a content block. The meta information block has to be
+in YAML format and should contain key-value pairs of meta information. [YAML](http://www.yaml.org)
+is a simple markup language designed for ease of use and although you define structured data with
+it, it feels like just writing a plain text document.
+
+
+### Content Blocks
+
+A content block is used to provide content in a specific format. Each file in Webgen Page Format
+needs to have at least one content block which may be empty. However, it can have as many content
+blocks as necessary. Each content block needs to have a unique name and additional options can also
+be set.
+
+The name uniquely identifies a content block and is used to access it. The only option used by
+webgen is the `pipeline` option which specifies the processing pipeline for the block. The
+processing pipeline is used for rendering the block by using the specified content processors in the
+specified order. There are several different content processors available - have a look at the
+[content processor listing]({relocatable: contentprocessor/}) for an overview.
+
+There are also defaults for the name and the options of a block but they can be overwritten. You can
+use one of two ways to do this:
+
+* you either specify the name and additional options of the block on the starting line with the
+  three dashes
+
+* or you use the special meta information `block` to define the names and options of one or all
+  blocks.
+
+The following example uses the first technique to override the name and/or the `pipeline` option:
+
+    1. content block of the file
+    --- name:sidebar pipeline:maruku,tags
+    2. content block of the file
+    --- name:other
+    3. content block of the file
+
+The first block has no identifieres set (there is no line with three dashes and the identifieres).
+Therefore the default value for the name is used: `content`. The second block is named `sidebar` and
+uses the processing pipeline `maruku,tags`. As you can see, the name of a block as well as
+additional options are specified by stating the key (e.g. `name` or `pipeline`) followed by a colon
+and the value. Multiple options are separated via one or more spaces.
+
+> Only the first block gets the default name of `content`. The second and following blocks have
+> numbered names like `block2`, `block3` and so on.
+{.information}
+
+You can also set the name and additional options of the content blocks by using the special `blocks`
+meta information. It is a hash using the index of a block (or the special value `default`) as key
+and the options as values. The above example can therefore also be written like this:
+
+    ---
+    blocks: \{2: {name: sidebar, pipeline: maruku,tags}, 3: {name: other}}
+    ---
+    1. content block of the file
+    ---
+    2. content block of the file
+    ---
+    3. content block of the file
+
+When selecting a value for the name of a block or an option, the following precedence is used (from
+low to high):
+
+* global defaults set via the `default` key of the meta information `blocks`
+* block defaults set via the meta information `blocks`
+* the `--- line` options
+
+As stated above, the "option" `name` is special insofar that when it is not set, an automatic name
+gets generated.

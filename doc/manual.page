@@ -1,0 +1,356 @@
+---
+title: Manual
+---
+
+# The `webgen` command
+
+The executable for webgen is called... webgen ;-) It uses a command style syntax (like Subversion's
+`svn` or Rubygem's `gem` commands) through the [cmdparse] library. To get an overview of the
+possible commands run `webgen help`.
+
+The main command is the `render` command which does the actual website generation. This command uses
+the current working directory as website directory if none was specified via the gloabl `-d` option.
+
+You can invoke a command by specifying its name after the executable name. Also counting the
+executable `webgen` as a command, the options for a command are specified directly after the command
+name and before the next command or any arguments. For example, all the following command lines are
+valid:
+
+    $ webgen
+    $ webgen render
+    $ webgen -d doc render
+    $ webgen -v create -t project new_site
+    $ webgen help create
+
+Following is a short overview of the available commands:
+
+*   `create [-t TEMPLATE] [-s STYLE] SITE_DIR`
+
+    Creates a basic webgen website in `SITE_DIR` using the optional template and styles. All
+    available templates and styles are listed in the help output for the command.
+
+*   `help`
+
+    Displays usage information. Can be used to show information about a command by using the command
+    name as argument, eg. `webgen help create`.
+
+*   `render`
+
+    Renders the given webgen website.
+
+*   `version`
+
+    Displays the version of webgen.
+
+[cmdparse]: http://cmdparse.rubyforge.org
+
+
+# All About Paths and Sources   {#source}
+
+A source provides paths that identity files or directories. webgen can use paths from many sources.
+The most commonly used source is the file system source which provides paths and information on them
+from the file system.
+
+
+## Path Types {#source-types}
+
+webgen can handle many different types of files through the different source handler classes.
+
+The most important files are the page and template files as they are used to define the content and
+the layout of a website. Have a look at the [Webgen Page Format documentation]({relocatable:
+webgen_page_format.html}) to see how these files look like and how they are structured. After that
+have a look at the documentation of the source handler class SourceHandler::Page and
+SourceHandler::Template as they are responsible for handling these page and template files!
+
+You can naturally use any other type of file. However, be aware that some files may not be processed
+by webgen when no source handler class for them exists. For example, there is currently no source
+handler class for `.svg` files, so those files would be ignored. If you just want to have files
+copied from a source to the output directory (like images or CSS files), the SourceHandler::Copy
+class is what you need! Look through the documentation of the availabe source handler classes to get
+a feeling of what files are handled by webgen.
+
+
+## Source Paths Naming Convention {#source-naming}
+
+webgen assumes that the paths provided by the sources follow a special naming convention sothat meta
+information can be extracted correctly from the path name:
+
+    [sort_info.]basename[.lang].extension
+
+*   `sort_info`
+
+    This part is optional and has to consist of the digits 0 to 9. Its value is used for the meta
+    information `sort_info`. If not specified, it defaults to the value zero.
+
+*   `basename`
+
+    This part is used on the one hand to generate the `title` meta information (but with `_` and `-`
+    replaced by spaces). And on the other hand, the canonical name is derived from it. `basename`
+    must not contain any dots, spaces or any character from the following list: ``; / ? * : ` & = +
+    $ ,``. If you do use one of them webgen may not work correctly!
+
+    > If two paths have the same `basename` and `extension` part, they should define the same
+    > content but for different languages. This allows webgen to automatically deliver the right
+    > language version of the content
+    {.information}
+
+*   `lang`
+
+    This part is optional and has to be an [ISO-639-1/2](http://www.loc.gov/standards/iso639-2/)
+    language identifier (two or three characters (a-z) long). If not specified, it is assumed that
+    the path is language independent (for example, images are normally not specific for a specific
+    language). However, this behaviour may be different for some source handler classes (for
+    example, all paths handled by SourceHandler::Page are assigned the default language if none is
+    set).
+
+    If the language identifier can't be matched to a valid language, it is assumed that this part
+    isn't actually a language identifier but a part of the extension. This also means that in the
+    special case where the first part of an extension is also a valid language identifier, the first
+    part is interpreted as language identifier and not as part of the extension.
+
+*   `extension`
+
+    The file extension can be anything and can include dots.
+
+Following are some examples of source path names:
+
+|Path name                 | Parsed meta information
+|--------------------------|------------------------------------------------
+|`name.png`                | title: Name, language: none, sort\_info: 0, basename: name, cn: name.png
+|`name.de.png`             | title: Name, language: de, sort\_info: 0, basename: name, cn: name.png
+|`01.name_of-file.eo.page` | title: Name of file, language: eo, sort\_info: 1, basename: name_of-file, cn: name_of-file.page
+|`name.tar.bz2`            | title: Name, language: none, sort\_info: 0, basename: name, cn: name.tar.bz2
+|`name.de.tar.bz2`         | title: Name, language: de, sort\_info: 0, basename: name, cn: name.tar.bz2
+
+Notice: The first two and the last two examples define the same content for two different languages
+(or more exactly: the first one is unlocalized and the second one localized to German) as they have
+the same canonical name.
+
+
+## Canonical Name of a File ### {#source-cn}
+
+webgen provides the functionality to define the same content in more than one language, ie. to
+localize content. This is achieved with the _canonical name_ of a path.
+
+When multiple paths share the same canonical name, webgen assumes that they have the same content
+but in different languages. It is also possible to specify a _language independent_ path which is
+used as a fallback. Therefore when a path should be resolved using a canonical name and a given
+language, it is first tried to get the path in the requested language. If this is not possible
+(ie. no such localization exists), the unlocalized path is returned if it exists.
+
+> Directories and fragments are never localized, only files are!
+{.exclamation}
+
+It is also possible to use the _localized canonical name_ of a path to resolve it. The localized
+canonical name is the same as the canonical name but with a language code inserted before the
+extension. If the localized canonical name is used to resolve a path, a possibly additionally
+specified language is ignored as it is assumed that the user really only wants the path in the
+specified language!
+
+This also means that all paths are not resolved using their real source or output names but using
+the (localized) canonical name! This is different from previous webgen versions!
+
+
+## Output Path Name Construction ### {#source-output}
+
+The output path for a given source path is constructed using the meta information
+`output_path_style`. This meta information is set to a default value and can be overwritten by
+setting it for a specific source handler or for a path individually. The value for this meta
+information key is an array which can have the following values:
+
+* strings (for inserting arbitrary text into output names)
+* arrays (for grouping values - only interesting for the language part)
+* symbols for inserting special values:
+  * `:cnbase`: the basename of the path
+  * `:parent`: the parent path
+  * `:lang`: the language
+  * `:ext`: the file extension including the leading dot
+
+> The contructed output path must always be an absolute one, ie. it has to start at the root of the
+> output directory. Therefore, the `:parent` part should always be included!
+{.information}
+
+Following are some examples of output path names for given source path names (assuming that `en` is
+the default language and that the path is under a directory called `/img/`):
+
+*   `output_path_style=[:parent, :cnbase, [., :lang], :ext]` (the default)
+
+    *   `index.jpg` --> `/img/index.jpg`
+
+        Since the source path is unlocalized, no language part is used and the whole sub array with
+        the `:lang` symbol is dropped.
+
+    *   `index.en.jpg` --> `/img/index.jpg`
+
+        This happens if the configuration option `sourcehandler.default_lang_in_output_path` is
+        `false` and no unlocalized version of this path exists.
+
+    *   `index.en.jpg` --> `/img/index.en.jpg`
+
+        Similar to the last example but this result occurs when there is an unlocalized version of
+        the path which is naturally named `index.jpg`!
+
+    *   `index.de.jpg` --> `/img/index.de.jpg`
+
+        Since `de` is not the default language, the language part is always used!
+
+*   `output_path_style=[:parent, :cnbase, :ext, ., :lang]`
+
+    *   `index.jpg` --> `/img/index.jpg.`
+
+        Be aware of the trailing dot since the `:lang` value is not defined in an sub array!
+
+
+## Path Patterns {#source-pathpattern}
+
+Each source handler specifies path patterns which are used to locate the files that the class can
+handle. Normally these patterns are used to match file extensions, however, they are much more
+powerful. For detailed information on the structure of path patterns have a look at the
+[Dir.glob](http://ruby-doc.org/core/classes/Dir.html#M002375) API documentation.
+
+The path patterns that are handled by a particular source handler are stated on its documentation
+page. These patterns can be changed by modfying the configuration option `sourcehandler.patterns`
+although that is not recommended except in some few cases (for example, it is useful to add some
+patterns for SourceHandler::Copy). The information about how these path patterns work are useful for
+the usage of webgen because of two reasons:
+
+* so that you know which files will be processed by a specific source handler class
+
+* so that you can specify additional path patterns for some source handlers like the
+  SourceHandler::Copy
+
+Here are some example path patterns:
+
+<table class="examples" markdown='1'>
+<tr><th>Path Pattern</th><th>Result</th></tr>
+<tr>
+  <td>`*/*.html`</td>
+  <td>All files with the extension `html` in the subdirectories of the source directory</td>
+</tr>
+<tr>
+  <td>`**/*.html`</td>
+  <td>All files with the extension `html` in all directories</td>
+</tr>
+<tr>
+  <td>`**/{foo,bar}*`</td>
+  <td>All files in all directories which start with `foo` or `bar`</td>
+</tr>
+<tr>
+  <td>`**/???`</td>
+  <td>All files in all directories whose file name is exactly three characters long</td>
+</tr>
+</table>
+
+
+## Handling of files in the source directory {#source-handling}
+
+Following is the list of rules how source files are handled by webgen:
+
+* All path names of all sources specified in the configuration option `sources` are fetched. Prior
+  listed sources have priority over later listed sources if both specify the same path.
+
+* Those paths which match a pattern of the configuration option `sourcehandler.ignore` are excluded.
+
+* The source handler classes are invoked according to the invocation order specified in
+  `sourcehandler.invoke` and they use only those paths that match one of their path patterns
+  specified in `sourcehandler.patterns`.
+
+As you might have deduced from the processing list above, it is possible that one path is handled by
+multiple source handlers. This can be used, for example, to render an XML file as HTML and copy it
+verbatim.
+
+Internally a tree structure is created reflecting the source directory hierarchy and each path that
+is handled by webgen. Normally a source handler creates one node from one path but it is also
+possible that a source handler creates multiple nodes from one path.
+
+> The name used for describing a directory or file once it is placed in the internal tree structure
+> is 'node'.
+{.information}
+
+After this internal tree structure is created, it is traversed and each node is processed. First the
+node is checked if has changed (the notion of 'changed' depends on many things but a node is
+changed, for example, if its meta information or the associated source path has changed since the
+last webgen run). If it has not changed, nothing needs to be written. Otherwise, the information
+needed to write out the node is gathered and its content is written to the output path represented
+by the node.
+
+
+## Path Meta Information {#source-metainfo}
+
+Each path can have meta information, i.e. information about the path itself, associated with it, for
+example the title of the path, if it should appear in a menu and so on. This meta information can be
+specified in several ways, including:
+
+* Source handlers can provide default meta information for their handled paths (set using the
+  configuration option `sourcehandler.default_meta_info`)
+
+* Some file types allow meta information to be specified directly in the file, for example page
+  files in [Webgen Page Format]({relocatable: webgen_page_format.html}).
+
+* Meta information can also be specified in special meta information backing files. These files are
+  handled by the source handler SourceHandler::Metainfo.
+
+There is clearly defined order in which meta information is applied to a node for a path:
+
+1. The path gets read by a source and some meta information is extracted from the path name.
+
+2. This meta information is overwritten with meta information specified for all source handlers and
+   then with meta information specified for the source handler that handles the path.
+
+3. Extensions can now overwrite meta information before the path gets handled by a source
+   handler. For example, the SourceHandler::Metainfo assigns meta information specified for paths at
+   this stage.
+
+4. Before the node for the path gets created, meta information from the content of the path itself
+   may overwrite the current meta information (this is the case, for example, with files in Webgen
+   Page Format).
+
+5. The node gets created with the provided meta information.
+
+6. After the node has been created, extensions may overwrite meta information again. For example,
+   the SourceHandler::Metainfo assigns meta information specified for nodes at this stage.
+
+
+
+# The Configuration File
+
+Many user will want to change some configuration options, for example, the default language of the
+website since not all people will want to write websites in English. This is primarily done via the
+configuration file.
+
+The configuration file is called `config.yaml` and has to be placed directly under the website
+directory. It uses [YAML](http://www.yaml.org) as file format. You can find a list of all available
+configuration options that can be set in the [Configuration Options Reference]({relocatable:
+reference_configuration.html}).
+
+Each configuration option can be set in the configuration file by specifing the configuration option
+name and the new value as a key/value pair. A sample configuration file looks like this:
+
+    website.lang: de
+    website.link_to_current_page: true
+
+There is one special key called `default_meta_info` which behaves a little different. It does not
+map to any configuration option but is used to update the meta information hashes of the
+configuration option `sourcehandler.default_meta_info`. For example, the following configuration
+file updates the default meta information for all source handlers by setting a new value for
+`output_path_style` and setting `in_menu` to `true`:
+
+    default_meta_info:
+      :all:
+        output_path_style: [:parent, :cnbase, :ext, [., :lang]]
+        in_menu: true
+
+
+# Extending webgen
+
+If you know the programming language Ruby a little bit, you can easily extend webgen and add new
+features that you need. All the needed developer documentation is available in the [API
+documentation](rdoc/index.html), along with sample implementations for all major types of extensions
+(source class, output classes, source handler class, content processors classes, tag classes, ...)
+and detailed information about the inner workings of webgen.
+
+webgen allows one to add extensions to a website by placing them in the directory `ext` under the
+website directory. All files called `init.rb` in any directory are loaded when the Webgen::Website
+gets initialized. So you need to make sure to either place all extensions in `init.rb` or load them
+from this file.
+

@@ -1,0 +1,38 @@
+---
+title: Webgen::ContentProcessor::Erb
+---
+
+> TODO: This needs to be redone
+{.exclamation}
+
+#### Evaluating ERB Tags
+
+TODO: ev move this to the ContentProcessor/Erb documentation???
+
+The evaluation of ERB (embedded ruby) tags is optional and only done if the meta information
+`useERB` is set to `true`. The use of ERB allows to add dynamic content without using webgen tags.
+Following is an example of a file which uses ERB:
+
+<notextile>
+<pre>
+\---
+title: Test page with ERB
+useERB: true
+\---
+This page has the following meta info items:
+&lt;% node.meta_info.each do |key, value| %&gt;
+    * &lt;%=key %&gt;: &lt;%=value %&gt;
+&lt;% end %&gt;
+</pre>
+</notextile>
+
+This would output all meta information for the file. There are some objects available which you can
+use in your ERB code:
+
+* `node`: the node for the current file (normally a page file)
+* `ref_node`: the reference node, i.e. the node in which the content will be embedded (normally a
+  template file)
+
+*Caveat*: you may need to ensure that the ERB start and end tags are not processed by the content
+converter. For example, with Textile you may need to surround the ERB code with &lt;textile&gt;
+tags!

@@ -1,0 +1,10 @@
+\--- !omap
+- /documentation/:
+
+- /documentation/index.html:
+    routed_title: Documentation
+
+- download_and_installation.html:
+    in_menu: true
+    sort_info: 25
+    url: index.html#download__installation

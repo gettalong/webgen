@@ -1,0 +1,177 @@
+---
+title: FAQ
+---
+# General Questions
+
+> This section does not have any content yet. If you have any good questions, please write an email!
+{.exclamation}
+
+
+# How to ...
+
+This section provides quick answers and links to more information for the most commonly asked
+questions.
+
+### ... create a website?
+
+Use the `webgen` command to create the needed directories
+
+    webgen create -t project -s andreas07 my_site
+
+This will create a webgen website in the directory `my_site` using the specified template and style.
+
+### ... set configuration options?
+
+You can set any configuration options via the configuration file called `config.yaml`. For example,
+say you want to set the option `website.link_to_current_page` to `true`, then you would add the
+following to the configuration file:
+
+    website.link_to_current_page: true
+
+There is a second possibility for webgen tags: you can set the options directly in the tag
+definition, like this:
+
+    \{menu: {start_level: 2, min_levels: 3}}
+
+And if you want to have complete control over the configuration options, you can use the file
+`ext/init.rb`. For example, the following specifies that all page files should be in the menu by
+default:
+
+    config = Webgen::WebsiteAccess.website.config
+    config['sourcehandler.default_meta_info']['Webgen::SourceHandler::Page']['in_menu'] = true
+
+### ... change the default language?
+
+To use, for example, German as the default language, put the following into the configuration file:
+
+    website.lang: de
+
+The value needs to be a valid ISO-639-1/2 language code.
+
+### ... use a different processing pipeline for page files?
+
+If you want to change the processing pipeline (ie. how a page file get rendered), you need to add
+the following to your configuration file:
+
+    default_meta_info:
+      Webgen::SourceHandler::Page:
+        blocks:
+          default:
+            pipeline: erb,tags,textile,blocks
+
+Substitute the value of the `pipeline` key approriately.
+
+If you just want to change the pipeline for one block, you can do it like this:
+
+    --- pipeline:erb,tags,textile,blocks
+    This is the content of the block
+
+### ... set the default meta information for files created by a specific source handler?
+
+Use the configuration file! For example, to change the meta information `in-menu` sothat it defaults
+to `true` for all page files use the following in your configuration file:
+
+    default_meta_info:
+      Webgen::SourceHandler::Page:
+        inMenu: true
+
+The key `default_meta_info` is a special key in the configuration file which allows to update the
+default meta information for a source handler and not to substitute it.
+
+### ... ignore files in the source directory?
+
+This can be done using the `sourcehandler.ignore` configuration options. For example, to ignore all
+files starting with `core`, you would put the following in the configuration file:
+
+    sourcehandler.ignore: [**/core*]
+
+The value of this option has to be an array of path patterns. Be aware that this overwrites the
+default setting.
+
+### ... change the output name style?
+
+You have several options of varying granularity:
+
+* Set the meta information `output_path_style` for all source handlers:
+
+      default_meta_info:
+        :all:
+          output_path_style: [:parent, :cnbase, [., :lang], :ext]
+
+* Set the meta information `output_path_style` for a specific source handler to only change the
+  output paths of this source handler (the page source handler in the following example):
+
+      default_meta_info:
+        Webgen::SourceHandler::Page:
+          output_path_style: [:parent, :cnbase, [., :lang], :ext]
+
+* Add the meta information `output_path_style` to a single file via, for example, a meta information
+  backing file.
+
+### ... modify the template chain?
+
+To stop the template chain at a specific template or even at the page file itself, specify a
+null template in the meta information, like this:
+
+    template: ~
+
+To nest templates, you just need to specify the template, in which this template/page file should be
+nested, in the meta information:
+
+    template: my_special.template
+
+Be aware that if no `template` meta information is specified for a page or template file, the
+template handler automatically searches for a default template in the directory and the parent
+directories of the file!
+
+### ... localize a directory name?
+
+Just set the `routed_title` meta information on the correct localized directory index files.
+
+### ... provide additional attributes on links to a file?
+
+You can specify additional attributes for a link to a file by using the `link_attrs` meta
+information. Take the following page file:
+
+    ---
+    title: Tutorial
+    in_menu: true
+    link_attrs:
+      title: This is a rather large tutorial
+      accesskey: D
+      tabindex: 5
+    ---
+    Yippieh, this is my tutorial!
+
+When a link to this page is created, the specified attributes get additionally set on the link!
+
+### ... add page specific sidebar content?
+
+There are many ways to accomplish this, I will show only one way here using blocks. Add the
+following to the sidebar part in your `default.template` (ensure that you haven't disabled `erb` in
+the processing pipeline):
+
+    <% if node.node_info[:page].blocks.has_key?('sidebar') %>
+      \<webgen:block name='sidebar' />
+    <% end %>
+
+This will include the contents of the block `sidebar` in the sidebar if such a block exists for a
+page. You can then add a sidebar block to each page file which needs it. Following is such a sample
+page file:
+
+    This is the main content block
+    --- sidebar
+    This is the sidebar block and everything in here goes to the sidebar!
+
+### ... create XML output?
+
+This can be achieved manually (by removing any markup processor in the processing pipeline of the
+page file and then directly creating the XML elements) or by changing the processing pipeline to
+include content processor `builder` which provides an easy way of programmatically creating an XML
+compliant file. More information on this can be found on the documentation page of
+Webgen::ContentProcessor::Builder!
+
+### ... create a static menu?
+
+You can use virtual nodes to define virtually any menu structure you like, including things like
+having menu entries that point to the same page and links to external pages.
