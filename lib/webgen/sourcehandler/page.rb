@@ -17,9 +17,12 @@ module Webgen::SourceHandler
 
       super(parent, path) do |node|
         node.node_info[:page] = page
+        tmp_logger = website.logger
+        website.logger = nil    # disabling logging whiling creating fragment nodes
         website.blackboard.invoke(:create_fragment_nodes,
                                   website.blackboard.invoke(:parse_html_headers, render_node(node, 'content', [])),
                                   node, node.meta_info['fragments_in_menu'])
+        website.logger = tmp_logger
       end
     end
 
