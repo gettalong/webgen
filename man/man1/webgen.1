@@ -1,0 +1,64 @@
+.TH "WEBGEN" 1 "July 2008"
+.SH NAME
+webgen \- a fast, powerful and extensible static website generator
+.SH SYNOPSIS
+.B webgen
+[\fIglobal options\fR]
+\fIcommand\fR
+[\fIcommand arguments\fR] [command [command arguments] ...] [args]
+.SH DESCRIPTION
+webgen is used to generate static websites from content files written in a markup language and
+template files. You create one template file in which you define the layout of your pages and where
+the content should go. After that you create content files called page files in which you only
+define the content. webgen merges the page's content into the template and generates the final HTML
+output. During the last step so called webgen tags are substituted so that, for example, menus can
+automatically be generated.
+.SH GLOBAL OPTIONS
+.TP
+.B \-d, \-\-directory DIR
+Set the website directectory. if none specified, the current directory is used.
+.TP
+.B \-v, \-\-verbose
+Show more output by default.
+.TP
+.B \-q, \-\-quiet
+Show less output by default. If this option is specified, then no output is shown during rendering
+of a website.
+.TP
+.B \-l, \-\-log-level LEVEL
+Set the logging level to LEVEL which can be a number between 0 (debug output) and 3 (only error
+output).
+.TP
+.B \-h, \-\-help
+Show generic help.
+.TP
+.B \-\-version
+Show the version of the program and exit.
+.SH COMMANDS
+.TP
+\fBcreate\fR
+Creates the basic directories and files for webgen.  This includes the source and
+output directories as well as an empty extensions directory.  Also, a basic template plus a CSS and
+an index file are created.  Takes the \fIdirectory\fR to create the webgen structure in as an
+argument.
+.TP
+\fBhelp\fR
+Provides help for the individual commands.
+.TP
+\fBrender\fR
+Runs webgen which will result in the generation of the HTML data in the output
+directory from the files in the source directory.  This command is used as the default command when
+no command was issued.
+.TP
+\fBversion\fR
+Shows the version of the program and exit.
+.SH SEE ALSO
+The webgen website, http://webgen.rubyforge.org/ for more information.
+.SH AUTHOR
+webgen was written by Thomas Leitner <t_leitner@gmx.at>
+.PP
+This manual page was written by Paul van Tilburg <paulvt@debian.org> for the Debian project (but may
+be used by others).  This manual page was update to reflect webgen 0.4 change by Arnaud Cornet
+<arnaud.cornet@gmail.com>.  This manual page was updated to reflect webgen 0.5.x changes by Thomas
+Leitner <t_leitner@gmx.at>.
+
