@@ -1,0 +1,128 @@
+---
+title: Meta Information Reference
+---
+# Meta Information Reference
+
+Following is a list of all the meta information items that are used in one way or another by an
+extension, be it a source handler, a tag or any other extension. Each meta information description
+follows the same pattern:
+
+* First the type of the value and an example value are listed.
+* Then the paths for which this item is valid are listed.
+* And at last follows a detailed description.
+
+{:miref: .meta-information-ref}
+
+### blocks
+
+{:miref}
+* Hash of Hashes: `\{default: {pipeline:textile}, 1: {name: content, pipeline:maruku,erb,tags}}`
+* Files in Webgen Page Format
+
+Specifies the default names and additional options for the blocks. The special key `default` is used
+to set default options for all blocks. Specific options for (or the name of) a block can be set by
+using the block index as key (numbering starts from one).
+
+### fragments\_in\_menu
+
+{:miref}
+* Boolean: `false`
+* Page files
+
+Specifies if the fragment nodes of the page file should be in the menu.
+
+### index\_path
+
+{:miref}
+* String: `myindex.html`
+* Directories
+
+Sets the directory index path for the directory overriding the default value.
+
+### in\_menu
+
+{:miref}
+* Boolean: `true`
+* Any
+
+Specifies if the path should appear in menus.
+
+### lang
+
+{:miref}
+* String: `de`
+* Page files
+
+Sets the language for the path. Has to be a valid ISO-639-1/2 character code for the language. This
+meta information needs to be set before a node gets created.
+
+### link\_attrs
+
+{:miref}
+* Hash: `\{title: Hallo, class: extra}`
+* Any
+
+Specifies additional attribute-value pairs (in form of a Hash) that should be added to a link to the
+path.
+
+### no\_output
+
+{:miref}
+* Boolean: `true`
+* Any
+
+Specifies whether an output path for this node gets written or not.
+
+### output\_path\_style
+
+{:miref}
+* Array: `[:parent, :cnbase, [., :lang], .html]`
+* Any
+
+Sets a custom output path style for the specified path. The basename is substituted for the value
+`:cnbase` and the language for the value `:lang`. Strings are used verbatim. If `:lang` is specified
+in a sub-array, the whole sub-array is omitted, if the configuration option
+`sourcehandler.default_lang_in_output_path` is false.
+
+> This meta information has to be set BEFORE a node gets created. Setting this value is therefore
+> only useful, for example, in the `paths` block of a meta information backing file.
+{.exclamation}
+
+### routed\_title
+
+{:miref}
+* String: `Image Directory`
+* Any
+
+Only used if set on a directory index path; specifies the title of the directory for which it is the
+index path. If this meta information is not specified, the title of the directory will be used
+instead.
+
+### sort\_info
+
+{:miref}
+* Integer or String: `15`
+* Any
+
+Sets the sort information for the path. Any String or Integer value can be used here. When two nodes
+are compared using this information and both have Integers, then an Integer comparision is
+done. Otherwise a String comparision is done.
+
+Setting a String value is useful, for example, for specifying dates as sort information.
+
+### template
+
+{:miref}
+* String or null: `my.template` or `~`
+* Page/Template files
+
+Sets the template for the page/template file overriding the default value. If set to null
+(i.e. `~`), no template is used for the page/template file!
+
+### title
+
+{:miref}
+* String: `New Title`
+* Any
+
+Sets the title for the path.
