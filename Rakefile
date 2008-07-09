@@ -173,14 +173,14 @@ EOF
 
   desc "Upload webgen documentation to Rubyforge homepage"
   task :publish_doc => [:doc] do
-    sh "rsync -avc htmldoc/ gettalong@rubyforge.org:/var/www/gforge-projects/webgen/documentation/#{(Webgen::VERSION.split('.')[0..-2] + ['x']).join('.')}"
+    sh "rsync -avc --delete htmldoc/ gettalong@rubyforge.org:/var/www/gforge-projects/webgen/documentation/#{(Webgen::VERSION.split('.')[0..-2] + ['x']).join('.')}"
   end
 
   desc 'Release webgen version ' + Webgen::VERSION
   task :release => [:clobber, :package, :publish_files, :publish_doc]
 
   desc 'Announce webgen version ' + Webgen::VERSION
-  task :announce => [:clobber, :doc, :publish_doc, :post_news]
+  task :announce => [:clobber, :post_news, :website, :publish_website]
 
   if defined? RubyForge
     desc "Upload the release to Rubyforge"
@@ -228,7 +228,7 @@ EOF
 
   desc "Upload the webgen website to Rubyforge"
   task :publish_website => [:website] do
-    sh "rsync -avc --exclude 'documentation/0.5.x' --exclude 'documentation/0.4.x' --exclude 'wiki' website_html/ gettalong@rubyforge.org:/var/www/gforge-projects/webgen/"
+    sh "rsync -avc --exclude 'documentation/0.5.x' --exclude 'documentation/0.4.x' --exclude 'wiki' --exclude 'robots.txt'  website/out/ gettalong@rubyforge.org:/var/www/gforge-projects/webgen/"
   end
 
 
