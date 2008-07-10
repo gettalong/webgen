@@ -109,4 +109,9 @@ class TestPath < Test::Unit::TestCase
     assert(p.inspect.include?('test.de.page'))
   end
 
+  def test_changed?
+    p = Webgen::Path.new('test.de.page')
+    assert(p.changed?)
+  end
+
 end

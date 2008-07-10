@@ -44,8 +44,16 @@ class TestSourceHandlerPage < Test::Unit::TestCase
     assert_equal('yes', node['test'])
     assert_equal(6, node['sort_info'])
     assert_equal(Webgen::LanguageManager.language_for_code('epo'), node.lang)
+    assert_not_nil(@website.cache.permanent[:page_sections]['/test/index.eo.html'])
 
     assert_nil(@obj.create_node(@root, @path.dup))
+
+    @root.tree.delete_node(node)
+    path = @path.dup
+    def path.changed?
+      false
+    end
+    @obj.create_node(@root, path)
   end
 
   def test_content
