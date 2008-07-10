@@ -6,7 +6,8 @@ module Webgen
   # content.
   #
   # A webgen source class needs to derive a specialized path class from this class and implement an
-  # approriate #changed? method.
+  # approriate #changed? method that returns +true+ if the path's content has changed since the last
+  # webgen run.
   class Path
 
     # Helper class for easy access to the content of a path.
@@ -72,6 +73,12 @@ module Webgen
         temp.directory = File.join(File.dirname(temp.path), '/')
       end
       temp
+    end
+
+    # Has the content of this path changed since the last webgen run? This default implementation
+    # always returns +true+, a specialized sub class needs to override this behaviour!
+    def changed?
+      true
     end
 
     # Duplicate the path object.

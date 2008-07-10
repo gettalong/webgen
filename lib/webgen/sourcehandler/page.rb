@@ -19,8 +19,16 @@ module Webgen::SourceHandler
         node.node_info[:page] = page
         tmp_logger = website.logger
         website.logger = nil    # disabling logging whiling creating fragment nodes
+
+        website.cache.permanent[:page_sections] ||= {}
+        sections = if path.changed? || !website.cache.permanent[:page_sections][node.absolute_lcn]
+                     website.blackboard.invoke(:parse_html_headers, render_node(node, 'content', []))
+                   else
+                     website.cache.permanent[:page_sections][node.absolute_lcn]
+                   end
+        website.cache.permanent[:page_sections][node.absolute_lcn] = sections
         website.blackboard.invoke(:create_fragment_nodes,
-                                  website.blackboard.invoke(:parse_html_headers, render_node(node, 'content', [])),
+                                  sections,
                                   node, node.meta_info['fragments_in_menu'])
         website.logger = tmp_logger
       end
