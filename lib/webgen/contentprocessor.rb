@@ -58,6 +58,7 @@ module Webgen
     autoload :Blocks, 'webgen/contentprocessor/blocks'
     autoload :Maruku, 'webgen/contentprocessor/maruku'
     autoload :RedCloth, 'webgen/contentprocessor/redcloth'
+    autoload :Erb, 'webgen/contentprocessor/erb'
 
     # Return the list of all available content processors.
     def self.list
