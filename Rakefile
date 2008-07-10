@@ -255,6 +255,33 @@ EOF
     end
   end
 
+  EXCLUDED_FOR_TESTS=FileList.new(['lib/webgen/cli{*,**/*}', 'lib/webgen/version.rb',
+                                   'lib/webgen/output.rb', 'lib/webgen/source.rb',
+                                   'lib/webgen/tag.rb', 'lib/webgen/default_config.rb',
+                                  ])
+
+  EXCLUDED_FOR_DOCU=FileList.new(['lib/webgen/cli{*,**/*}', 'lib/webgen/contentprocessor/context.rb',
+                                  'lib/webgen/*/base.rb'
+                                 ])
+
+  desc "Checks for missing test/docu"
+  task :check_missing do
+    puts 'Files for which no test exists:'
+    Dir['lib/webgen/**/*'].each do |path|
+      next if File.directory?(path) || EXCLUDED_FOR_TESTS.include?(path)
+      test_path = 'test/test_' + path.gsub(/lib\/webgen\//, "").tr('/', '_')
+      puts ' '*4 + path unless File.exists?(test_path)
+    end
+
+    puts
+    puts 'Files for which no docu exists:'
+    Dir['lib/webgen/*/*'].each do |path|
+      next if EXCLUDED_FOR_DOCU.include?(path)
+      docu_path = 'doc/' + path.gsub(/lib\/webgen\//, "").gsub(/\.rb$/, '.page')
+      puts ' '*4 + path unless File.exists?(docu_path)
+    end
+  end
+
 end
 
 task :clobber => ['dev:clobber']
