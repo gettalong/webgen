@@ -76,10 +76,10 @@ config.sourcehandler.default_meta_info({
                                          },
                                          'Webgen::SourceHandler::Page' => {
                                            'fragments_in_menu' => true,
-                                           'blocks' => {'default' => {'pipeline' => 'tags,maruku,blocks'}}
+                                           'blocks' => {'default' => {'pipeline' => 'erb,tags,maruku,blocks'}}
                                          },
                                          'Webgen::SourceHandler::Template' => {
-                                           'blocks' => {'default' => {'pipeline' => 'tags,blocks'}}
+                                           'blocks' => {'default' => {'pipeline' => 'erb,tags,blocks'}}
                                          },
                                          'Webgen::SourceHandler::Metainfo' => {
                                            'blocks' => {1 => {'name' => 'paths'}, 2 => {'name' => 'alcn'}}
@@ -105,7 +105,8 @@ config.contentprocessor.map({
                               'maruku' => 'Webgen::ContentProcessor::Maruku',
                               'redcloth' => 'Webgen::ContentProcessor::RedCloth',
                               'tags' => 'Webgen::ContentProcessor::Tags',
-                              'blocks' => 'Webgen::ContentProcessor::Blocks'
+                              'blocks' => 'Webgen::ContentProcessor::Blocks',
+                              'erb' => 'Webgen::ContentProcessor::Erb'
                             }, :doc => 'Content processor name to class map')
 
 Webgen::WebsiteAccess.website.blackboard.add_service(:content_processor_names, Webgen::ContentProcessor.method(:list))
