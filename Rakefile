@@ -261,7 +261,7 @@ EOF
                                   ])
 
   EXCLUDED_FOR_DOCU=FileList.new(['lib/webgen/cli{*,**/*}', 'lib/webgen/contentprocessor/context.rb',
-                                  'lib/webgen/*/base.rb'
+                                  'lib/webgen/*/base.rb', 'lib/webgen/sourcehandler/fragment.rb',
                                  ])
 
   desc "Checks for missing test/docu"
