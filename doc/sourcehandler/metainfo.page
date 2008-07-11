@@ -1,117 +1,40 @@
 ---
-title: SourceHandler::Metainfo
+title: Webgen::SourceHandler::Metainfo
 ---
+## Description
 
-> TODO: This information needs to be updated
-{.exclamation}
+This source handler provides the ability to set meta information for any path. It uses files in
+[Webgen Page Format]({relocatable: ../webgen_page_format.html}) which can have two special blocks:
 
-### The meta information backing file {#metainfo-file}
+* `paths`: This block specifies meta information for paths and therefore this meta information is
+  applied before a node for a path is created. This can be used, for example, to change the output
+  path style. When specifying patterns, remember that the patterns are matched against paths!
 
-The meta information backing file contains meta information about files/directories in the source
-directory. It has two sections both of which have to be in YAML format and both have to have the
-same structure: a source backing section and an output backing section which is optional. The
-sections are separated by three dashes on an otherwise empty line.
+* `alcn`: This block specifies meta information for nodes and this meta information is applied
+  directly after a node has been created. When specifying patterns, remember that the patterns
+  are matched against absolute localized canonical names!
 
-The source backing section is used to apply meta information to a file before a node for this file
-is created. A file handler plugin can therefore use this meta information during the creation of the
-node. Make sure that you use a valid source path, i.e. a path that resolves to a file in the source
-directory!
+When no name is specified in the meta information file, the first block is assumed to be the `paths`
+block and the second block is assumed to be the `alcn` block. The format of the two blocks is the
+same: they need to be in YAML format and provide a hash with path patterns as keys and the
+to-be-assigned meta information as values. This is best showed in an example:
 
-The output backing section is used to apply meta information after _all_ nodes have been created and
-to create so called "virtual nodes". The paths specified in the output backing section have to be:
+    --- name:paths
+    /**/index.page:
+      output_path_style: [:parent, :cnbase, :ext, [., :lang]]
 
-* valid (localized) canonical names (for assigning meta info to existing nodes) or
-* a path pattern for matching against localized canonical names (for assigning meta info to multiple
-  existing nodes)
-* the desired output names (for creating virtual nodes)!
+    mypic.jpg:
+      in_menu: true
+    --- name:alcn
+    **/index.en.html:
+      in_menu: true
 
-The different cases are handled like this:
+All paths named `index.page` are assigned a new output path style. This has to be done in the
+`paths` block because otherwise it would have no effect. And the file `mypic.jpg` will show up in
+the menu. Notice, that the first form is specified as an absolute path pattern and the second
+not. If this meta information file lies in the root directory there is no difference between those
+two approaches. However, when it lies in a sub directory, the first form is still absolute but the
+second form is taken relative to the directory in which the meta information file is in.
 
-* If a path has a `*` or a `?` in it, it is considered a path pattern and the meta information is
-  assigned to all nodes whose localized canonical name matches the pattern.
-
-  > Since the localized canonical name of the nodes are used, you need to remember that the pattern
-  > `**/*.html` sets the meta information on all nodes ending in `.html` whereas the pattern
-  > `**/*.en.html` only sets the meta information on English nodes ending in `.html`.
-  {.information}
-
-* If a specified path resolves to an already created node, the meta information is applied to this
-  node.
-
-* If the path ends in an slash, a directory node is created with the meta information.
-
-* Otherwise, a virtual node is created with the specified meta information and empty content - a
-  virtual node _never_ creates a real output file!
-
-This facility can be used, for example, to specify meta information common to a set of nodes (for
-example, the author of blog pages), to include links to external web pages in menus or to create a
-whole menu with custom sections and multiple references in different sections to the same node!
-
-Following is a sample meta information backing file with explanations afterwards:
-
-    index.page:
-      inMenu: true
-      sort_info: 2
-
-    images:
-      indexFile: ~
-    ---
-    index.html:
-      inMenu: false
-
-    wiki.html:
-      title: Link to wiki
-      url: http://myhost.com/path/to/my/wiki
-      inMenu: true
-      sort_info: 5
-
-    api.html:
-      title: API Reference
-      url: http://myhost.com/api
-
-    virtdir/:
-      indexFile: index.html
-
-    virtdir/index.html:
-      title: A virtual index file
-      inMenu: true
-      url: /index.page
-
-    virtdir/other.html:
-      inMenu: true
-      url: /otherdir/linked.de.page
-
-    **/*.html:
-      author: The Real Author
-
-The above sample meta information backing file consists of both sections: the mandatory source
-section and the optional output section. As you can see each section is described using a hash of
-hashes, i.e. the keys are paths and the values are the meta information hashes.
-
-The source section specifies additional meta information for the `index.page` file and for the
-`images` directory: the `index.page` gets the `inMenu` and `sort_info` meta information set and it
-is specified that the `images` directory has no `indexFile`.
-
-The output section is more interesting than the source section:
-
-* The first entry references an existing file, therefore the meta information for that file
-  (`index.html`) is set appropriately.
-
-* The second entry specifies that under the `root` directory a virtual node with the path
-  `wiki.html` should be created (the node will be virtual as the path references no existing file).
-  It should have the specified title and should be in the menu with the specified
-  order. Furthermore, a special *`url`* key is used. This key can only be used for virtual file
-  nodes (not directory nodes) in the output section and it specifies the link target for the node.
-  So, whenever a reference to `wiki.html` is requested the resolved `url` is returned. This `url`
-  can be a link to an outside page or it can refer to another node, as described below. The `url` is
-  assumed to be relative to the directory the virtual node is in.
-
-* The third entry also specifies a virtual node linking to an external page, but one which will not
-  appear in a menu. Such nodes are normally inserted into the output section so that the
-  Tag/Relocatable plugin can be used.
-
-* The next three entries add virtual entries to the menu to show how one page can appear in more
-  than one directory: the `virtdir/index.html` links to the top level `index.page` and
-  `virtdir/other.html` links to a page in another subdirectory, namely `/otherdir/linked.de.page`.
-
-* The last entry set the `author` meta information on all nodes that end with `.html`.
+And last but not least, all nodes with a localized canonical name of `index.en.html` will show up in
+the menu (again, notice that the pattern is relative).

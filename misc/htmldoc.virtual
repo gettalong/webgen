@@ -1,5 +1,5 @@
 api.html:
   url: rdoc/index.html
-  title: API doc
+  title: API
   in_menu: true
   sort_info: 60

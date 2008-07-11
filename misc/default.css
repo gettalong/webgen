@@ -307,6 +307,25 @@ blockquote pre {
   padding: 2px;
 }
 
+/* extensions classes */
+.backlink {
+  float: right;
+}
+
+table.examples {
+  border: 1px solid black;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  width: 80%;
+}
+
+table.examples td, table.examples th {
+  border: 1px solid black;
+  padding: 3px;
+}
+
+
 
 /* plugin documentation classes */
 .plugin-info .param-name {

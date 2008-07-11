@@ -1,0 +1,29 @@
+contentprocessor/:
+  index_path: ~
+
+contentprocessor/*:
+  template: ../extensions.template
+
+sourcehandler/:
+  index_path: ~
+
+sourcehandler/*:
+  template: ../extensions.template
+
+tag/:
+  index_path: ~
+
+tag/*:
+  template: ../extensions.template
+
+source/:
+  index_path: ~
+
+source/*:
+  template: ../extensions.template
+
+output/:
+  index_path: ~
+
+output/*:
+  template: ../extensions.template

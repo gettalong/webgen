@@ -1,0 +1,10 @@
+--- pipeline:tags,maruku,blocks
+[Back]({relocatable: extensions.html}) to the extension listing.
+{.backlink}
+
+# {title:}
+
+<webgen:block name='content' />
+
+[Back]({relocatable: extensions.html}) to the extension listing.
+{.backlink}
