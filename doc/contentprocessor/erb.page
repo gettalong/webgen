@@ -1,38 +1,56 @@
 ---
 title: Webgen::ContentProcessor::Erb
 ---
+## Description
 
-> TODO: This needs to be redone
+This processer uses ERB (embedded Ruby) to process content. For detailed information about ERB have
+a look at its documentation by executing `ri ERB` or the [ruby documentation
+site](http://www.ruby-doc.org/)! The short name of the processor is `erb`!
+
+You can use the following special objects in your ERB code:
+
+* `context`: This object provides the whole rendering context, the following objects are just for
+  backwards compatibility.
+
+* `ref_node` (or `context.ref_node`): The reference node which is the source of the ERB code that is
+  executed. Should be used, for example, for resolving paths.
+
+* `node` (or `context.content_node`): The node that gets currently rendered. Should be used for
+  retrieving meta information.
+
+* `dest_node` (or `context.dest_node`): The node in which the result gets inserted. Should be used
+  for calculating relative paths.
+
+Here is a small usage example. The following put in a page file
+
+    Counting 5 items dynamically:
+    <%% for i in 1..5 %>
+      * item <%%= i %>
+    <%% end %>
+
+    Outputting all meta information:
+    <%% node.meta_info.each do |k,v| %>
+      * <%%= k %> = <%%= v %>
+    <%% end %>
+
+... will give the result:
+
+    Counting 5 items dynamically:
+    <% for i in 1..5 %>
+      * item <%= i %>
+    <% end %>
+
+    Outputting all meta information:
+    <% node.meta_info.each do |k,v| %>
+      * <%= k %> = <%= v %>
+    <% end %>
+
+The second line shows the first form of the ERB tags which executes Ruby code but does not output
+anything: it just starts a `for` loop. On the third line the second form of ERB tags is used to
+output the result of the Ruby code (note the equation sign!). And the fourth line completes the
+`for` loop by adding the needed `end` keyword.
+
+> You may need to ensure that the ERB start and end tags are not processed by the content
+> processor. For example, when using the RedCloth content processor, you may need to surround the
+> ERB code with `<textile>` tags!
 {.exclamation}
-
-#### Evaluating ERB Tags
-
-TODO: ev move this to the ContentProcessor/Erb documentation???
-
-The evaluation of ERB (embedded ruby) tags is optional and only done if the meta information
-`useERB` is set to `true`. The use of ERB allows to add dynamic content without using webgen tags.
-Following is an example of a file which uses ERB:
-
-<notextile>
-<pre>
-\---
-title: Test page with ERB
-useERB: true
-\---
-This page has the following meta info items:
-&lt;% node.meta_info.each do |key, value| %&gt;
-    * &lt;%=key %&gt;: &lt;%=value %&gt;
-&lt;% end %&gt;
-</pre>
-</notextile>
-
-This would output all meta information for the file. There are some objects available which you can
-use in your ERB code:
-
-* `node`: the node for the current file (normally a page file)
-* `ref_node`: the reference node, i.e. the node in which the content will be embedded (normally a
-  template file)
-
-*Caveat*: you may need to ensure that the ERB start and end tags are not processed by the content
-converter. For example, with Textile you may need to surround the ERB code with &lt;textile&gt;
-tags!

@@ -2,10 +2,21 @@
 title: Extensions
 in_menu: true
 ---
-
-> TODO: This needs to be filled with real docu.
-{.exclamation}
-
 # webgen Extensions
 
-webgen comes with many extensions. Below is a list of all extensions:
+webgen comes with many extensions that allow for rapid creation of static websites. The variety of
+the extensions allows you to use your tools of choice, for example, your preferred markup
+language. And if your choice is not available, you can write the extension for it yourself or make a
+feature request!
+
+Here is a list of all extensions:
+
+<%
+pattern = /#{File.join(node.parent.absolute_lcn, '/')}(contentprocessor|output|source|sourcehandler|tag|)\//
+context.content_node.tree.node_access[:alcn].select {|alcn, n| alcn =~ pattern}.sort.each do |alcn, n|
+next if n.is_fragment?
+%>
+* <%= dest_node.link_to(n) %>
+<%
+end
+%>

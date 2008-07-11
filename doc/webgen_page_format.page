@@ -72,8 +72,8 @@ be set.
 The name uniquely identifies a content block and is used to access it. The only option used by
 webgen is the `pipeline` option which specifies the processing pipeline for the block. The
 processing pipeline is used for rendering the block by using the specified content processors in the
-specified order. There are several different content processors available - have a look at the
-[content processor listing]({relocatable: contentprocessor/}) for an overview.
+specified order. There are many different content processors available - have a look at the
+[extensions page]({relocatable: extensions.html}) for an overview.
 
 There are also defaults for the name and the options of a block but they can be overwritten. You can
 use one of two ways to do this:

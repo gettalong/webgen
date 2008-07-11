@@ -1,0 +1,20 @@
+---
+title: Webgen::SourceHandler::Copy
+---
+## Description
+
+This source handler copies files from the source to the output directory, optionally running a
+content processor over the content. It is useful, for example, for CSS stylesheets, javascript files
+and images.
+
+It decides using the file extension if a content processor should be used and which one. If the
+short name of a content processor is the first part of the file extension, the file is processed by
+this content processor and the first part is removed from the file extension. Otherwise no
+processing is done at all. For example, a file named `hello.jpg` just gets copied verbatimly but a
+file named `usage.erb.html` gets preprocessed by the `erb` content processor and written to a file
+named `usage.html`. As you can see in this example, the processor name gets stripped from the file
+extension.
+
+If you want to use a specific content processor for processing a file, have a look at its
+documentation page which shows the unique identification string that needs to be used in the file
+extension.
