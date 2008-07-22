@@ -109,6 +109,7 @@ config.contentprocessor.map({
                               'erb' => 'Webgen::ContentProcessor::Erb',
                               'haml' => 'Webgen::ContentProcessor::Haml',
                               'sass' => 'Webgen::ContentProcessor::Sass',
+                              'rdoc' => 'Webgen::ContentProcessor::RDoc',
                             }, :doc => 'Content processor name to class map')
 
 Webgen::WebsiteAccess.website.blackboard.add_service(:content_processor_names, Webgen::ContentProcessor.method(:list))

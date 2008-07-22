@@ -24,4 +24,4 @@ If you want to have a missing feature in the next release, write to the mailing 
 
 * Minor feature enhancements:
 
-  - ported 2 content processors: haml and sass
+  - ported 3 content processors: haml, sass and rdoc

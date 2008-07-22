@@ -1,0 +1,36 @@
+---
+title: Webgen::ContentProcessor::RDoc
+---
+## Description
+
+This content processors converts content written in RDoc markup (the default documentation format
+for Ruby source files, [reference][1]) to HTML.
+
+> This extension needs the [new RDoc implementation][2] and is not compatible with the
+> implementation included in the Ruby distribution. The preferred way to install the new
+> implementation is via Rubygems:
+>
+>     gem install rdoc
+{.exclamation}
+
+[1]: http://rdoc.rubyforge.org/rdoc/ "RDoc Reference"
+[2]: http://rubyforge.org/projects/rdoc/ "New RDoc implementation"
+
+## Example
+
+Here is a short sample of a text in RDoc markup:
+
+    = This a h1 header
+
+    You can just write *your* paragraphs here and <a href="http://someurl.com">link</a> them below.
+    This is also a _nice_ format!
+
+    <blockquote class='information>
+    Citations are easy too.
+    Really. And you can assign them attributes.
+    </blockquote>
+
+    * Lists
+    * aren't
+    * difficult
+    * either.
