@@ -61,6 +61,7 @@ module Webgen
     autoload :Erb, 'webgen/contentprocessor/erb'
     autoload :Haml, 'webgen/contentprocessor/haml'
     autoload :Sass, 'webgen/contentprocessor/sass'
+    autoload :RDoc, 'webgen/contentprocessor/rdoc'
 
     # Return the list of all available content processors.
     def self.list
