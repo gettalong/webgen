@@ -145,6 +145,8 @@ EOF
       s.add_development_dependency('rcov', '>= 0.8.0')
       s.add_development_dependency('dcov', '>= 0.2.2')
       s.add_development_dependency('rubyforge', '>= 1.0.0')
+      s.add_development_dependency('RedCloth', '>= 3.0.0')
+      s.add_development_dependency('haml', '>= 2.0.1')
 
       s.require_path = 'lib'
 
