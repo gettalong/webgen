@@ -1,0 +1,27 @@
+---
+title: webgen 0.5.1 released
+in_menu: true
+sort_info: TODO!!
+---
+## {title:}
+
+<webgen:block name='notes' />
+
+### Changes
+
+<webgen:block name='changes' />
+
+--- name:notes pipeline:maruku
+
+Since the 0.5.0 release did not have as many features as the older 0.4.x releases, this release as
+well as the next few releases concentrate on porting features from the latest 0.4.x version. The
+focus of this release was adding the missing content processors and some of the more widely used
+tags.
+
+If you want to have a missing feature in the next release, write to the mailing list!
+
+--- name:changes pipeline:maruku
+
+* Minor feature enhancements:
+
+  - ported 2 content processors: haml and sass

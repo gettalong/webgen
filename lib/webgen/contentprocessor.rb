@@ -59,6 +59,8 @@ module Webgen
     autoload :Maruku, 'webgen/contentprocessor/maruku'
     autoload :RedCloth, 'webgen/contentprocessor/redcloth'
     autoload :Erb, 'webgen/contentprocessor/erb'
+    autoload :Haml, 'webgen/contentprocessor/haml'
+    autoload :Sass, 'webgen/contentprocessor/sass'
 
     # Return the list of all available content processors.
     def self.list

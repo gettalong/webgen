@@ -106,7 +106,9 @@ config.contentprocessor.map({
                               'redcloth' => 'Webgen::ContentProcessor::RedCloth',
                               'tags' => 'Webgen::ContentProcessor::Tags',
                               'blocks' => 'Webgen::ContentProcessor::Blocks',
-                              'erb' => 'Webgen::ContentProcessor::Erb'
+                              'erb' => 'Webgen::ContentProcessor::Erb',
+                              'haml' => 'Webgen::ContentProcessor::Haml',
+                              'sass' => 'Webgen::ContentProcessor::Sass',
                             }, :doc => 'Content processor name to class map')
 
 Webgen::WebsiteAccess.website.blackboard.add_service(:content_processor_names, Webgen::ContentProcessor.method(:list))
