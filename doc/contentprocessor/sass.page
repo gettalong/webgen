@@ -5,6 +5,7 @@ title: Webgen::ContentProcessor::Sass
 
 This processor converts the content, which is assumed to be in the Sass meta language, to valid CSS
 using the Haml library. For detailed information about Sass have a look at the [Haml Homepage][1]!
+The short name of the processor is `sass`!
 
 > This extension is only available if you have installed the [haml][1] library. The preferred way to
 > do this is via Rubygems:

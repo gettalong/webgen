@@ -5,7 +5,7 @@ title: Webgen::ContentProcessor::Haml
 
 This processor converts the content, which is assumed to be in the Haml markup language, to valid
 XHTML by using the Haml library. For detailed information about Haml have a look at the [Haml
-Homepage][1]!
+Homepage][1]! The short name of the processor is `haml`!
 
 You can use some special objects provided by webgen in your Haml markup. These are the same objects
 that are available to the `erb` processor, have a look at its [documentation page]({relocatable:
