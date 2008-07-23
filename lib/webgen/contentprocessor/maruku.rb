@@ -10,7 +10,7 @@ module Webgen::ContentProcessor
       context.content = ::Maruku.new(context.content, :on_error => :raise).to_html
       context
     rescue Exception => e
-      raise "Maruku to HTML conversion failed: #{e.message}"
+      raise RuntimeError, "Maruku to HTML conversion failed: #{e.message}", e.backtrace
     end
 
   end
