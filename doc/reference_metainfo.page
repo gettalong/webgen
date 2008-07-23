@@ -73,6 +73,15 @@ path.
 
 Specifies whether an output path for this node gets written or not.
 
+### omit_index_path
+
+{:miref}
+* Boolean: `false`
+* Index paths
+
+Controls whether the index path should appear in a breadcrumb trail despite the setting of the
+`tag.breadcrumbtrail.omit_index_path` option.
+
 ### output\_path\_style
 
 {:miref}
