@@ -26,7 +26,7 @@ class TestNode < Test::Unit::TestCase
       :dir_file => dir_file = Webgen::Node.new(dir, '/dir/file.html', 'file.html'),
       :dir_file_frag => Webgen::Node.new(dir_file, '/dir/file.html#frag', '#frag'),
       :dir2 => dir2 = Webgen::Node.new(node, '/dir2/', 'dir2/', {'index_path' => 'index.html', 'title' => 'dir2'}),
-      :dir2_index_en => Webgen::Node.new(dir2, '/dir2/index.html', 'index.html', {'lang' => 'en', 'routed_title' => 'routed'}),
+      :dir2_index_en => Webgen::Node.new(dir2, '/dir2/index.html', 'index.html', {'lang' => 'en', 'routed_title' => 'routed', 'title' => 'index'}),
     }
   end
 
@@ -281,6 +281,8 @@ class TestNode < Test::Unit::TestCase
                  nodes[:somename_en].link_to(nodes[:somename_en_frag], 'attr1' => 'val1'))
     assert_equal('<a href="#frag">frag</a>',
                  nodes[:somename_en].link_to(nodes[:somename_en_frag], :attr1 => 'val1'))
+    assert_equal('<a href="dir2/index.html">index</a>',
+                 nodes[:somename_en].link_to(nodes[:dir2_index_en]))
 
     nodes[:somename_en_frag]['link_attrs'] = {:link_text => 'Default Text', 'class'=>'help'}
     assert_equal('<a attr1="val1" class="help" href="#frag">link_text</a>',
