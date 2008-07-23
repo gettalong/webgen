@@ -11,6 +11,7 @@ module Webgen
     autoload :Metainfo, 'webgen/tag/metainfo'
     autoload :Menu, 'webgen/tag/menu'
     autoload :BreadcrumbTrail, 'webgen/tag/breadcrumbtrail'
+    autoload :Langbar, 'webgen/tag/langbar'
 
   end
 

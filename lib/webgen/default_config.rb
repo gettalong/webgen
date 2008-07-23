@@ -122,6 +122,7 @@ config.contentprocessor.tags.map({
                                    'relocatable' => 'Webgen::Tag::Relocatable',
                                    'menu' => 'Webgen::Tag::Menu',
                                    'breadcrumb_trail' => 'Webgen::Tag::BreadcrumbTrail',
+                                   'langbar' => 'Webgen::Tag::Langbar',
                                    :default => 'Webgen::Tag::Metainfo'
                                  }, :doc => 'Tag processor name to class map')
 
@@ -136,3 +137,8 @@ config.tag.menu.used_nodes('all', :doc => 'Specifies the kind of nodes that shou
 config.tag.breadcrumbtrail.separator(' / ', :doc => 'Separates the hierachy entries from each other.')
 config.tag.breadcrumbtrail.omit_last(false, :doc => 'Omits the last path component.')
 config.tag.breadcrumbtrail.omit_index_path(false, :doc => 'Omits the last path component if it is an index path.')
+
+config.tag.langbar.separator(' | ', :doc => 'Separates the languages from each other.')
+config.tag.langbar.show_single_lang(true, :doc => 'Should the link be shown although the page is only available in one language?')
+config.tag.langbar.show_own_lang(true, :doc => 'Should the link to the currently displayed language page be shown?')
+
