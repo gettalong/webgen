@@ -267,10 +267,11 @@ module Webgen
     # always need to specify general attributes with Strings!
     def link_to(node, attr = {})
       attr = node['link_attrs'].merge(attr) if node['link_attrs'].kind_of?(Hash)
-      link_text = attr[:link_text] || node.routing_node(@lang)['routed_title'] || node['title']
+      rnode = node.routing_node(@lang)
+      link_text = attr[:link_text] || (rnode != node && rnode['routed_title']) || node['title']
       attr.delete_if {|k,v| k.kind_of?(Symbol)}
 
-      use_link = (node.routing_node(@lang) != self || website.config['website.link_to_current_page'])
+      use_link = (rnode != self || website.config['website.link_to_current_page'])
       attr['href'] = self.route_to(node) if use_link
       attrs = attr.collect {|name,value| "#{name.to_s}=\"#{value}\"" }.sort.unshift('').join(' ')
       (use_link ? "<a#{attrs}>#{link_text}</a>" : "<span#{attrs}>#{link_text}</span>")
