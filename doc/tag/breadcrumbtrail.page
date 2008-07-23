@@ -1,0 +1,35 @@
+---
+title: Webgen::Tag::BreadcrumbTrail
+---
+## Description
+
+The breadcrumb trail tag is used for displaying the hierarchy of the current page. It can be fully
+customized by changing its used options (see [configuration option reference]({relocatable:
+../reference_configuration.html}) for detailed information on the options):
+
+* `tag.breadcrumbtrail.separator`
+* `tag.breadcrumbtrail.omit_last`
+* `tag.breadcrumbtrail.omit_index_path`
+
+The behavior of the `tag.breadcrumbtrail.omit_index_path` option can be overridden for individual
+index paths by setting the meta information `omit_index_path` accordingly.
+
+## Examples
+
+<table class="examples">
+<tr>
+  <th>Usage</th><th>Output</th>
+</tr>
+<tr>
+  <td>\{breadcrumb_trail:}</td>
+  <td>{breadcrumb_trail:}</td>
+</tr>
+<tr>
+  <td>\{breadcrumb_trail: {separator: " HELLO "}}</td>
+  <td>{breadcrumb_trail: {separator: " HELLO "}}</td>
+</tr>
+<tr>
+  <td>\{breadcrumb_trail: {omit_last: true}}</td>
+  <td>{breadcrumb_trail: {omit_last: true}}</td>
+</tr>
+</table>

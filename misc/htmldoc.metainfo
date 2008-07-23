@@ -1,4 +1,7 @@
 --- name:alcn
+/index.en.html:
+  routed_title: Documentation
+
 index.*.html:
   in_menu: true
   sort_info: 10

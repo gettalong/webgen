@@ -10,6 +10,7 @@ module Webgen
     autoload :Relocatable, 'webgen/tag/relocatable'
     autoload :Metainfo, 'webgen/tag/metainfo'
     autoload :Menu, 'webgen/tag/menu'
+    autoload :BreadcrumbTrail, 'webgen/tag/breadcrumbtrail'
 
   end
 

@@ -308,6 +308,43 @@ files in Webgen Page Format.
 
           Showing all subtrees: \{menu: {show_current_subtree_only: false}}
 
+
+*   ### `tag.breadcrumbtrail.separator`
+
+    Specifies the string that should be used as separator between indivdual parts of the breadcrumb
+    trail.
+
+    * Syntax: `SEPARATOR` where `SEPARATOR` is a string (special HTML characters need to be properly
+      escaped)
+
+    * Examples:
+
+          Breadcrumb trail with different separator: \{breadcrumb_trail: {separator: ' --- '}}
+
+
+*   ### `tag.breadcrumbtrail.omit_last`
+
+    Specifies that the last part of the breadcrumb trail should be omitted. If
+    `tag.breadcrumbtrail.omit_index_path` is also set to `true` and the last part is an index path,
+    only the index path is omitted (and not the parent of the index node too)!
+
+    * Syntax: `BOOLEAN` where `BOOLEAN` is either `true` or `false`.
+
+    * Examples:
+
+          Breadcrumb trail with last part omitted: \{breadcrumb_trail: {omit_last: true}}
+
+
+*   ### `tag.breadcrumbtrail.omit_index_path`
+
+    Specifies that the last part of the breadcrumb trail should be omitted if it is an index path.
+
+    * Syntax: `BOOLEAN` where `BOOLEAN` is either `true` or `false`.
+
+    * Examples:
+
+          Breadcrumb trail with index path omitted: \{breadcrumb_trail: {omit_index_path: true}}
+
 ---
 
 ## Miscelleanous Configuration Options

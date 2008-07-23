@@ -121,6 +121,7 @@ config.contentprocessor.tags.prefix('', :doc => 'The prefix used for tag names t
 config.contentprocessor.tags.map({
                                    'relocatable' => 'Webgen::Tag::Relocatable',
                                    'menu' => 'Webgen::Tag::Menu',
+                                   'breadcrumb_trail' => 'Webgen::Tag::BreadcrumbTrail',
                                    :default => 'Webgen::Tag::Metainfo'
                                  }, :doc => 'Tag processor name to class map')
 
@@ -131,3 +132,7 @@ config.tag.menu.min_levels(1, :doc => 'The minimum number of menu levels that sh
 config.tag.menu.max_levels(3, :doc => 'The maximum number of menu levels that should be shown.')
 config.tag.menu.show_current_subtree_only(true, :doc => 'Specifies whether only the current subtree should be shown.')
 config.tag.menu.used_nodes('all', :doc => 'Specifies the kind of nodes that should be used: all, files, or fragments')
+
+config.tag.breadcrumbtrail.separator(' / ', :doc => 'Separates the hierachy entries from each other.')
+config.tag.breadcrumbtrail.omit_last(false, :doc => 'Omits the last path component.')
+config.tag.breadcrumbtrail.omit_index_path(false, :doc => 'Omits the last path component if it is an index path.')
