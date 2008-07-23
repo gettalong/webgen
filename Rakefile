@@ -147,6 +147,7 @@ EOF
       s.add_development_dependency('rubyforge', '>= 1.0.0')
       s.add_development_dependency('RedCloth', '>= 3.0.0')
       s.add_development_dependency('haml', '>= 2.0.1')
+      s.add_development_dependency('builder', '>= 2.1.0')
 
       s.require_path = 'lib'
 
