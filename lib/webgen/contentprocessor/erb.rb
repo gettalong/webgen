@@ -12,11 +12,11 @@ module Webgen::ContentProcessor
       dest_node = context.dest_node
 
       erb = ERB.new(context.content)
-      erb.filename = context.ref_node.node_info[:src]
+      erb.filename = context.ref_node.absolute_lcn
       context.content = erb.result(binding)
       context
     rescue Exception => e
-      raise "Erb processing failed: #{e.message}"
+      raise RuntimeError, "Erb processing failed: #{e.message}", e.backtrace
     end
 
   end
