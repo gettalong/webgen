@@ -234,16 +234,76 @@ These options are not normally set in the configuration file but given directly 
 respective tag classes. Therefore, all examples in this section show the use of these options in
 files in Webgen Page Format.
 
-*   ### `tag.relocatable.path`
+*   ### `tag.breadcrumbtrail.separator`
 
-    The default mandatory configuration option for Tag::Relocatable that specifies the path that
-    should be made relocatable.
+    Specifies the string that should be used as separator between indivdual parts of the breadcrumb
+    trail.
 
-    * Syntax: `PATH` where `PATH` is a (localized) canonical name.
+    * Syntax: `SEPARATOR` where `SEPARATOR` is a string (special HTML characters need to be properly
+      escaped)
 
     * Examples:
 
-          <a href="\{relocatable: ../features.html}">Some Path</a>
+          Breadcrumb trail with different separator: \{breadcrumb_trail: {separator: ' --- '}}
+
+
+*   ### `tag.breadcrumbtrail.omit_last`
+
+    Specifies that the last part of the breadcrumb trail should be omitted. If
+    `tag.breadcrumbtrail.omit_index_path` is also set to `true` and the last part is an index path,
+    only the index path is omitted (and not the parent of the index node too)!
+
+    * Syntax: `BOOLEAN` where `BOOLEAN` is either `true` or `false`.
+
+    * Examples:
+
+          Breadcrumb trail with last part omitted: \{breadcrumb_trail: {omit_last: true}}
+
+
+*   ### `tag.breadcrumbtrail.omit_index_path`
+
+    Specifies that the last part of the breadcrumb trail should be omitted if it is an index path.
+
+    * Syntax: `BOOLEAN` where `BOOLEAN` is either `true` or `false`.
+
+    * Examples:
+
+          Breadcrumb trail with index path omitted: \{breadcrumb_trail: {omit_index_path: true}}
+
+
+*   ### `tag.langbar.separator`
+
+    Specifies the string that should be used as separator between the individual language parts.
+
+    * Syntax: `SEPARATOR` where `SEPARATOR` is a string (special HTML characters need to be properly
+      escaped)
+
+    * Examples:
+
+          Langbar with another separator: \{langbar: {separator: ' --- '}}
+
+
+*   ### `tag.langbar.show_own_lang`
+
+    Specifies whether the link to the language of the current page should be displayed.
+
+    * Syntax: `BOOLEAN` where `BOOLEAN` is either `true` or `false`.
+
+    * Examples:
+
+          Langbar with current page's lang not shown: \{langbar: {show_own_lang: false}}
+
+
+*   ### `tag.langbar.show_single_lang`
+
+    Specifies whether the list should be displayed even if there are no translations of the page
+    (i.e. when there is only one page).
+
+    * Syntax: `BOOLEAN` where `BOOLEAN` is either `true` or `false`.
+
+    * Examples:
+
+          Langbar with single language not shown: \{langbar: {show_single_lang: false}}
 
 
 *   ### `tag.menu.used_nodes`
@@ -309,41 +369,19 @@ files in Webgen Page Format.
           Showing all subtrees: \{menu: {show_current_subtree_only: false}}
 
 
-*   ### `tag.breadcrumbtrail.separator`
+*   ### `tag.relocatable.path`
 
-    Specifies the string that should be used as separator between indivdual parts of the breadcrumb
-    trail.
+    The default mandatory configuration option for Tag::Relocatable that specifies the path that
+    should be made relocatable.
 
-    * Syntax: `SEPARATOR` where `SEPARATOR` is a string (special HTML characters need to be properly
-      escaped)
-
-    * Examples:
-
-          Breadcrumb trail with different separator: \{breadcrumb_trail: {separator: ' --- '}}
-
-
-*   ### `tag.breadcrumbtrail.omit_last`
-
-    Specifies that the last part of the breadcrumb trail should be omitted. If
-    `tag.breadcrumbtrail.omit_index_path` is also set to `true` and the last part is an index path,
-    only the index path is omitted (and not the parent of the index node too)!
-
-    * Syntax: `BOOLEAN` where `BOOLEAN` is either `true` or `false`.
+    * Syntax: `PATH` where `PATH` is a (localized) canonical name.
 
     * Examples:
 
-          Breadcrumb trail with last part omitted: \{breadcrumb_trail: {omit_last: true}}
+          <a href="\{relocatable: ../features.html}">Some Path</a>
 
 
-*   ### `tag.breadcrumbtrail.omit_index_path`
 
-    Specifies that the last part of the breadcrumb trail should be omitted if it is an index path.
-
-    * Syntax: `BOOLEAN` where `BOOLEAN` is either `true` or `false`.
-
-    * Examples:
-
-          Breadcrumb trail with index path omitted: \{breadcrumb_trail: {omit_index_path: true}}
 
 ---
 

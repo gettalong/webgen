@@ -25,4 +25,4 @@ If you want to have a missing feature in the next release, write to the mailing 
 * Major feature enhancements:
 
   - ported 4 content processors: haml, sass, rdoc and builder
-  - ported 1 tag: breadcrumb\_trail
+  - ported 2 tags: breadcrumb\_trail and langbar
