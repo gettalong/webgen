@@ -291,6 +291,8 @@ class TestNode < Test::Unit::TestCase
                  nodes[:somename_de].link_to(nodes[:dir2]))
     assert_equal('<a href="dir2/index.html">routed</a>',
                  nodes[:somename_en].link_to(nodes[:dir2]))
+    assert_equal('<span>routed</span>',
+                 nodes[:dir2_index_en].link_to(nodes[:dir2]))
 
     # varying the website.link_to_current_page option
     @website.config['website.link_to_current_page'] = true
