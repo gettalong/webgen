@@ -61,7 +61,7 @@ class TestTagMenu < Test::Unit::TestCase
     output = @obj.call('menu', '', Webgen::ContentProcessor::Context.new(:chain => [nodes[:index11_en]]))
     assert_equal("<div class=\"webgen-menu\">" +
                  "<ul><li class=\"webgen-menu-submenu webgen-menu-submenu-inhierarchy\"><a href=\"../\"></a>" +
-                 "<ul><li class=\"webgen-menu-submenu webgen-menu-submenu-inhierarchy\"><a href=\"index.en.html\"></a>" +
+                 "<ul><li class=\"webgen-menu-submenu webgen-menu-submenu-inhierarchy\"><span></span>" +
                  "<ul><li ><a href=\"file111.en.html\"></a></li>" +
                  "<li class=\"webgen-menu-item-selected\"><span></span></li></ul></li>" +
                  "<li ><a href=\"../file11.en.html\"></a></li></ul></li>" +
