@@ -271,10 +271,46 @@ files in Webgen Page Format.
           Breadcrumb trail with index path omitted: \{breadcrumb_trail: {omit_index_path: true}}
 
 
+*   ### `tag.executecommand.command`
+
+    Specifies the command that should be executed. This option is the default mandatory option for
+    Webgen::Tag::ExecuteCommand.
+
+    * Syntax: `COMMAND` where `COMMAND` is the to-be-executed command.
+
+    * Examples:
+
+          executing a simple command \{exeucte_cmd: echo hallo}
+
+
+*   ### `tag.executecommand.process_output`
+
+    Specifies whether the output of the executed command should be further processed by the tags
+    content processor.
+
+    * Syntax: `BOOLEAN` where `BOOLEAN` is either `true` or `false`.
+
+    * Examples:
+
+          executing command without further processing \{execute_cmd: {command: 'echo hallo', process_output: false}}
+
+
+*   ### `tag.executecommand.escape_html`
+
+    Specifies whether special HTML characters in the output of the executed command should be escaped.
+
+    * Syntax: `BOOLEAN` where `BOOLEAN` is either `true` or `false`.
+
+    * Examples:
+
+          executing command, output not escaped \{execute_cmd: {command: 'echo hallo', escape_html: false}}
+
+
 *   ### `tag.includefile.filename`
 
     Specifies the name of the file that should be included. The filename needs to be relative to the
-    website directory or an absolute path.
+    website directory or an absolute path. This option is the default mandatory option for
+    Webgen::Tag::IncludeFile.
 
     * Syntax: `FILENAME` where `FILENAME` is the name of a file
 
@@ -407,7 +443,8 @@ files in Webgen Page Format.
 *   ### `tag.relocatable.path`
 
     The default mandatory configuration option for Tag::Relocatable that specifies the path that
-    should be made relocatable.
+    should be made relocatable. This option is the default mandatory option for
+    Webgen::Tag::Relocatable.
 
     * Syntax: `PATH` where `PATH` is a (localized) canonical name.
 

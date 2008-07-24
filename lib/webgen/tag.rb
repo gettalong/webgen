@@ -13,6 +13,7 @@ module Webgen
     autoload :BreadcrumbTrail, 'webgen/tag/breadcrumbtrail'
     autoload :Langbar, 'webgen/tag/langbar'
     autoload :IncludeFile, 'webgen/tag/includefile'
+    autoload :ExecuteCommand, 'webgen/tag/executecommand'
 
   end
 

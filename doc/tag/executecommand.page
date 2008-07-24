@@ -1,0 +1,28 @@
+---
+title: Webgen::Tag::ExecuteCommand
+---
+## Description
+
+The execute command tag is used to include the output from a shell command. This tag uses the
+following options (see [configuration option reference]({relocatable:
+../reference_configuration.html}) for detailed information on the options):
+
+* `tag.executecommand.command`
+* `tag.executecommand.process_output`
+* `tag.executecommand.escape_html`
+
+## Examples
+
+<table class="examples">
+<tr>
+  <th>Usage</th><th>Output</th>
+</tr>
+<tr>
+  <td>\{execute_cmd: uname -p}</td>
+  <td><pre>{execute_cmd: uname -p}</pre></td>
+</tr>
+<tr>
+  <td>\{execute_cmd: {command: 'ruby -v'}}</td>
+  <td><pre>{execute_cmd: {command: 'ruby -v'}}</pre></td>
+</tr>
+</table>
