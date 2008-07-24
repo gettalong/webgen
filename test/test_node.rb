@@ -207,7 +207,7 @@ class TestNode < Test::Unit::TestCase
     assert_equal('ftp://test', nodes[:dir].route_to('ftp://test'))
 
     #test args with '..' and '.': either too many of them or absolute path given
-    assert_equal('../dir2', nodes[:dir_file].route_to('../../../dir2/./'))
+    assert_equal('../dir2', nodes[:dir_file].route_to('../../.././dir2'))
     assert_equal('../file', nodes[:dir_file].route_to('/dir/../file'))
     assert_equal('file', nodes[:dir_file].route_to('dir/../file'))
 
