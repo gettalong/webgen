@@ -1,10 +1,11 @@
 ---
 title: Webgen::Tag::Relocatable
+used_options:
+  - tag.relocatable.path
 ---
 ## Description
 
-This tag ensures that the relative path to the specified path is always correct. It has one
-mandatory parameter, namely the configuration option `tag.relocatable.path`.
+This tag ensures that the relative path to the specified path is always correct. 
 
 When the tag is used, it changes the directory part of the supplied path name to a relative path to
 the destination and is most often used in template files. A relocatable tag looks like this:

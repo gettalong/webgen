@@ -1,15 +1,13 @@
 ---
 title: Webgen::Tag::ExecuteCommand
+used_options:
+  - tag.executecommand.command
+  - tag.executecommand.process_output
+  - tag.executecommand.escape_html
 ---
 ## Description
 
-The execute command tag is used to include the output from a shell command. This tag uses the
-following options (see [configuration option reference]({relocatable:
-../reference_configuration.html}) for detailed information on the options):
-
-* `tag.executecommand.command`
-* `tag.executecommand.process_output`
-* `tag.executecommand.escape_html`
+The execute command tag is used to include the output from a shell command.
 
 ## Examples
 

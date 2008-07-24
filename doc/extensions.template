@@ -1,8 +1,15 @@
---- pipeline:tags,maruku,blocks
+--- pipeline:erb,tags,maruku,blocks
 [Back]({relocatable: extensions.html}) to the extension listing.
 {.backlink}
 
 # {title:}
+
+<% if (context[:chain][1] || context[:chain][0]).node_info[:page].blocks.has_key?('summary') %>
+## Summary
+
+<webgen:block name='summary' />
+
+<% end %>
 
 <webgen:block name='content' />
 

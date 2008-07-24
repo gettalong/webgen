@@ -1,0 +1,21 @@
+---
+template: extensions.template
+--- name:summary pipeline:erb,tags,maruku,blocks
+<%
+patterns = context.website.config['sourcehandler.patterns'][context.content_node['title']]
+if patterns
+%>
+This source handler operates on paths that match one of the following path patterns (see the [path pattern documentation]({relocatable: manual.html#source-pathpattern}) for more information): `<%= patterns.join(', ') %>`
+<% end %>
+
+<%
+meta_info = context.website.config['sourcehandler.default_meta_info'][context.content_node['title']]
+if meta_info
+%>
+Following is the default meta information set on any node created by this source handler:
+<pre>
+<%= meta_info.to_yaml.gsub(/^---/, '').strip %>
+</pre>
+<% end %>
+--- name:content
+<webgen:block name='content' />

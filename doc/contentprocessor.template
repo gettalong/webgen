@@ -1,0 +1,10 @@
+---
+template: extensions.template
+--- name:summary pipeline:erb,tags,maruku,blocks
+
+The short name of the content processor (used, for example, in the `pipeline` option of a block in a
+file in [Webgen Page Format]({relocatable: webgen_page_format.html}) is `<%=
+context.website.config['contentprocessor.map'].invert[context.content_node['title']] %>`.
+
+--- name:content
+<webgen:block name='content' />
