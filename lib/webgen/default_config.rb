@@ -124,6 +124,7 @@ config.contentprocessor.tags.map({
                                    'breadcrumb_trail' => 'Webgen::Tag::BreadcrumbTrail',
                                    'langbar' => 'Webgen::Tag::Langbar',
                                    'include_file' => 'Webgen::Tag::IncludeFile',
+                                   'execute_cmd' => 'Webgen::Tag::ExecuteCommand',
                                    :default => 'Webgen::Tag::Metainfo'
                                  }, :doc => 'Tag processor name to class map')
 
@@ -146,3 +147,7 @@ config.tag.langbar.show_own_lang(true, :doc => 'Should the link to the currently
 config.tag.includefile.filename(nil, :doc => 'The name of the file which should be included (relative to the website).', :mandatory => 'default')
 config.tag.includefile.process_output(true, :doc => 'The file content will be scanned for tags if true.')
 config.tag.includefile.escape_html(true, :doc => 'Special HTML characters in the file content will be escaped if true.')
+
+config.tag.executecommand.command(nil, :doc => 'The command which should be executed', :mandatory => 'default')
+config.tag.executecommand.process_output(true, :doc => 'The output of the command will be scanned for tags if true')
+config.tag.executecommand.escape_html(true, :doc => 'Special HTML characters in the output will be escaped if true')
