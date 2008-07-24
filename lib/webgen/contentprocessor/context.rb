@@ -1,4 +1,5 @@
 require 'webgen/contentprocessor'
+require 'webgen/websiteaccess'
 
 module Webgen::ContentProcessor
 
@@ -12,6 +13,9 @@ module Webgen::ContentProcessor
   # <tt>:chain</tt>:: The chain of nodes that is processed. There are some utiltity methods for getting
   #                   special nodes of the chain (see #ref_node, #content_node).
   class Context
+
+    include Webgen::WebsiteAccess
+    public :website
 
     # Processing options
     attr_accessor :options
