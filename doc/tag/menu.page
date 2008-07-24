@@ -1,10 +1,16 @@
 ---
 title: Webgen::Tag::Menu
+used_options:
+  - tag.menu.used_nodes
+  - tag.menu.start_level
+  - tag.menu.min_levels
+  - tag.menu.max_levels
+  - tag.menu.show_current_subtree_only
 ---
 ## Description
 
 The menu tag builds a seemingly simple menu using HTML lists. However, it is very flexible due to
-its many parameters that let you decide every detail of the menu.
+its many options that let you decide every detail of the menu.
 
 > The menu is constructed using HTML lists with `ul` and `li` tags.  However, the menu normally
 > looks better if no discs are shown for the menu items (using the CSS directive `list-style-type:
@@ -14,16 +20,6 @@ its many parameters that let you decide every detail of the menu.
 It uses the meta information `in_menu` and `sort_info` to determine which nodes should be in the
 menu and how they should be ordered. A separate menu tree is then created from all nodes for each
 language.
-
-The following configuration options (all are optional) are used by the menu tag (for detailed
-information on one of the options have a look at the [Configuration Options Reference]({relocatable:
-../reference_configuration.html}). They allow for an easy customization of the menu:
-
-* `tag.menu.used_nodes`
-* `tag.menu.start_level`
-* `tag.menu.min_levels`
-* `tag.menu.max_levels`
-* `tag.menu.show_current_subtree_only`
 
 By setting the option `tag.menu.used_nodes` to `fragments`, the menu tag can also be used for
 generating an in-page content menu of all the header sections.

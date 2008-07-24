@@ -1,15 +1,13 @@
 ---
 title: Webgen::Tag::Langbar
+used_options:
+  - tag.langbar.separator
+  - tag.langbar.show_own_lang
+  - tag.langbar.show_single_lang
 ---
 ## Description
 
-This tag is used to display a list of links to translations of the page and can be customized via
-the following options (see [configuration option reference]({relocatable:
-../reference_configuration.html}) for detailed information on the options):
-
-* `tag.langbar.separator`
-* `tag.langbar.show_own_lang`
-* `tag.langbar.show_single_lang`
+This tag is used to display a list of links to translations of the page.
 
 ## Examples
 

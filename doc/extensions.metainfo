@@ -2,19 +2,19 @@ contentprocessor/:
   index_path: ~
 
 contentprocessor/*:
-  template: ../extensions.template
+  template: ../contentprocessor.template
 
 sourcehandler/:
   index_path: ~
 
 sourcehandler/*:
-  template: ../extensions.template
+  template: ../sourcehandler.template
 
 tag/:
   index_path: ~
 
 tag/*:
-  template: ../extensions.template
+  template: ../tag.template
 
 source/:
   index_path: ~
