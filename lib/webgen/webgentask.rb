@@ -125,16 +125,11 @@ module Webgen
     def define # :nodoc:
       desc "Render the webgen website"
       task @name, :verbosity, :log_level do |t, args|
-        begin
-          require 'webgen/website'
-          website = Webgen::Website.new(@directory, Webgen::Logger.new($stdout), &@config_block)
-          website.logger.verbosity = args[:verbosity].to_s.intern unless args[:verbosity].to_s.empty?
-          website.logger.level = args[:log_level].to_i if args[:log_level]
-          website.render
-        rescue => e
-          puts "webgen task failed: #{e}"
-          raise e
-        end
+        require 'webgen/website'
+        website = Webgen::Website.new(@directory, Webgen::Logger.new($stdout), &@config_block)
+        website.logger.verbosity = args[:verbosity].to_s.intern unless args[:verbosity].to_s.empty?
+        website.logger.level = args[:log_level].to_i if args[:log_level]
+        website.render
       end
 
       task :clobber => paste('clobber_', @name)
