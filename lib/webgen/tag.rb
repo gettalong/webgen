@@ -12,6 +12,7 @@ module Webgen
     autoload :Menu, 'webgen/tag/menu'
     autoload :BreadcrumbTrail, 'webgen/tag/breadcrumbtrail'
     autoload :Langbar, 'webgen/tag/langbar'
+    autoload :IncludeFile, 'webgen/tag/includefile'
 
   end
 
