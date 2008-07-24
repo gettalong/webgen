@@ -271,6 +271,41 @@ files in Webgen Page Format.
           Breadcrumb trail with index path omitted: \{breadcrumb_trail: {omit_index_path: true}}
 
 
+*   ### `tag.includefile.filename`
+
+    Specifies the name of the file that should be included. The filename needs to be relative to the
+    website directory or an absolute path.
+
+    * Syntax: `FILENAME` where `FILENAME` is the name of a file
+
+    * Examples:
+
+          including a file \{include_file: my_file.txt}
+
+
+*   ### `tag.includefile.process_output`
+
+    Specifies whether the content of the file should be further processed by the tags content
+    processor.
+
+    * Syntax: `BOOLEAN` where `BOOLEAN` is either `true` or `false`.
+
+    * Examples:
+
+          including a file without further processing \{include_file: {filename: my_file.txt, process_output: false}}
+
+
+*   ### `tag.includefile.escape_html`
+
+    Specifies whether special HTML characters in the content of the file should be escaped.
+
+    * Syntax: `BOOLEAN` where `BOOLEAN` is either `true` or `false`.
+
+    * Examples:
+
+          including a file without escaping \{include_file: {filename: my_file.txt, escape_html: false}}
+
+
 *   ### `tag.langbar.separator`
 
     Specifies the string that should be used as separator between the individual language parts.
