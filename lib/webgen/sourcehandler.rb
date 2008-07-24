@@ -58,16 +58,21 @@ module Webgen
           tree.node_access[:alcn].sort.each do |name, node|
             next if node == tree.dummy_root || !node.dirty
             node.dirty = node.created = false
-            if !node['no_output'] && (content = node.content)
-              puts " "*4 + name, :verbose
-              type = if node.is_directory?
-                       :directory
-                     elsif node.is_fragment?
-                       :fragment
-                     else
-                       :file
-                     end
-              output.write(node.path, content, type)
+
+            begin
+              if !node['no_output'] && (content = node.content)
+                puts " "*4 + name, :verbose
+                type = if node.is_directory?
+                         :directory
+                       elsif node.is_fragment?
+                         :fragment
+                       else
+                         :file
+                       end
+                output.write(node.path, content, type)
+              end
+            rescue
+              raise RuntimeError, "Error while processing <#{node.absolute_lcn}>: #{$!.message}", $!.backtrace
             end
           end
         end
