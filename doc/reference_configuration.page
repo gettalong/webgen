@@ -271,6 +271,83 @@ files in Webgen Page Format.
           Breadcrumb trail with index path omitted: \{breadcrumb_trail: {omit_index_path: true}}
 
 
+*   ### `tag.coderay.lang`
+
+    Specifies the language that should be used for syntax highlighting.
+
+    * Syntax: `LANG` where `LANG` is one of <%= (require 'coderay'; CodeRay::Scanners.list.map {|n| '`' + n + '`'}.join(', ')) %>.
+
+    * Examples:
+
+          highlighting some ruby code \{coderay:: ruby}puts 5 + 5{coderay}
+
+
+*   ### `tag.coderay.process_body`
+
+    Specifies whether the body of the tag should be processed by the tags content processor first.
+
+    * Syntax: `BOOLEAN` where `BOOLEAN` is either `true` or `false`.
+
+    * Examples:
+
+          wrapping in a span: \{coderay:: {lang: ruby, process_body: false}}puts 5 + 5{coderay}
+
+
+*   ### `tag.coderay.wrap`
+
+    Specifies in which HTML element the highlighted code should be wrapped.
+
+    * Syntax: `WRAP` where `WRAP` is either `div` or `span`
+
+    * Examples:
+
+          wrapping in a span: \{coderay:: {lang: ruby, wrap: span}}puts 5 + 5{coderay}
+
+
+*   ### `tag.coderay.line_numbers`
+
+    Specifies whether line numbers should be shown.
+
+    * Syntax: `BOOLEAN` where `BOOLEAN` is either `true` or `false`.
+
+    * Examples:
+
+          not showing line numbers: \{coderay:: {lang: ruby, line_numbers: false}}puts 5 + 5{coderay}
+
+
+*   ### `tag.coderay.line_number_start`
+
+    Specifies the line number that should be used for the first line.
+
+    * Syntax: `NUMBER` where `NUMBER` is an integer value.
+
+    * Examples:
+
+          starting with line 4: \{coderay:: {lang: ruby, line_number_start: 4}}puts 5 + 5{coderay}
+
+
+*   ### `tag.coderay.bold_every`
+
+    Specifies the interval at which the line numbers should appear bold.
+
+    * Syntax: `NUMBER` where `NUMBER` is an integer value.
+
+    * Examples:
+
+          every other line bold: \{coderay:: {lang: ruby, bold_every: 2}}puts 5 + 5{coderay}
+
+
+*   ### `tag.coderay.tab_width`
+
+    Specifies the number of spaces that should be used to replace tabulator characters.
+
+    * Syntax: `NUMBER` where `NUMBER` is an integer value.
+
+    * Examples:
+
+          tabulator == 4 spaces: \{coderay:: {lang: ruby, tab_width: 4}}puts 5 + 5{coderay}
+
+
 *   ### `tag.executecommand.command`
 
     Specifies the command that should be executed. This option is the default mandatory option for

@@ -119,6 +119,7 @@ config.contentprocessor.tags.map({
                                    'langbar' => 'Webgen::Tag::Langbar',
                                    'include_file' => 'Webgen::Tag::IncludeFile',
                                    'execute_cmd' => 'Webgen::Tag::ExecuteCommand',
+                                   'coderay' => 'Webgen::Tag::Coderay',
                                    :default => 'Webgen::Tag::Metainfo'
                                  }, :doc => 'Tag processor name to class map')
 
@@ -145,3 +146,11 @@ config.tag.includefile.escape_html(true, :doc => 'Special HTML characters in the
 config.tag.executecommand.command(nil, :doc => 'The command which should be executed', :mandatory => 'default')
 config.tag.executecommand.process_output(true, :doc => 'The output of the command will be scanned for tags if true')
 config.tag.executecommand.escape_html(true, :doc => 'Special HTML characters in the output will be escaped if true')
+
+config.tag.coderay.lang('ruby', :doc => 'The highlighting language', :mandatory => 'default')
+config.tag.coderay.process_body(true, :doc => 'The tag body will be scanned for tags first if true')
+config.tag.coderay.wrap(:div, :doc => 'Specifies how the code should be wrapped, either :div or :span')
+config.tag.coderay.line_numbers(true, :doc => 'Show line numbers')
+config.tag.coderay.line_number_start(1, :doc => 'Line number of first line')
+config.tag.coderay.bold_every(10, :doc => 'The interval at which the line number appears bold')
+config.tag.coderay.tab_width(8, :doc => 'Number of spaces used for a tabulator')

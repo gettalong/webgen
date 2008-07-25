@@ -1,0 +1,49 @@
+---
+title: Webgen::Tag::Coderay
+used_options:
+  - tag.coderay.lang
+  - tag.coderay.process_body
+  - tag.coderay.wrap
+  - tag.coderay.line_numbers
+  - tag.coderay.line_number_start
+  - tag.coderay.bold_every
+  - tag.coderay.tab_width
+---
+## Description
+
+This tag applies syntax highlighting to its body by using the [coderay][1] library which can be used
+to highlight many different languages (see `tag.coderay.lang` documentation). The body of the tag
+specifies what should be highlighted.
+
+> It is easy to include and highlight an entire file by combining this tag with the `include_file` tag:
+>
+>     \{coderay:: ruby}{include_file: test.rb}{coderay}
+{.information}
+
+> This extension is only available if you have installed the [coderay][1] library. The preferred
+> way to do this is via Rubygems:
+>
+>     gem install coderay
+{.exclamation}
+
+[1]: http://coderay.rubychan.de/ "The Coderay homepage"
+
+## Examples
+
+<table class="examples">
+<tr>
+  <th>Usage</th><th>Output</th>
+</tr>
+<tr>
+  <td>\{coderay:: {lang: ruby, bold_every: 2}}{include_file: lib/webgen/version.rb}{coderay}</td>
+  <% if File.exists?(File.join(context.website.directory, 'lib/webgen/version.rb')) %>
+  <td>{coderay:: {lang: ruby, bold_every: 2}}{include_file: lib/webgen/version.rb}{coderay}</td>
+  <% else %>
+  <td>{coderay:: {lang: ruby, bold_every: 2}}{include_file: ../lib/webgen/version.rb}{coderay}</td>
+  <% end %>
+</tr>
+<tr>
+  <td>\{coderay:: {lang: ruby, wrap: span}}puts 5+5{coderay}</td>
+  <td><code>{coderay:: {lang: ruby, wrap: span}}puts 5+5{coderay}</code></td>
+</tr>
+</table>
