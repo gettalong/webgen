@@ -26,3 +26,4 @@ If you want to have a missing feature in the next release, write to the mailing 
 
   - ported 4 content processors: haml, sass, rdoc and builder
   - ported 4 tags: breadcrumb\_trail, langbar, include\_file and execute\_cmd
+  - implemented 1 new tag: coderay

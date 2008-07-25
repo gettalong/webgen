@@ -14,6 +14,7 @@ module Webgen
     autoload :Langbar, 'webgen/tag/langbar'
     autoload :IncludeFile, 'webgen/tag/includefile'
     autoload :ExecuteCommand, 'webgen/tag/executecommand'
+    autoload :Coderay, 'webgen/tag/coderay'
 
   end
 
