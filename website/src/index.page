@@ -38,14 +38,15 @@ information have a look at the [documentation]({relocatable: /documentation/})!
 
 If you have an idea for a new feature for webgen, [request it][feature_request]. If you have found a
 bug, you should [report it here][bug_report]. Also, there are [forums][forum] and [mailing
-lists][ml] available if you have any questions! You can also visit the IRC channel `#webgen` on
-Freenode where I can be found whenever I'm online.
+lists][ml] available (the mailing list is mirrored to the [webgen-users google group][google-group])
+if you have any questions! You can also visit the IRC channel `#webgen` on Freenode where I can be
+found whenever I'm online.
 
 [feature_request]: http://rubyforge.org/tracker/?atid=1210&group_id=296&func=browse
 [bug_report]: http://rubyforge.org/tracker/?atid=1207&group_id=296&func=browse
 [forum]: http://rubyforge.org/forum/?group_id=296
 [ml]: http://rubyforge.org/mail/?group_id=296
-
+[google-group]: http://groups.google.com/group/webgen-users/
 
 ## Download & Installation
 
