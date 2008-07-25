@@ -51,8 +51,11 @@ Below is a list of features that webgen supports or will shortly support.
     generation and more. The following methods for adding dynamic content are supported:
 
     * **webgen tags**: these allow non-programmers to easily add dynamic content using a simple markup
-      syntax. webgen ships with many tag plugins for generating menus, breadcrumb trails, language
-      selectors and more.
+      syntax. webgen ships with many tag plugins for
+      * **generating menus and breadcrumb trails**
+      * listing all translations of a page
+      * **syntax highlighting code** fragments or entire files
+      * and much more
     * **ERB** (embedded Ruby) for custom scripts embedded into content files for advanced users.
 
 *   ## Other features

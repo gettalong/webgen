@@ -20,10 +20,20 @@ tags.
 
 If you want to have a missing feature in the next release, write to the mailing list!
 
---- name:changes pipeline:maruku
+--- name:changes pipeline:tags,maruku
 
 * Major feature enhancements:
 
-  - ported 4 content processors: haml, sass, rdoc and builder
-  - ported 4 tags: breadcrumb\_trail, langbar, include\_file and execute\_cmd
-  - implemented 1 new tag: coderay
+  - ported 4 content processors: [haml], [sass], [rdoc] and [builder]
+  - ported 4 tags: [breadcrumb\_trail], [langbar], [include\_file] and [execute\_cmd]
+  - implemented 1 new tag: [coderay]
+
+[haml]:              {relocatable: ../documentation/contentprocessor/haml.html}
+[sass]:              {relocatable: ../documentation/contentprocessor/sass.html}
+[rdoc]:              {relocatable: ../documentation/contentprocessor/rdoc.html}
+[builder]:           {relocatable: ../documentation/contentprocessor/builder.html}
+[breadcrumb\_trail]: {relocatable: ../documentation/tag/breadcrumbtrail.html}
+[langbar]:           {relocatable: ../documentation/tag/langbar.html}
+[include\_file]:     {relocatable: ../documentation/tag/includefile.html}
+[execute_cmd]:       {relocatable: ../documentation/tag/executecommand.html}
+[coderay]:           {relocatable: ../documentation/tag/coderay.html}
