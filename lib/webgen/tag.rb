@@ -15,6 +15,7 @@ module Webgen
     autoload :IncludeFile, 'webgen/tag/includefile'
     autoload :ExecuteCommand, 'webgen/tag/executecommand'
     autoload :Coderay, 'webgen/tag/coderay'
+    autoload :Date, 'webgen/tag/date'
 
   end
 

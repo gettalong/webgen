@@ -25,7 +25,7 @@ If you want to have a missing feature in the next release, write to the mailing 
 * Major feature enhancements:
 
   - ported 4 content processors: [haml], [sass], [rdoc] and [builder]
-  - ported 4 tags: [breadcrumb\_trail], [langbar], [include\_file] and [execute\_cmd]
+  - ported 5 tags: [breadcrumb\_trail], [langbar], [include\_file], [execute\_cmd] and [date]
   - implemented 1 new tag: [coderay]
 
 [haml]:              {relocatable: ../documentation/contentprocessor/haml.html}
@@ -37,3 +37,4 @@ If you want to have a missing feature in the next release, write to the mailing 
 [include\_file]:     {relocatable: ../documentation/tag/includefile.html}
 [execute_cmd]:       {relocatable: ../documentation/tag/executecommand.html}
 [coderay]:           {relocatable: ../documentation/tag/coderay.html}
+[date]:              {relocatable: ../documentation/tag/date.html}

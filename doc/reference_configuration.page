@@ -348,6 +348,19 @@ files in Webgen Page Format.
           tabulator == 4 spaces: \{coderay:: {lang: ruby, tab_width: 4}}puts 5 + 5{coderay}
 
 
+*   ### `tag.date.format`
+
+    Specifies the format that should be used for formatting the current date. The format string
+    needs to be in a format supported by Ruby's method
+    [Time#strftime](http://www.ruby-doc.org/core/classes/Time.html).
+
+    * Syntax: `FORMAT` where `FORMAT` is a string.
+
+    * Examples:
+
+          very short date format: \{date: {format: '%Y-%m-%d'}}
+
+
 *   ### `tag.executecommand.command`
 
     Specifies the command that should be executed. This option is the default mandatory option for
