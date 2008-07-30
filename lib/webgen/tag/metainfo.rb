@@ -15,7 +15,7 @@ module Webgen::Tag
       elsif context.content_node[tag]
         output = context.content_node[tag].to_s
       else
-        log(:warn) { "No value for tag '#{tag}' in <#{context.ref_node.absolute_lcn}> found in <#{context.content_node.absolute_lcn}>" }
+        log(:warn) { "No value for meta info key '#{tag}' in <#{context.ref_node.absolute_lcn}> found in <#{context.content_node.absolute_lcn}>" }
       end
       output
     end
