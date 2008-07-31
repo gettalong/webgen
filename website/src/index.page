@@ -97,6 +97,11 @@ Make sure that you also install the mandatory and, if you need them, the optiona
 
 * (optional) [RedCloth](http://redcloth.rubyforge.org) version 2.0.10 or higher for Textile support
 
+* (optional) [haml](http://haml.hamptoncatlin.com) version 2.0.1 or higher for haml and sass support
+
+* (optional) [builder](http://builder.rubyforge.org) version 2.1.0 or higher for programmatic xml
+  generation support
+
 All these libraries can be installed via Rubygems (which I recommend).
 
 ## Author

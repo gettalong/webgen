@@ -1,7 +1,7 @@
 ---
 title: webgen 0.5.1 released
-in_menu: false
-sort_info: TODO!!
+in_menu: true
+sort_info: 2008-07-31
 ---
 ## {title:}
 
@@ -15,10 +15,15 @@ sort_info: TODO!!
 
 Since the 0.5.0 release did not have as many features as the older 0.4.x releases, this release as
 well as the next few releases concentrate on porting features from the latest 0.4.x version. The
-focus of this release was adding the missing content processors and some of the more widely used
+focus of this release was adding the missing content processors and most of the more widely used
 tags.
 
-If you want to have a missing feature in the next release, write to the mailing list!
+If you want to have a currently missing feature in the next release, write to the mailing list!
+
+A new [google group][google-group] which mirrors the `webgen-users` mailing list on Rubyforge has
+also be created.
+
+[google-group]: http://groups.google.com/group/webgen-users/
 
 --- name:changes pipeline:tags,maruku
 
@@ -27,6 +32,10 @@ If you want to have a missing feature in the next release, write to the mailing 
   - ported 4 content processors: [haml], [sass], [rdoc] and [builder]
   - ported 5 tags: [breadcrumb\_trail], [langbar], [include\_file], [execute\_cmd] and [date]
   - implemented 1 new tag: [coderay]
+
+* Bug fixes:
+
+  - fixed bug RF#21387: webgen CLI now works correctly when `stty` is not available
 
 [haml]:              {relocatable: ../documentation/contentprocessor/haml.html}
 [sass]:              {relocatable: ../documentation/contentprocessor/sass.html}

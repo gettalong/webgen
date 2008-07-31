@@ -86,9 +86,10 @@
           <a href="http://validator.w3.org/check/referer">XHTML</a>
         </p>
 
-        <ul>
-          <li><a href="{relocatable: /}">Home</a></li>
-        </ul>
+        <p>
+          <a href="{relocatable: /}">Home</a><br />
+          Page last changed at {date:}
+        </p>
       </div>
 
     </div></div>
