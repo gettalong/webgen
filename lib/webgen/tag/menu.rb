@@ -21,11 +21,19 @@ module Webgen::Tag
       # The encapsulated node.
       attr_reader :node
 
+      # Set to +true+ if the menu node is in the tree of files.
+      attr_writer :is_in_tree_of_files
+
       # Create a new menu node under +parent+ for the real node +node+.
       def initialize(parent, node)
         @parent = parent
         @node = node
         @children = []
+      end
+
+      # Return +true+ if the menu node is in the menu tree of only files.
+      def is_in_tree_of_files?
+        @is_in_tree_of_files
       end
 
       # Sort recursively all children of the node using the wrapped nodes.
@@ -77,7 +85,9 @@ module Webgen::Tag
         set_params({})
 
         if (tree.nil? && !cached_tree.nil?) || (tree_list && tree_list != cached_tree) ||
-            (tree_list && tree_list.flatten.any? {|alcn| (n = node.tree[alcn]) && (r = n.routing_node(cn.lang)) && r != node && r.changed?})
+            (tree_list && tree_list.flatten.any? do |alcn|
+               (n = node.tree[alcn]) && (r = n.routing_node(cn.lang)) && r != node && r.meta_info_changed?
+             end)
           node.dirty = true
           break
         end
@@ -110,7 +120,7 @@ module Webgen::Tag
       sub_menu_tree = MenuNode.new(nil, menu_node.node)
       menu_tree = MenuNode.new(nil, menu_node.node)
       menu_node.children.each do |child|
-        next if param('tag.menu.used_nodes') == 'files' && !is_in_menu_tree_of_files?(child)
+        next if param('tag.menu.used_nodes') == 'files' && !child.is_in_tree_of_files?
         menu_tree.children << (this_node = MenuNode.new(menu_tree, child.node))
         sub_node = child.children.length > 0 ? build_specific_menu_tree(content_node, child, level + 1) : nil
         sub_node.children.each {|n| this_node.children << n; sub_menu_tree.children << n} if sub_node
@@ -121,11 +131,6 @@ module Webgen::Tag
       else
         menu_tree
       end
-    end
-
-    # Return +true+ if +menu_node+ is in the menu tree without fragment nodes.
-    def is_in_menu_tree_of_files?(menu_node)
-      (!menu_node.node.is_fragment? && menu_node.node['in_menu']) || menu_node.children.any? {|c| is_in_menu_tree_of_files?(c)}
     end
 
     # Create the HTML menu of the +tree+ using the provided +context+.
@@ -177,10 +182,10 @@ module Webgen::Tag
         sub_node = create_menu_tree(child, menu_node, lang)
         menu_node.children << sub_node unless sub_node.nil?
       end
+      menu_node.is_in_tree_of_files = (!node.is_fragment? && node['in_menu']) || menu_node.children.any? {|c| c.is_in_tree_of_files?}
 
       menu_node.children.empty? ? (node['in_menu'] ? menu_node : nil) : menu_node
     end
-
 
   end
 

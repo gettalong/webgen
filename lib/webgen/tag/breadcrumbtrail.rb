@@ -23,8 +23,8 @@ module Webgen::Tag
       node = node.parent if omit_index_path
 
       until node == node.tree.dummy_root
-        context.dest_node.node_info[:used_nodes] << node.routing_node(context.dest_node.lang).absolute_lcn
-        context.dest_node.node_info[:used_nodes] << node.absolute_lcn
+        context.dest_node.node_info[:used_meta_info_nodes] << node.routing_node(context.dest_node.lang).absolute_lcn
+        context.dest_node.node_info[:used_meta_info_nodes] << node.absolute_lcn
         out.push(context.dest_node.link_to(node.in_lang(context.content_node.lang)))
         node = node.parent
       end

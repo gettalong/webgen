@@ -41,8 +41,9 @@ class TestTagBreadcrumbTrail < Test::Unit::TestCase
 
     assert_equal('<a href="../../index.html"></a> / <a href="../">Dir1</a> / <a href="index.html">Dir11</a> / <span>File111</span>',
                  call(context, ' / ', false, false))
-    assert_equal(Set.new([nodes[:file11_en], nodes[:index_en], nodes[:index11_en], nodes[:dir1], nodes[:dir11], nodes[:root]].map {|n| n.absolute_lcn}),
-                 nodes[:file11_en].node_info[:used_nodes])
+    assert_equal(Set.new([nodes[:file11_en], nodes[:index_en], nodes[:index11_en],
+                          nodes[:dir1], nodes[:dir11], nodes[:root]].map {|n| n.absolute_lcn}),
+                 nodes[:file11_en].node_info[:used_meta_info_nodes])
 
 
     assert_equal('<a href="../../index.html"></a> / <a href="../">Dir1</a> / <a href="index.html">Dir11</a> / <span>File111</span>',
