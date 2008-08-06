@@ -41,7 +41,7 @@ class TestNode < Test::Unit::TestCase
       assert(node.dirty)
       assert(node.created)
       assert_equal(mi, node.meta_info)
-      assert_equal({:used_nodes => Set.new}, node.node_info)
+      assert_equal({:used_nodes => Set.new, :used_meta_info_nodes => Set.new}, node.node_info)
       mi.each {|k,v| assert_equal(v, node[k])}
     end
 
@@ -157,6 +157,25 @@ class TestNode < Test::Unit::TestCase
     node.node_info[:used_nodes] << @tree.dummy_root.absolute_lcn
     node.changed?
     assert_equal(1, calls)
+  end
+
+  def test_meta_info_changed
+    node = Webgen::Node.new(@tree.dummy_root, '/', '/')
+    node.dirty = node.created = false
+
+    calls = 0
+    @website.blackboard.add_listener(:node_meta_info_changed?) {|n| assert(node, n); node.dirty_meta_info = true; calls += 1}
+    assert(node.meta_info_changed?)
+    assert_equal(1, calls)
+    assert(node.meta_info_changed?)
+    assert_equal(1, calls)
+
+    node.dirty_meta_info = false
+    node.node_info[:used_meta_info_nodes] << node.absolute_lcn
+    node.node_info[:used_meta_info_nodes] << 'unknown alcn'
+    node.node_info[:used_meta_info_nodes] << @tree.dummy_root.absolute_lcn
+    assert(node.meta_info_changed?)
+    assert_equal(2, calls)
   end
 
   def test_method_missing

@@ -50,6 +50,10 @@ module Webgen
     # not be set to +false+ once it is +true+!
     attr_accessor :dirty
 
+    # Set by other objects to +true+ if the meta information of the node has changed since the last
+    # run. Must not be set to +false+ once it is +true+!
+    attr_accessor :dirty_meta_info
+
     # Has the node been created or has it been read from the cache?
     attr_accessor :created
 
@@ -120,6 +124,15 @@ module Webgen
       @dirty
     end
 
+    # Return +true+ if the meta information of the node has changed.
+    def meta_info_changed?
+      @dirty_meta_info = node_info[:used_meta_info_nodes].any? do |n|
+         n != @absolute_lcn && (!tree[n] || tree[n].meta_info_changed?)
+      end unless @dirty_meta_info
+      website.blackboard.dispatch_msg(:node_meta_info_changed?, self) unless @dirty_meta_info
+      @dirty_meta_info
+    end
+
     # Return an informative representation of the node.
     def inspect
       "<##{self.class.name}: alcn=#{@absolute_lcn}>"
@@ -133,7 +146,7 @@ module Webgen
     # Sort nodes by using the meta info +sort_info+ (or +title+ if +sort_info+ is not set) of both
     # involved nodes.
     def <=>(other)
-      self_so = (self['sort_info'] && self['sort_info'].to_s) || self['title'] || ''
+      self_so = (@meta_info['sort_info'] && @meta_info['sort_info'].to_s) || @meta_info['title'] || ''
       other_so = (other['sort_info'] && other['sort_info'].to_s) || other['title'] || ''
       if self_so !~ /\D/ && other_so !~ /\D/
         self_so = self_so.to_i
@@ -295,6 +308,7 @@ module Webgen
       @parent.children << self unless @parent == @tree
 
       self.node_info[:used_nodes] = Set.new
+      self.node_info[:used_meta_info_nodes] = Set.new
     end
 
     # Delegate missing methods to a processor. The current node is placed into the argument array as

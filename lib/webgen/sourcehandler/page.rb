@@ -9,6 +9,10 @@ module Webgen::SourceHandler
     include Webgen::WebsiteAccess
     include Base
 
+    def initialize #:nodoc:
+      website.blackboard.add_listener(:node_meta_info_changed?, method(:meta_info_changed?))
+    end
+
     # Create a page file from +parent+ and +path+.
     def create_node(parent, path)
       page = page_from_path(path)
@@ -16,6 +20,8 @@ module Webgen::SourceHandler
       path.ext = 'html' if path.ext == 'page'
 
       super(parent, path) do |node|
+        website.cache[[:sh_page_node_mi, node.absolute_lcn]] = node.meta_info.dup
+
         node.node_info[:page] = page
         tmp_logger = website.logger
         website.logger = nil    # disabling logging whiling creating fragment nodes
@@ -29,7 +35,8 @@ module Webgen::SourceHandler
         website.cache.permanent[:page_sections][node.absolute_lcn] = sections
         website.blackboard.invoke(:create_fragment_nodes,
                                   sections,
-                                  node, node.meta_info['fragments_in_menu'])
+                                  node, website.blackboard.invoke(:source_paths)[path.path],
+                                  node.meta_info['fragments_in_menu'])
         website.logger = tmp_logger
       end
     end
@@ -49,6 +56,19 @@ module Webgen::SourceHandler
       end
     end
     alias_method :content, :render_node
+
+    #######
+    private
+    #######
+
+    # Checks if the meta information provided by the file in Webgen Page Format changed.
+    def meta_info_changed?(node)
+      return if !node.created || node.node_info[:processor] != self.class.name
+      ckey = [:sh_page_node_mi, node.absolute_lcn]
+      if website.cache.old_data[ckey]  != website.cache.new_data[ckey]
+        node.dirty_meta_info = true
+      end
+    end
 
   end
 

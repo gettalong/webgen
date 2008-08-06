@@ -1,6 +1,18 @@
 require 'test/unit'
 require 'webgen/page'
 
+class TestBlock < Test::Unit::TestCase
+
+  def test_render
+    block = Webgen::Block.new('content', 'some content', {'pipeline' => 'test'})
+    context = {:processors => {}}
+    assert_raise(RuntimeError) { block.render(context) }
+    context[:processors]['test'] = lambda {|context| context[:content] = context[:content].reverse + context[:block].name }
+    assert_equal('some content'.reverse + 'content', block.render(context)[:content])
+  end
+
+end
+
 class TestPage < Test::Unit::TestCase
 
   VALID = <<EOF

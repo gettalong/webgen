@@ -14,10 +14,24 @@ module Webgen
   # standard:: The standard cache saves data between webgen runs and returns the cached data (not
   #            the newly set data) if it is available. This is useful, for example, to store file
   #            modifcation times and check if a file has been changed between runs.
+  #
+  # The standard cache should be accessed through the <tt>[]</tt> method which returns the correct
+  # value and the <tt>[]=</tt> method should be used for setting the new value. However, if you
+  # really need to access a particular value of the old or new standard cache, you can use the
+  # accessors +old_data+ and +new_data+.
   class Cache
 
     # The permanent cache hash.
     attr_reader :permanent
+
+    # The volatile cache hash.
+    attr_reader :volatile
+
+    # The cache data stored in the previous webgen run.
+    attr_reader :old_data
+
+    # The cache data stored in the current webgen run.
+    attr_reader :new_data
 
     # Create a new cache object.
     def initialize()
@@ -53,15 +67,9 @@ module Webgen
       [@old_data.merge(@new_data), @permanent]
     end
 
-    # Return the volatile cache hash. If volatile caching has not been enabled, a new hash is
-    # returned on every invocation!
-    def volatile
-      (@volatile[:enabled] ? @volatile : {})
-    end
-
-    # Enable the volatile cache.
-    def enable_volatile_cache
-      @volatile[:enabled] = true
+    # Reset the volatile cache.
+    def reset_volatile_cache
+      @volatile = {:classes => @volatile[:classes]}
     end
 
     # Return the unique instance of the class +name+. This method should be used when it is

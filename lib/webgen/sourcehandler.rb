@@ -31,6 +31,7 @@ module Webgen
       def initialize #:nodoc:
         website.blackboard.add_service(:create_nodes, method(:create_nodes))
         website.blackboard.add_service(:source_paths, method(:find_all_source_paths))
+        website.blackboard.add_listener(:node_meta_info_changed?, method(:meta_info_changed?))
       end
 
       # Render the nodes provided in the +tree+. Before the actual rendering is done, the sources
@@ -44,20 +45,19 @@ module Webgen
           while paths.length > 0
             used_paths += (paths = Set.new(find_all_source_paths.keys) - used_paths - clean(tree))
             create_nodes_from_paths(tree, paths)
+            website.cache.reset_volatile_cache
           end
         end
         puts "...done in " + ('%2.4f' % time.real) + ' seconds'
 
         output = website.blackboard.invoke(:output_instance)
 
-        # Enable permanent (till end of run) storing of volatile information
-        website.cache.enable_volatile_cache
-
         puts "Writing changed nodes..."
         time = Benchmark.measure do
           tree.node_access[:alcn].sort.each do |name, node|
+            node.dirty_meta_info = node.created = false
             next if node == tree.dummy_root || !node.dirty
-            node.dirty = node.created = false
+            node.dirty = false
 
             begin
               if !node['no_output'] && (content = node.content)
@@ -134,8 +134,8 @@ module Webgen
           raise "The specified parent path <#{parent_path_name}> does not exist"
         end
         path = path.dup
-        path.meta_info.update(website.config['sourcehandler.default_meta_info'][:all])
-        path.meta_info.update(website.config['sourcehandler.default_meta_info'][source_handler.class.name] || {})
+        path.meta_info = default_meta_info(path, source_handler.class.name)
+        (website.cache[:sourcehandler_path_mi] ||= {})[[path.path, source_handler.class.name]] = path.meta_info.dup
         website.blackboard.dispatch_msg(:before_node_created, parent, path)
         *nodes = if block_given?
                    yield(parent, path)
@@ -148,12 +148,27 @@ module Webgen
         nodes
       end
 
+      # Return the default meta info for the pair of +path+ and +sh_name+.
+      def default_meta_info(path, sh_name)
+        path.meta_info.merge(website.config['sourcehandler.default_meta_info'][:all]).
+          merge(website.config['sourcehandler.default_meta_info'][sh_name] || {})
+      end
+
+      # Check if the default meta information for +node+ has changed since the last run.
+      def meta_info_changed?(node)
+        path = node.node_info[:src]
+        cached_mi = website.cache[:sourcehandler_path_mi][[path, node.node_info[:processor]]]
+        if !cached_mi || cached_mi != default_meta_info(@paths[path], node.node_info[:processor])
+          node.dirty_meta_info = true
+        end
+      end
 
       # Clean the +tree+ by deleting nodes which have changed or which don't have an associated
-      # source anymore.
+      # source anymore. Return all paths for which nodes need to be created.
       def clean(tree)
         paths_to_delete = Set.new
         paths_not_to_delete = Set.new
+        nodes_to_be_deleted = Set.new
         tree.node_access[:alcn].each do |alcn, node|
           next if node == tree.dummy_root || tree[alcn].nil?
 
@@ -162,12 +177,14 @@ module Webgen
                                find_all_source_paths[node.node_info[:src]].changed? ||
                                node.changed?)
             paths_not_to_delete << node.node_info[:src]
-            tree.delete_node(node, deleted)
-            #TODO: delete output path
+            nodes_to_be_deleted << [node, deleted]
           else
             paths_to_delete << node.node_info[:src]
           end
         end
+
+        nodes_to_be_deleted.each {|node, deleted| tree.delete_node(node, deleted)}
+        #TODO: delete output path
 
         # source paths that should be used
         paths_to_delete - paths_not_to_delete
