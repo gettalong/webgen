@@ -85,7 +85,7 @@ class TestTagMenu < Test::Unit::TestCase
     @website.blackboard.dispatch_msg(:node_changed?, nodes[:file11_en])
     assert(!nodes[:file11_en].dirty)
 
-    nodes[:index11_en].dirty = true
+    nodes[:index11_en].dirty_meta_info = true
     @website.blackboard.dispatch_msg(:node_changed?, nodes[:file11_en])
     assert(nodes[:file11_en].dirty)
 

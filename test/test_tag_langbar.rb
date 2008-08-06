@@ -33,6 +33,13 @@ class TestTagLangbar < Test::Unit::TestCase
 
     @obj.set_params('tag.langbar.show_single_lang'=>true, 'tag.langbar.show_own_lang'=>true, 'tag.langbar.separator' => ' --- ')
     assert_equal("#{de_link} --- #{en_link}", @obj.call('langbar', '', Webgen::ContentProcessor::Context.new(:chain => [nodes[:index_en]])))
+
+    nodes[:index_en].dirty = false
+    @website.blackboard.dispatch_msg(:node_changed?, nodes[:index_en])
+    assert(!nodes[:index_en].dirty)
+    nodes[:index_en].tree.delete_node(nodes[:index_de])
+    @website.blackboard.dispatch_msg(:node_changed?, nodes[:index_en])
+    assert(nodes[:index_en].dirty)
   end
 
   def check_results(node, both_true, both_false, first_false, second_false)
