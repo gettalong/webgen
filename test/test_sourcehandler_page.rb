@@ -3,19 +3,6 @@ require 'helper'
 require 'webgen/sourcehandler/page'
 require 'stringio'
 
-class TestBlock < Test::Unit::TestCase
-
-  def test_render
-    block = Webgen::Block.new('content', 'some content', {'pipeline' => 'test'})
-    context = {:processors => {}}
-    assert_raise(RuntimeError) { block.render(context) }
-    context[:processors]['test'] = lambda {|context| context[:content] = context[:content].reverse + context[:block].name }
-    assert_equal('some content'.reverse + 'content', block.render(context)[:content])
-  end
-
-end
-
-
 class TestSourceHandlerPage < Test::Unit::TestCase
 
   include Test::WebsiteHelper
@@ -32,6 +19,7 @@ class TestSourceHandlerPage < Test::Unit::TestCase
     @root = Webgen::Node.new(Webgen::Tree.new.dummy_root, 'test/', 'test')
     @path = path_with_meta_info('/index.page') {StringIO.new('content')}
     @path.meta_info.update({'lang'=>'eo', 'test'=>'yes', 'sort_info'=>6})
+    @website.blackboard.add_service(:source_paths) {{@path.path => @path}}
   end
 
   def test_create_node
@@ -65,6 +53,17 @@ class TestSourceHandlerPage < Test::Unit::TestCase
     node = @obj.create_node(@root, @path)
     assert_equal("content", @obj.render_node(node))
     assert_raise(RuntimeError) { @obj.render_node(node, 'other') }
+  end
+
+  def test_meta_info_changed
+    node = @obj.create_node(@root, @path)
+    @website.blackboard.dispatch_msg(:node_meta_info_changed?, node)
+    assert(node.meta_info_changed?)
+
+    node.dirty_meta_info = false
+    @website.cache.restore(@website.cache.dump)
+    @website.blackboard.dispatch_msg(:node_meta_info_changed?, node)
+    assert(!node.meta_info_changed?)
   end
 
 end

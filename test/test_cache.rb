@@ -33,14 +33,15 @@ class TestCache < Test::Unit::TestCase
 
   def test_volatile_cache
     @cache.volatile[:key] = :value
+    assert_equal(:value, @cache.volatile[:key])
+    dump_and_restore
     assert_equal(nil, @cache.volatile[:key])
 
-    obj = @cache.instance('Hash')
-    assert_equal(obj, @cache.instance('Hash'))
-
-    @cache.enable_volatile_cache
     @cache.volatile[:key] = :value
-    assert_equal(:value, @cache.volatile[:key])
+    obj = @cache.instance('Hash')
+    @cache.reset_volatile_cache
+    assert_equal(nil, @cache.volatile[:key])
+    assert_equal(obj, @cache.instance('Hash'))
   end
 
   def test_instance
@@ -50,7 +51,6 @@ class TestCache < Test::Unit::TestCase
     @cache.instance('Array')
     assert_equal(['Hash', 'Array'], @cache.permanent[:classes])
     dump_and_restore
-    @cache.enable_volatile_cache
     assert_not_nil(@cache.volatile[:classes]['Hash'])
   end
 
