@@ -1,0 +1,30 @@
+---
+title: webgen 0.5.2 released
+in_menu: false
+sort_info: TODO
+---
+## {title:}
+
+<webgen:block name='notes' />
+
+### Changes
+
+<webgen:block name='changes' />
+
+--- name:notes pipeline:maruku
+
+This release brings some updates to the core as well as some ported or new extensions. The most
+noteable update to the core is better partial site generation support.
+
+When a file that was in the menu changed, all files which included a menu with a link to this file
+got regenerated, too. However, that was not always necessary since the content of the changed file
+does not appear in the menu, only its meta information `title`. Therefore the new system checks if
+the meta information of the changed file has changed and only then regenerates all menus. This
+system is now also used by all other extensions like the breadcrumb trail or the langbar tag.
+
+--- name:changes pipeline:tags,maruku
+
+* Major enhancements:
+
+  - better partial site regeneration
+
