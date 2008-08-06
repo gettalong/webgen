@@ -237,11 +237,15 @@ EOF
 
   desc "Run the tests one by one to check for missing deps"
   task :test_isolated do
-    Dir['test/test_*'].each do |file|
-      if !system("ruby -Ilib:test #{file} -vs &> /dev/null")
-        puts "Problem with test" + " "*5 + file
-      end
+    files = Dir['test/test_*']
+    puts "Checking #{files.length} tests"
+    failed = files.select do |file|
+      okay = system("ruby -Ilib:test #{file} -vs &> /dev/null")
+      print(okay ? '.' : 'E')
+      !okay
     end
+    puts
+    failed.each {|file| puts "Problem with" + file.rjust(40) }
   end
 
   if defined? Rcov
