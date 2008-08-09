@@ -2,7 +2,8 @@ require 'fileutils'
 
 module Webgen::Output
 
-  # This class is used to write rendered nodes out to the file system.
+  # This class uses the file systems as output device. On initialization a +root+ path is set and
+  # all other operations are taken relative to this root path.
   class FileSystem
 
     include Webgen::WebsiteAccess
@@ -54,6 +55,11 @@ module Webgen::Output
       else
         raise "Unsupported path type '#{type}' for #{path}"
       end
+    end
+
+    # Return the content of the given +path+.
+    def read(path)
+      File.read(File.join(@root, path))
     end
 
   end
