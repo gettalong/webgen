@@ -15,6 +15,8 @@ module Webgen
   # <tt>write(path, data, type)</tt>::
   #   Write the data to the given output path. The parameter +type+ specifies the type of the
   #   to be written path: +:file+ or +:directory+.
+  # <tt>read(path)</tt>:
+  #   Return the content of the given path if it exists or raise an error otherwise.
   #
   module Output
 
