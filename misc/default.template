@@ -65,7 +65,7 @@
           <a href="http://validator.w3.org/check/referer">XHTML</a>
         </p>
 
-        <p>Page last changed at: {date:}</p>
+        <p>Page last changed at: {modified_at:}</p>
       </div>
 
     </div></div>
