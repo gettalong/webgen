@@ -88,7 +88,7 @@
 
         <p>
           <a href="{relocatable: /}">Home</a><br />
-          Page last changed at {date:}
+          Page last changed at {modified_at:}
         </p>
       </div>
 

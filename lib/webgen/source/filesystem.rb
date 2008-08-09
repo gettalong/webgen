@@ -14,6 +14,7 @@ module Webgen
         super(path) { File.open(fs_path, 'r') }
         @fs_path = fs_path
         WebsiteAccess.website.cache[[:fs_path, @fs_path]] = File.mtime(@fs_path)
+        @meta_info['modified_at'] = File.mtime(@fs_path)
       end
 
       # Return +true+ if the file system path used by the object has been modified.
