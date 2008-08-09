@@ -46,9 +46,13 @@ possibilities:
   example `webgen -d sample_site`.
 
 Easy! webgen has used all files in the `src` directory and created the HTML output in the directory
-`out`. Since webgen automatically creates relative links, you can just open the `index.html` file
-and you will have a fully functional website - no web server needed! However, as we did not write
-any content yet, there is not much to see (only the default pages). So let's do that now!
+`out`. Now you just need to open the `out/index.html` file to view your website! However, as we did
+not write any content yet, there is not much to see (only the default pages). So let's do that now!
+
+> Since webgen automatically creates relative links, you will have a fully functional website
+> without needing a web server! This also implies that you can deploy your website to any directory
+> on your web server and it will just work!
+{.information}
 
 
 ### Adding Content
