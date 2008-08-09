@@ -45,6 +45,75 @@ Following is a short overview of the available commands:
 [cmdparse]: http://cmdparse.rubyforge.org
 
 
+
+# A webgen Website {#website}
+
+webgen needs a special directory structure so that it works out of the box. This directory structure
+is automatically created by the `webgen create` command.
+
+The root directory of webgen website is called the website directory. You can have the following
+files and directories under this directory:
+
+* `src`: The source directory in which all the source files for the website are. If this directory
+  is not called `src` or you want to include additional source directories, you need to change the
+  `sources` configuration option.
+
+* `out`: This directory is created, if it does not exist, when webgen generates the HTML files. All
+  the output files are put into this directory. This directory can be changed by setting the
+  `output` configuration option.
+
+* `ext`: The extension directory (optional). You can put self-written extensions into this directory
+  so that they are used by webgen.
+
+* `config.yaml`: This file can be used to set configuration options for the website. See the
+  [Configuration File]({relocatable: '#website-configfile'}) section for more information.
+
+* `Rakefile`: This file is provided for your convenience to execute tasks via `rake` and provides
+  some useful tasks out of the box. See the [Rakefile]({relocatable: '#website-rakefile'}) section
+  for more information.
+
+
+## Configuration File {#website-configfile}
+
+Many user will want to change some configuration options, for example, the default language of the
+website since not all people will want to write websites in English. This is primarily done via the
+configuration file.
+
+The configuration file is called `config.yaml` and has to be placed directly under the website
+directory. It uses [YAML](http://www.yaml.org) as file format. You can find a list of all available
+configuration options that can be set in the [Configuration Options Reference]({relocatable:
+reference_configuration.html}).
+
+Each configuration option can be set in the configuration file by specifing the configuration option
+name and the new value as a key/value pair. A sample configuration file looks like this:
+
+    website.lang: de
+    website.link_to_current_page: true
+
+There is one special key called `default_meta_info` which behaves a little different. It does not
+map to any configuration option but is used to update the meta information hashes of the
+configuration option `sourcehandler.default_meta_info`. For example, the following configuration
+file updates the default meta information for all source handlers by setting a new value for
+`output_path_style` and setting `in_menu` to `true`:
+
+    default_meta_info:
+      :all:
+        output_path_style: [:parent, :cnbase, :ext, [., :lang]]
+        in_menu: true
+
+
+## Rakefile {#website-rakefile}
+
+The Rakefile that is automatically created upon website creation provides a place to specify
+recurring task for your website, for example, for deploying the website to a server. It contains
+some useful tasks out of the box:
+
+* `webgen`: Renders the webgen website once.
+* `auto_webgen`: Automatically renders the website when a source file has changed.
+* `clobber_webgen`: Removes all webgen generated products (the output files and the cache file).
+
+
+
 # All About Paths and Sources   {#source}
 
 A source provides paths that identity files or directories. webgen can use paths from many sources.
@@ -310,35 +379,6 @@ There is clearly defined order in which meta information is applied to a node fo
 6. After the node has been created, extensions may overwrite meta information again. For example,
    the SourceHandler::Metainfo assigns meta information specified for nodes at this stage.
 
-
-
-# The Configuration File
-
-Many user will want to change some configuration options, for example, the default language of the
-website since not all people will want to write websites in English. This is primarily done via the
-configuration file.
-
-The configuration file is called `config.yaml` and has to be placed directly under the website
-directory. It uses [YAML](http://www.yaml.org) as file format. You can find a list of all available
-configuration options that can be set in the [Configuration Options Reference]({relocatable:
-reference_configuration.html}).
-
-Each configuration option can be set in the configuration file by specifing the configuration option
-name and the new value as a key/value pair. A sample configuration file looks like this:
-
-    website.lang: de
-    website.link_to_current_page: true
-
-There is one special key called `default_meta_info` which behaves a little different. It does not
-map to any configuration option but is used to update the meta information hashes of the
-configuration option `sourcehandler.default_meta_info`. For example, the following configuration
-file updates the default meta information for all source handlers by setting a new value for
-`output_path_style` and setting `in_menu` to `true`:
-
-    default_meta_info:
-      :all:
-        output_path_style: [:parent, :cnbase, :ext, [., :lang]]
-        in_menu: true
 
 
 # Extending webgen
