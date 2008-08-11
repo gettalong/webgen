@@ -102,6 +102,11 @@ Make sure that you also install the mandatory and, if you need them, the optiona
 * (optional) [builder](http://builder.rubyforge.org) version 2.1.0 or higher for programmatic xml
   generation support
 
+* (optional) [rdoc](http://rdoc.rubyforge.org/) version 2.0.0 for RDoc markup support
+
+* (optional) [coderay](http://coderay.rubychan.de/) version 0.7.4.214 or higher for syntax
+  highlighting
+
 All these libraries can be installed via Rubygems (which I recommend).
 
 ## Author
