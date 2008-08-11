@@ -81,6 +81,7 @@ module Webgen
         @directory = Dir.pwd
         @verbosity = :normal
         @log_level = ::Logger::WARN
+        @log_filter = nil
 
         self.program_name = "webgen"
         self.program_version = Webgen::VERSION
@@ -89,7 +90,7 @@ module Webgen
           opts.on("--directory DIR", "-d", String, "The website directory (default: the current directory)") {|@directory|}
           opts.on("--verbose", "-v", "Print more output") { @verbosity = :verbose }
           opts.on("--quiet", "-q", "No output") { @verbosity = :quiet }
-          opts.on("--log-level", "-l", [0, 1, 2, 3], "The logging level (0..debug, 3..error)") {|@log_level|}
+          opts.on("--log-level LEVEL", "-l", Integer, "The logging level (0..debug, 3..error)") {|@log_level|}
           opts.on("--log-filter", "-f", Regexp, 'Filter for logging events') {|@log_filter|}
         end
         self.add_command(CmdParse::HelpCommand.new)

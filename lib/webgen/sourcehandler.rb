@@ -85,7 +85,7 @@ module Webgen
 
       # Return a hash with all source paths.
       def find_all_source_paths
-        if !@paths
+        if !defined?(@paths)
           source = Webgen::Source::Stacked.new(website.config['sources'].collect do |mp, name, *args|
                                                  [mp, constant(name).new(*args)]
                                                end)

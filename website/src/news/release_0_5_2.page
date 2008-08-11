@@ -13,8 +13,8 @@ sort_info: TODO
 
 --- name:notes pipeline:maruku
 
-This release brings some updates to the core as well as some ported or new extensions. The most
-noteable update to the core is better partial site generation support.
+This release brings some updates to the core as well as some bug fixes and better Windows
+support. The most noteable update to the core is better partial site generation support.
 
 When a file that was in the menu changed, all files which included a menu with a link to this file
 got regenerated, too. However, that was not always necessary since the content of the changed file
@@ -30,4 +30,7 @@ system is now also used by all other extensions like the breadcrumb trail or the
 
 * Bug fixes:
 
-  - RF#21507: rdoc documentation link did not work
+  - RF#21507: rdoc documentation link now works again
+  - corrected some Windows specific bugs
+  - terminal width recognition now works again
+  - global command line option `--log-level` now works as intended

@@ -50,7 +50,7 @@ class TestSourceFileSystem < Test::Unit::TestCase
   end
 
   def test_paths
-    source = Webgen::Source::FileSystem.new('lib/webgen', '**/*')
+    source = Webgen::Source::FileSystem.new(File.join(File.dirname(__FILE__), '..', 'lib', 'webgen'), '/source/../**/*')
     assert(source.paths.length > 1)
     assert(source.paths.include?(Webgen::Path.new('/source/')))
     assert(source.paths.include?(Webgen::Path.new('/source/filesystem.rb')))

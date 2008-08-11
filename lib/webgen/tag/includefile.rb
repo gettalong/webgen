@@ -20,7 +20,7 @@ module Webgen::Tag
     def call(tag, body, context)
       filename = param('tag.includefile.filename')
       filename = File.join(website.directory, filename) unless filename =~ /^(\/|\w:)/
-      content = File.read(filename)
+      content = File.open(filename, 'rb') {|f| f.read}
       content = CGI::escapeHTML(content) if param('tag.includefile.escape_html')
       (context.dest_node.node_info[:tag_includefile_filenames] ||= []) << [filename, File.mtime(filename)]
 

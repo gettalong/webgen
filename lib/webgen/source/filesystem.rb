@@ -1,3 +1,4 @@
+require 'pathname'
 require 'webgen/websiteaccess'
 require 'webgen/path'
 
@@ -11,7 +12,7 @@ module Webgen
 
       # Create a new object with absolute path +path+ for the file system path +fs_path+.
       def initialize(path, fs_path)
-        super(path) { File.open(fs_path, 'r') }
+        super(path) { File.open(fs_path, 'rb') }
         @fs_path = fs_path
         WebsiteAccess.website.cache[[:fs_path, @fs_path]] = File.mtime(@fs_path)
         @meta_info['modified_at'] = File.mtime(@fs_path)
@@ -45,7 +46,7 @@ module Webgen
     # Return all paths under #root which match #glob.
     def paths
       @paths ||= Dir.glob(File.join(@root, @glob), File::FNM_DOTMATCH|File::FNM_CASEFOLD).to_set.collect! do |f|
-        temp = File.expand_path(f.sub(/^#{Regexp.escape(@root)}\/?/, '/'))
+        temp = Pathname.new(f.sub(/^#{Regexp.escape(@root)}\/?/, '/')).cleanpath.to_s
         temp += '/' if File.directory?(f) && temp[-1] != ?/
         path = Path.new(temp, f)
         path

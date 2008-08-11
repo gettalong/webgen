@@ -1,3 +1,4 @@
+require 'pathname'
 require 'yaml'
 require 'webgen/sourcehandler/base'
 require 'webgen/websiteaccess'
@@ -28,7 +29,7 @@ module Webgen::SourceHandler
         [[:mi_paths, 'paths'], [:mi_alcn, 'alcn']].each do |mi_key, block_name|
           node.node_info[mi_key] = {}
           YAML::load(page.blocks[block_name].content).each do |key, value|
-            key = File.expand_path(key =~ /^\// ? key : File.join(parent.absolute_lcn, key))
+            key = Pathname.new(key =~ /^\// ? key : File.join(parent.absolute_lcn, key)).cleanpath.to_s
             node.node_info[mi_key][key.chomp('/')] = value
           end if page.blocks.has_key?(block_name)
         end

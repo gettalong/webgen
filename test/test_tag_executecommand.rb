@@ -1,7 +1,6 @@
 require 'test/unit'
 require 'helper'
 require 'webgen/tag'
-require 'rbconfig'
 
 class TestTagExecuteCommand < Test::Unit::TestCase
 
