@@ -1,4 +1,5 @@
 require 'ostruct'
+require 'fileutils'
 require 'webgen/website'
 
 module Webgen
