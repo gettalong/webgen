@@ -1,21 +1,6 @@
-<form method='post' action='#{R :site_ops}'>
-  <p>
-    <label for="user_type">webgen website:</label>
-    <input type='text' id='site_dir' name='site_dir' />
-    <input type='submit' id='set_site' name='set_site' value='Set website' />
-  </p>
-</form>
-
-<form method='post' action='#{R :site_ops}'>
-  <p>
-    <input type='submit' id='render_site' name='render_site' value='Render website' />
-    <input type='submit' id='auto_render_site' name='auto_render_site' value='#{session['auto_render'] ? 'Stop auto-rendering' : 'Start auto-rendering'}' />
-  </p>
-</form>
+Welcome to the webgen webgui!
 
 <div id='status'>
   <p>website directory: #{session['website_dir']}</p>
   <p>auto render on: #{!session['auto_render'].nil?}</p>
 </div>
-
-<object type='text/html' data='/website/index.html' width='100%' height='600px' style='border: 1px solid black' />

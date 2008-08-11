@@ -1,0 +1,23 @@
+body, html {
+  margin: 0px;
+  padding: 0px;
+}
+
+#header {
+  height: 65px;
+  border-bottom: 1px solid black;
+}
+
+#header h2 {
+  margin-left: 20px;
+  float: left;
+}
+
+#site-select-form {
+  float: right;
+  margin: 20px;
+}
+
+#site-select-form p {
+  margin: 0px;
+}

@@ -6,12 +6,22 @@
     <meta http-equiv="Content-Script-Type" content="text/javascript" />
     <meta http-equiv="Content-Style-Type" content="text/css" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <style type="text/css">
-      body { margin: 2em; }
-      #content { margin-left: 2em; }
-    </style>
+    <link href="#{R '/css/style.css'}" rel="stylesheet" type="text/css" />
   </head>
   <body>
+    <div id="header">
+      <h2>webgen webgui</h2>
+
+      <div id='site-select-form'>
+        <form method='post' action='#{R MainController, :site_ops}'>
+          <p>
+            <label for="user_type">Set website:</label>
+            <input type='text' id='site_dir' name='site_dir' />
+            <input type='submit' id='set_site' name='set_site' value='Set website' />
+          </p>
+        </form>
+      </div>
+    </div>
     <div id="content">
       #@content
     </div>
