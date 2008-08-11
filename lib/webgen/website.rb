@@ -1,6 +1,7 @@
 # Standard lib requires
 require 'logger'
 require 'set'
+require 'fileutils'
 
 # Requirements for Website
 require 'webgen/loggable'
