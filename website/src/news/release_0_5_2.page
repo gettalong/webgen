@@ -28,3 +28,6 @@ system is now also used by all other extensions like the breadcrumb trail or the
 
   - better partial site regeneration
 
+* Bug fixes:
+
+  - RF#21507: rdoc documentation link did not work
