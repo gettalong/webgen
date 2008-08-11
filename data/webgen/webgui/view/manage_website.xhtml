@@ -1,0 +1,8 @@
+<form method='post' action='#{R :manage_website}'>
+  <p>
+    <input type='submit' id='render_site' name='render_site' value='Render website' />
+    <input type='submit' id='auto_render_site' name='auto_render_site' value='#{session['auto_render'] ? 'Stop auto-rendering' : 'Start auto-rendering'}' />
+  </p>
+</form>
+
+<object type='text/html' data='#{R :preview_website, "/index.html"}' width='100%' height='600px' style='border: 1px solid black' />
