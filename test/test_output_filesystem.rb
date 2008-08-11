@@ -35,8 +35,9 @@ class TestOutputFileSystem < Test::Unit::TestCase
 
     output.write('/dir/hallo', 'content', :file)
     assert(File.file?(File.join(output.root, 'dir/hallo')))
-    assert_equal('content', File.read(File.join(output.root, 'dir/hallo')))
     assert(output.exists?('/dir/hallo'))
+    assert_equal('content', File.read(File.join(output.root, 'dir/hallo')))
+    assert_equal('content', output.read('/dir/hallo'))
 
     output.delete('/dir/hallo')
     assert(!output.exists?('/dir/hallo'))

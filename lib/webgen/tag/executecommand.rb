@@ -1,6 +1,7 @@
 require 'webgen/tag'
 require 'cgi'
 require "tempfile"
+require 'rbconfig'
 
 module Webgen::Tag
 
@@ -10,10 +11,12 @@ module Webgen::Tag
 
     include Webgen::Tag::Base
 
+    BIT_BUCKET = (Config::CONFIG['arch'].include?('mswin32') ?  "nul" : "/dev/null")
+
     # Execute the command and return the standard output.
     def call(tag, body, context)
       command = param('tag.executecommand.command')
-      output = `#{command} 2> /dev/null`
+      output = `#{command} 2> #{BIT_BUCKET}`
       if ($? >> 8) != 0
         raise "Command '#{command}' in <#{context.ref_node.absolute_lcn}> has return value != 0: #{output}"
       end

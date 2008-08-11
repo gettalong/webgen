@@ -73,6 +73,7 @@ module Webgen
     def initialize(dir, logger=Webgen::Logger.new($stdout, false), &block)
       @blackboard = nil
       @cache = nil
+      @config = nil
       @logger = logger
       @config_block = block
       @directory = dir
@@ -165,7 +166,7 @@ module Webgen
       @tree = Tree.new
       data = if config['website.cache'].first == :file
                cache_file = File.join(@directory, config['website.cache'].last)
-               File.read(cache_file) if File.exists?(cache_file)
+               File.open(cache_file, 'rb') {|f| f.read} if File.exists?(cache_file)
              else
                config['website.cache'].last
              end
