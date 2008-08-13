@@ -42,6 +42,12 @@ Following is a short overview of the available commands:
 
     Displays the version of webgen.
 
+*   `webgui`
+
+    Starts the webgen webgui, a browser based graphical user interface for managing webgen
+    websites. First the webgui web application is started and then the webgui is opened in the
+    default browser.
+
 [cmdparse]: http://cmdparse.rubyforge.org
 
 
