@@ -52,6 +52,20 @@ class TestPath < Test::Unit::TestCase
     assert_equal('/', p.directory)
     assert_equal('somedir', p.cn)
     assert_equal('Somedir', p.meta_info['title'])
+
+    p = Webgen::Path.new('/source/test.rb')
+    p = p.mount_at('/', '/source/')
+    assert_equal('/test.rb', p.path)
+    assert_equal('/', p.directory)
+    assert_equal('test.rb', p.cn)
+    assert_equal('Test', p.meta_info['title'])
+
+    p = Webgen::Path.new('/source/')
+    p = p.mount_at('/', '/source')
+    assert_equal('/', p.path)
+    assert_equal('/', p.directory)
+    assert_equal('/', p.cn)
+    assert_equal('/', p.meta_info['title'])
   end
 
   def test_dup

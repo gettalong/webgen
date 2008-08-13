@@ -63,11 +63,14 @@ module Webgen
       analyse(path)
     end
 
-    # Mount this path at the mount point +mp+ and return the new path object.
-    def mount_at(mp)
+    # Mount this path at the mount point +mp+ optionally stripping +prefix+ from the path and return
+    # the new path object.
+    def mount_at(mp, prefix = nil)
       temp = dup
-      temp.path = File.join(mp, @path)
-      if @path == '/'
+      temp.path = temp.path.sub(/^#{Regexp.escape(prefix.chomp("/"))}/, '') if prefix     #"
+      reanalyse = (@path == '/' || temp.path == '/')
+      temp.path = File.join(mp, temp.path)
+      if reanalyse
         temp.send(:analyse, temp.path)
       else
         temp.directory = File.join(File.dirname(temp.path), '/')

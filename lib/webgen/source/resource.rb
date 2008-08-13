@@ -11,9 +11,16 @@ module Webgen::Source
     # The glob specifying the resources.
     attr_reader :glob
 
-    # Create a new resource source for the the +glob+.
-    def initialize(glob)
-      @glob = glob
+    # The glob specifying the paths that should be used from the resources.
+    attr_reader :paths_glob
+
+    # The prefix that should optionally be stripped from the paths.
+    attr_reader :strip_prefix
+
+    # Create a new resource source for the the +glob+ and use only those paths matching +paths_glob+
+    # while stripping +strip_prefix+ off the path.
+    def initialize(glob, paths_glob = nil, strip_prefix = nil)
+      @glob, @paths_glob, @strip_prefix = glob, paths_glob, strip_prefix
     end
 
     # Return all paths associated with the resources identified by #glob.
@@ -24,6 +31,8 @@ module Webgen::Source
           stack.add([['/', constant(infos.first).new(*infos[1..-1])]])
         end
         @paths = stack.paths
+        @paths = @paths.select {|p| File.fnmatch(@paths_glob, p)} if @paths_glob
+        @paths.collect! {|p| p.mount_at('/', @strip_prefix)} if @strip_prefix
       end
       @paths
     end
