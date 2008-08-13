@@ -264,6 +264,7 @@ EOF
     desc "Analyze documentation coverage"
     task :dcov do
       class Dcov::Analyzer; def generate; end; end
+      class NilClass; def file_absolute_name; nil; end; end
       Dcov::Analyzer.new(:path => Dir.getwd, :files => Dir.glob('lib/**'))
     end
   end
