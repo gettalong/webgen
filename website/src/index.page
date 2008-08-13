@@ -66,7 +66,10 @@ following platforms:
 
 * Linux with Ruby 1.8.6
 * Mac OSX with Ruby 1.8.6
-* Windows XP with Ruby 1.8.5 (1.8.6 has a bug that prevents webgen from working correctly)
+* Windows XP with latest Ruby 1.8.6
+
+Furthermore, webgen should also run on jruby 1.1.3 and ruby 1.9.0 but that has not been extensively
+tested.
 
 ### Using Rubygems
 
