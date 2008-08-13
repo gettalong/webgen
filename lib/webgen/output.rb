@@ -24,8 +24,12 @@ module Webgen
 
     # Returns an instance of the configured output class.
     def self.instance
-      klass, *args = WebsiteAccess.website.config['output']
-      Object.constant(klass).new(*args)
+      classes = (WebsiteAccess.website.cache.volatile[:classes] ||= {})
+      unless classes.has_key?(:output_instance)
+        klass, *args = WebsiteAccess.website.config['output']
+        classes[:output_instance] = Object.constant(klass).new(*args)
+      end
+      classes[:output_instance]
     end
 
   end
