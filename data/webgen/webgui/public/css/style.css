@@ -1,23 +1,55 @@
 body, html {
   margin: 0px;
   padding: 0px;
+  background-color: #FCFFF5;
 }
 
 #header {
-  height: 65px;
+  background: #444 url(../img/headerbg.jpg) repeat-x 0 0;
+  text-align: left;
+  color: white;
+  height: 87px;
   border-bottom: 1px solid black;
 }
 
+#header img {
+  position: absolute;
+  left: 10px;
+  top: 10px;
+}
+
 #header h2 {
-  margin-left: 20px;
+  position: absolute;
+  margin: 0px;
+  top: 5px;
+  margin-left: 100px;
   float: left;
+  font: bold 40px Verdana, 'Trebuchet Ms', Sans-serif;
+  letter-spacing: -2px;
+}
+
+#header h2 span {
+  position: absolute;
+  left: 70px;
+  top: 35px;
+  font-size: 30px;
+}
+
+#header h2 a {
+  color: white;
+  text-decoration: none;
 }
 
 #site-select-form {
   float: right;
-  margin: 20px;
+  margin: 30px;
+  margin-right: 10px;
 }
 
 #site-select-form p {
   margin: 0px;
+}
+
+#content {
+  padding: 10px;
 }

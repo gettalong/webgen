@@ -142,6 +142,8 @@ EOF
       s.add_dependency('maruku', '>= 0.5.6')
       s.add_dependency('facets', '>= 2.4.1')
       s.add_dependency('rake', '>= 0.8.0')
+      s.add_dependency('ramaze', '2008.06')
+      s.add_dependency('launchy', '>= 0.3.2')
       s.add_development_dependency('rcov', '>= 0.8.0')
       s.add_development_dependency('dcov', '>= 0.2.2')
       s.add_development_dependency('rubyforge', '>= 1.0.0')

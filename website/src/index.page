@@ -95,6 +95,11 @@ Make sure that you also install the mandatory and, if you need them, the optiona
 
 * (mandatory) [maruku](http://maruku.rubyforge.org) version 0.5.5 or higher
 
+* (mandatory for webgui) [ramaze](http://ramaze.net) version 2008.06
+
+* (mandatory for webgui) [launchy](http://copiousfreetime.rubyforge.org/launchy/) version 0.3.2 or
+  higher
+
 * (optional) [RedCloth](http://redcloth.rubyforge.org) version 2.0.10 or higher for Textile support
 
 * (optional) [haml](http://haml.hamptoncatlin.com) version 2.0.1 or higher for haml and sass support
