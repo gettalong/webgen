@@ -59,7 +59,7 @@ module Webgen::Output
 
     # Return the content of the given +path+.
     def read(path)
-      File.read(File.join(@root, path))
+      File.open(File.join(@root, path), 'rb') {|f| f.read}
     end
 
   end
