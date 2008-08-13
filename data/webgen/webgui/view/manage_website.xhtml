@@ -1,8 +1,18 @@
 <form method='post' action='#{R :manage_website}'>
   <p>
+    <label for='verbosity'>Verbosity:
+    <select id='verbosity' name='verbosity'>
+      <option #{@verbosity == 'normal' ? selected='selected' : ''}>normal</option>
+      <option #{@verbosity == 'verbose' ? selected='selected' : ''}>verbose</option>
+      <option #{@verbosity == 'quiet' ? selected='selected' : ''}>quiet</option>
+    </select>
     <input type='submit' id='render_site' name='render_site' value='Render website' />
-    <input type='submit' id='auto_render_site' name='auto_render_site' value='#{session['auto_render'] ? 'Stop auto-rendering' : 'Start auto-rendering'}' />
+    <!-- <input type='submit' id='auto_render_site' name='auto_render_site' value='#{session['auto_render'] ? 'Stop auto-rendering' : 'Start auto-rendering'}' /> -->
   </p>
 </form>
 
-<object type='text/html' data='#{R :preview_website, "/index.html"}' width='100%' height='600px' style='border: 1px solid black' />
+<div id='website_log'>
+  <pre>#{CGI::escapeHTML(@log.to_s)}</pre>
+</div>
+
+<object id='website_preview' type='text/html' data='#{R :preview_website, "/index.html"}' width='100%' height='600px' style='border: 1px solid black' />

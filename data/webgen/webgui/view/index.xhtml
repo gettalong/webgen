@@ -1,6 +1,22 @@
-Welcome to the webgen webgui!
+<h2>Welcome to the webgen webgui!</h2>
 
-<div id='status'>
-  <p>website directory: #{session['website_dir']}</p>
-  <p>auto render on: #{!session['auto_render'].nil?}</p>
-</div>
+<p>
+  This web application lets you create and manage webgen website. Just set the directory of an
+  existing or a to-be-created website in the top right corner and click the button!
+</p>
+
+<ul>
+  <li>
+    If you select an existing directory, the webgui assumes that it is a webgen website directory and
+    presents you with page for managing a webgen website.
+  </li>
+  <li>
+    If you select a non-existing directory, the webgui shows you a page for creating a webgen website.
+  </li>
+</ul>
+
+<p>
+  The text input field uses auto-completion to show you the available directories on your
+  computer. You can either start typing an absolute path name or relative one which will be resolved
+  from the directory in which you started the webgui.
+</p>

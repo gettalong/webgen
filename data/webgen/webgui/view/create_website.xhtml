@@ -1,0 +1,22 @@
+<form method='post' action='#{R :create_website}'>
+  <p>
+    Choose a <label for="website_style">style:</label>
+    <select name="website_style" id="website_style">
+      <?r for style in @styles ?>
+      <option #{style == @cur_style ? selected='selected' : ''}>#{style}</option>
+      <?r end ?>
+    </select>
+
+    and a <label for="website_template">template:</label>
+    <select name="website_template" id="website_template">
+      <?r for template in @templates ?>
+      <option #{template == @cur_template ? selected='selected' : ''}>#{template}</option>
+      <?r end ?>
+    </select>
+
+    <input type='submit' id='preview_site' name='preview_site' value='Preview website' />
+    <input type='submit' id='create_site' name='create_site' value='Create website' />
+  </p>
+</form>
+
+<object type='text/html' data='#{R :preview_style_and_template, "/index.html"}' width='100%' height='600px' style='border: 1px solid black' />
