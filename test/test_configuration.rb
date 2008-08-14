@@ -1,5 +1,6 @@
 require 'test/unit'
 require 'webgen/configuration'
+require 'webgen/sourcehandler'
 
 class TestConfiguration < Test::Unit::TestCase
 
@@ -30,6 +31,29 @@ class TestConfiguration < Test::Unit::TestCase
     assert_equal(:newvalue, @config['test.value'])
 
     assert_raise(ArgumentError) { @config['not.existing'] = :newvalue}
+  end
+
+  def test_set_options_using_helpers
+    @config = Webgen::Configuration.new
+    @config.sourcehandler.default_meta_info({'Webgen::SourceHandler::Page' => {'in_menu' => true}})
+    @config.sourcehandler.patterns({'Webgen::SourceHandler::Page' => ['**/*.page']})
+
+    @config.default_meta_info('Page' => {'in_menu' => false, 'test' => true})
+    assert_equal({'in_menu' => false, 'test' => true}, @config['sourcehandler.default_meta_info']['Webgen::SourceHandler::Page'])
+    @config.default_meta_info('Webgen::SourceHandler::Page' => {'in_menu' => true, :action => 'replace'})
+    assert_equal({'in_menu' => true}, @config['sourcehandler.default_meta_info']['Webgen::SourceHandler::Page'])
+    @config.default_meta_info('Other' => {'in_menu' => false})
+    assert_equal({'in_menu' => false}, @config['sourcehandler.default_meta_info']['Other'])
+    assert_raise(ArgumentError) { @config.default_meta_info([5,6]) }
+
+    @config.patterns('Page' => ['**/*.html'])
+    assert_equal(['**/*.html'], @config['sourcehandler.patterns']['Webgen::SourceHandler::Page'])
+    @config.patterns('Page' => {'del' => ['**/*.html'], 'add' => ['**/*.page']})
+    assert_equal(['**/*.page'], @config['sourcehandler.patterns']['Webgen::SourceHandler::Page'])
+    @config.patterns('Other' => {'del' => ['**/*.html'], 'add' => ['**/*.page']})
+    assert_equal(['**/*.page'], @config['sourcehandler.patterns']['Other'])
+    assert_raise(ArgumentError) { @config.patterns([5,6]) }
+    assert_raise(ArgumentError) { @config.patterns('Page' => 5) }
   end
 
 end

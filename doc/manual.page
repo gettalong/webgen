@@ -96,16 +96,56 @@ name and the new value as a key/value pair. A sample configuration file looks li
     website.lang: de
     website.link_to_current_page: true
 
-There is one special key called `default_meta_info` which behaves a little different. It does not
-map to any configuration option but is used to update the meta information hashes of the
-configuration option `sourcehandler.default_meta_info`. For example, the following configuration
-file updates the default meta information for all source handlers by setting a new value for
-`output_path_style` and setting `in_menu` to `true`:
+Since some configuration options have a complex structure, there exist several special configuration
+keys to help setting these configuration options:
 
-    default_meta_info:
-      :all:
-        output_path_style: [:parent, :cnbase, :ext, [., :lang]]
-        in_menu: true
+*   `default_meta_info`: Set the default meta information for one or more source handlers.
+
+    This key needs needs a Hash as value which should be of the following form:
+
+        SOURCE_HANDLER_NAME:
+          mi_key: mi_value
+          other_key: other_value
+          :action: replace
+
+    So each entry has to specify the name of a source handler (or the special value `:all` which
+    sets the default meta information for all source handlers) and the meta information items that
+    should be set or modified. If you don't want to update the meta information hash but want to
+    replace it, you need to add `:action: replace` as meta information entry.
+
+    If a source handler called `Webgen::SourceHandler::SOURCE_HANDLER_NAME` exists, the meta
+    information is set for this source handler instead.
+
+    For example, the following snippet of a configuration file sets the meta information item
+    `in_menu` to `true` for `Webgen::SourceHandler::Page`:
+
+        default_meta_info:
+          Page:
+            in_menu: true
+
+*   `patterns`: Set the used path patterns for one or more source handlers.
+
+    This key needs a Hash value and provides two different ways of setting the path patterns:
+
+        SOURCE_HANDLER_NAME: [**/*.jpg, **/*.css]
+
+        SOURCE_HANDLER_NAME:
+          add: [**/*.jpg]
+          del: [**/*.js]
+
+    The first form replaces the path patterns for the source handler with the given patterns. The
+    second form allows to add or delete individual patterns.
+
+    If a source handler called `Webgen::SourceHandler::SOURCE_HANDLER_NAME` exists, the meta
+    information is set for this source handler instead.
+
+    For example, the following snippet of a configuration file adds the pattern `**/*.pdf` to the
+    patterns of `Webgen::SourceHandler::Copy`:
+
+        patterns:
+          Copy:
+            add: [**/*.pdf]
+
 
 
 ## Rakefile {#website-rakefile}
