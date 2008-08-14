@@ -1,0 +1,33 @@
+---
+title: webgen 0.5.3 released
+in_menu: false
+sort_info: 2008-??-??
+---
+## {title:}
+
+<webgen:block name='notes' />
+
+### Changes
+
+<webgen:block name='changes' />
+
+--- name:notes pipeline:maruku
+
+This release brings some usability and feature enhancements to webgen.
+
+Setting some configuration options (for example, the path patterns used by
+Webgen::SourceHandler::Copy) was very complicated in previous releases. With the introduction of
+configuration file helpers this gets much easier now. For example, adding some path patterns for
+Webgen::SourceHandler::Copy can be done like this:
+
+    patterns:
+      Copy:
+        add: [**/*.pdf, **/*.avi]
+
+--- name:changes pipeline:tags,maruku
+
+* Minor enhancements:
+
+  - configuration file helpers, see [configuration file] documentation
+
+[configuration file]: {relocatable: ../documentation/manual.html#website-configfile}
