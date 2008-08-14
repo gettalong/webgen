@@ -17,6 +17,7 @@ module Webgen
     autoload :Page, 'webgen/sourcehandler/page'
     autoload :Fragment, 'webgen/sourcehandler/fragment'
     autoload :Virtual, 'webgen/sourcehandler/virtual'
+    autoload :Feed, 'webgen/sourcehandler/feed'
 
     # This class is used by Website to do the actual rendering of the website. It
     #
