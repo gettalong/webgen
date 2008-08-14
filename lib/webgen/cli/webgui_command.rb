@@ -20,7 +20,8 @@ module Webgen::CLI
       $:.shift
       require 'ramaze'
       Ramaze::Log.loggers = []
-      def Ramaze.shutdown; end
+      def Ramaze.shutdown; # :nodoc:
+      end
 
       acquire Webgen.data_dir/:webgui/:controller/'*'
       Ramaze::Global.setup do |g|

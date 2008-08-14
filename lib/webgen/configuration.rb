@@ -43,8 +43,8 @@ module Webgen
     #
     #   default_meta_info:
     #     Webgen::SourceHandler::Page:
-    #       in_menu: true
-    #       :action: replace
+    #       in_menu : true
+    #       :action : replace
     #
     # All methods have to take exactly one argument, a Hash.
     #
