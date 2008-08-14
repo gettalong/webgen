@@ -94,7 +94,7 @@ Make sure that you also install the mandatory and, if you need them, the optiona
 
 * (mandatory) [cmdparse](http://cmdparse.rubyforge.org) version 2.0.0 or higher
 
-* (mandatory) [facets](http://facets.rubyforge.org) version 2.4.1 or higher
+* (mandatory) [facets](http://facets.rubyforge.org) version 2.4.3 or higher
 
 * (mandatory) [maruku](http://maruku.rubyforge.org) version 0.5.5 or higher
 

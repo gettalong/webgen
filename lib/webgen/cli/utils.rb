@@ -1,8 +1,8 @@
 require 'facets/ansicode'
 require 'rbconfig'
 
-Console::ANSICode.define_ansicolor_method(:lred, '1;31')
-Console::ANSICode.define_ansicolor_method(:lblue, '1;34')
+ANSICode.define_ansicolor_method(:lred, '1;31')
+ANSICode.define_ansicolor_method(:lblue, '1;34')
 
 module Webgen::CLI
 
@@ -18,8 +18,8 @@ module Webgen::CLI
 
     # Used for dynamically formatting the text (setting color, bold face, ...).
     def self.method_missing(id, text = nil)
-      if USE_ANSI_COLORS && Console::ANSICode.respond_to?(id)
-        Console::ANSICode.send(id, text.to_s)
+      if USE_ANSI_COLORS && ANSICode.respond_to?(id)
+        ANSICode.send(id, text.to_s)
       else
         text.to_s
       end
