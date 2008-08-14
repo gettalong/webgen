@@ -236,7 +236,7 @@ EOF
 
   desc "Upload the webgen website to Rubyforge"
   task :publish_website => [:website] do
-    sh "rsync -avc --delete --exclude 'documentation/0.5.x' --exclude 'documentation/0.4.x' --exclude 'wiki' --exclude 'robots.txt'  website/out/ gettalong@rubyforge.org:/var/www/gforge-projects/webgen/"
+    sh "rsync -avc --delete --exclude documentation/rdoc --exclude 'documentation/0.5.x' --exclude 'documentation/0.4.x' --exclude 'wiki' --exclude 'robots.txt'  website/out/ gettalong@rubyforge.org:/var/www/gforge-projects/webgen/"
     sh "rsync -avc --delete htmldoc/rdoc/ gettalong@rubyforge.org:/var/www/gforge-projects/webgen/documentation/rdoc"
   end
 
