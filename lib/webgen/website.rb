@@ -194,12 +194,9 @@ module Webgen
           config = YAML::load(File.read(file)) || {}
           raise 'Structure of config file is not valid, has to be a Hash' if !config.kind_of?(Hash)
           config.each do |key, value|
-            if key == 'default_meta_info'
-              value.each do |klass_name, options|
-                @config['sourcehandler.default_meta_info'][klass_name].update(options)
-              end
-            else
-              @config[key] = value
+            case key
+            when *Webgen::Configuration::Helpers.public_instance_methods(false) then @config.send(key, value)
+            else @config[key] = value
             end
           end
         rescue RuntimeError, ArgumentError => e
