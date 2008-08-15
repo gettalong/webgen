@@ -23,6 +23,7 @@ module Webgen::SourceHandler
 
         temp_path = Webgen::Path.new(key)
         temp_path.meta_info.update(value || {})
+        temp_path.meta_info['modified_at'] = path.meta_info['modified_at']
         temp_path.meta_info['no_output'] = true
         output_path = temp_path.meta_info.delete('url') || key
         output_path = (output_path =~ /^\// ? output_path : File.join(temp_parent.absolute_lcn, output_path))
