@@ -34,11 +34,18 @@ EOF
     assert_equal({'/**/*' => {'after' => 'valaft'}}, @node.node_info[:mi_alcn])
   end
 
+  def test_meta_info_changed
+    other = TestSH.new.create_node(@root, path_with_meta_info('/default.css'))
+    assert(@obj.send(:meta_info_changed?, @node, other))
+    @website.cache.old_data.update(@website.cache.new_data)
+    assert(!@obj.send(:meta_info_changed?, @node, other))
+  end
+
   def test_mark_all_matched_dirty
     other = TestSH.new.create_node(@root, path_with_meta_info('/default.css'))
-    other.dirty = false
+    other.dirty_meta_info = false
     @obj.send(:mark_all_matched_dirty, @node)
-    assert(other.dirty)
+    assert(other.dirty_meta_info)
   end
 
   def test_before_node_created
@@ -55,21 +62,28 @@ EOF
 
   def test_before_node_deleted
     other = TestSH.new.create_node(@root, path_with_meta_info('/default.css'))
-    other.dirty = false
+    other.dirty_meta_info = false
+
+    @website.blackboard.del_service(:source_paths)
+    @website.blackboard.add_service(:source_paths) { {'/metainfo' => ''} }
     @website.blackboard.dispatch_msg(:before_node_deleted, @node)
-    assert(other.dirty)
+    assert(!other.dirty_meta_info)
+
+    @website.blackboard.del_service(:source_paths)
+    @website.blackboard.add_service(:source_paths) { {} }
+    @website.blackboard.dispatch_msg(:before_node_deleted, @node)
+    assert(other.dirty_meta_info)
   end
 
-  def test_node_changed
-    @node.dirty = false
-    @website.blackboard.dispatch_msg(:node_changed?, @node)
-    assert(!@node.dirty)
+  def test_node_meta_info_changed
+    @node.dirty_meta_info = false
+    @website.blackboard.dispatch_msg(:node_meta_info_changed?, @node)
+    assert(!@node.dirty_meta_info)
 
-    @node.dirty = true
     other = TestSH.new.create_node(@root, path_with_meta_info('/default.css'))
-    other.dirty = false
-    @website.blackboard.dispatch_msg(:node_changed?, other)
-    assert(other.dirty)
+    other.dirty_meta_info = false
+    @website.blackboard.dispatch_msg(:node_meta_info_changed?, other)
+    assert(other.dirty_meta_info)
   end
 
   def test_content
