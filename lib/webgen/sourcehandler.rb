@@ -143,7 +143,7 @@ module Webgen
                  else
                    source_handler.create_node(parent, path.dup)
                  end
-        nodes.compact.each do |node|
+        nodes.flatten.compact.each do |node|
           website.blackboard.dispatch_msg(:after_node_created, node)
         end
         nodes

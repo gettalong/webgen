@@ -152,6 +152,7 @@ EOF
       s.add_development_dependency('builder', '>= 2.1.0')
       s.add_development_dependency('rdoc', '>= 2.0.0')
       s.add_development_dependency('coderay', '>= 0.7.4.215')
+      s.add_development_dependency('feed_tools', '>= 0.2.29')
 
       s.require_path = 'lib'
 
