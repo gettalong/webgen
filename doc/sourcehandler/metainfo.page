@@ -11,8 +11,9 @@ This source handler provides the ability to set meta information for any path. I
   path style. When specifying patterns, remember that the patterns are matched against paths!
 
 * `alcn`: This block specifies meta information for nodes and this meta information is applied
-  directly after a node has been created. When specifying patterns, remember that the patterns
-  are matched against absolute localized canonical names!
+  directly after a node has been created. When specifying patterns, remember that the patterns are
+  matched against absolute localized canonical names! So you always need to take the language part
+  into account, ie. `/index.html` won't match but `/index.en.html`.
 
 When no name is specified in the meta information file, the first block is assumed to be the `paths`
 block and the second block is assumed to be the `alcn` block. The format of the two blocks is the
