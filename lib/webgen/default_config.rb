@@ -49,11 +49,13 @@ config.sourcehandler.patterns({
                                 'Webgen::SourceHandler::Metainfo' => ['**/metainfo', '**/*.metainfo'],
                                 'Webgen::SourceHandler::Template' => ['**/*.template'],
                                 'Webgen::SourceHandler::Page' => ['**/*.page'],
-                                'Webgen::SourceHandler::Virtual' => ['**/virtual', '**/*.virtual']
+                                'Webgen::SourceHandler::Virtual' => ['**/virtual', '**/*.virtual'],
+                                'Webgen::SourceHandler::Feed' => ['**/*.feed'],
                               }, :doc => 'Source handler to path pattern map')
 config.sourcehandler.invoke({
                               1 => ['Webgen::SourceHandler::Directory', 'Webgen::SourceHandler::Metainfo', 'Webgen::SourceHandler::Directory'],
-                              5 => ['Webgen::SourceHandler::Copy', 'Webgen::SourceHandler::Template', 'Webgen::SourceHandler::Page'],
+                              5 => ['Webgen::SourceHandler::Copy', 'Webgen::SourceHandler::Template',
+                                    'Webgen::SourceHandler::Page', 'Webgen::SourceHandler::Feed'],
                               9 => ['Webgen::SourceHandler::Virtual']
                             }, :doc => 'All source handlers listed here are used by webgen and invoked according to their priority setting')
 config.sourcehandler.casefold(true, :doc => 'Specifies whether path are considered to be case-sensitive')
@@ -77,6 +79,10 @@ config.sourcehandler.default_meta_info({
                                          },
                                          'Webgen::SourceHandler::Metainfo' => {
                                            'blocks' => {1 => {'name' => 'paths'}, 2 => {'name' => 'alcn'}}
+                                         },
+                                         'Webgen::SourceHandler::Feed' => {
+                                           'rss' => true,
+                                           'atom' => true
                                          }
                                        }, :doc => "Default meta information for all nodes and for nodes belonging to a specific source handler")
 
