@@ -119,6 +119,7 @@ module Webgen
     # Return +true+ if the node has changed since the last webgen run. If it has changed, +dirty+ is
     # set to +true+.
     def changed?
+      @dirty = @dirty || meta_info_changed?
       @dirty = node_info[:used_nodes].any? {|n| n != @absolute_lcn && (!tree[n] || tree[n].changed?)} unless @dirty
       website.blackboard.dispatch_msg(:node_changed?, self) unless @dirty
       @dirty
