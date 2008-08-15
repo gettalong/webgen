@@ -64,7 +64,7 @@ module Webgen
       n = node_or_alcn.kind_of?(Node) ? node_or_alcn : @node_access[:alcn][node_or_alcn]
       return if n.nil? || n == @dummy_root || (n.is_directory? && !delete_dir)
 
-      n.children.dup.each {|child| delete_node(child, true)}
+      n.children.dup.each {|child| delete_node(child, delete_dir)}
 
       website.blackboard.dispatch_msg(:before_node_deleted, n)
       n.parent.children.delete(n)
