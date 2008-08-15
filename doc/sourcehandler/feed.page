@@ -1,0 +1,82 @@
+---
+title: Webgen::SourceHandler::Feed
+---
+## Description
+
+This source handler automatically generates an atom or RSS feed for a set of files from a file in
+[Webgen Page Format]({relocatable: ../webgen_page_format.html}) (the format which is also used for
+page files).
+
+The following meta information keys are supported:
+
+*   `entries` (MANDATORY)
+
+    A LCN pattern (or an array of LCN patterns) which specify the page files that should be
+    used. Other matched files are excluded from the list.
+
+*   `number_of_entries` (OPTIONAL)
+
+    The number of entries that should be included in the feed. Defaults to 10.
+
+*   `atom` (OPTIONAL)
+
+    An atom feed is generated if this key is set to `true`. Defaults to `true`.
+
+*   `rss` (OPTIONAL)
+
+    A RSS feed is generated if this key is set to `true`. Defaults to `true`.
+
+*   `site_url` (MANDATORY)
+
+    The base url of the website for which the feed is generated.
+
+*   `author` (MANDATORY)
+
+    Specifies the author of the feed.
+
+*   `author_url` (OPTIONAL)
+
+    Specifies the URL of the homepage of the author.
+
+*   `title` (MANDATORY)
+
+    The title of the feed.
+
+*   `description` (OPTIONAL)
+
+    A short description of the feed.
+
+*   `created_at` (OPTIONAL)
+
+    The time at which this feed was created. Defaults to the current time if not set.
+
+*   `icon` (OPTIONAL)
+
+    The absolute localized canonical name of the feed's icon image.
+
+The following meta information keys of page files are used if they are specified:
+
+*   `created_at`
+
+    The time at which the page file was created, used as the publication time.
+
+*   `modified_at`
+
+    The time at which the page file was last modified, used as the time at which this feed entry was
+    updated.
+
+*   `title`
+
+    The title of the page file, used as title of the feed entry.
+
+*   `author`
+
+    The name of the author of the page file, used as the author of the feed entry.
+
+*   `author_url`
+
+    The URL of the homepage of the author. Only used if the `author` meta information is also set.
+
+The default implementation supports the generation of atom and RSS feeds. You can override the
+default generation mechanism by adding an `atom_template` and/or `rss_template` block in the feed
+file which are then used to generate the atom or the RSS feed respectively.

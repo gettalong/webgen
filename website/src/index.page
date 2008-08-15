@@ -115,7 +115,12 @@ Make sure that you also install the mandatory and, if you need them, the optiona
 * (optional) [coderay](http://coderay.rubychan.de/) version 0.7.4.214 or higher for syntax
   highlighting
 
-All these libraries can be installed via Rubygems (which I recommend).
+* (optional) [feedtools](http://sporkmonger.com/projects/feedtools) version 0.2.29 for built-in feed
+  generation support
+
+All these libraries can be installed via Rubygems (which I recommend). If you want to install all
+optional dependencies when installing webgen via Rubygems, install webgen using the `--development`
+option.
 
 ## Author
 
