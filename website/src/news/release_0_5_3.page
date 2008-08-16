@@ -1,7 +1,9 @@
 ---
 title: webgen 0.5.3 released
 in_menu: false
-sort_info: 2008-??-??
+sort_info: 2008-08-??
+created_at: 2008-08-??
+modified_at: 2008-08-??
 ---
 ## {title:}
 
@@ -15,19 +17,29 @@ sort_info: 2008-??-??
 
 This release brings some usability and feature enhancements to webgen.
 
-Setting some configuration options (for example, the path patterns used by
-Webgen::SourceHandler::Copy) was very complicated in previous releases. With the introduction of
-configuration file helpers this gets much easier now. For example, adding some path patterns for
-Webgen::SourceHandler::Copy can be done like this:
+* Setting some configuration options (for example, the path patterns used by
+  Webgen::SourceHandler::Copy) was very complicated in previous releases. With the introduction of
+  configuration file helpers this gets much easier now. For example, adding some path patterns for
+  Webgen::SourceHandler::Copy can be done like this now:
 
-    patterns:
-      Copy:
-        add: [**/*.pdf, **/*.avi]
+      patterns:
+        Copy:
+          add: [**/*.pdf, **/*.avi]
+
+* A new source handler for automatic feed generation has been added. This is the first part of the
+  blogging support that will be introduced in the following versions of webgen.
 
 --- name:changes pipeline:tags,maruku
+
+* Major enhancements:
+
+  - added a [feed source handler] for generating atom and/or RSS feeds
 
 * Minor enhancements:
 
   - configuration file helpers, see [configuration file] documentation
+  - updated [metainfo source handler] to be more efficient
 
+[feed source handler]: {relocatable: ../documentation/sourcehandler/feed.html}
+[metainfo source handler]: {relocatable: ../documentation/sourcehandler/metainfo.html}
 [configuration file]: {relocatable: ../documentation/manual.html#website-configfile}

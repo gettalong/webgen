@@ -11,7 +11,25 @@ follows the same pattern:
 * Then the paths for which this item is valid are listed.
 * And at last follows a detailed description.
 
+
 {:miref: .meta-information-ref}
+
+### author
+
+{:miref}
+* String: `Thomas Leitner`
+* Any
+
+Sets the author of the path. This information is used, for example, by Webgen::SourceHandler::Feed.
+
+### author\_url
+
+{:miref}
+* String: `http://webgen.rubyforge.org`
+* Any where `author` is also set
+
+Sets the homepage of the author of the path. This information is used, for example, by
+Webgen::SourceHandler::Feed and normally only when `author` is also set.
 
 ### blocks
 
@@ -22,6 +40,15 @@ follows the same pattern:
 Specifies the default names and additional options for the blocks. The special key `default` is used
 to set default options for all blocks. Specific options for (or the name of) a block can be set by
 using the block index as key (numbering starts from one).
+
+### created\_at
+
+{:miref}
+* Time: `2008-08-14 10:25:34 +02:00`
+* Any
+
+Sets the time when the path was created. This information cannot automatically be derived for paths
+provided by Webgen::Source::FileSystem, so this has to be set manually.
 
 ### fragments\_in\_menu
 
@@ -65,6 +92,16 @@ meta information needs to be set before a node gets created.
 Specifies additional attribute-value pairs (in form of a Hash) that should be added to a link to the
 path.
 
+### modified\_at
+
+{:miref}
+* Time: `2008-08-14 10:25:34 +02:00`
+* Any
+
+Sets the time when the path was last modified. This information is automatically set for paths
+provided by Webgen::Source::FileSystem but can be overridden by setting it manually. If not set to a
+valid time, the time when webgen is executed is used for this meta information.
+
 ### no\_output
 
 {:miref}
@@ -73,7 +110,7 @@ path.
 
 Specifies whether an output path for this node gets written or not.
 
-### omit_index_path
+### omit\_index\_path
 
 {:miref}
 * Boolean: `false`
