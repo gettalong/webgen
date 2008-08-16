@@ -60,7 +60,7 @@ module Webgen::SourceHandler
       patterns = [node['entries']].flatten.map {|pat| Pathname.new(pat =~ /^\// ? pat : File.join(node.parent.absolute_lcn, pat)).cleanpath.to_s}
 
       node.tree.node_access[:alcn].values.
-        select {|node| patterns.any? {|pat| node =~ pat} && !node.node_info[:page].nil?}.
+        select {|node| patterns.any? {|pat| node =~ pat} && node.node_info[:page]}.
         sort {|a,b| a['modified_at'] <=> b['modified_at']}.
         reverse[0, nr_items]
     end
@@ -85,7 +85,7 @@ module Webgen::SourceHandler
       feed.link = File.join(site_url, node.tree[node['link']].path)
       feed.id = feed.link
 
-      feed.published = node['created_at'] || Time.now
+      feed.published = (node['created_at'].kind_of?(Time) ? node['created_at'] : Time.now)
       feed.updated = Time.now
       feed.generator = 'webgen - Webgen::SourceHandler::Feed'
       feed.icon = File.join(site_url, node.tree[node['icon']].path) if node['icon']
@@ -96,7 +96,7 @@ module Webgen::SourceHandler
         item.link = File.join(site_url, entry.path)
         item.content = entry.node_info[:page].blocks['content'].render(Webgen::ContentProcessor::Context.new(:chain => [entry])).content
         item.updated = entry['modified_at']
-        item.published = entry['created_at']
+        item.published = entry['created_at'] if entry['created_at'].kind_of?(Time)
         if entry['author']
           item.author = entry['author']
           item.author.url = entry['author_url']
