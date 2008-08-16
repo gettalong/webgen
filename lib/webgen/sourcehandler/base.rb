@@ -152,11 +152,13 @@ module Webgen::SourceHandler
       parent.tree[Webgen::Node.absolute_name(parent, path.lcn, :alcn)] || (!path.meta_info['no_output'] && parent.tree[output_path, :path])
     end
 
-    # Create and return a node under +parent+ from +path+ if it does not already exists. The created
-    # node is yielded if a block is given.
+    # Create and return a node under +parent+ from +path+ if it does not already exists. Some
+    # additional node information like <tt>:src</tt> and <tt>:processor</tt> is set and the meta
+    # information is checked for validness. The created node is yielded if a block is given.
     def create_node(parent, path, output_path = self.output_path(parent, path))
       if !node_exists?(parent, path, output_path)
         node = Webgen::Node.new(parent, output_path, path.cn, path.meta_info)
+        node['modified_at'] = Time.now unless node['modified_at'].kind_of?(Time)
         node.node_info[:src] = path.path
         node.node_info[:processor] = self.class.name
         yield(node) if block_given?
