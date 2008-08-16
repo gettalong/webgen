@@ -1,0 +1,9 @@
+---
+title: Webgen News
+description: webgen - static website generation made easy
+site_url: http://webgen.rubyforge.org/
+author: Thomas Leitner
+author_url: http://webgen.rubyforge.org
+number_of_entries: 10
+entries: [rel*.html]
+---
