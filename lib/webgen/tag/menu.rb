@@ -157,7 +157,7 @@ module Webgen::Tag
       styles << 'webgen-menu-item-selected' if node == dest_node
       style = "class=\"#{styles.join(' ')}\"" if styles.length > 0
 
-      link = dest_node.link_to(node)
+      link = dest_node.link_to(node, :lang => lang)
 
       [style, link]
     end

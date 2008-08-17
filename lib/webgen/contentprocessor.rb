@@ -36,7 +36,7 @@ module Webgen
   #         context.content.gsub!(/#{context.content_node['replace_key']}:([\w\/.]+)/ ) do |match|
   #           link_node = context.ref_node.resolve($1, context.content_node.lang)
   #           if link_node
-  #             context.dest_node.link_to(link_node)
+  #             context.dest_node.link_to(link_node, :lang => context.content_node.lang)
   #           else
   #             match
   #           end
