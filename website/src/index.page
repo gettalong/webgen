@@ -14,7 +14,7 @@ write a static website by hand, of course. But by using webgen you have several 
 
 * The content files can be written in a markup language like Markdown or Textile.
 
-* webgen can automatically generate, for example, menus and breadcrumb trails for you.
+* webgen can automatically generates, for example, menus and breadcrumb trails for you.
 
 * Dynamic content can easily be added to content files.
 
