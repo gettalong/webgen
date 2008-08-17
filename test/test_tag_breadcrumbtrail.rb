@@ -26,10 +26,11 @@ class TestTagBreadcrumbTrail < Test::Unit::TestCase
     }
   end
 
-  def call(context, separator, omit_last, omit_index_path)
+  def call(context, separator, omit_index_path, start_level, end_level)
     @obj.set_params({'tag.breadcrumbtrail.separator' => separator,
-                      'tag.breadcrumbtrail.omit_last' => omit_last,
-                      'tag.breadcrumbtrail.omit_index_path' => omit_index_path})
+                      'tag.breadcrumbtrail.omit_index_path' => omit_index_path,
+                      'tag.breadcrumbtrail.start_level' => start_level,
+                      'tag.breadcrumbtrail.end_level' => end_level})
     result = @obj.call('breadcrumbTrail', '', context)
     @obj.set_params({})
     result
@@ -40,40 +41,49 @@ class TestTagBreadcrumbTrail < Test::Unit::TestCase
     context = Webgen::ContentProcessor::Context.new(:chain => [nodes[:file11_en]])
 
     assert_equal('<a href="../../index.html"></a> / <a href="../">Dir1</a> / <a href="index.html">Dir11</a> / <span>File111</span>',
-                 call(context, ' / ', false, false))
-    assert_equal(Set.new([nodes[:file11_en], nodes[:index_en], nodes[:index11_en],
-                          nodes[:dir1], nodes[:dir11], nodes[:root]].map {|n| n.absolute_lcn}),
-                 nodes[:file11_en].node_info[:used_meta_info_nodes])
-
-
+                 call(context, ' / ', false, 0, -1))
     assert_equal('<a href="../../index.html"></a> / <a href="../">Dir1</a> / <a href="index.html">Dir11</a> / <span>File111</span>',
-                 call(context, ' / ', false, true))
-    assert_equal('<a href="../../index.html"></a> / <a href="../">Dir1</a> / <a href="index.html">Dir11</a> / ',
-                 call(context, ' / ', true, true))
-    assert_equal('<a href="../../index.html"></a> / <a href="../">Dir1</a> / <a href="index.html">Dir11</a> / ',
-                 call(context, ' / ', true, false))
+                 call(context, ' / ', true, 0, -1))
+    assert_equal('<a href="../">Dir1</a> / <a href="index.html">Dir11</a>',
+                 call(context, ' / ', true, 1, -2))
+    assert_equal('<a href="../">Dir1</a> / <a href="index.html">Dir11</a>',
+                 call(context, ' / ', false, 1, -2))
 
 
     context[:chain] = [nodes[:index11_en]]
     assert_equal('<a href="../../index.html"></a> / <a href="../">Dir1</a> / <span>Dir11</span> / <span>Index</span>',
-                 call(context, ' / ', false, false))
+                 call(context, ' / ', false, 0, -1))
     assert_equal('<a href="../../index.html"></a> / <a href="../">Dir1</a> / <span>Dir11</span>',
-                 call(context, ' / ', false, true))
+                 call(context, ' / ', true, 0, -1))
     assert_equal('<a href="../../index.html"></a> / <a href="../">Dir1</a> / <span>Dir11</span>',
-                 call(context, ' / ', true, true))
-    assert_equal('<a href="../../index.html"></a> / <a href="../">Dir1</a> / <span>Dir11</span> / ',
-                 call(context, ' / ', true, false))
+                 call(context, ' / ', false, 0, -2))
+    assert_equal('<a href="../../index.html"></a> / <a href="../">Dir1</a>',
+                 call(context, ' / ', true, 0, -2))
 
-    assert_equal('<a href="../../index.html"></a> | <a href="../">Dir1</a> | <span>Dir11</span> | ',
-                 call(context, ' | ', true, false))
+    assert_equal('<a href="../../index.html"></a> | <a href="../">Dir1</a> | <span>Dir11</span> | <span>Index</span>',
+                 call(context, ' | ', false, 0, -1))
 
 
     nodes[:index11_en]['omit_index_path'] = false
     assert_equal('<a href="../../index.html"></a> / <a href="../">Dir1</a> / <span>Dir11</span> / <span>Index</span>',
-                 call(context, ' / ', false, true))
+                 call(context, ' / ', true, 0, -1))
     nodes[:index11_en]['omit_index_path'] = true
     assert_equal('<a href="../../index.html"></a> / <a href="../">Dir1</a> / <span>Dir11</span>',
-                 call(context, ' / ', false, false))
+                 call(context, ' / ', false, 0, -1))
+  end
+
+  def test_node_changed
+    nodes = create_default_nodes
+    context = Webgen::ContentProcessor::Context.new(:chain => [nodes[:file11_en]])
+    call(context, ' / ', false, 0, -1)
+
+    nodes[:file11_en].dirty = false
+    @website.blackboard.dispatch_msg(:node_changed?, nodes[:file11_en])
+    assert(!nodes[:file11_en].dirty)
+
+    nodes[:index11_en].dirty_meta_info = true
+    @website.blackboard.dispatch_msg(:node_changed?, nodes[:file11_en])
+    assert(nodes[:file11_en].dirty)
   end
 
 end

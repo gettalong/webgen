@@ -139,8 +139,9 @@ config.tag.menu.show_current_subtree_only(true, :doc => 'Specifies whether only 
 config.tag.menu.used_nodes('all', :doc => 'Specifies the kind of nodes that should be used: all, files, or fragments')
 
 config.tag.breadcrumbtrail.separator(' / ', :doc => 'Separates the hierachy entries from each other.')
-config.tag.breadcrumbtrail.omit_last(false, :doc => 'Omits the last path component.')
 config.tag.breadcrumbtrail.omit_index_path(false, :doc => 'Omits the last path component if it is an index path.')
+config.tag.breadcrumbtrail.start_level(0, :doc => 'The level at which the breadcrumb trail starts.')
+config.tag.breadcrumbtrail.end_level(-1, :doc => 'The level at which the breadcrumb trail ends.')
 
 config.tag.langbar.separator(' | ', :doc => 'Separates the languages from each other.')
 config.tag.langbar.show_single_lang(true, :doc => 'Should the link be shown although the page is only available in one language?')
