@@ -1,3 +1,4 @@
+require 'webgen/websiteaccess'
 require 'webgen/tag'
 
 module Webgen::Tag
@@ -6,13 +7,31 @@ module Webgen::Tag
   # hierarchies of directories.
   class BreadcrumbTrail
 
-    include Webgen::Tag::Base
+    include Webgen::WebsiteAccess
+    include Base
+
+    def initialize #:nodoc:
+      website.blackboard.add_listener(:node_changed?, method(:node_changed?))
+    end
 
     # Create the breadcrumb trail.
     def call(tag, body, context)
-      out = []
-      node = context.content_node
+      out = breadcrumb_trail_list(context.content_node)
+      (context.dest_node.node_info[:tag_breadcrumb_trail] ||= {})[[@params, context.content_node.absolute_lcn]] = out.map {|n| n.absolute_lcn}
+      out = out.map {|n| context.dest_node.link_to(n, :lang => context.content_node.lang) }.
+        join(param('tag.breadcrumbtrail.separator'))
+      log(:debug) { "Breadcrumb trail for <#{context.content_node.absolute_lcn}>: #{out}" }
+      out
+    end
 
+    #######
+    private
+    #######
+
+    # Return the list of nodes that make up the breadcrumb trail of +node+ according to the current
+    # parameters.
+    def breadcrumb_trail_list(node)
+      list = []
       omit_index_path = if node.meta_info.has_key?('omit_index_path')
                           node['omit_index_path']
                         else
@@ -23,15 +42,28 @@ module Webgen::Tag
       node = node.parent if omit_index_path
 
       until node == node.tree.dummy_root
-        context.dest_node.node_info[:used_meta_info_nodes] << node.routing_node(context.dest_node.lang).absolute_lcn
-        context.dest_node.node_info[:used_meta_info_nodes] << node.absolute_lcn
-        out.push(context.dest_node.link_to(node.in_lang(context.content_node.lang)))
+        list.unshift(node)
         node = node.parent
       end
-      out[0] = '' if param('tag.breadcrumbtrail.omit_last') && !omit_index_path
-      out = out.reverse.join(param('tag.breadcrumbtrail.separator'))
-      log(:debug) { "Breadcrumb trail for <#{context.dest_node.absolute_lcn}>: #{out}" }
-      out
+      list[param('tag.breadcrumbtrail.start_level')..param('tag.breadcrumbtrail.end_level')].to_a
+    end
+
+    # Check if the breadcrumb trails for +node+ have changed.
+    def node_changed?(node)
+      return if !node.node_info[:tag_breadcrumb_trail]
+
+      node.node_info[:tag_breadcrumb_trail].each do |(params, cn_alcn), cached_list|
+        cn = node.tree[cn_alcn]
+        set_params(params)
+        list = breadcrumb_trail_list(cn)
+        set_params({})
+
+        if (list.map {|n| n.absolute_lcn} != cached_list) ||
+            list.any? {|n| (r = n.routing_node(cn.lang)) && r != node && r.meta_info_changed?}
+          node.dirty = true
+          break
+        end
+      end
     end
 
   end

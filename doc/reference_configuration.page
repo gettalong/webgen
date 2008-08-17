@@ -247,19 +247,6 @@ files in Webgen Page Format.
           Breadcrumb trail with different separator: \{breadcrumb_trail: {separator: ' --- '}}
 
 
-*   ### `tag.breadcrumbtrail.omit_last`
-
-    Specifies that the last part of the breadcrumb trail should be omitted. If
-    `tag.breadcrumbtrail.omit_index_path` is also set to `true` and the last part is an index path,
-    only the index path is omitted (and not the parent of the index node too)!
-
-    * Syntax: `BOOLEAN` where `BOOLEAN` is either `true` or `false`.
-
-    * Examples:
-
-          Breadcrumb trail with last part omitted: \{breadcrumb_trail: {omit_last: true}}
-
-
 *   ### `tag.breadcrumbtrail.omit_index_path`
 
     Specifies that the last part of the breadcrumb trail should be omitted if it is an index path.
@@ -269,6 +256,39 @@ files in Webgen Page Format.
     * Examples:
 
           Breadcrumb trail with index path omitted: \{breadcrumb_trail: {omit_index_path: true}}
+
+
+*   ### `tag.breadcrumbtrail.start_level`
+
+    Specifies the level at which the breadcrumb trail starts. The default of 0 means to start a the
+    root directory. Setting this option to 1 starts the breadcrumb trail at the first level. If you
+    specify negative numbers, then everything is calculated from the end of the trail. Following is
+    a diagram showing the level numbers for a sample path:
+
+         0   1        2           3
+         /  dir1  /  dir2  /  myfile.html
+        -4  -3       -2          -1
+
+    Be aware that the you need to take the `tag.breadcrumbtrail.omit_index_path` option into
+    account when specifying the level number.
+
+    * Syntax: `INTEGER` where `INTEGER` is any integer number
+
+    * Examples:
+
+        Breadcrumb trail starting at level 2: \{breadcrumb_trail: {start_level: 2}}
+
+
+*   ### `tag.breadcrumbtrail.end_level`
+
+    Specifies the level at which the breadcrumb trail ends. Have a look at the documentation for
+    `tag.breadcrumbtrail.start_level` for more information on the useable level numbers.
+
+    * Syntax: `INTEGER` where `INTEGER` is any integer number
+
+    * Examples:
+
+        Breadcrumb trail ending at level 2: \{breadcrumb_trail: {end_level: 2}}
 
 
 *   ### `tag.coderay.lang`
