@@ -8,14 +8,13 @@ The following tag names are registered for this tag class:
       map {|k,v| '`' + (k.kind_of?(Symbol) ? k.inspect : k.to_s) + '`'}.join(', ') %>
 
 <% if context.content_node['used_options'] %>
-This tag uses the following options (see [configuration option reference]({relocatable:
-reference_configuration.html}) for detailed information on the options):
+This tag uses the following options:
 
 <%
 for option in context.content_node['used_options']
   temp = 'mandatory' if !context.website.config.meta_info[option][:mandatory].nil?
   temp += ' default' if context.website.config.meta_info[option][:mandatory] == 'default'
-%>* `<%= option %>` <%= temp ? '(' + temp + ')' : '' %>
+%>* [`<%= option %>`]({relocatable: reference_configuration.html#<%= option.tr('.', '') %>}) <%= temp ? '(' + temp + ')' : '' %>
 <%
   temp = nil
 end
