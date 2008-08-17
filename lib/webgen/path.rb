@@ -169,7 +169,7 @@ module Webgen
       @directory = File.join(File.dirname(path), '/')
       matchData = FILENAME_RE.match(@basename)
 
-      @meta_info['sort_info'] = matchData[1].to_i
+      @meta_info['sort_info'] = (matchData[1].nil? ? nil : matchData[1].to_i)
       @cnbase                 = matchData[2]
       @meta_info['lang']      = Webgen::LanguageManager.language_for_code(matchData[3])
       @ext                    = (@meta_info['lang'].nil? && !matchData[3].nil? ? matchData[3].to_s + '.' : '') + matchData[4].to_s
