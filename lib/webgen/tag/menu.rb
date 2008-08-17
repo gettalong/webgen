@@ -58,7 +58,7 @@ module Webgen::Tag
     def call(tag, body, context)
       tree = specific_menu_tree_for(context.content_node)
 
-      (context.dest_node.node_info[:tag_menu_menus] ||= []) << [@params, context.content_node.absolute_lcn, (tree ? tree.to_lcn_list : nil)]
+      (context.dest_node.node_info[:tag_menu_menus] ||= {})[[@params.to_a.sort, context.content_node.absolute_lcn]] = (tree ? tree.to_lcn_list : nil)
       if tree && !tree.children.empty?
         "<div class=\"webgen-menu\">#{create_output(context, tree)}</div>"
       else
@@ -75,11 +75,11 @@ module Webgen::Tag
       return if !node.node_info[:tag_menu_menus] || @inside_node_changed
 
       @inside_node_changed = true  #TODO: better solution for this race condition?
-      node.node_info[:tag_menu_menus].each do |params, cn_alcn, cached_tree|
+      node.node_info[:tag_menu_menus].each do |(params, cn_alcn), cached_tree|
         cn = node.tree[cn_alcn]
         menu_tree = menu_tree_for_lang(cn.lang, cn.tree.root)
 
-        set_params(params)
+        set_params(Hash[*params.flatten])
         tree = build_specific_menu_tree(cn, menu_tree)
         tree_list = tree.to_lcn_list if tree
         set_params({})
