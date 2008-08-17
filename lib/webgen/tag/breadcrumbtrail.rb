@@ -17,7 +17,7 @@ module Webgen::Tag
     # Create the breadcrumb trail.
     def call(tag, body, context)
       out = breadcrumb_trail_list(context.content_node)
-      (context.dest_node.node_info[:tag_breadcrumb_trail] ||= {})[[@params, context.content_node.absolute_lcn]] = out.map {|n| n.absolute_lcn}
+      (context.dest_node.node_info[:tag_breadcrumb_trail] ||= {})[[@params.to_a.sort, context.content_node.absolute_lcn]] = out.map {|n| n.absolute_lcn}
       out = out.map {|n| context.dest_node.link_to(n, :lang => context.content_node.lang) }.
         join(param('tag.breadcrumbtrail.separator'))
       log(:debug) { "Breadcrumb trail for <#{context.content_node.absolute_lcn}>: #{out}" }
@@ -54,7 +54,7 @@ module Webgen::Tag
 
       node.node_info[:tag_breadcrumb_trail].each do |(params, cn_alcn), cached_list|
         cn = node.tree[cn_alcn]
-        set_params(params)
+        set_params(Hash[*params.flatten])
         list = breadcrumb_trail_list(cn)
         set_params({})
 
