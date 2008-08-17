@@ -15,7 +15,8 @@ modified_at: 2008-08-??
 
 --- name:notes pipeline:maruku
 
-This release brings some usability and feature enhancements to webgen.
+This release brings some usability and feature enhancements to webgen as well as several bug
+fixes. Also note that this release require facets version 2.4.3 instead of 2.4.1!
 
 * Setting some configuration options (for example, the path patterns used by
   Webgen::SourceHandler::Copy) was very complicated in previous releases. With the introduction of
@@ -39,6 +40,15 @@ This release brings some usability and feature enhancements to webgen.
 
   - configuration file helpers, see [configuration file] documentation
   - updated [metainfo source handler] to be more efficient
+
+* Bug fixes:
+
+  - meta information `sort_info` was not correctly set which lead to sort errors when creating menus
+  - fixed bug with meta information change detection: `modified_at` was taken into account although
+    this changes on every content change
+  - fix some other bugs releated to the meta information `modified_at`
+  - an API change in facets from version 2.4.1 to 2.4.3 prevented webgen from working, now facets
+    2.4.3 is needed for webgen
 
 [feed source handler]: {relocatable: ../documentation/sourcehandler/feed.html}
 [metainfo source handler]: {relocatable: ../documentation/sourcehandler/metainfo.html}
