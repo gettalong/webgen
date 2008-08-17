@@ -34,22 +34,25 @@ fixes. Also note that this release require facets version 2.4.3 instead of 2.4.1
 
 * Major enhancements:
 
-  - added a [feed source handler] for generating atom and/or RSS feeds
+  - Added a [feed source handler] for generating atom and/or RSS feeds.
 
 * Minor enhancements:
 
-  - configuration file helpers, see [configuration file] documentation
-  - updated [metainfo source handler] to be more efficient
+  - Added configuration file helpers, see [configuration file] documentation.
+  - Updated [metainfo source handler] to be more efficient.
+  - Updated [breadcrumb trail tag] to allow the specification of a start and an end level and added
+    better node change checking.
 
 * Bug fixes:
 
-  - meta information `sort_info` was not correctly set which lead to sort errors when creating menus
-  - fixed bug with meta information change detection: `modified_at` was taken into account although
-    this changes on every content change
-  - fix some other bugs releated to the meta information `modified_at`
-  - an API change in facets from version 2.4.1 to 2.4.3 prevented webgen from working, now facets
-    2.4.3 is needed for webgen
+  - Meta information `sort_info` was not correctly set which lead to sort errors when creating menus.
+  - Fixed bug with meta information change detection: `modified_at` was taken into account although
+    this changes on every content change.
+  - Fix some other bugs releated to the meta information `modified_at`.
+  - An API change in facets from version 2.4.1 to 2.4.3 prevented webgen from working, now facets
+    2.4.3 is needed for webgen.
 
 [feed source handler]: {relocatable: ../documentation/sourcehandler/feed.html}
 [metainfo source handler]: {relocatable: ../documentation/sourcehandler/metainfo.html}
+[breadcrumb trail tag]: {relocatable: ../documentation/tag/breadcrumbtrail.html}
 [configuration file]: {relocatable: ../documentation/manual.html#website-configfile}
