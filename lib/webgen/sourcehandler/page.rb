@@ -65,9 +65,11 @@ module Webgen::SourceHandler
     def meta_info_changed?(node)
       return if !node.created || node.node_info[:processor] != self.class.name
       ckey = [:sh_page_node_mi, node.absolute_lcn]
-      if website.cache.old_data[ckey]  != website.cache.new_data[ckey]
-        node.dirty_meta_info = true
-      end
+      old_mi = website.cache.old_data[ckey]
+      old_mi.delete('modified_at') if old_mi
+      new_mi = website.cache.new_data[ckey]
+      new_mi.delete('modified_at')
+      node.dirty_meta_info = true if old_mi != new_mi
     end
 
   end
