@@ -62,6 +62,7 @@ class TestSourceHandlerPage < Test::Unit::TestCase
 
     node.dirty_meta_info = false
     @website.cache.restore(@website.cache.dump)
+    @website.cache[[:sh_page_node_mi, node.absolute_lcn]]['modified_at'] = Time.now
     @website.blackboard.dispatch_msg(:node_meta_info_changed?, node)
     assert(!node.meta_info_changed?)
   end

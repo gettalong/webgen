@@ -155,13 +155,16 @@ module Webgen
           merge(website.config['sourcehandler.default_meta_info'][sh_name] || {})
       end
 
-      # Check if the default meta information for +node+ has changed since the last run.
+      # Check if the default meta information for +node+ has changed since the last run. But don't
+      # take the node's path's +modified_at+ meta information into account since that changes on
+      # every path change.
       def meta_info_changed?(node)
         path = node.node_info[:src]
-        cached_mi = website.cache[:sourcehandler_path_mi][[path, node.node_info[:processor]]]
-        if !cached_mi || cached_mi != default_meta_info(@paths[path], node.node_info[:processor])
-          node.dirty_meta_info = true
-        end
+        old_mi = website.cache[:sourcehandler_path_mi][[path, node.node_info[:processor]]]
+        old_mi.delete('modified_at')
+        new_mi = default_meta_info(@paths[path], node.node_info[:processor])
+        new_mi.delete('modified_at')
+        node.dirty_meta_info = true if !old_mi || old_mi != new_mi
       end
 
       # Clean the +tree+ by deleting nodes which have changed or which don't have an associated
