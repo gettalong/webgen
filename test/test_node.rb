@@ -27,6 +27,7 @@ class TestNode < Test::Unit::TestCase
       :dir_file_frag => Webgen::Node.new(dir_file, '/dir/file.html#frag', '#frag'),
       :dir2 => dir2 = Webgen::Node.new(node, '/dir2/', 'dir2/', {'index_path' => 'index.html', 'title' => 'dir2'}),
       :dir2_index_en => Webgen::Node.new(dir2, '/dir2/index.html', 'index.html', {'lang' => 'en', 'routed_title' => 'routed', 'title' => 'index'}),
+      :dir2_index_de => Webgen::Node.new(dir2, '/dir2/index.de.html', 'index.html', {'lang' => 'de', 'routed_title' => 'routed_de', 'title' => 'index'}),
     }
   end
 
@@ -308,10 +309,12 @@ class TestNode < Test::Unit::TestCase
                  nodes[:somename_en].link_to(nodes[:somename_en_frag], :link_text => 'link_text', 'attr1' => 'val1'))
 
     # links to directories
-    assert_equal('<a href="dir2/">dir2</a>',
+    assert_equal('<a href="dir2/index.de.html">routed_de</a>',
                  nodes[:somename_de].link_to(nodes[:dir2]))
     assert_equal('<a href="dir2/index.html">routed</a>',
                  nodes[:somename_en].link_to(nodes[:dir2]))
+    assert_equal('<a href="dir2/index.de.html">routed_de</a>',
+                 nodes[:somename_en].link_to(nodes[:dir2], :lang => 'de'))
     assert_equal('<span>routed</span>',
                  nodes[:dir2_index_en].link_to(nodes[:dir2]))
 

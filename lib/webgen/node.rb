@@ -275,18 +275,23 @@ module Webgen
     # You can optionally specify additional attributes for the HTML element in the +attr+ Hash.
     # Also, the meta information +link_attrs+ of the given +node+ is used, if available, to set
     # attributes. However, the +attr+ parameter takes precedence over the +link_attrs+ meta
-    # information. If the special value <tt>:link_text</tt> is present in the attributes, it will be
-    # used as the link text; otherwise the title of the +node+ will be used. Be aware that all
-    # key-value pairs with Symbol keys are removed before the attributes are written. Therefore you
-    # always need to specify general attributes with Strings!
+    # information. Be aware that all key-value pairs with Symbol keys are removed before the
+    # attributes are written. Therefore you always need to specify general attributes with Strings!
+    #
+    # If the special value <tt>:link_text</tt> is present in the attributes, it will be used as the
+    # link text; otherwise the title of the +node+ will be used.
+    #
+    # If the special value <tt>:lang</tt> is present in the attributes, it will be used as parameter
+    # to the <tt>node.routing_node</tt> call for getting the linked-to node instead of this node's
+    # +lang+ attribute. Note: this is only useful when linking to a directory.
     def link_to(node, attr = {})
       attr = node['link_attrs'].merge(attr) if node['link_attrs'].kind_of?(Hash)
-      rnode = node.routing_node(@lang)
+      rnode = node.routing_node(attr[:lang] || @lang)
       link_text = attr[:link_text] || (rnode != node && rnode['routed_title']) || node['title']
       attr.delete_if {|k,v| k.kind_of?(Symbol)}
 
       use_link = (rnode != self || website.config['website.link_to_current_page'])
-      attr['href'] = self.route_to(node) if use_link
+      attr['href'] = self.route_to(rnode) if use_link
       attrs = attr.collect {|name,value| "#{name.to_s}=\"#{value}\"" }.sort.unshift('').join(' ')
       (use_link ? "<a#{attrs}>#{link_text}</a>" : "<span#{attrs}>#{link_text}</span>")
     end

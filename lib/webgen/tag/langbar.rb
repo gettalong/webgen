@@ -20,7 +20,7 @@ module Webgen::Tag
       result = lang_nodes.
         reject {|n| (context.content_node.lang == n.lang && !param('tag.langbar.show_own_lang'))}.
         sort {|a, b| a.lang <=> b.lang}.
-        collect {|n| context.dest_node.link_to(n, :link_text => n.lang)}.
+        collect {|n| context.dest_node.link_to(n, :link_text => n.lang, :lang => n.lang)}.
         join(param('tag.langbar.separator'))
       (param('tag.langbar.show_single_lang') || lang_nodes.length > 1 ? result : "")
     end
