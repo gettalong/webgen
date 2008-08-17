@@ -18,26 +18,26 @@ class TestPath < Test::Unit::TestCase
     check_proc.call(Webgen::Path.new('5.base_name-one.de.page'),
                     '5.base_name-one.de.page', './', 'base_name-one', 'de', 'page', 'base_name-one.page', 5, 'Base name one')
     check_proc.call(Webgen::Path.new('dir/default.png'),
-                    'dir/default.png', 'dir/', 'default', nil, 'png', 'default.png', 0, 'Default')
+                    'dir/default.png', 'dir/', 'default', nil, 'png', 'default.png', nil, 'Default')
     check_proc.call(Webgen::Path.new('default.en.png'),
-                    'default.en.png', './', 'default', 'en', 'png', 'default.png', 0, 'Default')
+                    'default.en.png', './', 'default', 'en', 'png', 'default.png', nil, 'Default')
     check_proc.call(Webgen::Path.new('default.deu.png'),
-                    'default.deu.png', './', 'default', 'de', 'png', 'default.png', 0, 'Default')
+                    'default.deu.png', './', 'default', 'de', 'png', 'default.png', nil, 'Default')
     check_proc.call(Webgen::Path.new('default.template'),
-                    'default.template', './', 'default', nil, 'template', 'default.template', 0, 'Default')
+                    'default.template', './', 'default', nil, 'template', 'default.template', nil, 'Default')
     check_proc.call(Webgen::Path.new('default.en.tar.bz2'),
-                    'default.en.tar.bz2', './', 'default', 'en', 'tar.bz2', 'default.tar.bz2', 0, 'Default')
+                    'default.en.tar.bz2', './', 'default', 'en', 'tar.bz2', 'default.tar.bz2', nil, 'Default')
     check_proc.call(Webgen::Path.new('default.tar.bz2'),
-                    'default.tar.bz2', './', 'default', nil, 'tar.bz2', 'default.tar.bz2', 0, 'Default')
+                    'default.tar.bz2', './', 'default', nil, 'tar.bz2', 'default.tar.bz2', nil, 'Default')
     check_proc.call(Webgen::Path.new('default'),
-                    'default', './', 'default', nil, '', 'default', 0, 'Default')
+                    'default', './', 'default', nil, '', 'default', nil, 'Default')
     check_proc.call(Webgen::Path.new('.htaccess'),
-                    '.htaccess', './', '', nil, 'htaccess', '.htaccess', 0, '')
+                    '.htaccess', './', '', nil, 'htaccess', '.htaccess', nil, '')
 
     check_proc.call(Webgen::Path.new('/'),
-                    '/', '/', '/', nil, '', '/', 0, '/')
+                    '/', '/', '/', nil, '', '/', nil, '/')
     check_proc.call(Webgen::Path.new('/dir/'),
-                    '/dir/', '/', 'dir', nil, '', 'dir', 0, 'Dir')
+                    '/dir/', '/', 'dir', nil, '', 'dir', nil, 'Dir')
   end
 
   def test_mount_at
