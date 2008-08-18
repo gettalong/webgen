@@ -4,6 +4,7 @@ require 'set'
 require 'fileutils'
 
 # Requirements for Website
+require 'webgen/coreext'
 require 'webgen/loggable'
 require 'webgen/logger'
 require 'webgen/configuration'

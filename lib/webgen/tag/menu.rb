@@ -79,7 +79,7 @@ module Webgen::Tag
         cn = node.tree[cn_alcn]
         menu_tree = menu_tree_for_lang(cn.lang, cn.tree.root)
 
-        set_params(Hash[*params.flatten])
+        set_params(params.to_hash)
         tree = build_specific_menu_tree(cn, menu_tree)
         tree_list = tree.to_lcn_list if tree
         set_params({})

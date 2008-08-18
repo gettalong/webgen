@@ -54,7 +54,7 @@ module Webgen::Tag
 
       node.node_info[:tag_breadcrumb_trail].each do |(params, cn_alcn), cached_list|
         cn = node.tree[cn_alcn]
-        set_params(Hash[*params.flatten])
+        set_params(params.to_hash)
         list = breadcrumb_trail_list(cn)
         set_params({})
 
