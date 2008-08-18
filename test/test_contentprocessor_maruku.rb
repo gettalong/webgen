@@ -1,11 +1,14 @@
 require 'test/unit'
+require 'webgen/node'
+require 'webgen/tree'
 require 'webgen/contentprocessor'
 
 class TestContentProcessorMaruku < Test::Unit::TestCase
 
   def test_call
     @obj = Webgen::ContentProcessor::Maruku.new
-    context = Webgen::ContentProcessor::Context.new(:content => '# header')
+    node = Webgen::Node.new(Webgen::Node.new(Webgen::Tree.new.dummy_root, '/', '/'), 'test', 'test')
+    context = Webgen::ContentProcessor::Context.new(:content => '# header', :chain => [node])
     assert_equal('<h1 id=\'header\'>header</h1>', @obj.call(context).content)
 
     context.content = "# head*d* {#das .dsaf "

@@ -10,7 +10,7 @@ module Webgen::ContentProcessor
       context.content = ::Sass::Engine.new(context.content, :filename => context.ref_node.absolute_lcn).render
       context
     rescue Exception => e
-      raise RuntimeError, "Error converting Sass markup to CSS: #{e.message}", e.backtrace
+      raise RuntimeError, "Error converting Sass markup to CSS in <#{context.ref_node.absolute_lcn}>: #{e.message}", e.backtrace
     end
 
   end
