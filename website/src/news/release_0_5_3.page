@@ -35,6 +35,7 @@ fixes. Also note that this release require facets version 2.4.3 instead of 2.4.1
 * Major enhancements:
 
   - Added a [feed source handler] for generating atom and/or RSS feeds.
+  - Ported the [sitemap tag] and feature-enhanced it
 
 * Minor enhancements:
 
@@ -42,6 +43,8 @@ fixes. Also note that this release require facets version 2.4.3 instead of 2.4.1
   - Updated [metainfo source handler] to be more efficient.
   - Updated [breadcrumb trail tag] to allow the specification of a start and an end level and added
     better node change checking.
+  - Added new meta information `kind` for specifying the kind of a node (used, for example, by the
+    new sitemap tag)
 
 * Bug fixes:
 
@@ -53,6 +56,7 @@ fixes. Also note that this release require facets version 2.4.3 instead of 2.4.1
     2.4.3 is needed for webgen.
 
 [feed source handler]: {relocatable: ../documentation/sourcehandler/feed.html}
+[sitemap tag]: {relocatable: ../documentation/tag/sitemap.html}
 [metainfo source handler]: {relocatable: ../documentation/sourcehandler/metainfo.html}
 [breadcrumb trail tag]: {relocatable: ../documentation/tag/breadcrumbtrail.html}
 [configuration file]: {relocatable: ../documentation/manual.html#website-configfile}

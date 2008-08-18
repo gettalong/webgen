@@ -563,7 +563,40 @@ files in Webgen Page Format.
           <a href="\{relocatable: ../features.html}">Some Path</a>
 
 
+*   ### tag.sitemap.honor\_in\_menu
 
+    Specifies whether the sitemap should only include nodes that have the meta information `in_menu`
+    set.
+
+    * Syntax: `BOOLEAN` where `BOOLEAN` is either `true` or `false`.
+
+    * Examples:
+
+          Sitemap with in-menu nodes: \{sitemap: {honor_in_menu: true}}
+
+
+*   ### tag.sitemap.any\_lang
+
+    Specifies whether the sitemap should include nodes in any language or only those without a
+    language or with the language of the node in which the sitemap tag is used.
+
+    * Syntax: `BOOLEAN` where `BOOLEAN` is either `true` or `false`.
+
+    * Examples:
+
+          Sitemap with nodes in any language: \{sitemap: {any_lang: true}}
+
+
+*   ### tag.sitemap.used\_kinds
+
+    Specifies the kind of nodes that should be used in the sitemap. This defaults to all nodes with
+    the kind `page`. If this is set to an empty array, any kind of node is used.
+
+    * Syntax: `[KIND, ...]` where `KIND` is the kind of node that should be used.
+
+    * Examples:
+
+          Sitemap with only asset nodes: \{sitemap: {used_kinds: [asset]}}
 
 ---
 
