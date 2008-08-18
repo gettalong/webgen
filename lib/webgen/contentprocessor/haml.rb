@@ -17,7 +17,7 @@ module Webgen::ContentProcessor
         render(Object.new, locals)
       context
     rescue Exception => e
-      raise RuntimeError, "Error converting Haml markup to HTML: #{e.message}", e.backtrace
+      raise RuntimeError, "Error converting Haml markup to HTML in <#{context.ref_node.absolute_lcn}>: #{e.message}", e.backtrace
     end
 
   end

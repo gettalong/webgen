@@ -18,7 +18,7 @@ module Webgen::ContentProcessor
       context.content = xml.target!
       context
     rescue Exception => e
-      raise RuntimeError, "Error using Builder to generate XML: #{e.message}", e.backtrace
+      raise RuntimeError, "Error using Builder in <#{context.ref_node.absolute_lcn}> to generate XML: #{e.message}", e.backtrace
     end
 
   end
