@@ -74,6 +74,15 @@ Sets the directory index path for the directory overriding the default value.
 
 Specifies if the path should appear in menus.
 
+### kind
+
+{:miref}
+* String: `page`
+* Any
+
+Specifies the kind of the path. Some source handlers define a default value for this meta
+information for nodes created by them.
+
 ### lang
 
 {:miref}

@@ -67,12 +67,19 @@ config.sourcehandler.default_meta_info({
                                          :all => {
                                            'output_path_style' => [:parent, :cnbase, ['.', :lang], :ext]
                                          },
+                                         'Webgen::SourceHandler::Copy' => {
+                                           'kind' => 'asset'
+                                         },
                                          'Webgen::SourceHandler::Directory' => {
                                            'index_path' => 'index.html'
                                          },
                                          'Webgen::SourceHandler::Page' => {
+                                           'kind' => 'page',
                                            'fragments_in_menu' => true,
                                            'blocks' => {'default' => {'pipeline' => 'erb,tags,maruku,blocks'}}
+                                         },
+                                         'Webgen::SourceHandler::Fragment' => {
+                                           'kind' => 'fragment'
                                          },
                                          'Webgen::SourceHandler::Template' => {
                                            'blocks' => {'default' => {'pipeline' => 'erb,tags,blocks'}}
@@ -127,6 +134,7 @@ config.contentprocessor.tags.map({
                                    'execute_cmd' => 'Webgen::Tag::ExecuteCommand',
                                    'coderay' => 'Webgen::Tag::Coderay',
                                    'date' => 'Webgen::Tag::Date',
+                                   'sitemap' => 'Webgen::Tag::Sitemap',
                                    :default => 'Webgen::Tag::Metainfo'
                                  }, :doc => 'Tag processor name to class map')
 
@@ -164,3 +172,7 @@ config.tag.coderay.bold_every(10, :doc => 'The interval at which the line number
 config.tag.coderay.tab_width(8, :doc => 'Number of spaces used for a tabulator')
 
 config.tag.date.format('%Y-%m-%d %H:%M:%S', :doc => 'The format of the date (same options as Ruby\'s Time#strftime)')
+
+config.tag.sitemap.honor_in_menu(false, :doc => 'Only include pages that are also in the menu if true')
+config.tag.sitemap.any_lang(false, :doc => 'Use nodes in any language if true')
+config.tag.sitemap.used_kinds(['page'], :doc => 'Array of node kinds that is used for the sitemap')
