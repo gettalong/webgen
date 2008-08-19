@@ -30,6 +30,13 @@ fixes. Also note that this release require facets version 2.4.3 instead of 2.4.1
 * A new source handler for automatic feed generation has been added. This is the first part of the
   blogging support that will be introduced in the following versions of webgen.
 
+* The styling of the menu tag has been modified: an additional CSS class specifying the current menu
+  level has been added and the surrounding `div` tag has been removed.
+
+  > **Attention**: This may break websites which relied on the surrounding `div` tag with the
+  > `webgen-menu` CSS class for styling.
+  {.error}
+
 --- name:changes pipeline:tags,maruku
 
 * Major enhancements:
@@ -45,6 +52,8 @@ fixes. Also note that this release require facets version 2.4.3 instead of 2.4.1
     better node change checking.
   - Added new meta information `kind` for specifying the kind of a node (used, for example, by the
     new sitemap tag)
+  - New level specific CSS class names for generated menus
+  - Removed unnecessary `div` tag surrounding generated menus
 
 * Bug fixes:
 
