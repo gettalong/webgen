@@ -155,7 +155,9 @@ recurring task for your website, for example, for deploying the website to a ser
 some useful tasks out of the box:
 
 * `webgen`: Renders the webgen website once.
-* `auto_webgen`: Automatically renders the website when a source file has changed.
+* `auto_webgen`: Automatically renders the website when a source file has changed. This is very
+  useful when developing a website because you don't need to change back and forth between your
+  website code and the command line to rebuild the site.
 * `clobber_webgen`: Removes all webgen generated products (the output files and the cache file).
 
 

@@ -12,6 +12,17 @@ are not available in the latest released version.
 * If you are looking for the documentation of the 0.4.x series, it can be found
   [here](http://webgen.rubyforge.org/documentation/0.4.x/index.html).
 
+If you don't find an answer to your questions in the documentation, there are also:
+
+* [forums][forum] hosted on Rubyforge
+* [mailing lists][ml] hosted on Rubyforge (the `webgen-users` mailing list is mirrored to the
+  [webgen-users google group][google-group])
+* the IRC channel `#webgen` on Freenode where I can be found whenever I'm online.
+
+[forum]: http://rubyforge.org/forum/?group_id=296
+[ml]: http://rubyforge.org/mail/?group_id=296
+[google-group]: http://groups.google.com/group/webgen-users/
+
 # User Documentation
 
 Depending on whether you are new to webgen, you want more information about a specific topic or read
