@@ -51,30 +51,27 @@ class TestTagMenu < Test::Unit::TestCase
     nodes = create_default_nodes
 
     output = @obj.call('menu', '', Webgen::ContentProcessor::Context.new(:chain => [nodes[:file11_en]]))
-    assert_equal("<div class=\"webgen-menu\">" +
-                 "<ul><li class=\"webgen-menu-submenu webgen-menu-submenu-inhierarchy\"><a href=\"./\"></a>" +
-                 "<ul><li class=\"webgen-menu-submenu\"><a href=\"dir11/index.en.html\"></a></li>" +
-                 "<li class=\"webgen-menu-item-selected\"><span></span></li></ul></li>" +
-                 "<li class=\"webgen-menu-submenu\"><a href=\"../dir2/\"></a></li>" +
-                 "<li class=\"webgen-menu-submenu\"><a href=\"../dir3/\"></a></li></ul></div>", output)
+    assert_equal("<ul><li class=\"webgen-menu-level1 webgen-menu-submenu webgen-menu-submenu-inhierarchy\"><a href=\"./\"></a>" +
+                 "<ul><li class=\"webgen-menu-level2 webgen-menu-submenu\"><a href=\"dir11/index.en.html\"></a></li>" +
+                 "<li class=\"webgen-menu-level2 webgen-menu-item-selected\"><span></span></li></ul></li>" +
+                 "<li class=\"webgen-menu-level1 webgen-menu-submenu\"><a href=\"../dir2/\"></a></li>" +
+                 "<li class=\"webgen-menu-level1 webgen-menu-submenu\"><a href=\"../dir3/\"></a></li></ul>", output)
 
     output = @obj.call('menu', '', Webgen::ContentProcessor::Context.new(:chain => [nodes[:index11_en]]))
-    assert_equal("<div class=\"webgen-menu\">" +
-                 "<ul><li class=\"webgen-menu-submenu webgen-menu-submenu-inhierarchy\"><a href=\"../\"></a>" +
-                 "<ul><li class=\"webgen-menu-submenu webgen-menu-submenu-inhierarchy\"><span></span>" +
-                 "<ul><li ><a href=\"file111.en.html\"></a></li>" +
-                 "<li class=\"webgen-menu-item-selected\"><span></span></li></ul></li>" +
-                 "<li ><a href=\"../file11.en.html\"></a></li></ul></li>" +
-                 "<li class=\"webgen-menu-submenu\"><a href=\"../../dir2/\"></a></li>" +
-                 "<li class=\"webgen-menu-submenu\"><a href=\"../../dir3/\"></a></li></ul></div>", output)
+    assert_equal("<ul><li class=\"webgen-menu-level1 webgen-menu-submenu webgen-menu-submenu-inhierarchy\"><a href=\"../\"></a>" +
+                 "<ul><li class=\"webgen-menu-level2 webgen-menu-submenu webgen-menu-submenu-inhierarchy\"><span></span>" +
+                 "<ul><li class=\"webgen-menu-level3\"><a href=\"file111.en.html\"></a></li>" +
+                 "<li class=\"webgen-menu-level3 webgen-menu-item-selected\"><span></span></li></ul></li>" +
+                 "<li class=\"webgen-menu-level2\"><a href=\"../file11.en.html\"></a></li></ul></li>" +
+                 "<li class=\"webgen-menu-level1 webgen-menu-submenu\"><a href=\"../../dir2/\"></a></li>" +
+                 "<li class=\"webgen-menu-level1 webgen-menu-submenu\"><a href=\"../../dir3/\"></a></li></ul>", output)
 
 
     @obj.set_params('tag.menu.used_nodes' => 'fragments')
     output = @obj.call('menu', '', Webgen::ContentProcessor::Context.new(:chain => [nodes[:file11_en]]))
     @obj.set_params({})
-    assert_equal("<div class=\"webgen-menu\">" +
-                 "<ul><li class=\"webgen-menu-submenu\"><a href=\"#f1\"></a></li>" +
-                 "<li ><a href=\"#f2\"></a></li></ul></div>", output)
+    assert_equal("<ul><li class=\"webgen-menu-level1 webgen-menu-submenu\"><a href=\"#f1\"></a></li>" +
+                 "<li class=\"webgen-menu-level1\"><a href=\"#f2\"></a></li></ul>", output)
 
     @obj.set_params('tag.menu.start_level' => 5)
     output = @obj.call('menu', '', Webgen::ContentProcessor::Context.new(:chain => [nodes[:file11_en]]))
@@ -183,14 +180,16 @@ class TestTagMenu < Test::Unit::TestCase
     nodes = create_default_nodes
     tree = build_menu(nodes[:file111_en], [1, 2, 3, true])
     context = Webgen::ContentProcessor::Context.new(:chain => [nodes[:file111_en]])
-    assert_equal("<ul><li class=\"webgen-menu-submenu webgen-menu-submenu-inhierarchy\"><a href=\"../\"></a>" +
-                 "<ul><li class=\"webgen-menu-submenu webgen-menu-submenu-inhierarchy\"><a href=\"index.en.html\"></a>" +
-                 "<ul><li class=\"webgen-menu-item-selected\"><span></span></li><li ><a href=\"index.en.html\"></a></li></ul></li>" +
-                 "<li ><a href=\"../file11.en.html\"></a></li></ul></li>" +
-                 "<li class=\"webgen-menu-submenu\"><a href=\"../../dir2/\"></a>" +
-                 "<ul><li ><a href=\"../../dir2/file21.en.html\"></a></li></ul></li>" +
-                 "<li class=\"webgen-menu-submenu\"><a href=\"../../dir3/\"></a>" +
-                 "<ul><li ><a href=\"../../dir3/file31.en.html\"></a></li></ul></li></ul>", @obj.send(:create_output, context, tree))
+    assert_equal("<ul><li class=\"webgen-menu-level1 webgen-menu-submenu webgen-menu-submenu-inhierarchy\"><a href=\"../\"></a>" +
+                 "<ul><li class=\"webgen-menu-level2 webgen-menu-submenu webgen-menu-submenu-inhierarchy\"><a href=\"index.en.html\"></a>" +
+                 "<ul><li class=\"webgen-menu-level3 webgen-menu-item-selected\"><span></span></li>" +
+                 "<li class=\"webgen-menu-level3\"><a href=\"index.en.html\"></a></li></ul></li>" +
+                 "<li class=\"webgen-menu-level2\"><a href=\"../file11.en.html\"></a></li></ul></li>" +
+                 "<li class=\"webgen-menu-level1 webgen-menu-submenu\"><a href=\"../../dir2/\"></a>" +
+                 "<ul><li class=\"webgen-menu-level2\"><a href=\"../../dir2/file21.en.html\"></a></li></ul></li>" +
+                 "<li class=\"webgen-menu-level1 webgen-menu-submenu\"><a href=\"../../dir3/\"></a>" +
+                 "<ul><li class=\"webgen-menu-level2\"><a href=\"../../dir3/file31.en.html\"></a></li></ul></li></ul>",
+                 @obj.send(:create_output, context, tree))
   end
 
 end

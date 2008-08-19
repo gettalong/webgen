@@ -59,11 +59,7 @@ module Webgen::Tag
       tree = specific_menu_tree_for(context.content_node)
 
       (context.dest_node.node_info[:tag_menu_menus] ||= {})[[@params.to_a.sort, context.content_node.absolute_lcn]] = (tree ? tree.to_lcn_list : nil)
-      if tree && !tree.children.empty?
-        "<div class=\"webgen-menu\">#{create_output(context, tree)}</div>"
-      else
-        ""
-      end
+      (tree && !tree.children.empty? ? create_output(context, tree) : '')
     end
 
     #########
@@ -134,11 +130,11 @@ module Webgen::Tag
     end
 
     # Create the HTML menu of the +tree+ using the provided +context+.
-    def create_output(context, tree)
+    def create_output(context, tree, level = 1)
       out = "<ul>"
       tree.children.each do |child|
-        menu = child.children.length > 0 ? create_output(context, child) : ''
-        style, link = menu_item_details(context.dest_node, child.node, context.content_node.lang)
+        menu = child.children.length > 0 ? create_output(context, child, level + 1) : ''
+        style, link = menu_item_details(context.dest_node, child.node, context.content_node.lang, level)
 
         out << "<li #{style}>#{link}"
         out << menu
@@ -149,8 +145,8 @@ module Webgen::Tag
     end
 
     # Return style information (node is selected, ...) and a link from +dest_node+ to +node+.
-    def menu_item_details(dest_node, node, lang)
-      styles = []
+    def menu_item_details(dest_node, node, lang, level)
+      styles = ['webgen-menu-level' + level.to_s]
       styles << 'webgen-menu-submenu' if node.is_directory? || (node.is_fragment? && node.children.length > 0)
       styles << 'webgen-menu-submenu-inhierarchy' if (node.is_directory? || (node.is_fragment? && node.children.length > 0)) &&
         dest_node.in_subtree_of?(node)
