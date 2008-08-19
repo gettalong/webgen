@@ -28,15 +28,17 @@ generating an in-page content menu of all the header sections.
 > menu because they have fragment nodes beneath them are not included in the menu.
 {.exclamation}
 
-The rendered menu consists of `ul` and `li` tags and the links to the menu entries as well as a
-surrounding `div` tag. The `li` tags have special CSS classes set for styling. These CSS class names
-are as follows:
+The rendered menu consists of `ul` and `li` tags and the links (or `span` elements) to the menu
+entries . The `li` tags have special CSS classes set for styling. These CSS class names are as
+follows:
 
+* `webgen-menu-levelNUMBER`: Set on all menu items and can be used to style specific menu levels
+  only. `NUMBER` is replaced with the actual menu level, so the first level menu entries will get a
+  `webgen-menu-level1` class.
 * `webgen-menu-submenu`: Set if the menu item contains sub menu items.
 * `webgen-menu-submenu-inhierarchy`: Set if the menu item contains sub menu items and it is in the
   sub tree of the rendered node.
 * `webgen-menu-item-selected`: Set if the menu item corresponds to the rendered node.
-
 
 ## "Static" Menus
 
