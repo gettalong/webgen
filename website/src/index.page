@@ -9,19 +9,24 @@ sort_info: 10
 webgen is a *free* (GPL-licensed) command line application for generating static websites. You could
 write a static website by hand, of course. But by using webgen you have several advantages:
 
-* The page layout is separated from the content: if you change the layout, all pages that use that
-  layout are automatically updated.
+* **The page layout is separated from the content**: if you change the layout, all pages that use
+  that layout are automatically updated. You can have any number of different layouts and even
+  nested ones.
 
-* The content files can be written in a markup language like Markdown or Textile.
+* **Write content in a markup language**: The content and layout files can be written in a markup
+    language like Markdown, Textile or Haml which lets you concentrate more on what you write.
 
-* webgen can automatically generates, for example, menus and breadcrumb trails for you.
+* **Automation**: webgen can automatically generate, for example, menus and breadcrumb trails for
+    you.
 
-* Dynamic content can easily be added to content files.
+* **Dynamic content**: It is easy to add some dynamic content if there is a need for it.
 
-* webgen websites are self contained since all generated links are relative ones.
+* **Self-Contained websites**: webgen websites are self contained since all generated links are
+    relative ones. This allows to preview a generated site without a web server!
 
 The above list should just give you a glimpse of what is possible with webgen. Have a look at the
-[features page]({relocatable: features.html}) for a more complete list.
+[features page]({relocatable: features.html}) for a more complete list and a feature comparison to
+other static website generators.
 
 Although webgen is very powerful it is also very easy to use. A basic website can be created in just
 one step by executing `webgen create mywebsite`. This command will create the directory `mywebsite`
@@ -70,6 +75,14 @@ following platforms:
 
 Furthermore, webgen should also run on jruby 1.1.3 and ruby 1.9.0 but that has not been extensively
 tested.
+
+webgen uses git as its versioning system and webgen's repository is hosted primarily on Rubyforge
+but I have also created a clone of it on GitHub. The repositories always contains a clean state of
+the current development version of webgen, i.e. webgen should always work when checked out from the
+repository. To check out webgen use one of the following commands:
+
+     git clone git://rubyforge.org/webgen.git
+     git clone git://github.com/gettalong/webgen.git
 
 ### Using Rubygems
 

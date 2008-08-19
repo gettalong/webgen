@@ -66,3 +66,65 @@ Below is a list of features that webgen supports or will shortly support.
     * Support for specifying 'virtual files and directories' (can be used, for example, to include
       links to external pages in the menu)
     * Generated HTML files can be automatically checked if they are standard conform
+
+
+# Comparison to other generators
+
+Many static website generators are available on the net. Following is a short comparison of webgen
+to the following static website generators (mail me if I should include others):
+
+* [nanoc 2.1.1](http://nanoc.stoneship.org)
+* [webby 0.8.4](http://webby.rubyforge.org)
+
+
+## nanoc
+
+nano is also written in Ruby and aims to be a small CMS. It is possible to programatically generate
+content and template files and nanoc even has support for some version control systems. It is also
+possible to extend nanoc with custom code.
+
+Similarities:
+
+* nanoc also provides a wide variety of markup/template languages.
+* similiar command driven CLI
+* partial site generation (although not as powerful as webgen's one)
+* auto-building of websites
+* output path can be customized
+
+Disadvantages:
+
+* nothing comparable to webgen tags
+* only one data source can be used at a time
+* no website templates/styles
+* fixed website directory structure
+* not generating relative URLs
+
+Advantages:
+
+* programatic generation of content/template files
+* blogging support
+
+
+## webby
+
+Webby is also written in Ruby and is similar to nanoc. It uses rake tasks for everything, from
+building the website to adding new content files and it is easy to extend. From a source code point
+of view it does not look as advanced as webgen or nanoc.
+
+Similarities:
+
+* partial site generation (although not as powerful as webgen's one)
+* auto-building of websites
+* helpers for syntax highlighting
+
+Disadvantages:
+
+* not as many markup/template languages
+* nothing comparable to webgen tags
+* fixed website directory structure
+* not generating relative URLs
+
+Advantages:
+
+* can use a database as a source of content
+* helper methods for outputting LaTeX and graphivz images
