@@ -159,13 +159,13 @@ background-color:inherit;
 
 /**************** Menublock styles ****************/
 
-#subcontent .webgen-menu ul, .linkblock {margin:0 0 20px 8px; font-size:0.9em;}
-#subcontent .webgen-menu ul li, .linkblock li {list-style:none; display:block; padding:2px; margin-bottom:2px;}
-#subcontent .webgen-menu ul li a, .linkblock li a {font-weight:bold; text-decoration:none;}
-#subcontent .webgen-menu ul li a:hover, .linkblock li a:hover {text-decoration:none;}
-#subcontent .webgen-menu ul li ul, .linkblock li ul {margin:3px 0 3px 15px; font-size:1em; font-weight:normal;}
-#subcontent .webgen-menu ul li ul li, .linkblock li ul li {margin-bottom:0;}
-#subcontent .webgen-menu ul li ul a, .linkblock li ul a {font-weight:normal;}
+#subcontent #submenu ul, .linkblock {margin:0 0 20px 8px; font-size:0.9em;}
+#subcontent #submenu ul li, .linkblock li {list-style:none; display:block; padding:2px; margin-bottom:2px;}
+#subcontent #submenu ul li a, .linkblock li a {font-weight:bold; text-decoration:none;}
+#subcontent #submenu ul li a:hover, .linkblock li a:hover {text-decoration:none;}
+#subcontent #submenu ul li ul, .linkblock li ul {margin:3px 0 3px 15px; font-size:1em; font-weight:normal;}
+#subcontent #submenu ul li ul li, .linkblock li ul li {margin-bottom:0;}
+#subcontent #submenu ul li ul a, .linkblock li ul a {font-weight:normal;}
 
 /**************** Searchbar styles ****************/
 

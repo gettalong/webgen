@@ -159,13 +159,13 @@ padding:0;
 
 /*** Sidebar menu ***/
 
-.webgen-menu-section ul {
+#pagemenu ul {
   margin: 0 0 16px 10px;
   padding: 0px;
   list-style: none;
 }
 
-.nav, .webgen-menu-section a {
+.nav, #pagemenu a {
 background:#e8e9ea;
 border:1px solid #b0b0b0;
 color:#606060;
@@ -177,7 +177,7 @@ text-transform:uppercase;
 width:140px;
 }
 
-.nav:hover, .webgen-menu-section a:hover, .webgen-menu-section li.webgen-menu-item-selected a, .webgen-menu-section li.webgen-menu-submenu-inhierarchy a, .active {
+.nav:hover, #pagemenu a:hover, #pagemenu li.webgen-menu-item-selected a, #pagemenu li.webgen-menu-submenu-inhierarchy a, .active {
 background:#f8f9fa;
 border:1px solid #909090;
 color:#303030;

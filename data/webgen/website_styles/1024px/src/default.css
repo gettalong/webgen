@@ -12,7 +12,7 @@ margin:0 auto;
 padding:0;
 }
 
-a, #sidebar .webgen-menu span {
+a, #sidebar #menu span {
 text-decoration:none;
 color:#4088b8;
 font-weight:bold;

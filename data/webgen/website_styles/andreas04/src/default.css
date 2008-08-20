@@ -95,7 +95,7 @@ padding-top:35px;
 text-align: right;
 }
 
-#menu .webgen-menu ul, #menu .webgen-menu li {
+#menu ul, #menu li {
 display: inline;
 margin: 0px;
 padding: 0px;

@@ -27,7 +27,7 @@
 
         <div id="leftside">
           <h1>Page Menu</h1>
-          {menu: {used_nodes: fragments}}
+          <div id="pagemenu">{menu: {used_nodes: fragments}}</div>
 
 	  <h1>Color</h1>
 	  <p>This website style is available in many different colors. Just copy one of the <code>menuhover-COLOR.jpg</code> and <code>bodybg-COLOR.jpg</code> over <code>menuhover.jpg</code> and <code>bodybg.jpg</code> and your are done. You can then delete the other menuhover-* and bodybg-* images.</p>
