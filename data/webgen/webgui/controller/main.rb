@@ -102,7 +102,7 @@ class MainController < Ramaze::Controller
       @styles = wm.styles.keys.select {|k| k =~ /^website-|[^-]+/ }.sort
 
       if !@cur_style.nil? && !@cur_template.nil?
-        ws = Webgen::Website.new('unknown') do |config|
+        ws = Webgen::Website.new('unknown', nil) do |config|
           config['sources'] = [
                                ['/', 'Webgen::Source::Resource', 'webgen-website-template-' + @cur_template, '/src/**', '/src'],
                                ['/', 'Webgen::Source::Resource', 'webgen-website-style-' + @cur_style, '/src/**', '/src']
