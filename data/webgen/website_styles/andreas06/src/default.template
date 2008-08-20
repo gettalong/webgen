@@ -39,7 +39,7 @@
             <p class="soft">Some text here, maybe a website description</p>
             <% if node.level > 1 %>
 	    <h1>Site menu:</h1>
-            {menu: {start_level: 2, max_levels: 2}}
+            <div id="submenu">{menu: {start_level: 2, max_levels: 2}}</div>
 	    <% end %>
           </div>
 

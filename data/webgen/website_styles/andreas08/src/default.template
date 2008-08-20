@@ -14,7 +14,7 @@
     <div id="container" >
 
       <div id="header">
-        <h1><a href="{relocatable: /index.page}">website title</a></h1>
+        <h1><a href="{relocatable: /index.html}">website title</a></h1>
         <h2>space reserved for your website slogan!</h2>
       </div>
 
@@ -30,7 +30,7 @@
         <div class="small box"><strong>Note: </strong>This is a box. It can be used for special messages both in the sidebar and the content section. You could use it for special notes and announcements, but also as a frame for photos. This space can be used for a short website presentation!</div>
 
         <h2>Nested Menu</h2>
-        {menu: }
+        <div id="submenu">{menu: }</div>
 
         <h2>Links</h2>
         <ul class="linkblock">

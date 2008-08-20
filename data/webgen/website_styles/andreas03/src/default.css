@@ -123,13 +123,13 @@ margin: 0px;
 padding: 5px 0px 5px 8px;
 }
 
-#sidebar .webgen-menu ul {
+#sidebar #menu ul {
 list-style-type: none;
 margin: 0px;
 padding: 0px;
 }
 
-#sidebar .webgen-menu li a, #sidebar .webgen-menu li span, .sidelink{
+#sidebar #menu li a, #sidebar #menu li span, .sidelink{
 display:block;
 width:140px;
 margin:3px 10px 2px 0;
@@ -145,7 +145,7 @@ border-bottom:1px solid #bbb;
 border-left:1px solid #ddd;
 }
 
-#sidebar .webgen-menu li a:hover, #sidebar li.webgen-menu-item-selected a, #sidebar li.webgen-menu-item-selected span, .sidelink:hover, .menuheader {
+#sidebar #menu li a:hover, #sidebar li.webgen-menu-item-selected a, #sidebar li.webgen-menu-item-selected span, .sidelink:hover, .menuheader {
 background:#fff url(images/gradient2.png) repeat-x;
 color:#222;
 border-top:1px solid #ddd;
