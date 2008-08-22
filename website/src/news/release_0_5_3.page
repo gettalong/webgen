@@ -16,7 +16,7 @@ modified_at: 2008-08-??
 --- name:notes pipeline:maruku
 
 This release brings some usability and feature enhancements to webgen as well as several bug
-fixes. Also note that this release require facets version 2.4.3 instead of 2.4.1!
+fixes. Also note that this release requires facets version 2.4.3 instead of 2.4.1!
 
 * Setting some configuration options (for example, the path patterns used by
   Webgen::SourceHandler::Copy) was very complicated in previous releases. With the introduction of
@@ -42,6 +42,7 @@ fixes. Also note that this release require facets version 2.4.3 instead of 2.4.1
 * Major enhancements:
 
   - Added a [feed source handler] for generating atom and/or RSS feeds.
+  - Added a [sitemap source handler] for generating XML sitemaps
   - Ported the [sitemap tag] and feature-enhanced it
 
 * Minor enhancements:
@@ -52,6 +53,7 @@ fixes. Also note that this release require facets version 2.4.3 instead of 2.4.1
     better node change checking.
   - Added new meta information `kind` for specifying the kind of a node (used, for example, by the
     new sitemap tag)
+  - Added new meta information `change_freq` and `priority` (used by the new sitemap source handler)
   - New level specific CSS class names for generated menus
   - Removed unnecessary `div` tag surrounding generated menus
 
@@ -65,6 +67,7 @@ fixes. Also note that this release require facets version 2.4.3 instead of 2.4.1
     2.4.3 is needed for webgen.
 
 [feed source handler]: {relocatable: ../documentation/sourcehandler/feed.html}
+[sitemap source handler]: {relocatable: ../documentation/sourcehandler/sitemap.html}
 [sitemap tag]: {relocatable: ../documentation/tag/sitemap.html}
 [metainfo source handler]: {relocatable: ../documentation/sourcehandler/metainfo.html}
 [breadcrumb trail tag]: {relocatable: ../documentation/tag/breadcrumbtrail.html}

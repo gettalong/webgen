@@ -41,6 +41,16 @@ Specifies the default names and additional options for the blocks. The special k
 to set default options for all blocks. Specific options for (or the name of) a block can be set by
 using the block index as key (numbering starts from one).
 
+### change\_freq
+
+{:miref}
+* String: `hourly`
+* Any
+
+Sets the change frequency of the page. This information is used, for example, by the sitemap source
+handler. You can use the following values for this key: `hourly, daily, weekly, monthly, yearly,
+never`.
+
 ### created\_at
 
 {:miref}
@@ -142,6 +152,15 @@ in a sub-array, the whole sub-array is omitted, if the configuration option
 > This meta information has to be set BEFORE a node gets created. Setting this value is therefore
 > only useful, for example, in the `paths` block of a meta information backing file.
 {.exclamation}
+
+### priority
+
+{:miref}
+* Float: `0.5`
+* Any
+
+Specifies the priority of this file in respect to all the other files of the website. This
+information is used, for example, by the sitemap source handler.
 
 ### routed\_title
 

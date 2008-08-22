@@ -51,11 +51,13 @@ config.sourcehandler.patterns({
                                 'Webgen::SourceHandler::Page' => ['**/*.page'],
                                 'Webgen::SourceHandler::Virtual' => ['**/virtual', '**/*.virtual'],
                                 'Webgen::SourceHandler::Feed' => ['**/*.feed'],
+                                'Webgen::SourceHandler::Sitemap' => ['**/*.sitemap']
                               }, :doc => 'Source handler to path pattern map')
 config.sourcehandler.invoke({
                               1 => ['Webgen::SourceHandler::Directory', 'Webgen::SourceHandler::Metainfo', 'Webgen::SourceHandler::Directory'],
                               5 => ['Webgen::SourceHandler::Copy', 'Webgen::SourceHandler::Template',
-                                    'Webgen::SourceHandler::Page', 'Webgen::SourceHandler::Feed'],
+                                    'Webgen::SourceHandler::Page', 'Webgen::SourceHandler::Feed',
+                                    'Webgen::SourceHandler::Sitemap'],
                               9 => ['Webgen::SourceHandler::Virtual']
                             }, :doc => 'All source handlers listed here are used by webgen and invoked according to their priority setting')
 config.sourcehandler.casefold(true, :doc => 'Specifies whether path are considered to be case-sensitive')
@@ -90,6 +92,11 @@ config.sourcehandler.default_meta_info({
                                          'Webgen::SourceHandler::Feed' => {
                                            'rss' => true,
                                            'atom' => true
+                                         },
+                                         'Webgen::SourceHandler::Sitemap' => {
+                                           'default_priority' => 0.5,
+                                           'default_change_freq' => 'weekly',
+                                           'common.sitemap.any_lang' => true
                                          }
                                        }, :doc => "Default meta information for all nodes and for nodes belonging to a specific source handler")
 
@@ -173,6 +180,10 @@ config.tag.coderay.tab_width(8, :doc => 'Number of spaces used for a tabulator')
 
 config.tag.date.format('%Y-%m-%d %H:%M:%S', :doc => 'The format of the date (same options as Ruby\'s Time#strftime)')
 
-config.tag.sitemap.honor_in_menu(false, :doc => 'Only include pages that are also in the menu if true')
-config.tag.sitemap.any_lang(false, :doc => 'Use nodes in any language if true')
-config.tag.sitemap.used_kinds(['page'], :doc => 'Array of node kinds that is used for the sitemap')
+
+# All things regarding common functionality
+website.autoload_service(:create_sitemap, 'Webgen::Common::Sitemap')
+
+config.common.sitemap.honor_in_menu(false, :doc => 'Only include pages that are also in the menu if true')
+config.common.sitemap.any_lang(false, :doc => 'Use nodes in any language if true')
+config.common.sitemap.used_kinds(['page'], :doc => 'Array of node kinds that is used for the sitemap')

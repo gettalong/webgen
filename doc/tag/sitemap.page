@@ -1,9 +1,9 @@
 ---
 title: Webgen::Tag::Sitemap
 used_options:
-  - tag.sitemap.honor_in_menu
-  - tag.sitemap.any_lang
-  - tag.sitemap.used_kinds
+  - common.sitemap.honor_in_menu
+  - common.sitemap.any_lang
+  - common.sitemap.used_kinds
 ---
 ## Description
 

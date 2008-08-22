@@ -14,6 +14,7 @@ require 'webgen/cache'
 require 'webgen/tree'
 
 # Files for autoloading
+require 'webgen/common'
 require 'webgen/source'
 require 'webgen/output'
 require 'webgen/sourcehandler'
