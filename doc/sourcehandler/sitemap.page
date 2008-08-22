@@ -1,0 +1,40 @@
+---
+title: Webgen::SourceHandler::Sitemap
+---
+## Description
+
+This source handler automatically generates a sitemap based on the specification of
+[sitemaps.org](http://sitemaps.org) from a file in [Webgen Page Format]({relocatable:
+../webgen_page_format.html}).
+
+The following meta information keys are supported:
+
+*   `site_url` (MANDATORY)
+
+    The base url of the website for which the sitemap is generated.
+
+*   `default_change_freq` (OPTIONAL)
+
+    The default change frequency of a file.
+
+*   `default_priority` (OPTIONAL)
+
+    The default priority of a file.
+
+You can also specify all common sitemap configuration options to customize the output of the source
+handler.
+
+The following meta information keys of files are used if they are specified:
+
+*   `modified_at`
+
+    The time at which the file was last modified, used as the time at which this feed entry was
+    updated.
+
+*   `change_freq`
+
+    The change frequency of the the file.
+
+*   `priority`
+
+    The priority of the file in respect to the other files.
