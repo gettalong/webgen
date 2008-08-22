@@ -64,6 +64,16 @@ class TestPage < Test::Unit::TestCase
     - name: content
       content: ''
 
+# with only meta information, no blocks
+- in: |
+    ---
+    key: value
+
+  meta_info: {key: value}
+  blocks:
+    - name: content
+      content: ''
+
 # block with escaped ---
 - in: |
     before
@@ -123,11 +133,6 @@ EOF
   ---
   asdf kadsfakl
 
-# no block specified
-- |
-  ---
-  doit: now
-
 # two blocks with same name
 - |
   aasdf
@@ -156,6 +161,7 @@ EOF
     YAML::load(VALID).each_with_index do |data, oindex|
       d = Webgen::Page.from_data(data['in'])
       assert_equal(data['meta_info'], d.meta_info, "test item #{oindex} - meta info")
+      assert_equal(data['blocks'].length*2, d.blocks.length)
       data['blocks'].each_with_index do |b, index|
         index += 1
         assert_equal(b['name'], d.blocks[index].name, "test item #{oindex} - name")
