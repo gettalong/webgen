@@ -33,6 +33,8 @@ class TestSourceHandlerTemplate < Test::Unit::TestCase
     invalid_template = Webgen::Node.new(root, 'invalid.template', 'invalid.template', {'template' => 'invalidity'})
     chained_template = Webgen::Node.new(root, 'chained.template', 'chained.template', {'template' => 'other.template'})
     german_file = Webgen::Node.new(root, 'german.html', 'german.page', {'lang' => 'de', 'template' => 'other.template'})
+    dir = Webgen::Node.new(root, '/dir/', 'dir')
+    dir_default_template = Webgen::Node.new(dir, '/dir/default.template', 'default.template')
 
     assert_equal([], @obj.templates_for_node(default_template))
     assert_equal([], @obj.templates_for_node(stopped_template))
@@ -40,6 +42,7 @@ class TestSourceHandlerTemplate < Test::Unit::TestCase
     assert_equal([default_template], @obj.templates_for_node(invalid_template))
     assert_equal([default_template, other_template], @obj.templates_for_node(chained_template))
     assert_equal([default_de_template, other_template], @obj.templates_for_node(german_file))
+    assert_equal([default_template], @obj.templates_for_node(dir_default_template))
 
     @website.cache.reset_volatile_cache
     root.tree.delete_node(default_template)

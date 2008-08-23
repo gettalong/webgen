@@ -35,7 +35,11 @@ module Webgen::SourceHandler
         template_node = cached_template[lang] = nil
       else
         log(:info) { "Using default template in language '#{lang}' for <#{node.absolute_lcn}>" }
-        template_node = cached_template[lang] = default_template(node.parent, lang)
+        template_node = default_template(node.parent, lang)
+        if template_node == node && !node.parent.is_root?
+          template_node = default_template(node.parent.parent, lang)
+        end
+        cached_template[lang] = template_node
       end
 
       if template_node.nil?
