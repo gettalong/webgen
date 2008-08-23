@@ -1,6 +1,7 @@
 ---
 title: webgen 0.5.3 released
 in_menu: false
+draft: true
 sort_info: 2008-08-??
 created_at: 2008-08-??
 modified_at: 2008-08-??
@@ -54,6 +55,7 @@ fixes. Also note that this release requires facets version 2.4.3 instead of 2.4.
   - Added new meta information `kind` for specifying the kind of a node (used, for example, by the
     new sitemap tag)
   - Added new meta information `change_freq` and `priority` (used by the new sitemap source handler)
+  - Added new meta information `draft` which can be set on paths that should not create any nodes
   - New level specific CSS class names for generated menus
   - Removed unnecessary `div` tag surrounding generated menus
 

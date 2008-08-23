@@ -60,6 +60,15 @@ never`.
 Sets the time when the path was created. This information cannot automatically be derived for paths
 provided by Webgen::Source::FileSystem, so this has to be set manually.
 
+### draft
+
+{:miref}
+* Boolean: `true`
+* Any
+
+If this meta information is set on a path, no node will be created from it. This is useful to add
+content to a website which should only be used later on.
+
 ### fragments\_in\_menu
 
 {:miref}
