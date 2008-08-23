@@ -55,7 +55,7 @@ module Webgen::Common
 
       node.node_info[:common_sitemap].each do |(options, lang), cached_tree|
         @options = options.to_hash
-        tree = recursive_create(nil, node.tree.root, lang).to_lcn_list
+        tree = recursive_create(nil, node.tree.root, lang).sort!.to_lcn_list
         @options = nil
 
         if (tree != cached_tree) ||
