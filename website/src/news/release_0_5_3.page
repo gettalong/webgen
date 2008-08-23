@@ -67,6 +67,9 @@ fixes. Also note that this release requires facets version 2.4.3 instead of 2.4.
   - Fix some other bugs releated to the meta information `modified_at`.
   - An API change in facets from version 2.4.1 to 2.4.3 prevented webgen from working, now facets
     2.4.3 is needed for webgen.
+  - Fixed bug in template source handler: template chain resolution stopped at default.template in
+    sub directory and did not go further towards the root directory.
+
 
 [feed source handler]: {relocatable: ../documentation/sourcehandler/feed.html}
 [sitemap source handler]: {relocatable: ../documentation/sourcehandler/sitemap.html}

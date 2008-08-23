@@ -54,8 +54,8 @@ h3 { font-size: 1.3em; }
 
 #sidebar h1 {
   font: bold 1.4em 'Trebuchet MS', Arial, Sans-serif;
-  background: url(images/arrow.gif) no-repeat 5px .6em;
-  padding: 7px 0 7px 30px;
+  background: url(images/arrow.gif) no-repeat 0px .6em;
+  padding: 7px 0 7px 25px;
   color: #193441;
 }
 
@@ -216,6 +216,10 @@ blockquote pre {
   width: 340px;
   margin: 0; padding: 10px;
   background-color: #91AA9D;
+}
+#sidebar p {
+  margin: 0px;
+  padding-left: 10px;
 }
 #sidebar ul {
   list-style: inside square;
