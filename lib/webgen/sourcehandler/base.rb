@@ -156,6 +156,7 @@ module Webgen::SourceHandler
     # additional node information like <tt>:src</tt> and <tt>:processor</tt> is set and the meta
     # information is checked for validness. The created node is yielded if a block is given.
     def create_node(parent, path, output_path = self.output_path(parent, path))
+      return if path.meta_info['draft']
       if !node_exists?(parent, path, output_path)
         node = Webgen::Node.new(parent, output_path, path.cn, path.meta_info)
         node['modified_at'] = Time.now unless node['modified_at'].kind_of?(Time)
