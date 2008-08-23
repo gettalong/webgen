@@ -136,7 +136,8 @@ valid time, the time when webgen is executed is used for this meta information.
 * Boolean: `true`
 * Any
 
-Specifies whether an output path for this node gets written or not.
+Specifies whether an output path for the node should be written or not. This differs from `draft`
+that a node for the path gets created nonetheless.
 
 ### omit\_index\_path
 

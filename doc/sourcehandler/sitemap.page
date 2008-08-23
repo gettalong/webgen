@@ -7,6 +7,12 @@ This source handler automatically generates a sitemap based on the specification
 [sitemaps.org](http://sitemaps.org) from a file in [Webgen Page Format]({relocatable:
 ../webgen_page_format.html}).
 
+> This extension can only be used if you have installed the [builder][1] library. The preferred way
+> to do this is via Rubygems:
+>
+>     gem install builder
+{.exclamation}
+
 The following meta information keys are supported:
 
 *   `site_url` (MANDATORY)
