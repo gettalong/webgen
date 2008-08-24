@@ -134,6 +134,15 @@ EOF
       s.version = Webgen::VERSION
       s.summary = SUMMARY
       s.description = DESCRIPTION
+      s.post_install_message = <<EOF
+Thanks for choosing webgen! Here are some places to get you started:
+* The webgen User Documentation at <http://webgen.rubyforge.org/documentation/index.html>
+* The mailing list archive at <http://rubyforge.org/pipermail/webgen-users/>
+
+Have a look at <http://webgen.rubyforge.org/news/index.html> for a list of changes!
+
+Have fun!
+EOF
 
       #### Dependencies, requirements and files
 
@@ -152,7 +161,7 @@ EOF
       s.add_development_dependency('builder', '>= 2.1.0')
       s.add_development_dependency('rdoc', '>= 2.0.0')
       s.add_development_dependency('coderay', '>= 0.7.4.215')
-      s.add_development_dependency('feed_tools', '>= 0.2.29')
+      s.add_development_dependency('feedtools', '>= 0.2.29')
 
       s.require_path = 'lib'
 
