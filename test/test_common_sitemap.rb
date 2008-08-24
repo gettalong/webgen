@@ -34,6 +34,10 @@ class TestCommonSitemap < Test::Unit::TestCase
               [:dir1, :file11_en, :file11_en_f1, :dir2, :file21_en, :index_en])
     do_assert(@nodes[:file11_en], 'en', false, false, ['noone'],
               [])
+    do_assert(@nodes[:file11_en], 'en', false, false, ['page', 'directory'],
+              [:dir1, :file11_en, :dir2, :index_en])
+    do_assert(@nodes[:file11_en], 'en', true, false, ['page', 'directory'],
+              [:dir1, :file11_en])
 
     do_assert(@nodes[:file1_de], 'de', false, false, ['page'],
               [:file1_de])
