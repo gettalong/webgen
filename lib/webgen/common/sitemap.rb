@@ -28,18 +28,20 @@ module Webgen::Common
     #######
 
     # Recursively create the sitemap.
-    def recursive_create(parent, node, lang)
+    def recursive_create(parent, node, lang, in_sitemap = true)
       mnode = Webgen::Tag::Menu::MenuNode.new(parent, node)
-      node.children.select do |n|
-        n.is_directory? || ((option('common.sitemap.used_kinds').empty? || option('common.sitemap.used_kinds').include?(n['kind'])) &&
-                            (option('common.sitemap.any_lang') || n.lang.nil? || n.lang == lang) &&
-                            (!option('common.sitemap.honor_in_menu') || n['in_menu']) &&
-                            (parent.nil? || node.routing_node(lang) != n))
-      end.each do |n|
-        sub_node = recursive_create(mnode, n, lang)
+      node.children.map do |n|
+        sub_in_sitemap = ((option('common.sitemap.used_kinds').empty? || option('common.sitemap.used_kinds').include?(n['kind'])) &&
+                          (option('common.sitemap.any_lang') || n.lang.nil? || n.lang == lang) &&
+                          (!option('common.sitemap.honor_in_menu') || n['in_menu']) &&
+                          (parent.nil? || node.routing_node(lang) != n))
+        [(!n.children.empty? || sub_in_sitemap ? n : nil), sub_in_sitemap]
+      end.each do |n, sub_in_sitemap|
+        next if n.nil?
+        sub_node = recursive_create(mnode, n, lang, sub_in_sitemap)
         mnode.children << sub_node unless sub_node.nil?
       end
-      (mnode.children.empty? && mnode.node.is_directory? && !parent.nil? ? nil : mnode)
+      (mnode.children.empty? && !in_sitemap ? nil : mnode)
     end
 
     # Retrieve the configuration option value for +name+. The value is taken from the current

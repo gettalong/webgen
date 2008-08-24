@@ -73,7 +73,8 @@ config.sourcehandler.default_meta_info({
                                            'kind' => 'asset'
                                          },
                                          'Webgen::SourceHandler::Directory' => {
-                                           'index_path' => 'index.html'
+                                           'index_path' => 'index.html',
+                                           'kind' => 'directory'
                                          },
                                          'Webgen::SourceHandler::Page' => {
                                            'kind' => 'page',
