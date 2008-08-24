@@ -28,31 +28,35 @@ If you don't find an answer to your questions in the documentation, there are al
 Depending on whether you are new to webgen, you want more information about a specific topic or read
 a reference, go to one of the following pages:
 
-* [Getting Started Guide]({relocatable: getting_started.html}): If you are new to webgen, this
+* [**Getting Started Guide**]({relocatable: getting_started.html}): If you are new to webgen, this
   should be your first read. It explains the usage of the CLI command and how to create your first
   website with webgen.
 
-* [Manual]({relocatable: manual.html}): Detailed information about how webgen works can be found
+* [**Manual**]({relocatable: manual.html}): Detailed information about how webgen works can be found
   here. After reading the Getting Started Guide, this should be the next read. Have a look at the
   section headers to get a quick overview of what can be found here.
 
-* [FAQ]({relocatable: faq.html}): If you want to do something with webgen, but you don't know how,
+* [**FAQ**]({relocatable: faq.html}): If you want to do something with webgen, but you don't know how,
   this page is exactly for you. It provides answers to frequently asked questions. If you have a
   question which you think should be added, just mail me.
 
-* Reference Documentation:
+* [**Upgrade information**]({relocatable: upgrading.html}): This document provides some information
+  on upgrading a website from the 0.4.x to the 0.5.x series.
 
-  * [Extensions Documentation]({relocatable: extensions.html}): Detailed information on every usage
-    related extension class (source handlers, tags, content processors, ...)
 
-  * [Webgen Page Format]({relocatable: webgen_page_format.html}): Information about/Specification of
-    the format used, for example, by page and template files
+Following is a list of all the reference documentation of webgen:
 
-  * [Meta Information Reference]({relocatable: reference_metainfo.html}): Descriptions for every
-    meta information key that is used by webgen.
+* [**Extensions Documentation**]({relocatable: extensions.html}): Detailed information on every usage
+  related extension class (**source handlers, tags, content processors**, ...)
 
-  * [Configuration Options Reference]({relocatable: reference_configuration.html}): Overview of all
-    configuration options.
+* [**Webgen Page Format**]({relocatable: webgen_page_format.html}): Information about/Specification of
+  the format used, for example, by page and template files
+
+* [**Meta Information Reference**]({relocatable: reference_metainfo.html}): Descriptions for every
+  meta information key that is used by webgen.
+
+* [**Configuration Options Reference**]({relocatable: reference_configuration.html}): Overview of all
+  configuration options.
 
 # Developer Documentation
 

@@ -1,0 +1,67 @@
+---
+title: Upgrading from 0.4.x
+---
+# Upgrading
+
+Here are some helpers to make upgrading a webgen website from 0.4.x to 0.5.x more easy:
+
+* **Files in [Webgen Page Format]({relocatable: webgen_page_format.html})**: Since the format of
+  these files changed a little bit you may need to adapt all your files that use it, that is
+  primarily page and template files. The main change in the format was a different use of the block
+  separator line. Whereas before you would write
+
+      --- content, textile
+
+  for specifying the name of the block and its processor, you now can specify any number of
+  options. Two options are currently used by webgen: `name` and `pipeline`. So you could change the
+  name and the processing pipeline of a block by using a block start line like:
+
+      --- name:other pipeline:tags,maruku,blocks
+
+* **Block inclusion in template/page files**: The way how named blocks are included has
+  changed. This feature is now provided by the content processor [blocks]({relocatable:
+  contentprocessor/blocks.html}) instead of the tag `block`. This allows you to specify the point in
+  the processing pipeline when a block should be included. So you definitely need to update your
+  `default.template` file as well as any other page/template file where you used the `block` tag.
+
+* **Meta information names**: The names of some meta information keys have been changed. Meta
+  information names are not specified in camelCase anymore but with under\_scores. You can find a
+  complete list of supported meta information names in the [meta information
+  reference]({relocatable: reference_metainfo.html}). The most notable changes are:
+
+  * directoryName → routed\_title
+  * inMenu → in\_menu
+  * indexFile → index\_path
+  * omitIndexPath → omit\_index\_path
+  * outputNameStyle → output\_path\_style
+  * orderInfo → sort\_info
+
+* **website\_dir/metainfo.yaml**: This file is not supported anymore since webgen 0.5.x uses a more
+  flexible way for specifying meta information and virtual paths. You need to migrate its data to
+  `metainfo` and `virtual` files in the source directory. Have a look at the documentation of the
+  [metainfo source handler]({relocatable: sourcehandler/metainfo.html}) and the [virtual source
+  handler]({relocatable: sourcehandler/virtual.html}).
+
+* **Configuration file syntax**: The configuration file syntax as well as the names of the
+  configuration options and some defaults changed. For example, the default processing pipeline now
+  uses Maruku (a Markdown converter) as markup language processor. You can find an overview over all
+  available configuration options in the [configuration option reference]({relocatable:
+  reference_configuration.html}). Also have a look at the [configuration file
+  documentation]({relocatable: manual.html#website-configfile}) for more information on the syntax
+  of this file and the available helpers.
+
+* **Extensions development**: Since the complete core of webgen has changed you need to rewrite all
+  your plugins for the 0.5.x series. Howver, webgen has complete [API documentation]({relocatable:
+  api.html}) now which provides you with all needed information as well as examples on how to
+  implement source handlers, tags, content processors, ... If you still have any questions, don't
+  hesitate to contact me or write a mail to the mailing list!
+
+* **Not Implement Yet**: There are several features of the 0.4.x series which are currently not
+  implemented in the 0.5.x series:
+
+  * source handlers: gallery, sipttra
+  * tags: customvar (won't be ported), download, htmlmetainfo, news (won't be ported, superceded
+    by blogging support), wikilink
+  * misc: smiley replacer, html validators
+
+  If you need any of those you have to wait till they are implemented or port them on your on.
