@@ -239,6 +239,7 @@ EOF
     site.config_block = lambda do |config|
       config['sources'] += [['/documentation/', 'Webgen::Source::FileSystem', '../doc'],
                             ['/', "Webgen::Source::FileSystem", '../misc', 'default.css'],
+                            ['/documentation/', "Webgen::Source::FileSystem", '../misc', 'htmldoc.virtual'],
                             ['/', "Webgen::Source::FileSystem", '../misc', 'images/**/*']]
     end
   end
@@ -281,6 +282,7 @@ EOF
   EXCLUDED_FOR_TESTS=FileList.new(['lib/webgen/cli{*,**/*}', 'lib/webgen/version.rb',
                                    'lib/webgen/output.rb', 'lib/webgen/source.rb',
                                    'lib/webgen/tag.rb', 'lib/webgen/default_config.rb',
+                                   'lib/webgen/common.rb'
                                   ])
 
   EXCLUDED_FOR_DOCU=FileList.new(['lib/webgen/cli{*,**/*}', 'lib/webgen/contentprocessor/context.rb',
