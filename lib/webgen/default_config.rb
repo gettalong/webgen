@@ -117,7 +117,9 @@ Webgen::WebsiteAccess.website.blackboard.add_service(:output_instance, Webgen::O
 
 # All things regarding content processors
 config.contentprocessor.map({
+                              'markdown' => 'Webgen::ContentProcessor::Maruku',
                               'maruku' => 'Webgen::ContentProcessor::Maruku',
+                              'textile' => 'Webgen::ContentProcessor::RedCloth',
                               'redcloth' => 'Webgen::ContentProcessor::RedCloth',
                               'tags' => 'Webgen::ContentProcessor::Tags',
                               'blocks' => 'Webgen::ContentProcessor::Blocks',
