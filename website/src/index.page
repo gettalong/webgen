@@ -91,6 +91,12 @@ install webgen` (or, if you want the current stable version, just use `gem insta
 0.5.0'`). After this command has finished, everything is ready for creating websites. Be sure to
 have a look at the optional dependencies which provide additional functionality.
 
+> Rubygems 1.2.0 has a bug that prevents the correct resolution of development dependencies. Till a
+> new version of Rubygems is released, you will have to use the following command to install webgen:
+>
+>     gem install --development webgen
+{.error}
+
 ### Manual Installation
 
 The latest version of webgen can always be downloaded from [webgen's files section on
