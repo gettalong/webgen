@@ -123,6 +123,29 @@ keys to help setting these configuration options:
           Page:
             in_menu: true
 
+*   `default_processing_pipeline`: Set the default processing pipeline for one or more source
+    handlers.
+
+    This key needs a Hash as value which should be of the following form:
+
+        SOURCE_HANDLER_NAME: PIPELINE
+
+    Each key-value pair specifies the name of a source handler and the new default processing
+    pipeline. The value for the processing pipeline has to consist of the short names of content
+    processors separated by commas and normally includes `erb`, `tags`, `blocks` and the name of a
+    content processor for a markup language. The short name(s) of a content processor is (are)
+    stated on its documentation page. Be aware that the content processors are executed in the order
+    in which they are specified!
+
+    If a source handler called `Webgen::SourceHandler::SOURCE_HANDLER_NAME` exists, the meta
+    information is set for this source handler instead.
+
+    For example, the following snippet of a configuration file sets the default processing pipeline
+    for 'Webgen::SourceHandler::Page':
+
+        default_processing_pipeline:
+          Page: erb,tags,textile,blocks
+
 *   `patterns`: Set the used path patterns for one or more source handlers.
 
     This key needs a Hash value and provides two different ways of setting the path patterns:

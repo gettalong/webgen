@@ -54,6 +54,13 @@ class TestConfiguration < Test::Unit::TestCase
     assert_equal(['**/*.page'], @config['sourcehandler.patterns']['Other'])
     assert_raise(ArgumentError) { @config.patterns([5,6]) }
     assert_raise(ArgumentError) { @config.patterns('Page' => 5) }
+
+    @config.default_processing_pipeline('Page' => 'tags,maruku')
+    assert_equal('tags,maruku', @config['sourcehandler.default_meta_info']['Webgen::SourceHandler::Page']['blocks']['default']['pipeline'])
+    @config.default_processing_pipeline('Other' => 'tags,maruku')
+    assert_equal('tags,maruku', @config['sourcehandler.default_meta_info']['Other']['blocks']['default']['pipeline'])
+    assert_raise(ArgumentError) { @config.default_processing_pipeline([5,6]) }
+    assert_raise(ArgumentError) { @config.default_processing_pipeline('Page' => [5,6]) }
   end
 
 end

@@ -35,7 +35,7 @@ module Webgen
     end
 
     # This module provides methods for setting more complex configuration options. It is mixed into
-    # Webgen::Configuration so that it methods can be used. Detailed information on the use of the
+    # Webgen::Configuration so that its methods can be used. Detailed information on the use of the
     # methods can be found in the "User Manual" in the "Configuration File" section.
     #
     # All public methods defined in this module are available for direct use in the
@@ -85,13 +85,26 @@ module Webgen
         end
       end
 
+
+      # Set the default processing pipeline for a source handler.
+      def default_processing_pipeline(args)
+        args.each do |sh_name, pipeline|
+          raise ArgumentError, 'Invalid argument for configuration helper pipeline' unless pipeline.kind_of?(String)
+          mi_hash = (self['sourcehandler.default_meta_info'][complete_source_handler_name(sh_name)] ||= {})
+          ((mi_hash['blocks'] ||= {})['default'] ||= {})['pipeline'] = pipeline
+        end
+      end
+
+
       # Complete +sh_name+ by checking if a source handler called
       # <tt>Webgen::SourceHandler::SH_NAME</tt> exists.
       def complete_source_handler_name(sh_name)
         (Webgen::SourceHandler.constants.include?(sh_name) ? 'Webgen::SourceHandler::' + sh_name : sh_name)
       end
       private :complete_source_handler_name
+
     end
+
 
     include Helpers
 
