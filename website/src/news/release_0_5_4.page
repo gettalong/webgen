@@ -1,0 +1,28 @@
+---
+title: webgen 0.5.4 released
+in_menu: true
+draft: true
+sort_info: 2008-??-??
+created_at: 2008-??-??
+modified_at: 2008-??-??
+---
+## {title:}
+
+<webgen:block name='notes' />
+
+### Changes
+
+<webgen:block name='changes' />
+
+--- name:notes pipeline:tags,maruku
+
+--- name:changes pipeline:tags,maruku
+
+* Major enhancements:
+
+* Minor enhancements:
+
+  - Added configuration file helpers for setting the default processing pipeline
+  - Better error messages when parsing files in Webgen Page Format
+
+* Bug fixes:
