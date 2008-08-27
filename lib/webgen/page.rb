@@ -55,7 +55,9 @@ module Webgen
       # the information. The +meta_info+ parameter can be used to provide default meta information.
       def from_data(data, meta_info = {})
         md = /(#{RE_META_INFO})?(.*)/m.match(normalize_eol(data))
-        raise(WebgenPageFormatError, 'Invalid structure of meta information part') if md[1].nil? && data =~ RE_META_INFO_START
+        if md[1].nil? && data =~ RE_META_INFO_START
+          raise WebgenPageFormatError, 'Found start line for meta information block but no valid meta information block'
+        end
         meta_info = meta_info.merge(md[1].nil? ? {} : parse_meta_info(md[1]))
         blocks = parse_blocks(md[2] || '', meta_info)
         new(meta_info, blocks)
@@ -74,7 +76,9 @@ module Webgen
       def parse_meta_info(data)
         begin
           meta_info = YAML::load(data)
-          raise(WebgenPageFormatError, 'Invalid structure of meta information part') unless meta_info.kind_of?(Hash)
+          unless meta_info.kind_of?(Hash)
+            raise WebgenPageFormatError, "Invalid structure of meta information block: expected YAML hash but found #{meta_info.class}"
+          end
         rescue ArgumentError => e
           raise WebgenPageFormatError, e.message
         end
@@ -91,14 +95,14 @@ module Webgen
         scanned.each_with_index do |block_data, index|
           options, content = *block_data
           md = RE_BLOCKS_OPTIONS.match(options.to_s)
-          raise(WebgenPageFormatError, "Found invalid blocks starting line") if content =~ /\A---/ || md.nil?
+          raise(WebgenPageFormatError, "Found invalid blocks starting line for block #{index+1}: #{options}") if content =~ /\A---/ || md.nil?
           options = Hash[*md[1].to_s.scan(/(\w+):([^\s]*)/).flatten]
           options = (meta_info['blocks']['default'] || {} rescue {}).
             merge((meta_info['blocks'][index+1] || {} rescue {})).
             merge(options)
 
           name = options.delete('name') || (index == 0 ? 'content' : 'block' + (index + 1).to_s)
-          raise(WebgenPageFormatError, "Same name used for more than one block: #{name}") if blocks.has_key?(name)
+          raise(WebgenPageFormatError, "Previously used name '#{name}' also used for block #{index+1}") if blocks.has_key?(name)
           content ||= ''
           content.gsub!(/^(\\+)(---.*?)$/) {|m| "\\" * ($1.length / 2) + $2}
           content.strip!
