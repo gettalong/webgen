@@ -118,6 +118,9 @@ class TestPage < Test::Unit::TestCase
 EOF
 
   INVALID=<<EOF
+# invalid meta info: none specified
+- "---\\n---"
+
 # invalid meta info: no hash
 - |
   ---
