@@ -68,9 +68,8 @@ module Webgen::Tag
 
     # Check if the menus for +node+ have changed.
     def node_changed?(node)
-      return if !node.node_info[:tag_menu_menus] || @inside_node_changed
+      return if !node.node_info[:tag_menu_menus]
 
-      @inside_node_changed = true  #TODO: better solution for this race condition?
       node.node_info[:tag_menu_menus].each do |(params, cn_alcn), cached_tree|
         cn = node.tree[cn_alcn]
         menu_tree = menu_tree_for_lang(cn.lang, cn.tree.root)
@@ -88,7 +87,6 @@ module Webgen::Tag
           break
         end
       end
-      @inside_node_changed = false
     end
 
     # Wrapper method for returning the specific menu tree for +content_node+.
