@@ -119,18 +119,22 @@ module Webgen
     # Return +true+ if the node has changed since the last webgen run. If it has changed, +dirty+ is
     # set to +true+.
     def changed?
-      @dirty = @dirty || meta_info_changed?
-      @dirty = node_info[:used_nodes].any? {|n| n != @absolute_lcn && (!tree[n] || tree[n].changed?)} unless @dirty
-      website.blackboard.dispatch_msg(:node_changed?, self) unless @dirty
+      if_not_checked(:node) do
+        @dirty = @dirty || meta_info_changed?
+        @dirty = node_info[:used_nodes].any? {|n| n != @absolute_lcn && (!tree[n] || tree[n].changed?)} unless @dirty
+        website.blackboard.dispatch_msg(:node_changed?, self) unless @dirty
+      end
       @dirty
     end
 
     # Return +true+ if the meta information of the node has changed.
     def meta_info_changed?
-      @dirty_meta_info = node_info[:used_meta_info_nodes].any? do |n|
-         n != @absolute_lcn && (!tree[n] || tree[n].meta_info_changed?)
-      end unless @dirty_meta_info
-      website.blackboard.dispatch_msg(:node_meta_info_changed?, self) unless @dirty_meta_info
+      if_not_checked(:meta_info) do
+        @dirty_meta_info = node_info[:used_meta_info_nodes].any? do |n|
+          n != @absolute_lcn && (!tree[n] || tree[n].meta_info_changed?)
+        end unless @dirty_meta_info
+        website.blackboard.dispatch_msg(:node_meta_info_changed?, self) unless @dirty_meta_info
+      end
       @dirty_meta_info
     end
 
@@ -315,6 +319,17 @@ module Webgen
 
       self.node_info[:used_nodes] = Set.new
       self.node_info[:used_meta_info_nodes] = Set.new
+    end
+
+    # Only run the code in the block if this node has not already been checked. Different checks are
+    # supported by setting a different +type+ value.
+    def if_not_checked(type)
+      array = (website.cache.volatile[:node_change_checking] ||= {})[type] ||= []
+      if !array.include?(self)
+        array << self
+        yield
+        array.delete(self)
+      end
     end
 
     # Delegate missing methods to a processor. The current node is placed into the argument array as

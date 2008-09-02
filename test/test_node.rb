@@ -158,6 +158,14 @@ class TestNode < Test::Unit::TestCase
     node.node_info[:used_nodes] << @tree.dummy_root.absolute_lcn
     node.changed?
     assert_equal(1, calls)
+
+    # Test circular depdendence
+    other_node = Webgen::Node.new(@tree.dummy_root, '/other', 'test.l', {'lang' => 'de', :test => :value})
+    other_node.dirty = node.created = false
+    node.dirty = false
+    other_node.node_info[:used_nodes] = [node.absolute_lcn]
+    node.node_info[:used_nodes] = [other_node.absolute_lcn]
+    node.changed?
   end
 
   def test_meta_info_changed
