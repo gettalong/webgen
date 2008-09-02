@@ -1,6 +1,16 @@
 ---
 title: Manual
 ---
+# Introduction
+
+This manual describes all of webgen in as much detail as possible. If you still find something
+missing, don't hesistate to write a mail to the mailing list!
+
+The manual is structured in such a way that it can be read from top to bottom while creating a
+webgen website. This means that first the information on how to use the webgen CLI comes, then how a
+webgen website is structured and how content can be added and so on.
+
+
 
 # The `webgen` command
 
@@ -55,21 +65,23 @@ Following is a short overview of the available commands:
 # A webgen Website {#website}
 
 webgen needs a special directory structure so that it works out of the box. This directory structure
-is automatically created by the `webgen create` command.
+is automatically created by the `webgen create` command. You can alternatively use the webgui to
+create the website directory.
 
 The root directory of webgen website is called the website directory. You can have the following
 files and directories under this directory:
 
 * `src`: The source directory in which all the source files for the website are. If this directory
-  is not called `src` or you want to include additional source directories, you need to change the
-  `sources` configuration option.
+  should not be called `src` or you want to include additional source directories, you need to
+  change the `sources` configuration option.
 
 * `out`: This directory is created, if it does not exist, when webgen generates the HTML files. All
-  the output files are put into this directory. This directory can be changed by setting the
-  `output` configuration option.
+  the output files are put into this directory. The name of this directory can be changed by setting
+  the `output` configuration option.
 
 * `ext`: The extension directory (optional). You can put self-written extensions into this directory
-  so that they are used by webgen.
+  so that they are used by webgen. See the [extension directory]({relocatable: '#website-ext'})
+  section for more information.
 
 * `config.yaml`: This file can be used to set configuration options for the website. See the
   [Configuration File]({relocatable: '#website-configfile'}) section for more information.
@@ -78,6 +90,14 @@ files and directories under this directory:
   some useful tasks out of the box. See the [Rakefile]({relocatable: '#website-rakefile'}) section
   for more information.
 
+## Extension Directory {#website-ext}
+
+The extension directory is used for modifying core behaviour of webgen or adding extensions. It is
+called `ext` and has to reside directly under the website directory. All files called `init.rb` in
+this directory or any of its subdirectories are loaded when webgen renders the website. So you need
+to make sure to either place all extensions in `init.rb` or load them from this file. The latter
+approach is better since you can use the lazy loading feature that webgen uses internally,
+ie. extensions are loaded only when they are needed.
 
 ## Configuration File {#website-configfile}
 
@@ -169,8 +189,6 @@ keys to help setting these configuration options:
           Copy:
             add: [**/*.pdf]
 
-
-
 ## Rakefile {#website-rakefile}
 
 The Rakefile that is automatically created upon website creation provides a place to specify
@@ -206,8 +224,8 @@ You can naturally use any other type of file. However, be aware that some files 
 by webgen when no source handler class for them exists. For example, there is currently no source
 handler class for `.svg` files, so those files would be ignored. If you just want to have files
 copied from a source to the output directory (like images or CSS files), the SourceHandler::Copy
-class is what you need! Look through the documentation of the availabe source handler classes to get
-a feeling of what files are handled by webgen.
+class is what you need! Look through the documentation of the [availabe source handler
+classes]({relocatable: extensions.html}) to get a feeling of what files are handled by webgen.
 
 
 ## Source Paths Naming Convention {#source-naming}
@@ -452,16 +470,51 @@ There is clearly defined order in which meta information is applied to a node fo
 
 
 
+# webgen Extensions
+
+webgen comes with many extensions that allow for rapid creation of static websites. The variety of
+the extensions allows you to use your tools of choice, for example, your preferred markup
+language. And if your choice is not available, you can write the extension for it yourself or make a
+feature request!
+
+Extensions are only loaded when they are needed. For example, if you don't use `.feed` files for
+automatically generating atom/RSS feeds for your website, the source handler that handles these
+files will never be loaded. Therefore you don't need to explicitly enable extensions, they just sit
+in the background and wait till the webgen core needs them.
+
+There are several types of extensions:
+
+*   **Content Processors**: These extensions process content, for example, the content of files in
+    Webgen Page Format. It is not specified how they have to process the content but this type of
+    extension can basically be divided into two groups:
+
+    * Markup processors: Processors like Maruku or RedCloth belong to this group and they convert
+      markup text that is easy to read and write to a more structure format like HTML. This allows
+      you to write an HTML page without knowing HTML.
+
+    * String replacers: These processors normally process special strings and substitute them with
+      other content. For example, the `erb` processors replaces delimited strings interpreted as
+      Ruby code with the interpreted value. Another example would be webgen's `tags` processor which
+      replaces strings like `\{relocatable: ../index.html}` with a processed value.
+
+*   **Source Handler**: These extensions are used for handling source paths. They read the content of
+    a path and produce one or more nodes (the internal representation of an output path, see [source
+    handling]({relocatable: '#source-handling'}) for more information on nodes). So a source handler
+    can do something simple like just copying a source path to the output directory but they can
+    also do complex things like creating a whole image gallery from just one source path.
+
+*   **Tags**: This type of extension allows the easy inclusion of dynamic content in, for example,
+    page and template files. Each tag extension is used for a specific task like creating a menu or
+    a breadcrumb trail.
+
+
+
 # Extending webgen
 
 If you know the programming language Ruby a little bit, you can easily extend webgen and add new
 features that you need. All the needed developer documentation is available in the [API
 documentation](rdoc/index.html), along with sample implementations for all major types of extensions
 (source class, output classes, source handler class, content processors classes, tag classes, ...)
-and detailed information about the inner workings of webgen.
-
-webgen allows one to add extensions to a website by placing them in the directory `ext` under the
-website directory. All files called `init.rb` in any directory are loaded when the Webgen::Website
-gets initialized. So you need to make sure to either place all extensions in `init.rb` or load them
-from this file.
-
+and detailed information about the inner workings of webgen. Have a look at the [extension
+directory]({relocatable: '#website-ext'}) section for more information on naming files and where to
+put the extensions.

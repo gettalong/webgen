@@ -27,23 +27,23 @@ This is more easily explained with examples. Assume we have a `default.template`
 
 The `default.template` file:
 
-    --- name:content, pipeline:blocks
+    --- name:content pipeline:blocks
     before default
     <webgen:block name='content' />
     after default 1
-    <webgen:block name='content' chain='page.template;my.page' />
+    <webgen:block name='content' chain='page.template;my.html' />
     after default 2
 
 The `page.template` file:
 
-    --- name:content, pipeline:blocks
+    --- name:content pipeline:blocks
     before page 1
     <webgen:block name='content' />
     after page 1
 
 And the `my.page` file:
 
-    --- name:content
+    --- name:content pipeline:
     The content of the page file.
 
 When `my.page` gets rendered to `my.html`, the node chain looks like this by default:
