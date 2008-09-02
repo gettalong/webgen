@@ -3,14 +3,14 @@ title: Overview
 in_menu: false
 ---
 
-This documentation is for the *repository version* of webgen and therefore may state features that
-are not available in the latest released version.
+This documentation is for the *repository version*{: style='color: red; font-weight: bold'} of
+webgen and therefore may state features that are not available in the latest released version.
 
-* The documentation for the latest released 0.5.x version can be found
-  [here](http://webgen.rubyforge.org/documentation/0.5.x/index.html)
+* The documentation for the *latest released 0.5.x*{: style='color: red; font-weight: bold'} version
+  can be found [here](http://webgen.rubyforge.org/documentation/0.5.x/index.html)
 
-* If you are looking for the documentation of the 0.4.x series, it can be found
-  [here](http://webgen.rubyforge.org/documentation/0.4.x/index.html).
+* If you are looking for the documentation of the *0.4.x*{: style='color: red; font-weight: bold'}
+  series, it can be found [here](http://webgen.rubyforge.org/documentation/0.4.x/index.html).
 
 If you don't find an answer to your questions in the documentation, there are also:
 
@@ -36,9 +36,9 @@ a reference, go to one of the following pages:
   here. After reading the Getting Started Guide, this should be the next read. Have a look at the
   section headers to get a quick overview of what can be found here.
 
-* [**FAQ**]({relocatable: faq.html}): If you want to do something with webgen, but you don't know how,
-  this page is exactly for you. It provides answers to frequently asked questions. If you have a
-  question which you think should be added, just mail me.
+* [**FAQ**]({relocatable: faq.html}): If you want to do something with webgen, but you don't know
+  how, this page is exactly for you. It provides answers to frequently asked questions and
+  HowTos. If you have a question which you think should be added, just mail me.
 
 * [**Upgrade information**]({relocatable: upgrading.html}): This document provides some information
   on upgrading a website from the 0.4.x to the 0.5.x series.

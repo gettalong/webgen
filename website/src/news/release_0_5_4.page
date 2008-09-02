@@ -16,6 +16,11 @@ modified_at: 2008-??-??
 
 --- name:notes pipeline:tags,maruku
 
+This release features an updated documentation and some minor enhancements and fixes. The [upgrading
+instructions] have been expanded and provide now more details on how to convert an old 0.4.x site to
+0.5.x.
+
+[upgrading instructions]: {relocatable: ../doc/upgrading.html}
 --- name:changes pipeline:tags,maruku
 
 * Major enhancements:
@@ -23,6 +28,10 @@ modified_at: 2008-??-??
 * Minor enhancements:
 
   - Added configuration file helpers for setting the default processing pipeline
+  - New content processor short names aliases: textile for redcloth, markdown for maruku
   - Better error messages when parsing files in Webgen Page Format
+  - Updated documentation
 
 * Bug fixes:
+
+  - Circular dependencies between nodes are now correctly prevented
