@@ -157,7 +157,8 @@ Controls whether the index path should appear in a breadcrumb trail despite the 
 Sets a custom output path style for the specified path. The basename is substituted for the value
 `:cnbase` and the language for the value `:lang`. Strings are used verbatim. If `:lang` is specified
 in a sub-array, the whole sub-array is omitted, if the configuration option
-`sourcehandler.default_lang_in_output_path` is false.
+`sourcehandler.default_lang_in_output_path` is false. For more and detailed information, have look
+at the [output path creation section]({relocatable: manual.html#source-output}) of the manual!
 
 > This meta information has to be set BEFORE a node gets created. Setting this value is therefore
 > only useful, for example, in the `paths` block of a meta information backing file.

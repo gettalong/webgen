@@ -102,49 +102,69 @@ module Webgen::SourceHandler
   #
   module Base
 
-    include Webgen::Loggable
-
-    # Construct the output name for the given +path+. First it is checked if a node with the
-    # constructed output name already exists. If it exists, the language part is forced to be in the
-    # output name and the resulting output name is returned.
+    # This module is used for defining all methods that can be used for creating output paths.
     #
-    # The parameter +style+ (which uses the meta information +output_path_style+ from the path's
-    # meta information hash) defines how the output name should be built (more information about
-    # this in the user documentation).
-    def output_path(parent, path, style = path.meta_info['output_path_style'])
-      name = construct_output_path(parent, path, style)
-      name += '/'  if path.path =~ /\/$/ && name !~ /\/$/
-      if node_exists?(parent, path, name)
-        name = construct_output_path(parent, path, style, true)
-        name += '/'  if path.path =~ /\/$/ && name !~ /\/$/
+    # All public methods of this module are considered to be output path creation methods and must
+    # have the following parameters:
+    # +parent+:: the parent node
+    # +path+:: the path for which the output name should be created
+    # +use_lang_part+:: controls whether the output path name has to include the language part
+    module OutputPathHelpers
+
+      # Default method for creating an output path for +parent+ and source +path+.
+      #
+      # The automatically set parameter +style+ (which uses the meta information +output_path_style+
+      # from the path's meta information hash) defines how the output name should be built (more
+      # information about this in the user documentation).
+      def standard_output_path(parent, path, use_lang_part, style = path.meta_info['output_path_style'])
+        result = style.collect do |part|
+          case part
+          when String  then part
+          when :lang   then use_lang_part ? path.meta_info['lang'] : ''
+          when :ext    then path.ext.empty? ? '' : '.' + path.ext
+          when :parent then temp = parent; temp = temp.parent while temp.is_fragment?; temp.path
+          when :year, :month, :day
+            ctime = path.meta_info['created_at']
+            if !ctime.kind_of?(Time)
+              raise "Invalid meta info 'created_at' for #{path}, needed because of used output path style"
+            end
+            ctime.send(part).to_s.rjust(2, '0')
+          when Symbol  then path.send(part)
+          when Array   then part.include?(:lang) && !use_lang_part ? '' : standard_output_path(parent, path, use_lang_part, part)
+          else ''
+          end
+        end
+        result.join('')
       end
-      name
+
     end
 
-    # Utility method for constructing the output name.
-    def construct_output_path(parent, path, style, use_lang_part = nil)
+    include Webgen::Loggable
+    include OutputPathHelpers
+
+    # Construct the output name for the given +path+ and +parent+. First it is checked if a node
+    # with the constructed output name already exists. If it exists, the language part is forced to
+    # be in the output name and the resulting output name is returned.
+    def output_path(parent, path)
+      method = path.meta_info['output_path'] + '_output_path'
       use_lang_part = if path.meta_info['lang'].nil? # unlocalized files never get a lang in the filename!
                         false
-                      elsif use_lang_part.nil?
+                      else
                         Webgen::WebsiteAccess.website.config['sourcehandler.default_lang_in_output_path'] ||
                           Webgen::WebsiteAccess.website.config['website.lang'] != path.meta_info['lang']
-                      else
-                        use_lang_part
                       end
-      result = style.collect do |part|
-        case part
-        when String  then part
-        when :lang   then use_lang_part ? path.meta_info['lang'] : ''
-        when :ext    then path.ext.empty? ? '' : '.' + path.ext
-        when :parent then temp = parent; temp = temp.parent while temp.is_fragment?; temp.path
-        when Symbol  then path.send(part)
-        when Array   then part.include?(:lang) && !use_lang_part ? '' : construct_output_path(parent, path, part, use_lang_part)
-        else ''
+      if OutputPathHelpers.public_instance_methods(false).include?(method)
+        name = send(method, parent, path, use_lang_part)
+        name += '/'  if path.path =~ /\/$/ && name !~ /\/$/
+        if node_exists?(parent, path, name)
+          name = send(method, parent, path, (path.meta_info['lang'].nil? ? false : true))
+          name += '/'  if path.path =~ /\/$/ && name !~ /\/$/
         end
+        name
+      else
+        raise "Unknown method for creating output path: #{method}"
       end
-      result.join('')
     end
-    private :construct_output_path
 
     # Check if the node alcn and output path which would be created by #create_node exists. The
     # +output_path+ to check for can individually be set.

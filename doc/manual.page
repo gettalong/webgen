@@ -311,6 +311,10 @@ the (localized) canonical name! This is different from previous webgen versions!
 
 ## Output Path Name Construction ### {#source-output}
 
+There is currently only one method, called `standard`, for creating output path names which is
+described here. However, webgen allows developers to create other output path name creation
+methods. More information on this can be found in the [API documentation]({relocatable: api.html}).
+
 The output path for a given source path is constructed using the meta information
 `output_path_style`. This meta information is set to a default value and can be overwritten by
 setting it for a specific source handler or for a path individually. The value for this meta
@@ -319,10 +323,12 @@ information key is an array which can have the following values:
 * strings (for inserting arbitrary text into output names)
 * arrays (for grouping values - only interesting for the language part)
 * symbols for inserting special values:
-  * `:cnbase`: the basename of the path
-  * `:parent`: the parent path
-  * `:lang`: the language
-  * `:ext`: the file extension including the leading dot
+  * `:cnbase`: The basename of the path.
+  * `:parent`: The parent path.
+  * `:lang`: The language.
+  * `:ext`: The file extension including the leading dot.
+  * `:year`, `:month`, `:day`: The creation year, month and day, respectively, of the source path.
+    An error is raised if the needed meta information `created_at` is not set on the path.
 
 > The contructed output path must always be an absolute one, ie. it has to start at the root of the
 > output directory. Therefore, the `:parent` part should always be included!
@@ -356,7 +362,13 @@ the default language and that the path is under a directory called `/img/`):
 
     *   `index.jpg` --> `/img/index.jpg.`
 
-        Be aware of the trailing dot since the `:lang` value is not defined in an sub array!
+        Be aware of the trailing dot since the `:lang` value is not defined in a sub array!
+
+*   `output_path_style=[:parent, :year, /, :month, /, :cnbase, [., :lang], :ext]`
+
+    *   `index.jpg` --> `/img/2008/09/index.jpg`
+
+        This output path style can be used to create blog archive style output names.
 
 
 ## Path Patterns {#source-pathpattern}
