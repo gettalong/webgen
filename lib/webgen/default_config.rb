@@ -67,6 +67,7 @@ config.sourcehandler.default_lang_in_output_path(false, :doc => 'Specifies wheth
 
 config.sourcehandler.default_meta_info({
                                          :all => {
+                                           'output_path' => 'standard',
                                            'output_path_style' => [:parent, :cnbase, ['.', :lang], :ext]
                                          },
                                          'Webgen::SourceHandler::Copy' => {

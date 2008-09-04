@@ -4,6 +4,7 @@ require 'webgen/tree'
 require 'webgen/node'
 require 'webgen/path'
 require 'webgen/sourcehandler/base'
+require 'time'
 
 class TestSourceHandlerBase < Test::Unit::TestCase
 
@@ -30,35 +31,48 @@ class TestSourceHandlerBase < Test::Unit::TestCase
   end
 
   def test_output_path
+    node = Webgen::Node.new(Webgen::Tree.new.dummy_root, 'test/', 'test')
+    assert_raise(RuntimeError) { @obj.output_path(node, path_with_meta_info('test.page', 'output_path' => 'non'))}
+  end
+
+  def test_standard_output_path
     @tree = Webgen::Tree.new
     node = Webgen::Node.new(@tree.dummy_root, 'test/', 'test', {'lang' => 'de', :test => :value})
 
-    output_path_style = [:parent, :cnbase, ['.', :lang], :ext]
-
-    path = Webgen::Path.new('path.html')
-    assert_equal('test/path.html', @obj.output_path(node, path, output_path_style))
-    path = Webgen::Path.new('path.en.html')
-    assert_equal('test/path.html', @obj.output_path(node, path, output_path_style))
-    path = Webgen::Path.new('path.eo.html')
-    assert_equal('test/path.eo.html', @obj.output_path(node, path, output_path_style))
-    path = Webgen::Path.new('dir/')
-    assert_equal('test/dir/', @obj.output_path(node, path, output_path_style))
+    path = path_with_meta_info('path.html')
+    assert_equal('test/path.html', @obj.output_path(node, path))
+    path = path_with_meta_info('path.en.html')
+    assert_equal('test/path.html', @obj.output_path(node, path))
+    path = path_with_meta_info('path.eo.html')
+    assert_equal('test/path.eo.html', @obj.output_path(node, path))
+    path = path_with_meta_info('dir/')
+    assert_equal('test/dir/', @obj.output_path(node, path))
 
     other = Webgen::Node.new(node, 'test/path.html', 'other.page')
-    path = Webgen::Path.new('path.html')
-    assert_equal('test/path.html', @obj.output_path(node, path, output_path_style))
-    path = Webgen::Path.new('path.en.html')
-    assert_equal('test/path.en.html', @obj.output_path(node, path, output_path_style))
+    path = path_with_meta_info('path.html')
+    assert_equal('test/path.html', @obj.output_path(node, path))
+    path = path_with_meta_info('path.en.html')
+    assert_equal('test/path.en.html', @obj.output_path(node, path))
 
-    path = Webgen::Path.new('#frag')
-    assert_equal('test/path.html#frag', @obj.output_path(other, path, output_path_style))
+    path = path_with_meta_info('#frag')
+    assert_equal('test/path.html#frag', @obj.output_path(other, path))
     frag = Webgen::Node.new(other, 'test/path.html#frag', '#frag')
-    path = Webgen::Path.new('#frag1')
-    assert_equal('test/path.html#frag1', @obj.output_path(frag, path, output_path_style))
+    path = path_with_meta_info('#frag1')
+    assert_equal('test/path.html#frag1', @obj.output_path(frag, path))
 
-    path = Webgen::Path.new('/')
-    assert_equal('/', @obj.output_path(@tree.dummy_root, path, output_path_style))
-    assert_equal('hallo/', @obj.output_path(@tree.dummy_root, path, [:parent, 'hallo', 56]))
+    path = path_with_meta_info('/')
+    assert_equal('/', @obj.output_path(@tree.dummy_root, path))
+    path = path_with_meta_info('/', 'output_path_style' => [:parent, 'hallo', 56])
+    assert_equal('hallo/', @obj.output_path(@tree.dummy_root, path))
+
+    assert_raise(RuntimeError) do
+      path = path_with_meta_info('path.html', 'output_path_style' => [:parent, :year, '/', :month, '/', :cnbase, :ext])
+      @obj.output_path(node, path)
+    end
+    time = Time.parse('2008-09-04 08:15')
+    path = path_with_meta_info('path.html', 'output_path_style' => [:parent, :year, '/', :month, '/', :day, '-', :cnbase, :ext],
+                               'created_at' => time)
+    assert_equal('test/2008/09/04-path.html', @obj.output_path(node, path))
   end
 
   def test_content
