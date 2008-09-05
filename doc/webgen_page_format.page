@@ -96,7 +96,9 @@ The first block has no identifieres set (there is no line with three dashes and 
 Therefore the default value for the name is used: `content`. The second block is named `sidebar` and
 uses the processing pipeline `maruku,tags`. As you can see, the name of a block as well as
 additional options are specified by stating the key (e.g. `name` or `pipeline`) followed by a colon
-and the value. Multiple options are separated via one or more spaces.
+and the value. Multiple options are separated via one or more spaces. The value of a block option is
+parsed with YAML. For example, when specifying `use_something:true` the value `true` is
+automatically converted from the string `true` to the boolean `true`.
 
 > Only the first block gets the default name of `content`. The second and following blocks have
 > numbered names like `block2`, `block3` and so on.

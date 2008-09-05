@@ -97,13 +97,14 @@ class TestPage < Test::Unit::TestCase
     --- name:block
     content doing -
     with?: with some things
-    --- other:optins
+    --- other:options test1:true test2:false test3:542
   meta_info: {}
   blocks:
     - name: block
       content: "content doing -\\nwith?: with some things"
     - name: block2
       content: ''
+      options: {other: options, test1: true, test2: false, test3: 542}
 
 # block with seemingly block start line it
 - in: |
@@ -169,6 +170,7 @@ EOF
         index += 1
         assert_equal(b['name'], d.blocks[index].name, "test item #{oindex} - name")
         assert_equal(b['content'], d.blocks[index].content, "test item #{oindex} - content")
+        assert_equal(b['options'] || {}, d.blocks[index].options, "test item #{oindex} - options")
         assert_same(d.blocks[index], d.blocks[b['name']])
       end
     end
