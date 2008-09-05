@@ -140,6 +140,9 @@ Make sure that you also install the mandatory and, if you need them, the optiona
 * (optional) [erubis](http://www.kuwata-lab.com/erubis/) version 2.6.2 for Erubis (enhanced ERB)
   support
 
+* (optional) [rdiscount](http://github.com/rtomayko/rdiscount) version 1.2.9 for fast Markdown
+  support
+
 All these libraries can be installed via Rubygems (which I recommend). If you want to install all
 optional dependencies when installing webgen via Rubygems, install webgen using the `--development`
 option.

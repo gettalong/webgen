@@ -163,6 +163,7 @@ EOF
       s.add_development_dependency('coderay', '>= 0.7.4.215')
       s.add_development_dependency('feedtools', '>= 0.2.29')
       s.add_development_dependency('erubis', '>= 2.6.2')
+      s.add_development_dependency('rdiscount', '>= 1.2.9')
 
       s.require_path = 'lib'
 

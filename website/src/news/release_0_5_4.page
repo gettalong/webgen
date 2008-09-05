@@ -26,6 +26,7 @@ instructions] have been expanded and provide now more details on how to convert 
 * Major enhancements:
 
   - Added content processor [erubis]
+  - Added content processor [rdiscount]
 
 * Minor enhancements:
 
@@ -38,4 +39,5 @@ instructions] have been expanded and provide now more details on how to convert 
 
   - Circular dependencies between nodes are now correctly prevented
 
-[erubis]: {relocatable: ../documentation/contentprocessor/erubis.html}
+[erubis]:    {relocatable: ../documentation/contentprocessor/erubis.html}
+[rdiscount]: {relocatable: ../documentation/contentprocessor/rdiscount.html}
