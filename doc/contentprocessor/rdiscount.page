@@ -1,0 +1,37 @@
+---
+title: Webgen::ContentProcessor::RDiscount
+---
+## Description
+
+This processor converts the content, which is assumed to be in Markdown markup, to HTML by using the
+RDiscount library. This library is based on the C based discount library which provides very fast
+Markdown processing. However, this processor does not support advanced features like the [Maruku
+Markdown processor]({relocatable: maruku.html}) does.
+
+> This extension is only available if you have installed the [rdiscount][1] library. The preferred
+> way to do this is via Rubygems:
+>
+>     gem install rdiscount
+{.exclamation}
+
+[1]: http://github.com/rtomayko/rdiscount
+
+Example
+-------
+
+Here is a short sample of a text in Markdown markup:
+
+    # This a h1 header
+
+    You can just write *your* paragraphs here and
+    [link][1] them below. This is **nice** format!
+
+    > Citations are easy too.
+    > Really. And you can assign them attributes.
+
+    * Lists
+    * aren't
+    * difficult
+    * either.
+
+    [1]: http://someurl.com

@@ -130,6 +130,7 @@ config.contentprocessor.map({
                               'rdoc' => 'Webgen::ContentProcessor::RDoc',
                               'builder' => 'Webgen::ContentProcessor::Builder',
                               'erubis' => 'Webgen::ContentProcessor::Erubis',
+                              'rdiscount' => 'Webgen::ContentProcessor::RDiscount',
                             }, :doc => 'Content processor name to class map')
 
 Webgen::WebsiteAccess.website.blackboard.add_service(:content_processor_names, Webgen::ContentProcessor.method(:list))

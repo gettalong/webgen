@@ -64,6 +64,7 @@ module Webgen
     autoload :RDoc, 'webgen/contentprocessor/rdoc'
     autoload :Builder, 'webgen/contentprocessor/builder'
     autoload :Erubis, 'webgen/contentprocessor/erubis'
+    autoload :RDiscount, 'webgen/contentprocessor/rdiscount'
 
     # Return the list of all available content processors.
     def self.list
