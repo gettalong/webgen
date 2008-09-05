@@ -7,7 +7,7 @@ This processor provides an easy method for adding dynamic content to web pages. 
 webgen tags to replace special markup constructs with dynamic content. This system allows webgen to
 generate menus and breadcrumb trails, include files and much more. webgen already comes with many
 tags that handle simple things, like including a file, to advanced things, like generating a
-menu. The short name of the processor is `tags`!
+menu.
 
 Each webgen tag is defined using a unique name and handled by a tag class. A tag can have zero or
 more parameters some of which are mandatory. Tag parameters map directly to configuration options,

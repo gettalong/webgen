@@ -4,8 +4,7 @@ title: Webgen::ContentProcessor::Blocks
 ## Description
 
 This processor replaces a special xml tag with rendered blocks. It is used, for example, in
-templates to define the place where the actual page content should be. The short name of the
-processor is `blocks`!
+templates to define the place where the actual page content should be.
 
 The general syntax is as follows:
 
