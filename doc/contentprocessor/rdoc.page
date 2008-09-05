@@ -4,7 +4,7 @@ title: Webgen::ContentProcessor::RDoc
 ## Description
 
 This content processors converts content written in RDoc markup (the default documentation format
-for Ruby source files, [reference][1]) to HTML. The short name of the processor is `rdoc`!
+for Ruby source files, [reference][1]) to HTML.
 
 > This extension needs the [new RDoc implementation][2] and is not compatible with the
 > implementation included in the Ruby distribution. The preferred way to install the new

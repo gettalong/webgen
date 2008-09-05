@@ -6,7 +6,7 @@ title: Webgen::ContentProcessor::Maruku
 This processor converts the content, which is assumed to be in Markdown markup, to HTML by using the
 Maruku library. Maruku is a Markdown processor which supports a superset of Markdown, including
 support for assigning ids and classes to every element, support for Markdown inside HTML elements
-and footnotes. The short name of the processor is `maruku`!
+and footnotes.
 
 For detailed information about Maruku have a look at the [Maruku Homepage][1]. There you will find
 information about the general Markdown syntax as well as information about the extras added by

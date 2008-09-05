@@ -5,7 +5,7 @@ title: Webgen::ContentProcessor::Erb
 
 This processer uses ERB (embedded Ruby) to process content. For detailed information about ERB have
 a look at its documentation by executing `ri ERB` or the [ruby documentation
-site](http://www.ruby-doc.org/)! The short name of the processor is `erb`!
+site](http://www.ruby-doc.org/)!
 
 You can use the following special objects in your ERB code:
 
