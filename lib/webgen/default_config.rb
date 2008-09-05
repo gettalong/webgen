@@ -129,6 +129,7 @@ config.contentprocessor.map({
                               'sass' => 'Webgen::ContentProcessor::Sass',
                               'rdoc' => 'Webgen::ContentProcessor::RDoc',
                               'builder' => 'Webgen::ContentProcessor::Builder',
+                              'erubis' => 'Webgen::ContentProcessor::Erubis',
                             }, :doc => 'Content processor name to class map')
 
 Webgen::WebsiteAccess.website.blackboard.add_service(:content_processor_names, Webgen::ContentProcessor.method(:list))
@@ -148,6 +149,9 @@ config.contentprocessor.tags.map({
                                    'sitemap' => 'Webgen::Tag::Sitemap',
                                    :default => 'Webgen::Tag::Metainfo'
                                  }, :doc => 'Tag processor name to class map')
+
+config.contentprocessor.erubis.use_pi(false, :doc => 'Specify whether processing instructions should be used')
+config.contentprocessor.erubis.options({}, :doc => 'A hash of additional options')
 
 config.tag.relocatable.path(nil, :doc => 'The path which should be made relocatable', :mandatory => 'default')
 

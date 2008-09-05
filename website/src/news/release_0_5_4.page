@@ -16,7 +16,7 @@ modified_at: 2008-??-??
 
 --- name:notes pipeline:tags,maruku
 
-This release features an updated documentation and some minor enhancements and fixes. The [upgrading
+This release features an updated documentation and some enhancements and fixes. The [upgrading
 instructions] have been expanded and provide now more details on how to convert an old 0.4.x site to
 0.5.x.
 
@@ -24,6 +24,8 @@ instructions] have been expanded and provide now more details on how to convert 
 --- name:changes pipeline:tags,maruku
 
 * Major enhancements:
+
+  - Added content processor [erubis]
 
 * Minor enhancements:
 
@@ -35,3 +37,5 @@ instructions] have been expanded and provide now more details on how to convert 
 * Bug fixes:
 
   - Circular dependencies between nodes are now correctly prevented
+
+[erubis]: {relocatable: ../documentation/contentprocessor/erubis.html}

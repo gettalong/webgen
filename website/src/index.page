@@ -137,6 +137,9 @@ Make sure that you also install the mandatory and, if you need them, the optiona
 * (optional) [feedtools](http://sporkmonger.com/projects/feedtools) version 0.2.29 for built-in feed
   generation support
 
+* (optional) [erubis](http://www.kuwata-lab.com/erubis/) version 2.6.2 for Erubis (enhanced ERB)
+  support
+
 All these libraries can be installed via Rubygems (which I recommend). If you want to install all
 optional dependencies when installing webgen via Rubygems, install webgen using the `--development`
 option.
