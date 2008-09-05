@@ -96,7 +96,7 @@ module Webgen
           options, content = *block_data
           md = RE_BLOCKS_OPTIONS.match(options.to_s)
           raise(WebgenPageFormatError, "Found invalid blocks starting line for block #{index+1}: #{options}") if content =~ /\A---/ || md.nil?
-          options = Hash[*md[1].to_s.scan(/(\w+):([^\s]*)/).flatten]
+          options = Hash[*md[1].to_s.scan(/(\w+):([^\s]*)/).map {|k,v| [k, YAML::load(v)]}.flatten]
           options = (meta_info['blocks']['default'] || {} rescue {}).
             merge((meta_info['blocks'][index+1] || {} rescue {})).
             merge(options)
