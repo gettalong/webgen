@@ -151,7 +151,7 @@ This reference describes all available configurations that can be set via the co
     Specifies whether path names should be considered case-sensitive (set to `false`) or
     case-insensitive (set to `true`).
 
-    * Syntax: `BOOLEAN` where `BOOLEAN` is either `true` or `false`
+    * Syntax: `BOOLEAN` where `BOOLEAN` is either `true` or `false`.
 
     * Examples:
 
@@ -162,7 +162,7 @@ This reference describes all available configurations that can be set via the co
 
     Specifies whether hidden files (those starting with a dot) should be used.
 
-    * Syntax: `BOOLEAN` where `BOOLEAN` is either `true` or `false`
+    * Syntax: `BOOLEAN` where `BOOLEAN` is either `true` or `false`.
 
     * Examples:
 
@@ -186,7 +186,7 @@ This reference describes all available configurations that can be set via the co
     Specifies whether output paths in the default language should have the language code in their
     name.
 
-    * Syntax: `BOOLEAN` where `BOOLEAN` is either `true` or `false`
+    * Syntax: `BOOLEAN` where `BOOLEAN` is either `true` or `false`.
 
     * Examples:
 
@@ -238,6 +238,31 @@ This reference describes all available configurations that can be set via the co
     * Examples (for `ext/init.rb`):
 
           config['contentprocessor.map']['newcp'] = 'Extension::MyNewContentProcessor'
+
+
+*   ### contentprocessor.erubis.use\_pi
+
+    Specifies whether Erubis should look for XML processing instructions or the standard ERB tags
+    when processing content.
+
+    * Syntax: `BOOLEAN` where `BOOLEAN` is either `true` or `false`.
+
+    * Examples:
+
+          contentprocessor.erubis.use_pi: true
+
+
+*   ### contentprocessor.erubis.options
+
+    This configuration option can be used to specify additional options that the Erubis processor
+    should use.
+
+    * Syntax: `\{KEY: VALUE, ...}` where `KEY` and `VALUE` are key-value pairs of options where
+      `KEY` needs to be a Symbol and not a String.
+
+    * Examples:
+
+          contentprocessor.erubis.options: {:trim: true}
 
 
 *   ### contentprocessor.tags.prefix
