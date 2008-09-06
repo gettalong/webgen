@@ -26,6 +26,14 @@ title: FAQ
     automatically used. The same is true for all types of extensions (source handler, content
     processors, tags, ...).
 
+*   **Is there any way to add comments to my webgen website?**
+
+    Surely! There are several comment engines out there, however, the following two look very
+    promising:
+
+    * [JS-Kit](http://js-kit.com/comments/)
+    * [DISQUS](http://disqus.com)
+
 # How to ...
 
 This section provides quick answers and links to more information for the most commonly asked
