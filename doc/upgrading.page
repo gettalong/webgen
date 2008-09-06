@@ -85,10 +85,12 @@ Here are step-by-step instructions on how to update your webgen website from 0.4
   name of the block that should be included) and replace them with `<webgen:block name='content'
   />`.
 
-* **Update tag parameters**
+* **Update tag names and parameters**
 
   Since the names of the configuration options changed (from using camelCase to using under\_scores)
-  and some tags have different options, you need to change all tag parameters.
+  and some tags have different options, you need to change all tag parameters. You may also need to
+  convert old tag names to new ones (same reason: camelCase to under\_score), for example,
+  `includeFile` is now `include_file`.
 
 * **Update your ERB code**
 
