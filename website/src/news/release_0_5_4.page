@@ -1,10 +1,9 @@
 ---
 title: webgen 0.5.4 released
 in_menu: true
-draft: true
-sort_info: 2008-??-??
-created_at: 2008-??-??
-modified_at: 2008-??-??
+sort_info: 2008-09-08
+created_at: 2008-09-08
+modified_at: 2008-09-08
 ---
 ## {title:}
 
@@ -16,11 +15,12 @@ modified_at: 2008-??-??
 
 --- name:notes pipeline:tags,maruku
 
-This release features an updated documentation and some enhancements and fixes. The [upgrading
+This release features updated documentation and some enhancements and fixes. The [upgrading
 instructions] have been expanded and provide now more details on how to convert an old 0.4.x site to
 0.5.x.
 
-[upgrading instructions]: {relocatable: ../doc/upgrading.html}
+[upgrading instructions]: {relocatable: ../documentation/upgrading.html}
+
 --- name:changes pipeline:tags,maruku
 
 * Major enhancements:
