@@ -19,6 +19,10 @@ class TestSourceHandlerVirtual < Test::Unit::TestCase
 - /directory/path.en.html:
     url: other.html
     title: new title
+
+- api.html:
+    url: http://www.example.com
+    title: Absolute
 EOF
 
   def test_create_node
@@ -44,6 +48,9 @@ EOF
     assert_equal('directory/other.html', path_de.route_to(path_en))
     assert_equal('../path.de.html', dir.route_to(path_de))
     assert_equal('../directory/other.html', dir.route_to(path_en))
+
+    assert_equal('http://www.example.com', root.tree['/api.html'].path)
+    assert_equal('http://www.example.com', root.tree['/path.de.html'].route_to(root.tree['/api.html']))
   end
 
 end
