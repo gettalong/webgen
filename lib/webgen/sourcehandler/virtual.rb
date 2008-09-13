@@ -1,3 +1,4 @@
+require 'uri'
 require 'yaml'
 require 'webgen/sourcehandler/base'
 require 'webgen/websiteaccess'
@@ -26,7 +27,8 @@ module Webgen::SourceHandler
         temp_path.meta_info['modified_at'] = path.meta_info['modified_at']
         temp_path.meta_info['no_output'] = true
         output_path = temp_path.meta_info.delete('url') || key
-        output_path = (output_path =~ /^\// ? output_path : File.join(temp_parent.absolute_lcn, output_path))
+        output_path = (URI::parse(output_path).absolute? || output_path =~ /^\// ?
+                       output_path : File.join(temp_parent.absolute_lcn, output_path))
 
         if key =~ /\/$/
           nodes << create_directory(temp_parent, key, path, temp_path.meta_info)
