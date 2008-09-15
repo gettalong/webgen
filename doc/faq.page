@@ -185,7 +185,7 @@ page. You can then add a sidebar block to each page file which needs it. Followi
 page file:
 
     This is the main content block
-    --- sidebar
+    --- name:sidebar
     This is the sidebar block and everything in here goes to the sidebar!
 
 ### ... create XML output?

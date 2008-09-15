@@ -16,5 +16,4 @@ named `usage.html`. As you can see in this example, the processor name gets stri
 extension.
 
 If you want to use a specific content processor for processing a file, have a look at its
-documentation page which shows the unique identification string that needs to be used in the file
-extension.
+documentation page which shows the unique short name that needs to be used in the file extension.
