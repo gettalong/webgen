@@ -58,13 +58,12 @@ module Webgen
       end
     end
 
-    # Delete the node identified by +node_or_alcn+ and all of its children from the
-    # tree. Directories are only deleted if +delete_dir+ is +true+.
-    def delete_node(node_or_alcn, delete_dir = false)
+    # Delete the node identified by +node_or_alcn+ and all of its children from the tree.
+    def delete_node(node_or_alcn)
       n = node_or_alcn.kind_of?(Node) ? node_or_alcn : @node_access[:alcn][node_or_alcn]
-      return if n.nil? || n == @dummy_root || (n.is_directory? && !delete_dir)
+      return if n.nil? || n == @dummy_root
 
-      n.children.dup.each {|child| delete_node(child, delete_dir)}
+      n.children.dup.each {|child| delete_node(child)}
 
       website.blackboard.dispatch_msg(:before_node_deleted, n)
       n.parent.children.delete(n)
