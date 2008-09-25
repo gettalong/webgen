@@ -1,5 +1,3 @@
-require 'webgen/websiteaccess'
-require 'webgen/sourcehandler/base'
 require 'uri'
 require 'time'
 

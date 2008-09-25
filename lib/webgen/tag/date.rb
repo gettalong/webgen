@@ -1,5 +1,3 @@
-require 'webgen/tag'
-
 module Webgen::Tag
 
   # Prints out the date using a format string which will be passed to Time#strftime. Therefore you

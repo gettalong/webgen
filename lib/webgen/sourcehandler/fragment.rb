@@ -1,6 +1,3 @@
-require 'webgen/sourcehandler/base'
-require 'webgen/websiteaccess'
-
 module Webgen::SourceHandler
 
   # Handles page fragment nodes and provides utility methods for parsing HTML headers and generating

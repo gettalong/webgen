@@ -1,5 +1,3 @@
-require 'webgen/tag'
-
 module Webgen::Tag
 
   # Provides easy access to the meta information of a node.

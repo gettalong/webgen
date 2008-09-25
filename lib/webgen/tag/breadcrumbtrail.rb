@@ -1,6 +1,3 @@
-require 'webgen/websiteaccess'
-require 'webgen/tag'
-
 module Webgen::Tag
 
   # Generates a breadcrumb trail for the page. This is especially useful when pages are in deep

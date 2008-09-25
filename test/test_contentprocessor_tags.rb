@@ -1,7 +1,7 @@
 require 'test/unit'
 require 'helper'
 require 'webgen/tree'
-require 'webgen/contentprocessor/tags'
+require 'webgen/contentprocessor'
 
 class TestContentProcessorTags < Test::Unit::TestCase
 

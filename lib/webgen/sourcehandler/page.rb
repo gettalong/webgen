@@ -1,6 +1,3 @@
-require 'webgen/websiteaccess'
-require 'webgen/sourcehandler/base'
-
 module Webgen::SourceHandler
 
   # Source handler for handling content files in Webgen Page Format.

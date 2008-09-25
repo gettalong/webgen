@@ -1,6 +1,6 @@
 require 'test/unit'
 require 'helper'
-require 'webgen/sourcehandler/directory'
+require 'webgen/sourcehandler'
 require 'stringio'
 
 class TestSourceHandlerDirectory < Test::Unit::TestCase

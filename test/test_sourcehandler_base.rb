@@ -3,7 +3,7 @@ require 'helper'
 require 'webgen/tree'
 require 'webgen/node'
 require 'webgen/path'
-require 'webgen/sourcehandler/base'
+require 'webgen/sourcehandler'
 require 'time'
 
 class TestSourceHandlerBase < Test::Unit::TestCase

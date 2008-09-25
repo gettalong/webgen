@@ -1,5 +1,3 @@
-require 'webgen/sourcehandler/base'
-
 module Webgen::SourceHandler
 
   # Handles directory source paths.

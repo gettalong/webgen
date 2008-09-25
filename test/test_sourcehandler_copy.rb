@@ -1,6 +1,6 @@
 require 'test/unit'
 require 'helper'
-require 'webgen/sourcehandler/copy'
+require 'webgen/sourcehandler'
 require 'stringio'
 
 class TestSourceHandlerCopy < Test::Unit::TestCase

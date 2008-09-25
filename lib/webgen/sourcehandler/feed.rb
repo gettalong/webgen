@@ -1,6 +1,3 @@
-require 'webgen/websiteaccess'
-require 'webgen/sourcehandler/base'
-
 module Webgen::SourceHandler
 
   # Source handler for creating atom and/or rss feeds.

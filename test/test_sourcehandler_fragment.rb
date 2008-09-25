@@ -1,6 +1,6 @@
 require 'test/unit'
 require 'helper'
-require 'webgen/sourcehandler/fragment'
+require 'webgen/sourcehandler'
 require 'stringio'
 
 class TestSourceHandlerFragment < Test::Unit::TestCase

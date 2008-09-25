@@ -1,6 +1,6 @@
 require 'test/unit'
 require 'helper'
-require 'webgen/source/filesystem'
+require 'webgen/source'
 
 class TestSourceFileSystemPath < Test::Unit::TestCase
 

@@ -1,4 +1,4 @@
-require 'webgen/tag/menu'
+require 'webgen/tag'
 require 'webgen/websiteaccess'
 
 module Webgen::Common
