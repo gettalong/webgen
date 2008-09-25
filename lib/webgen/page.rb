@@ -55,12 +55,15 @@ module Webgen
       # the information. The +meta_info+ parameter can be used to provide default meta information.
       def from_data(data, meta_info = {})
         md = /(#{RE_META_INFO})?(.*)/m.match(normalize_eol(data))
-        if md[1].nil? && data =~ RE_META_INFO_START
-          raise WebgenPageFormatError, 'Found start line for meta information block but no valid meta information block'
-        end
-        meta_info = meta_info.merge(md[1].nil? ? {} : parse_meta_info(md[1]))
+        meta_info = meta_info.merge(parse_meta_info(md[1], data))
         blocks = parse_blocks(md[2] || '', meta_info)
         new(meta_info, blocks)
+      end
+
+      # Parse the given string +data+ in Webgen Page Format and return the found meta information.
+      def meta_info_from_data(data)
+        md = /(#{RE_META_INFO})?/m.match(normalize_eol(data))
+        parse_meta_info(md[1], data)
       end
 
       #######
@@ -72,17 +75,24 @@ module Webgen
         data.gsub(/\r\n?/, "\n")
       end
 
-      # Parse the meta info string +data+ and return the hash with the meta information.
-      def parse_meta_info(data)
-        begin
-          meta_info = YAML::load(data)
-          unless meta_info.kind_of?(Hash)
-            raise WebgenPageFormatError, "Invalid structure of meta information block: expected YAML hash but found #{meta_info.class}"
+      # Parse the meta info string in +mi_data+ and return the hash with the meta information. The
+      # original +data+ is used for checking the validness of the meta information block.
+      def parse_meta_info(mi_data, data)
+        if mi_data.nil? && data =~ RE_META_INFO_START
+          raise WebgenPageFormatError, 'Found start line for meta information block but no valid meta information block'
+        elsif mi_data.nil?
+          {}
+        else
+          begin
+            meta_info = YAML::load(mi_data.to_s)
+            unless meta_info.kind_of?(Hash)
+              raise WebgenPageFormatError, "Invalid structure of meta information block: expected YAML hash but found #{meta_info.class}"
+            end
+          rescue ArgumentError => e
+            raise WebgenPageFormatError, e.message
           end
-        rescue ArgumentError => e
-          raise WebgenPageFormatError, e.message
+          meta_info
         end
-        meta_info
       end
 
       # Parse all blocks in +data+ and return them. Meta information can be provided in +meta_info+
@@ -118,12 +128,12 @@ module Webgen
     # The contents of the meta information block.
     attr_reader :meta_info
 
-    # The array of blocks for the page.
+    # The hash of blocks for the page.
     attr_reader :blocks
 
     # Create a new Page object with the meta information provided in +meta_info+ and the given
     # +blocks+.
-    def initialize(meta_info = {}, blocks = nil)
+    def initialize(meta_info = {}, blocks = {})
       @meta_info = meta_info
       @blocks = blocks
     end
