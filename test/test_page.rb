@@ -118,7 +118,7 @@ class TestPage < Test::Unit::TestCase
       content: "content\\n----------- some block start???\\nthings"
 EOF
 
-  INVALID=<<EOF
+  INVALID_MI=<<EOF
 # invalid meta info: none specified
 - "---\\n---"
 
@@ -136,7 +136,9 @@ EOF
   : * [ }
   ---
   asdf kadsfakl
+EOF
 
+  INVALID_BLOCKS=<<EOF
 # two blocks with same name
 - |
   aasdf
@@ -155,16 +157,23 @@ EOF
 EOF
 
   def test_invalid_pagefiles
-    testdata = YAML::load(INVALID)
+    testdata = YAML::load(INVALID_MI)
     testdata.each_with_index do |data, index|
-      assert_raise(Webgen::WebgenPageFormatError, "test item #{index}") { Webgen::Page.from_data(data) }
+      assert_raise(Webgen::WebgenPageFormatError, "test mi item #{index}") { Webgen::Page.from_data(data) }
+      assert_raise(Webgen::WebgenPageFormatError, "test mi item #{index}") { Webgen::Page.meta_info_from_data(data) }
+    end
+    testdata = YAML::load(INVALID_BLOCKS)
+    testdata.each_with_index do |data, index|
+      assert_raise(Webgen::WebgenPageFormatError, "test blocks item #{index}") { Webgen::Page.from_data(data) }
     end
   end
 
   def test_valid_pagefiles
     YAML::load(VALID).each_with_index do |data, oindex|
+      mi = Webgen::Page.meta_info_from_data(data['in'])
+      assert_equal(data['meta_info'], mi, "test item #{oindex} - meta info directly")
       d = Webgen::Page.from_data(data['in'])
-      assert_equal(data['meta_info'], d.meta_info, "test item #{oindex} - meta info")
+      assert_equal(data['meta_info'], d.meta_info, "test item #{oindex} - meta info all")
       assert_equal(data['blocks'].length*2, d.blocks.length)
       data['blocks'].each_with_index do |b, index|
         index += 1
