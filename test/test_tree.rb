@@ -42,8 +42,7 @@ class TestTree < Test::Unit::TestCase
     @tree.delete_node(@tree.dummy_root)
     assert_not_nil(@tree[''])
 
-    @tree.delete_node(root)
-    assert_not_nil(@tree['/'])
+    assert_nothing_raised { @tree.delete_node('/unknown_path') }
 
     @tree.delete_node(file)
     assert_nil(@tree['/testfile'])
@@ -52,17 +51,13 @@ class TestTree < Test::Unit::TestCase
     assert_equal(1, root.children.size)
     assert_equal(1, nrcalls)
 
-    @tree.delete_node('/', true)
+    @tree.delete_node('/')
     assert_nil(@tree['/testdir'])
     assert_nil(@tree['/testdir', :acn])
     assert_nil(@tree.node_info['/testdir'])
     assert_nil(@tree['/'])
     assert_nil(@tree.node_info['/'])
     assert_equal(3, nrcalls)
-
-    Webgen::Node.new(root, 'testfile', 'testfile')
-    Webgen::Node.new(root, 'testdir/', 'testdir')
-    @tree.delete_node(root, true)
     assert_equal([@tree.dummy_root], @tree.node_access[:alcn].values)
   end
 
