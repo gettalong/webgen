@@ -1,6 +1,3 @@
-require 'webgen/websiteaccess'
-require 'webgen/tag'
-
 module Webgen::Tag
 
   # Generates a sitemap. The sitemap contains the hierarchy of all pages on the web site.

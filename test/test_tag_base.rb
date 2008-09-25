@@ -2,7 +2,6 @@ require 'test/unit'
 require 'helper'
 require 'stringio'
 require 'webgen/tag'
-require 'webgen/tag/base'
 
 class TestTagBase < Test::Unit::TestCase
 

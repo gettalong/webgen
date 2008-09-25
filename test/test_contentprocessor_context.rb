@@ -1,6 +1,6 @@
 require 'test/unit'
 require 'helper'
-require 'webgen/contentprocessor/context'
+require 'webgen/contentprocessor'
 
 class TestContentProcessorContext < Test::Unit::TestCase
 

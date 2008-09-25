@@ -1,6 +1,3 @@
-require 'webgen/contentprocessor'
-require 'webgen/websiteaccess'
-
 module Webgen::ContentProcessor
 
   # The context object that is passed to the +call+ method of a content processor.

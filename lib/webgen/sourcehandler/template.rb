@@ -1,7 +1,3 @@
-require 'webgen/websiteaccess'
-require 'webgen/loggable'
-require 'webgen/sourcehandler/base'
-
 module Webgen::SourceHandler
 
   # Source handler for handling template files in Webgen Page Format.

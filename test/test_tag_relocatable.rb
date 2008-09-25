@@ -2,7 +2,7 @@ require 'test/unit'
 require 'helper'
 require 'webgen/tree'
 require 'webgen/contentprocessor'
-require 'webgen/tag/relocatable'
+require 'webgen/tag'
 
 class TestTagRelocatable < Test::Unit::TestCase
 

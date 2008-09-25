@@ -1,5 +1,3 @@
-require 'webgen/websiteaccess'
-
 module Webgen::ContentProcessor
 
   # Processes embedded Ruby statements with the +erubis+ library.

@@ -1,5 +1,3 @@
-require 'webgen/websiteaccess'
-require 'webgen/tag'
 require 'cgi'
 
 module Webgen::Tag

@@ -1,4 +1,3 @@
-require 'webgen/tag'
 require 'uri'
 
 module Webgen::Tag

@@ -2,7 +2,7 @@ require 'test/unit'
 require 'helper'
 require 'webgen/tree'
 require 'webgen/contentprocessor'
-require 'webgen/tag/menu'
+require 'webgen/tag'
 
 class TestTagMenu < Test::Unit::TestCase
 

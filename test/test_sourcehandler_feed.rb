@@ -1,6 +1,6 @@
 require 'test/unit'
 require 'helper'
-require 'webgen/sourcehandler/feed'
+require 'webgen/sourcehandler'
 require 'stringio'
 
 class TestSourceHandlerFeed < Test::Unit::TestCase

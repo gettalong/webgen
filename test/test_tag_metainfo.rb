@@ -1,7 +1,7 @@
 require 'test/unit'
 require 'webgen/tree'
 require 'webgen/contentprocessor'
-require 'webgen/tag/metainfo'
+require 'webgen/tag'
 
 class TestTagMetainfo < Test::Unit::TestCase
 

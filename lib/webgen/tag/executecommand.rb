@@ -1,6 +1,5 @@
-require 'webgen/tag'
 require 'cgi'
-require "tempfile"
+require 'tempfile'
 require 'rbconfig'
 
 module Webgen::Tag

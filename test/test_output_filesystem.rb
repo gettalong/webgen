@@ -1,6 +1,6 @@
 require 'test/unit'
 require 'helper'
-require 'webgen/output/filesystem'
+require 'webgen/output'
 require 'tmpdir'
 require 'fileutils'
 

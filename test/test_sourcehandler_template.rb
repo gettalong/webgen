@@ -3,7 +3,7 @@ require 'helper'
 require 'webgen/tree'
 require 'webgen/node'
 require 'webgen/path'
-require 'webgen/sourcehandler/template'
+require 'webgen/sourcehandler'
 require 'stringio'
 
 class TestSourceHandlerTemplate < Test::Unit::TestCase

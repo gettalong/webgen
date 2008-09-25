@@ -1,6 +1,6 @@
 require 'test/unit'
 require 'helper'
-require 'webgen/sourcehandler/metainfo'
+require 'webgen/sourcehandler'
 require 'stringio'
 
 class TestSourceHandlerMetainfo < Test::Unit::TestCase

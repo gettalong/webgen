@@ -1,6 +1,3 @@
-require 'webgen/websiteaccess'
-require 'webgen/tag'
-
 module Webgen::Tag
 
   # Provides syntax highlighting via the +coderay+ library.

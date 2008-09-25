@@ -1,6 +1,6 @@
 require 'test/unit'
 require 'helper'
-require 'webgen/source/stacked'
+require 'webgen/source'
 
 class TestSourceFileSystemStacked < Test::Unit::TestCase
 

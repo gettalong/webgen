@@ -1,6 +1,3 @@
-require 'webgen/websiteaccess'
-require 'webgen/tag'
-
 module Webgen::Tag
 
   # Generates a menu that can be configured extensively.

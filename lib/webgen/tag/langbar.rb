@@ -1,6 +1,3 @@
-require 'webgen/tag'
-require 'webgen/websiteaccess'
-
 module Webgen::Tag
 
   # Generates a list with all the languages of the page.
