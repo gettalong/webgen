@@ -26,11 +26,11 @@ module Webgen::Tag
           end
           if result.empty?
             log(:error) { "Could not resolve path '#{uri_string}' in <#{context.ref_node.absolute_lcn}>" }
-            context.dest_node.dirty = true
+            context.dest_node.flag(:dirty)
           end
         rescue URI::InvalidURIError => e
           log(:error) { "Error while parsing path for tag relocatable in <#{context.ref_node.absolute_lcn}>: #{e.message}" }
-          context.dest_node.dirty = true
+          context.dest_node.flag(:dirty)
         end
       end
       result

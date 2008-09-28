@@ -57,7 +57,7 @@ module Webgen::Tag
 
         if (list.map {|n| n.absolute_lcn} != cached_list) ||
             list.any? {|n| (r = n.routing_node(cn.lang)) && r != node && r.meta_info_changed?}
-          node.dirty = true
+          node.flag(:dirty)
           break
         end
       end

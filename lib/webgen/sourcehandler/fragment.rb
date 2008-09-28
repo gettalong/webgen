@@ -50,15 +50,13 @@ module Webgen::SourceHandler
     def create_fragment_nodes(sections, parent, path, in_menu, si = 1000 )
       sections.each do |level, id, title, sub_sections|
         node = website.blackboard.invoke(:create_nodes, parent.tree, parent.absolute_lcn,
-                                         path, self) do |cn_parent, cn_path|
-          ptemp = Webgen::Path.new('#' + id)
-          ptemp.meta_info = cn_path.meta_info.merge(ptemp.meta_info)
-          create_node(cn_parent, ptemp)
+                                         Webgen::Path.new('#' + id, path.source_path),
+                                         self) do |cn_parent, cn_path|
+          cn_path.meta_info['title'] = title
+          cn_path.meta_info['in_menu'] = in_menu
+          cn_path.meta_info['sort_info'] = si = si.succ
+          create_node(cn_parent, cn_path)
         end.first
-        node['title'] = title
-        node['in_menu'] = in_menu
-        node['sort_info'] = si = si.succ
-        node.node_info[:src] = path.path
         create_fragment_nodes(sub_sections, node, path, in_menu, si.succ)
       end
     end

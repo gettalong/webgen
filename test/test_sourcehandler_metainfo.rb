@@ -30,22 +30,32 @@ EOF
   end
 
   def test_create_node
+    assert(@node.flagged(:dirty_meta_info))
     assert_equal({'/**/*' => {'title' => 'new title', 'before' => 'valbef'}}, @node.node_info[:mi_paths])
     assert_equal({'/**/*' => {'after' => 'valaft'}}, @node.node_info[:mi_alcn])
   end
 
   def test_meta_info_changed
     other = TestSH.new.create_node(@root, path_with_meta_info('/default.css'))
-    assert(@obj.send(:meta_info_changed?, @node, other))
-    @website.cache.old_data.update(@website.cache.new_data)
     assert(!@obj.send(:meta_info_changed?, @node, other))
+    assert(@obj.send(:meta_info_changed?, @node, other, :force))
+    assert(!@obj.send(:meta_info_changed?, @node, other, :no_old_data))
   end
 
   def test_mark_all_matched_dirty
     other = TestSH.new.create_node(@root, path_with_meta_info('/default.css'))
-    other.dirty_meta_info = false
+
+    other.unflag(:dirty_meta_info)
     @obj.send(:mark_all_matched_dirty, @node)
-    assert(other.dirty_meta_info)
+    assert(!other.flagged(:dirty_meta_info))
+
+    other.unflag(:dirty_meta_info)
+    @obj.send(:mark_all_matched_dirty, @node, :force)
+    assert(other.flagged(:dirty_meta_info))
+
+    other.unflag(:dirty_meta_info)
+    @obj.send(:mark_all_matched_dirty, @node, :no_old_data)
+    assert(!other.flagged(:dirty_meta_info))
   end
 
   def test_before_node_created
@@ -62,28 +72,20 @@ EOF
 
   def test_before_node_deleted
     other = TestSH.new.create_node(@root, path_with_meta_info('/default.css'))
-    other.dirty_meta_info = false
-
-    @website.blackboard.del_service(:source_paths)
-    @website.blackboard.add_service(:source_paths) { {'/metainfo' => ''} }
     @website.blackboard.dispatch_msg(:before_node_deleted, @node)
-    assert(!other.dirty_meta_info)
-
-    @website.blackboard.del_service(:source_paths)
-    @website.blackboard.add_service(:source_paths) { {} }
-    @website.blackboard.dispatch_msg(:before_node_deleted, @node)
-    assert(other.dirty_meta_info)
+    assert(other.flagged(:dirty_meta_info))
+    assert(@obj.nodes.empty?)
   end
 
   def test_node_meta_info_changed
-    @node.dirty_meta_info = false
+    @node.unflag(:dirty_meta_info)
     @website.blackboard.dispatch_msg(:node_meta_info_changed?, @node)
-    assert(!@node.dirty_meta_info)
+    assert(!@node.flagged(:dirty_meta_info))
 
-    other = TestSH.new.create_node(@root, path_with_meta_info('/default.css'))
-    other.dirty_meta_info = false
-    @website.blackboard.dispatch_msg(:node_meta_info_changed?, other)
-    assert(other.dirty_meta_info)
+    @node.node_info[:mi_alcn] = @node.node_info[:mi_alcn].dup
+    @node.node_info[:mi_alcn]['/*metainfo'] = {'other' => 'doit'}
+    @website.blackboard.dispatch_msg(:node_meta_info_changed?, @node)
+    assert(@node.flagged(:dirty_meta_info))
   end
 
   def test_content

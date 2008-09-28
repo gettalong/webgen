@@ -54,7 +54,7 @@ config.sourcehandler.patterns({
                                 'Webgen::SourceHandler::Sitemap' => ['**/*.sitemap']
                               }, :doc => 'Source handler to path pattern map')
 config.sourcehandler.invoke({
-                              1 => ['Webgen::SourceHandler::Directory', 'Webgen::SourceHandler::Metainfo', 'Webgen::SourceHandler::Directory'],
+                              1 => ['Webgen::SourceHandler::Directory', 'Webgen::SourceHandler::Metainfo'],
                               5 => ['Webgen::SourceHandler::Copy', 'Webgen::SourceHandler::Template',
                                     'Webgen::SourceHandler::Page', 'Webgen::SourceHandler::Feed',
                                     'Webgen::SourceHandler::Sitemap'],

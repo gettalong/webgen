@@ -38,7 +38,7 @@ module Webgen::Tag
         lang_nodes = all_lang_nodes(node.tree[acn, :acn]) rescue nil
         if !lang_nodes || lang_nodes.length != clang_nodes.length ||
             lang_nodes.any? {|n| n.meta_info_changed?}
-          node.dirty = true
+          node.flag(:dirty)
           break
         end
       end

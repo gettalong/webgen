@@ -7,6 +7,7 @@ class TestPath < Test::Unit::TestCase
   def test_initialize
     check_proc = proc do |o, path, dir, bn, lang, ext, cn, oi, title|
       assert_equal(path, o.path)
+      assert_equal(path, o.source_path)
       assert_equal(dir, o.directory)
       assert_equal(bn, o.cnbase)
       assert_equal(lang, o.meta_info['lang'])
@@ -38,6 +39,10 @@ class TestPath < Test::Unit::TestCase
                     '/', '/', '/', nil, '', '/', nil, '/')
     check_proc.call(Webgen::Path.new('/dir/'),
                     '/dir/', '/', 'dir', nil, '', 'dir', nil, 'Dir')
+
+    path = Webgen::Path.new('/test/', '/other.path')
+    assert_equal('/other.path', path.source_path)
+    assert_equal('/test/', path.path)
   end
 
   def test_mount_at

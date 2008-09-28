@@ -34,7 +34,7 @@ class TestSourceHandlerPage < Test::Unit::TestCase
     assert_equal(Webgen::LanguageManager.language_for_code('epo'), node.lang)
     assert_not_nil(@website.cache.permanent[:page_sections]['/test/index.eo.html'])
 
-    assert_nil(@obj.create_node(@root, @path.dup))
+    assert_equal(node, @obj.create_node(@root, @path.dup))
 
     @root.tree.delete_node(node)
     path = @path.dup
@@ -58,13 +58,11 @@ class TestSourceHandlerPage < Test::Unit::TestCase
   def test_meta_info_changed
     node = @obj.create_node(@root, @path)
     @website.blackboard.dispatch_msg(:node_meta_info_changed?, node)
-    assert(node.meta_info_changed?)
-
-    node.dirty_meta_info = false
-    @website.cache.restore(@website.cache.dump)
-    @website.cache[[:sh_page_node_mi, node.absolute_lcn]]['modified_at'] = Time.now
-    @website.blackboard.dispatch_msg(:node_meta_info_changed?, node)
     assert(!node.meta_info_changed?)
+
+    @path.instance_eval { @io = Webgen::Path::SourceIO.new {StringIO.new("---\ntitle: test\n---\ncontent")} }
+    @website.blackboard.dispatch_msg(:node_meta_info_changed?, node)
+    assert(node.meta_info_changed?)
   end
 
 end

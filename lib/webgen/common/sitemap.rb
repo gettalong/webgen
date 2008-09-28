@@ -64,12 +64,11 @@ module Webgen::Common
             (tree.flatten.any? do |alcn|
                (n = node.tree[alcn]) && (r = n.routing_node(lang)) && r.meta_info_changed?
              end)
-          node.dirty = true
+          node.flag(:dirty)
           break
         end
       end
     end
-
 
   end
 

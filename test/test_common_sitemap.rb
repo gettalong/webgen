@@ -44,13 +44,13 @@ class TestCommonSitemap < Test::Unit::TestCase
     do_assert(@nodes[:file1_de], 'de', false, true, ['page'],
               [:dir1, :file11_en, :file1_de, :index_en])
 
-    @nodes[:file11_en].dirty = false
+    @nodes[:file11_en].unflag(:dirty)
     @website.blackboard.dispatch_msg(:node_changed?, @nodes[:file11_en])
-    assert(!@nodes[:file11_en].dirty)
+    assert(!@nodes[:file11_en].flagged(:dirty))
 
-    @nodes[:file11_en].dirty_meta_info = true
+    @nodes[:file11_en].flag(:dirty_meta_info)
     @website.blackboard.dispatch_msg(:node_changed?, @nodes[:file11_en])
-    assert(@nodes[:file11_en].dirty)
+    assert(@nodes[:file11_en].flagged(:dirty))
   end
 
 end

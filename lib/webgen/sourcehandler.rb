@@ -39,51 +39,84 @@ module Webgen
       # Render the nodes provided in the +tree+. Before the actual rendering is done, the sources
       # are checked (nodes for deleted sources are deleted, nodes for new and changed sources).
       def render(tree)
-        # Add new and changed nodes, remove nodes of deleted paths
-        puts "Generating tree..."
+        puts "Updating tree..."
         time = Benchmark.measure do
-          used_paths = Set.new
-          paths = Set.new([nil])
-          while paths.length > 0
-            used_paths += (paths = Set.new(find_all_source_paths.keys) - used_paths - clean(tree))
-            create_nodes_from_paths(tree, paths)
-            website.cache.reset_volatile_cache
-          end
+          update_tree(tree)
         end
         puts "...done in " + ('%2.4f' % time.real) + ' seconds'
-
-        output = website.blackboard.invoke(:output_instance)
 
         puts "Writing changed nodes..."
         time = Benchmark.measure do
-          tree.node_access[:alcn].sort.each do |name, node|
-            node.dirty_meta_info = node.created = false
-            next if node == tree.dummy_root || !node.dirty
-            node.dirty = false
-
-            begin
-              if !node['no_output'] && (content = node.content)
-                puts " "*4 + name, :verbose
-                type = if node.is_directory?
-                         :directory
-                       elsif node.is_fragment?
-                         :fragment
-                       else
-                         :file
-                       end
-                output.write(node.path, content, type)
-              end
-            rescue
-              raise RuntimeError, "Error while processing <#{node.absolute_lcn}>: #{$!.message}", $!.backtrace
-            end
-          end
+          write_tree(tree)
         end
         puts "...done in " + ('%2.4f' % time.real) + ' seconds'
+
+        #TODO: redo everything if new nodes (ones flagged :created) are found
       end
 
       #######
       private
       #######
+
+      # Update the +tree+ by creating/reinitializing all needed nodes.
+      def update_tree(tree)
+        unused_paths = Set.new
+        begin
+          used_paths = Set.new(find_all_source_paths.keys) - unused_paths
+          paths_to_use = Set.new
+          nodes_to_delete = Set.new
+
+          tree.node_access[:alcn].each do |alcn, node|
+            next if node == tree.dummy_root
+            used_paths.delete(node.node_info[:src])
+
+            deleted = !find_all_source_paths.include?(node.node_info[:src])
+            if deleted
+              nodes_to_delete << node
+              #TODO: delete output path
+            elsif (!node.flagged(:created) && find_all_source_paths[node.node_info[:src]].changed?) || node.meta_info_changed?
+              node.flag(:reinit)
+              paths_to_use << node.node_info[:src]
+            elsif node.changed?
+              # nothing to be done here
+            end
+          end
+
+          nodes_to_delete.each {|node| tree.delete_node(node)}
+          used_paths.merge(paths_to_use)
+          paths = create_nodes_from_paths(tree, used_paths.to_a.sort)
+          unused_paths.merge(used_paths - paths)
+          tree.node_access[:alcn].each {|name, node| tree.delete_node(node) if node.flagged(:reinit)}
+          website.cache.reset_volatile_cache
+        end until used_paths.empty?
+      end
+
+      # Write out all changed nodes of the +tree+.
+      def write_tree(tree)
+        output = website.blackboard.invoke(:output_instance)
+        tree.node_access[:alcn].sort.each do |name, node|
+          node.unflag(:dirty_meta_info)
+          node.unflag(:created)
+          next if node == tree.dummy_root || !node.flagged(:dirty)
+
+          node.unflag(:dirty)
+          next if node['no_output'] || !(content = node.content)
+
+          begin
+            puts " "*4 + name, :verbose
+            type = if node.is_directory?
+                     :directory
+                   elsif node.is_fragment?
+                     :fragment
+                   else
+                     :file
+                   end
+            output.write(node.path, content, type)
+          rescue
+            raise RuntimeError, "Error while processing <#{node.absolute_lcn}>: #{$!.message}", $!.backtrace
+          end
+        end
+      end
 
       # Return a hash with all source paths.
       def find_all_source_paths
@@ -94,7 +127,7 @@ module Webgen
           @paths = {}
           source.paths.each do |path|
             if !(website.config['sourcehandler.ignore'].any? {|pat| File.fnmatch(pat, path, File::FNM_CASEFOLD|File::FNM_DOTMATCH)})
-              @paths[path.path] = path
+              @paths[path.source_path] = path
             end
           end
         end
@@ -115,16 +148,20 @@ module Webgen
 
       # Use the source handlers to create nodes for the +paths+ in the +tree+.
       def create_nodes_from_paths(tree, paths)
+        used_paths = Set.new
         website.config['sourcehandler.invoke'].sort.each do |priority, shns|
           shns.each do |shn|
             sh = website.cache.instance(shn)
-            paths_for_handler(shn, paths).sort.each do |path|
+            handler_paths = paths_for_handler(shn, paths)
+            used_paths.merge(handler_paths)
+            handler_paths.sort {|a,b| a.path.length <=> b.path.length}.each do |path|
               parent_dir = path.directory.split('/').collect {|p| Path.new(p).cn}.join('/')
               parent_dir += '/' if path != '/' && parent_dir == ''
               create_nodes(tree, parent_dir, path, sh)
             end
           end
         end
+        used_paths
       end
 
       # Prepare everything to create nodes under the absolute lcn path +parent_path_name+ in the
@@ -142,7 +179,7 @@ module Webgen
         *nodes = if block_given?
                    yield(parent, path)
                  else
-                   source_handler.create_node(parent, path.dup)
+                   source_handler.create_node(parent, path)
                  end
         nodes.flatten.compact.each do |node|
           website.blackboard.dispatch_msg(:after_node_created, node)
@@ -160,39 +197,12 @@ module Webgen
       # take the node's path's +modified_at+ meta information into account since that changes on
       # every path change.
       def meta_info_changed?(node)
-        path = node.node_info[:src]
+        path = node.node_info[:creation_path]
         old_mi = website.cache[:sourcehandler_path_mi][[path, node.node_info[:processor]]]
         old_mi.delete('modified_at')
-        new_mi = default_meta_info(@paths[path], node.node_info[:processor])
+        new_mi = default_meta_info(@paths[path] || Webgen::Path.new(path), node.node_info[:processor])
         new_mi.delete('modified_at')
-        node.dirty_meta_info = true if !old_mi || old_mi != new_mi
-      end
-
-      # Clean the +tree+ by deleting nodes which have changed or which don't have an associated
-      # source anymore. Return all paths for which nodes need to be created.
-      def clean(tree)
-        paths_to_delete = Set.new
-        paths_not_to_delete = Set.new
-        nodes_to_be_deleted = Set.new
-        tree.node_access[:alcn].each do |alcn, node|
-          next if node == tree.dummy_root || tree[alcn].nil?
-
-          deleted = !find_all_source_paths.include?(node.node_info[:src])
-          if !node.created && (deleted ||
-                               find_all_source_paths[node.node_info[:src]].changed? ||
-                               node.changed?)
-            paths_not_to_delete << node.node_info[:src]
-            nodes_to_be_deleted << [node, deleted]
-          else
-            paths_to_delete << node.node_info[:src]
-          end
-        end
-
-        nodes_to_be_deleted.each {|node, deleted| tree.delete_node(node, deleted)}
-        #TODO: delete output path
-
-        # source paths that should be used
-        paths_to_delete - paths_not_to_delete
+        node.flag(:dirty_meta_info) if !old_mi || old_mi != new_mi
       end
 
     end

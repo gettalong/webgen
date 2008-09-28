@@ -14,8 +14,7 @@ class TestTagLangbar < Test::Unit::TestCase
   def create_default_nodes
     {
       :root => root = Webgen::Node.new(Webgen::Tree.new.dummy_root, '/', '/', {'index_path' => 'index.html'}),
-      :file_en => Webgen::Node.new(root, '/file1.html', 'file1.html',
-                                   {'lang' => 'en', 'title' => 'File1'}),
+      :file_en => Webgen::Node.new(root, '/file1.html', 'file1.html', {'lang' => 'en', 'title' => 'File1'}),
       :index_en => Webgen::Node.new(root, '/index.html', 'index.html', {'lang' => 'en'}),
       :index_de => Webgen::Node.new(root, '/index.de.html', 'index.html', {'lang' => 'de'}),
     }
@@ -31,15 +30,15 @@ class TestTagLangbar < Test::Unit::TestCase
     link = '<span>en</span>'
     check_results(nodes[:file_en], link, '', '', '')
 
-    @obj.set_params('tag.langbar.show_single_lang'=>true, 'tag.langbar.show_own_lang'=>true, 'tag.langbar.separator' => ' --- ')
+    @obj.set_params('tag.langbar.show_single_lang' => true, 'tag.langbar.show_own_lang' => true, 'tag.langbar.separator' => ' --- ')
     assert_equal("#{de_link} --- #{en_link}", @obj.call('langbar', '', Webgen::ContentProcessor::Context.new(:chain => [nodes[:index_en]])))
 
-    nodes[:index_en].dirty = false
+    nodes[:index_en].unflag(:dirty)
     @website.blackboard.dispatch_msg(:node_changed?, nodes[:index_en])
-    assert(!nodes[:index_en].dirty)
+    assert(!nodes[:index_en].flagged(:dirty))
     nodes[:index_en].tree.delete_node(nodes[:index_de])
     @website.blackboard.dispatch_msg(:node_changed?, nodes[:index_en])
-    assert(nodes[:index_en].dirty)
+    assert(nodes[:index_en].flagged(:dirty))
   end
 
   def check_results(node, both_true, both_false, first_false, second_false)

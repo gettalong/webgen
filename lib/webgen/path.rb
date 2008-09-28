@@ -37,8 +37,11 @@ module Webgen
 
     include Comparable
 
-    # The full source path.
+    # The full path.
     attr_accessor :path
+
+    # The source path that lead to the creation of this path.
+    attr_reader :source_path
 
     # The basename part of the path.
     attr_accessor :basename
@@ -55,11 +58,13 @@ module Webgen
     # Extracted meta information for the path.
     attr_accessor :meta_info
 
-    # Create a new Path object for +path+. The optional block needs to return an IO object for the
-    # content of the path.
-    def initialize(path, &ioblock)
+    # Create a new Path object for +path+. The optional +source_path+ parameter specifies the path
+    # that lead to the creation of this path. The optional block needs to return an IO object for
+    # the content of the path.
+    def initialize(path, source_path = path, &ioblock)
       @meta_info = {}
       @io = SourceIO.new(&ioblock) if block_given?
+      @source_path = source_path
       analyse(path)
     end
 

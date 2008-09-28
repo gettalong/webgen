@@ -14,6 +14,7 @@ class TestSourceHandlerDirectory < Test::Unit::TestCase
     assert_not_nil(node)
     assert_equal(:value, node[:key])
 
+    node.flag(:reinit)
     assert_equal(node, @obj.create_node(root, path_with_meta_info('/dir/', {:key => :other}) {StringIO.new('')}))
     assert_equal(:other, node[:key])
   end

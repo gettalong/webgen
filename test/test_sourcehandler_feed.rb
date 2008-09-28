@@ -36,7 +36,7 @@ EOF
     assert_equal('atom', atom_node.node_info[:feed_type])
     assert_equal('rss', rss_node.node_info[:feed_type])
 
-    assert_equal([nil, nil], @obj.create_node(@nodes[:root], @path))
+    assert_equal([atom_node, rss_node], @obj.create_node(@nodes[:root], @path))
   end
 
   def test_content
@@ -58,15 +58,14 @@ EOF
     atom_node.content # populate cache
     @website.cache.old_data.update(@website.cache.new_data)
 
-    atom_node.dirty = false
+    atom_node.unflag(:dirty)
     assert(atom_node.changed?)
 
-    atom_node.dirty = false
-    @nodes[:file1_en].dirty = false
-    @nodes[:index_en].dirty = false
+    atom_node.unflag(:dirty)
+    @nodes[:file1_en].unflag(:dirty)
+    @nodes[:index_en].unflag(:dirty)
     assert(!atom_node.changed?)
 
-    atom_node.dirty = false
     atom_node['entries'] = 'file.*.html'
     assert(atom_node.changed?)
   end
