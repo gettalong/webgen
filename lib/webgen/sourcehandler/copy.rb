@@ -7,8 +7,8 @@ module Webgen::SourceHandler
     include Webgen::WebsiteAccess
     include Base
 
-    # Create the node for +parent+ and +path+. If the +path+ has the name of a content processor in
-    # the extension, it is preprocessed.
+    # Create the node for +parent+ and +path+. If the +path+ has the name of a content processor as
+    # the first part in the extension, it is preprocessed.
     def create_node(parent, path)
       if path.ext.index('.')
         processor, *rest = path.ext.split('.')

@@ -31,7 +31,7 @@ class TestNode < Test::Unit::TestCase
     }
   end
 
-  def test_initialize
+  def test_initialize_and_reinit
     check_proc = proc do |node, parent, path, cn, lcn, alcn, lang, mi|
       assert_equal(parent, node.parent)
       assert_equal(path, node.path)
@@ -39,8 +39,8 @@ class TestNode < Test::Unit::TestCase
       assert_equal(lcn, node.lcn)
       assert_equal(alcn, node.absolute_lcn)
       assert_equal(lang, node.lang)
-      assert(node.dirty)
-      assert(node.created)
+      assert(node.flagged(:dirty))
+      assert(node.flagged(:created))
       assert_equal(mi, node.meta_info)
       assert_equal({:used_nodes => Set.new, :used_meta_info_nodes => Set.new}, node.node_info)
       mi.each {|k,v| assert_equal(v, node[k])}
@@ -55,9 +55,13 @@ class TestNode < Test::Unit::TestCase
 
     ['http://webgen.rubyforge.org', 'c:\\test'].each_with_index do |abspath, index|
       cn = 'test' + index.to_s + '.html'
-      child = Webgen::Node.new(node, abspath, cn)
-      check_proc.call(child, node, abspath, cn, cn, '/test/' + cn, nil, {})
+      c = Webgen::Node.new(node, abspath, cn)
+      check_proc.call(c, node, abspath, cn, cn, '/test/' + cn, nil, {})
     end
+
+    child.reinit('somename.en.html', {'lang' => 'de', 'title' => 'test'})
+    check_proc.call(child, node, 'somename.en.html', 'somename.page', 'somename.de.page',
+                    '/test/somename.de.page', 'de', {'title' => 'test'})
   end
 
   def test_type_checkers
@@ -75,6 +79,22 @@ class TestNode < Test::Unit::TestCase
     node[:other] = :value
     assert_equal(:newvalue, node[:test])
     assert_equal(:value, node[:other])
+  end
+
+  def test_flags
+    node = Webgen::Node.new(@tree.dummy_root, 'test/', 'test', {'lang' => 'de', :test => :value})
+    assert(node.flagged(:created))
+    assert(node.flagged(:dirty))
+    node.unflag(:dirty)
+    assert(!node.flagged(:dirty))
+    node.flag(:a, :b, :c)
+    assert(node.flagged(:a))
+    assert(node.flagged(:b))
+    assert(node.flagged(:c))
+    node.unflag(:a, :b, :c)
+    assert(!node.flagged(:a))
+    assert(!node.flagged(:b))
+    assert(!node.flagged(:c))
   end
 
   def test_in_lang
@@ -143,16 +163,16 @@ class TestNode < Test::Unit::TestCase
 
   def test_changed
     node = Webgen::Node.new(@tree.dummy_root, 'test/', 'test', {'lang' => 'de', :test => :value})
-    node.dirty = node.created = false
+    node.unflag(:dirty, :created)
 
     calls = 0
-    @website.blackboard.add_listener(:node_changed?) {|n| assert(node, n); node.dirty = true; calls += 1}
+    @website.blackboard.add_listener(:node_changed?) {|n| assert(node, n); node.flag(:dirty); calls += 1}
     node.changed?
     assert_equal(1, calls)
     node.changed?
     assert_equal(1, calls)
 
-    node.dirty = false
+    node.unflag(:dirty)
     node.node_info[:used_nodes] << node.absolute_lcn
     node.node_info[:used_nodes] << 'unknown alcn'
     node.node_info[:used_nodes] << @tree.dummy_root.absolute_lcn
@@ -161,8 +181,8 @@ class TestNode < Test::Unit::TestCase
 
     # Test circular depdendence
     other_node = Webgen::Node.new(@tree.dummy_root, '/other', 'test.l', {'lang' => 'de', :test => :value})
-    other_node.dirty = node.created = false
-    node.dirty = false
+    other_node.flag(:dirty, :created)
+    node.flag(:dirty)
     other_node.node_info[:used_nodes] = [node.absolute_lcn]
     node.node_info[:used_nodes] = [other_node.absolute_lcn]
     node.changed?
@@ -170,16 +190,16 @@ class TestNode < Test::Unit::TestCase
 
   def test_meta_info_changed
     node = Webgen::Node.new(@tree.dummy_root, '/', '/')
-    node.dirty = node.created = false
+    node.unflag(:dirty, :created)
 
     calls = 0
-    @website.blackboard.add_listener(:node_meta_info_changed?) {|n| assert(node, n); node.dirty_meta_info = true; calls += 1}
+    @website.blackboard.add_listener(:node_meta_info_changed?) {|n| assert(node, n); node.flag(:dirty_meta_info); calls += 1}
     assert(node.meta_info_changed?)
     assert_equal(1, calls)
     assert(node.meta_info_changed?)
     assert_equal(1, calls)
 
-    node.dirty_meta_info = false
+    node.unflag(:dirty_meta_info)
     node.node_info[:used_meta_info_nodes] << node.absolute_lcn
     node.node_info[:used_meta_info_nodes] << 'unknown alcn'
     node.node_info[:used_meta_info_nodes] << @tree.dummy_root.absolute_lcn

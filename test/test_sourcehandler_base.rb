@@ -8,12 +8,41 @@ require 'time'
 
 class TestSourceHandlerBase < Test::Unit::TestCase
 
+  class TestSH; include Webgen::SourceHandler::Base; end
+
   include Test::WebsiteHelper
 
   def setup
     super
     @obj = Object.new
     @obj.extend(Webgen::SourceHandler::Base)
+  end
+
+  def test_create_node
+    tree = Webgen::Tree.new
+    path = path_with_meta_info('/path.html')
+    count = 0
+
+    path.instance_eval { @source_path = '/path'}
+    node = @obj.create_node(tree.dummy_root, path) {|n| count +=1 }
+    assert_equal('/path', node.node_info[:src])
+    assert_equal('Object', node.node_info[:processor])
+    assert_kind_of(Time, node['modified_at'])
+    assert_equal(1, count)
+
+    other_node = @obj.create_node(tree.dummy_root, path) {|n| count +=1 }
+    assert_equal(node, other_node)
+    assert_equal(1, count)
+
+    node.flag(:reinit)
+    other_node = @obj.create_node(tree.dummy_root, path) {|n| count +=1 }
+    assert_equal(node, other_node)
+    assert_equal(2, count)
+
+    path.instance_eval { @source_path = '/other' }
+    other_node = @obj.create_node(tree.dummy_root, path) {|n| count +=1 }
+    assert_equal(node, other_node)
+    assert_equal(2, count)
   end
 
   def test_node_exists

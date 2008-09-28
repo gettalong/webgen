@@ -77,13 +77,13 @@ class TestTagBreadcrumbTrail < Test::Unit::TestCase
     context = Webgen::ContentProcessor::Context.new(:chain => [nodes[:file11_en]])
     call(context, ' / ', false, 0, -1)
 
-    nodes[:file11_en].dirty = false
+    nodes[:file11_en].unflag(:dirty)
     @website.blackboard.dispatch_msg(:node_changed?, nodes[:file11_en])
-    assert(!nodes[:file11_en].dirty)
+    assert(!nodes[:file11_en].flagged(:dirty))
 
-    nodes[:index11_en].dirty_meta_info = true
+    nodes[:index11_en].flag(:dirty_meta_info)
     @website.blackboard.dispatch_msg(:node_changed?, nodes[:file11_en])
-    assert(nodes[:file11_en].dirty)
+    assert(nodes[:file11_en].flagged(:dirty))
   end
 
 end

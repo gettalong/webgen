@@ -51,6 +51,11 @@ module Webgen
         @node_access[:alcn][node.absolute_lcn] = node
       end
       (@node_access[:acn][node.absolute_cn] ||= []) << node
+      register_path(node)
+    end
+
+    # A utility method called by Node#reinit. This method should not be used directly!
+    def register_path(node)
       if @node_access[:path].has_key?(node.path)
         raise "Can't have two nodes with same output path: #{node.path}" unless node['no_output']
       else

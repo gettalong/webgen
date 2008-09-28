@@ -16,22 +16,25 @@ module Webgen::SourceHandler
     def create_node(parent, path)
       page = page_from_path(path)
       nodes = []
-      YAML::load(page.blocks['content'].content).each do |key, value|
+      YAML::load(page.blocks['content'].content).each do |key, meta_info|
         key = (key =~ /^\// ? key : File.join(parent.absolute_lcn, key))
         temp_parent = create_directories(parent.tree.root, File.dirname(key), path)
 
-        temp_path = Webgen::Path.new(key)
-        temp_path.meta_info.update(value || {})
-        temp_path.meta_info['modified_at'] = path.meta_info['modified_at']
-        temp_path.meta_info['no_output'] = true
-        output_path = temp_path.meta_info.delete('url') || key
+        meta_info ||= {}
+        meta_info['modified_at'] = path.meta_info['modified_at']
+        meta_info['no_output'] = true
+        output_path = meta_info.delete('url') || key
         output_path = (URI::parse(output_path).absolute? || output_path =~ /^\// ?
                        output_path : File.join(temp_parent.absolute_lcn, output_path))
 
         if key =~ /\/$/
-          nodes << create_directory(temp_parent, key, path, temp_path.meta_info)
+          nodes << create_directory(temp_parent, key, path, meta_info)
         else
-          nodes << super(temp_parent, temp_path, output_path) {|n| n.node_info[:src] = path.path}
+          nodes += website.blackboard.invoke(:create_nodes, parent.tree, temp_parent.absolute_lcn,
+                                             Webgen::Path.new(key, path.source_path), self) do |cn_parent, cn_path|
+            cn_path.meta_info.update(meta_info)
+            super(cn_parent, cn_path, output_path)
+          end
         end
       end if page.blocks.has_key?('content')
       nodes.compact
@@ -53,17 +56,16 @@ module Webgen::SourceHandler
     def create_directory(parent, dir, path, meta_info = nil)
       dir_handler = website.cache.instance('Webgen::SourceHandler::Directory')
       website.blackboard.invoke(:create_nodes, parent.tree, parent.absolute_lcn,
-                                Webgen::Path.new(File.join(dir, '/')),
+                                Webgen::Path.new(File.join(dir, '/'), path.source_path),
                                 dir_handler) do |par, temp_path|
-        node = nil
-        if (node = dir_handler.node_exists?(par, temp_path)) && (!meta_info || node.node_info[:src] != path.path)
-          parent, node = node, nil
-        else
+        parent = dir_handler.node_exists?(par, temp_path)
+        if (parent && (parent.node_info[:src] == path.source_path) && !meta_info.nil?) ||
+            !parent
           temp_path.meta_info.update(meta_info) if meta_info
-          parent = node = dir_handler.create_node(par, temp_path)
-          parent.node_info[:src] = path.path
+          parent.flag(:reinit) if parent
+          parent = dir_handler.create_node(par, temp_path)
         end
-        node
+        parent
       end
       parent
     end

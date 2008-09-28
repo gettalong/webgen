@@ -104,12 +104,12 @@ module Webgen::SourceHandler
       feed
     end
 
-    # Check if the +node+ has meta information from any meta info node and if so, if the meta info
-    # node in question has changed.
+    # Check if the any of the nodes used by this feed +node+ have changed and then mark the node as
+    # dirty.
     def node_changed?(node)
       return if node.node_info[:processor] != self.class.name
       entries = node.feed_entries
-      node.dirty = true if entries.map {|n| n.absolute_lcn } != website.cache[[:sourcehandler_feed, node.node_info[:src]]] ||
+      node.flag(:dirty) if entries.map {|n| n.absolute_lcn } != website.cache[[:sourcehandler_feed, node.node_info[:src]]] ||
         entries.any? {|n| n.changed?}
     end
 

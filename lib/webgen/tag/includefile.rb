@@ -31,7 +31,7 @@ module Webgen::Tag
 
     def node_changed?(node)
       if filenames = node.node_info[:tag_includefile_filenames]
-        node.dirty = true if filenames.any? {|f, mtime| File.mtime(f) > mtime}
+        node.flag(:dirty) if filenames.any? {|f, mtime| File.mtime(f) > mtime}
       end
     end
 

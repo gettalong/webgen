@@ -17,7 +17,7 @@ module Webgen::SourceHandler
       website.blackboard.add_listener(:before_node_created, method(:before_node_created))
       website.blackboard.add_listener(:before_node_deleted, method(:before_node_deleted))
       website.blackboard.add_listener(:after_node_created, method(:after_node_created))
-      self.nodes ||= Set.new
+      self.nodes ||= []
     end
 
     # Create a meta info node from +parent+ and +path+.
@@ -32,14 +32,15 @@ module Webgen::SourceHandler
             node.node_info[mi_key][key] = value
           end if page.blocks.has_key?(block_name)
         end
-        website.cache[[:sh_metainfo_node_mi, node.absolute_lcn]] = {
+
+        mark_all_matched_dirty(node, :no_old_data)
+
+        website.cache.permanent[[:sh_metainfo_node_mi, node.absolute_lcn]] = {
           :mi_paths => node.node_info[:mi_paths],
           :mi_alcn => node.node_info[:mi_alcn]
         }
 
-        mark_all_matched_dirty(node)
-
-        self.nodes << node
+        self.nodes << node unless self.nodes.include?(node)
         self.nodes = self.nodes.sort_by {|n| n.absolute_lcn}
       end
     end
@@ -57,19 +58,21 @@ module Webgen::SourceHandler
     #######
 
     # Return +true+ if any meta information for +node+ provided by +mi_node+ has changed.
-    def meta_info_changed?(mi_node, node, use_cache = true)
-      use_cache = false if !website.cache.old_data[[:sh_metainfo_node_mi, mi_node.absolute_lcn]]
-      cached = website.cache[[:sh_metainfo_node_mi, mi_node.absolute_lcn]]
+    def meta_info_changed?(mi_node, node, option = nil)
+      cached = website.cache.permanent[[:sh_metainfo_node_mi, mi_node.absolute_lcn]]
       path = website.blackboard.invoke(:source_paths)[node.node_info[:src]]
-      (mi_node.node_info[:mi_paths].any? {|pattern, mi| path =~ pattern && (!use_cache || mi != cached[:mi_paths][pattern])} ||
-       mi_node.node_info[:mi_alcn].any? {|pattern, mi| node =~ pattern && (!use_cache || mi != cached[:mi_alcn][pattern])})
+      (mi_node.node_info[:mi_paths].any? do |pattern, mi|
+         path =~ pattern && (option == :force || (!cached && option == :no_old_data) || mi != cached[:mi_paths][pattern])
+       end || mi_node.node_info[:mi_alcn].any? do |pattern, mi|
+         node =~ pattern && (option == :force || (!cached && option == :no_old_data) || mi != cached[:mi_alcn][pattern])
+       end)
     end
 
     # Mark all nodes that are matched by a path or an alcn specifcation in the meta info node +node+
     # as dirty.
-    def mark_all_matched_dirty(node, use_cache = true)
+    def mark_all_matched_dirty(node, option = nil)
       node.tree.node_access[:alcn].each do |path, n|
-        n.dirty_meta_info = true if meta_info_changed?(node, n, use_cache)
+        n.flag(:dirty_meta_info) if meta_info_changed?(node, n, option)
       end
     end
 
@@ -94,10 +97,9 @@ module Webgen::SourceHandler
     # Check if the +node+ has meta information from any meta info node and if so, if the meta info
     # node in question has changed.
     def node_meta_info_changed?(node)
-      return if self.nodes.include?(node)
       self.nodes.each do |n|
-        if n.created && meta_info_changed?(n, node)
-          node.dirty_meta_info = true
+        if n.flagged(:created) && meta_info_changed?(n, node)
+          node.flag(:dirty_meta_info)
           return
         end
       end
@@ -106,7 +108,8 @@ module Webgen::SourceHandler
     # Delete the meta info node +node+ from the internal array.
     def before_node_deleted(node)
       return unless node.node_info[:processor] == self.class.name
-      mark_all_matched_dirty(node, false) if !website.blackboard.invoke(:source_paths).include?(node.node_info[:src])
+      mark_all_matched_dirty(node, :force)
+      website.cache.permanent.delete([:sh_metainfo_node_mi, node.absolute_lcn])
       self.nodes.delete(node)
     end
 

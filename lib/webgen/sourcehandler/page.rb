@@ -17,7 +17,7 @@ module Webgen::SourceHandler
       path.ext = 'html' if path.ext == 'page'
 
       super(parent, path) do |node|
-        website.cache[[:sh_page_node_mi, node.absolute_lcn]] = node.meta_info.dup
+        node.node_info[:sh_page_node_mi] = Webgen::Page.meta_info_from_data(path.io.data)
 
         node.node_info[:page] = page
         tmp_logger = website.logger
@@ -32,7 +32,7 @@ module Webgen::SourceHandler
         website.cache.permanent[:page_sections][node.absolute_lcn] = sections
         website.blackboard.invoke(:create_fragment_nodes,
                                   sections,
-                                  node, website.blackboard.invoke(:source_paths)[path.path],
+                                  node, website.blackboard.invoke(:source_paths)[path.source_path],
                                   node.meta_info['fragments_in_menu'])
         website.logger = tmp_logger
       end
@@ -60,13 +60,12 @@ module Webgen::SourceHandler
 
     # Checks if the meta information provided by the file in Webgen Page Format changed.
     def meta_info_changed?(node)
-      return if !node.created || node.node_info[:processor] != self.class.name
-      ckey = [:sh_page_node_mi, node.absolute_lcn]
-      old_mi = website.cache.old_data[ckey]
-      old_mi.delete('modified_at') if old_mi
-      new_mi = website.cache.new_data[ckey]
-      new_mi.delete('modified_at')
-      node.dirty_meta_info = true if old_mi != new_mi
+      path = website.blackboard.invoke(:source_paths)[node.node_info[:src]]
+      return if node.node_info[:processor] != self.class.name || !path.changed?
+
+      old_mi = node.node_info[:sh_page_node_mi]
+      new_mi = Webgen::Page.meta_info_from_data(path.io.data)
+      node.flag(:dirty_meta_info) if old_mi && old_mi != new_mi
     end
 
   end

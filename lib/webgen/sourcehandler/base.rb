@@ -42,9 +42,18 @@ module Webgen::SourceHandler
   # <tt>node_info[:processor]</tt>:: Has to be set to the class name of the source handler. This is
   #                                  used by the Node class: all unknown method calls are forwarded
   #                                  to the node processor.
-  # <tt>node_info[:src]</tt>:: Has to be set to the string version of the source path.
+  # <tt>node_info[:src]</tt>:: Has to be set to the string version of the path that lead to the
+  #                            creation of the node.
+  # <tt>node_info[:creation_path]</tt>:: Has to be set to the string version of the path that is
+  #                                      used to create the path.
   # <tt>meta_info['no_output']</tt>:: Has to be set to +true+ on nodes that are used during a
   #                                   webgen run but do not produce an output file.
+  # <tt>meta_info['modified_at']</tt>:: Is automatically set to the current time if not already set
+  #                                     correctly (ie. if not a Time object).
+  #
+  # Note: The difference between +:src+ and +:creation_path+ is that a creation path need not have
+  # an existing source path representation. For example, fragments created from a page source path
+  # have a different +:creation_path+ which includes the fragment part.
   #
   # Additional information that is used only for processing purposes should be stored in the
   # #node_info hash of a node as the #meta_info hash is reserved for real node meta information and
@@ -55,7 +64,8 @@ module Webgen::SourceHandler
   # Path patterns define which paths are handled by a specific source handler. These patterns are
   # specified in the <tt>sourcehandler.patterns</tt> configuration hash as a mapping from the source
   # handler class name to an array of path patterns. The patterns need to have a format that
-  # <tt>Dir.glob</tt> can handle.
+  # <tt>Dir.glob</tt> can handle. You can use the configuration helper +patterns+ to set this (is
+  # shown in the example below).
   #
   # Specifying a path pattern does not mean that webgen uses the source handler. One also needs to
   # provide an entry in the configuration value <tt>sourcehandler.invoke</tt>. This is a hash that
@@ -97,7 +107,7 @@ module Webgen::SourceHandler
   #
   #   end
   #
-  #   WebsiteAccess.website.config.sourcehandler.patterns['SimpleCopy'] = ['**/*.jpg', '**/*.png']
+  #   WebsiteAccess.website.config.patterns('SimpleCopy' => ['**/*.jpg', '**/*.png'])
   #   WebsiteAccess.website.config.sourcehandler.invoke[5] << 'SimpleCopy'
   #
   module Base
@@ -156,7 +166,9 @@ module Webgen::SourceHandler
       if OutputPathHelpers.public_instance_methods(false).include?(method)
         name = send(method, parent, path, use_lang_part)
         name += '/'  if path.path =~ /\/$/ && name !~ /\/$/
-        if node_exists?(parent, path, name)
+        if (node = node_exists?(parent, path, name)) && node.lang == path.meta_info['lang']
+          name = node.path
+        elsif node
           name = send(method, parent, path, (path.meta_info['lang'].nil? ? false : true))
           name += '/'  if path.path =~ /\/$/ && name !~ /\/$/
         end
@@ -172,21 +184,31 @@ module Webgen::SourceHandler
       parent.tree[Webgen::Node.absolute_name(parent, path.lcn, :alcn)] || (!path.meta_info['no_output'] && parent.tree[output_path, :path])
     end
 
-    # Create and return a node under +parent+ from +path+ if it does not already exists. Some
+    # Create a node under +parent+ from +path+ if it does not already exists or needs to be
+    # re-initialized. The found node or the newly created node is returned afterwards. +nil+ is
+    # returned if no node can be created (e.g. when <tt>path.meta_info['draft']</tt> is set). Some
     # additional node information like <tt>:src</tt> and <tt>:processor</tt> is set and the meta
-    # information is checked for validness. The created node is yielded if a block is given.
+    # information is checked for validness. The created/re-initialized node is yielded if a block is
+    # given.
     def create_node(parent, path, output_path = self.output_path(parent, path))
-      return if path.meta_info['draft']
-      if !node_exists?(parent, path, output_path)
+      return nil if path.meta_info['draft']
+      node = node_exists?(parent, path, output_path)
+      if node && (node.node_info[:src] != path.source_path || node.node_info[:processor] != self.class.name)
+        log(:warn) { "Node already exists: source = #{path.source_path} | path = #{node.path} | alcn = #{node.absolute_lcn}"}
+        return node
+      elsif !node
         node = Webgen::Node.new(parent, output_path, path.cn, path.meta_info)
-        node['modified_at'] = Time.now unless node['modified_at'].kind_of?(Time)
-        node.node_info[:src] = path.path
-        node.node_info[:processor] = self.class.name
-        yield(node) if block_given?
-        node
+      elsif node.flagged(:reinit)
+        node.reinit(output_path, path.meta_info)
       else
-        log(:warn) { "Node already exists: output path = #{output_path} | alcn = #{Webgen::Node.absolute_name(parent, path.lcn, :alcn)}"}
+        return node
       end
+      node['modified_at'] = Time.now unless node['modified_at'].kind_of?(Time)
+      node.node_info[:src] = path.source_path
+      node.node_info[:creation_path] = path.path
+      node.node_info[:processor] = self.class.name
+      yield(node) if block_given?
+      node
     end
 
     # Return the content of the given +node+. This default +content+ method just returns +nil+.

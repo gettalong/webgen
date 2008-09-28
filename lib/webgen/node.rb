@@ -46,17 +46,6 @@ module Webgen
     # Meta information associated with the node.
     attr_reader :meta_info
 
-    # Set by other objects to +true+ if they think the object has changed since the last run. Must
-    # not be set to +false+ once it is +true+!
-    attr_accessor :dirty
-
-    # Set by other objects to +true+ if the meta information of the node has changed since the last
-    # run. Must not be set to +false+ once it is +true+!
-    attr_accessor :dirty_meta_info
-
-    # Has the node been created or has it been read from the cache?
-    attr_accessor :created
-
     # Create a new Node instance.
     #
     # +parent+ (immutable)::
@@ -78,15 +67,27 @@ module Webgen
     # found, the node is language neutral.
     def initialize(parent, path, cn, meta_info = {})
       @parent = parent
-      @path = path.freeze
       @cn = cn.chomp('/').freeze
+      @children = []
+      reinit(path, meta_info)
+      init_rest
+    end
+
+    # Re-initializes an already initialized node and resets it to its pristine state.
+    def reinit(path, meta_info = {})
+      old_path = @path
+      @path = path.freeze
       @lang = meta_info.delete('lang').freeze
       @lang = nil unless is_file?
       @meta_info = meta_info
-      @children = []
-      @dirty = true
-      @created = true
-      init_rest
+      @flags = Set.new([:dirty, :created])
+      if @tree
+        @tree.node_access[:path].delete(old_path) if old_path
+        @tree.register_path(self)
+        self.node_info.clear
+        self.node_info[:used_nodes] = Set.new
+        self.node_info[:used_meta_info_nodes] = Set.new
+      end
     end
 
     # Return the meta information item for +key+.
@@ -116,26 +117,47 @@ module Webgen
     # Check if the node is the root node.
     def is_root?; self == tree.root;  end
 
+    # Check if the node is flagged with one of the following:
+    #
+    # :created:: Has the node been created or has it been read from the cache?
+    # :dirty:: Set by other objects to +true+ if they think the object has changed since the last
+    #          run. Must not be set to +false+ once it is +true+!
+    # :dirty_meta_info:: Set by other objects to +true+ if the meta information of the node has
+    #                    changed since the last run. Must not be set to +false+ once it is +true+!
+    def flagged(key)
+      @flags.include?(key)
+    end
+
+    # Flag the node with the +keys+. See #flagged for valid keys.
+    def flag(*keys)
+      @flags += keys
+    end
+
+    # Remove the flags +keys+ from the node.
+    def unflag(*keys)
+      @flags.subtract(keys)
+    end
+
     # Return +true+ if the node has changed since the last webgen run. If it has changed, +dirty+ is
     # set to +true+.
     def changed?
       if_not_checked(:node) do
-        @dirty = @dirty || meta_info_changed?
-        @dirty = node_info[:used_nodes].any? {|n| n != @absolute_lcn && (!tree[n] || tree[n].changed?)} unless @dirty
-        website.blackboard.dispatch_msg(:node_changed?, self) unless @dirty
+        flag(:dirty) if meta_info_changed? ||
+          node_info[:used_nodes].any? {|n| n != @absolute_lcn && (!tree[n] || tree[n].changed?)}
+        website.blackboard.dispatch_msg(:node_changed?, self) unless flagged(:dirty)
       end
-      @dirty
+      flagged(:dirty)
     end
 
     # Return +true+ if the meta information of the node has changed.
     def meta_info_changed?
       if_not_checked(:meta_info) do
-        @dirty_meta_info = node_info[:used_meta_info_nodes].any? do |n|
+        flag(:dirty_meta_info) if node_info[:used_meta_info_nodes].any? do |n|
           n != @absolute_lcn && (!tree[n] || tree[n].meta_info_changed?)
-        end unless @dirty_meta_info
-        website.blackboard.dispatch_msg(:node_meta_info_changed?, self) unless @dirty_meta_info
+        end
+        website.blackboard.dispatch_msg(:node_meta_info_changed?, self) unless flagged(:dirty_meta_info)
       end
-      @dirty_meta_info
+      flagged(:dirty_meta_info)
     end
 
     # Return an informative representation of the node.

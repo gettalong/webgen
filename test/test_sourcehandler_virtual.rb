@@ -11,10 +11,10 @@ class TestSourceHandlerVirtual < Test::Unit::TestCase
 \\--- !omap
 - path.de.html:
 
+- /dir/file.html:
+
 - /dir/:
     title: My Dir
-
-- /dir/file.html:
 
 - /directory/path.en.html:
     url: other.html
