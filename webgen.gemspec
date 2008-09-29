@@ -535,15 +535,19 @@ files:
 - test/helper.rb
 has_rdoc: true
 homepage: http://webgen.rubyforge.org
-post_install_message: |
-  Thanks for choosing webgen! Here are some places to get you started:
-  * The webgen User Documentation at <http://webgen.rubyforge.org/documentation/index.html>
-  * The mailing list archive at <http://rubyforge.org/pipermail/webgen-users/>
+post_install_message: |+
   
-  Have a look at <http://webgen.rubyforge.org/news/index.html> for a list of changes!
   
-  Have fun!
-
+  
+  WARNING: This is an unsupported BETA version of webgen which may
+  still contain bugs!
+  
+  The official version is called 'webgen' and can be installed via
+  
+      gem install webgen
+  
+  
+  
 rdoc_options: 
 - --line-numbers
 - --inline-source
