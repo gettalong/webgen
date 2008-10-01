@@ -1,7 +1,7 @@
 --- !ruby/object:Gem::Specification 
 name: webgen
 version: !ruby/object:Gem::Version 
-  version: 0.5.4.20080929
+  version: 0.5.5.20081001
 platform: ruby
 authors: 
 - Thomas Leitner
@@ -9,7 +9,7 @@ autorequire:
 bindir: bin
 cert_chain: []
 
-date: 2008-09-29 00:00:00 +02:00
+date: 2008-10-01 00:00:00 +02:00
 default_executable: webgen
 dependencies: 
 - !ruby/object:Gem::Dependency 
@@ -18,9 +18,9 @@ dependencies:
   version_requirement: 
   version_requirements: !ruby/object:Gem::Requirement 
     requirements: 
-    - - ~>
+    - - "="
       - !ruby/object:Gem::Version 
-        version: 2.0.0
+        version: 2.0.2
     version: 
 - !ruby/object:Gem::Dependency 
   name: maruku
@@ -28,9 +28,9 @@ dependencies:
   version_requirement: 
   version_requirements: !ruby/object:Gem::Requirement 
     requirements: 
-    - - ">="
+    - - "="
       - !ruby/object:Gem::Version 
-        version: 0.5.6
+        version: 0.5.9
     version: 
 - !ruby/object:Gem::Dependency 
   name: facets
@@ -38,7 +38,7 @@ dependencies:
   version_requirement: 
   version_requirements: !ruby/object:Gem::Requirement 
     requirements: 
-    - - ">="
+    - - "="
       - !ruby/object:Gem::Version 
         version: 2.4.3
     version: 
@@ -48,9 +48,9 @@ dependencies:
   version_requirement: 
   version_requirements: !ruby/object:Gem::Requirement 
     requirements: 
-    - - ">="
+    - - "="
       - !ruby/object:Gem::Version 
-        version: 0.8.0
+        version: 0.8.3
     version: 
 - !ruby/object:Gem::Dependency 
   name: ramaze
@@ -68,7 +68,7 @@ dependencies:
   version_requirement: 
   version_requirements: !ruby/object:Gem::Requirement 
     requirements: 
-    - - ">="
+    - - "="
       - !ruby/object:Gem::Version 
         version: 0.3.2
     version: 
@@ -78,9 +78,9 @@ dependencies:
   version_requirement: 
   version_requirements: !ruby/object:Gem::Requirement 
     requirements: 
-    - - ">="
+    - - "="
       - !ruby/object:Gem::Version 
-        version: 0.8.0
+        version: 0.8.1.2.0
     version: 
 - !ruby/object:Gem::Dependency 
   name: dcov
@@ -88,7 +88,7 @@ dependencies:
   version_requirement: 
   version_requirements: !ruby/object:Gem::Requirement 
     requirements: 
-    - - ">="
+    - - "="
       - !ruby/object:Gem::Version 
         version: 0.2.2
     version: 
@@ -98,7 +98,7 @@ dependencies:
   version_requirement: 
   version_requirements: !ruby/object:Gem::Requirement 
     requirements: 
-    - - ">="
+    - - "="
       - !ruby/object:Gem::Version 
         version: 1.0.0
     version: 
@@ -108,7 +108,7 @@ dependencies:
   version_requirement: 
   version_requirements: !ruby/object:Gem::Requirement 
     requirements: 
-    - - ">="
+    - - "="
       - !ruby/object:Gem::Version 
         version: 3.0.0
     version: 
@@ -118,7 +118,7 @@ dependencies:
   version_requirement: 
   version_requirements: !ruby/object:Gem::Requirement 
     requirements: 
-    - - ">="
+    - - "="
       - !ruby/object:Gem::Version 
         version: 2.0.1
     version: 
@@ -128,9 +128,9 @@ dependencies:
   version_requirement: 
   version_requirements: !ruby/object:Gem::Requirement 
     requirements: 
-    - - ">="
+    - - "="
       - !ruby/object:Gem::Version 
-        version: 2.1.0
+        version: 2.1.2
     version: 
 - !ruby/object:Gem::Dependency 
   name: rdoc
@@ -138,7 +138,7 @@ dependencies:
   version_requirement: 
   version_requirements: !ruby/object:Gem::Requirement 
     requirements: 
-    - - ">="
+    - - "="
       - !ruby/object:Gem::Version 
         version: 2.0.0
     version: 
@@ -148,7 +148,7 @@ dependencies:
   version_requirement: 
   version_requirements: !ruby/object:Gem::Requirement 
     requirements: 
-    - - ">="
+    - - "="
       - !ruby/object:Gem::Version 
         version: 0.7.4.215
     version: 
@@ -158,7 +158,7 @@ dependencies:
   version_requirement: 
   version_requirements: !ruby/object:Gem::Requirement 
     requirements: 
-    - - ">="
+    - - "="
       - !ruby/object:Gem::Version 
         version: 0.2.29
     version: 
@@ -168,7 +168,7 @@ dependencies:
   version_requirement: 
   version_requirements: !ruby/object:Gem::Requirement 
     requirements: 
-    - - ">="
+    - - "="
       - !ruby/object:Gem::Version 
         version: 2.6.2
     version: 
@@ -178,7 +178,7 @@ dependencies:
   version_requirement: 
   version_requirements: !ruby/object:Gem::Requirement 
     requirements: 
-    - - ">="
+    - - "="
       - !ruby/object:Gem::Version 
         version: 1.2.9
     version: 

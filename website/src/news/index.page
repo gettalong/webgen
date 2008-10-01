@@ -3,7 +3,7 @@ title: News
 ---
 # Latest news
 
-<webgen:block name='content' chain='release_0_5_4.html' />
+<webgen:block name='content' chain='release_0_5_5.html' />
 
 # News listing
 
