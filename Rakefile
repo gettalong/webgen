@@ -135,6 +135,7 @@ EOF
       s.summary = SUMMARY
       s.description = DESCRIPTION
       s.post_install_message = <<EOF
+
 Thanks for choosing webgen! Here are some places to get you started:
 * The webgen User Documentation at <http://webgen.rubyforge.org/documentation/index.html>
 * The mailing list archive at <http://rubyforge.org/pipermail/webgen-users/>
@@ -142,28 +143,29 @@ Thanks for choosing webgen! Here are some places to get you started:
 Have a look at <http://webgen.rubyforge.org/news/index.html> for a list of changes!
 
 Have fun!
+
 EOF
 
       #### Dependencies, requirements and files
 
       s.files = PKG_FILES.to_a
-      s.add_dependency('cmdparse', '~> 2.0.0')
-      s.add_dependency('maruku', '>= 0.5.6')
-      s.add_dependency('facets', '>= 2.4.3')
-      s.add_dependency('rake', '>= 0.8.0')
+      s.add_dependency('cmdparse', '2.0.2')
+      s.add_dependency('maruku', '0.5.9')
+      s.add_dependency('facets', '2.4.3')
+      s.add_dependency('rake', '0.8.3')
       s.add_dependency('ramaze', '2008.06')
-      s.add_dependency('launchy', '>= 0.3.2')
-      s.add_development_dependency('rcov', '>= 0.8.0')
-      s.add_development_dependency('dcov', '>= 0.2.2')
-      s.add_development_dependency('rubyforge', '>= 1.0.0')
-      s.add_development_dependency('RedCloth', '>= 3.0.0')
-      s.add_development_dependency('haml', '>= 2.0.1')
-      s.add_development_dependency('builder', '>= 2.1.0')
-      s.add_development_dependency('rdoc', '>= 2.0.0')
-      s.add_development_dependency('coderay', '>= 0.7.4.215')
-      s.add_development_dependency('feedtools', '>= 0.2.29')
-      s.add_development_dependency('erubis', '>= 2.6.2')
-      s.add_development_dependency('rdiscount', '>= 1.2.9')
+      s.add_dependency('launchy', '0.3.2')
+      s.add_development_dependency('rcov', '0.8.1.2.0')
+      s.add_development_dependency('dcov', '0.2.2')
+      s.add_development_dependency('rubyforge', '1.0.0')
+      s.add_development_dependency('RedCloth', '3.0.0')
+      s.add_development_dependency('haml', '2.0.1')
+      s.add_development_dependency('builder', '2.1.2')
+      s.add_development_dependency('rdoc', '2.0.0')
+      s.add_development_dependency('coderay', '0.7.4.215')
+      s.add_development_dependency('feedtools', '0.2.29')
+      s.add_development_dependency('erubis', '2.6.2')
+      s.add_development_dependency('rdiscount', '1.2.9')
 
       s.require_path = 'lib'
 

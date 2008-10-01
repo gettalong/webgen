@@ -1,0 +1,43 @@
+---
+title: webgen 0.5.5 released
+in_menu: true
+sort_info: 2008-10-01
+created_at: 2008-10-01 18:25:12 +02:00
+modified_at: 2008-10-01 18:25:12 +02:00
+---
+## {title:}
+
+<webgen:block name='notes' />
+
+### Changes
+
+<webgen:block name='changes' />
+
+--- name:notes pipeline:tags,maruku
+
+This is just a small release which fixes a bug with absolute virtual URLs. The only change feature
+wise was the addition of the configuration option `tag.menu.nested` which allows to generate either
+a nested or a sequential menu (like the horizontal menu style in webgen 0.4.x).
+
+If you want to live on the edge, a beta gem is now provided via Github's gem server. To use the beta
+gem you need to run
+
+    gem sources -a http://gems.github.com
+    gem install gettalong-webgen
+
+Be aware that these beta gems are not officially supported but are normally in quite a useable state
+and are updated more often than the official gem for testing purposes.
+
+--- name:changes pipeline:tags,maruku
+
+* Minor enhancements:
+
+  - New configuration option [`tag.menu.nested`][nested]
+  - Depending on fixed gem version (using `=` instead of `>=`)
+
+[nested]: {relocatable: ../documentation/reference_configuration.html#tagmenunested}
+
+* Bug fixes:
+
+  - RF#21349: absolute virtual URLs didn't work correctly
+  - small docu fixes
