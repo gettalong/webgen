@@ -59,7 +59,14 @@ module Webgen::Tag
       tree = specific_menu_tree_for(context.content_node)
 
       (context.dest_node.node_info[:tag_menu_menus] ||= {})[[@params.to_a.sort, context.content_node.absolute_lcn]] = (tree ? tree.to_lcn_list : nil)
-      (tree && !tree.children.empty? ? create_output(context, tree) : '')
+
+      if !tree || tree.children.empty?
+        ''
+      elsif param('tag.menu.nested')
+        create_output_nested(context, tree)
+      else
+        create_output_not_nested(context, tree)
+      end
     end
 
     #########
@@ -127,11 +134,11 @@ module Webgen::Tag
       end
     end
 
-    # Create the HTML menu of the +tree+ using the provided +context+.
-    def create_output(context, tree, level = 1)
+    # Create the nested HTML menu of the +tree+ using the provided +context+.
+    def create_output_nested(context, tree, level = 1)
       out = "<ul>"
       tree.children.each do |child|
-        menu = child.children.length > 0 ? create_output(context, child, level + 1) : ''
+        menu = child.children.length > 0 ? create_output_nested(context, child, level + 1) : ''
         style, link = menu_item_details(context.dest_node, child.node, context.content_node.lang, level)
 
         out << "<li #{style}>#{link}"
@@ -139,6 +146,21 @@ module Webgen::Tag
         out << "</li>"
       end
       out << "</ul>"
+      out
+    end
+
+    # Create the not nested HTML menu of the +tree+ using the provided +context+.
+    def create_output_not_nested(context, tree, level = 1)
+      submenu = ''
+      out = "<ul>"
+      tree.children.each do |child|
+        submenu << (child.children.length > 0 ? create_output_not_nested(context, child, level + 1) : '')
+        style, link = menu_item_details(context.dest_node, child.node, context.content_node.lang, level)
+
+        out << "<li #{style}>#{link}</li>"
+      end
+      out << "</ul>"
+      out << submenu
       out
     end
 

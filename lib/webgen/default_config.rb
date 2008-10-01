@@ -161,6 +161,7 @@ config.tag.menu.min_levels(1, :doc => 'The minimum number of menu levels that sh
 config.tag.menu.max_levels(3, :doc => 'The maximum number of menu levels that should be shown.')
 config.tag.menu.show_current_subtree_only(true, :doc => 'Specifies whether only the current subtree should be shown.')
 config.tag.menu.used_nodes('all', :doc => 'Specifies the kind of nodes that should be used: all, files, or fragments')
+config.tag.menu.nested(true, :doc => 'Specifies whether a nested menu list should be generated.')
 
 config.tag.breadcrumbtrail.separator(' / ', :doc => 'Separates the hierachy entries from each other.')
 config.tag.breadcrumbtrail.omit_index_path(false, :doc => 'Omits the last path component if it is an index path.')

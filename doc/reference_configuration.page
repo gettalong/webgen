@@ -613,6 +613,39 @@ files in Webgen Page Format.
           Showing all subtrees: \{menu: {show_current_subtree_only: false}}
 
 
+*   ### tag.menu.nested
+
+    Specifies whether the generated menu should contain nested lists, ie. whether sub menus are
+    put inline
+
+        ul           1
+          li         2
+            ul       3
+              li     4
+              li     5
+          li         6
+
+    or separately following the previous menu level
+
+        ul           1
+          li         2
+          li         6
+        ul           3
+          li         4
+          li         5
+
+    > When this option is enabled you should enable the option
+    > `tag.menu.show_current_subtree_only`. Otherwise the generated menu will look a little bit
+    > confusing.
+    {.information}
+
+    * Syntax: `BOOLEAN` where `BOOLEAN` is either `true` or `false`.
+
+    * Examples:
+
+          Don't use nested lists: \{menu: {nested: false}}
+
+
 *   ### tag.relocatable.path
 
     The default mandatory configuration option for Tag::Relocatable that specifies the path that
