@@ -60,9 +60,9 @@ module Webgen::SourceHandler
     # Return +true+ if any meta information for +node+ provided by +mi_node+ has changed.
     def meta_info_changed?(mi_node, node, option = nil)
       cached = website.cache.permanent[[:sh_metainfo_node_mi, mi_node.absolute_lcn]]
-      path = website.blackboard.invoke(:source_paths)[node.node_info[:src]]
       (mi_node.node_info[:mi_paths].any? do |pattern, mi|
-         path =~ pattern && (option == :force || (!cached && option == :no_old_data) || mi != cached[:mi_paths][pattern])
+         Webgen::Path.match(node.node_info[:creation_path], pattern) &&
+           (option == :force || (!cached && option == :no_old_data) || mi != cached[:mi_paths][pattern])
        end || mi_node.node_info[:mi_alcn].any? do |pattern, mi|
          node =~ pattern && (option == :force || (!cached && option == :no_old_data) || mi != cached[:mi_alcn][pattern])
        end)
@@ -80,7 +80,7 @@ module Webgen::SourceHandler
     def before_node_created(parent, path)
       self.nodes.each do |node|
         node.node_info[:mi_paths].each do |pattern, mi|
-          path.meta_info.update(mi) if path =~ pattern
+          path.meta_info.update(mi) if Webgen::Path.match(path, pattern)
         end
       end
     end
