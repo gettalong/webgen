@@ -19,6 +19,20 @@ class TestSourceHandlerDirectory < Test::Unit::TestCase
     assert_equal(:other, node[:key])
   end
 
+  def test_create_directories
+    @obj = Webgen::SourceHandler::Directory.new
+    shm = Webgen::SourceHandler::Main.new # for using service :create_nodes
+    root = Webgen::Node.new(Webgen::Tree.new.dummy_root, 'test/', 'test')
+    dir = @obj.create_node(root, path_with_meta_info('/dir/'))
+
+    assert_equal(dir, @obj.create_directories(root, '/dir/', path_with_meta_info('/test')))
+    assert_equal(dir, @obj.create_directories(root, 'dir/', path_with_meta_info('/test')))
+    assert_equal(dir, @obj.create_directories(root, 'dir', path_with_meta_info('/test')))
+
+    which = @obj.create_directories(root, 'dir/under/which', path_with_meta_info('/test'))
+    assert_equal(which, @obj.create_directories(root, 'dir/under/which', path_with_meta_info('/test')))
+  end
+
   def test_content
     assert_equal('', Webgen::SourceHandler::Directory.new.content(nil))
   end
