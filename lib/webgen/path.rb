@@ -35,6 +35,13 @@ module Webgen
     end
 
 
+    # Return +true+ if the given +path+ matches the given +pattern+. For information on which
+    # patterns are supported, have a look at the documentation of File.fnmatch.
+    def self.match(path, pattern)
+      File.fnmatch(pattern, path.to_s, File::FNM_DOTMATCH|File::FNM_CASEFOLD|File::FNM_PATHNAME)
+    end
+
+
     include Comparable
 
     # The full path.
@@ -135,12 +142,6 @@ module Webgen
       end
     end
     alias_method(:eql?, :==)
-
-    # Return +true+ if the localized path matches the given +pattern+. For information on which
-    # patterns are supported, have a look at the documentation of File.fnmatch.
-    def =~(pattern)
-      File.fnmatch(pattern, File.join(@directory, lcn), File::FNM_DOTMATCH|File::FNM_CASEFOLD|File::FNM_PATHNAME)
-    end
 
     # Implemented sothat a Path looks like a String when used as key in a hash.
     def <=>(other)
