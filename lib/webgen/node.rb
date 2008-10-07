@@ -120,6 +120,7 @@ module Webgen
     # Check if the node is flagged with one of the following:
     #
     # :created:: Has the node been created or has it been read from the cache?
+    # :reinit:: Does the node need to be reinitialized?
     # :dirty:: Set by other objects to +true+ if they think the object has changed since the last
     #          run. Must not be set to +false+ once it is +true+!
     # :dirty_meta_info:: Set by other objects to +true+ if the meta information of the node has
@@ -131,11 +132,13 @@ module Webgen
     # Flag the node with the +keys+. See #flagged for valid keys.
     def flag(*keys)
       @flags += keys
+      website.blackboard.dispatch_msg(:node_flagged, self, keys)
     end
 
     # Remove the flags +keys+ from the node.
     def unflag(*keys)
       @flags.subtract(keys)
+      website.blackboard.dispatch_msg(:node_unflagged, self, keys)
     end
 
     # Return +true+ if the node has changed since the last webgen run. If it has changed, +dirty+ is
