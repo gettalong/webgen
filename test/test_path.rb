@@ -120,6 +120,21 @@ class TestPath < Test::Unit::TestCase
     assert(Webgen::Path.match(path, '**/file.de.PAGE'))
     assert(Webgen::Path.match(path, '/dir/*/file.*.page'))
     assert(!Webgen::Path.match(path, '**/*.test'))
+
+    path = '/dir/'
+    assert(Webgen::Path.match(path, '/dir/'))
+    assert(Webgen::Path.match(path, '/dir'))
+
+    path = '/dir'
+    assert(Webgen::Path.match(path, '/dir/'))
+    assert(Webgen::Path.match(path, '/dir'))
+
+    path = '/'
+    assert(Webgen::Path.match(path, '/'))
+    assert(!Webgen::Path.match(path, ''))
+
+    path = ''
+    assert(!Webgen::Path.match(path, '/'))
   end
 
   def test_introspection
