@@ -39,19 +39,19 @@ module Webgen
       # Render the nodes provided in the +tree+. Before the actual rendering is done, the sources
       # are checked (nodes for deleted sources are deleted, nodes for new and changed sources).
       def render(tree)
-        puts "Updating tree..."
-        time = Benchmark.measure do
-          update_tree(tree)
-        end
-        puts "...done in " + ('%2.4f' % time.real) + ' seconds'
+        begin
+          puts "Updating tree..."
+          time = Benchmark.measure do
+            update_tree(tree)
+          end
+          puts "...done in " + ('%2.4f' % time.real) + ' seconds'
 
-        puts "Writing changed nodes..."
-        time = Benchmark.measure do
-          write_tree(tree)
-        end
-        puts "...done in " + ('%2.4f' % time.real) + ' seconds'
-
-        #TODO: redo everything if new nodes (ones flagged :created) are found
+          puts "Writing changed nodes..."
+          time = Benchmark.measure do
+            write_tree(tree)
+          end
+          puts "...done in " + ('%2.4f' % time.real) + ' seconds'
+        end while tree.node_access[:alcn].any? {|name,node| node.flagged(:created) || node.flagged(:reinit)}
       end
 
       #######
@@ -94,12 +94,14 @@ module Webgen
       # Write out all changed nodes of the +tree+.
       def write_tree(tree)
         output = website.blackboard.invoke(:output_instance)
-        tree.node_access[:alcn].sort.each do |name, node|
+
+        tree.node_access[:alcn].select do |name, node|
+          use_node = (node != tree.dummy_root && node.flagged(:dirty))
           node.unflag(:dirty_meta_info)
           node.unflag(:created)
-          next if node == tree.dummy_root || !node.flagged(:dirty)
-
           node.unflag(:dirty)
+          use_node
+        end.sort.each do |name, node|
           next if node['no_output'] || !(content = node.content)
 
           begin
