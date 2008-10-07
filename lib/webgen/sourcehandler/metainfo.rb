@@ -28,7 +28,6 @@ module Webgen::SourceHandler
           node.node_info[mi_key] = {}
           YAML::load(page.blocks[block_name].content).each do |key, value|
             key = Pathname.new(key =~ /^\// ? key : File.join(parent.absolute_lcn, key)).cleanpath.to_s
-            key.chomp('/') unless key == '/'
             node.node_info[mi_key][key] = value
           end if page.blocks.has_key?(block_name)
         end
