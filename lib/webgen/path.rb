@@ -51,7 +51,7 @@ module Webgen
     attr_accessor :path
 
     # The source path that lead to the creation of this path.
-    attr_reader :source_path
+    attr_accessor :source_path
 
     # The basename part of the path.
     attr_accessor :basename
@@ -85,6 +85,7 @@ module Webgen
       temp.path = temp.path.sub(/^#{Regexp.escape(prefix.chomp("/"))}/, '') if prefix     #"
       reanalyse = (@path == '/' || temp.path == '/')
       temp.path = File.join(mp, temp.path)
+      temp.source_path = temp.path if @path == @source_path
       if reanalyse
         temp.send(:analyse, temp.path)
       else

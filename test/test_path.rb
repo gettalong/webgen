@@ -49,11 +49,13 @@ class TestPath < Test::Unit::TestCase
     p = Webgen::Path.new('test.de.page')
     p = p.mount_at('/somedir')
     assert_equal('/somedir/test.de.page', p.path)
+    assert_equal('/somedir/test.de.page', p.source_path)
     assert_equal('/somedir/', p.directory)
 
     p = Webgen::Path.new('/')
     p = p.mount_at('/somedir')
     assert_equal('/somedir/', p.path)
+    assert_equal('/somedir/', p.source_path)
     assert_equal('/', p.directory)
     assert_equal('somedir', p.cn)
     assert_equal('Somedir', p.meta_info['title'])
@@ -61,6 +63,7 @@ class TestPath < Test::Unit::TestCase
     p = Webgen::Path.new('/source/test.rb')
     p = p.mount_at('/', '/source/')
     assert_equal('/test.rb', p.path)
+    assert_equal('/test.rb', p.source_path)
     assert_equal('/', p.directory)
     assert_equal('test.rb', p.cn)
     assert_equal('Test', p.meta_info['title'])
@@ -68,9 +71,18 @@ class TestPath < Test::Unit::TestCase
     p = Webgen::Path.new('/source/')
     p = p.mount_at('/', '/source')
     assert_equal('/', p.path)
+    assert_equal('/', p.source_path)
     assert_equal('/', p.directory)
     assert_equal('/', p.cn)
     assert_equal('/', p.meta_info['title'])
+
+    p = Webgen::Path.new('/test.rb', '/other.rb')
+    p = p.mount_at('/source/')
+    assert_equal('/source/test.rb', p.path)
+    assert_equal('/other.rb', p.source_path)
+    assert_equal('/source/', p.directory)
+    assert_equal('test.rb', p.cn)
+    assert_equal('Test', p.meta_info['title'])
   end
 
   def test_dup
