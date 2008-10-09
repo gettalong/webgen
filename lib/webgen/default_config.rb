@@ -148,6 +148,7 @@ config.contentprocessor.tags.map({
                                    'coderay' => 'Webgen::Tag::Coderay',
                                    'date' => 'Webgen::Tag::Date',
                                    'sitemap' => 'Webgen::Tag::Sitemap',
+                                   'tikz' => 'Webgen::Tag::TikZ',
                                    :default => 'Webgen::Tag::Metainfo'
                                  }, :doc => 'Tag processor name to class map')
 
@@ -190,6 +191,12 @@ config.tag.coderay.tab_width(8, :doc => 'Number of spaces used for a tabulator')
 
 config.tag.date.format('%Y-%m-%d %H:%M:%S', :doc => 'The format of the date (same options as Ruby\'s Time#strftime)')
 
+config.tag.tikz.path(nil, :doc => 'The source path of the created image', :mandatory => 'default')
+config.tag.tikz.libraries(nil, :doc => 'An array of additional TikZ library names')
+config.tag.tikz.opts(nil, :doc => 'A string with global options for the tikzpicture environment')
+config.tag.tikz.resolution('72 72', :doc => 'A string specifying the render and output resolutions')
+config.tag.tikz.transparent(false, :doc => 'Specifies whether the generated image should be transparent (only png)')
+config.tag.tikz.img_attr({}, :doc => 'A hash of additional HTML attributes for the created img tag')
 
 # All things regarding common functionality
 website.autoload_service(:create_sitemap, 'Webgen::Common::Sitemap')

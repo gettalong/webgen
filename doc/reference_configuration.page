@@ -659,6 +659,91 @@ files in Webgen Page Format.
           <a href="\{relocatable: ../features.html}">Some Path</a>
 
 
+*   ### tag.tikz.path
+
+    The default mandatory configuration option for Tag::TikZ that specifies the (naturally
+    non-existing) source path that should be used for creating the TikZ image. The output path is
+    derived from this path the usual way. You shouldn't use a path that does already exist!
+
+    * Syntax: `PATH` where `PATH` is a relative or absolute source path.
+
+    * Examples:
+
+          \{tikz:: images/tikz.png}\tikz \draw (0,0) -- (0,2);{tikz}
+
+
+*   ### tag.tikz.libraries
+
+    Specifies the names of additional TikZ library names that should be used when creating the
+    image.
+
+    * Syntax: `[NAME, ...]` where `NAME` is the name of a TikZ library.
+
+    * Examples:
+
+          \{tikz:: {path: images/tikz.png, libraries: [mindmap, arrows]}}
+          \tikz \draw (0,0) -- (0,2) -- (2,2);
+          {tikz}
+
+
+*   ### tag.tikz.opts
+
+    Specifies additional global options for the `tikzpicture` environment.
+
+    * Syntax: `OPTS` where `OPTS` is the string with the global options.
+
+    * Examples:
+
+          \{tikz:: {path: images/tikz.png, opts: 'scale=3, line cap=round'}}
+          \tikz \draw (0,0) -- (0,2) -- (2,2);
+          {tikz}
+
+
+*   ### tag.tikz.resolution
+
+    Specifies the render and output resolutions that should be used to convert the TikZ image in PDF
+    format to the chosen image format. The first number specifies the render resolution and the
+    second one the output resolution. If the render resolution is higher than the output resolution,
+    the final image quality is better but the image needs to scaled down to the output resolution.
+
+    * Syntax: `RENDER_RES OUTPUT_RES` where `RENDER_RES` is the integer specifying the render
+      resolution and `OUTPUT_RES` is the integer specifying the output resolution.
+
+    * Examples:
+
+          \{tikz:: {path: images/tikz.png, resolution: 300 72}}
+          \tikz \draw (0,0) -- (0,2) -- (2,2);
+          {tikz}
+
+
+*   ### tag.tikz.transparent
+
+    Specifies whether the generated image should be transparent. This only works when the path
+    specified by `tag.tikz.path` option has the extension `.png`! You should probably also set the
+    background of the generated image tag to transparent.
+
+    * Syntax: `BOOLEAN` where `BOOLEAN` is either `true` or `false`.
+
+    * Examples:
+
+          \{tikz:: {path: images/tikz.png, transparent: true}}
+          \tikz \draw (0,0) -- (0,2) -- (2,2);
+          {tikz}
+
+
+*   ### tag.tikz.img\_attr
+
+    Specifies additional HTML attributes that should be set on the generated `img` tag.
+
+    * Syntax: `\{KEY:VALUE, ...}` where `KEY` is a valid HTML `img` tag attribute name and `VALUE`
+      the to-be-set value.
+
+    * Examples:
+
+          \{tikz:: {path: images/tikz.png, img_attr: {alt: Some TikZ picture}}}
+          \tikz \draw (0,0) -- (0,2) -- (2,2);
+          {tikz}
+
 ---
 
 ## Miscelleanous Configuration Options
