@@ -1,4 +1,5 @@
 require 'test/unit'
+require 'webgen/websiteaccess'
 require 'webgen/contentprocessor'
 
 class TestContentProcessorRedCloth < Test::Unit::TestCase
