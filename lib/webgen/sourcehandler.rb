@@ -19,6 +19,7 @@ module Webgen
     autoload :Virtual, 'webgen/sourcehandler/virtual'
     autoload :Feed, 'webgen/sourcehandler/feed'
     autoload :Sitemap, 'webgen/sourcehandler/sitemap'
+    autoload :Memory, 'webgen/sourcehandler/memory'
 
     # This class is used by Website to do the actual rendering of the website. It
     #
