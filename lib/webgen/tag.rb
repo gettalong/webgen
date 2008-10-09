@@ -17,6 +17,7 @@ module Webgen
     autoload :Coderay, 'webgen/tag/coderay'
     autoload :Date, 'webgen/tag/date'
     autoload :Sitemap, 'webgen/tag/sitemap'
+    autoload :TikZ, 'webgen/tag/tikz'
 
   end
 
