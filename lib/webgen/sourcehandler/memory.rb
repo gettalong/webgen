@@ -7,7 +7,7 @@ module Webgen::SourceHandler
     include Webgen::WebsiteAccess
     include Base
 
-    def initialize #:nodoc
+    def initialize #:nodoc:
       website.blackboard.add_listener(:node_flagged) do |node, *flags|
         node.tree[node.node_info[:memory_source_alcn]].flag(:dirty) if node.node_info[:memory_source_alcn]
       end
