@@ -60,6 +60,10 @@ never`.
 Sets the time when the path was created. This information cannot automatically be derived for paths
 provided by Webgen::Source::FileSystem, so this has to be set manually.
 
+> Note that the value needs to be a valid [YAML timestamp](http://yaml.org/type/timestamp.html) and
+> needs to include the time part.
+{.information}
+
 ### draft
 
 {:miref}
@@ -127,8 +131,13 @@ path.
 * Any
 
 Sets the time when the path was last modified. This information is automatically set for paths
-provided by Webgen::Source::FileSystem but can be overridden by setting it manually. If not set to a
-valid time, the time when webgen is executed is used for this meta information.
+provided by Webgen::Source::FileSystem (the file modification is used) but can be overridden by
+setting it manually. If not set to a valid time, the time when webgen is executed is used for this
+meta information.
+
+> Note that the value needs to be a valid [YAML timestamp](http://yaml.org/type/timestamp.html) and
+> needs to include the time part.
+{.information}
 
 ### no\_output
 
