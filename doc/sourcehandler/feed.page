@@ -14,6 +14,11 @@ The following meta information keys are supported:
     A LCN pattern (or an array of LCN patterns) which specify the page files that should be
     used. Other matched files are excluded from the list.
 
+    > Be aware that if you want to include a single file or files in a specific language only you
+    > need to include the language part since this is a LCN and not a CN pattern, eg. `mypage.html`
+    > won't work but `mypage.en.html` will!
+    {.information}
+
 *   `number_of_entries` (OPTIONAL)
 
     The number of entries that should be included in the feed. Defaults to 10.
@@ -48,11 +53,14 @@ The following meta information keys are supported:
 
 *   `created_at` (OPTIONAL)
 
-    The time at which this feed was created. Defaults to the current time if not set.
+    The time at which this feed was created. Defaults to the current time if not set. Has the same
+    format as the meta information `created_at`.
 
-*   `icon` (OPTIONAL)
+*   `content_block_name` (OPTIONAL)
 
-    The absolute localized canonical name of the feed's icon image.
+    The name of the block that should be used for the content of the feed entries. If not specified
+    the name `content` is used. Be aware that each page file that can appear in the feed needs to
+    have such a block!
 
 The following meta information keys of page files are used if they are specified:
 
@@ -64,6 +72,9 @@ The following meta information keys of page files are used if they are specified
 
     The time at which the page file was last modified, used as the time at which this feed entry was
     updated.
+
+    > This is the field that is used to sort the entries.
+    {.information}
 
 *   `title`
 

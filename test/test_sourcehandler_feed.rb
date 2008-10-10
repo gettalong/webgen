@@ -12,6 +12,7 @@ class TestSourceHandlerFeed < Test::Unit::TestCase
 site_url: http://example.com
 entries: *.html
 author: Thomas Leitner
+content_block_name: abstract
 --- name:rss_template
 hallo
 EOF
@@ -22,7 +23,7 @@ EOF
       :file1_en => Webgen::Node.new(root, '/file1.en.html', 'file1.html', {'lang' => 'en', 'in_menu' => true, 'modified_at' => Time.now}),
       :index_en => Webgen::Node.new(root, '/index.en.html', 'index.html', {'lang' => 'en', 'modified_at' => Time.now - 1, 'author' => 'test'}),
     }
-    @nodes[:index_en].node_info[:page] = Webgen::Page.from_data("hallo")
+    @nodes[:index_en].node_info[:page] = Webgen::Page.from_data("--- name:content\nMyContent\n--- name:abstract\nRealContent")
     @obj = Webgen::SourceHandler::Feed.new
     @path = path_with_meta_info('/test.feed', {}, @obj.class.name) {StringIO.new(FEED_CONTENT)}
   end
@@ -43,6 +44,7 @@ EOF
     atom_node, rss_node = @obj.create_node(@nodes[:root], @path)
     assert_equal('hallo', rss_node.content)
     assert(atom_node.content =~ /Thomas Leitner/)
+    assert(atom_node.content =~ /RealContent/)
   end
 
   def test_feed_entries

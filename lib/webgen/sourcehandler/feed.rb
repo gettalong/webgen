@@ -85,13 +85,12 @@ module Webgen::SourceHandler
       feed.published = (node['created_at'].kind_of?(Time) ? node['created_at'] : Time.now)
       feed.updated = Time.now
       feed.generator = 'webgen - Webgen::SourceHandler::Feed'
-      feed.icon = File.join(site_url, node.tree[node['icon']].path) if node['icon']
 
       node.feed_entries.each do |entry|
         item = FeedTools::FeedItem.new
         item.title = entry['title']
         item.link = File.join(site_url, entry.path)
-        item.content = entry.node_info[:page].blocks['content'].render(Webgen::ContentProcessor::Context.new(:chain => [entry])).content
+        item.content = entry.node_info[:page].blocks[node['content_block_name'] || 'content'].render(Webgen::ContentProcessor::Context.new(:chain => [entry])).content
         item.updated = entry['modified_at']
         item.published = entry['created_at'] if entry['created_at'].kind_of?(Time)
         if entry['author']
