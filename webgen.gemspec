@@ -1,7 +1,7 @@
 --- !ruby/object:Gem::Specification 
 name: webgen
 version: !ruby/object:Gem::Version 
-  version: 0.5.5.20081001
+  version: 0.5.5.20081010
 platform: ruby
 authors: 
 - Thomas Leitner
@@ -9,7 +9,7 @@ autorequire:
 bindir: bin
 cert_chain: []
 
-date: 2008-10-01 00:00:00 +02:00
+date: 2008-10-10 00:00:00 +02:00
 default_executable: webgen
 dependencies: 
 - !ruby/object:Gem::Dependency 
@@ -398,6 +398,7 @@ files:
 - doc/tag/metainfo.page
 - doc/tag/relocatable.page
 - doc/tag/sitemap.page
+- doc/tag/tikz.page
 - doc/tag.template
 - doc/upgrading.page
 - doc/webgen_page_format.page
@@ -443,6 +444,7 @@ files:
 - lib/webgen/sourcehandler/directory.rb
 - lib/webgen/sourcehandler/feed.rb
 - lib/webgen/sourcehandler/fragment.rb
+- lib/webgen/sourcehandler/memory.rb
 - lib/webgen/sourcehandler/metainfo.rb
 - lib/webgen/sourcehandler/page.rb
 - lib/webgen/sourcehandler/sitemap.rb
@@ -460,6 +462,7 @@ files:
 - lib/webgen/tag/metainfo.rb
 - lib/webgen/tag/relocatable.rb
 - lib/webgen/tag/sitemap.rb
+- lib/webgen/tag/tikz.rb
 - lib/webgen/tag.rb
 - lib/webgen/tree.rb
 - lib/webgen/version.rb
@@ -511,6 +514,7 @@ files:
 - test/test_sourcehandler_directory.rb
 - test/test_sourcehandler_feed.rb
 - test/test_sourcehandler_fragment.rb
+- test/test_sourcehandler_memory.rb
 - test/test_sourcehandler_metainfo.rb
 - test/test_sourcehandler_page.rb
 - test/test_sourcehandler_sitemap.rb
@@ -527,6 +531,7 @@ files:
 - test/test_tag_metainfo.rb
 - test/test_tag_relocatable.rb
 - test/test_tag_sitemap.rb
+- test/test_tag_tikz.rb
 - test/test_tree.rb
 - test/test_webgentask.rb
 - test/test_website.rb
