@@ -97,14 +97,14 @@ class TestPage < Test::Unit::TestCase
     --- name:block
     content doing -
     with?: with some things
-    --- other:options test1:true test2:false test3:542
+    --- other:options test1:true test2:false test3:542 pipeline:
   meta_info: {}
   blocks:
     - name: block
       content: "content doing -\\nwith?: with some things"
     - name: block2
       content: ''
-      options: {other: options, test1: true, test2: false, test3: 542}
+      options: {other: options, test1: true, test2: false, test3: 542, pipeline: ~}
 
 # block with seemingly block start line it
 - in: |
