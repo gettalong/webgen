@@ -31,6 +31,10 @@ The following meta information keys are supported:
 
     A RSS feed is generated if this key is set to `true`. Defaults to `true`.
 
+*   `rss_version` (OPTIONAL)
+
+    The RSS version that should be used for generating the RSS feed. Defaults to `2.0`.
+
 *   `site_url` (MANDATORY)
 
     The base url of the website for which the feed is generated.

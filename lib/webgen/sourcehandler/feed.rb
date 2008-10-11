@@ -46,8 +46,7 @@ module Webgen::SourceHandler
           render(Webgen::ContentProcessor::Context.new(:chain => [node])).content
       else
         feed = (website.cache.volatile[:sourcehandler_feed] ||= {})[node.node_info[:src]] ||= build_feed_for(node)
-        feed.feed_type = node.node_info[:feed_type]
-        feed.build_xml
+        feed.build_xml(node.node_info[:feed_type], (node.node_info[:feed_type] == 'rss' ? node['rss_version'] || 2.0 : nil))
       end
     end
 
@@ -58,8 +57,7 @@ module Webgen::SourceHandler
 
       node.tree.node_access[:alcn].values.
         select {|node| patterns.any? {|pat| node =~ pat} && node.node_info[:page]}.
-        sort {|a,b| a['modified_at'] <=> b['modified_at']}.
-        reverse[0, nr_items]
+        sort {|a,b| a['modified_at'] <=> b['modified_at']}[0, nr_items]
     end
 
     #######
