@@ -56,8 +56,9 @@ module Webgen
 
     # A utility method called by Node#reinit. This method should not be used directly!
     def register_path(node)
+      return if node['no_output']
       if @node_access[:path].has_key?(node.path)
-        raise "Can't have two nodes with same output path: #{node.path}" unless node['no_output']
+        raise "Can't have two nodes with same output path: #{node.path}"
       else
         @node_access[:path][node.path] = node
       end

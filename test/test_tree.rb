@@ -20,8 +20,8 @@ class TestTree < Test::Unit::TestCase
     assert_equal(root, @tree.root)
   end
 
-  def test_register_node
-    # Tree#register_node is called when creating a node
+  def test_register_node_and_register_path
+    # Tree#register_node/_path is called when creating a node
     node = Webgen::Node.new(@tree.dummy_root, 'dummy/', 'dummy')
     assert_equal(node, @tree['/dummy', :alcn])
     assert_equal(node, @tree['/dummy', :acn])
@@ -29,6 +29,8 @@ class TestTree < Test::Unit::TestCase
     assert_raise(RuntimeError) { Webgen::Node.new(@tree.dummy_root, '/', 'dummy') }
     assert_raise(RuntimeError) { Webgen::Node.new(@tree.dummy_root, 'dummy/', 'other') }
     assert_nothing_raised { Webgen::Node.new(@tree.dummy_root, 'dummy/', 'unknown', {'no_output' => true}) }
+    Webgen::Node.new(@tree.dummy_root, 'new', 'new', {'no_output' => true})
+    assert(!@tree['new', :path])
   end
 
   def test_delete_node
