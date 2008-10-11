@@ -43,6 +43,7 @@ module Webgen
         begin
           puts "Updating tree..."
           time = Benchmark.measure do
+            website.cache.reset_volatile_cache
             update_tree(tree)
           end
           puts "...done in " + ('%2.4f' % time.real) + ' seconds'
