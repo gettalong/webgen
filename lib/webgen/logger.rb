@@ -27,11 +27,28 @@ module Webgen
       end
       self.level = ::Logger::WARN
       self.verbosity = :normal
+      @marks = []
     end
 
     # Returns the output of the logger when #sync is +false+. Otherwise an empty string is returned.
     def log_output
-      @sync ? '' : @logio.string
+      if @sync
+        ''
+      else
+        out = @logio.string.dup
+        @marks.reverse.each_with_index do |mark, index|
+          out.insert(mark, " INFO -- Log messages for run #{@marks.length - index} are following\n")
+        end if out.length > 0
+        out
+      end
+    end
+
+    # Only used when #sync is +false: Mark the location in the log stream where a new update/write
+    # run begins.
+    def mark_new_cycle
+      if !@sync
+        @marks << @logio.string.length
+      end
     end
 
     # The severity threshold level.

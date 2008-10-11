@@ -70,4 +70,23 @@ class TestLogger < Test::Unit::TestCase
     assert_equal("ERROR -- hallo\n", l.log_output)
   end
 
+  def test_run_marks
+    l = Webgen::Logger.new(io = StringIO.new, true)
+    l.mark_new_cycle
+    l.error { 'hallo' }
+    assert_equal("", l.log_output)
+
+    l = Webgen::Logger.new(io = StringIO.new, false)
+    l.error { 'hallo' }
+    l.mark_new_cycle
+    l.error { 'other' }
+    l.mark_new_cycle
+    assert_equal("ERROR -- hallo\n INFO -- Log messages for run 1 are following\n" +
+                 "ERROR -- other\n INFO -- Log messages for run 2 are following\n", l.log_output)
+
+    l = Webgen::Logger.new(io = StringIO.new, false)
+    l.mark_new_cycle
+    assert_equal("", l.log_output)
+  end
+
 end
