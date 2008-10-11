@@ -41,6 +41,8 @@ module Webgen
       # are checked (nodes for deleted sources are deleted, nodes for new and changed sources).
       def render(tree)
         begin
+          website.logger.mark_new_cycle if website.logger
+
           puts "Updating tree..."
           time = Benchmark.measure do
             website.cache.reset_volatile_cache
