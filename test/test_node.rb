@@ -39,6 +39,7 @@ class TestNode < Test::Unit::TestCase
       assert_equal(lcn, node.lcn)
       assert_equal(alcn, node.absolute_lcn)
       assert_equal(lang, node.lang)
+      assert_kind_of(Webgen::Language, node.lang) if node.lang
       assert(node.flagged(:dirty))
       assert(node.flagged(:created))
       assert_equal(mi, node.meta_info)

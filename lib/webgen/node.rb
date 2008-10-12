@@ -77,7 +77,7 @@ module Webgen
     def reinit(path, meta_info = {})
       old_path = @path
       @path = path.freeze
-      @lang = meta_info.delete('lang').freeze
+      @lang = Webgen::LanguageManager.language_for_code(meta_info.delete('lang'))
       @lang = nil unless is_file?
       @meta_info = meta_info
       @flags = Set.new([:dirty, :created])
