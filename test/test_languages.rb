@@ -50,4 +50,16 @@ class TestLanguages < Test::Unit::TestCase
     assert_equal(-1, ace <=> eng)
   end
 
+  def test_hashing
+    de = Webgen::LanguageManager.language_for_code('ger')
+    en = Webgen::LanguageManager.language_for_code('en')
+    h = {'de' => de, en => en}
+    assert_equal(de, h[de])
+    assert_equal(de, h['de'])
+    assert_equal(en, h[en])
+    assert_not_equal(en, h['en']) # bc 'en'.eql?(en) is false
+    assert_equal(Webgen::LanguageManager.language_for_code('en'),
+                 Webgen::LanguageManager.language_for_code(en))
+  end
+
 end
