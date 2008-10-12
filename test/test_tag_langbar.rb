@@ -31,7 +31,13 @@ class TestTagLangbar < Test::Unit::TestCase
     check_results(nodes[:file_en], link, '', '', '')
 
     @obj.set_params('tag.langbar.show_single_lang' => true, 'tag.langbar.show_own_lang' => true, 'tag.langbar.separator' => ' --- ')
-    assert_equal("#{de_link} --- #{en_link}", @obj.call('langbar', '', Webgen::ContentProcessor::Context.new(:chain => [nodes[:index_en]])))
+    assert_equal("#{de_link} --- #{en_link}",
+                 @obj.call('langbar', '', Webgen::ContentProcessor::Context.new(:chain => [nodes[:index_en]])))
+
+    @obj.set_params('tag.langbar.show_single_lang' => true, 'tag.langbar.show_own_lang' => true,
+                    'tag.langbar.lang_names' => {'de' => 'Deutsch'})
+    assert_equal("<a href=\"index.de.html\">Deutsch</a> | #{en_link}",
+                 @obj.call('langbar', '', Webgen::ContentProcessor::Context.new(:chain => [nodes[:index_en]])))
 
     nodes[:index_en].unflag(:dirty)
     @website.blackboard.dispatch_msg(:node_changed?, nodes[:index_en])

@@ -4,10 +4,13 @@ used_options:
   - tag.langbar.separator
   - tag.langbar.show_own_lang
   - tag.langbar.show_single_lang
+  - tag.langbar.lang_names
 ---
 ## Description
 
-This tag is used to display a list of links to translations of the page.
+This tag is used to display a list of links to translations of the page. The text that is displayed
+can be set via the configuration option `tag.langbar.lang_names` (if not set, the language code is
+shown).
 
 ## Examples
 
@@ -18,5 +21,9 @@ This tag is used to display a list of links to translations of the page.
 <tr>
   <td>\{langbar:}</td>
   <td>{langbar:}</td>
+</tr>
+<tr>
+  <td>\{langbar: {lang_names: {en: Englisch}}}</td>
+  <td>{langbar: {lang_names: {en: Englisch}}}</td>
 </tr>
 </table>
