@@ -12,19 +12,3 @@ meta information.
 set, the default language specified using the configuration option `website.lang` is used. This
 means that for the default language set to English and a source path named `index.page`, the
 language meta information is automatically set to English.
-
-## Fragment nodes
-
-The page handler automatically generates fragment nodes for all found header tags in the block named
-`content` (i.e. `h1`, `h2`, ...) that have an `id` attribute set. The default markup language Maruku
-automatically generates an `id` attribute for all headers. If you use another markup language or
-plain old HTML, you might need to set the `id` attributes by hand.
-
-> The reason why only header tags with an `id` attribute are used is that only those can be
-> referenced and linked to later.
-{.information}
-
-The generated fragment nodes can be used like any other node. So you can link to them and use them
-in a menu. Concerning the menu, there is a setting for the `tag.menu.used_nodes` option called
-`fragments` which only uses the fragment node of the current page to generate a menu. This allows to
-generate a nice overview of the page.

@@ -10,11 +10,7 @@ class TestSourceHandlerPage < Test::Unit::TestCase
   def setup
     super
     @website.blackboard.del_service(:templates_for_node)
-    @website.blackboard.del_service(:parse_html_sections)
-    @website.blackboard.del_service(:create_fragment_nodes)
     @website.blackboard.add_service(:templates_for_node) {|node| []}
-    @website.blackboard.add_service(:parse_html_sections) {[]}
-    @website.blackboard.add_service(:create_fragment_nodes) {nil}
     @obj = Webgen::SourceHandler::Page.new
     @root = Webgen::Node.new(Webgen::Tree.new.dummy_root, 'test/', 'test')
     @path = path_with_meta_info('/index.page') {StringIO.new('content')}
@@ -32,7 +28,6 @@ class TestSourceHandlerPage < Test::Unit::TestCase
     assert_equal('yes', node['test'])
     assert_equal(6, node['sort_info'])
     assert_equal(Webgen::LanguageManager.language_for_code('epo'), node.lang)
-    assert_not_nil(@website.cache.permanent[:page_sections]['/test/index.eo.html'])
 
     assert_equal(node, @obj.create_node(@root, @path.dup))
 
