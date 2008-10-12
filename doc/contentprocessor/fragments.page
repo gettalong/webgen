@@ -1,0 +1,25 @@
+---
+title: Webgen::ContentProcessor::Fragments
+---
+## Description
+
+This processor generates nested fragment nodes from all headers `h1` to `h6` which have an `id`
+attribute set.
+
+> This is only done for the block named `content` or if no block is associated with the given render
+> context! This is to ensure that fragment nodes are not created from multiple block of one page
+> file. So this content processor has no effect when used in the pipeline of blocks except if the
+> block is named `content`.
+{.exclamation}
+
+The default markup language Maruku automatically generates an `id` attribute for all headers. If you
+use another markup language or plain old HTML, you might need to set the `id` attributes by hand.
+
+> The reason why only header tags with an `id` attribute are used is that only those can be
+> referenced and linked to later.
+{.information}
+
+The generated fragment nodes can be used like any other node. So you can link to them and use them
+in a menu. Concerning the menu, there is a setting for the `tag.menu.used_nodes` option called
+`fragments` which only uses the fragment node of the current page to generate a menu. This allows to
+generate a nice overview of the page.

@@ -18,23 +18,7 @@ module Webgen::SourceHandler
 
       super(parent, path) do |node|
         node.node_info[:sh_page_node_mi] = Webgen::Page.meta_info_from_data(path.io.data)
-
         node.node_info[:page] = page
-        tmp_logger = website.logger
-        website.logger = nil    # disabling logging whiling creating fragment nodes
-
-        website.cache.permanent[:page_sections] ||= {}
-        sections = if path.changed? || !website.cache.permanent[:page_sections][node.absolute_lcn]
-                     website.blackboard.invoke(:parse_html_headers, render_node(node, 'content', []))
-                   else
-                     website.cache.permanent[:page_sections][node.absolute_lcn]
-                   end
-        website.cache.permanent[:page_sections][node.absolute_lcn] = sections
-        website.blackboard.invoke(:create_fragment_nodes,
-                                  sections,
-                                  node, website.blackboard.invoke(:source_paths)[path.source_path],
-                                  node.meta_info['fragments_in_menu'])
-        website.logger = tmp_logger
       end
     end
 
