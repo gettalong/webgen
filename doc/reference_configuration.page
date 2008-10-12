@@ -550,6 +550,19 @@ files in Webgen Page Format.
           Langbar with single language not shown: \{langbar: {show_single_lang: false}}
 
 
+*   ### tag.langbar.lang\_names
+
+    This configuration option can be used to specify the language names that should be displayed
+    instead of the language codes.
+
+    * Syntax: `\{CODE: NAME, ...}` where `CODE` is a language code and `NAME` the associated language
+      name of the code.
+
+    * Examples:
+
+          Langbar with custom language names: \{langbar: {lang_names: {de: Deutsch, en: English}}}
+
+
 *   ### tag.menu.used\_nodes
 
     Specifies the type of nodes that should be used for menu generation. If `all` is specified then
