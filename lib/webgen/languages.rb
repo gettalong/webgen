@@ -50,6 +50,15 @@ module Webgen
       self.to_s <=> other.to_s
     end
 
+    def eql?(other) #:nodoc:
+      (other.is_a?(self.class) && other.to_s == self.to_s) ||
+        (other.is_a?(String) && self.to_s == other)
+    end
+
+    def hash #:nodoc:
+      self.to_s.hash
+    end
+
   end
 
 
