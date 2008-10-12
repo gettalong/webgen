@@ -1,7 +1,7 @@
 --- !ruby/object:Gem::Specification 
 name: webgen
 version: !ruby/object:Gem::Version 
-  version: 0.5.5.20081010
+  version: 0.5.5.20081012
 platform: ruby
 authors: 
 - Thomas Leitner
@@ -9,7 +9,7 @@ autorequire:
 bindir: bin
 cert_chain: []
 
-date: 2008-10-10 00:00:00 +02:00
+date: 2008-10-12 00:00:00 +02:00
 default_executable: webgen
 dependencies: 
 - !ruby/object:Gem::Dependency 
@@ -360,6 +360,7 @@ files:
 - doc/contentprocessor/builder.page
 - doc/contentprocessor/erb.page
 - doc/contentprocessor/erubis.page
+- doc/contentprocessor/fragments.page
 - doc/contentprocessor/haml.page
 - doc/contentprocessor/maruku.page
 - doc/contentprocessor/rdiscount.page
@@ -417,6 +418,7 @@ files:
 - lib/webgen/contentprocessor/context.rb
 - lib/webgen/contentprocessor/erb.rb
 - lib/webgen/contentprocessor/erubis.rb
+- lib/webgen/contentprocessor/fragments.rb
 - lib/webgen/contentprocessor/haml.rb
 - lib/webgen/contentprocessor/maruku.rb
 - lib/webgen/contentprocessor/rdiscount.rb
@@ -492,6 +494,7 @@ files:
 - test/test_contentprocessor_context.rb
 - test/test_contentprocessor_erb.rb
 - test/test_contentprocessor_erubis.rb
+- test/test_contentprocessor_fragments.rb
 - test/test_contentprocessor_haml.rb
 - test/test_contentprocessor_maruku.rb
 - test/test_contentprocessor_rdiscount.rb
