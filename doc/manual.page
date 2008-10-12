@@ -429,21 +429,6 @@ As you might have deduced from the processing list above, it is possible that on
 multiple source handlers. This can be used, for example, to render an XML file as HTML and copy it
 verbatim.
 
-Internally a tree structure is created reflecting the source directory hierarchy and each path that
-is handled by webgen. Normally a source handler creates one node from one path but it is also
-possible that a source handler creates multiple nodes from one path.
-
-> The name used for describing a directory or file once it is placed in the internal tree structure
-> is 'node'.
-{.information}
-
-After this internal tree structure is created, it is traversed and each node is processed. First the
-node is checked if has changed (the notion of 'changed' depends on many things but a node is
-changed, for example, if its meta information or the associated source path has changed since the
-last webgen run). If it has not changed, nothing needs to be written. Otherwise, the information
-needed to write out the node is gathered and its content is written to the output path represented
-by the node.
-
 
 ## Path Meta Information {#source-metainfo}
 
@@ -519,6 +504,39 @@ There are several types of extensions:
     page and template files. Each tag extension is used for a specific task like creating a menu or
     a breadcrumb trail.
 
+
+
+# A webgen Run
+
+When webgen is started, it first looks for a cache file and uses it if it exists. The cache file
+provides information on the previous run and allows webgen to render only those paths that have
+changed since the last time.
+
+Each webgen run consists of one or more update/write cycles. During the update phase the internal
+tree structure is updated to reflect the current situation:
+
+* Nodes are created from newly found source paths.
+* If a source path was deleted since the last webgen run, the nodes created from it will be deleted.
+* All nodes in the tree are checked if they have changed and, if so, are marked for regeneration.
+
+> The name used for describing a directory or file once it is placed in the internal tree structure
+> is 'node'.
+{.information}
+
+After the update cycle has finished, the internal tree representation is up-to-date and contains all
+necessary information to write its nodes. This is done in the write phase which writes out all
+changed nodes.
+
+It is possible that the internal tree structure changes during the write phase. For example, after
+writing a page file fragments node for it may have been generated. After the write phase it is
+checked if something like this has happened. If webgen finds such a condition, a new update/write
+cycle is initiated. This is done as long as needed.
+
+Since it is possible that multiple update/write cycles are used in one webgen run, it is shown in
+the log messages when a new cycle started. This is necessary because sometimes some warning or error
+log messages may be generated during an earlier cycle but the error conditions are automatically
+solved in later cycles. By marking where the cycles start a user can compare the log messages of the
+different cycles and see what he needs to solve himself.
 
 
 # Extending webgen
