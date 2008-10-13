@@ -150,6 +150,7 @@ config.contentprocessor.tags.map({
                                    'date' => 'Webgen::Tag::Date',
                                    'sitemap' => 'Webgen::Tag::Sitemap',
                                    'tikz' => 'Webgen::Tag::TikZ',
+                                   'link' => 'Webgen::Tag::Link',
                                    :default => 'Webgen::Tag::Metainfo'
                                  }, :doc => 'Tag processor name to class map')
 
@@ -199,6 +200,9 @@ config.tag.tikz.opts(nil, :doc => 'A string with global options for the tikzpict
 config.tag.tikz.resolution('72 72', :doc => 'A string specifying the render and output resolutions')
 config.tag.tikz.transparent(false, :doc => 'Specifies whether the generated image should be transparent (only png)')
 config.tag.tikz.img_attr({}, :doc => 'A hash of additional HTML attributes for the created img tag')
+
+config.tag.link.path(nil, :doc => 'The (A)LCN path to which a link should be generated', :mandatory => 'default')
+config.tag.link.attr({}, :doc => 'A hash of additional HTML attributes that should be set on the link')
 
 # All things regarding common functionality
 website.autoload_service(:create_sitemap, 'Webgen::Common::Sitemap')

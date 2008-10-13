@@ -18,6 +18,7 @@ module Webgen
     autoload :Date, 'webgen/tag/date'
     autoload :Sitemap, 'webgen/tag/sitemap'
     autoload :TikZ, 'webgen/tag/tikz'
+    autoload :Link, 'webgen/tag/link'
 
   end
 
