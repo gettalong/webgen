@@ -88,16 +88,16 @@ module Webgen
         self.program_version = Webgen::VERSION
         self.options = CmdParse::OptionParserWrapper.new do |opts|
           opts.separator "Global options:"
-          opts.on("--directory DIR", "-d", String, "The website directory (default: the current directory)") {|@directory|}
+          opts.on("--directory DIR", "-d", String, "The website directory (default: the current directory)") {|p| @directory = p}
           opts.on("--verbose", "-v", "Print more output") { @verbosity = :verbose }
           opts.on("--quiet", "-q", "No output") { @verbosity = :quiet }
-          opts.on("--log-level LEVEL", "-l", Integer, "The logging level (0..debug, 3..error)") {|@log_level|}
-          opts.on("--log-filter", "-f", Regexp, 'Filter for logging events') {|@log_filter|}
+          opts.on("--log-level LEVEL", "-l", Integer, "The logging level (0..debug, 3..error)") {|p| @log_level = p}
+          opts.on("--log-filter", "-f", Regexp, 'Filter for logging events') {|p| @log_filter = p}
         end
         self.add_command(CmdParse::HelpCommand.new)
         self.add_command(CmdParse::VersionCommand.new)
         Webgen::CLI.constants.select {|c| c =~ /.+Command$/ }.each do |c|
-          self.add_command(Webgen::CLI.const_get(c).new, (c == 'RunCommand' ? true : false))
+          self.add_command(Webgen::CLI.const_get(c).new, (c.to_s == 'RunCommand' ? true : false))
         end
       end
 
