@@ -203,9 +203,8 @@ class TestNode < Test::Unit::TestCase
     node.unflag(:dirty_meta_info)
     node.node_info[:used_meta_info_nodes] << node.absolute_lcn
     node.node_info[:used_meta_info_nodes] << 'unknown alcn'
-    node.node_info[:used_meta_info_nodes] << @tree.dummy_root.absolute_lcn
     assert(node.meta_info_changed?)
-    assert_equal(2, calls)
+    assert_equal(1, calls)
   end
 
   def test_method_missing

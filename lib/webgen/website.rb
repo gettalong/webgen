@@ -2,6 +2,7 @@
 require 'logger'
 require 'set'
 require 'fileutils'
+require 'facets/symbol/to_proc'
 
 # Requirements for Website
 require 'webgen/coreext'
@@ -197,7 +198,7 @@ module Webgen
           raise 'Structure of config file is not valid, has to be a Hash' if !config.kind_of?(Hash)
           config.each do |key, value|
             case key
-            when *Webgen::Configuration::Helpers.public_instance_methods(false) then @config.send(key, value)
+            when *Webgen::Configuration::Helpers.public_instance_methods(false).map(&:to_s) then @config.send(key, value)
             else @config[key] = value
             end
           end
