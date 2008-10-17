@@ -5,8 +5,14 @@ in_menu: false
 
 # Configuration Option Reference
 
-This reference describes all available configurations that can be set via the configuration file
-(or, if you want to have more control, via an extension file).
+This reference describes all available configurations that can be set via the [configuration
+file]({relocatable: manual.html#website-configfile}) `config.yaml` (or, if you want to have more
+control, via an extension file).
+
+The reference is splitted into sections to provide better navigation. A sub header under a category
+always specifies the name of a configuration option and after that comes a description and example
+code. The example code either shows how to set this option in the configuration file (for most
+configuration options) and/or how to use it in a webgen tag (for tag configuration options).
 
 ## General Options
 
@@ -17,10 +23,9 @@ This reference describes all available configurations that can be set via the co
 
     * Syntax: `LANGUAGE` where `LANGUAGE` is a ISO-639-1/2 two or three letter language code
 
-    * Examples:
+    * Example for setting the option in the configuration file:
 
-          website.lang: deu
-          website.lang: fr
+          website.lang: de
 
 
 *   ### website.link\_to\_current\_page
@@ -30,7 +35,7 @@ This reference describes all available configurations that can be set via the co
 
     * Syntax: `BOOLEAN` where `BOOLEAN` is `true` or `false`
 
-    * Examples:
+    * Example for setting the option in the configuration file:
 
           website.link_to_current_page: false
 
@@ -44,7 +49,7 @@ This reference describes all available configurations that can be set via the co
 
     * Syntax: `[TYPE, LOCATION]` where `TYPE` is one of `:file` or `:string`
 
-    * Examples:
+    * Example for setting the option in the configuration file:
 
           website.cache: [:file, my.cache]
 
@@ -58,7 +63,11 @@ This reference describes all available configurations that can be set via the co
 
     * Syntax: `BOOLEAN` where `BOOLEAN` is either `true` or `false`.
 
-    * Examples:
+    * Example for setting the option in the configuration file:
+
+          common.sitemap.honor_in_menu: true
+
+      Example for setting the option directly in a tag:
 
           Sitemap with in-menu nodes: \{sitemap: {honor_in_menu: true}}
 
@@ -70,7 +79,11 @@ This reference describes all available configurations that can be set via the co
 
     * Syntax: `BOOLEAN` where `BOOLEAN` is either `true` or `false`.
 
-    * Examples:
+    * Example for setting the option in the configuration file:
+
+          common.sitemap.any_lang: true
+
+      Example for setting the option directly in a tag:
 
           Sitemap with nodes in any language: \{sitemap: {any_lang: true}}
 
@@ -82,7 +95,11 @@ This reference describes all available configurations that can be set via the co
 
     * Syntax: `[KIND, ...]` where `KIND` is the kind of node that should be used.
 
-    * Examples:
+    * Example for setting the option in the configuration file:
+
+          common.sitemap.used_kinds: [asset]
+
+      Example for setting the option directly in a tag:
 
           Sitemap with only asset nodes: \{sitemap: {used_kinds: [asset]}}
 
@@ -100,7 +117,7 @@ This reference describes all available configurations that can be set via the co
       `Webgen::Source::FileSystem`) and `ARG1`, `ARG2` and so on are the parameters for the source
       class. The supported parameters can be found in the documentation for each source class.
 
-    * Examples:
+    * Example for setting the option in the configuration file:
 
           sources: [[/, Webgen::Source::FileSystem, src], [/, Webgen::Source::FileSystem, /mnt/pictures, **/*.jpg]
 
@@ -113,7 +130,7 @@ This reference describes all available configurations that can be set via the co
       `Webgen::Output::FileSystem`) and `ARG1`, `ARG2` and so on are the parameters for the output
       class. The supported parameters can be found in the documentation for each output class.
 
-    * Examples:
+    * Example for setting the option in the configuration file:
 
           output: [Webgen::Output::FileSystem, custom_out]
 
@@ -121,15 +138,23 @@ This reference describes all available configurations that can be set via the co
 *   ### sourcehandler.patterns
 
     Specifies the path patterns that are used by the individual source handlers. This configuration
-    option is not normally set in the configuration file but in an extension file
-    (e.g. `ext/init.rb`) because otherwise the default entries would be overwritten.
+    option is not normally set directly in the configuration file but either in an extension file
+    (e.g. `ext/init.rb`) or using a [configuration file helper]({relocatable:
+    manual.html#website-configfile}) because otherwise the default entries would be overwritten.
 
     * Syntax: `\{NAME: [PATTERN, PATTERN, ...], ...}` where `NAME` is the
       name the name of a source handler and `PATTERN` are one or more path patterns.
 
-    * Examples (for `ext/init.rb`):
+    * Example for setting the option in `ext/init.rb`:
 
-          config.sourcehandler.patterns['Webgen::SourceHandler::Copy'] << '**/*.swf'
+          config = Webgen::WebsiteAccess.website.config
+          config['sourcehandler.patterns']['Webgen::SourceHandler::Copy'] << '**/*.swf'
+
+      Example for setting the option via the configuration file helper in the configuration file:
+
+          patterns:
+            Copy:
+              add: [**/*.swf]
 
 
 *   ### sourcehandler.invoke
@@ -141,9 +166,10 @@ This reference describes all available configurations that can be set via the co
       invocation (source handlers with a lower `ORDER` setting are executed earlier than ones with a
       higher `ORDER` setting) and `NAME` is the name of a source handler.
 
-    * Examples (for `ext/init.rb`):
+    * Example for setting the option in `ext/init.rb`:
 
-          config.sourcehandler.invoke[5] << 'Extension::MyNewSourceHandler'
+          config = Webgen::WebsiteAccess.website.config
+          config['sourcehandler.invoke'][5] << 'Extension::MyNewSourceHandler'
 
 
 *   ### sourcehandler.casefold
@@ -153,7 +179,7 @@ This reference describes all available configurations that can be set via the co
 
     * Syntax: `BOOLEAN` where `BOOLEAN` is either `true` or `false`.
 
-    * Examples:
+    * Example for setting the option in the configuration file:
 
           sourcehandler.casefold: true
 
@@ -164,7 +190,7 @@ This reference describes all available configurations that can be set via the co
 
     * Syntax: `BOOLEAN` where `BOOLEAN` is either `true` or `false`.
 
-    * Examples:
+    * Example for setting the option in the configuration file:
 
           sourcehandler.use_hidden_files: true
 
@@ -176,7 +202,7 @@ This reference describes all available configurations that can be set via the co
 
     * Syntax: `[PATTERN, ...]` where `PATTERN` is a valid path pattern.
 
-    * Examples:
+    * Example for setting the option in the configuration file:
 
           sourcehandler.ignore: [**/*~, **/CVS/**]
 
@@ -188,7 +214,7 @@ This reference describes all available configurations that can be set via the co
 
     * Syntax: `BOOLEAN` where `BOOLEAN` is either `true` or `false`.
 
-    * Examples:
+    * Example for setting the option in the configuration file:
 
           sourcehandler.default_lang_in_output_path: true
 
@@ -202,7 +228,7 @@ This reference describes all available configurations that can be set via the co
     * Syntax: `\{NAME: {MI_KEY: MI_VALUE, ...}, ...}` where `NAME` is either the name of a source
       handler or the special key `:all` which sets default meta info for all source handlers.
 
-    * Examples:
+    * Example for setting the option in the configuration file:
 
           default_meta_info:
             :all:
@@ -218,7 +244,7 @@ This reference describes all available configurations that can be set via the co
 
     * Syntax: `PATH` where `PATH` is the absolute localized canonical name of the default template.
 
-    * Examples:
+    * Example for setting the option in the configuration file:
 
           sourcehandler.template.default_template: other.template
 
@@ -235,8 +261,9 @@ This reference describes all available configurations that can be set via the co
     * Syntax: `\{SHORT: NAME, ...}` where `SHORT` is the short name of the content processor class
       `NAME`.
 
-    * Examples (for `ext/init.rb`):
+    * Examples for setting the option in `ext/init.rb`:
 
+          config = Webgen::WebsiteAccess.website.config
           config['contentprocessor.map']['newcp'] = 'Extension::MyNewContentProcessor'
 
 
@@ -247,7 +274,7 @@ This reference describes all available configurations that can be set via the co
 
     * Syntax: `BOOLEAN` where `BOOLEAN` is either `true` or `false`.
 
-    * Examples:
+    * Example for setting the option in the configuration file:
 
           contentprocessor.erubis.use_pi: true
 
@@ -260,7 +287,7 @@ This reference describes all available configurations that can be set via the co
     * Syntax: `\{KEY: VALUE, ...}` where `KEY` and `VALUE` are key-value pairs of options where
       `KEY` needs to be a Symbol and not a String.
 
-    * Examples:
+    * Example for setting the option in the configuration file:
 
           contentprocessor.erubis.options: {:trim: true}
 
@@ -272,10 +299,9 @@ This reference describes all available configurations that can be set via the co
 
     * Syntax: `PREFIX` where `PREFIX` is the prefix name.
 
-    * Examples:
+    * Example for setting the option in the configuration file:
 
           contentprocessor.tags.prefix: webgen
-          contentprocessor.tags.prefix: tag
 
 
 *   ### contentprocessor.tags.map
@@ -286,16 +312,18 @@ This reference describes all available configurations that can be set via the co
 
     * Syntax: `\{SHORT: NAME, ...}` where `SHORT` is the short name of the tag class `NAME`.
 
-    * Examples (for `ext/init.rb`):
+    * Example for setting the option in `ext/init.rb`:
 
+          config = Webgen::WebsiteAccess.website.config
           config['contentprocessor.tags.map']['highlight'] = 'Extension::MyHighlightingTag'
 
 
 ## Tag Specific Options
 
 These options are not normally set in the configuration file but given directly as options to the
-respective tag classes. Therefore, all examples in this section show the use of these options in
-files in Webgen Page Format.
+respective tag classes. Therefore, all options described in this section have an example which shows
+how to use the option in files in Webgen Page Format and most options also have an example which
+shows how to set the option in the configuration file.
 
 *   ### tag.breadcrumbtrail.separator
 
@@ -305,7 +333,11 @@ files in Webgen Page Format.
     * Syntax: `SEPARATOR` where `SEPARATOR` is a string (special HTML characters need to be properly
       escaped)
 
-    * Examples:
+    * Example for setting the option in the configuration file:
+
+          tag.breadcrumbtrail.separator: '---'
+
+      Example for setting the option directly in a tag:
 
           Breadcrumb trail with different separator: \{breadcrumb_trail: {separator: ' --- '}}
 
@@ -316,7 +348,11 @@ files in Webgen Page Format.
 
     * Syntax: `BOOLEAN` where `BOOLEAN` is either `true` or `false`.
 
-    * Examples:
+    * Example for setting the option in the configuration file:
+
+          tag.breadcrumbtrail.omit_index_path: true
+
+      Example for setting the option directly in a tag:
 
           Breadcrumb trail with index path omitted: \{breadcrumb_trail: {omit_index_path: true}}
 
@@ -337,7 +373,11 @@ files in Webgen Page Format.
 
     * Syntax: `INTEGER` where `INTEGER` is any integer number
 
-    * Examples:
+    * Example for setting the option in the configuration file:
+
+          tag.breadcrumbtrail.start_level: 2
+
+      Example for setting the option directly in a tag:
 
           Breadcrumb trail starting at level 2: \{breadcrumb_trail: {start_level: 2}}
 
@@ -349,7 +389,11 @@ files in Webgen Page Format.
 
     * Syntax: `INTEGER` where `INTEGER` is any integer number
 
-    * Examples:
+    * Example for setting the option in the configuration file:
+
+          tag.breadcrumbtrail.end_level: 2
+
+      Example for setting the option directly in a tag:
 
           Breadcrumb trail ending at level 2: \{breadcrumb_trail: {end_level: 2}}
 
@@ -360,7 +404,11 @@ files in Webgen Page Format.
 
     * Syntax: `LANG` where `LANG` is one of <%= (require 'coderay'; CodeRay::Scanners.list.map {|n| '`' + n + '`'}.join(', ')) %>.
 
-    * Examples:
+    * Example for setting the option in the configuration file:
+
+          tag.coderay.lang: ruby
+
+      Example for setting the option directly in a tag:
 
           highlighting some ruby code \{coderay:: ruby}puts 5 + 5{coderay}
 
@@ -371,7 +419,11 @@ files in Webgen Page Format.
 
     * Syntax: `BOOLEAN` where `BOOLEAN` is either `true` or `false`.
 
-    * Examples:
+    * Example for setting the option in the configuration file:
+
+          tag.coderay.process_body: false
+
+      Example for setting the option directly in a tag:
 
           wrapping in a span: \{coderay:: {lang: ruby, process_body: false}}puts 5 + 5{coderay}
 
@@ -382,7 +434,11 @@ files in Webgen Page Format.
 
     * Syntax: `WRAP` where `WRAP` is either `div` or `span`
 
-    * Examples:
+    * Example for setting the option in the configuration file:
+
+          tag.coderay.wrap: span
+
+      Example for setting the option directly in a tag:
 
           wrapping in a span: \{coderay:: {lang: ruby, wrap: span}}puts 5 + 5{coderay}
 
@@ -393,7 +449,11 @@ files in Webgen Page Format.
 
     * Syntax: `BOOLEAN` where `BOOLEAN` is either `true` or `false`.
 
-    * Examples:
+    * Example for setting the option in the configuration file:
+
+          tag.coderay.line_numbers: false
+
+      Example for setting the option directly in a tag:
 
           not showing line numbers: \{coderay:: {lang: ruby, line_numbers: false}}puts 5 + 5{coderay}
 
@@ -404,7 +464,11 @@ files in Webgen Page Format.
 
     * Syntax: `NUMBER` where `NUMBER` is an integer value.
 
-    * Examples:
+    * Example for setting the option in the configuration file:
+
+          tag.coderay.line_number_start: 4
+
+      Example for setting the option directly in a tag:
 
           starting with line 4: \{coderay:: {lang: ruby, line_number_start: 4}}puts 5 + 5{coderay}
 
@@ -415,7 +479,11 @@ files in Webgen Page Format.
 
     * Syntax: `NUMBER` where `NUMBER` is an integer value.
 
-    * Examples:
+    * Example for setting the option in the configuration file:
+
+          tag.coderay.bold_every: 2
+
+      Example for setting the option directly in a tag:
 
           every other line bold: \{coderay:: {lang: ruby, bold_every: 2}}puts 5 + 5{coderay}
 
@@ -426,7 +494,11 @@ files in Webgen Page Format.
 
     * Syntax: `NUMBER` where `NUMBER` is an integer value.
 
-    * Examples:
+    * Example for setting the option in the configuration file:
+
+          tag.coderay.tab_width: 4
+
+      Example for setting the option directly in a tag:
 
           tabulator == 4 spaces: \{coderay:: {lang: ruby, tab_width: 4}}puts 5 + 5{coderay}
 
@@ -439,7 +511,11 @@ files in Webgen Page Format.
 
     * Syntax: `FORMAT` where `FORMAT` is a string.
 
-    * Examples:
+    * Example for setting the option in the configuration file:
+
+          tag.date.format: '%Y-%m-%d'
+
+      Example for setting the option directly in a tag:
 
           very short date format: \{date: {format: '%Y-%m-%d'}}
 
@@ -451,7 +527,7 @@ files in Webgen Page Format.
 
     * Syntax: `COMMAND` where `COMMAND` is the to-be-executed command.
 
-    * Examples:
+    * Example for setting the option directly in a tag:
 
           executing a simple command \{exeucte_cmd: echo hallo}
 
@@ -463,7 +539,11 @@ files in Webgen Page Format.
 
     * Syntax: `BOOLEAN` where `BOOLEAN` is either `true` or `false`.
 
-    * Examples:
+    * Example for setting the option in the configuration file:
+
+          tag.executecommand.process_output: false
+
+      Example for setting the option directly in a tag:
 
           executing command without further processing \{execute_cmd: {command: 'echo hallo', process_output: false}}
 
@@ -474,7 +554,11 @@ files in Webgen Page Format.
 
     * Syntax: `BOOLEAN` where `BOOLEAN` is either `true` or `false`.
 
-    * Examples:
+    * Example for setting the option in the configuration file:
+
+          tag.executecommand.escape_html: false
+
+      Example for setting the option directly in a tag:
 
           executing command, output not escaped \{execute_cmd: {command: 'echo hallo', escape_html: false}}
 
@@ -487,7 +571,7 @@ files in Webgen Page Format.
 
     * Syntax: `FILENAME` where `FILENAME` is the name of a file
 
-    * Examples:
+    * Example for setting the option directly in a tag:
 
           including a file \{include_file: my_file.txt}
 
@@ -499,7 +583,11 @@ files in Webgen Page Format.
 
     * Syntax: `BOOLEAN` where `BOOLEAN` is either `true` or `false`.
 
-    * Examples:
+    * Example for setting the option in the configuration file:
+
+          tag.includefile.process_output: false
+
+      Example for setting the option directly in a tag:
 
           including a file without further processing \{include_file: {filename: my_file.txt, process_output: false}}
 
@@ -510,7 +598,11 @@ files in Webgen Page Format.
 
     * Syntax: `BOOLEAN` where `BOOLEAN` is either `true` or `false`.
 
-    * Examples:
+    * Example for setting the option in the configuration file:
+
+          tag.includefile.escape_html: false
+
+      Example for setting the option directly in a tag:
 
           including a file without escaping \{include_file: {filename: my_file.txt, escape_html: false}}
 
@@ -522,7 +614,11 @@ files in Webgen Page Format.
     * Syntax: `SEPARATOR` where `SEPARATOR` is a string (special HTML characters need to be properly
       escaped)
 
-    * Examples:
+    * Example for setting the option in the configuration file:
+
+          tag.langbar.separator: ' --- '
+
+      Example for setting the option directly in a tag:
 
           Langbar with another separator: \{langbar: {separator: ' --- '}}
 
@@ -533,7 +629,11 @@ files in Webgen Page Format.
 
     * Syntax: `BOOLEAN` where `BOOLEAN` is either `true` or `false`.
 
-    * Examples:
+    * Example for setting the option in the configuration file:
+
+          tag.langbar.show_own_lang: false
+
+      Example for setting the option directly in a tag:
 
           Langbar with current page's lang not shown: \{langbar: {show_own_lang: false}}
 
@@ -545,7 +645,11 @@ files in Webgen Page Format.
 
     * Syntax: `BOOLEAN` where `BOOLEAN` is either `true` or `false`.
 
-    * Examples:
+    * Example for setting the option in the configuration file:
+
+          tag.langbar.show_single_lang: false
+
+      Example for setting the option directly in a tag:
 
           Langbar with single language not shown: \{langbar: {show_single_lang: false}}
 
@@ -558,7 +662,11 @@ files in Webgen Page Format.
     * Syntax: `\{CODE: NAME, ...}` where `CODE` is a language code and `NAME` the associated language
       name of the code.
 
-    * Examples:
+    * Example for setting the option in the configuration file:
+
+          tag.langbar.lang_names: \{de: Deutsch, en: English}
+
+      Example for setting the option directly in a tag:
 
           Langbar with custom language names: \{langbar: {lang_names: {de: Deutsch, en: English}}}
 
@@ -570,7 +678,7 @@ files in Webgen Page Format.
 
     * Syntax: `PATH` where `PATH` is an (absolute) (localized) canonical name.
 
-    * Examples:
+    * Example for setting the option directly in a tag:
 
           You will find more information on the \{link: docu.html} page!
 
@@ -582,7 +690,11 @@ files in Webgen Page Format.
     * Syntax: `\{NAME: VALUE, ...}` where `NAME` is a valid HTML attribute name and `VALUE` its
       value.
 
-    * Examples:
+    * Example for setting the option in the configuration file:
+
+          tag.link.attr: \{title: DocuPage}
+
+      Example for setting the option directly in a tag:
 
           You will find more info on the \{link: {path: docu.html, attr: {title: DocuPage}}} page!
 
@@ -596,7 +708,11 @@ files in Webgen Page Format.
 
     * Syntax: `TYPE` where `TYPE` is one of `all`, `files` or `fragments`
 
-    * Examples:
+    * Example for setting the option in the configuration file:
+
+          tag.menu.used_nodes: fragments
+
+      Example for setting the option directly in a tag:
 
           Show the fragment node menu: \{menu: {used_nodes: fragments}}
 
@@ -608,7 +724,11 @@ files in Webgen Page Format.
 
     * Syntax: `LEVEL` where `LEVEL` is a number that is greater or equal to one.
 
-    * Examples:
+    * Example for setting the option in the configuration file:
+
+          tag.menu.start_level: 2
+
+      Example for setting the option directly in a tag:
 
           Menu starting at level 2: \{menu: {start_level: 2}}
 
@@ -620,7 +740,11 @@ files in Webgen Page Format.
 
     * Syntax: `LEVEL` where `LEVEL` is a number that is greater or equal to one.
 
-    * Examples:
+    * Example for setting the option in the configuration file:
+
+          tag.menu.min_levels: 2
+
+      Example for setting the option directly in a tag:
 
           Menu that always shows at least 2 levels : \{menu: {min_levels: 2}}
 
@@ -632,7 +756,11 @@ files in Webgen Page Format.
 
     * Syntax: `LEVEL` where `LEVEL` is a number that is greater or equal to one.
 
-    * Examples:
+    * Example for setting the option in the configuration file:
+
+          tag.menu.max_levels: 2
+
+      Example for setting the option directly in a tag:
 
           Menu that always shows at most 2 levels : \{menu: {max_levels: 2}}
 
@@ -645,7 +773,11 @@ files in Webgen Page Format.
 
     * Syntax: `BOOLEAN` where `BOOLEAN` is either `true` or `false`.
 
-    * Examples:
+    * Example for setting the option in the configuration file:
+
+          tag.menu.show_current_subtree_only: false
+
+      Example for setting the option directly in a tag:
 
           Showing all subtrees: \{menu: {show_current_subtree_only: false}}
 
@@ -678,7 +810,11 @@ files in Webgen Page Format.
 
     * Syntax: `BOOLEAN` where `BOOLEAN` is either `true` or `false`.
 
-    * Examples:
+    * Example for setting the option in the configuration file:
+
+          tag.menu.nested: false
+
+      Example for setting the option directly in a tag:
 
           Don't use nested lists: \{menu: {nested: false}}
 
@@ -690,7 +826,7 @@ files in Webgen Page Format.
 
     * Syntax: `PATH` where `PATH` is a (localized) canonical name.
 
-    * Examples:
+    * Example for setting the option directly in a tag:
 
           <a href="\{relocatable: ../features.html}">Some Path</a>
 
@@ -703,7 +839,7 @@ files in Webgen Page Format.
 
     * Syntax: `PATH` where `PATH` is a relative or absolute source path.
 
-    * Examples:
+    * Example for setting the option directly in a tag:
 
           \{tikz:: images/tikz.png}\tikz \draw (0,0) -- (0,2);{tikz}
 
@@ -715,7 +851,11 @@ files in Webgen Page Format.
 
     * Syntax: `[NAME, ...]` where `NAME` is the name of a TikZ library.
 
-    * Examples:
+    * Example for setting the option in the configuration file:
+
+          tag.tikz.libraries: [mindmap, arrows]
+
+      Example for setting the option directly in a tag:
 
           \{tikz:: {path: images/tikz.png, libraries: [mindmap, arrows]}}
           \tikz \draw (0,0) -- (0,2) -- (2,2);
@@ -728,7 +868,11 @@ files in Webgen Page Format.
 
     * Syntax: `OPTS` where `OPTS` is the string with the global options.
 
-    * Examples:
+    * Example for setting the option in the configuration file:
+
+          tag.tikz.opts: 'scale=3, line cap=round'
+
+      Example for setting the option directly in a tag:
 
           \{tikz:: {path: images/tikz.png, opts: 'scale=3, line cap=round'}}
           \tikz \draw (0,0) -- (0,2) -- (2,2);
@@ -745,7 +889,11 @@ files in Webgen Page Format.
     * Syntax: `RENDER_RES OUTPUT_RES` where `RENDER_RES` is the integer specifying the render
       resolution and `OUTPUT_RES` is the integer specifying the output resolution.
 
-    * Examples:
+    * Example for setting the option in the configuration file:
+
+          tag.tikz.resolution: 300 72
+
+      Example for setting the option directly in a tag:
 
           \{tikz:: {path: images/tikz.png, resolution: 300 72}}
           \tikz \draw (0,0) -- (0,2) -- (2,2);
@@ -760,7 +908,11 @@ files in Webgen Page Format.
 
     * Syntax: `BOOLEAN` where `BOOLEAN` is either `true` or `false`.
 
-    * Examples:
+    * Example for setting the option in the configuration file:
+
+          tag.tikz.transparent: true
+
+      Example for setting the option directly in a tag:
 
           \{tikz:: {path: images/tikz.png, transparent: true}}
           \tikz \draw (0,0) -- (0,2) -- (2,2);
@@ -774,7 +926,11 @@ files in Webgen Page Format.
     * Syntax: `\{KEY:VALUE, ...}` where `KEY` is a valid HTML `img` tag attribute name and `VALUE`
       the to-be-set value.
 
-    * Examples:
+    * Example for setting the option in the configuration file:
+
+          tag.tikz.img_attr: \{alt: Some TikZ picture}
+
+      Example for setting the option directly in a tag:
 
           \{tikz:: {path: images/tikz.png, img_attr: {alt: Some TikZ picture}}}
           \tikz \draw (0,0) -- (0,2) -- (2,2);
