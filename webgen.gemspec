@@ -1,7 +1,7 @@
 --- !ruby/object:Gem::Specification 
 name: webgen
 version: !ruby/object:Gem::Version 
-  version: 0.5.5.20081012
+  version: 0.5.6.20081020
 platform: ruby
 authors: 
 - Thomas Leitner
@@ -9,7 +9,7 @@ autorequire:
 bindir: bin
 cert_chain: []
 
-date: 2008-10-12 00:00:00 +02:00
+date: 2008-10-20 00:00:00 +02:00
 default_executable: webgen
 dependencies: 
 - !ruby/object:Gem::Dependency 
@@ -395,6 +395,7 @@ files:
 - doc/tag/executecommand.page
 - doc/tag/includefile.page
 - doc/tag/langbar.page
+- doc/tag/link.page
 - doc/tag/menu.page
 - doc/tag/metainfo.page
 - doc/tag/relocatable.page
@@ -460,6 +461,7 @@ files:
 - lib/webgen/tag/executecommand.rb
 - lib/webgen/tag/includefile.rb
 - lib/webgen/tag/langbar.rb
+- lib/webgen/tag/link.rb
 - lib/webgen/tag/menu.rb
 - lib/webgen/tag/metainfo.rb
 - lib/webgen/tag/relocatable.rb
@@ -486,6 +488,7 @@ files:
 - misc/images/quote.gif
 - test/test_blackboard.rb
 - test/test_cache.rb
+- test/test_cli.rb
 - test/test_common_sitemap.rb
 - test/test_configuration.rb
 - test/test_contentprocessor.rb
@@ -530,6 +533,7 @@ files:
 - test/test_tag_executecommand.rb
 - test/test_tag_includefile.rb
 - test/test_tag_langbar.rb
+- test/test_tag_link.rb
 - test/test_tag_menu.rb
 - test/test_tag_metainfo.rb
 - test/test_tag_relocatable.rb
