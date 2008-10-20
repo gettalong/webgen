@@ -22,7 +22,7 @@
     </div>
 
     <div id="menu">
-      {menu: }
+      {menu: {used_nodes: files}}
     </div>
 
     <div id="body">

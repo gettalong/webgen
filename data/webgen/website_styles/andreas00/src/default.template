@@ -20,7 +20,7 @@
 
       <div id="avmenu">
         <h2 class="hide">Site menu:</h2>
-        {menu: }
+        {menu: {used_nodes: files}}
 
         <div class="announce">
           <h2>Latest news:</h2>

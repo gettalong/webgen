@@ -37,7 +37,7 @@
       <div id="sidebar">
 
         <h2 class="sidelink menuheader"><a id="sitemenu"></a>Menu:</h2>
-        <div id="menu">{menu: {max_levels: 1}}</div>
+        <div id="menu">{menu: {max_levels: 1, used_nodes: files}}</div>
         <a class="hide" href="#top" accesskey="1">Top of page</a>
 
         <h3>Regular links</h3>

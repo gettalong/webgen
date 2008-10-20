@@ -35,7 +35,7 @@
         <p>Write a short presentation of yourself or the site right here!</p>
 
         <h2>Pages:</h2>
-        <div id="menu">{menu: {max_levels: 2}}</div>
+        <div id="menu">{menu: {max_levels: 2, used_nodes: files}}</div>
 
         <h2>Site news:</h2>
         <p><strong>09.09.2009</strong><br />
