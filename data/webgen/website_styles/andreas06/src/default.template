@@ -23,7 +23,7 @@
       </div>
 
       <div id="nav">
-        {menu: {max_levels: 1}}
+        {menu: {max_levels: 1, used_nodes: files}}
         <p class="hide"><a href="#top">Back to top</a></p>
       </div>
 

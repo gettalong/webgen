@@ -19,7 +19,7 @@
       </div>
 
       <div id="menu">
-        {menu: {max_levels: 1}}
+        {menu: {max_levels: 1, used_nodes: files}}
       </div>
 
       <div id="content">

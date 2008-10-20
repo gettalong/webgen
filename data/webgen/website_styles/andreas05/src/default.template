@@ -17,7 +17,7 @@
       <div id="sidebar">
 
         <h2>Site menu</h2>
-        <div id="menu">{menu: {max_levels: 1}}</div>
+        <div id="menu">{menu: {max_levels: 1, used_nodes: files}}</div>
 
         <p class="sidenote">
           Links:<br />
