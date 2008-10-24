@@ -14,7 +14,7 @@ module Webgen
   #   Delete the given output path.
   # <tt>write(path, data, type)</tt>::
   #   Write the data to the given output path. The parameter +type+ specifies the type of the
-  #   to be written path: +:file+ or +:directory+.
+  #   to be written path: <tt>:file</tt> or <tt>:directory</tt>.
   # <tt>read(path)</tt>:
   #   Return the content of the given path if it exists or raise an error otherwise.
   #

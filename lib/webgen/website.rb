@@ -28,6 +28,95 @@ require 'webgen/page'
 
 
 # The Webgen namespace houses all classes/modules used by webgen.
+#
+# = webgen
+#
+# webgen is a command line application for generating a web site from templates and content
+# files. Despite this fact, the implementation also provides adequate support for using webgen as a
+# library and *full* *support* for extending it.
+#
+# = Extending webgen
+#
+# webgen can be extended very easily. Any file called <tt>init.rb</tt> put into the <tt>ext/</tt>
+# directory of the website or into one of its sub-directories is automatically loaded on
+# Website#init.
+#
+# You can extend webgen in several ways. However, no magic or special knowledge is needed since
+# webgen relies on the power of Ruby itself. So, for example, an extension is just a normal Ruby
+# class. Most extension types provide a Base module for mixing into an extension which provides
+# default implementations for needed methods.
+#
+# Following are links to detailed descriptions on how to develop specific types of extensions:
+#
+# [Webgen::Source] Information on how to implement a class that provides source paths for
+#                  webgen. For example, one could implement a source class that uses a database as
+#                  backend.
+#
+# [Webgen::Output] Information on how to implement a class that writes content to an output
+#                  location. The default output class just writes to the file system. One could, for
+#                  example, implement an output class that writes the generated files to multiple
+#                  locations or to a remote server.
+#
+# [Webgen::ContentProcessor] Information on how to develop an extension that processes the
+#                            content. For example, markup-to-HTML converters are implemented as
+#                            content processors in webgen.
+#
+# [Webgen::SourceHandler::Base] Information on how to implement a class that handles objects of type
+#                               source Path and creates Node instances. For example,
+#                               Webgen::SourceHandler::Page handles the conversion of <tt>.page</tt>
+#                               files to <tt>.html</tt> files.
+#
+# [Webgen::Tag::Base] Information on how to implement a webgen tag. webgen tags are used to provide
+#                     an easy way for users to include dynamic content such as automatically
+#                     generated menus.
+#
+# = Blackboard services
+#
+# The Blackboard class provides an easy communication facility between objects. It implements the
+# Observer pattern on the one side and allows the definition of services on the other side. One
+# advantage of a service over the direct use of an object instance method is that the caller does
+# not need to how to find the object that provides the service. It justs uses the Website#blackboard
+# instance. An other advantage is that one can easily exchange the place where the service was
+# defined without breaking extensions that rely on it.
+#
+# Following is a list of all services available in the stock webgen distribution by the name and the
+# method that implements it (which is useful for looking up the parameters of service).
+#
+# <tt>:create_fragment_nodes</tt>:: SourceHandler::Fragment#create_fragment_nodes
+# <tt>:templates_for_node</tt>:: SourceHandler::Template#templates_for_node
+# <tt>:parse_html_headers</tt>:: SourceHandler::Fragment#parse_html_headers
+# <tt>:output_instance</tt>:: Output.instance
+# <tt>:content_processor_names</tt>:: ContentProcessor.list
+# <tt>:content_processor</tt>:: ContentProcessor.for_name
+# <tt>:create_sitemap</tt>:: Common::Sitemap#create_sitemap
+# <tt>:create_directories</tt>:: SourceHandler::Directory#create_directories
+# <tt>:create_nodes</tt>:: SourceHandler::Main#create_nodes
+# <tt>:source_paths</tt>:: SourceHandler::Main#source_paths
+#
+# Following is the list of all messages that can be listened to:
+#
+# <tt>:node_flagged</tt>::
+#   See Node#flag
+#
+# <tt>:node_unflagged</tt>::
+#   See Node#unflag
+#
+# <tt>:node_changed?</tt>::
+#   See Node#changed?
+# <tt>:node_meta_info_changed?</tt>::
+#   See Node#meta_info_changed?
+#
+# <tt>:before_node_created</tt>::
+#   Sent by the <tt>:create_nodes</tt> service before a node is created (handled by a source handler)
+#   with the +parent+ and the +path+ as arguments.
+#
+# <tt>:after_node_created</tt>::
+#   Sent by the <tt>:create_nodes</tt> service after a node has been created with the created node
+#   as argument.
+#
+# <tt>:before_node_deleted</tt>::
+#   See Tree#delete_node
+
 module Webgen
 
   # Returns the data directory for webgen.
