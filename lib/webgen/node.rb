@@ -129,13 +129,15 @@ module Webgen
       @flags.include?(key)
     end
 
-    # Flag the node with the +keys+. See #flagged for valid keys.
+    # Flag the node with the +keys+ and dispatch the message <tt>:node_flagged</tt> with +self+ and
+    # +keys+ as arguments. See #flagged for valid keys.
     def flag(*keys)
       @flags += keys
       website.blackboard.dispatch_msg(:node_flagged, self, keys)
     end
 
-    # Remove the flags +keys+ from the node.
+    # Remove the flags +keys+ from the node and dispatch the message <tt>:node_unflagged</tt> with
+    # +self+ and +keys+ as arguments.
     def unflag(*keys)
       @flags.subtract(keys)
       website.blackboard.dispatch_msg(:node_unflagged, self, keys)
@@ -143,6 +145,10 @@ module Webgen
 
     # Return +true+ if the node has changed since the last webgen run. If it has changed, +dirty+ is
     # set to +true+.
+    #
+    # Sends the message <tt>:node_changed?</tt> with +self+ as argument unless the node is already
+    # dirty. A listener to this message should set the flag <tt>:dirty</tt> on the passed node if he
+    # thinks it is dirty.
     def changed?
       if_not_checked(:node) do
         flag(:dirty) if meta_info_changed? ||
@@ -153,6 +159,11 @@ module Webgen
     end
 
     # Return +true+ if the meta information of the node has changed.
+    #
+    # Sends the message <tt>:node_meta_info_changed?</tt> with +self+ as argument unless the meta
+    # information of the node is already dirty. A listener to this message should set the flag
+    # <tt>:dirt_meta_info</tt> on the passed node if he thinks that the node's meta information is
+    # dirty.
     def meta_info_changed?
       if_not_checked(:meta_info) do
         flag(:dirty_meta_info) if node_info[:used_meta_info_nodes].any? do |n|

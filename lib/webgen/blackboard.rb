@@ -3,12 +3,15 @@ module Webgen
   # A blackboard object provides two features for inter-object communication:
   #
   # * services: An object can add a service to the blackboard which can be called by any other
-  #             object by just specifing the service name. Therefore it is easy to change the
-  #             underlying implementation of the service and there are no hard dependencies on
-  #             specific class or method names.
+  #   object by just specifing the service name. Therefore it is easy to change the underlying
+  #   implementation of the service and there are no hard dependencies on specific class or method
+  #   names.
   #
   # * listeners: Objects may register themselves for specific messsage names and get notified when
-  #              such a message gets dispatched.
+  #   such a message gets dispatched.
+  #
+  # For a list of all available services and messages have a look at the main Webgen documentation
+  # page.
   class Blackboard
 
     # Create a new Blackboard object.

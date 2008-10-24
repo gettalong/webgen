@@ -65,6 +65,9 @@ module Webgen
     end
 
     # Delete the node identified by +node_or_alcn+ and all of its children from the tree.
+    #
+    # The message <tt>:before_node_deleted</tt> is sent with the to-be-deleted node before this node
+    # is actually deleted from the tree.
     def delete_node(node_or_alcn)
       n = node_or_alcn.kind_of?(Node) ? node_or_alcn : @node_access[:alcn][node_or_alcn]
       return if n.nil? || n == @dummy_root
