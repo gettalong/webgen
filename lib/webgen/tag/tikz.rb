@@ -30,7 +30,7 @@ EOF
     # Create a graphic from the commands in the body of the tag.
     def call(tag, body, context)
       path = param('tag.tikz.path')
-      path = Pathname.new(path =~ /^\// ? path : File.join(context.ref_node.parent.absolute_lcn, path)).cleanpath.to_s
+      path = Webgen::Common.absolute_path(path, context.ref_node.parent.absolute_lcn)
 
       mem_handler = website.cache.instance('Webgen::SourceHandler::Memory')
       src_path = context.ref_node.node_info[:src]

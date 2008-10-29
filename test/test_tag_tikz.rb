@@ -24,7 +24,8 @@ class TestTagTikZ < Test::Unit::TestCase
 
   def test_call
     root = Webgen::Node.new(Webgen::Tree.new.dummy_root, '/', '/')
-    context = Webgen::ContentProcessor::Context.new(:chain => [root])
+    node = Webgen::Node.new(root, '/file.html', 'file.page')
+    context = Webgen::ContentProcessor::Context.new(:chain => [node])
 
     output = call(context, '\tikz \draw (0,0) -- (0,1);', 'test.png', [], '', '72 72', false, {})
     assert_equal('<img src="test.png" />', output)
