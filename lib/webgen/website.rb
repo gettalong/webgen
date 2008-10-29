@@ -116,6 +116,13 @@ require 'webgen/page'
 #
 # <tt>:before_node_deleted</tt>::
 #   See Tree#delete_node
+#
+# = Other places to look at
+#
+# Here is a list of modules/classes that are primarily used throughout webgen or provide useful
+# methods for developing extensions:
+#
+# Common, Tree, Node, Path, Cache, Page
 
 module Webgen
 
