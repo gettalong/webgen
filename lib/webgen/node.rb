@@ -75,13 +75,13 @@ module Webgen
 
     # Re-initializes an already initialized node and resets it to its pristine state.
     def reinit(path, meta_info = {})
-      old_path = @path
+      old_path = @path if defined?(@path)
       @path = path.freeze
       @lang = Webgen::LanguageManager.language_for_code(meta_info.delete('lang'))
       @lang = nil unless is_file?
       @meta_info = meta_info
       @flags = Set.new([:dirty, :created])
-      if @tree
+      if defined?(@tree)
         @tree.node_access[:path].delete(old_path) if old_path
         @tree.register_path(self)
         self.node_info.clear

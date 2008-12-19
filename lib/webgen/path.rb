@@ -73,7 +73,7 @@ module Webgen
     # the content of the path.
     def initialize(path, source_path = path, &ioblock)
       @meta_info = {}
-      @io = SourceIO.new(&ioblock) if block_given?
+      @io = block_given? ? SourceIO.new(&ioblock) : nil
       @source_path = source_path
       analyse(path)
     end
