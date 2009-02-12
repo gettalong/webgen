@@ -7,12 +7,11 @@ This source handler automatically generates an atom or RSS feed for a set of fil
 [Webgen Page Format]({relocatable: ../webgen_page_format.html}) (the format which is also used for
 page files).
 
-> This extension is only available if you have installed the [feedtools][2] library. The preferred
+> This extension is only available if you have installed the [feedtools][1] library. The preferred
 > way to do this is via Rubygems:
 >
 >     gem install feedtools
 {.exclamation}
-
 
 The following meta information keys are supported:
 
@@ -102,3 +101,5 @@ The following meta information keys of page files are used if they are specified
 The default implementation supports the generation of atom and RSS feeds. You can override the
 default generation mechanism by adding an `atom_template` and/or `rss_template` block in the feed
 file which are then used to generate the atom or the RSS feed respectively.
+
+[1]: http://sporkmonger.com/projects/feedtools
