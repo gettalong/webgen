@@ -24,7 +24,7 @@ specifies what should be highlighted.
 > way to do this is via Rubygems:
 >
 >     gem install coderay
-{.exclamation}
+{.warning}
 
 [1]: http://coderay.rubychan.de/ "The Coderay homepage"
 

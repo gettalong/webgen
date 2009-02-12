@@ -12,7 +12,7 @@ erb.html}).
 > to do this is via Rubygems:
 >
 >     gem install builder
-{.exclamation}
+{.warning}
 
 
 ## Examples

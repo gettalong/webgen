@@ -11,7 +11,7 @@ page files).
 > way to do this is via Rubygems:
 >
 >     gem install feedtools
-{.exclamation}
+{.warning}
 
 The following meta information keys are supported:
 

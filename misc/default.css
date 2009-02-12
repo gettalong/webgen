@@ -98,28 +98,52 @@ acronym {
   border-bottom: 1px solid #777;
 }
 
-blockquote.exclamation, blockquote.error, blockquote.information {
+blockquote.warning, blockquote.error, blockquote.information, blockquote.important {
   margin: 10px 0px;
-  padding: 0 0 0 40px;
+  padding: 5px 0 0 50px;
   min-height: 40px;
   border: 1px solid #91AA9D;
   font: 'Helvetica Neue', 'Trebuchet MS', Sans-serif;
   background-color: #D1DBBD;
   background-image: url(images/quote.gif);
   background-repeat: no-repeat;
-  background-position: 5px 5px;
+  background-position: 9px 5px;
 }
 
-blockquote.exclamation {
-  background-image: url(images/exclamation.gif);
+blockquote.warning {
+  background-image: url(images/warning.png);
+}
+
+blockquote.warning:before {
+  content: 'Caution';
+  font: bold 1.3em 'Helvetica Neue', 'Trebuchet MS', Arial, Sans-serif;
 }
 
 blockquote.error {
-  background-image: url(images/error.gif);
+  background-image: url(images/error.png);
+}
+
+blockquote.error:before {
+  content: 'Warning';
+  font: bold 1.3em 'Helvetica Neue', 'Trebuchet MS', Arial, Sans-serif;
 }
 
 blockquote.information {
-  background-image: url(images/information.gif);
+  background-image: url(images/information.png);
+}
+
+blockquote.information:before {
+  content: 'Information';
+  font: bold 1.3em 'Helvetica Neue', 'Trebuchet MS', Arial, Sans-serif;
+}
+
+blockquote.important {
+  background-image: url(images/important.png);
+}
+
+blockquote.important:before {
+  content: 'Important';
+  font: bold 1.3em 'Helvetica Neue', 'Trebuchet MS', Arial, Sans-serif;
 }
 
 blockquote pre {

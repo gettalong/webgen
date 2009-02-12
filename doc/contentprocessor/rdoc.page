@@ -11,7 +11,7 @@ for Ruby source files, [reference][1]) to HTML.
 > implementation is via Rubygems:
 >
 >     gem install rdoc
-{.exclamation}
+{.warning}
 
 [1]: http://rdoc.rubyforge.org/rdoc/ "RDoc Reference"
 [2]: http://rubyforge.org/projects/rdoc/ "New RDoc implementation"

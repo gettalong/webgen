@@ -251,7 +251,7 @@ information can be extracted correctly from the path name:
     > If two paths have the same `basename` and `extension` part, they should define the same
     > content but for different languages. This allows webgen to automatically deliver the right
     > language version of the content
-    {.information}
+    {.important}
 
 *   `lang`
 
@@ -298,7 +298,7 @@ language, it is first tried to get the path in the requested language. If this i
 (ie. no such localization exists), the unlocalized path is returned if it exists.
 
 > Directories and fragments are never localized, only files are!
-{.exclamation}
+{.important}
 
 It is also possible to use the _localized canonical name_ of a path to resolve it. The localized
 canonical name is the same as the canonical name but with a language code inserted before the
@@ -331,9 +331,9 @@ information key is an array which can have the following values:
   * `:year`, `:month`, `:day`: The creation year, month and day, respectively, of the source path.
     An error is raised if the needed meta information `created_at` is not set on the path.
 
-> The contructed output path must always be an absolute one, ie. it has to start at the root of the
+> The constructed output path must always be an absolute one, ie. it has to start at the root of the
 > output directory. Therefore, the `:parent` part should always be included!
-{.information}
+{.important}
 
 Following are some examples of output path names for given source path names (assuming that `en` is
 the default language and that the path is under a directory called `/img/`):
