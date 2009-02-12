@@ -17,7 +17,7 @@ module Webgen::SourceHandler
       page = page_from_path(path)
       nodes = []
       YAML::load(page.blocks['content'].content).each do |key, meta_info|
-        key = (key =~ /^\// ? key : File.join(parent.absolute_lcn, key))
+        key = Webgen::Common.absolute_path(key, parent.absolute_lcn) + (key =~ /\/$/ ? '/' : '')
         temp_parent = create_directories(parent.tree.root, File.dirname(key), path)
 
         meta_info ||= {}
