@@ -11,4 +11,9 @@ class TestCLICommandParser < Test::Unit::TestCase
     assert_equal(Dir.pwd, cli.directory)
   end
 
+  def test_website_from_env
+    ENV['WEBGEN_WEBSITE'] = '/webgen/test/site'
+    cli = Webgen::CLI::CommandParser.new
+    assert_equal('/webgen/test/site', cli.directory)
+  end
 end
