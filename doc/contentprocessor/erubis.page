@@ -11,7 +11,7 @@ options.
 > way to do this is via Rubygems:
 >
 >     gem install erubis
-{.exclamation}
+{.warning}
 
 [1]: http://www.kuwata-lab.com/erubis/ "Erubis Homepage"
 

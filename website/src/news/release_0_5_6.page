@@ -25,7 +25,7 @@ now executed as often as needed (which amounts to two times in nearly all situat
 > Since the internal code changed a lot from the last release, you may need to update your
 > extensions to comply with the new internal API! Have a look at the ChangeLog or the `git log` to
 > see all changes.
-{.exclamation}
+{.warning}
 
 Building on the above changes a new webgen tag for generating high quality graphics using the LaTeX
 library PGF/TikZ is now available.

@@ -10,7 +10,7 @@ RedCloth library. For detailed information about Textile have a look at the [Tex
 > way to do this is via Rubygems:
 >
 >     gem install RedCloth
-{.exclamation}
+{.warning}
 
 
 Example

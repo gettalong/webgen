@@ -12,7 +12,7 @@ Markdown processor]({relocatable: maruku.html}) does.
 > way to do this is via Rubygems:
 >
 >     gem install rdiscount
-{.exclamation}
+{.warning}
 
 [1]: http://github.com/rtomayko/rdiscount
 

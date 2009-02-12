@@ -10,7 +10,7 @@ attribute set.
 > context! This is to ensure that fragment nodes are not created from multiple block of one page
 > file. So this content processor has no effect when used in the pipeline of blocks except if the
 > block is named `content`.
-{.exclamation}
+{.warning}
 
 The default markup language Maruku automatically generates an `id` attribute for all headers. If you
 use another markup language or plain old HTML, you might need to set the `id` attributes by hand.

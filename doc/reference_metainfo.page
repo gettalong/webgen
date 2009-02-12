@@ -171,7 +171,7 @@ at the [output path creation section]({relocatable: manual.html#source-output}) 
 
 > This meta information has to be set BEFORE a node gets created. Setting this value is therefore
 > only useful, for example, in the `paths` block of a meta information backing file.
-{.exclamation}
+{.important}
 
 ### priority
 

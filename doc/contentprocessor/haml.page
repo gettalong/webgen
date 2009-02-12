@@ -15,7 +15,7 @@ erb.html}).
 > do this is via Rubygems:
 >
 >     gem install haml
-{.exclamation}
+{.warning}
 
 
 ## Example

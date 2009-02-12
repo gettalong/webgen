@@ -11,7 +11,7 @@ This source handler automatically generates a sitemap based on the specification
 > library. The preferred way to do this is via Rubygems:
 >
 >     gem install builder
-{.exclamation}
+{.warning}
 
 The following meta information keys are supported:
 
