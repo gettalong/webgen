@@ -1,6 +1,6 @@
 module Webgen
 
   # The version of webgen.
-  VERSION = '0.5.6'
+  VERSION = '0.5.7'
 
 end
