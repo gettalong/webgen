@@ -25,24 +25,24 @@ class TestCommonSitemap < Test::Unit::TestCase
 
   def test_create_sitemap_and_node_chagned
     do_assert(@nodes[:file11_en], 'en', false, false, ['page'],
-              [:dir1, :file11_en, :index_en])
+              [:dir1, :file11_en, :index_en, :dir3])
     do_assert(@nodes[:file11_en], 'en', true, false, ['page'],
               [:dir1, :file11_en])
     do_assert(@nodes[:file11_en], 'en', false, false, ['page', 'other'],
-              [:dir1, :file11_en, :dir2, :file21_en, :index_en])
+              [:dir1, :file11_en, :dir2, :file21_en, :index_en, :dir3])
     do_assert(@nodes[:file11_en], 'en', false, false, [],
-              [:dir1, :file11_en, :file11_en_f1, :dir2, :file21_en, :index_en])
+              [:dir1, :file11_en, :file11_en_f1, :dir2, :file21_en, :index_en, :dir3])
     do_assert(@nodes[:file11_en], 'en', false, false, ['noone'],
               [])
     do_assert(@nodes[:file11_en], 'en', false, false, ['page', 'directory'],
-              [:dir1, :file11_en, :dir2, :index_en])
+              [:dir1, :file11_en, :dir2, :index_en, :dir3])
     do_assert(@nodes[:file11_en], 'en', true, false, ['page', 'directory'],
               [:dir1, :file11_en])
 
     do_assert(@nodes[:file1_de], 'de', false, false, ['page'],
               [:file1_de])
     do_assert(@nodes[:file1_de], 'de', false, true, ['page'],
-              [:dir1, :file11_en, :file1_de, :index_en])
+              [:dir1, :file11_en, :file1_de, :index_en, :dir3, :index3_en])
 
     @nodes[:file11_en].unflag(:dirty)
     @website.blackboard.dispatch_msg(:node_changed?, @nodes[:file11_en])

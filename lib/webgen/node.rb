@@ -282,8 +282,9 @@ module Webgen
 
     # Return the routing node in language +lang+ which is the node that is used when routing to this
     # node. The returned node can differ from the node itself in case of a directory where the
-    # routing node is the directory index node.
-    def routing_node(lang)
+    # routing node is the directory index node. If +show_warning+ is +true+ and this node is a
+    # directory node, then a warning is logged if no associated index file is found.
+    def routing_node(lang, log_warning = true)
       if !is_directory?
         self
       else
@@ -299,12 +300,12 @@ module Webgen
           if index_node
             vcache[key] = index_node
             log(:info) { "Directory index path for <#{absolute_lcn}> => <#{index_node.absolute_lcn}>" }
-          else
+          elsif log_warning
             vcache[key] = self
             log(:warn) { "No directory index path found for directory <#{absolute_lcn}>" }
           end
         end
-        vcache[key]
+        vcache[key] || self
       end
     end
 

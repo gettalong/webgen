@@ -31,10 +31,7 @@ module Webgen::Common
     def recursive_create(parent, node, lang, in_sitemap = true)
       mnode = Webgen::Tag::Menu::MenuNode.new(parent, node)
       node.children.map do |n|
-        sub_in_sitemap = ((option('common.sitemap.used_kinds').empty? || option('common.sitemap.used_kinds').include?(n['kind'])) &&
-                          (option('common.sitemap.any_lang') || n.lang.nil? || n.lang == lang) &&
-                          (!option('common.sitemap.honor_in_menu') || n['in_menu']) &&
-                          (parent.nil? || node.routing_node(lang) != n))
+        sub_in_sitemap = in_sitemap?(n, lang)
         [(!n.children.empty? || sub_in_sitemap ? n : nil), sub_in_sitemap]
       end.each do |n, sub_in_sitemap|
         next if n.nil?
@@ -42,6 +39,15 @@ module Webgen::Common
         mnode.children << sub_node unless sub_node.nil?
       end
       (mnode.children.empty? && !in_sitemap ? nil : mnode)
+    end
+
+    # Return +true+ if the +child+ of the +node+ is in the sitemap for the language +lang+.
+    def in_sitemap?(child, lang, allow_index_file = false)
+      ((option('common.sitemap.used_kinds').empty? || option('common.sitemap.used_kinds').include?(child['kind']) ||
+        (child.routing_node(lang, false) != child && in_sitemap?(child.routing_node(lang), lang, true))) &&
+       (option('common.sitemap.any_lang') || child.lang.nil? || child.lang == lang) &&
+       (!option('common.sitemap.honor_in_menu') || child['in_menu']) &&
+       (allow_index_file || child.parent == child.tree.root || child.parent.routing_node(lang) != child))
     end
 
     # Retrieve the configuration option value for +name+. The value is taken from the current

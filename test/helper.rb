@@ -33,6 +33,8 @@ module Test
         :file21_en => Webgen::Node.new(dir2, '/dir2/file21.en.html', 'file21.html', {'lang' => 'en', 'in_menu' => false, 'kind' => 'other'}),
         :file1_de => Webgen::Node.new(root, '/file1.de.html', 'file1.html', {'lang' => 'de', 'in_menu' => true, 'kind' => 'page'}),
         :index_en => Webgen::Node.new(root, '/index.en.html', 'index.html', {'lang' => 'en', 'kind' => 'page'}),
+        :dir3 => dir3 = Webgen::Node.new(root, '/dir3/', 'dir3/', {'kind' => 'directory', 'index_path' => 'index.html'}),
+        :index3_en => Webgen::Node.new(dir3, '/dir3/index.en.html', 'index.html', {'lang' => 'en', 'kind' => 'page'})
       }
     end
 
