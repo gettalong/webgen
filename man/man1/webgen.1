@@ -55,6 +55,12 @@ Shows the version of the program and exit.
 .TP
 \fBwebgui\fR
 Starts the webgen webgui, a browser based graphical user interface for manging webgen websites.
+.SH ENVIRONMENT VARIABLES
+webgen's behaviour is affected by the following environment variables:
+.TP
+\fBWEBGEN_WEBSITE\fR
+If no website is specified via the \-d option and this variable is set, webgen assumes that its
+content is the webgen website directory that should be used.
 .SH SEE ALSO
 The webgen website, http://webgen.rubyforge.org/ for more information.
 .SH AUTHOR

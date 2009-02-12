@@ -19,7 +19,8 @@ The executable for webgen is called... webgen ;-) It uses a command style syntax
 possible commands run `webgen help`.
 
 The main command is the `render` command which does the actual website generation. This command uses
-the current working directory as website directory if none was specified via the gloabl `-d` option.
+either the environment variable `WEBGEN_WEBSITE` (if it is set and non-empty) or the current working
+directory as website directory if none was specified via the gloabl `-d` option.
 
 You can invoke a command by specifying its name after the executable name. Also counting the
 executable `webgen` as a command, the options for a command are specified directly after the command
