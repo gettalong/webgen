@@ -1,0 +1,33 @@
+#download-box {
+    margin: 20px 50px;
+    padding: 5px;
+    background-color: #193441;
+}
+
+#download-box h2 {
+    text-align: center;
+    color: white;
+}
+
+#download-box-inner {
+    padding: 5px;
+    background-color: #FCFFF5;
+}
+
+#download-box p {
+    padding: 0px;
+}
+
+#download-box-version {
+    text-align: center;
+    font-weight: bold;
+    font-size: 2em;
+    color: #A0080D;
+    margin: 10px 0px;
+}
+
+#download-box em {
+    color: #A0080D;
+    display: inline;
+}
+

@@ -8,6 +8,9 @@
     <meta name="Author" content="Thomas Leitner - t_leitner@gmx.at" />
 
     <link rel="stylesheet" href="{relocatable: default.css}" type="text/css" />
+    <link rel="stylesheet" href="{relocatable: website.css}" type="text/css" />
+    <script type="text/javascript" src="{relocatable: js/jquery-1.3.1.min.js}"></script>
+    <script type="text/javascript" src="{relocatable: js/jquery.corner.js}"></script>
 
     <title>webgen - static website generator - {title:}</title>
 
@@ -30,6 +33,10 @@
     <div id="content-wrap"><div id="content">
 
       <div id="sidebar" >
+
+        <% if context[:chain][1].node_info[:page].blocks.has_key?('sidebarbefore') %>
+        <webgen:block name="sidebarbefore" />
+        <% end %>
 
         <% if !context.content_node.children.empty? %>
         <h1>Contents</h1>

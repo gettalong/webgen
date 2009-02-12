@@ -20,7 +20,7 @@
 body {
   margin: 0;
   padding: 0;
-  font: normal .80em/1.5em Tahoma, 'Trebuchet MS', sans-serif;
+  font: normal .80em/1.5em 'Helvetica Neue', Tahoma, 'Trebuchet MS', sans-serif;
   color: #000;
   text-align: center;
   background-color: #FCFFF5;
@@ -40,7 +40,7 @@ a:hover {
 
 /* headers */
 h1, h2, h3, h4, h5, h6 {
-  font: bold 1.3em 'Trebuchet MS', Arial, Sans-serif;
+  font: bold 1.3em 'Helvetica Neue', 'Trebuchet MS', Arial, Sans-serif;
   color: #CE900A;
 }
 h1 { font-size: 1.6em; }
@@ -53,7 +53,7 @@ h3 { font-size: 1.3em; }
 }
 
 #sidebar h1 {
-  font: bold 1.4em 'Trebuchet MS', Arial, Sans-serif;
+  font: bold 1.4em 'Helvetica Neue', 'Trebuchet MS', Arial, Sans-serif;
   background: url(images/arrow.gif) no-repeat 0px .6em;
   padding: 7px 0 7px 25px;
   color: #193441;
@@ -103,7 +103,7 @@ blockquote.exclamation, blockquote.error, blockquote.information {
   padding: 0 0 0 40px;
   min-height: 40px;
   border: 1px solid #91AA9D;
-  font: 'Trebuchet MS', Sans-serif;
+  font: 'Helvetica Neue', 'Trebuchet MS', Sans-serif;
   background-color: #D1DBBD;
   background-image: url(images/quote.gif);
   background-repeat: no-repeat;
@@ -171,7 +171,7 @@ blockquote pre {
 #header-content ul {
   position: absolute;
   right: 20px; top: 75px;
-  font: bolder 1.3em 'Trebuchet MS', sans-serif;
+  font: bolder 1.3em 'Helvetica Neue', 'Trebuchet MS', sans-serif;
   color: #FCFFF5;
   list-style: none;
   margin: 0; padding: 0;
