@@ -31,7 +31,8 @@ class TestTagSitemap < Test::Unit::TestCase
                  "<ul><li><a href=\"#f1\"></a></li></ul></li></ul></li>" +
                  "<li><a href=\"../dir2/\"></a>" +
                  "<ul><li><a href=\"../dir2/file21.en.html\"></a></li></ul></li>"+
-                 "<li><a href=\"../index.en.html\"></a></li></ul>",
+                 "<li><a href=\"../index.en.html\"></a></li>" +
+                 "<li><a href=\"../dir3/index.en.html\"></a></li></ul>",
                  call(context, false, false, []))
     assert_equal("",
                  call(context, false, false, ['noone']))
