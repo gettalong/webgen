@@ -34,9 +34,7 @@
 
       <div id="sidebar" >
 
-        <% if context[:chain][1].node_info[:page].blocks.has_key?('sidebarbefore') %>
-        <webgen:block name="sidebarbefore" />
-        <% end %>
+        <webgen:block name="sidebarbefore" node="first" notfound="ignore" />
 
         <% if !context.content_node.children.empty? %>
         <h1>Contents</h1>
@@ -44,9 +42,7 @@
 
         {menu: {used_nodes: fragments, min_levels: 4, max_levels: 6}}
 
-        <% if context[:chain][1].node_info[:page].blocks.has_key?('sidebar') %>
-        <webgen:block name="sidebar" />
-        <% end %>
+        <webgen:block name="sidebar" node="first" notfound="ignore" />
 
         <h1>Support webgen</h1>
         <p>If you are interested in supporting webgen and would like to contribute, you are

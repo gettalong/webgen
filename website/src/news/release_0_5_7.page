@@ -19,18 +19,20 @@ Although this is a just a minor interim release, the 0.5.x series is declared st
 release and should be used instead of the old stable 0.4.x series! The one exception is when you
 rely on features of the 0.4.x series that have not been ported to 0.5.x yet.
 
-Aside from that some issues were fixed and the homepage was updated sothat the current version and
-release date is visible from the start page.
+Aside from this this release brings some new features, various issues were fixed and the homepage
+was updated sothat the current version and release date is visible from the start page.
 
 --- name:changes pipeline:tags,maruku
 
 * Major enhancements:
 
-  - 0.5.x series declared the new stable webgen series
+  - 0\.5.x series declared the new stable webgen series
 
 * Minor enhancements:
 
+  - Added two very useful options to [ContentProcessor::Blocks][1]
   - Updated API and user documentation
+  - Current webgen version and release date visible on start date (tip from Sebastian Gassner)
   - The webgen CLI now uses the environment variable `WEBGEN_WEBSITE` instead of the current
     directory as the location of the webgen website if the switch `-d` is not specified
 
@@ -39,3 +41,5 @@ release date is visible from the start page.
   - Fixed a small bug in Common::Sitemap: directories with just an index file did not appear in the
     sitemap (reported by Damien Robert)
   - Removed causes of Ruby code warnings
+
+[1]: {relocatable: ../documentation/contentprocessor/blocks.html}

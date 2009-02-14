@@ -8,20 +8,32 @@ templates to define the place where the actual page content should be.
 
 The general syntax is as follows:
 
-    <webgen:block name='BLOCK_NAME' chain='(L)CN;(L)CN;...' />
+    <webgen:block name='BLOCK_NAME' chain='(L)CN;(L)CN;...' node='first' notfound='ignore' />
 
-So it is basically an XML tag with two attributes, `name` and `chain`. The `name` attribute
-specifies the name of the block that should be rendered in place of the block tag. The next node in
-the used node chain needs to have a block that is named so, otherwise an error is thrown (if there
-is only one node left in the node chain that node is used). The block is rendered according to its
-render pipeline and then inserted.
+So it is basically an XML tag with the mandatory attribute `name` and the optional attributes
+`chain`, `node` and `notfound`:
 
-The optional attribute `chain` specifies the node chain that should be used for rendering the
-block. Its value needs to be a list of (localized) canonical names of nodes separated by semicolons
-that should be used as node chain. If this attribute is not specified the default node chain is
-used.
+* The `name` attribute is the only mandatory attribute and it specifies the name of the block that
+  should be rendered in place of the block tag. The next node in the used node chain (if there is
+  only one node left in the node chain that node is used) needs to have a block that has such a name
+  (this behaviour can be changed with the `node` attribute), otherwise an error is raised. The
+  block is rendered according to its render pipeline and then inserted.
 
-This is more easily explained with examples. Assume we have a `default.template` file, a
+* The optional attribute `chain` specifies the node chain that should be used for rendering the
+  block. Its value needs to be a list of (localized) canonical names of nodes separated by
+  semicolons that should be used as node chain. If this attribute is not specified the default node
+  chain is used.
+
+* The optional attribute `node` specifies which node in the node chain should be used. If this
+  attribute is not specified, the next node in the node chain is used. If it is specified with the
+  value `first`, then the node chain is traversed till a node is found that has a block with the
+  specified name. If no such node is in the node chain, an error is raised.
+
+* If the optional attribute `notfound` has a value of `ignore`, all errors that can occur are
+  ignored. This is especially useful when used in templates to include blocks that may not be
+  defined in all page files.
+
+All this is more easily explained with examples. Assume that we have a `default.template` file, a
 `page.template` file and a `my.page` file with the following contents:
 
 The `default.template` file:
@@ -32,6 +44,10 @@ The `default.template` file:
     after default 1
     <webgen:block name='content' chain='page.template;my.html' />
     after default 2
+    <webgen:block name='optional' chain='page.template;my.html' node='first' />
+    after default 3
+    <webgen:block name='invalid' notfound='ignore' />
+    after default 4
 
 The `page.template` file:
 
@@ -44,18 +60,28 @@ And the `my.page` file:
 
     --- name:content pipeline:
     The content of the page file.
+    --- name:optional pipeline:
+    Optional content.
 
 When `my.page` gets rendered to `my.html`, the node chain looks like this by default:
 
-    default.template ---> my.page
+    default.template ---> my.html
 
 The first webgen block tag just inserts the rendered block named `content` of `my.page`. The second
 block tag uses a custom node chain. Therefore the block named `content` of `page.template` gets
 rendered using the node chain:
 
-    page.template ---> my.page
+    page.template ---> my.html
 
-and then inserted. Summing up the above, the rendered file `my.html` will then look like this:
+and then inserted. The third block tag uses the same custom node chain but for a block named
+`optional`. This block does not exist in `page.template` but it does exist in `my.page`. Since the
+`node` attribute is set to `first`, the first node `page.template` in the node chain is ignored and
+the block is found in `my.page` (if the `node` attribute is not specified, an error will be raised).
+
+The fourth block tag specifies a block name that does not occur in `my.page`. However, since the
+optional attribute `notfound` is set to `ignore`, this error is ignored.
+
+Summing up the above, the rendered file `my.html` will then look like this:
 
     before default 1
     The content of the page file.
@@ -64,3 +90,7 @@ and then inserted. Summing up the above, the rendered file `my.html` will then l
     The content of the page file.
     after page 1
     after default 2
+    Optional content.
+    after default 3
+
+    after default 4
