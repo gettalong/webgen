@@ -177,7 +177,7 @@ following to the sidebar part in your `default.template` (ensure that you haven'
 the processing pipeline):
 
     <%% if node.node_info[:page].blocks.has_key?('sidebar') %>
-      \<webgen:block name='sidebar' />
+      <webgen:block name='sidebar' />
     <%% end %>
 
 This will include the contents of the block `sidebar` in the sidebar if such a block exists for a
@@ -187,6 +187,11 @@ page file:
     This is the main content block
     --- name:sidebar
     This is the sidebar block and everything in here goes to the sidebar!
+
+You can avoid using the ERB processor if you use the following syntax (available from version 0.5.7
+upwards):
+
+    <webgen:block name='sidebar' node='first' notfound='ignore' />
 
 ### ... create XML output?
 
