@@ -44,7 +44,7 @@ config.sources [['/', "Webgen::Source::FileSystem", 'src']], :doc => 'One or mor
 
 # All things regarding source handler
 config.sourcehandler.patterns({
-                                'Webgen::SourceHandler::Copy' => ['**/*.css', '**/*.js', '**/*.html', '**/*.gif', '**/*.jpg', '**/*.png'],
+                                'Webgen::SourceHandler::Copy' => ['**/*.css', '**/*.js', '**/*.html', '**/*.gif', '**/*.jpg', '**/*.png', '**/*.ico'],
                                 'Webgen::SourceHandler::Directory' => ['**/'],
                                 'Webgen::SourceHandler::Metainfo' => ['**/metainfo', '**/*.metainfo'],
                                 'Webgen::SourceHandler::Template' => ['**/*.template'],
