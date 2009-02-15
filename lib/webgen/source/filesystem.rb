@@ -45,12 +45,13 @@ module Webgen
 
     # Return all paths under #root which match #glob.
     def paths
-      @paths ||= Dir.glob(File.join(@root, @glob), File::FNM_DOTMATCH|File::FNM_CASEFOLD).to_set.collect! do |f|
+      @paths ||= Dir.glob(File.join(@root, @glob), File::FNM_DOTMATCH|File::FNM_CASEFOLD).to_set.collect do |f|
+        next unless File.exists?(f) # handle invalid links
         temp = Pathname.new(f.sub(/^#{Regexp.escape(@root)}\/?/, '/')).cleanpath.to_s
         temp += '/' if File.directory?(f) && temp[-1] != ?/
         path = Path.new(temp, f)
         path
-      end
+      end.compact
     end
 
   end
