@@ -1,6 +1,9 @@
 require 'test/unit'
 require 'helper'
 require 'webgen/source'
+require 'tmpdir'
+require 'fileutils'
+require 'rbconfig'
 
 class TestSourceFileSystemPath < Test::Unit::TestCase
 
@@ -54,6 +57,18 @@ class TestSourceFileSystem < Test::Unit::TestCase
     assert(source.paths.length > 1)
     assert(source.paths.include?(Webgen::Path.new('/source/')))
     assert(source.paths.include?(Webgen::Path.new('/source/filesystem.rb')))
+  end
+
+  def test_handling_of_invalid_link
+    return if Config::CONFIG['arch'].include?('mswin32')
+    dir = File.join(Dir.tmpdir, 'webgen-link-test')
+    FileUtils.mkdir_p(dir)
+    FileUtils.touch(File.join(dir, 'test'))
+    File.symlink('non-existing-file', File.join(dir, 'invalid-link'))
+    source = Webgen::Source::FileSystem.new(dir, '/t*')
+    assert(source.paths.length == 1)
+  ensure
+    FileUtils.rm_rf(dir)
   end
 
 end
