@@ -1,3 +1,5 @@
+# -*- encoding: utf-8 -*-
+
 module Webgen::Tag
 
   # Create a link to a given (A)LCN.

@@ -1,3 +1,5 @@
+# -*- encoding: utf-8 -*-
+
 module Webgen::ContentProcessor
 
   # The context object that is passed to the +call+ method of a content processor.

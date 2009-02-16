@@ -1,3 +1,5 @@
+# -*- encoding: utf-8 -*-
+
 module Webgen::ContentProcessor
 
   # Processes content in Sass markup (used for writing CSS files) using the +haml+ library.

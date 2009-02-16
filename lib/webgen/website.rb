@@ -1,3 +1,5 @@
+# -*- encoding: utf-8 -*-
+
 # Standard lib requires
 require 'logger'
 require 'set'

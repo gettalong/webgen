@@ -1,3 +1,5 @@
+# -*- encoding: utf-8 -*-
+
 module Webgen::Tag
 
   # Provides syntax highlighting via the +coderay+ library.

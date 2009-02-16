@@ -1,3 +1,5 @@
+# -*- encoding: utf-8 -*-
+
 require 'webgen/cli'
 
 module Webgen::CLI

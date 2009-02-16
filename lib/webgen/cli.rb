@@ -1,3 +1,5 @@
+# -*- encoding: utf-8 -*-
+
 require 'cmdparse'
 require 'webgen/website'
 require 'webgen/version'

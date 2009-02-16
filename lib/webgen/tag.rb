@@ -1,3 +1,5 @@
+# -*- encoding: utf-8 -*-
+
 module Webgen
 
   # Namespace for all classes that are useable by Webgen::ContentProcessor::Tag.

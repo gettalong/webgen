@@ -1,3 +1,5 @@
+# -*- encoding: utf-8 -*-
+
 module Webgen::SourceHandler
 
   # This source handler should be used for handling nodes that are created during the write

@@ -1,3 +1,5 @@
+# -*- encoding: utf-8 -*-
+
 module Webgen::Tag
 
   # Generates a breadcrumb trail for the page. This is especially useful when pages are in deep

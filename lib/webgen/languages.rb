@@ -1,3 +1,5 @@
+# -*- encoding: utf-8 -*-
+
 module Webgen
 
   # Describes a human language which is uniquely identfied by a three letter code and, optionally,

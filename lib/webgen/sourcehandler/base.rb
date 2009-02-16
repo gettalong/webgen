@@ -1,3 +1,5 @@
+# -*- encoding: utf-8 -*-
+
 require 'facets/symbol/to_proc'
 require 'webgen/websiteaccess'
 require 'webgen/loggable'

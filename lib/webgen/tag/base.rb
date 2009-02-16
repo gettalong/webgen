@@ -1,3 +1,5 @@
+# -*- encoding: utf-8 -*-
+
 require 'yaml'
 require 'webgen/loggable'
 require 'webgen/websiteaccess'

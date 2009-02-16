@@ -1,3 +1,5 @@
+# -*- encoding: utf-8 -*-
+
 module Webgen::Tag
 
   # Provides easy access to the meta information of a node.

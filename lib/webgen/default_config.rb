@@ -1,3 +1,5 @@
+# -*- encoding: utf-8 -*-
+
 website = Webgen::WebsiteAccess.website
 config = website.config
 

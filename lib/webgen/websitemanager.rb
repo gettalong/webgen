@@ -1,3 +1,5 @@
+# -*- encoding: utf-8 -*-
+
 require 'ostruct'
 require 'fileutils'
 require 'webgen/website'

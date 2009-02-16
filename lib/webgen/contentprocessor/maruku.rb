@@ -1,3 +1,5 @@
+# -*- encoding: utf-8 -*-
+
 module Webgen::ContentProcessor
 
   # Processes content in Markdown format using the +maruku+ library.

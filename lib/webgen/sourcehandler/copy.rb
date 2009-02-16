@@ -1,3 +1,5 @@
+# -*- encoding: utf-8 -*-
+
 module Webgen::SourceHandler
 
   # Simple source handler for copying files from the source tree, either verbatim or by applying a

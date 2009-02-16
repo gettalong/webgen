@@ -1,3 +1,5 @@
+# -*- encoding: utf-8 -*-
+
 module Webgen::Source
 
   # This source class is used to stack several sources together.

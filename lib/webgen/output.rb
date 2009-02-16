@@ -1,3 +1,5 @@
+# -*- encoding: utf-8 -*-
+
 module Webgen
 
   # Namespace for all classes that know how to write out node content.

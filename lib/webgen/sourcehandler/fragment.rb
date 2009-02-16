@@ -1,3 +1,5 @@
+# -*- encoding: utf-8 -*-
+
 module Webgen::SourceHandler
 
   # Handles page fragment nodes and provides utility methods for parsing HTML headers and generating
