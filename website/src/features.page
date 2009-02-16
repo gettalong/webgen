@@ -66,6 +66,7 @@ Below is a list of features that webgen supports or will shortly support.
     * Support for specifying 'virtual files and directories' (can be used, for example, to include
       links to external pages in the menu)
     * Generated HTML files can be automatically checked if they are standard conform
+    * Automatic rebuilding of website on file change
 
 
 # Comparison to other generators
