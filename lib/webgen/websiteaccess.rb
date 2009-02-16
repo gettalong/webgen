@@ -1,3 +1,5 @@
+# -*- encoding: utf-8 -*-
+
 module Webgen
 
   # Mixed into modules/classes that need access to the current website object.

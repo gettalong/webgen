@@ -1,3 +1,5 @@
+# -*- encoding: utf-8 -*-
+
 module Webgen::ContentProcessor
 
   # Processes content in Textile format using the +redcloth+ library.

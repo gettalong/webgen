@@ -1,3 +1,5 @@
+# -*- encoding: utf-8 -*-
+
 module Webgen::SourceHandler
 
   # Source handler for handling content files in Webgen Page Format.

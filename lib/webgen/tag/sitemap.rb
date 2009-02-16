@@ -1,3 +1,5 @@
+# -*- encoding: utf-8 -*-
+
 module Webgen::Tag
 
   # Generates a sitemap. The sitemap contains the hierarchy of all pages on the web site.

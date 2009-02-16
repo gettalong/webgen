@@ -1,3 +1,5 @@
+# -*- encoding: utf-8 -*-
+
 module Webgen::ContentProcessor
 
   # Processes content in Markdown markup with the fast +rdiscount+ library.

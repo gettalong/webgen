@@ -1,3 +1,5 @@
+# -*- encoding: utf-8 -*-
+
 module Webgen::ContentProcessor
 
   # Converts content in RDoc markup (the native Ruby documentation format) to HTML. Needs the newer

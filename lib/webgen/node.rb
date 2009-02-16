@@ -1,3 +1,5 @@
+# -*- encoding: utf-8 -*-
+
 require 'webgen/websiteaccess'
 require 'webgen/loggable'
 require 'webgen/path'

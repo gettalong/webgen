@@ -1,3 +1,5 @@
+# -*- encoding: utf-8 -*-
+
 module Webgen
 
   # A blackboard object provides two features for inter-object communication:

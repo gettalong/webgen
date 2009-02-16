@@ -1,3 +1,5 @@
+# -*- encoding: utf-8 -*-
+
 require 'uri'
 
 module Webgen::Tag

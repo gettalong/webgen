@@ -1,3 +1,7 @@
+# -*- encoding: utf-8 -*-
+
+# -*- encoding: utf-8 -*-
+
 require 'test/unit'
 require 'helper'
 require 'stringio'

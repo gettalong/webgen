@@ -1,3 +1,5 @@
+# -*- encoding: utf-8 -*-
+
 module Webgen::ContentProcessor
 
   # Processes content that is valid Ruby to build an XML tree. This is done by using the +builder+
