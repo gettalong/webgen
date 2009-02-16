@@ -204,15 +204,17 @@ module Webgen
       self
     end
 
-    # Render the website (after calling #init if the website is not already initialized).
+    # Render the website (after calling #init if the website is not already initialized) and return
+    # a status code not equal to +nil+ if rendering was successful.
     def render
+      result = nil
       execute_in_env do
         init unless @config
 
         puts "Starting webgen..."
         shm = SourceHandler::Main.new
-        shm.render(@tree)
-        save_tree_and_cache
+        result = shm.render(@tree)
+        save_tree_and_cache if result
         puts "Finished"
 
         if @logger && @logger.log_output.length > 0
@@ -220,6 +222,7 @@ module Webgen
           puts @logger.log_output
         end
       end
+      result
     end
 
     # Clean the website directory from all generated output files (including the cache file). If
