@@ -50,12 +50,18 @@ module Webgen
           end
           puts "...done in " + ('%2.4f' % time.real) + ' seconds'
 
+          if !tree.root
+            puts 'No source files found - maybe not a webgen website?'
+            return nil
+          end
+
           puts "Writing changed nodes..."
           time = Benchmark.measure do
             write_tree(tree)
           end
           puts "...done in " + ('%2.4f' % time.real) + ' seconds'
         end while tree.node_access[:alcn].any? {|name,node| node.flagged(:created) || node.flagged(:reinit)}
+        :success
       end
 
       #######

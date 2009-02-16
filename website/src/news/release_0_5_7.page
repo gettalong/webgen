@@ -32,6 +32,7 @@ was updated sothat the current version and release date is visible from the star
 
   - Added two very useful options to [ContentProcessor::Blocks][1]
   - Added `.ico` as extension that is handled by [SourceHandler::Copy][2] (suggested by Matthias Kirschner)
+  - Added detection of non webgen website
   - Updated API and user documentation
   - Current webgen version and release date visible on start date (tip from Sebastian Gassner)
   - The webgen CLI now uses the environment variable `WEBGEN_WEBSITE` instead of the current

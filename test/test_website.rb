@@ -38,12 +38,12 @@ class TestWebsite < Test::Unit::TestCase
     assert_not_nil(ws.tree)
   end
 
-  def test_render
+  def test_render_of_non_webgen_website
     ws = Webgen::Website.new(File.dirname(__FILE__), nil) do |config|
       config['website.cache'] = [:string, '']
     end
-    ws.render
-    assert(ws.config['website.cache'][1].length > 0)
+    assert_nil(ws.render)
+    assert(ws.config['website.cache'][1].length == 0)
   end
 
   def test_execute_in_env
@@ -84,7 +84,7 @@ class TestWebsite < Test::Unit::TestCase
     FileUtils.touch(File.join(dir, 'src', 'test.jpg'))
 
     ws = Webgen::Website.new(dir, nil)
-    ws.render
+    assert_equal(:success, ws.render)
     assert(File.exists?(File.join(dir, 'out', 'test.jpg')))
     ws.clean
     assert(!File.exists?(File.join(dir, 'out', 'test.jpg')))
