@@ -12,6 +12,21 @@ This tag is used to display a list of links to translations of the page. The tex
 can be set via the configuration option `tag.langbar.lang_names` (if not set, the language code is
 shown).
 
+The option `tag.langbar.process_output` is useful in conjunction with `tag.langbar.lang_names` to
+display language flags. For example, you can use the following entries in `config.yaml`:
+
+    tag.langbar.lang_names:
+      en: |
+        <img src="\{relocatable: img/flag_english.gif}" alt="English flag"/> English
+      de: |
+        <img src="\{relocatable: img/flag_german.gif}" alt="German flag"/> Deutsch
+
+    tag.langbar.process_output: true
+
+This assumes that the `langbar` tag is *only* used in `src/default.template` and the flag images are
+under `src/img/` (otherwise the `relocatable` tag can correctly find the paths). To work around
+this, you could specify the `lang_names` directly in the `langbar` tag.
+
 ## Examples
 
 <table class="examples">

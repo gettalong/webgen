@@ -33,12 +33,17 @@ class TestTagLangbar < Test::Unit::TestCase
     check_results(nodes[:file_en], link, '', '', '')
 
     @obj.set_params('tag.langbar.show_single_lang' => true, 'tag.langbar.show_own_lang' => true, 'tag.langbar.separator' => ' --- ')
-    assert_equal("#{de_link} --- #{en_link}",
+    assert_equal(["#{de_link} --- #{en_link}", false],
                  @obj.call('langbar', '', Webgen::ContentProcessor::Context.new(:chain => [nodes[:index_en]])))
 
     @obj.set_params('tag.langbar.show_single_lang' => true, 'tag.langbar.show_own_lang' => true,
                     'tag.langbar.lang_names' => {'de' => 'Deutsch'})
-    assert_equal("<a href=\"index.de.html\">Deutsch</a> | #{en_link}",
+    assert_equal(["<a href=\"index.de.html\">Deutsch</a> | #{en_link}", false],
+                 @obj.call('langbar', '', Webgen::ContentProcessor::Context.new(:chain => [nodes[:index_en]])))
+
+    @obj.set_params('tag.langbar.show_single_lang' => true, 'tag.langbar.show_own_lang' => true,
+                    'tag.langbar.process_output' => true)
+    assert_equal(["#{de_link} | #{en_link}", true],
                  @obj.call('langbar', '', Webgen::ContentProcessor::Context.new(:chain => [nodes[:index_en]])))
 
     nodes[:index_en].unflag(:dirty)
@@ -52,16 +57,16 @@ class TestTagLangbar < Test::Unit::TestCase
   def check_results(node, both_true, both_false, first_false, second_false)
     context = Webgen::ContentProcessor::Context.new(:chain => [node])
     @obj.set_params('tag.langbar.show_single_lang'=>true, 'tag.langbar.show_own_lang'=>true)
-    assert_equal(both_true, @obj.call('langbar', '', context))
+    assert_equal(both_true, @obj.call('langbar', '', context).first)
 
     @obj.set_params('tag.langbar.show_single_lang'=>false, 'tag.langbar.show_own_lang'=>false)
-    assert_equal(both_false, @obj.call('langbar', '', context))
+    assert_equal(both_false, @obj.call('langbar', '', context).first)
 
     @obj.set_params('tag.langbar.show_single_lang'=>false, 'tag.langbar.show_own_lang'=>true)
-    assert_equal(first_false, @obj.call('langbar', '', context))
+    assert_equal(first_false, @obj.call('langbar', '', context).first)
 
     @obj.set_params('tag.langbar.show_single_lang'=>true, 'tag.langbar.show_own_lang'=>false)
-    assert_equal(second_false, @obj.call('langbar', '', context))
+    assert_equal(second_false, @obj.call('langbar', '', context).first)
   end
 
 end
