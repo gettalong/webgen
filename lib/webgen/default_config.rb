@@ -177,6 +177,7 @@ config.tag.langbar.separator(' | ', :doc => 'Separates the languages from each o
 config.tag.langbar.show_single_lang(true, :doc => 'Should the link be shown although the page is only available in one language?')
 config.tag.langbar.show_own_lang(true, :doc => 'Should the link to the currently displayed language page be shown?')
 config.tag.langbar.lang_names({}, :doc => 'A map from language code to language names')
+config.tag.langbar.process_output(false, :doc => 'The content of the language bar will be scanned for tags if true.')
 
 config.tag.includefile.filename(nil, :doc => 'The name of the file which should be included (relative to the website).', :mandatory => 'default')
 config.tag.includefile.process_output(true, :doc => 'The file content will be scanned for tags if true.')
