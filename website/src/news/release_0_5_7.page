@@ -1,9 +1,9 @@
 ---
 title: webgen 0.5.7 released
 in_menu: true
-sort_info: 2009-02-??
-created_at: 2009-02-?? ??:??:?? +02:00
-modified_at: 2009-02-?? ??:??:?? +02:00
+sort_info: 2009-02-27
+created_at: 2009-02-27 15:56:23 +02:00
+modified_at: 2009-02-27 15:56:23 +02:00
 ---
 ## {title:}
 
@@ -20,7 +20,7 @@ release and should be used instead of the old stable 0.4.x series! The one excep
 rely on features of the 0.4.x series that have not been ported to 0.5.x yet.
 
 Aside from this this release brings some new features, various issues were fixed and the homepage
-was updated sothat the current version and release date is visible from the start page.
+was updated sothat the current version and release date are visible from the start page.
 
 --- name:changes pipeline:tags,maruku
 
@@ -31,7 +31,7 @@ was updated sothat the current version and release date is visible from the star
 * Minor enhancements:
 
   - Added two very useful options to [ContentProcessor::Blocks][1]
-  - Added new parameter for [Tag::LangBar][3]
+  - Added one new option to [Tag::LangBar][3]
   - Added `.ico` as extension that is handled by [SourceHandler::Copy][2] (suggested by Matthias Kirschner)
   - Added detection of non webgen website
   - Updated API and user documentation
