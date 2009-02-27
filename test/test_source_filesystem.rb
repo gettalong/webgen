@@ -70,7 +70,7 @@ class TestSourceFileSystem < Test::Unit::TestCase
     source = Webgen::Source::FileSystem.new(dir, '/t*')
     assert(source.paths.length == 1)
   ensure
-    FileUtils.rm_rf(dir)
+    FileUtils.rm_rf(dir) if dir
   end
 
 end
