@@ -1,7 +1,7 @@
 --- !ruby/object:Gem::Specification 
 name: webgen
 version: !ruby/object:Gem::Version 
-  version: 0.5.6.20081020
+  version: 0.5.7.20090227
 platform: ruby
 authors: 
 - Thomas Leitner
@@ -9,7 +9,7 @@ autorequire:
 bindir: bin
 cert_chain: []
 
-date: 2008-10-20 00:00:00 +02:00
+date: 2009-02-27 00:00:00 +01:00
 default_executable: webgen
 dependencies: 
 - !ruby/object:Gem::Dependency 
@@ -447,6 +447,7 @@ files:
 - lib/webgen/sourcehandler/directory.rb
 - lib/webgen/sourcehandler/feed.rb
 - lib/webgen/sourcehandler/fragment.rb
+- lib/webgen/sourcehandler/gallery.rb
 - lib/webgen/sourcehandler/memory.rb
 - lib/webgen/sourcehandler/metainfo.rb
 - lib/webgen/sourcehandler/page.rb
@@ -481,14 +482,16 @@ files:
 - misc/htmldoc.virtual
 - misc/images
 - misc/images/arrow.gif
-- misc/images/error.gif
-- misc/images/exclamation.gif
+- misc/images/error.png
 - misc/images/headerbg.jpg
-- misc/images/information.gif
+- misc/images/important.png
+- misc/images/information.png
 - misc/images/quote.gif
+- misc/images/warning.png
 - test/test_blackboard.rb
 - test/test_cache.rb
 - test/test_cli.rb
+- test/test_common.rb
 - test/test_common_sitemap.rb
 - test/test_configuration.rb
 - test/test_contentprocessor.rb
@@ -583,7 +586,7 @@ required_rubygems_version: !ruby/object:Gem::Requirement
 requirements: []
 
 rubyforge_project: webgen
-rubygems_version: 1.3.0
+rubygems_version: 1.3.1
 signing_key: 
 specification_version: 2
 summary: webgen beta build, not supported!!!
