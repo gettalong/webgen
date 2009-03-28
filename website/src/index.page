@@ -61,125 +61,6 @@ found whenever I'm online.
 [google-group]: http://groups.google.com/group/webgen-users/
 
 
-## Download & Installation
-
-There are currently two versions of webgen:
-
-* The 0.5.x series: This is the new *stable* series. A completely new implementation of the core
-  allows for advanced features like partial site regeneration. It provides many features out of the
-  box (though currently a bit less than the old 0.4.x series) and is very user friendly.
-
-* The 0.4.x series: This is the old stable series which can still be used but is not updated
-  anymore. The complete documentation (including installation information and needed libraries) for
-  the last version of the 0.4.x series can be found [here](documentation/0.4.x/index.html).
-
-### Compatibility Notes
-
-webgen should run on any platform which supports Ruby. It has been successfully tested on the
-following platforms:
-
-* Linux with Ruby 1.8.6
-* Mac OSX with Ruby 1.8.6 and 1.8.7
-* Windows XP with latest Ruby 1.8.6 from One-Click-Installer
-
-Furthermore, webgen should also run on jruby 1.1.3 and ruby 1.9.1 but that has not been extensively
-tested.
-
-> Ruby 1.9.1 support notes (as of 2009-02-13):
->
-> * All unit tests run fine except those which use libraries that have not been fixed to work with
->   1.9.1 yet (ie. feedtools).
->
-> * The webgen webgui won't work because one of its dependencies, rack 0.9.1, is not 1.9.1
->   compatible.
->
-> * There may be problems with Maruku and character encodings.
-{.information}
-
-### Using the repository version
-
-webgen uses git as its versioning system and webgen's repository is hosted primarily on Rubyforge
-but I have also created a clone of it on GitHub. The repositories always contains a clean state of
-the current development version of webgen, i.e. webgen should always work when checked out from the
-repository. To check out webgen use one of the following commands:
-
-     git clone git://rubyforge.org/webgen.git
-     git clone git://github.com/gettalong/webgen.git
-
-### Using Rubygems
-
-If you are using Rubygems, installing the latest version of webgen is as simple as executing
-
-    gem install webgen
-
-or, if you want to install the latest version of the old series, just use
-
-    gem install webgen -v '< 0.5.0'
-
-After this command has finished, everything is ready for creating websites. Be sure to have a look
-at the optional dependencies which provide additional functionality.
-
-> Rubygems 1.2.0 has a bug that prevents the correct resolution of development dependencies.
-> Therefore you should upgrade to at least 1.3.0 which fixes this bug. Otherwise you will
-> have to use the following command to install webgen:
->
->     gem install --development webgen
-{.error}
-
-### Manual Installation
-
-The latest version of webgen can always be downloaded from [webgen's files section on
-Rubyforge](http://rubyforge.org/frs/?group_id=296). After the download the package needs to be
-decompressed and then you can install webgen using the included `setup.rb` installation method:
-
-    $ ruby setup.rb config
-    $ ruby setup.rb setup
-    $ ruby setup.rb install
-
-Make sure that you also install the mandatory and, if you need them, the optional dependencies.
-
-
-### Dependencies
-
-* (mandatory) [Ruby](http://www.ruby-lang.org) version 1.8.6 or 1.8.7. Since webgen is written in
-  Ruby, you need the Ruby interpreter to run webgen.
-
-* (mandatory) [cmdparse](http://cmdparse.rubyforge.org) version 2.0.0 or higher
-
-* (mandatory) [facets](http://facets.rubyforge.org) version 2.4.3 or higher
-
-* (mandatory) [maruku](http://maruku.rubyforge.org) version 0.5.5 or higher
-
-* (mandatory for webgui) [ramaze](http://ramaze.net) version 2008.06
-
-* (mandatory for webgui) [launchy](http://copiousfreetime.rubyforge.org/launchy/) version 0.3.2 or
-  higher
-
-* (optional) [RedCloth](http://redcloth.rubyforge.org) version 2.0.10 or higher for Textile support
-
-* (optional) [haml](http://haml.hamptoncatlin.com) version 2.0.1 or higher for haml and sass support
-
-* (optional) [builder](http://builder.rubyforge.org) version 2.1.0 or higher for programmatic xml
-  generation support
-
-* (optional) [rdoc](http://rdoc.rubyforge.org/) version 2.0.0 for RDoc markup support
-
-* (optional) [coderay](http://coderay.rubychan.de/) version 0.7.4.214 or higher for syntax
-  highlighting
-
-* (optional) [feedtools](http://sporkmonger.com/projects/feedtools) version 0.2.29 for built-in feed
-  generation support
-
-* (optional) [erubis](http://www.kuwata-lab.com/erubis/) version 2.6.2 for Erubis (enhanced ERB)
-  support
-
-* (optional) [rdiscount](http://github.com/rtomayko/rdiscount) version 1.2.9 for fast Markdown
-  support
-
-All these libraries can be installed via Rubygems (which I recommend). If you want to install all
-optional dependencies when installing webgen via Rubygems, install webgen using the `--development`
-option.
-
 ## Author
 
 * Thomas Leitner
@@ -198,11 +79,8 @@ The latest webgen version
 
 <div id='download-box-version'>0\.5.7</div>
 
-was released on [*2009-02-27*]({relocatable: news/index.html}) and can be installed via
-
-    gem install webgen
-
-or downloaded from [webgen's Rubyforge page](http://rubyforge.org/frs/?group_id=296).
+was released on [*2009-02-27*]({relocatable: news/index.html}) and can be installed by following the
+instructions on the [installation]({relocatable: installation.html}) page!
 </div>
 
 </div>
