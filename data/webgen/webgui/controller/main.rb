@@ -38,6 +38,10 @@ class MainController < Ramaze::Controller
 
   layout '/page'
 
+  def initialize
+    @title = 'webgen webgui'
+  end
+
   def site_ops
     session['website_dir'] = request['website_dir'].to_s
 
