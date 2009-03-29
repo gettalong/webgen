@@ -22,6 +22,10 @@ class TestContentProcessorBlocks < Test::Unit::TestCase
     assert_equal('databeforedataafter', context.content)
     assert_equal(Set.new([node.absolute_lcn, template.absolute_lcn]), node.node_info[:used_nodes])
 
+    context.content = '<webgen:block name="content" node="next" /><webgen:block name="content" chain="template;test" />'
+    obj.call(context)
+    assert_equal('databeforedataafter', context.content)
+
     context.content = '<webgen:block name="nothing"/>'
     assert_raise(RuntimeError) { obj.call(context) }
 
@@ -50,6 +54,15 @@ class TestContentProcessorBlocks < Test::Unit::TestCase
     context.content = '<webgen:block name="invalid" node="first" notfound="ignore" /><webgen:block name="content" />'
     obj.call(context)
     assert_equal('beforedataafter', context.content)
+
+    context[:chain] = [node, template]
+    context.content = '<webgen:block name="other" node="current" />'
+    obj.call(context)
+    assert_equal('other', context.content)
+
+    context.content = '<webgen:block name="other" node="current" chain="template"/>'
+    obj.call(context)
+    assert_equal('other', context.content)
   end
 
 end
