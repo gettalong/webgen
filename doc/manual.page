@@ -289,25 +289,50 @@ the same canonical name.
 ## Canonical Name of a File ### {#source-cn}
 
 webgen provides the functionality to define the same content in more than one language, ie. to
-localize content. This is achieved with the _canonical name_ of a path.
+localize content. This is achieved with the _canonical name_ of a path, short CN.
 
 When multiple paths share the same canonical name, webgen assumes that they have the same content
-but in different languages. It is also possible to specify a _language independent_ path which is
-used as a fallback. Therefore when a path should be resolved using a canonical name and a given
-language, it is first tried to get the path in the requested language. If this is not possible
-(ie. no such localization exists), the unlocalized path is returned if it exists.
+but in different languages. It is also possible to specify a _language independent_ path (i.e. one
+without a language) which is used as a fallback. Therefore when a path should be resolved using a
+canonical name and a given language, it is first tried to get the path in the requested language. If
+this is not possible (ie. no such localization exists), the unlocalized path is returned if it
+exists.
+
+For example, assume that we have the following `src` directory:
+
+    /test.jpg
+    /images/my.jpg
+    /images/my.de.jpg
+    /index.page
+    /index.fr.page
+    /index.de.page
+
+Since the path `images/my.jpg` has no language part, it is assumed to be unlocalized. In contrast,
+`images/my.de.jpg` has the "same" picture but in a German version. So, when specifying
+`images/my.jpg` in `index.de.page`, the correct localized version will be returned, i.e.
+`images/my.de.jpg`. When specifying `images/my.jpg` in `index.page` or in `index.fr.page`, the
+unlocalized version will be returned since no localized version exists.
 
 > Directories and fragments are never localized, only files are!
 {.important}
 
-It is also possible to use the _localized canonical name_ of a path to resolve it. The localized
-canonical name is the same as the canonical name but with a language code inserted before the
-extension. If the localized canonical name is used to resolve a path, a possibly additionally
+It is also possible to use the _localized canonical name_ of a path (short: LCN) to resolve it. The
+localized canonical name is the same as the canonical name but with a language code inserted before
+the extension. If the localized canonical name is used to resolve a path, a possibly additionally
 specified language is ignored as it is assumed that the user really only wants the path in the
 specified language!
 
-This also means that all paths are not resolved using their real source or output names but using
-the (localized) canonical name! This is different from previous webgen versions!
+Continuing the above example, this means that `images/my.de.jpg` is always returned when one
+specifies `images/my.de.jpg` in any of the index page files, e.g. in `index.fr.page`.
+
+Both canonical and localized canonical names can be absolute (ACN and ALCN) which is done by using
+the full path starting with a slash. This is especially useful when you don't exactly know in which
+hierarchy level a certain canoncial name gets evaluated.
+
+Everything said above also means that all paths are not resolved using their real source or output
+names but using the (localized) canonical name! So when specifying paths for extensions, for example
+when using the [relocatable tag]({relocatable: tag/relocatable.html}), you always have to use the
+(absolute) (localized) canonical names. This is different from previous webgen versions!
 
 
 ## Output Path Name Construction ### {#source-output}
