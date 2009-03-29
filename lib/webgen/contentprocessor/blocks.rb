@@ -33,6 +33,8 @@ module Webgen::ContentProcessor
 
         if attr['node'] == 'first'
           used_chain.shift while used_chain.length > 0 && !used_chain.first.node_info[:page].blocks.has_key?(attr['name'])
+        elsif attr['node'] == 'current'
+          used_chain = context[:chain].dup
         end
         block_node = used_chain.first
 
