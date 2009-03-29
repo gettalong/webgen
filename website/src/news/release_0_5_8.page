@@ -1,0 +1,25 @@
+---
+title: webgen 0.5.8 released
+in_menu: true
+sort_info: 2009-??
+created_at: 2009-??
+modified_at: 2009-??
+---
+## {title:}
+
+<webgen:block name='notes' />
+
+### Changes
+
+<webgen:block name='changes' />
+
+--- name:notes pipeline:tags,maruku
+
+
+--- name:changes pipeline:tags,maruku
+
+* Minor enhancements:
+
+  - Added new value `current` for attribute `node` for webgen block tags - see [ContentProcessor::Blocks][1]
+
+[1]: {relocatable: ../documentation/contentprocessor/blocks.html}
