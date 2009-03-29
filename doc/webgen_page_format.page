@@ -10,7 +10,7 @@ easy to use.
 ## Structure
 
 A file using the Webgen Page Format consists of one or more blocks which are the smallest units
-recongnized. Blocks are separated from each other through a line containing three dashes. This is
+recognized. Blocks are separated from each other through a line containing three dashes. This is
 illustrated in the following examples which are all valid files in WebPage Format:
 
 Example 1:
@@ -66,17 +66,18 @@ it, it feels like just writing a plain text document.
 
 A content block is used to provide content in a specific format. Each file in Webgen Page Format
 needs to have at least one content block which may be empty. However, it can have as many content
-blocks as necessary. Each content block needs to have a unique name and additional options can also
-be set.
+blocks as necessary. This functionality can be used, for example, to provide the main content of an
+HTML page in one block and sidebar content in another one.
 
-The name uniquely identifies a content block and is used to access it. The only option used by
-webgen is the `pipeline` option which specifies the processing pipeline for the block. The
-processing pipeline is used for rendering the block by using the specified content processors in the
-specified order. There are many different content processors available - have a look at the
-[extensions page]({relocatable: extensions.html}) for an overview.
+Each content block needs to have a unique name and additional options can also be set. The name
+uniquely identifies a content block and is used to access it. The only option used by webgen is the
+`pipeline` option which specifies the processing pipeline for the block. The processing pipeline is
+used for rendering the block by using the specified content processors in the specified order. There
+are many different content processors available - have a look at the [extensions page]({relocatable:
+extensions.html}) for an overview.
 
-There are also defaults for the name and the options of a block but they can be overwritten. You can
-use one of two ways to do this:
+webgen extensions that use files in Webgen Page Format may specify defaults for the name and the
+options of a block but these defaults can be overwritten. You can use one of two ways to do this:
 
 * you either specify the name and additional options of the block on the starting line with the
   three dashes
