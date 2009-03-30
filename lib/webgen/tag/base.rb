@@ -27,12 +27,15 @@ require 'webgen/websiteaccess'
 #
 # webgen tags allow the specification of parameters in the tag definition. The method
 # +tag_params_list+ returns all configuration entries that can be set this way. And the method
-# +tag_config_base+ is used to resolve partially stated configuration entries. An additional
-# configuration entry option is also used: <tt>:mandatory</tt>. If this key is set to +true+ for a
-# configuration entry, the entry counts as mandatory and needs to be set in the tag definition. If
-# this key is set to +default+, this means that this entry should be the default mandatory parameter
-# (used when only a string is provided in the tag definition). There *should* be only one default
-# mandatory parameter.
+# +tag_config_base+ is used to resolve partially stated configuration entries. The default method
+# uses the full class name, strips a <tt>Webgen::</tt> part at the beginning away, substitutes
+# <tt>.</tt> for <tt>::</tt> and makes everything lowercase.
+#
+# An additional configuration entry option is also used: <tt>:mandatory</tt>. If this key is set to
+# +true+ for a configuration entry, the entry counts as mandatory and needs to be set in the tag
+# definition. If this key is set to +default+, this means that this entry should be the default
+# mandatory parameter (used when only a string is provided in the tag definition). There *should* be
+# only one default mandatory parameter.
 #
 # = Sample Tag Class
 #
@@ -104,13 +107,16 @@ module Webgen::Tag::Base
   private
   #######
 
-  # The base part of the configuration name. This is normally the class name without the Webgen
-  # module downcased and all "::" substituted with "." (e.g. Webgen::Tag::Menu -> tag.menu).
+  # The base part of the configuration name. This isthe class name without the Webgen module
+  # downcased and all "::" substituted with "." (e.g. Webgen::Tag::Menu -> tag.menu). By overriding
+  # this method one can provide a different way of specifying the base part of the configuration
+  # name.
   def tag_config_base
     self.class.name.gsub('::', '.').gsub(/^Webgen\./, '').downcase
   end
 
-  # Return the list of all parameters for the tag class.
+  # Return the list of all parameters for the tag class. All configuration options starting with
+  # +tag_config_base+ are used.
   def tag_params_list
     regexp = /^#{tag_config_base}/
     website.config.data.keys.select {|key| key =~ regexp}
