@@ -20,6 +20,7 @@ module Webgen
     autoload :FileSystem, 'webgen/source/filesystem'
     autoload :Stacked, 'webgen/source/stacked'
     autoload :Resource, 'webgen/source/resource'
+    autoload :TarArchive, 'webgen/source/tararchive'
 
   end
 
