@@ -5,12 +5,15 @@ module Webgen::ContentProcessor
   # Processes content in Haml markup using the +haml+ library.
   class Haml
 
+    include Webgen::WebsiteAccess
+
     # Convert the content in +haml+ markup to HTML.
     def call(context)
       require 'haml'
 
       locals = {
         :context => context,
+        :website => website,
         :node => context.content_node,
         :ref_node => context.ref_node,
         :dest_node => context.dest_node,

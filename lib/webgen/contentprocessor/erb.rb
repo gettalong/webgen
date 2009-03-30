@@ -5,6 +5,8 @@ module Webgen::ContentProcessor
   # Processes embedded Ruby statements.
   class Erb
 
+    include Webgen::WebsiteAccess
+
     # Process the Ruby statements embedded in the content of +context+.
     def call(context)
       require 'erb'
