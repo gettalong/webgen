@@ -6,6 +6,8 @@ module Webgen::ContentProcessor
   # library.
   class Builder
 
+    include Webgen::WebsiteAccess
+
     # Process the content of +context+ which needs to be valid Ruby code. The special variable +xml+
     # should be used to construct the XML content.
     def call(context)

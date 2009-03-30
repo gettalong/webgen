@@ -9,6 +9,9 @@ site](http://www.ruby-doc.org/)!
 
 You can use the following special objects in your ERB code:
 
+* `website`: Provides access to the `Webgen::Website` object which can be used to access all aspects
+  of the currently rendered website.
+
 * `context`: This object provides the whole rendering context, the following objects are just for
   backwards compatibility.
 

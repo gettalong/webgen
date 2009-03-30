@@ -10,10 +10,11 @@ class TestContentProcessorErb < Test::Unit::TestCase
     obj = Webgen::ContentProcessor::Erb.new
     root = Webgen::Node.new(Webgen::Tree.new.dummy_root, '/', '/')
     node = Webgen::Node.new(root, 'test', 'test')
-    context = Webgen::ContentProcessor::Context.new(:content => '<%= context[:doit] %>6', :doit => 'hallo',
+    content = "<%= context[:doit] %>6\n<%= ref_node.absolute_lcn %>\n<%= node.absolute_lcn %>\n<%= dest_node.absolute_lcn %><% website %>"
+    context = Webgen::ContentProcessor::Context.new(:content => content, :doit => 'hallo',
                                                     :chain => [node])
     obj.call(context)
-    assert_equal('hallo6', context.content)
+    assert_equal("hallo6\n/test\n/test\n/test", context.content)
 
     context.content = '<%= 5* %>'
     assert_raise(RuntimeError) { obj.call(context) }

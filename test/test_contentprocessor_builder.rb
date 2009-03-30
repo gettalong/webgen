@@ -10,7 +10,9 @@ class TestContentProcessorBuilder < Test::Unit::TestCase
     obj = Webgen::ContentProcessor::Builder.new
     root = Webgen::Node.new(Webgen::Tree.new.dummy_root, '/', '/')
     node = Webgen::Node.new(root, 'test', 'test')
-    context = Webgen::ContentProcessor::Context.new(:content => "xml.div(:path => node.absolute_lcn) { xml.strong('test') }",
+    content = "xml.div(:path => node.absolute_lcn) { xml.strong('test'); " +
+      "website; context; ref_node; dest_node }"
+    context = Webgen::ContentProcessor::Context.new(:content => content,
                                                     :chain => [node])
     assert_equal("<div path=\"/test\">\n  <strong>test</strong>\n</div>\n", obj.call(context).content)
 
