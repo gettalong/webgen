@@ -7,6 +7,8 @@ begin
 rescue LoadError
 end
 
+require 'rdoc/task'
+
 begin
   require 'rubyforge'
 rescue LoadError
@@ -17,16 +19,10 @@ begin
 rescue LoadError
 end
 
-begin
-  require 'dcov'
-rescue LoadError
-end
-
 require 'fileutils'
 require 'rake/clean'
 require 'rake/testtask'
 require 'rake/packagetask'
-require 'rake/rdoctask'
 
 $:.unshift('lib')
 require 'webgen/webgentask'
@@ -64,12 +60,12 @@ Webgen::WebgenTask.new('htmldoc') do |site|
   end
 end
 
-rd = Rake::RDocTask.new do |rdoc|
+rd = RDoc::Task.new do |rdoc|
   rdoc.rdoc_dir = 'htmldoc/rdoc'
   rdoc.title = 'webgen'
-  rdoc.main = 'Webgen'
-  rdoc.options << '--line-numbers' << '--inline-source' << '--promiscuous'
-  rdoc.rdoc_files.include('lib/**/*.rb')
+  rdoc.main = 'lib/webgen/website.rb'
+  rdoc.options << '--line-numbers' << '--all'
+  rdoc.rdoc_files.include('lib')
 end
 
 tt = Rake::TestTask.new do |test|
@@ -168,7 +164,7 @@ EOF
       s.add_development_dependency('RedCloth', '3.0.0')
       s.add_development_dependency('haml', '2.0.1')
       s.add_development_dependency('builder', '2.1.2')
-      s.add_development_dependency('rdoc', '2.0.0')
+      s.add_development_dependency('rdoc', '2.4.2')
       s.add_development_dependency('coderay', '0.7.4.215')
       s.add_development_dependency('feedtools', '0.2.29')
       s.add_development_dependency('erubis', '2.6.2')
@@ -182,7 +178,7 @@ EOF
       #### Documentation
 
       s.has_rdoc = true
-      s.rdoc_options = ['--line-numbers', '--inline-source', '--promiscuous', '--main', 'Webgen']
+      s.rdoc_options = ['--line-numbers', '--all', '--main', 'lib/webgen/website.rb']
 
       #### Author and project details
 
@@ -299,15 +295,6 @@ The official version is called 'webgen' and can be installed via
   if defined? Rcov
     Rcov::RcovTask.new do |rcov|
       rcov.libs << 'test'
-    end
-  end
-
-  if defined? Dcov
-    desc "Analyze documentation coverage"
-    task :dcov do
-      class Dcov::Analyzer; def generate; end; end
-      class NilClass; def file_absolute_name; nil; end; end
-      Dcov::Analyzer.new(:path => Dir.getwd, :files => Dir.glob('lib/**'))
     end
   end
 
