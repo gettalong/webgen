@@ -32,10 +32,11 @@ command.
 > styles (nearly all of them are converted open source web design styles).
 {.information}
 
-Don't worry if you don't like the used website style - you can easily change it later. Have a look
-at [the examples section](0.4.x/examples/website_styles/index.html) (note: these are still the
-example from the previous version of webgen but the styles haven't changed) to see demonstrations
-for all shipped website templates and styles!
+Don't worry if you don't like the used website style - you can easily change it later using the
+`webgen apply` command. Have a look at [the examples
+section](0.4.x/examples/website_styles/index.html) (note: these are still the example from the
+previous version of webgen but the styles haven't changed) to see demonstrations for all shipped
+website templates and styles!
 
 Since the basic parts are now in place, you can generate the HTML files. There are two
 possibilities:

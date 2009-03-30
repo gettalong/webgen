@@ -20,7 +20,8 @@ possible commands run `webgen help`.
 
 The main command is the `render` command which does the actual website generation. This command uses
 either the environment variable `WEBGEN_WEBSITE` (if it is set and non-empty) or the current working
-directory as website directory if none was specified via the gloabl `-d` option.
+directory as website directory if none was specified via the gloabl `-d` option. All other commands
+that need a valid webgen website directory specified work in the same way.
 
 You can invoke a command by specifying its name after the executable name. Also counting the
 executable `webgen` as a command, the options for a command are specified directly after the command
@@ -34,6 +35,12 @@ valid:
     $ webgen help create
 
 Following is a short overview of the available commands:
+
+*   `apply [-f] STYLE`
+
+    Applies the style `STYLE` to the given webgen website. The files that will be written to website
+    directory are shown and the user is asked to confirm that the shown files should indeed be
+    written (and sometimes overwritten). If the `-f` option is used, the files are always written.
 
 *   `create [-t TEMPLATE] [-s STYLE] SITE_DIR`
 

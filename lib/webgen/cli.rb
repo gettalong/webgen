@@ -61,6 +61,7 @@ module Webgen
     autoload :RunCommand, 'webgen/cli/run_command'
     autoload :CreateCommand, 'webgen/cli/create_command'
     autoload :WebguiCommand, 'webgen/cli/webgui_command'
+    autoload :ApplyCommand, 'webgen/cli/apply_command'
 
     autoload :Utils, 'webgen/cli/utils'
 
