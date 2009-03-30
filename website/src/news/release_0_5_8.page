@@ -21,5 +21,7 @@ modified_at: 2009-??
 * Minor enhancements:
 
   - Added new value `current` for attribute `node` for webgen block tags - see [ContentProcessor::Blocks][1]
+  - Added new CLI command for applying a style to a webgen website - see [The `webgen` command][2]
 
 [1]: {relocatable: ../documentation/contentprocessor/blocks.html}
+[2]: {relocatable: ../documentation/manual.html#cli}

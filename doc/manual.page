@@ -12,7 +12,7 @@ webgen website is structured and how content can be added and so on.
 
 
 
-# The `webgen` command
+# The `webgen` command {#cli}
 
 The executable for webgen is called... webgen ;-) It uses a command style syntax (like Subversion's
 `svn` or Rubygem's `gem` commands) through the [cmdparse] library. To get an overview of the
