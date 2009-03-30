@@ -94,7 +94,7 @@ require 'webgen/page'
 # <tt>:create_sitemap</tt>:: Common::Sitemap#create_sitemap
 # <tt>:create_directories</tt>:: SourceHandler::Directory#create_directories
 # <tt>:create_nodes</tt>:: SourceHandler::Main#create_nodes
-# <tt>:source_paths</tt>:: SourceHandler::Main#source_paths
+# <tt>:source_paths</tt>:: SourceHandler::Main#find_all_source_paths
 #
 # Following is the list of all messages that can be listened to:
 #
