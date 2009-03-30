@@ -1,5 +1,11 @@
 # -*- encoding: utf-8 -*-
 
+##
+# Welcome to the API documentation of wegen!
+#
+# Have a look at the base <a href=Webgen.html>webgen module</a> which provides a good starting point!
+
+
 # Standard lib requires
 require 'logger'
 require 'set'
