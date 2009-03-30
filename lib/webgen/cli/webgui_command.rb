@@ -3,6 +3,10 @@
 require 'webgen/cli'
 require 'facets/kernel/silence'
 
+# nothing to see here
+module Ramaze # :nodoc:
+end
+
 module Webgen::CLI
 
   # The CLI command for starting the webgen webgui.
