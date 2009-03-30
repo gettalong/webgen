@@ -22,6 +22,7 @@ require 'webgen/source'
 require 'webgen/output'
 require 'webgen/sourcehandler'
 require 'webgen/contentprocessor'
+require 'webgen/tag'
 
 # Load other needed files
 require 'webgen/path'
