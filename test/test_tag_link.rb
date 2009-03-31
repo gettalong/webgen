@@ -58,6 +58,12 @@ class TestTagLink < Test::Unit::TestCase
     assert_equal('<a href="dir/"></a>', call(context))
     @obj.set_params('tag.link.path' => 'dir2')
     assert_equal('<a href="dir2/index.html"></a>', call(context))
+
+    # used node information correctly set
+    node.node_info[:used_meta_info_nodes] = Set.new
+    @obj.set_params('tag.link.path' => 'dir/file.html')
+    call(context)
+    assert(Set.new([file.absolute_lcn]), node.node_info[:used_meta_info_nodes])
   end
 
 end
