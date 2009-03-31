@@ -169,6 +169,7 @@ EOF
       s.add_development_dependency('feedtools', '0.2.29')
       s.add_development_dependency('erubis', '2.6.2')
       s.add_development_dependency('rdiscount', '1.2.9')
+      s.add_development_dependency('archive-tar-minitar', '0.5.2')
 
       s.require_path = 'lib'
 
