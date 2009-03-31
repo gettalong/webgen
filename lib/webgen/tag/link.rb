@@ -10,6 +10,7 @@ module Webgen::Tag
     # Return a HTML link to the given (A)LCN.
     def call(tag, body, context)
       if (dest_node = context.ref_node.resolve(param('tag.link.path'), context.dest_node.lang))
+        context.dest_node.node_info[:used_meta_info_nodes] << dest_node.absolute_lcn
         context.dest_node.link_to(dest_node, param('tag.link.attr').merge(:lang => context.content_node.lang))
       else
         raise ArgumentError, 'Resolving of path failed'
