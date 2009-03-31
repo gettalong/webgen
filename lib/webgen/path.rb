@@ -109,7 +109,7 @@ module Webgen
       temp
     end
 
-    # The IO object associated with the path.
+    # The SourceIO object associated with the path.
     def io
       if @io
         @io
