@@ -154,7 +154,8 @@ module Webgen
     def changed?
       if_not_checked(:node) do
         flag(:dirty) if meta_info_changed? ||
-          node_info[:used_nodes].any? {|n| n != @absolute_lcn && (!tree[n] || tree[n].changed?)}
+          node_info[:used_nodes].any? {|n| n != @absolute_lcn && (!tree[n] || tree[n].changed?)} ||
+          node_info[:used_meta_info_nodes].any? {|n| n != @absolute_lcn && (!tree[n] || tree[n].meta_info_changed?)}
         website.blackboard.dispatch_msg(:node_changed?, self) unless flagged(:dirty)
       end
       flagged(:dirty)
@@ -168,9 +169,6 @@ module Webgen
     # dirty.
     def meta_info_changed?
       if_not_checked(:meta_info) do
-        flag(:dirty_meta_info) if node_info[:used_meta_info_nodes].any? do |n|
-          n != @absolute_lcn && (!tree[n] || tree[n].meta_info_changed?)
-        end
         website.blackboard.dispatch_msg(:node_meta_info_changed?, self) unless flagged(:dirty_meta_info)
       end
       flagged(:dirty_meta_info)

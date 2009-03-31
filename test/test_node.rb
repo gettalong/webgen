@@ -166,21 +166,33 @@ class TestNode < Test::Unit::TestCase
 
   def test_changed
     node = Webgen::Node.new(@tree.dummy_root, 'test/', 'test', {'lang' => 'de', :test => :value})
-    node.unflag(:dirty, :created)
+    node.unflag(:dirty, :dirty_meta_info, :created)
 
     calls = 0
     @website.blackboard.add_listener(:node_changed?) {|n| assert(node, n); node.flag(:dirty); calls += 1}
-    node.changed?
+    assert(node.changed?)
     assert_equal(1, calls)
-    node.changed?
+    assert(node.changed?)
     assert_equal(1, calls)
 
+    # Test :used_nodes array checking
     node.unflag(:dirty)
     node.node_info[:used_nodes] << node.absolute_lcn
     node.node_info[:used_nodes] << 'unknown alcn'
     node.node_info[:used_nodes] << @tree.dummy_root.absolute_lcn
-    node.changed?
+    assert(node.changed?)
     assert_equal(1, calls)
+
+    # Test :used_nodes array checking
+    node.unflag(:dirty)
+    node.node_info[:used_nodes] = Set.new
+    node.node_info[:used_meta_info_nodes] << node.absolute_lcn
+    assert(node.changed?)
+    assert_equal(2, calls)
+    node.unflag(:dirty)
+    node.node_info[:used_meta_info_nodes] << 'unknown alcn'
+    assert(node.changed?)
+    assert_equal(2, calls)
 
     # Test circular depdendence
     other_node = Webgen::Node.new(@tree.dummy_root, '/other', 'test.l', {'lang' => 'de', :test => :value})
@@ -199,12 +211,6 @@ class TestNode < Test::Unit::TestCase
     @website.blackboard.add_listener(:node_meta_info_changed?) {|n| assert(node, n); node.flag(:dirty_meta_info); calls += 1}
     assert(node.meta_info_changed?)
     assert_equal(1, calls)
-    assert(node.meta_info_changed?)
-    assert_equal(1, calls)
-
-    node.unflag(:dirty_meta_info)
-    node.node_info[:used_meta_info_nodes] << node.absolute_lcn
-    node.node_info[:used_meta_info_nodes] << 'unknown alcn'
     assert(node.meta_info_changed?)
     assert_equal(1, calls)
   end
