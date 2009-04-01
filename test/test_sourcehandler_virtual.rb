@@ -27,32 +27,61 @@ class TestSourceHandlerVirtual < Test::Unit::TestCase
     title: Absolute
 EOF
 
-  def test_create_node
-    obj = Webgen::SourceHandler::Virtual.new
-    root = Webgen::Node.new(Webgen::Tree.new.dummy_root, '/', '/')
+  def setup
+    super
+    @obj = Webgen::SourceHandler::Virtual.new
+    @root = Webgen::Node.new(Webgen::Tree.new.dummy_root, '/', '/')
     shm = Webgen::SourceHandler::Main.new # for using service :create_nodes
-    time = Time.now
-    nodes = obj.create_node(root, path_with_meta_info('/virtuals', {'modified_at' => time}, obj.class.name) {StringIO.new(CONTENT)})
+    @time = Time.now
+    @path = path_with_meta_info('/virtuals', {'modified_at' => @time}, @obj.class.name) {StringIO.new(CONTENT)}
+    @nodes = @obj.create_node(@root, @path)
+    @website.blackboard.del_service(:source_paths)
+    @website.blackboard.add_service(:source_paths) {{@path.path => @path}}
+  end
 
-    nodes.each {|n| assert_equal('/virtuals', n.node_info[:src])}
+  def test_create_node
+    @nodes.each {|n| assert_equal('/virtuals', n.node_info[:src])}
 
-    path_de = root.tree['/path.de.html']
-    path_en = root.tree['/directory/path.en.html']
-    dir = root.tree['/dir']
+    path_de = @root.tree['/path.de.html']
+    path_en = @root.tree['/directory/path.en.html']
+    dir = @root.tree['/dir']
     assert_not_nil(path_de)
     assert_not_nil(dir)
     assert_not_nil(path_en)
 
     assert_equal('new title', path_en['title'])
-    assert_equal(time, path_en['modified_at'])
+    assert_equal(@time, path_en['modified_at'])
     assert(path_en['no_output'])
     assert_equal('My Dir', dir['title'])
     assert_equal('directory/other.html', path_de.route_to(path_en))
     assert_equal('../path.de.html', dir.route_to(path_de))
     assert_equal('../directory/other.html', dir.route_to(path_en))
 
-    assert_equal('http://www.example.com', root.tree['/api.html'].path)
-    assert_equal('http://www.example.com', root.tree['/path.de.html'].route_to(root.tree['/api.html']))
+    assert_equal('http://www.example.com', @root.tree['/api.html'].path)
+    assert_equal('http://www.example.com', @root.tree['/path.de.html'].route_to(@root.tree['/api.html']))
+  end
+
+  def test_meta_info_changed
+    # Nothing done, nothing should have changed
+    path_de = @root.tree['/path.de.html']
+    @obj.send(:node_meta_info_changed?, path_de)
+    assert(!path_de.flagged(:dirty_meta_info))
+
+    # Change data, meta info should have changed
+    @path.instance_eval { @io = Webgen::Path::SourceIO.new {StringIO.new("path.de.html:\n  title: hallo")} }
+    @obj.send(:node_meta_info_changed?, path_de)
+    assert(path_de.flagged(:dirty_meta_info))
+
+    # Reinit node, meta info of path_de should not change, #create_node should only return one node
+    path_de.flag(:reinit)
+    assert(1, @obj.create_node(@root, @path).length)
+    @obj.send(:node_meta_info_changed?, path_de)
+    assert(!path_de.flagged(:dirty_meta_info))
+
+    # Remove data, meta info should have changed
+    @path.instance_eval { @io = Webgen::Path::SourceIO.new {StringIO.new("patha.de.html:\n  title: hallo")} }
+    @obj.send(:node_meta_info_changed?, path_de)
+    assert(path_de.flagged(:dirty_meta_info))
   end
 
 end
