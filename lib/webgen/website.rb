@@ -148,6 +148,25 @@ module Webgen
 
 
   # Represents a webgen website and is used to render it.
+  #
+  # Normally, webgen is used from the command line via the +webgen+ command or from Rakefiles via
+  # Webgen::WebgenTask. However, you can also easily use webgen as a library and this class provides
+  # the interface for this usage!
+  #
+  # Since a webgen website is, basically, just a directory, the only parameter needed for creating a
+  # new Website object is the website directory. After that you can work with the website:
+  #
+  # * If you want to render the website, you just need to call Website#render which initializes the
+  #   website and does all the rendering. When the method call returns, everything has been rendered.
+  #
+  # * If you want to remove the generated output, you just need to invoke Website#clean and it will
+  #   be done.
+  #
+  # * Finally, if you want to retrieve data from the website, you first have to call Website#init to
+  #   initialize the website. After that you can use the various accessors to retrieve the needed
+  #   data. *Note*: This is generally only useful if the website has been rendered because otherwise
+  #   there is no data to retrieve.
+  #
   class Website
 
     # Raised when the configuration file of the website is invalid.

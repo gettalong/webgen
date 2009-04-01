@@ -17,11 +17,11 @@ module Webgen
   # * applying a template to an existing website (#apply_template)
   # * applying a style to an existing website (#apply_style)
   #
-  # A website template defines some initial pages which should be filled with real data. For
-  # example, the @project@ template defines several pages which are useful for software projects
+  # A *website template* defines some initial pages which should be filled with real data. For
+  # example, the +project+ template defines several pages which are useful for software projects
   # including a features and about page.
   #
-  # A style defines, for example, the basic page layout (in the case of website styles) or how image
+  # A *style* defines, for example, the basic page layout (in the case of website styles) or how image
   # galleries should look like (in the case of gallery styles). So styles are basically used to
   # change the appearance of parts (or the whole) website. This makes them a powerful tool as this
   # plugin makes it easy to change a style later!

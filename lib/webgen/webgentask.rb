@@ -51,18 +51,21 @@ module Webgen
   #
   # The attributes available in the new block are:
   #
-  # * directory         - the root directory of the webgen site
-  #                       (default Dir.pwd)
-  # * config            - the config block for setting additional configuration options
-  # * clobber_outdir    - remove webgens output directory on clobber
-  #                       (default false)
+  # [directory]
+  #    the root directory of the webgen site (default <tt>Dir.pwd</tt>)
+  # [config]
+  #   the config block for setting additional configuration options
+  # [clobber_outdir]
+  #   remove webgens output directory on clobber (default +false+)
   #
   # == Tasks Provided
   #
   # The tasks provided are :
   #
-  # * webgen         - render the webgen website
-  # * clobber_webgen - remove all the files created during generation
+  # [webgen]
+  #   render the webgen website
+  # [clobber_webgen]
+  #   remove all the files created during generation
   #
   # == Integrate webgen in other project
   #
@@ -96,8 +99,7 @@ module Webgen
     # The directory of the webgen website. This would be the directory of your <tt>config.yaml</tt>
     # file. Or the parent directory of the <tt>src/</tt> directory for webgen.
     #
-    # The default for this is assumed to be
-    #   Dir.pwd
+    # The default for this is assumed to be <tt>Dir.pwd</tt>
     attr_accessor :directory
 
     # The configuration block that is invoked when the Webgen::Website object is initialized. This

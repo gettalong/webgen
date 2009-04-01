@@ -10,6 +10,13 @@ require 'pathname'
 module Webgen
 
   # Represents a file, a directory or a fragment. A node always belongs to a Tree.
+  #
+  # All needed meta and processing information is associated with a Node. The meta information is
+  # available throught the #[] and #meta_info accessors, the processing information through the
+  # #node_info accessor.
+  #
+  # Although node information should be changed by code, it is not advised to change meta
+  # information values in code since this may lead to unwanted behaviour!
   class Node
 
     include WebsiteAccess
@@ -50,18 +57,18 @@ module Webgen
 
     # Create a new Node instance.
     #
-    # +parent+ (immutable)::
+    # [+parent+ (immutable)]
     #    The parent node under which this nodes should be created.
-    # +path+ (immutable)::
+    # [+path+ (immutable)]
     #    The full output path for this node. If this node is a directory, the path must have a
     #    trailing slash (<tt>dir/</tt>). If it is a fragment, the hash sign must be the first
     #    character of the path (<tt>#fragment</tt>). This can also be an absolute path like
     #    <tt>http://myhost.com/</tt>.
-    # +cn+ (immutable)::
+    # [+cn+ (immutable)]
     #    The canonical name for this node. Needs to be of the form <tt>basename.ext</tt> or
     #    <tt>basename</tt> where +basename+ does not contain any dots. Also, the +basename+ must not
     #    include a language part!
-    # +meta_info+::
+    # [+meta_info+]
     #    A hash with meta information for the new node.
     #
     # The language of a node is taken from the meta information +lang+ and the entry is deleted from
@@ -121,11 +128,11 @@ module Webgen
 
     # Check if the node is flagged with one of the following:
     #
-    # :created:: Has the node been created or has it been read from the cache?
-    # :reinit:: Does the node need to be reinitialized?
-    # :dirty:: Set by other objects to +true+ if they think the object has changed since the last
+    # [:created] Has the node been created or has it been read from the cache?
+    # [:reinit] Does the node need to be reinitialized?
+    # [:dirty] Set by other objects to +true+ if they think the object has changed since the last
     #          run. Must not be set to +false+ once it is +true+!
-    # :dirty_meta_info:: Set by other objects to +true+ if the meta information of the node has
+    # [:dirty_meta_info] Set by other objects to +true+ if the meta information of the node has
     #                    changed since the last run. Must not be set to +false+ once it is +true+!
     def flagged(key)
       @flags.include?(key)
@@ -197,7 +204,7 @@ module Webgen
     end
 
     # Construct the absolute (localized) canonical name by using the +parent+ node and +name+ (which
-    # can be a cn or an lcn). The +type+ can be either +:alcn+ or +:acn+.
+    # can be a cn or an lcn). The +type+ can be either <tt>:alcn</tt> or <tt>:acn</tt>.
     def self.absolute_name(parent, name, type)
       if parent.kind_of?(Tree)
         ''
@@ -324,7 +331,7 @@ module Webgen
     #
     # If the special value <tt>:lang</tt> is present in the attributes, it will be used as parameter
     # to the <tt>node.routing_node</tt> call for getting the linked-to node instead of this node's
-    # +lang+ attribute. Note: this is only useful when linking to a directory.
+    # +lang+ attribute. *Note*: this is only useful when linking to a directory.
     def link_to(node, attr = {})
       attr = node['link_attrs'].merge(attr) if node['link_attrs'].kind_of?(Hash)
       rnode = node.routing_node(attr[:lang] || @lang)

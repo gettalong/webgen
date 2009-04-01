@@ -5,15 +5,15 @@ require 'facets/kernel/constant'
 
 module Webgen
 
-  # A cache object provides access to various caches to speed up rendering of a website.
+  # A cache object provides access to various caches to speed up rendering of a website:
   #
-  # permanent:: The permanent cache should be used for data that should be available between webgen
+  # [permanent] The permanent cache should be used for data that should be available between webgen
   #             runs.
   #
-  # volatile:: The volatile cache is used for data that can easily be regenerated but might be
+  # [volatile] The volatile cache is used for data that can easily be regenerated but might be
   #            expensive to do so. This cache is not stored between webgen runs.
   #
-  # standard:: The standard cache saves data between webgen runs and returns the cached data (not
+  # [standard] The standard cache saves data between webgen runs and returns the cached data (not
   #            the newly set data) if it is available. This is useful, for example, to store file
   #            modifcation times and check if a file has been changed between runs.
   #

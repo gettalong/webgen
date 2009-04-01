@@ -5,15 +5,15 @@ require 'webgen/source'
 
 module Webgen::Source
 
-  # This class is used to provide access to source provided by resources.
+  # This class is used to provide access to sources provided by resources.
   class Resource
 
     include Webgen::WebsiteAccess
 
-    # The glob specifying the resources.
+    # The glob (see File.fnmatch) specifying the resources.
     attr_reader :glob
 
-    # The glob specifying the paths that should be used from the resources.
+    # The glob (see File.fnmatch) specifying the paths that should be used from the resources.
     attr_reader :paths_glob
 
     # The prefix that should optionally be stripped from the paths.

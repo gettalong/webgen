@@ -27,8 +27,9 @@ module Webgen::SourceHandler
   # not need to reside under the Webgen::SourceHandler namespace but all shipped ones do.
   #
   # This base class provides useful default implementations of methods that are used by nearly all
-  # source handler class:
+  # source handler classes:
   # * #create_node
+  # * #output_path
   # * #node_exists?
   #
   # It also provides other utility methods:
@@ -39,28 +40,38 @@ module Webgen::SourceHandler
   #
   # The main functions of a source handler class are to create one or more nodes for a source path
   # and to provide the content of these nodes. To achieve this, certain information needs to be set
-  # on a node. If you use the methods provided by this base class, you don't need to set them
-  # explicitly because this is done by the provided methods.
+  # on a created node. If you use the +create_node+ method provided by this base class, you don't
+  # need to set them explicitly because this is done by the method:
   #
-  # <tt>node_info[:processor]</tt>:: Has to be set to the class name of the source handler. This is
+  # [<tt>node_info[:processor]</tt>] Has to be set to the class name of the source handler. This is
   #                                  used by the Node class: all unknown method calls are forwarded
   #                                  to the node processor.
-  # <tt>node_info[:src]</tt>:: Has to be set to the string version of the path that lead to the
+  # [<tt>node_info[:src]</tt>] Has to be set to the string version of the path that lead to the
   #                            creation of the node.
-  # <tt>node_info[:creation_path]</tt>:: Has to be set to the string version of the path that is
+  # [<tt>node_info[:creation_path]</tt>] Has to be set to the string version of the path that is
   #                                      used to create the path.
-  # <tt>meta_info['no_output']</tt>:: Has to be set to +true+ on nodes that are used during a
+  # [<tt>meta_info['no_output']</tt>] Has to be set to +true+ on nodes that are used during a
   #                                   webgen run but do not produce an output file.
-  # <tt>meta_info['modified_at']</tt>:: Is automatically set to the current time if not already set
+  # [<tt>meta_info['modified_at']</tt>] Has to be set to the current time if not already set
   #                                     correctly (ie. if not a Time object).
   #
-  # Note: The difference between +:src+ and +:creation_path+ is that a creation path need not have
-  # an existing source path representation. For example, fragments created from a page source path
-  # have a different +:creation_path+ which includes the fragment part.
+  # If <tt>meta_info['draft']</tt> is set on a path, then no node should be created in +create_node+
+  # and +nil+ has to be returned.
+  #
+  # Note: The difference between +:src+ and +:creation_path+ is that a creation path
+  # need not have an existing source path representation. For example, fragments created from a page
+  # source path have a different +:creation_path+ which includes the fragment part.
   #
   # Additional information that is used only for processing purposes should be stored in the
   # #node_info hash of a node as the #meta_info hash is reserved for real node meta information and
   # should not be changed once the node is created.
+  #
+  # == Output Path Names
+  #
+  # The method for creating an output path name for a source path is stored in the meta information
+  # +output_path+. If you don't use the provided method +output_path+, have a look at its
+  # implementation to see how to an output path gets created. Individual output path creation
+  # methods are stored as methods in the OutputPathHelpers module.
   #
   # == Path Patterns and Invocation order
   #
@@ -76,9 +87,9 @@ module Webgen::SourceHandler
   # invocation rank the earlier the specified source handlers are used.
   #
   # The default invocation ranks are:
-  # 1:: Early. Normally there is no need to use this rank.
-  # 5:: Standard. This is the rank the normal source handler should use.
-  # 9:: Late. This rank should be used by source handlers that operate on/use already created nodes
+  # [1] Early. Normally there is no need to use this rank.
+  # [5] Standard. This is the rank the normal source handler should use.
+  # [9] Late. This rank should be used by source handlers that operate on/use already created nodes
   #     and need to ensure that these nodes are available.
   #
   # == Default Meta Information
@@ -119,9 +130,10 @@ module Webgen::SourceHandler
     #
     # All public methods of this module are considered to be output path creation methods and must
     # have the following parameters:
-    # +parent+:: the parent node
-    # +path+:: the path for which the output name should be created
-    # +use_lang_part+:: controls whether the output path name has to include the language part
+    #
+    # [+parent+] the parent node
+    # [+path+] the path for which the output name should be created
+    # [+use_lang_part+] controls whether the output path name has to include the language part
     module OutputPathHelpers
 
       # Default method for creating an output path for +parent+ and source +path+.

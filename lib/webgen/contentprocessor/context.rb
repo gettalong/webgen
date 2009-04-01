@@ -7,10 +7,10 @@ module Webgen::ContentProcessor
   # The needed context variables are stored in the +options+ hash. You can set any options you like,
   # however, there are three noteworthy options:
   #
-  # <tt>:content</tt>:: The content string that should be processed.
-  # <tt>:processors</tt>:: Normally an AccessHash object providing access to all available content processors.
-  # <tt>:chain</tt>:: The chain of nodes that is processed. There are some utiltity methods for getting
-  #                   special nodes of the chain (see #ref_node, #content_node).
+  # [<tt>:content</tt>] The content string that should be processed.
+  # [<tt>:processors</tt>] Normally an AccessHash object providing access to all available content processors.
+  # [<tt>:chain</tt>] The chain of nodes that is processed. There are some utiltity methods for getting
+  #                   special nodes of the chain (see #ref_node, #content_node and #dest_node).
   class Context
 
     include Webgen::WebsiteAccess
