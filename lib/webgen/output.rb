@@ -4,7 +4,7 @@ module Webgen
 
   # Namespace for all classes that know how to write out node content.
   #
-  # = Implementing an output class
+  # == Implementing an output class
   #
   # Output classes know how to write rendered node data to an output location.
   #

@@ -9,7 +9,7 @@ module Webgen
   # This class is used for managing webgen websites. It provides access to website templates and
   # styles defined as resources and makes it easy to apply them to a webgen website.
   #
-  # = General information
+  # == General information
   #
   # Currently, the following actions are supported:
   #
@@ -26,7 +26,7 @@ module Webgen
   # change the appearance of parts (or the whole) website. This makes them a powerful tool as this
   # plugin makes it easy to change a style later!
   #
-  # = website template and style resource naming convention
+  # == website template and style resource naming convention
   #
   # Styles and website templates are defined using resources. Each such resource has to be a
   # directory containing an optional README file in YAML format in which key-value pairs provide

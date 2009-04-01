@@ -4,7 +4,7 @@ module Webgen
 
   # Namespace for all classes that provide source paths.
   #
-  # = Implementing a source class
+  # == Implementing a source class
   #
   # Source classes provide access to the source paths on which the source handlers act.
   #

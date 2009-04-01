@@ -7,7 +7,7 @@ require 'webgen/websiteaccess'
 # This module should be mixed into any class that wants to serve as a webgen tag class. Have a look
 # a the example below to see how a basic tag class looks like.
 #
-# = Tag classes
+# == Tag classes
 #
 # A tag class is a webgen extension that handles specific webgen tags. webgen tags are used to add
 # dynamic content to page and template files and are made for ease of use.
@@ -23,7 +23,7 @@ require 'webgen/websiteaccess'
 # Tag classes *can* also choose to not use this module. If they don't use it they have to provide
 # the following methods: +set_params+, +create_tag_params+, +call+.
 #
-# = Tag parameters
+# == Tag parameters
 #
 # webgen tags allow the specification of parameters in the tag definition. The method
 # +tag_params_list+ returns all configuration entries that can be set this way. And the method
@@ -37,7 +37,7 @@ require 'webgen/websiteaccess'
 # mandatory parameter (used when only a string is provided in the tag definition). There *should* be
 # only one default mandatory parameter.
 #
-# = Sample Tag Class
+# == Sample Tag Class
 #
 # Following is a simple tag class example which just reverses the body text and adds some
 # information about the context to the result. Note that the class does not reside in the

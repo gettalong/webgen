@@ -10,7 +10,7 @@ module Webgen::SourceHandler
   # This module should be included in every source handler as it provides the default methods for
   # creating nodes.
   #
-  # = Implementing Source Handlers
+  # == Implementing Source Handlers
   #
   # A source handler is a webgen extension that processes source paths to create nodes and that
   # provides the rendered content of these nodes. The nodes are later written to the output
@@ -35,7 +35,7 @@ module Webgen::SourceHandler
   # * #page_from_path
   # * #content
   #
-  # = Nodes Created for Paths
+  # == Nodes Created for Paths
   #
   # The main functions of a source handler class are to create one or more nodes for a source path
   # and to provide the content of these nodes. To achieve this, certain information needs to be set
@@ -62,7 +62,7 @@ module Webgen::SourceHandler
   # #node_info hash of a node as the #meta_info hash is reserved for real node meta information and
   # should not be changed once the node is created.
   #
-  # = Path Patterns and Invocation order
+  # == Path Patterns and Invocation order
   #
   # Path patterns define which paths are handled by a specific source handler. These patterns are
   # specified in the <tt>sourcehandler.patterns</tt> configuration hash as a mapping from the source
@@ -81,7 +81,7 @@ module Webgen::SourceHandler
   # 9:: Late. This rank should be used by source handlers that operate on/use already created nodes
   #     and need to ensure that these nodes are available.
   #
-  # = Default Meta Information
+  # == Default Meta Information
   #
   # Each source handler can define default meta information that gets automatically set on the
   # source paths that are passed to the #create_node method.
@@ -90,7 +90,7 @@ module Webgen::SourceHandler
   # configuration hash as a mapping from the source handler class name to the meta information
   # hash.
   #
-  # = Sample Source Handler Class
+  # == Sample Source Handler Class
   #
   # Following is a simple source handler class example which copies paths from the source to
   # the output location modifying the extension:

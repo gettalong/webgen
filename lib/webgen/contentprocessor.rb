@@ -4,7 +4,7 @@ module Webgen
 
   # Namespace for all content processors.
   #
-  # = Implementing a content processor
+  # == Implementing a content processor
   #
   # Content processors are used to process the content of files, normally of files in Webgen Page
   # Format. A content processor only needs to respond to one method called +call+ and must not take
@@ -21,7 +21,7 @@ module Webgen
   # be a short name without special characters or spaces and the value is the class name, not as
   # constant but as a string.
   #
-  # = Sample Content Processor
+  # == Sample Content Processor
   #
   # The following sample content processor checks for a meta information +replace_key+ and replaces
   # strings of the form <tt>replace_key:path/to/node</tt> with a link to the specified node if it is
