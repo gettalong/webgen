@@ -14,17 +14,20 @@ module Webgen::SourceHandler
     include Base
     include Webgen::WebsiteAccess
 
+    def initialize # :nodoc:
+      website.blackboard.add_listener(:node_meta_info_changed?, method(:node_meta_info_changed?))
+      @path_data = {}
+    end
+
     # Create all virtual nodes under +parent+ which are specified in +path+.
     def create_node(parent, path)
-      page = page_from_path(path)
       nodes = []
-      YAML::load(page.blocks['content'].content).each do |key, meta_info|
+      read_data(path).each do |key, meta_info|
+        cache_data = [key, meta_info.dup]
+
         key = Webgen::Common.absolute_path(key, parent.absolute_lcn) + (key =~ /\/$/ ? '/' : '')
         temp_parent = create_directories(parent.tree.root, File.dirname(key), path)
 
-        meta_info ||= {}
-        meta_info['modified_at'] = path.meta_info['modified_at']
-        meta_info['no_output'] = true
         output_path = meta_info.delete('url') || key
         output_path = (URI::parse(output_path).absolute? || output_path =~ /^\// ?
                        output_path : File.join(temp_parent.absolute_lcn, output_path))
@@ -35,16 +38,35 @@ module Webgen::SourceHandler
           nodes += website.blackboard.invoke(:create_nodes, parent.tree, temp_parent.absolute_lcn,
                                              Webgen::Path.new(key, path.source_path), self) do |cn_parent, cn_path|
             cn_path.meta_info.update(meta_info)
-            super(cn_parent, cn_path, output_path)
+            super(cn_parent, cn_path, output_path) do |n|
+              n.node_info[:sh_virtual_cache_data] = cache_data
+            end
           end
         end
-      end if page.blocks.has_key?('content')
+      end
       nodes.compact
     end
 
     #######
     private
     #######
+
+    # Read the entries from the virtual file +data+ and yield the path, and the meta info hash for
+    # each entry. The +parent+ parameter is used for making absolute path values if relative ones
+    # are given.
+    def read_data(path)
+      if !@path_data.has_key?(path) || path.changed?
+        page = page_from_path(path)
+        @path_data[path] = YAML::load(page.blocks['content'].content).collect do |key, meta_info|
+          meta_info ||= {}
+          meta_info['modified_at'] = path.meta_info['modified_at']
+          meta_info['no_output'] = true
+          [key, meta_info]
+        end if page.blocks.has_key?('content')
+        @path_data[path] ||= []
+      end
+      @path_data[path]
+    end
 
     # Create the needed parent directories for a virtual node.
     def create_directories(parent, dirname, path)
@@ -70,6 +92,17 @@ module Webgen::SourceHandler
         parent
       end
       parent
+    end
+
+    # Check if the +node+ is virtual and if, if its meta information has changed. This can only be
+    # the case if the node has been recreated in this run.
+    def node_meta_info_changed?(node)
+      path = website.blackboard.invoke(:source_paths)[node.node_info[:src]]
+      return if node.node_info[:processor] != self.class.name || !path.changed?
+
+      old_data = node.node_info[:sh_virtual_cache_data]
+      new_data = read_data(path).find {|key, mi| key == old_data.first}
+      node.flag(:dirty_meta_info) if !new_data || old_data.last != new_data.last
     end
 
   end
