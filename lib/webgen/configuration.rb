@@ -10,9 +10,11 @@ module Webgen
   #
   #   config.my.new.config 'value', :doc => 'some', :meta => 'info'
   #
-  # and later accessed or set using the accessor methods #[] and #[]= or a configuration
-  # helper. These helpers are defined in the Helpers module and provide easier access to complex
-  # configuration options.
+  # and later accessed or set using the accessor methods #[] and #[]= or a configuration helper.
+  # These helpers are defined in the Helpers module and provide easier access to complex
+  # configuration options. Also see the {webgen
+  # manual}[http://webgen.rubyforge.org/documentation/manual.html#website-configfile] for
+  # information about the configuration helpers.
   class Configuration
 
     # Helper class for providing an easy method to define configuration options.
@@ -55,9 +57,9 @@ module Webgen
     # The special key <tt>:action</tt> should be used for specifying how the configuration option
     # should be set:
     #
-    #   replace::  Replace the configuration option with the new values.
-    #   modify::   Replace old values with new values and add missing ones (useful for hashes and
-    #              normally the default value)
+    # [replace]  Replace the configuration option with the new values.
+    # [modify]   Replace old values with new values and add missing ones (useful for hashes and
+    #            normally the default value)
     module Helpers
 
       # Set the default meta information for source handlers.

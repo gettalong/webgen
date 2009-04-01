@@ -2,7 +2,7 @@
 
 module Webgen
 
-  # Mixed into modules/classes that need access to the current website object.
+  # Should be mixed into modules/classes that need access to the current website object.
   module WebsiteAccess
 
     # The methods of this module are available on classes that include WebsiteAccess.

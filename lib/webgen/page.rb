@@ -21,8 +21,14 @@ module Webgen
       @name, @content, @options = name, content, options
     end
 
-    # Render the block using the provided context object. Uses the content processors specified in
-    # the +pipeline+ key of the +options+ attribute to do the actual rendering.
+    # Render the block using the provided context object.
+    #
+    # The context object needs to respond to <tt>#[]</tt> and <tt>#[]=</tt> (e.g. a Hash is a valid
+    # context object) and the key <tt>:processors</tt> needs to contain a Hash which maps processor
+    # names to processor objects that respond to <tt>#call</tt>.
+    #
+    # Uses the content processors specified in the +pipeline+ key of the +options+ attribute to do
+    # the actual rendering.
     #
     # Returns the given context with the rendered content.
     def render(context)
@@ -45,11 +51,13 @@ module Webgen
   # generated from a file or string in Webgen Page Format using the provided class methods.
   class Page
 
+    # :stopdoc:
     RE_META_INFO_START = /\A---\s*(?:\n|\r|\r\n)/m
     RE_META_INFO = /\A---\s*(?:\n|\r|\r\n).*?(?:\n|\r|\r\n)(?=---.*?(?:\n|\r|\r\n)|\Z)/m
     RE_BLOCKS_OPTIONS = /^--- *?(?: *((?:\w+:[^\s]* *)*))?$|^$/
     RE_BLOCKS_START = /^--- .*?$|^--- *$/
     RE_BLOCKS = /(?:(#{RE_BLOCKS_START})|\A)(.*?)(?:(?=#{RE_BLOCKS_START})|\Z)/m
+    # :startdoc:
 
     class << self
 

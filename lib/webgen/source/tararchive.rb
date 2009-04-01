@@ -11,6 +11,12 @@ module Webgen
 
   # This class is used to read source paths from a (gzipped) tar archive. The archive can be remote
   # (http(s) or ftp) or local.
+  #
+  # For example, the following are all valid URIs:
+  #   http://example.com/directory/file.tgz
+  #   /home/test/my.tar.gz
+  #   ftp://ftp.example.com/archives/archive.tar
+  #
   class Source::TarArchive
 
     # A special Webgen::Path class for handling paths from a tar archive.

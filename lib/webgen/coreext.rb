@@ -1,12 +1,13 @@
 # -*- encoding: utf-8 -*-
 
-# :nodoc:
+# :stopdoc:
 class Array
 
-  def to_hash # :nodoc:
+  def to_hash
     h = {}
     self.each {|k,v| h[k] = v}
     h
   end
 
 end
+# :startdoc:
