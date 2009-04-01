@@ -44,7 +44,7 @@ require 'webgen/page'
 # files. Despite this fact, the implementation also provides adequate support for using webgen as a
 # library and *full* *support* for extending it.
 #
-# = Extending webgen
+# == Extending webgen
 #
 # webgen can be extended very easily. Any file called <tt>init.rb</tt> put into the <tt>ext/</tt>
 # directory of the website or into one of its sub-directories is automatically loaded on
@@ -79,7 +79,7 @@ require 'webgen/page'
 #                     an easy way for users to include dynamic content such as automatically
 #                     generated menus.
 #
-# = Blackboard services
+# == Blackboard services
 #
 # The Blackboard class provides an easy communication facility between objects. It implements the
 # Observer pattern on the one side and allows the definition of services on the other side. One
@@ -126,7 +126,7 @@ require 'webgen/page'
 # <tt>:before_node_deleted</tt>::
 #   See Tree#delete_node
 #
-# = Other places to look at
+# == Other places to look at
 #
 # Here is a list of modules/classes that are primarily used throughout webgen or provide useful
 # methods for developing extensions:

@@ -8,14 +8,14 @@ module Webgen
 
   # Namespace for all classes that act as CLI commands.
   #
-  # = Implementing a CLI command
+  # == Implementing a CLI command
   #
   # Each CLI command class needs to be put into this module and has to end with +Command+, otherwise
   # it is not used. A CLI command is an extension that can be invoked from the webgen command and
   # thus needs to be derived from CmdParse::Command. For detailed information on this class and the
   # whole cmdparse package have a look at http://cmdparse.rubyforge.org!
   #
-  # = Sample CLI command
+  # == Sample CLI command
   #
   # Here is a sample CLI command extension:
   #

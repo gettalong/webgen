@@ -41,13 +41,13 @@ module Webgen
   # It is assumed that you have already used the 'webgen' command to create the website directory
   # for the site.
   #
-  # === Basics
+  # == Basics
   #
   #   require 'webgen/webgentask'
   #
   #   Webgen::WebgenTask.new
   #
-  # === Attributes
+  # == Attributes
   #
   # The attributes available in the new block are:
   #
@@ -57,14 +57,14 @@ module Webgen
   # * clobber_outdir    - remove webgens output directory on clobber
   #                       (default false)
   #
-  # === Tasks Provided
+  # == Tasks Provided
   #
   # The tasks provided are :
   #
   # * webgen         - render the webgen website
   # * clobber_webgen - remove all the files created during generation
   #
-  # === Integrate webgen in other project
+  # == Integrate webgen in other project
   #
   # To integrate webgen tasks in another project you can use rake namespaces.  For example assuming
   # webgen's site directory is +webgen+ under the main project directory use the following code
