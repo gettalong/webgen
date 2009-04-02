@@ -12,29 +12,40 @@ class TestSourceHandlerMetainfo < Test::Unit::TestCase
   class TestSH; include Webgen::SourceHandler::Base; end
 
   CONTENT=<<EOF
-**/*:
+/default.*:
   title: new title
   before: valbef
 ---
-**/*/:
+/default.css:
   after: valaft
+
+/other.page:
+  title: Not Other
 EOF
 
   def setup
     super
     @website.blackboard.add_service(:source_paths) do
-      {'/default.css' => path_with_meta_info('/default.css') {StringIO.new('# header')}}
+      {'/default.css' => path_with_meta_info('/default.css') {StringIO.new('# header')},
+        '/other.page' => path_with_meta_info('/other.page') {StringIO.new('other page')},
+      }
     end
 
     @obj = Webgen::SourceHandler::Metainfo.new
-    @root = Webgen::Node.new(Webgen::Tree.new.dummy_root, 'test/', '/')
+    @root = Webgen::Node.new(Webgen::Tree.new.dummy_root, '/', '/')
     @node = @obj.create_node(@root, path_with_meta_info('/metainfo', {}, @obj.class.name) {StringIO.new(CONTENT)})
   end
 
   def test_create_node
-    assert(@node.flagged(:dirty_meta_info))
-    assert_equal({'/**/*' => {'title' => 'new title', 'before' => 'valbef'}}, @node.node_info[:mi_paths])
-    assert_equal({'/**/*' => {'after' => 'valaft'}}, @node.node_info[:mi_alcn])
+    assert_equal({'/default.*' => {'title' => 'new title', 'before' => 'valbef'}}, @node.node_info[:mi_paths])
+    assert_equal({'/default.css' => {'after' => 'valaft'},
+                 '/other.page' => {'title' => 'Not Other'}}, @node.node_info[:mi_alcn])
+  end
+
+  def test_empty_metainfo_file
+    node = @obj.create_node(@root, path_with_meta_info('/test', {}, @obj.class.name) {StringIO.new('')})
+    assert_equal({}, node.node_info[:mi_paths])
+    assert_equal({}, node.node_info[:mi_alcn])
   end
 
   def test_meta_info_changed
@@ -92,6 +103,16 @@ EOF
 
   def test_content
     assert_nil(@obj.content(nil))
+  end
+
+  def test_deletion_of_metainfo
+    other = TestSH.new.create_node(@root, path_with_meta_info('/other.page'))
+    @website.blackboard.dispatch_msg(:after_node_created, other)
+    assert_equal('Not Other', other['title'])
+
+    @node.flag(:reinit)
+    @node = @obj.create_node(@root, path_with_meta_info('/metainfo', {}, @obj.class.name) {StringIO.new("")})
+    assert(other.flagged(:dirty_meta_info))
   end
 
 end

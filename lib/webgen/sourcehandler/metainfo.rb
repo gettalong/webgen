@@ -28,10 +28,12 @@ module Webgen::SourceHandler
       super(parent, path) do |node|
         [[:mi_paths, 'paths'], [:mi_alcn, 'alcn']].each do |mi_key, block_name|
           node.node_info[mi_key] = {}
-          YAML::load(page.blocks[block_name].content).each do |key, value|
-            key = Webgen::Common.absolute_path(key, parent.absolute_lcn)
-            node.node_info[mi_key][key] = value
-          end if page.blocks.has_key?(block_name)
+          if page.blocks.has_key?(block_name) && (data = YAML::load(page.blocks[block_name].content))
+            data.each do |key, value|
+              key = Webgen::Common.absolute_path(key, parent.absolute_lcn)
+              node.node_info[mi_key][key] = value
+            end
+          end
         end
 
         mark_all_matched_dirty(node, :no_old_data)
@@ -66,7 +68,14 @@ module Webgen::SourceHandler
            (option == :force || (!cached && option == :no_old_data) || mi != cached[:mi_paths][pattern])
        end || mi_node.node_info[:mi_alcn].any? do |pattern, mi|
          node =~ pattern && (option == :force || (!cached && option == :no_old_data) || mi != cached[:mi_alcn][pattern])
-       end)
+       end || (option == :no_old_data && cached &&
+               ((cached[:mi_paths].keys - mi_node.node_info[:mi_paths].keys).any? do |p|
+                 Webgen::Path.match(node.node_info[:creation_path], p)
+                end || (cached[:mi_alcn].keys - mi_node.node_info[:mi_alcn].keys).any? do |p|
+                  node =~ p
+                end)
+               )
+       )
     end
 
     # Mark all nodes that are matched by a path or an alcn specifcation in the meta info node +node+
