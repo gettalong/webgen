@@ -41,9 +41,14 @@ module Webgen
     # The URI of the tar archive.
     attr_reader :uri
 
+    # The glob (see File.fnmatch for details) that is used to specify which paths in the archive should
+    # be returned by #paths.
+    attr_reader :glob
+
     # Create a new tar archive source for the URI string +uri+.
-    def initialize(uri)
+    def initialize(uri, glob = '**/*')
       @uri = uri
+      @glob = glob
     end
 
     # Return all paths in the tar archive available at #uri.
@@ -54,9 +59,10 @@ module Webgen
         Archive::Tar::Minitar::Input.open(stream) do |input|
           @paths = input.collect do |entry|
             path = entry.full_name
+            next unless File.fnmatch(@glob, path, File::FNM_DOTMATCH|File::FNM_CASEFOLD|File::FNM_PATHNAME)
             path += '/' if entry.directory? && path[-1] != ?/
             Path.new(path, entry.read, Time.at(entry.mtime), @uri)
-          end
+          end.compact.to_set
         end
       end
       @paths
