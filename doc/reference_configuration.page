@@ -121,6 +121,9 @@ configuration options) and/or how to use it in a webgen tag (for tag configurati
 
           sources: [[/, Webgen::Source::FileSystem, src], [/, Webgen::Source::FileSystem, /mnt/pictures, **/*.jpg]
 
+      Also have a look at the [file system source documentation]({relocatable:
+      source/filesystem.html}) for more examples!
+
 
 *   ### output
 

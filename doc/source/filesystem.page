@@ -1,0 +1,39 @@
+---
+title: Webgen::Source::FileSystem
+---
+## Description
+
+This is the default source extension used when creating a new webgen website. It uses files that
+match a certain glob (default value for the glob is to match all files) under a specific directory.
+
+> The default configuration for a new website uses all files under the `src` directory.
+{.information}
+
+The first parameter for the file system source is the directory under which the to-be-used files are
+and the second, optional, parameter specifies a glob (see [Dir.glob]).
+
+[Dir.glob]: http://ruby-doc.org/core/classes/Dir.html#M002375
+
+## Examples
+
+The used sources can be specified via the [`sources` configuration option]({relocatable:
+../reference_configuration.html#sources}), so each of the examples below can be specified in the
+`config.yaml` file.
+
+1.  The default configuration: all files under the `src` folder of the website directory
+
+        sources: [[/, Webgen::Source::FileSystem, src]]
+
+2.  The default configuration and additionally all files under a `misc` directory:
+
+        sources:
+          - [/, Webgen::Source::FileSystem, src]
+          - [/, Webgen::Source::FileSystem, misc]
+
+3.  The default configuration and mounting all image files from an external directory under the
+    `/images/` directory:
+
+        sources:
+          - [/, Webgen::Source::FileSystem, src]
+          - [/images/, Webgen::Source::FileSystem, /media/storage/pictures, **/*.jpg]
+
