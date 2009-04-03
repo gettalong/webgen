@@ -16,6 +16,9 @@ class TestSourceTarArchive < Test::Unit::TestCase
       stream.add_file('/test/hallo.page', :mtime => (Time.now - 4).to_i, :mode => 0100644) do |os, opts|
         os.write('This is the contents!')
       end
+      stream.add_file('/other.page', :mtime => (Time.now - 4).to_i, :mode => 0100644) do |os, opts|
+        os.write('This is other content!')
+      end
       sio.rewind
       sio
     end
@@ -39,10 +42,14 @@ class TestSourceTarArchive < Test::Unit::TestCase
 
   def test_paths
     source = Webgen::Source::TarArchive.new(@stream)
-    assert(source.paths.length == 2)
+    assert_equal(3, source.paths.length)
     assert(source.paths.include?(Webgen::Path.new('/test/')))
     assert(source.paths.include?(Webgen::Path.new('/test/hallo.page')))
-    assert('This is the contents!', source.paths.first {|p| p.path == '/test/hallo.page'}.io.data)
+    assert_equal('This is the contents!', source.paths.find {|p| p.path == '/test/hallo.page'}.io.data)
+
+    source = Webgen::Source::TarArchive.new(@stream, '/test/*')
+    assert_equal(1, source.paths.length)
+    assert(source.paths.include?(Webgen::Path.new('/test/hallo.page')))
   end
 
   def test_path_changed?
