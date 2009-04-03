@@ -81,11 +81,11 @@ files and directories under this directory:
 
 * `src`: The source directory in which all the source files for the website are. If this directory
   should not be called `src` or you want to include additional source directories, you need to
-  change the `sources` configuration option.
+  change the [`sources` configuration option]({relocatable: reference_configuration.html#sources}).
 
 * `out`: This directory is created, if it does not exist, when webgen generates the HTML files. All
   the output files are put into this directory. The name of this directory can be changed by setting
-  the `output` configuration option.
+  the [`output` configuration option]({relocatable: reference_configuration.html#output}).
 
 * `ext`: The extension directory (optional). You can put self-written extensions into this directory
   so that they are used by webgen. See the [extension directory]({relocatable: '#website-ext'})
@@ -231,9 +231,10 @@ SourceHandler::Template as they are responsible for handling these page and temp
 You can naturally use any other type of file. However, be aware that some files may not be processed
 by webgen when no source handler class for them exists. For example, there is currently no source
 handler class for `.svg` files, so those files would be ignored. If you just want to have files
-copied from a source to the output directory (like images or CSS files), the SourceHandler::Copy
-class is what you need! Look through the documentation of the [availabe source handler
-classes]({relocatable: extensions.html}) to get a feeling of what files are handled by webgen.
+copied from a source to the output directory (like images or CSS files), the
+[SourceHandler::Copy]({relocatable: sourcehandler/copy.html}) class is what you need! Look through
+the documentation of the [availabe source handler classes]({relocatable: extensions.html}) to get a
+feeling of what files are handled by webgen.
 
 
 ## Source Paths Naming Convention {#source-naming}
@@ -449,14 +450,17 @@ Here are some example path patterns:
 
 Following is the list of rules how source files are handled by webgen:
 
-* All path names of all sources specified in the configuration option `sources` are fetched. Prior
-  listed sources have priority over later listed sources if both specify the same path.
+* All path names of all sources specified in the configuration option [`sources`]({relocatable:
+  reference_configuration.html#sources}) are fetched. Prior listed sources have priority over later
+  listed sources if both specify the same path.
 
-* Those paths which match a pattern of the configuration option `sourcehandler.ignore` are excluded.
+* Those paths which match a pattern of the configuration option
+  [`sourcehandler.ignore`]({relocatable: reference_configuration.html#sourcehandlerignore}) are excluded.
 
 * The source handler classes are invoked according to the invocation order specified in
-  `sourcehandler.invoke` and they use only those paths that match one of their path patterns
-  specified in `sourcehandler.patterns`.
+  [`sourcehandler.invoke`]({relocatable: reference_configuration.html#sourcehandlerinvoke}) and
+  they use only those paths that match one of their path patterns specified in
+  [`sourcehandler.patterns`]({relocatable: reference_configuration.html#sourcehandlerpatterns}).
 
 As you might have deduced from the processing list above, it is possible that one path is handled by
 multiple source handlers. This can be used, for example, to render an XML file as HTML and copy it
@@ -470,13 +474,15 @@ example the title of the path, if it should appear in a menu and so on. This met
 specified in several ways, including:
 
 * Source handlers can provide default meta information for their handled paths (set using the
-  configuration option `sourcehandler.default_meta_info`)
+  configuration option [`sourcehandler.default_meta_info`]({relocatable:
+  reference_configuration.html#sourcehandlerdefault_meta_info}).
 
 * Some file types allow meta information to be specified directly in the file, for example page
   files in [Webgen Page Format]({relocatable: webgen_page_format.html}).
 
 * Meta information can also be specified in special meta information backing files. These files are
-  handled by the source handler SourceHandler::Metainfo.
+  handled by the source handler [SourceHandler::Metainfo]({relocatable:
+  sourcehandler/metainfo.html}).
 
 There is clearly defined order in which meta information is applied to a node for a path:
 
