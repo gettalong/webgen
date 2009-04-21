@@ -17,11 +17,11 @@ module Webgen::CLI
       self.short_desc = 'Create a basic webgen website with selectable template/style'
       self.options = CmdParse::OptionParserWrapper.new do |opts|
         opts.separator "Options:"
-        opts.on('-t', '--template TEMPLATE', String, 'A website template or "none" (default: default)') do |val|
-          @template = (val == 'none' ? nil : val)
+        opts.on('-t', '--template TEMPLATE', String, "A website template or 'none' (default: #{@template})") do |val|
+          @template = (val.lowercase == 'none' ? nil : val)
         end
-        opts.on('-s', '--style STYLE', String, 'A website style or "none" (default: andreas07)') do |val|
-          @style = (val == 'none' ? nil : val)
+        opts.on('-s', '--style STYLE', String, "A website style or 'none' (default: #{@style})") do |val|
+          @style = (val.lowercase == 'none' ? nil : val)
         end
         opts.separator ""
         opts.separator "Arguments:"
