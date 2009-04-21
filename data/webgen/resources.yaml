@@ -1,3 +1,2 @@
 website_skeleton:    webgen-website-skeleton
-website_styles/*:    webgen-website-style-$basename
-website_templates/*: webgen-website-template-$basename
+website_bundles/style/*: webgen-website-bundle-style-$basename
