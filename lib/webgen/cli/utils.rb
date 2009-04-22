@@ -83,6 +83,29 @@ module Webgen::CLI
       puts
     end
 
+    # Tries to match +name+ to a unique bundle name of the WebsiteManager +wm+. If this can not be
+    # done, it is checked whether +name+ is actually a valid bundle URL and if so, the URL source is
+    # added to the bundles of +wm+.
+    #
+    # Returns the correct bundle name or raises an error.
+    def self.match_bundle_name(wm, name)
+      matches = wm.bundles.keys.select {|k| k =~ /#{Regexp.escape(name)}/}
+      if matches.size > 1
+        raise ArgumentError.new("#{name} matches more than one bundle: #{matches.join(", ")}")
+      elsif matches.size == 0
+        begin
+          source = Webgen::Source::TarArchive.new(name)
+          wm.add_source(source, 'custom-URL-source')
+          name = 'custom-URL-source'
+        rescue
+          raise ArgumentError.new("#{name} is neither a valid bundle name nor a valid URL")
+        end
+      else
+        name = matches.first
+      end
+      name
+    end
+
   end
 
 end
