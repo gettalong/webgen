@@ -6,55 +6,45 @@ require 'webgen/website'
 
 module Webgen
 
-  # This class is used for managing webgen websites. It provides access to website templates and
-  # styles defined as resources and makes it easy to apply them to a webgen website.
+  # This class is used for managing webgen websites. It provides access to website bundles defined
+  # as resources and makes it easy to apply them to a webgen website.
   #
   # == General information
   #
   # Currently, the following actions are supported:
   #
-  # * creating a website based on a website template (#create_website)
-  # * applying a template to an existing website (#apply_template)
-  # * applying a style to an existing website (#apply_style)
+  # * creating a website based on a website bundle (#create_website)
+  # * applying a bundle to an existing website (#apply_bundle)
   #
-  # A *website template* defines some initial pages which should be filled with real data. For
-  # example, the +project+ template defines several pages which are useful for software projects
-  # including a features and about page.
+  # Bundles are partial webgen websites that contain certain functionality. For example, most of the
+  # bundles shipped with webgen are style bundles that define the basic page layout or how image
+  # galleries should look like. So style bundles are basically used to change the appearance of
+  # parts (or the whole) website. This makes them a powerful tool as this plugin makes it easy to
+  # change to another style bundle later!
   #
-  # A *style* defines, for example, the basic page layout (in the case of website styles) or how image
-  # galleries should look like (in the case of gallery styles). So styles are basically used to
-  # change the appearance of parts (or the whole) website. This makes them a powerful tool as this
-  # plugin makes it easy to change a style later!
+  # However, not all bundles have to be style bundles. For example, you could as easily create a
+  # bundle for a plugin or for a complete website (e.g. a blog template).
   #
-  # == website template and style resource naming convention
+  # == website bundle resource naming convention
   #
-  # Styles and website templates are defined using resources. Each such resource has to be a
-  # directory containing an optional README file in YAML format in which key-value pairs provide
-  # additional information about the style or website template. All other files/directories in the
-  # directory are copied to the root of the destination webgen website when the style or website
-  # template is used.
+  # The shipped bundles are defined using resources. Each such resource has to be a directory
+  # containing an optional README file in YAML format in which key-value pairs provide additional
+  # information about the bundle (e.g. copyright information, description, ...). All other
+  # files/directories in the directory are copied to the root of the destination webgen website when
+  # the bundle is used.
   #
-  # This class uses a special naming convention to recognize website templates and styles:
+  # This class uses a special naming convention to recognize website bundles:
   #
-  # * A resource named <tt>webgen-website-template-TEMPLATE_NAME</tt> is considered to be a website
-  #   template called TEMPLATE_NAME and can be later accessed using this name.
+  # * A resource named <tt>webgen-website-bundle-CATEGORY-NAME</tt> is considered to be a bundle in
+  #   the category CATEGORY called NAME (where CATEGORY is optional). There are no fixed categories,
+  #   one can use anything here! The shipped style bundles are located in the 'style' category. You
+  #   need to use the the full name, i.e. CATEGORY-NAME, for accessing a bundle later.
   #
-  # * A resource named <tt>webgen-website-style-CATEGORY-STYLE_NAME</tt> is considered to be a style
-  #   in the category CATEGORY called STYLE_NAME. There are no fixed categories, one can use
-  #   anything here!  Again, the style can later be accessed by providing the category and style
-  #   name.
-  #
-  # Website template names have to be unique and style names have to be unique in respect to their
-  # categories!
-  #
-  # Note: All styles without a category or which are in the category 'website' are website styles.
+  # Website bundle names have to be unique!
   class WebsiteManager
 
-    # A hash with the available website templates (mapping name to infos).
-    attr_reader :templates
-
-    # A hash with the available website styles (mapping name to infos).
-    attr_reader :styles
+    # A hash with the available website bundles (mapping name to infos).
+    attr_reader :bundles
 
     # The used Website object.
     attr_reader :website
@@ -63,49 +53,43 @@ module Webgen
     def initialize(dir)
       @website = Webgen::Website.new(dir)
       @website.init
-      @styles = {}
-      @templates = {}
+      @bundles = {}
 
       @website.execute_in_env do
-        [['webgen-website-style-', @styles], ['webgen-website-template-', @templates]].each do |prefix, var|
-          @website.config['resources'].select {|name, data| name =~ /^#{prefix}/}.each do |name, data|
-            paths = Webgen::Source::Resource.new(name).paths
-            readme = paths.select {|path| path == '/README' }.first
-            paths.delete(readme) if readme
-            infos = OpenStruct.new(readme.nil? ? {} : YAML::load(readme.io.data))
-            infos.paths = paths
-            var[name.sub(prefix, '')] = infos
-          end
+        prefix = "webgen-website-bundle-"
+        @website.config['resources'].select {|name, data| name =~ /^#{prefix}/}.each do |name, data|
+          add_source(Webgen::Source::Resource.new(name), name.sub(prefix, ''))
         end
       end
     end
 
-    # Create the basic website skeleton (without any template or style applied).
+    # Treat the +source+ as a website bundle and make it available to the WebsiteManager under
+    # +name+.
+    def add_source(source, name)
+      paths = source.paths.dup
+      readme = paths.select {|path| path == '/README' }.first
+      paths.delete(readme) if readme
+      infos = OpenStruct.new(readme.nil? ? {} : YAML::load(readme.io.data))
+      infos.paths = paths
+      @bundles[name] = infos
+    end
+
+    # Create the basic website skeleton (without any bundle applied).
     def create_website
       raise "Directory <#{@website.directory}> does already exist!" if File.exists?(@website.directory)
       @website.execute_in_env { write_paths(Webgen::Source::Resource.new('webgen-website-skeleton').paths) }
     end
 
-    # Apply the given +template+ to the website by copying the template files.
-    def apply_template(name)
-      write_paths_to_website(@templates[name], 'template')
-    end
-
-    # Apply the given website style +name+ to the website by copying the styles files.
-    def apply_style(name)
-      write_paths_to_website(@styles[name], 'style')
+    # Apply the given +bundle+ to the website by copying the files.
+    def apply_bundle(bundle)
+      raise ArgumentError.new("Invalid bundle name") if !@bundles.has_key?(bundle)
+      raise "Directory <#{@website.directory}> does not exist!" unless File.exists?(@website.directory)
+      write_paths(@bundles[bundle].paths)
     end
 
     #######
     private
     #######
-
-    # Do some sanity checks and write the +paths+ from +infos+ to the website directory.
-    def write_paths_to_website(infos, infos_type)
-      raise ArgumentError.new("Invalid #{infos_type} name") if infos.nil?
-      raise "Directory <#{@website.directory}> does not exist!" unless File.exists?(@website.directory)
-      write_paths(infos.paths)
-    end
 
     # Write the paths to the website directory.
     def write_paths(paths)
