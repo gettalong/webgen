@@ -92,26 +92,24 @@ class MainController < Ramaze::Controller
   end
 
   def create_website
-    @cur_style = request['website_style'] || @cur_style || '1024px'
-    @cur_template = request['website_template'] || @cur_template || 'default'
+    @cur_bundle = request['website_bundle'] || @cur_bundle || 'style-andreas07'
 
     if request['create_site']
       wm = Webgen::WebsiteManager.new(session['website_dir'])
       wm.create_website
-      wm.apply_template(@cur_template)
-      wm.apply_style(@cur_style)
+      wm.apply_bundle('default')
+      wm.apply_bundle(@cur_bundle)
 
       redirect R(:manage_website)
     else
       wm = Webgen::WebsiteManager.new(session['website_dir'])
-      @templates = wm.templates.keys.sort
-      @styles = wm.styles.keys.select {|k| k =~ /^website-|[^-]+/ }.sort
+      @bundles = wm.bundles.keys.sort
 
-      if !@cur_style.nil? && !@cur_template.nil?
+      if !@cur_bundle.nil?
         ws = Webgen::Website.new('unknown', nil) do |config|
           config['sources'] = [
-                               ['/', 'Webgen::Source::Resource', 'webgen-website-template-' + @cur_template, '/src/**', '/src'],
-                               ['/', 'Webgen::Source::Resource', 'webgen-website-style-' + @cur_style, '/src/**', '/src']
+                               ['/', 'Webgen::Source::Resource', 'webgen-website-bundle-default', '/src/**', '/src'],
+                               ['/', 'Webgen::Source::Resource', 'webgen-website-bundle-' + @cur_bundle, '/src/**', '/src']
                               ]
           config['output'] = ['MemoryOutput']
           config['website.cache'] = [:memory, '']
@@ -122,7 +120,7 @@ class MainController < Ramaze::Controller
     end
   end
 
-  def preview_style_and_template(*args)
+  def preview_website_bundles(*args)
     throw(:respond) unless session['create_website_preview']
     path = File.join(*args)
     response.header["Content-Type"] = Ramaze::Tool::MIME.trait[:types][File.extname(path)].to_s
