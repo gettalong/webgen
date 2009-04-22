@@ -10,12 +10,9 @@ class TestWebsiteManager < Test::Unit::TestCase
 
   def test_initialize
     wm = Webgen::WebsiteManager.new('.')
-    t = wm.templates['default']
+    t = wm.bundles['default']
     assert_equal('Thomas Leitner', t.author)
     assert(t.paths.length > 0)
-
-    s = wm.styles['1024px']
-    assert(s.paths.length > 0)
   end
 
   def test_create_website
@@ -29,34 +26,28 @@ class TestWebsiteManager < Test::Unit::TestCase
     end
   end
 
-  def test_apply_template
+  def test_apply_bundle
     with_tmpdir do |dir|
       wm = Webgen::WebsiteManager.new(dir)
-      assert_raise(RuntimeError) { wm.apply_template('default') }
+      assert_raise(RuntimeError) { wm.apply_bundle('default') }
 
       Dir.mkdir(dir)
-      wm.apply_template('default')
+      wm.apply_bundle('default')
       assert(File.directory?(File.join(dir, 'src')))
       assert(File.file?(File.join(dir, 'src', 'index.page')))
 
-      assert_raise(ArgumentError) { wm.apply_template('unknown-template') }
-    end
-  end
+      assert_raise(ArgumentError) { wm.apply_bundle('unknown-bundle') }
 
-  def test_apply_style
-    dir = with_tmpdir
-    wm = Webgen::WebsiteManager.new(dir)
-    assert_raise(RuntimeError) { wm.apply_style('simple') }
-
-    wm.styles.each do |name, infos|
-      Dir.mkdir(dir)
-      wm.apply_style(name)
-      assert(File.directory?(File.join(dir, 'src')))
-      assert(File.file?(File.join(dir, 'src', 'default.template')))
-      assert(File.file?(File.join(dir, 'src', 'default.css')))
       FileUtils.rm_rf(dir)
+      wm.bundles.select {|n,i| n =~ /^style-/}.each do |name, infos|
+        Dir.mkdir(dir)
+        wm.apply_bundle(name)
+        assert(File.directory?(File.join(dir, 'src')))
+        assert(File.file?(File.join(dir, 'src', 'default.template')))
+        assert(File.file?(File.join(dir, 'src', 'default.css')))
+        FileUtils.rm_rf(dir)
+      end
     end
-    assert_raise(ArgumentError) { wm.apply_style('unknown-style') }
   end
 
   def with_tmpdir
