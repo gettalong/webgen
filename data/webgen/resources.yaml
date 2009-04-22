@@ -1,2 +1,3 @@
 website_skeleton:    webgen-website-skeleton
 website_bundles/style/*: webgen-website-bundle-style-$basename
+website_bundles/default: webgen-website-bundle-default
