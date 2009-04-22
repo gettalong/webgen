@@ -11,17 +11,17 @@ module Webgen::CLI
     def initialize #:nodoc:
       super('create', false)
       self.description = Utils.format("If the verbosity level is set to verbose, the created files are listed.")
-      @template = 'default'
-      @style = 'andreas07'
+      @bundles = []
 
-      self.short_desc = 'Create a basic webgen website with selectable template/style'
+      self.short_desc = 'Create a basic webgen website from website bundles'
       self.options = CmdParse::OptionParserWrapper.new do |opts|
         opts.separator "Options:"
-        opts.on('-t', '--template TEMPLATE', String, "A website template or 'none' (default: #{@template})") do |val|
-          @template = (val.lowercase == 'none' ? nil : val)
-        end
-        opts.on('-s', '--style STYLE', String, "A website style or 'none' (default: #{@style})") do |val|
-          @style = (val.lowercase == 'none' ? nil : val)
+        opts.on('-b', '--bundle BUNDLE', String, "A website bundle name/URL or 'none'. Can be used more than once (default: [default, style-andreas07])") do |val|
+          if val.downcase == 'none'
+            @bundles = nil
+          elsif !@bundles.nil?
+            @bundles << val
+          end
         end
         opts.separator ""
         opts.separator "Arguments:"
@@ -38,11 +38,9 @@ module Webgen::CLI
       wm = Webgen::WebsiteManager.new(commandparser.directory)
 
       puts
-      puts "Available templates and styles:"
-      puts Utils.headline('Templates')
-      wm.templates.sort.each {|name, entry| Utils.hash_output(name, entry.instance_eval { @table }) }
-      puts Utils.headline('Styles')
-      wm.styles.select {|k,v| k =~ /^website-|[^-]+/ }.sort.each {|name, entry| Utils.hash_output(name, entry.instance_eval { @table }) }
+      puts "Available bundles:"
+      puts Utils.headline('Bundles')
+      wm.bundles.sort.each {|name, entry| Utils.hash_output(name, entry.instance_eval { @table }) }
     end
 
     # Create a webgen website in the directory <tt>args[0]</tt>.
@@ -52,11 +50,19 @@ module Webgen::CLI
       else
         wm = Webgen::WebsiteManager.new(args[0])
         paths = wm.create_website
-        paths += wm.apply_template(@template) if @template
-        paths += wm.apply_style(@style) if @style
+        begin
+          if @bundles
+            @bundles = ['default', 'style-andreas07'] if @bundles.empty?
+            @bundles.each {|name| paths += wm.apply_bundle(Utils.match_bundle_name(wm, name)) }
+          end
+        rescue
+          require 'fileutils'
+          FileUtils.rm_rf(args[0])
+          raise
+        end
         if commandparser.verbosity == :verbose
           puts "The following files were created in the directory #{args[0]}:"
-          puts paths.sort.collect {|f| "- " + f }.join("\n")
+          puts paths.sort.join("\n")
         end
       end
     end
