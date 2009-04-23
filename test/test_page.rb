@@ -6,7 +6,7 @@ require 'webgen/page'
 class TestBlock < Test::Unit::TestCase
 
   def test_render
-    block = Webgen::Block.new('content', 'some content', {'pipeline' => 'test'})
+    block = Webgen::Page::Block.new('content', 'some content', {'pipeline' => 'test'})
     context = {:processors => {}}
     assert_raise(RuntimeError) { block.render(context) }
     context[:processors]['test'] = lambda {|context| context[:content] = context[:content].reverse + context[:block].name }
@@ -161,12 +161,12 @@ EOF
   def test_invalid_pagefiles
     testdata = YAML::load(INVALID_MI)
     testdata.each_with_index do |data, index|
-      assert_raise(Webgen::WebgenPageFormatError, "test mi item #{index}") { Webgen::Page.from_data(data) }
-      assert_raise(Webgen::WebgenPageFormatError, "test mi item #{index}") { Webgen::Page.meta_info_from_data(data) }
+      assert_raise(Webgen::Page::FormatError, "test mi item #{index}") { Webgen::Page.from_data(data) }
+      assert_raise(Webgen::Page::FormatError, "test mi item #{index}") { Webgen::Page.meta_info_from_data(data) }
     end
     testdata = YAML::load(INVALID_BLOCKS)
     testdata.each_with_index do |data, index|
-      assert_raise(Webgen::WebgenPageFormatError, "test blocks item #{index}") { Webgen::Page.from_data(data) }
+      assert_raise(Webgen::Page::FormatError, "test blocks item #{index}") { Webgen::Page.from_data(data) }
     end
   end
 

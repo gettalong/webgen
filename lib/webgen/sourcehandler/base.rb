@@ -236,7 +236,7 @@ module Webgen::SourceHandler
     def page_from_path(path)
       begin
         page = Webgen::Page.from_data(path.io.data, path.meta_info)
-      rescue Webgen::WebgenPageFormatError => e
+      rescue Webgen::Page::FormatError => e
         raise "Error reading source path <#{path}>: #{e.message}"
       end
       path.meta_info = page.meta_info
