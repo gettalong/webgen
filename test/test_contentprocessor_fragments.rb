@@ -27,13 +27,13 @@ class TestContentProcessorFragments < Test::Unit::TestCase
     assert_equal(3, root.tree.node_access[:alcn].length)
     root.tree.delete_node('/#test')
 
-    context[:block] = Webgen::Block.new('content', '', {})
+    context[:block] = Webgen::Page::Block.new('content', '', {})
     obj.call(context)
     assert(root.tree['/#test'])
     assert_equal(3, root.tree.node_access[:alcn].length)
     root.tree.delete_node('/#test')
 
-    context[:block] = Webgen::Block.new('other', '', {})
+    context[:block] = Webgen::Page::Block.new('other', '', {})
     obj.call(context)
     assert(!root.tree['/#test'])
     assert_equal(2, root.tree.node_access[:alcn].length)

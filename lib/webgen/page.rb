@@ -4,52 +4,53 @@ require 'yaml'
 
 module Webgen
 
-  # A single block within a Page object. The content of the block can be rendered using the #render method.
-  class Block
-
-    # The name of the block.
-    attr_reader :name
-
-    # The content of the block.
-    attr_reader :content
-
-    # The options set specifically for this block.
-    attr_reader :options
-
-    # Create a new block with the name +name+ and the given +content+ and +options+.
-    def initialize(name, content, options)
-      @name, @content, @options = name, content, options
-    end
-
-    # Render the block using the provided context object.
-    #
-    # The context object needs to respond to <tt>#[]</tt> and <tt>#[]=</tt> (e.g. a Hash is a valid
-    # context object) and the key <tt>:processors</tt> needs to contain a Hash which maps processor
-    # names to processor objects that respond to <tt>#call</tt>.
-    #
-    # Uses the content processors specified in the +pipeline+ key of the +options+ attribute to do
-    # the actual rendering.
-    #
-    # Returns the given context with the rendered content.
-    def render(context)
-      context[:content] = @content.dup
-      context[:block] = self
-      @options['pipeline'].to_s.split(/,/).each do |processor|
-        raise "No such content processor available: #{processor}" unless context[:processors].has_key?(processor)
-        context[:processors][processor].call(context)
-      end
-      context
-    end
-
-  end
-
-
-  # Raised during parsing of data in Webgen Page Format if the data is invalid.
-  class WebgenPageFormatError < RuntimeError; end
-
   # A Page object wraps a meta information hash and an array of Block objects. It is normally
   # generated from a file or string in Webgen Page Format using the provided class methods.
   class Page
+
+    # A single block within a Page object. The content of the block can be rendered using the #render method.
+    class Block
+
+      # The name of the block.
+      attr_reader :name
+
+      # The content of the block.
+      attr_reader :content
+
+      # The options set specifically for this block.
+      attr_reader :options
+
+      # Create a new block with the name +name+ and the given +content+ and +options+.
+      def initialize(name, content, options)
+        @name, @content, @options = name, content, options
+      end
+
+      # Render the block using the provided context object.
+      #
+      # The context object needs to respond to <tt>#[]</tt> and <tt>#[]=</tt> (e.g. a Hash is a valid
+      # context object) and the key <tt>:processors</tt> needs to contain a Hash which maps processor
+      # names to processor objects that respond to <tt>#call</tt>.
+      #
+      # Uses the content processors specified in the +pipeline+ key of the +options+ attribute to do
+      # the actual rendering.
+      #
+      # Returns the given context with the rendered content.
+      def render(context)
+        context[:content] = @content.dup
+        context[:block] = self
+        @options['pipeline'].to_s.split(/,/).each do |processor|
+          raise "No such content processor available: #{processor}" unless context[:processors].has_key?(processor)
+          context[:processors][processor].call(context)
+        end
+        context
+      end
+
+    end
+
+
+    # Raised during parsing of data in Webgen Page Format if the data is invalid.
+    class FormatError < RuntimeError; end
+
 
     # :stopdoc:
     RE_META_INFO_START = /\A---\s*(?:\n|\r|\r\n)/m
@@ -89,17 +90,17 @@ module Webgen
       # original +data+ is used for checking the validness of the meta information block.
       def parse_meta_info(mi_data, data)
         if mi_data.nil? && data =~ RE_META_INFO_START
-          raise WebgenPageFormatError, 'Found start line for meta information block but no valid meta information block'
+          raise FormatError, 'Found start line for meta information block but no valid meta information block'
         elsif mi_data.nil?
           {}
         else
           begin
             meta_info = YAML::load(mi_data.to_s)
             unless meta_info.kind_of?(Hash)
-              raise WebgenPageFormatError, "Invalid structure of meta information block: expected YAML hash but found #{meta_info.class}"
+              raise FormatError, "Invalid structure of meta information block: expected YAML hash but found #{meta_info.class}"
             end
           rescue ArgumentError => e
-            raise WebgenPageFormatError, e.message
+            raise FormatError, e.message
           end
           meta_info
         end
@@ -109,20 +110,20 @@ module Webgen
       # which is used for setting the block names and options.
       def parse_blocks(data, meta_info)
         scanned = data.scan(RE_BLOCKS)
-        raise(WebgenPageFormatError, 'No content blocks specified') if scanned.length == 0
+        raise(FormatError, 'No content blocks specified') if scanned.length == 0
 
         blocks = {}
         scanned.each_with_index do |block_data, index|
           options, content = *block_data
           md = RE_BLOCKS_OPTIONS.match(options.to_s)
-          raise(WebgenPageFormatError, "Found invalid blocks starting line for block #{index+1}: #{options}") if content =~ /\A---/ || md.nil?
+          raise(FormatError, "Found invalid blocks starting line for block #{index+1}: #{options}") if content =~ /\A---/ || md.nil?
           options = Hash[*md[1].to_s.scan(/(\w+):([^\s]*)/).map {|k,v| [k, (v == '' ? nil : YAML::load(v))]}.flatten]
           options = (meta_info['blocks']['default'] || {} rescue {}).
             merge((meta_info['blocks'][index+1] || {} rescue {})).
             merge(options)
 
           name = options.delete('name') || (index == 0 ? 'content' : 'block' + (index + 1).to_s)
-          raise(WebgenPageFormatError, "Previously used name '#{name}' also used for block #{index+1}") if blocks.has_key?(name)
+          raise(FormatError, "Previously used name '#{name}' also used for block #{index+1}") if blocks.has_key?(name)
           content ||= ''
           content.gsub!(/^(\\+)(---.*?)$/) {|m| "\\" * ($1.length / 2) + $2}
           content.strip!
