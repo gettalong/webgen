@@ -19,17 +19,17 @@ class TestSourceHandlerMemory < Test::Unit::TestCase
     node = obj.create_node(root, path_with_meta_info('/test.png'), '/', 'data')
     assert_equal('/', node.node_info[:memory_source_alcn])
     assert_equal('data', obj.content(node))
-    assert(!node.flagged(:reinit))
+    assert(!node.flagged?(:reinit))
     root.tree.delete_node(node)
 
     node = obj.create_node(root, path_with_meta_info('/test.png'), '/') {|n| assert_equal(node, n); 'data'}
     assert_equal('/', node.node_info[:memory_source_alcn])
     assert_equal('data', obj.content(node))
-    assert(!node.flagged(:reinit))
+    assert(!node.flagged?(:reinit))
 
-    assert(!root.flagged(:dirty))
+    assert(!root.flagged?(:dirty))
     node.flag(:reinit)
-    assert(root.flagged(:dirty))
+    assert(root.flagged?(:dirty))
     root.unflag(:dirty)
     root.tree.delete_node(node)
 
@@ -37,8 +37,8 @@ class TestSourceHandlerMemory < Test::Unit::TestCase
     assert_equal('/', node.node_info[:memory_source_alcn])
     obj.instance_eval { @data = nil }
     assert_nil(obj.content(node))
-    assert(node.flagged(:reinit))
-    assert(root.flagged(:dirty))
+    assert(node.flagged?(:reinit))
+    assert(root.flagged?(:dirty))
   end
 
 end

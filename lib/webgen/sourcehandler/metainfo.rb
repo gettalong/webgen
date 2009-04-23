@@ -108,7 +108,7 @@ module Webgen::SourceHandler
     # node in question has changed.
     def node_meta_info_changed?(node)
       self.nodes.each do |n|
-        if n.flagged(:created) && meta_info_changed?(n, node)
+        if n.flagged?(:created) && meta_info_changed?(n, node)
           node.flag(:dirty_meta_info)
           return
         end

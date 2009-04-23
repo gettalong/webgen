@@ -62,7 +62,7 @@ module Webgen
             write_tree(tree)
           end
           puts "...done in " + ('%2.4f' % time.real) + ' seconds'
-        end while tree.node_access[:alcn].any? {|name,node| node.flagged(:created) || node.flagged(:reinit)}
+        end while tree.node_access[:alcn].any? {|name,node| node.flagged?(:created) || node.flagged?(:reinit)}
         :success
       end
 
@@ -86,7 +86,7 @@ module Webgen
             if deleted
               nodes_to_delete << node
               #TODO: delete output path
-            elsif (!node.flagged(:created) && find_all_source_paths[node.node_info[:src]].changed?) || node.meta_info_changed?
+            elsif (!node.flagged?(:created) && find_all_source_paths[node.node_info[:src]].changed?) || node.meta_info_changed?
               node.flag(:reinit)
               paths_to_use << node.node_info[:src]
             elsif node.changed?
@@ -98,7 +98,7 @@ module Webgen
           used_paths.merge(paths_to_use)
           paths = create_nodes_from_paths(tree, used_paths.to_a.sort)
           unused_paths.merge(used_paths - paths)
-          tree.node_access[:alcn].each {|name, node| tree.delete_node(node) if node.flagged(:reinit)}
+          tree.node_access[:alcn].each {|name, node| tree.delete_node(node) if node.flagged?(:reinit)}
           website.cache.reset_volatile_cache
         end until used_paths.empty?
       end
@@ -108,7 +108,7 @@ module Webgen
         output = website.blackboard.invoke(:output_instance)
 
         tree.node_access[:alcn].select do |name, node|
-          use_node = (node != tree.dummy_root && node.flagged(:dirty))
+          use_node = (node != tree.dummy_root && node.flagged?(:dirty))
           node.unflag(:dirty_meta_info)
           node.unflag(:created)
           node.unflag(:dirty)

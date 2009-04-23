@@ -65,23 +65,23 @@ EOF
     # Nothing done, nothing should have changed
     path_de = @root.tree['/path.de.html']
     @obj.send(:node_meta_info_changed?, path_de)
-    assert(!path_de.flagged(:dirty_meta_info))
+    assert(!path_de.flagged?(:dirty_meta_info))
 
     # Change data, meta info should have changed
     @path.instance_eval { @io = Webgen::Path::SourceIO.new {StringIO.new("path.de.html:\n  title: hallo")} }
     @obj.send(:node_meta_info_changed?, path_de)
-    assert(path_de.flagged(:dirty_meta_info))
+    assert(path_de.flagged?(:dirty_meta_info))
 
     # Reinit node, meta info of path_de should not change, #create_node should only return one node
     path_de.flag(:reinit)
     assert(1, @obj.create_node(@root, @path).length)
     @obj.send(:node_meta_info_changed?, path_de)
-    assert(!path_de.flagged(:dirty_meta_info))
+    assert(!path_de.flagged?(:dirty_meta_info))
 
     # Remove data, meta info should have changed
     @path.instance_eval { @io = Webgen::Path::SourceIO.new {StringIO.new("patha.de.html:\n  title: hallo")} }
     @obj.send(:node_meta_info_changed?, path_de)
-    assert(path_de.flagged(:dirty_meta_info))
+    assert(path_de.flagged?(:dirty_meta_info))
   end
 
 end

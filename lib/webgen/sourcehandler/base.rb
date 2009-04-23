@@ -213,7 +213,7 @@ module Webgen::SourceHandler
         return node
       elsif !node
         node = Webgen::Node.new(parent, output_path, path.cn, path.meta_info)
-      elsif node.flagged(:reinit)
+      elsif node.flagged?(:reinit)
         node.reinit(output_path, path.meta_info)
       else
         return node

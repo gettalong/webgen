@@ -35,7 +35,7 @@ class TestTagLink < Test::Unit::TestCase
     node.unflag(:dirty)
     @obj.set_params('tag.link.path' => nil)
     assert_equal('', call(context))
-    assert(node.flagged(:dirty))
+    assert(node.flagged?(:dirty))
 
     # invalid paths
     @obj.set_params('tag.link.path' => ':/asdf=-)')

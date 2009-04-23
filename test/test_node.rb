@@ -42,8 +42,8 @@ class TestNode < Test::Unit::TestCase
       assert_equal(alcn, node.absolute_lcn)
       assert_equal(lang, node.lang)
       assert_kind_of(Webgen::Language, node.lang) if node.lang
-      assert(node.flagged(:dirty))
-      assert(node.flagged(:created))
+      assert(node.flagged?(:dirty))
+      assert(node.flagged?(:created))
       assert_equal(mi, node.meta_info)
       assert_equal({:used_nodes => Set.new, :used_meta_info_nodes => Set.new}, node.node_info)
       mi.each {|k,v| assert_equal(v, node[k])}
@@ -86,18 +86,18 @@ class TestNode < Test::Unit::TestCase
 
   def test_flags
     node = Webgen::Node.new(@tree.dummy_root, 'test/', 'test', {'lang' => 'de', :test => :value})
-    assert(node.flagged(:created))
-    assert(node.flagged(:dirty))
+    assert(node.flagged?(:created))
+    assert(node.flagged?(:dirty))
     node.unflag(:dirty)
-    assert(!node.flagged(:dirty))
+    assert(!node.flagged?(:dirty))
     node.flag(:a, :b, :c)
-    assert(node.flagged(:a))
-    assert(node.flagged(:b))
-    assert(node.flagged(:c))
+    assert(node.flagged?(:a))
+    assert(node.flagged?(:b))
+    assert(node.flagged?(:c))
     node.unflag(:a, :b, :c)
-    assert(!node.flagged(:a))
-    assert(!node.flagged(:b))
-    assert(!node.flagged(:c))
+    assert(!node.flagged?(:a))
+    assert(!node.flagged?(:b))
+    assert(!node.flagged?(:c))
   end
 
   def test_in_lang
