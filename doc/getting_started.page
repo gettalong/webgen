@@ -21,20 +21,18 @@ The directory in which these directories are in is called the *website directory
 
 Don't worry too much about these directories since webgen is able to create the correct directory
 structure for you. By running the command `webgen create sample_site`, the website directory
-`sample_site` is created with the default website template and website style. You can naturally use
-any available template or style by passing their names to the respective options of the `create`
-command.
+`sample_site` is created with the default website bundles applied. You can naturally use any
+available bundles by passing their names to the `-b` option of the `create` command.
 
-> A *website template* provides a starting point for your website. For example, the `project`
-> template defines several pages including a features and about page.
->
-> A *website style* defines the look and feel of your website. webgen comes with many predefined
-> styles (nearly all of them are converted open source web design styles).
+> A *website bundle* defines some starting content for a website. The `default` bundle defines just
+> a sample content file sothat some output can be viewed after webgen is run. All other bundles are
+> style bundles which define the look and feel of your website. webgen comes with many predefined
+> style bundles and nearly all of them are converted open source web design styles.
 {.information}
 
 Don't worry if you don't like the used website style - you can easily change it later using the
 `webgen apply` command. Have a look at [the examples
-section](0.4.x/examples/website_styles/index.html) (note: these are still the example from the
+section](0.4.x/examples/website_styles/index.html) (note: these are still the examples from the
 previous version of webgen but the styles haven't changed) to see demonstrations for all shipped
 website templates and styles!
 
@@ -48,11 +46,11 @@ possibilities:
 
 Easy! webgen has used all files in the `src` directory and created the HTML output in the directory
 `out`. Now you just need to open the `out/index.html` file to view your website! However, as we did
-not write any content yet, there is not much to see (only the default pages). So let's do that now!
+not write any content yet, there is not much to see (only the default page). So let's do that now!
 
 > Since webgen automatically creates relative links, you will have a fully functional website
 > without needing a web server! This also implies that you can deploy your website to any directory
-> on your web server and it will just work!
+> on your web server and it will *just work*!
 {.information}
 
 

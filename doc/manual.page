@@ -36,16 +36,29 @@ valid:
 
 Following is a short overview of the available commands:
 
-*   `apply [-f] STYLE`
+*   `apply [-f] (BUNDLE_NAME|BUNDLE_URL)`
 
-    Applies the style `STYLE` to the given webgen website. The files that will be written to website
-    directory are shown and the user is asked to confirm that the shown files should indeed be
-    written (and sometimes overwritten). If the `-f` option is used, the files are always written.
+    The argument may either be a valid bundle name or an URL to a bundle archive (a (gzipped) tar
+    archive). The command applies the bundle to the given webgen website. The files that will be
+    written to website directory are shown and the user is asked to confirm that the shown files
+    should indeed be written (and sometimes overwritten). If the `-f` option is used, the files are
+    always written.
 
-*   `create [-t TEMPLATE] [-s STYLE] SITE_DIR`
+    You can get the full list of available bundle names by running `webgen help apply`!
 
-    Creates a basic webgen website in `SITE_DIR` using the optional template and styles. All
-    available templates and styles are listed in the help output for the command.
+*   `create [-b BUNDLE] SITE_DIR`
+
+    Creates a basic webgen website in `SITE_DIR` using the optionally specified bundles. The option
+    `-b` can be used more than once to specify more than one bundle - the bundles are applied in the
+    order they are specified. As with the `apply` command, `BUNDLE` may either be a valid bundle
+    name or a bundle URL.
+
+    > If you don't specify the `-b` option, the default value is used which applies the `default`
+    > and the `style-andreas07` bundles. The former only creates a simple `src/index.page` sothat
+    > some output can be seen and the latter applies a nice layout.
+    {.information}
+
+    All available bundles are listed in the help output for the command.
 
 *   `help`
 
