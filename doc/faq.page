@@ -10,14 +10,17 @@ title: FAQ
 
 *   **Why can I specify multiple blocks in a page/template file?**
 
-    This allows you to provide different content parts for one page. For example, image you have a
+    This allows you to provide different content parts for one page. For example, imagine you have a
     layout with a sidebar and you want to have page specific sidebar contents. The easiest way to
     achieve that is to add a `sidebar` block to the page files that provide a page specific sidebar
-    content and conditionally include the `sidebar` block in your `default.template`, like this:
+    content and include the `sidebar` block in your `default.template`, like this:
 
-        <%% if node.node_info[:page].blocks.has_key?('sidebar') %>
-          \<webgen:block name='sidebar' />
-        <%% end %>
+        <webgen:block name='sidebar' notfound="ignore" chain="first" />
+
+    By using `notfound="ignore"` we tell webgen to ignore errors when such a block is not found and
+    the `chain="first"` attribute tells webgen to search through the whole node chain for such a
+    block. The latter is needed when nested templates are used because by default only the next node
+    in the chain is inspected.
 
 *   **What do I have to do to use the extensions?**
 
@@ -43,9 +46,9 @@ questions.
 
 Use the `webgen` command to create the needed directories
 
-    webgen create -t project -s andreas07 my_site
+    webgen create -b default -b andreas07 my_site
 
-This will create a webgen website in the directory `my_site` using the specified template and style.
+This will create a webgen website in the directory `my_site` using the specified bundles.
 
 ### ... set configuration options?
 
@@ -208,8 +211,8 @@ having menu entries that point to the same page and links to external pages.
 
 ### ... use short menu title?
 
-You can use a special of the meta information `link_attrs` to achieve that. Just use the following
-in the meta information block of the page file for which you want a short menu title:
+You can use the special meta information key `link_attrs` to achieve that. Just use the following in
+the meta information block of the page file for which you want a short menu title:
 
     link_attrs:
       :link_text: Short title
