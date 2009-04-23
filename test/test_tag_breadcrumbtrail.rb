@@ -81,11 +81,11 @@ class TestTagBreadcrumbTrail < Test::Unit::TestCase
 
     nodes[:file11_en].unflag(:dirty)
     @website.blackboard.dispatch_msg(:node_changed?, nodes[:file11_en])
-    assert(!nodes[:file11_en].flagged(:dirty))
+    assert(!nodes[:file11_en].flagged?(:dirty))
 
     nodes[:index11_en].flag(:dirty_meta_info)
     @website.blackboard.dispatch_msg(:node_changed?, nodes[:file11_en])
-    assert(nodes[:file11_en].flagged(:dirty))
+    assert(nodes[:file11_en].flagged?(:dirty))
   end
 
 end

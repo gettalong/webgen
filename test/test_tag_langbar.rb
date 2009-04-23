@@ -48,10 +48,10 @@ class TestTagLangbar < Test::Unit::TestCase
 
     nodes[:index_en].unflag(:dirty)
     @website.blackboard.dispatch_msg(:node_changed?, nodes[:index_en])
-    assert(!nodes[:index_en].flagged(:dirty))
+    assert(!nodes[:index_en].flagged?(:dirty))
     nodes[:index_en].tree.delete_node(nodes[:index_de])
     @website.blackboard.dispatch_msg(:node_changed?, nodes[:index_en])
-    assert(nodes[:index_en].flagged(:dirty))
+    assert(nodes[:index_en].flagged?(:dirty))
   end
 
   def check_results(node, both_true, both_false, first_false, second_false)

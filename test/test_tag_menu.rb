@@ -92,16 +92,16 @@ class TestTagMenu < Test::Unit::TestCase
 
     nodes.each {|k,v| v.unflag(:dirty)}
     @website.blackboard.dispatch_msg(:node_changed?, nodes[:file11_en])
-    assert(!nodes[:file11_en].flagged(:dirty))
+    assert(!nodes[:file11_en].flagged?(:dirty))
 
     nodes[:index11_en].flag(:dirty_meta_info)
     @website.blackboard.dispatch_msg(:node_changed?, nodes[:file11_en])
-    assert(nodes[:file11_en].flagged(:dirty))
+    assert(nodes[:file11_en].flagged?(:dirty))
 
     nodes.each {|k,v| v.unflag(:dirty)}
     nodes[:file11_en_f2]['in_menu'] = false
     @website.blackboard.dispatch_msg(:node_changed?, nodes[:file11_en])
-    assert(nodes[:file11_en].flagged(:dirty))
+    assert(nodes[:file11_en].flagged?(:dirty))
   end
 
   def test_menu_tree_for_lang_and_create_menu_tree

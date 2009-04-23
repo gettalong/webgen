@@ -40,11 +40,11 @@ class TestTagIncludeFile < Test::Unit::TestCase
 
     root.unflag(:dirty)
     @website.blackboard.dispatch_msg(:node_changed?, root)
-    assert(!root.flagged(:dirty))
+    assert(!root.flagged?(:dirty))
 
     File.utime(Time.now + 1, Time.now + 1, file.path)
     @website.blackboard.dispatch_msg(:node_changed?, root)
-    assert(root.flagged(:dirty))
+    assert(root.flagged?(:dirty))
   end
 
 end

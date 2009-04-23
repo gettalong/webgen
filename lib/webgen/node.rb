@@ -134,7 +134,7 @@ module Webgen
     #          run. Must not be set to +false+ once it is +true+!
     # [:dirty_meta_info] Set by other objects to +true+ if the meta information of the node has
     #                    changed since the last run. Must not be set to +false+ once it is +true+!
-    def flagged(key)
+    def flagged?(key)
       @flags.include?(key)
     end
 
@@ -163,9 +163,9 @@ module Webgen
         flag(:dirty) if meta_info_changed? ||
           node_info[:used_nodes].any? {|n| n != @absolute_lcn && (!tree[n] || tree[n].changed?)} ||
           node_info[:used_meta_info_nodes].any? {|n| n != @absolute_lcn && (!tree[n] || tree[n].meta_info_changed?)}
-        website.blackboard.dispatch_msg(:node_changed?, self) unless flagged(:dirty)
+        website.blackboard.dispatch_msg(:node_changed?, self) unless flagged?(:dirty)
       end
-      flagged(:dirty)
+      flagged?(:dirty)
     end
 
     # Return +true+ if the meta information of the node has changed.
@@ -176,9 +176,9 @@ module Webgen
     # dirty.
     def meta_info_changed?
       if_not_checked(:meta_info) do
-        website.blackboard.dispatch_msg(:node_meta_info_changed?, self) unless flagged(:dirty_meta_info)
+        website.blackboard.dispatch_msg(:node_meta_info_changed?, self) unless flagged?(:dirty_meta_info)
       end
-      flagged(:dirty_meta_info)
+      flagged?(:dirty_meta_info)
     end
 
     # Return an informative representation of the node.

@@ -60,15 +60,15 @@ EOF
 
     other.unflag(:dirty_meta_info)
     @obj.send(:mark_all_matched_dirty, @node)
-    assert(!other.flagged(:dirty_meta_info))
+    assert(!other.flagged?(:dirty_meta_info))
 
     other.unflag(:dirty_meta_info)
     @obj.send(:mark_all_matched_dirty, @node, :force)
-    assert(other.flagged(:dirty_meta_info))
+    assert(other.flagged?(:dirty_meta_info))
 
     other.unflag(:dirty_meta_info)
     @obj.send(:mark_all_matched_dirty, @node, :no_old_data)
-    assert(!other.flagged(:dirty_meta_info))
+    assert(!other.flagged?(:dirty_meta_info))
   end
 
   def test_before_node_created
@@ -86,19 +86,19 @@ EOF
   def test_before_node_deleted
     other = TestSH.new.create_node(@root, path_with_meta_info('/default.css'))
     @website.blackboard.dispatch_msg(:before_node_deleted, @node)
-    assert(other.flagged(:dirty_meta_info))
+    assert(other.flagged?(:dirty_meta_info))
     assert(@obj.nodes.empty?)
   end
 
   def test_node_meta_info_changed
     @node.unflag(:dirty_meta_info)
     @website.blackboard.dispatch_msg(:node_meta_info_changed?, @node)
-    assert(!@node.flagged(:dirty_meta_info))
+    assert(!@node.flagged?(:dirty_meta_info))
 
     @node.node_info[:mi_alcn] = @node.node_info[:mi_alcn].dup
     @node.node_info[:mi_alcn]['/*metainfo'] = {'other' => 'doit'}
     @website.blackboard.dispatch_msg(:node_meta_info_changed?, @node)
-    assert(@node.flagged(:dirty_meta_info))
+    assert(@node.flagged?(:dirty_meta_info))
   end
 
   def test_content
@@ -112,7 +112,7 @@ EOF
 
     @node.flag(:reinit)
     @node = @obj.create_node(@root, path_with_meta_info('/metainfo', {}, @obj.class.name) {StringIO.new("")})
-    assert(other.flagged(:dirty_meta_info))
+    assert(other.flagged?(:dirty_meta_info))
   end
 
 end
