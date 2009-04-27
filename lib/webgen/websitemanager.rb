@@ -49,10 +49,21 @@ module Webgen
     # The used Website object.
     attr_reader :website
 
-    # Create a new WebsiteManager for the website +dir+.
+    # Create a new WebsiteManager.
+    #
+    # If +dir+ is a String, then the website manager is created for the website in the directory
+    # +dir+.
+    #
+    # If +dir+ is a Website object, the website manager is created for the website represented by
+    # +dir+. If the website object is initialized if it isn't already.
     def initialize(dir)
-      @website = Webgen::Website.new(dir)
-      @website.init
+      if dir.kind_of?(Webgen::Website)
+        @website = dir
+        @website.init if @website.config.nil?
+      else
+        @website = Webgen::Website.new(dir)
+        @website.init
+      end
       @bundles = {}
 
       @website.execute_in_env do

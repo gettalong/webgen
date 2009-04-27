@@ -13,6 +13,10 @@ class TestWebsiteManager < Test::Unit::TestCase
     t = wm.bundles['default']
     assert_equal('Thomas Leitner', t.author)
     assert(t.paths.length > 0)
+
+    ws = Webgen::Website.new('.')
+    wm = Webgen::WebsiteManager.new(ws)
+    assert_equal('Thomas Leitner', wm.bundles['default'].author)
   end
 
   def test_create_website
