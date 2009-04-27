@@ -1,0 +1,8 @@
+website_styles/*/default.template:
+  template: ~
+
+website_styles/*/:
+  index_path: style.html
+
+website_styles/:
+  index_path: ~

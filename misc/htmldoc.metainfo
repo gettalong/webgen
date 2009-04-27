@@ -22,4 +22,5 @@ extensions.*.html:
   in_menu: true
   sort_info: 50
 
-
+images/:
+  index_path: ~

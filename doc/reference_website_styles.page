@@ -1,0 +1,28 @@
+---
+title: Website Styles Reference
+---
+
+Following is a list of all website styles that are included in the webgen distribution. Each style
+can be used when creating a website by using the command
+
+    webgen create -b default -b STYLE_NAME SITE_DIR
+
+or applied later using the command
+
+    webgen apply STYLE_NAME
+
+When you click on the link provided for each website style, you will get a full browser preview of
+the respective website style. You can then return to this list by using the *back button* of your
+browser:
+
+<%
+context.content_node.tree.node_access[:alcn].select do |name, node|
+  node.is_directory? && node.parent == context.content_node.tree[File.join(context.content_node.parent.absolute_lcn, '/website_styles')]
+end.sort.each do |name, node|
+%>
+<h2 id="<%= node.cn %>"><%= node.cn %></h2>
+<div class="website-styles">
+<%= context.dest_node.link_to(node, :link_text => "Full window version") %>
+<object type="text/html" data="<%= context.dest_node.route_to(node) %>">Nothing</object>
+</div>
+<% end %>
