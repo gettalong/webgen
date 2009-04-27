@@ -47,11 +47,15 @@ module Webgen::SourceHandler
     # Checks if the meta information provided by the file in Webgen Page Format changed.
     def meta_info_changed?(node)
       path = website.blackboard.invoke(:source_paths)[node.node_info[:src]]
-      return if node.node_info[:processor] != self.class.name || !path.changed?
+      return if node.node_info[:processor] != self.class.name || (path && !path.changed?)
 
-      old_mi = node.node_info[:sh_page_node_mi]
-      new_mi = Webgen::Page.meta_info_from_data(path.io.data)
-      node.flag(:dirty_meta_info) if old_mi && old_mi != new_mi
+      if !path
+        node.flag(:dirty_meta_info)
+      else
+        old_mi = node.node_info[:sh_page_node_mi]
+        new_mi = Webgen::Page.meta_info_from_data(path.io.data)
+        node.flag(:dirty_meta_info) if old_mi && old_mi != new_mi
+      end
     end
 
   end

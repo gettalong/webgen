@@ -98,11 +98,15 @@ module Webgen::SourceHandler
     # the case if the node has been recreated in this run.
     def node_meta_info_changed?(node)
       path = website.blackboard.invoke(:source_paths)[node.node_info[:src]]
-      return if node.node_info[:processor] != self.class.name || !path.changed?
+      return if node.node_info[:processor] != self.class.name || (path && !path.changed?)
 
-      old_data = node.node_info[:sh_virtual_cache_data]
-      new_data = read_data(path).find {|key, mi| key == old_data.first}
-      node.flag(:dirty_meta_info) if !new_data || old_data.last != new_data.last
+      if !path
+        node.flag(:dirty_meta_info)
+      else
+        old_data = node.node_info[:sh_virtual_cache_data]
+        new_data = read_data(path).find {|key, mi| key == old_data.first}
+        node.flag(:dirty_meta_info) if !new_data || old_data.last != new_data.last
+      end
     end
 
   end

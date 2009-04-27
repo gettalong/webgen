@@ -60,6 +60,14 @@ class TestSourceHandlerPage < Test::Unit::TestCase
     @path.instance_eval { @io = Webgen::Path::SourceIO.new {StringIO.new("---\ntitle: test\n---\ncontent")} }
     @website.blackboard.dispatch_msg(:node_meta_info_changed?, node)
     assert(node.meta_info_changed?)
+
+    # Remove path from which node is created, meta info should naturally change
+    @root.tree.delete_node(node)
+    node = @obj.create_node(@root, @path)
+    @website.blackboard.del_service(:source_paths)
+    @website.blackboard.add_service(:source_paths) { {} }
+    @website.blackboard.dispatch_msg(:node_meta_info_changed?, node)
+    assert(node.meta_info_changed?)
   end
 
 end
