@@ -11,7 +11,7 @@ class TestSourceHandlerFragment < Test::Unit::TestCase
 
   TEST_CONTENT=<<EOF
 - data: |
-    <h1 id="test">Test</h1>
+    <h1 id="test" style="test">Test</h1>
     <h2 id="other">test</h2>
     <h1>nothing</h1>
     <h1 id="third">test</h1>
