@@ -10,7 +10,7 @@ module Webgen::SourceHandler
     include Webgen::WebsiteAccess
 
     HTML_HEADER_REGEXP = /<h([123456])(?:>|\s([^>]*)>)(.*?)<\/h\1\s*>/i
-    HTML_ATTR_REGEXP = /\s*(\w+)\s*=\s*('|")([^\2]+)\2\s*/
+    HTML_ATTR_REGEXP = /\s*(\w+)\s*=\s*('|")(.+?)\2\s*/
 
     # Parse the string +content+ for headers +h1+, ..., +h6+ and return the found, nested sections.
     #
