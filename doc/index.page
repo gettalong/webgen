@@ -58,6 +58,10 @@ Following is a list of all the reference documentation of webgen:
 * [**Configuration Options Reference**]({relocatable: reference_configuration.html}): Overview of all
   configuration options.
 
+* [**Website Styles Reference**]({relocatable: reference_website_styles.html}): Previews of all
+  website styles that ship with webgen.
+
+
 # Developer Documentation
 
 webgen makes it easy to extend its functionality by writing simple extension classes. All
