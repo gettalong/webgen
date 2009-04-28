@@ -259,7 +259,7 @@ margin: 0px;
 padding: 0px;
 }
 
-.nav, #leftside #submenu ul a {
+.nav, #leftside #submenu ul a, #leftside #submenu ul span {
 color:#d04a10;
 display:block;
 font-size:1.1em;
@@ -271,20 +271,22 @@ text-decoration:none;
 width:125px;
 }
 
-.nav:hover, #leftside #submenu ul a:hover {
+.nav:hover, #leftside #submenu ul a:hover, #leftside #submenu ul span:hover,
+#leftside #submenu ul li.webgen-menu-item-selected a, #leftside #submenu ul li.webgen-menu-item-selected span {
 border:1px solid #fa9035;
 color:#505050;
 padding:1px 1px 1px 9px;
 }
 
-.sub, #leftside #submenu ul ul a {
+.sub, #leftside #submenu ul ul a, #leftside #submenu ul ul span {
 font-size:0.9em;
 margin-left:20px;
 padding:1px 1px 1px 6px;
 width:105px;
 }
 
-.sub:hover, #leftside #submenu ul ul a {
+.sub:hover, #leftside #submenu ul ul a:hover, #leftside #submenu ul ul span:hover,
+#leftside #submenu ul ul li.webgen-menu-item-selected a, #leftside #submenu ul ul li.webgen-menu-item-selected span {
 border:1px solid #fa9035;
 color:#505050;
 padding:0 0 0 5px;
