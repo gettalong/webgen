@@ -45,7 +45,7 @@ module Webgen::SourceHandler
       block_name = node.node_info[:feed_type] + '_template'
       if node.node_info[:feed].blocks.has_key?(block_name)
         node.node_info[:feed].blocks[block_name].
-          render(Webgen::ContentProcessor::Context.new(:chain => [node])).content
+          render(Webgen::Context.new(:chain => [node])).content
       else
         feed = (website.cache.volatile[:sourcehandler_feed] ||= {})[node.node_info[:src]] ||= build_feed_for(node)
         feed.build_xml(node.node_info[:feed_type], (node.node_info[:feed_type] == 'rss' ? node['rss_version'] || 2.0 : nil))
@@ -90,7 +90,7 @@ module Webgen::SourceHandler
         item = FeedTools::FeedItem.new
         item.title = entry['title']
         item.link = File.join(site_url, entry.path)
-        item.content = entry.node_info[:page].blocks[node['content_block_name'] || 'content'].render(Webgen::ContentProcessor::Context.new(:chain => [entry])).content
+        item.content = entry.node_info[:page].blocks[node['content_block_name'] || 'content'].render(Webgen::Context.new(:chain => [entry])).content
         item.updated = entry['modified_at']
         item.published = entry['created_at'] if entry['created_at'].kind_of?(Time)
         if entry['author']

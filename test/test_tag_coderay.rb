@@ -23,7 +23,7 @@ class TestTagCoderay < Test::Unit::TestCase
 
   def test_call
     root = Webgen::Node.new(Webgen::Tree.new.dummy_root, '/', '/', {'title' => 'Hallo'})
-    context = Webgen::ContentProcessor::Context.new(:chain => [root])
+    context = Webgen::Context.new(:chain => [root])
 
     assert(call(context, 'TestData', 'html', false).include?('TestData'))
     assert(call(context, '{title:}', :ruby, true).include?('Hallo'))

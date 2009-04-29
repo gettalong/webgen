@@ -12,7 +12,7 @@ class TestTagDate < Test::Unit::TestCase
 
   def test_call
     @obj = Webgen::Tag::Date.new
-    assert_not_nil(Time.parse(@obj.call('date', '', Webgen::ContentProcessor::Context.new)))
+    assert_not_nil(Time.parse(@obj.call('date', '', Webgen::Context.new)))
   end
 
 end

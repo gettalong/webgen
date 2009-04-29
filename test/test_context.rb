@@ -2,16 +2,16 @@
 
 require 'test/unit'
 require 'helper'
-require 'webgen/contentprocessor'
+require 'webgen/context'
 
-class TestContentProcessorContext < Test::Unit::TestCase
+class TestContext < Test::Unit::TestCase
 
   def setup
-    @context = Webgen::ContentProcessor::Context.new(:content => 'test', :key => :value, :chain => [:first, :last])
+    @context = Webgen::Context.new(:content => 'test', :key => :value, :chain => [:first, :last])
   end
 
   def test_initialize
-    context = Webgen::ContentProcessor::Context.new
+    context = Webgen::Context.new
     assert_equal('', context.content)
     assert_kind_of(Webgen::ContentProcessor::AccessHash, context[:processors])
   end

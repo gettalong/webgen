@@ -93,7 +93,7 @@ module Webgen::Tag::Base
   # The parameter +body+ holds the optional body value for the tag.
   #
   # The +context+ parameter holds all relevant information for processing. Have a look at the
-  # Webgen::ContentProcessor::Context class to see what is available.
+  # Webgen::Context class to see what is available.
   #
   # The method has to return the result of the tag processing and, optionally, a boolean value
   # specifying if the result should further be processed (ie. webgen tags replaced).

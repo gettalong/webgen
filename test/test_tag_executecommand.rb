@@ -24,7 +24,7 @@ class TestTagExecuteCommand < Test::Unit::TestCase
 
   def test_call
     root = Webgen::Node.new(Webgen::Tree.new.dummy_root, '/', '/')
-    context = Webgen::ContentProcessor::Context.new(:chain => [root])
+    context = Webgen::Context.new(:chain => [root])
 
     test_text = "a\"b\""
     assert_equal([test_text, false], call(context, echo_cmd(test_text), false, false))

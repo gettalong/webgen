@@ -29,7 +29,7 @@ class TestTagLink < Test::Unit::TestCase
     dir2 = Webgen::Node.new(root, '/dir2/', 'dir2/', 'index_path' => "index.html")
     Webgen::Node.new(dir2, '/dir2/index.html', 'index.html')
 
-    context = Webgen::ContentProcessor::Context.new(:chain => [node])
+    context = Webgen::Context.new(:chain => [node])
 
     # no path set
     node.unflag(:dirty)

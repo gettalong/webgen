@@ -29,7 +29,7 @@ class TestTagRelocatable < Test::Unit::TestCase
     dir2 = Webgen::Node.new(root, '/dir2/', 'dir2/', 'index_path' => "index.html")
     Webgen::Node.new(dir2, '/dir2/index.html', 'index.html')
 
-    context = Webgen::ContentProcessor::Context.new(:chain => [node])
+    context = Webgen::Context.new(:chain => [node])
 
     # basic node resolving
     @obj.set_params('tag.relocatable.path' => 'dir/file.html')

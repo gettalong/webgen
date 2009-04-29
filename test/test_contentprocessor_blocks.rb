@@ -16,7 +16,7 @@ class TestContentProcessorBlocks < Test::Unit::TestCase
     template.node_info[:page] = Webgen::Page.from_data("--- name:content pipeline:blocks\nbefore<webgen:block name='content' />after")
     processors = { 'blocks' => obj }
 
-    context = Webgen::ContentProcessor::Context.new(:chain => [node], :processors => processors)
+    context = Webgen::Context.new(:chain => [node], :processors => processors)
     context.content = '<webgen:block name="content" /><webgen:block name="content" chain="template;test" />'
     obj.call(context)
     assert_equal('databeforedataafter', context.content)

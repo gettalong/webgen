@@ -21,4 +21,17 @@ module Webgen
     end
   end
 
+  module ContentProcessor
+
+    def self.const_missing(const)
+      if const.to_s == 'Context'
+        warn("Deprecation warning: Webgen::ContentProcessor::Context is now named Webgen::Context! This alias will be removed in one of the next releases.")
+        Webgen::Context
+      else
+        super
+      end
+    end
+
+  end
+
 end

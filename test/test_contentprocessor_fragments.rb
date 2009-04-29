@@ -20,7 +20,7 @@ class TestContentProcessorFragments < Test::Unit::TestCase
     root.node_info[:src] = '/'
     processors = { 'fragments' => obj }
 
-    context = Webgen::ContentProcessor::Context.new(:chain => [root], :processors => processors)
+    context = Webgen::Context.new(:chain => [root], :processors => processors)
     context.content = '<h1 id="test">Test</h1><h1>Test2</h1>'
     obj.call(context)
     assert(root.tree['/#test'])

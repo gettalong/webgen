@@ -40,7 +40,7 @@ class TestTagBreadcrumbTrail < Test::Unit::TestCase
 
   def test_call
     nodes = create_default_nodes
-    context = Webgen::ContentProcessor::Context.new(:chain => [nodes[:file11_en]])
+    context = Webgen::Context.new(:chain => [nodes[:file11_en]])
 
     assert_equal('<a href="../../index.html"></a> / <a href="../">Dir1</a> / <a href="index.html">Dir11</a> / <span>File111</span>',
                  call(context, ' / ', false, 0, -1))
@@ -76,7 +76,7 @@ class TestTagBreadcrumbTrail < Test::Unit::TestCase
 
   def test_node_changed
     nodes = create_default_nodes
-    context = Webgen::ContentProcessor::Context.new(:chain => [nodes[:file11_en]])
+    context = Webgen::Context.new(:chain => [nodes[:file11_en]])
     call(context, ' / ', false, 0, -1)
 
     nodes[:file11_en].unflag(:dirty)

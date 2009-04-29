@@ -27,7 +27,7 @@ class TestTagTikZ < Test::Unit::TestCase
   def test_call
     root = Webgen::Node.new(Webgen::Tree.new.dummy_root, '/', '/')
     node = Webgen::Node.new(root, '/file.html', 'file.page')
-    context = Webgen::ContentProcessor::Context.new(:chain => [node])
+    context = Webgen::Context.new(:chain => [node])
 
     output = call(context, '\tikz \draw (0,0) -- (0,1);', 'test.png', [], '', '72 72', false, {})
     assert_equal('<img src="test.png" />', output)
@@ -56,7 +56,7 @@ class TestTagTikZ < Test::Unit::TestCase
 
   def test_run_command
     root = Webgen::Node.new(Webgen::Tree.new.dummy_root, '/', '/')
-    context = Webgen::ContentProcessor::Context.new(:chain => [root])
+    context = Webgen::Context.new(:chain => [root])
     assert_equal("hallo\n", @obj.send(:run_command, echo_cmd('hallo'), context))
     assert_nil(@obj.send(:run_command, 'unknown_command 2>&1', context))
   end

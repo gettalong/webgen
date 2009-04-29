@@ -10,7 +10,7 @@ class TestContentProcessorSass < Test::Unit::TestCase
     obj = Webgen::ContentProcessor::Sass.new
     root = Webgen::Node.new(Webgen::Tree.new.dummy_root, '/', '/')
     node = Webgen::Node.new(root, 'test', 'test')
-    context = Webgen::ContentProcessor::Context.new(:content => "#main\n  :background-color #000",
+    context = Webgen::Context.new(:content => "#main\n  :background-color #000",
                                                     :chain => [node])
     obj.call(context)
     assert_equal("#main {\n  background-color: #000; }\n", context.content)
