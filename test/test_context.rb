@@ -27,11 +27,13 @@ class TestContext < Test::Unit::TestCase
     assert_equal(:value, @context[:key])
     assert_equal([:first, :last], @context[:chain])
     assert_equal('test', @context.content)
-    assert_equal(:first, @context.ref_node)
-    assert_equal(:last, @context.content_node)
-    assert_equal(:value, @context[:key])
     @context[:key] = :newvalue
     assert_equal(:newvalue, @context[:key])
+  end
+
+  def test_node_methods
+    assert_equal(:first, @context.ref_node)
+    assert_equal(:last, @context.content_node)
     assert_equal(:last, @context.dest_node)
     @context[:dest_node] = :other
     assert_equal(:other, @context.dest_node)
