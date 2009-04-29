@@ -26,7 +26,7 @@ class TestTagIncludeFile < Test::Unit::TestCase
 
   def test_call
     root = Webgen::Node.new(Webgen::Tree.new.dummy_root, '/', '/')
-    context = Webgen::ContentProcessor::Context.new(:chain => [root])
+    context = Webgen::Context.new(:chain => [root])
 
     content = "<a>This is 'a' Test</a>"
     file = Tempfile.new('webgen-test-file')

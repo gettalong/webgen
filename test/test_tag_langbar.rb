@@ -34,17 +34,17 @@ class TestTagLangbar < Test::Unit::TestCase
 
     @obj.set_params('tag.langbar.show_single_lang' => true, 'tag.langbar.show_own_lang' => true, 'tag.langbar.separator' => ' --- ')
     assert_equal(["#{de_link} --- #{en_link}", false],
-                 @obj.call('langbar', '', Webgen::ContentProcessor::Context.new(:chain => [nodes[:index_en]])))
+                 @obj.call('langbar', '', Webgen::Context.new(:chain => [nodes[:index_en]])))
 
     @obj.set_params('tag.langbar.show_single_lang' => true, 'tag.langbar.show_own_lang' => true,
                     'tag.langbar.lang_names' => {'de' => 'Deutsch'})
     assert_equal(["<a href=\"index.de.html\">Deutsch</a> | #{en_link}", false],
-                 @obj.call('langbar', '', Webgen::ContentProcessor::Context.new(:chain => [nodes[:index_en]])))
+                 @obj.call('langbar', '', Webgen::Context.new(:chain => [nodes[:index_en]])))
 
     @obj.set_params('tag.langbar.show_single_lang' => true, 'tag.langbar.show_own_lang' => true,
                     'tag.langbar.process_output' => true)
     assert_equal(["#{de_link} | #{en_link}", true],
-                 @obj.call('langbar', '', Webgen::ContentProcessor::Context.new(:chain => [nodes[:index_en]])))
+                 @obj.call('langbar', '', Webgen::Context.new(:chain => [nodes[:index_en]])))
 
     nodes[:index_en].unflag(:dirty)
     @website.blackboard.dispatch_msg(:node_changed?, nodes[:index_en])
@@ -55,7 +55,7 @@ class TestTagLangbar < Test::Unit::TestCase
   end
 
   def check_results(node, both_true, both_false, first_false, second_false)
-    context = Webgen::ContentProcessor::Context.new(:chain => [node])
+    context = Webgen::Context.new(:chain => [node])
     @obj.set_params('tag.langbar.show_single_lang'=>true, 'tag.langbar.show_own_lang'=>true)
     assert_equal(both_true, @obj.call('langbar', '', context).first)
 

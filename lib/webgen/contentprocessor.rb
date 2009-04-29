@@ -9,7 +9,7 @@ module Webgen
   # Content processors are used to process the content of files, normally of files in Webgen Page
   # Format. A content processor only needs to respond to one method called +call+ and must not take
   # any parameters in the +initialize+ method. This method is invoked with a
-  # Webgen::ContentProcessor::Context object that provides the whole context (especially the content
+  # Webgen::Context object that provides the whole context (especially the content
   # and the node chain) and the method needs to return this object. During processing a content
   # processor normally changes the content of the context but it does not need to.
   #
@@ -55,7 +55,6 @@ module Webgen
   #
   module ContentProcessor
 
-    autoload :Context, 'webgen/contentprocessor/context'
     autoload :Tags, 'webgen/contentprocessor/tags'
     autoload :Blocks, 'webgen/contentprocessor/blocks'
     autoload :Maruku, 'webgen/contentprocessor/maruku'
@@ -80,7 +79,7 @@ module Webgen
       klass.nil? ? nil : WebsiteAccess.website.cache.instance(klass)
     end
 
-    # Helper class for accessing content processors in a Webgen::ContentProcessor::Context object.
+    # Helper class for accessing content processors in a Webgen::Context object.
     class AccessHash
 
       # Check if a content processor called +name+ exists.

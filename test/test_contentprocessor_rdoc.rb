@@ -10,7 +10,7 @@ class TestContentProcessorRDoc < Test::Unit::TestCase
     obj = Webgen::ContentProcessor::RDoc.new
     root = Webgen::Node.new(Webgen::Tree.new.dummy_root, '/', '/')
     node = Webgen::Node.new(root, 'test', 'test')
-    context = Webgen::ContentProcessor::Context.new(:content => "* hello",
+    context = Webgen::Context.new(:content => "* hello",
                                                     :chain => [node])
     assert_equal("<ul>\n<li>hello\n\n</li>\n</ul>\n", obj.call(context).content)
   end

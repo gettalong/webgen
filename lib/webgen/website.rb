@@ -24,6 +24,7 @@ require 'webgen/tree'
 
 # Files for autoloading
 require 'webgen/common'
+require 'webgen/context'
 require 'webgen/source'
 require 'webgen/output'
 require 'webgen/sourcehandler'

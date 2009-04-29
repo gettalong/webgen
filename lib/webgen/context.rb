@@ -1,27 +1,38 @@
 # -*- encoding: utf-8 -*-
 
-module Webgen::ContentProcessor
+module Webgen
 
-  # The context object that is passed to the +call+ method of a content processor.
+  # This class represents the context object that is passed, for example, to the +call+ method of a
+  # content processor.
   #
   # The needed context variables are stored in the +options+ hash. You can set any options you like,
   # however, there are three noteworthy options:
   #
-  # [<tt>:content</tt>] The content string that should be processed.
-  # [<tt>:processors</tt>] Normally an AccessHash object providing access to all available content processors.
-  # [<tt>:chain</tt>] The chain of nodes that is processed. There are some utiltity methods for getting
-  #                   special nodes of the chain (see #ref_node, #content_node and #dest_node).
+  # [<tt>:content</tt>]
+  #   The content string that should be processed.
+  #
+  # [<tt>:processors</tt>]
+  #   Normally an AccessHash object providing access to all available content processors.
+  #
+  # [<tt>:chain</tt>]
+  #   The chain of nodes that is processed. There are some utiltity methods for getting
+  #   special nodes of the chain (see #ref_node, #content_node and #dest_node).
   class Context
 
     include Webgen::WebsiteAccess
-    public :website
 
     # Processing options
     attr_accessor :options
 
-    # Create a new Context object. You can use the +options+ hash to set needed options. The
-    # <tt>:content</tt> option is set to an empty string if not specified in +options+ and
-    # <tt>:processors</tt> is set to a new AccessHash if not specified in +options+.
+    # Create a new Context object. You can use the +options+ hash to set needed options.
+    #
+    # The following options are set by default and can be overridden via the +options+ hash:
+    #
+    # [<tt>:content</tt>]
+    #   Is set to an empty string.
+    #
+    # [<tt>:processors</tt>]
+    #   Is set to a new AccessHash.
     def initialize(options = {})
       @options = {
         :content => '',

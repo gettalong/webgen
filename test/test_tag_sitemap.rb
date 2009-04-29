@@ -26,7 +26,7 @@ class TestTagSitemap < Test::Unit::TestCase
 
   def test_call
     nodes = create_sitemap_nodes
-    context = Webgen::ContentProcessor::Context.new(:chain => [nodes[:file11_en]])
+    context = Webgen::Context.new(:chain => [nodes[:file11_en]])
 
     assert_equal("<ul><li><a href=\"./\"></a>" +
                  "<ul><li><span></span>"+

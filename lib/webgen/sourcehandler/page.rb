@@ -32,7 +32,7 @@ module Webgen::SourceHandler
 
       if chain.first.node_info[:page].blocks.has_key?(block_name)
         node.node_info[:used_nodes] << chain.first.absolute_lcn
-        context = chain.first.node_info[:page].blocks[block_name].render(Webgen::ContentProcessor::Context.new(:chain => chain))
+        context = chain.first.node_info[:page].blocks[block_name].render(Webgen::Context.new(:chain => chain))
         context.content
       else
         raise "Error rendering <#{node.absolute_lcn}>: no block named '#{block_name}' in <#{chain.first.absolute_lcn}>"
