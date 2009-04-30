@@ -17,7 +17,8 @@ module Webgen
   #
   # == Sample CLI command
   #
-  # Here is a sample CLI command extension:
+  # Here is a sample CLI command extension which could be put, for example, into the
+  # <tt>ext/init.rb</tt> of a webgen website:
   #
   #   require 'webgen/cli'
   #
@@ -26,13 +27,13 @@ module Webgen
   #     def initialize
   #       super('sample', false)
   #       self.short_desc = "This sample command just outputs its parameters"
-  #       self.description = Utils.format("Uses the global verbosity level and outputs additional " +
+  #       self.description = Webgen::CLI::Utils.format("Uses the global verbosity level and outputs additional " +
   #         "information when the level is set to verbose!")
   #       @username = nil
   #       self.options = CmdParse::OptionParserWrapper.new do |opts|
   #         opts.separator "Options:"
   #         opts.on('-u', '--user USER', String,
-  #           'Specify an additional user name to output') {|@username|}
+  #           'Specify an additional user name to output') {|username| @username = username}
   #       end
   #     end
   #
@@ -51,8 +52,8 @@ module Webgen
   #
   #   end
   #
-  # Note the use of Utils.format in the initialize method so that the long text gets wrapped
-  # correctly! The Utils class provides some other useful methods, too!
+  # Note the use of Webgen::CLI::Utils.format in the initialize method so that the long text gets
+  # wrapped correctly! The Utils class provides some other useful methods, too!
   #
   # For information about which attributes are available on the webgen command parser instance have
   # a look at Webgen::CLI::CommandParser!
@@ -102,19 +103,30 @@ module Webgen
         end
         self.add_command(CmdParse::HelpCommand.new)
         self.add_command(CmdParse::VersionCommand.new)
-        Webgen::CLI.constants.select {|c| c =~ /.+Command$/ }.each do |c|
-          self.add_command(Webgen::CLI.const_get(c).new, (c.to_s == 'RunCommand' ? true : false))
-        end
       end
 
       # Utility method for sub-commands to create the correct Webgen::Website object.
       def create_website
-        website = Webgen::Website.new(@directory) do |config|
-          config['logger.mask'] = @log_filter
+        if !defined?(@website)
+          @website = Webgen::Website.new(@directory) do |config|
+            config['logger.mask'] = @log_filter
+          end
+          @website.logger.level = @log_level
+          @website.logger.verbosity = @verbosity
         end
-        website.logger.level = @log_level
-        website.logger.verbosity = @verbosity
-        website
+        @website
+      end
+
+      # :nodoc:
+      def parse(argv = ARGV)
+        super do |level, cmd_name|
+          if level == 0
+            create_website.init
+            Webgen::CLI.constants.select {|c| c =~ /.+Command$/ }.each do |c|
+              self.add_command(Webgen::CLI.const_get(c).new, (c.to_s == 'RunCommand' ? true : false))
+            end
+          end
+        end
       end
 
     end
