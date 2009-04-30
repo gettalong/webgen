@@ -136,12 +136,17 @@ repository. To check out webgen use one of the following commands:
 
 ## Dependencies
 
+The following list shows all mandatory and optional dependencies for webgen. If you use Rubygems,
+the mandatory dependencies are automatically installed. webgen can make use of the optional
+dependencies if they are installed. Note that webgen was tested against the specified versions but
+it should normally work with newer versions, too!
+
 * (mandatory) [Ruby](http://www.ruby-lang.org) version 1.8.6 or 1.8.7. Since webgen is written in
   Ruby, you need the Ruby interpreter to run webgen.
 
-* (mandatory) [cmdparse](http://cmdparse.rubyforge.org) version 2.0.2
+* (mandatory) [cmdparse](http://cmdparse.rubyforge.org) version 2.0.2 or higher
 
-* (mandatory) [facets](http://facets.rubyforge.org) version 2.4.3
+* (mandatory) [facets](http://facets.rubyforge.org) version 2.4.5
 
 * (mandatory) [maruku](http://maruku.rubyforge.org) version 0.5.9
 
@@ -149,30 +154,31 @@ repository. To check out webgen use one of the following commands:
 
 * (optional for webgui) [launchy](http://copiousfreetime.rubyforge.org/launchy/) version 0.3.2
 
-* (optional) [RedCloth](http://redcloth.rubyforge.org) version 2.0.10 or higher for Textile support
+* (optional) [rake](http://rake.rubyforge.org) version 0.8.3 or higher for using the created
+  website Rakefiles
 
-* (optional) [haml](http://haml.hamptoncatlin.com) version 2.0.1 or higher for haml and sass support
+* (optional) [RedCloth](http://redcloth.rubyforge.org) version 3.0.0 or higher for Textile support
+
+* (optional) [haml](http://haml.hamptoncatlin.com) version 2.0.9 or higher for haml and sass support
 
 * (optional) [builder](http://builder.rubyforge.org) version 2.1.0 or higher for programmatic xml
   generation support
 
-* (optional) [rdoc](http://rdoc.rubyforge.org/) version 2.0.0 for RDoc markup support
+* (optional) [rdoc](http://rdoc.rubyforge.org/) version 2.4.2 or higher for RDoc markup support
 
 * (optional) [coderay](http://coderay.rubychan.de/) version 0.7.4.214 or higher for syntax
   highlighting
 
-* (optional) [feedtools](http://sporkmonger.com/projects/feedtools) version 0.2.29 for built-in feed
-  generation support
+* (optional) [feedtools](http://sporkmonger.com/projects/feedtools) version 0.2.29 or higher for
+  built-in feed generation support
 
-* (optional) [erubis](http://www.kuwata-lab.com/erubis/) version 2.6.2 for Erubis (enhanced ERB)
-  support
+* (optional) [erubis](http://www.kuwata-lab.com/erubis/) version 2.6.2 or higher for Erubis
+  (enhanced ERB) support
 
-* (optional) [rdiscount](http://github.com/rtomayko/rdiscount) version 1.2.9 for fast Markdown
-  support
+* (optional) [rdiscount](http://github.com/rtomayko/rdiscount) version 1.2.9 or higher for fast
+  Markdown support
 
-* (optional) [minitar](http://rubyforge.org/projects/ruwiki/) version 0.5.2 or higher for (gzipped)
-  tar archives as sources
+* (optional) [archive-tar-minitar](http://rubyforge.org/projects/ruwiki/) version 0.5.2 or higher
+  for (gzipped) tar archives as sources
 
-All these libraries can be installed via Rubygems (which I recommend). If you want to install all
-optional dependencies when installing webgen via Rubygems, install webgen using the `--development`
-option.
+All these libraries can be installed via Rubygems (which I recommend).
