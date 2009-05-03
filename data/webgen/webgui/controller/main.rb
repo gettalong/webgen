@@ -34,9 +34,12 @@ class MemoryOutput
 
 end
 
+
 class MainController < Ramaze::Controller
 
-  layout '/page'
+  layout(:default) {|name, wish| !["path_autocomplete", "preview_website", "preview_website_bundles"].include?(name)}
+  helper :xhtml
+  engine :Etanni
 
   def initialize
     @title = 'webgen webgui'
@@ -46,11 +49,11 @@ class MainController < Ramaze::Controller
     session['website_dir'] = request['website_dir'].to_s
 
     if File.directory?(session['website_dir'])
-      redirect R(:manage_website)
+      redirect r(:manage_website)
     elsif session['website_dir']
-      redirect R(:create_website)
+      redirect r(:create_website)
     else
-      redirect R('/')
+      redirect r('/')
     end
   end
 
@@ -61,7 +64,6 @@ class MainController < Ramaze::Controller
       ''
     end
   end
-  deny_layout :path_autocomplete
 
   def manage_website
     if request['render_site'] && session['website_dir']
@@ -81,13 +83,7 @@ class MainController < Ramaze::Controller
     ws = Webgen::Website.new(session['website_dir'])
     ws.init
     ws.execute_in_env do
-      oi = ws.blackboard.invoke(:output_instance)
-      path = File.join(*args)
-      response.header["Content-Type"] =  Ramaze::Tool::MIME.trait[:types][File.extname(path)].to_s
-      response.header['Cache-Control'] = 'no-store'
-      response.header['Pragma'] = 'no-cache'
-      response.body = (oi.read(path) rescue '')
-      throw(:respond)
+      send_preview_file(args, ws.blackboard.invoke(:output_instance))
     end
   end
 
@@ -100,7 +96,7 @@ class MainController < Ramaze::Controller
       wm.apply_bundle('default')
       wm.apply_bundle(@cur_bundle)
 
-      redirect R(:manage_website)
+      redirect r(:manage_website)
     else
       wm = Webgen::WebsiteManager.new(session['website_dir'])
       @bundles = wm.bundles.keys.sort
@@ -122,12 +118,18 @@ class MainController < Ramaze::Controller
 
   def preview_website_bundles(*args)
     throw(:respond) unless session['create_website_preview']
+    send_preview_file(args, session['create_website_preview'])
+  end
+
+  def send_preview_file(args, oi)
     path = File.join(*args)
-    response.header["Content-Type"] = Ramaze::Tool::MIME.trait[:types][File.extname(path)].to_s
+    path += ".html" if path !~ /\.\w+$/
+    response.header["Content-Type"] = Rack::Mime.mime_type(File.extname(path)).to_s
     response.header['Cache-Control'] = 'no-store'
     response.header['Pragma'] = 'no-cache'
-    response.body = session['create_website_preview'].read(path)
-    throw(:respond)
+    response.body = [(oi.read(path) rescue '')]
+    throw(:respond, response)
   end
+  private :send_preview_file
 
 end

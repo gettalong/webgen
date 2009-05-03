@@ -1,4 +1,4 @@
-<form method='post' action='#{R :create_website}'>
+<form method='post' action='#{r :create_website}'>
   <p>
     Choose a <label for="website_style">website bundle:</label>
     <select name="website_bundle" id="website_bundle">
@@ -11,4 +11,4 @@
   </p>
 </form>
 
-<object type='text/html' data='#{R :preview_website_bundles, "/index.html"}' width='100%' height='600px' style='border: 1px solid black' />
+<object type='text/html' data='#{r :preview_website_bundles, "/index.html"}' width='100%' height='600px' style='border: 1px solid black' />

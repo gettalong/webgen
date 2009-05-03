@@ -3,10 +3,6 @@
 require 'webgen/cli'
 require 'facets/kernel/silence'
 
-# nothing to see here
-module Ramaze # :nodoc:
-end
-
 module Webgen::CLI
 
   # The CLI command for starting the webgen webgui.
@@ -19,7 +15,7 @@ module Webgen::CLI
 
     # Render the website.
     def execute(args)
-      # some fixes for ramaze-2009.02
+      # some fixes for ramaze-2009.04
       # - fix for Windows when win32console is not installed
       # - fix for message displayed on shutdown
       # - fix for warning message
@@ -28,24 +24,22 @@ module Webgen::CLI
       $:.shift
       silence_warnings do
         begin
+          require 'ramaze/snippets/object/__dir__'
+          Object.__send__(:include, Ramaze::CoreExtensions::Object)
           require 'ramaze'
         rescue LoadError
           puts "The Ramaze web framework which is needed for the webgui was not found."
-          puts "You can install it via 'gem install ramaze --version 2009.02'"
+          puts "You can install it via 'gem install ramaze --version 2009.04'"
           return
         end
       end
       def Ramaze.shutdown; # :nodoc:
       end
 
-      Ramaze::acquire(File.join(Webgen.data_dir, 'webgui', 'controller', '*'))
+      require File.join(Webgen.data_dir, 'webgui', 'app.rb')
       Ramaze::Log.loggers = []
-      Ramaze::Global.setup do |g|
-        g.root = File.join(Webgen.data_dir, 'webgui')
-        g.public_root = File.join(Webgen.data_dir, 'webgui', 'public')
-        g.view_root = File.join(Webgen.data_dir, 'webgui', 'view')
-        g.adapter = :webrick
-        g.port = 7000
+      Ramaze.options[:middleware_compiler]::COMPILED[:dev].middlewares.delete_if do |app, args, block|
+        app == Rack::CommonLogger
       end
 
       puts 'Starting webgui on http://localhost:7000, press Control-C to stop'
@@ -53,7 +47,7 @@ module Webgen::CLI
       Thread.new do
         begin
           require 'launchy'
-          sleep 2
+          sleep 1
           puts 'Launching web browser'
           Launchy.open('http://localhost:7000')
         rescue LoadError
@@ -63,7 +57,7 @@ module Webgen::CLI
         end
       end
 
-      Ramaze.start
+      Ramaze.start(:adapter => :webrick, :port => 7000, :file => File.join(Webgen.data_dir, 'webgui', 'app.rb'))
       puts 'webgui finished'
     end
 
