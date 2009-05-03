@@ -1,4 +1,4 @@
-<form method='post' action='#{R :manage_website}'>
+<form method='post' action='#{r :manage_website}'>
   <p>
     <label for='verbosity'>Verbosity:
     <select id='verbosity' name='verbosity'>
@@ -15,4 +15,4 @@
   <pre>#{CGI::escapeHTML(@log.to_s)}</pre>
 </div>
 
-<object id='website_preview' type='text/html' data='#{R :preview_website, "/index.html"}' width='100%' height='600px' style='border: 1px solid black' />
+<object id='website_preview' type='text/html' data='#{r :preview_website, "/index.html"}' width='100%' height='600px' style='border: 1px solid black' />

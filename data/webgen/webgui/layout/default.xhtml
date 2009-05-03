@@ -7,24 +7,24 @@
     <meta http-equiv="Content-Style-Type" content="text/css" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
-    <link href="#{R '/css/style.css'}" rel="stylesheet" type="text/css" />
-    <link href="#{R '/css/jquery.autocomplete.css'}" rel="stylesheet" type="text/css" />
+    <link href="#{r '/css/style.css'}" rel="stylesheet" type="text/css" />
+    <link href="#{r '/css/jquery.autocomplete.css'}" rel="stylesheet" type="text/css" />
 
-    <script type='text/javascript' src="#{R '/js/jquery.js'}"></script>
-    <script type='text/javascript' src="#{R '/js/jquery.autocomplete.js'}"></script>
+    <script type='text/javascript' src="#{r '/js/jquery.js'}"></script>
+    <script type='text/javascript' src="#{r '/js/jquery.autocomplete.js'}"></script>
     <script type='text/javascript'>
       $(document).ready(function() {
-      $("#website_dir").autocomplete('#{R MainController, :path_autocomplete}');
+      $("#website_dir").autocomplete('#{r :path_autocomplete}');
       });
     </script>
   </head>
   <body>
     <div id="header">
-      <img src="#{R '/img/webgen_logo.png'}" alt='logo' />
-      <h2><a href="#{R '/'}">webgen <span>webgui</span></a></h2>
+      <img src="#{r '/img/webgen_logo.png'}" alt='logo' />
+      <h2><a href="#{r '/'}">webgen <span>webgui</span></a></h2>
 
       <div id='site-select-form'>
-        <form method='post' action='#{R MainController, :site_ops}'>
+        <form method='post' action='#{r :site_ops}'>
           <p>
             <input type='text' id='website_dir' name='website_dir' value='#{session["website_dir"]}' size="70" />
             <input type='submit' id='set_site' name='set_site' value='Set website directory' />
