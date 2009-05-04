@@ -29,6 +29,7 @@ module Webgen
     def content_node
       @options[:chain] && @options[:chain].last
     end
+    alias :node :content_node
 
   end
 

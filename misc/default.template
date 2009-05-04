@@ -28,7 +28,7 @@
 
       <div id="sidebar" >
 
-        <% if !node.children.empty? %>
+        <% if !context.node.children.empty? %>
         <h1>Contents</h1>
         <% end %>
 

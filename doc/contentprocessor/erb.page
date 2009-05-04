@@ -7,22 +7,20 @@ This processer uses ERB (embedded Ruby) to process content. For detailed informa
 a look at its documentation by executing `ri ERB` or the [ruby documentation
 site](http://www.ruby-doc.org/)!
 
-You can use the following special objects in your ERB code:
+You can use the special object `context` in your ERB code which provides the whole rendering context
+and the following useful methods:
 
 * `website`: Provides access to the `Webgen::Website` object which can be used to access all aspects
   of the currently rendered website.
 
-* `context`: This object provides the whole rendering context, the following objects are just for
-  backwards compatibility.
+* `node` (or `content_node`): The node that gets currently rendered. Should be used for retrieving
+  meta information.
 
-* `ref_node` (or `context.ref_node`): The reference node which is the source of the ERB code that is
-  executed. Should be used, for example, for resolving paths.
+* `ref_node`: The reference node which is the source of the ERB code that is executed. Should be
+  used, for example, for resolving paths.
 
-* `node` (or `context.content_node`): The node that gets currently rendered. Should be used for
-  retrieving meta information.
-
-* `dest_node` (or `context.dest_node`): The node in which the result gets inserted. Should be used
-  for calculating relative paths.
+* `dest_node`: The node in which the result gets inserted. Should be used for calculating relative
+  paths.
 
 Here is a small usage example. The following put in a page file
 
@@ -32,7 +30,7 @@ Here is a small usage example. The following put in a page file
     <%% end %>
 
     Outputting all meta information:
-    <%% node.meta_info.each do |k,v| %>
+    <%% context.node.meta_info.each do |k,v| %>
       * <%%= k %> = <%%= v %>
     <%% end %>
 
@@ -44,7 +42,7 @@ Here is a small usage example. The following put in a page file
     <% end %>
 
     Outputting all meta information:
-    <% node.meta_info.each do |k,v| %>
+    <% context.node.meta_info.each do |k,v| %>
       * <%= k %> = <%= v %>
     <% end %>
 

@@ -32,6 +32,22 @@ module Webgen
       end
     end
 
+    module Deprecated
+
+      def deprecate(old, new, obj)
+        klass = Class.new
+        klass.instance_methods.select {|m| m.to_s !~ /^(__|instance_eval)/}.each {|m| klass.__send__(:undef_method, m)}
+        result = klass.new
+        result.instance_eval { @old, @new, @obj = old, new, obj }
+        def result.method_missing(sym, *args, &block)
+          Kernel::warn("Deprecation warning (~ #{caller.first}): The alias '#{@old}' will be removed in one of the next releases - use '#{@new}' instead!")
+          @obj.send(sym, *args, &block)
+        end
+        result
+      end
+
+    end
+
   end
 
 end

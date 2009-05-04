@@ -5,15 +5,16 @@ module Webgen::ContentProcessor
   # Processes embedded Ruby statements.
   class Erb
 
-    include Webgen::WebsiteAccess
+    include Deprecated
 
     # Process the Ruby statements embedded in the content of +context+.
     def call(context)
       require 'erb'
 
-      node = context.content_node
-      ref_node = context.ref_node
-      dest_node = context.dest_node
+      website = deprecate('website', 'context.website', context.website)
+      node = deprecate('node', 'context.node', context.content_node)
+      ref_node = deprecate('ref_node', 'context.ref_node', context.ref_node)
+      dest_node = deprecate('dest_node', 'context.dest_node', context.dest_node)
 
       erb = ERB.new(context.content)
       erb.filename = context.ref_node.absolute_lcn
