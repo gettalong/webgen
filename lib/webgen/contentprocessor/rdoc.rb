@@ -9,7 +9,6 @@ module Webgen::ContentProcessor
     # Convert the content in RDoc markup to HTML.
     def call(context)
       require 'rdoc/markup/to_html'
-
       context.content = ::RDoc::Markup::ToHtml.new.convert(context.content)
       context
     end

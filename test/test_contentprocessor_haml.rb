@@ -10,7 +10,7 @@ class TestContentProcessorHaml < Test::Unit::TestCase
     obj = Webgen::ContentProcessor::Haml.new
     root = Webgen::Node.new(Webgen::Tree.new.dummy_root, '/', '/')
     node = Webgen::Node.new(root, 'test', 'test')
-    content = "#content\n  %h1 Hallo\n  = [node.absolute_lcn, ref_node.absolute_lcn, dest_node.absolute_lcn, website, context.dest_node.absolute_lcn].join"
+    content = "#content\n  %h1 Hallo\n  = [context.node.absolute_lcn, context.ref_node.absolute_lcn, context.dest_node.absolute_lcn, context.website, context.dest_node.absolute_lcn].join"
     context = Webgen::Context.new(:content => content,
                                                     :chain => [node])
     obj.call(context)

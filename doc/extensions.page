@@ -6,11 +6,11 @@ title: Extensions
 Following is a listing of all available extensions:
 
 <%
-pattern = /#{File.join(node.parent.absolute_lcn, '/')}(contentprocessor|output|source|sourcehandler|tag|)\/.*html$/
-context.content_node.tree.node_access[:alcn].select {|alcn, n| alcn =~ pattern}.sort.each do |alcn, n|
+pattern = /#{File.join(context.node.parent.absolute_lcn, '/')}(contentprocessor|output|source|sourcehandler|tag|)\/.*html$/
+context.node.tree.node_access[:alcn].select {|alcn, n| alcn =~ pattern}.sort.each do |alcn, n|
 next if n.is_fragment?
 %>
-* <%= dest_node.link_to(n) %>
+* <%= context.dest_node.link_to(n) %>
 <%
 end
 %>

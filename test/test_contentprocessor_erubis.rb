@@ -17,7 +17,7 @@ class TestContentProcessorErubis < Test::Unit::TestCase
     node = Webgen::Node.new(root, 'test', 'test')
     context = Webgen::Context.new(:doit => 'hallo', :chain => [node])
 
-    context.content = "<%= context[:doit] %>6\n<%= ref_node.absolute_lcn %>\n<%= node.absolute_lcn %>\n<%= dest_node.absolute_lcn %><% website %>"
+    context.content = "<%= context[:doit] %>6\n<%= context.ref_node.absolute_lcn %>\n<%= context.node.absolute_lcn %>\n<%= context.dest_node.absolute_lcn %><% context.website %>"
     assert_equal("hallo6\n/test\n/test\n/test", obj.call(context).content)
 
     context.content = '<%= 5* %>'

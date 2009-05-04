@@ -21,6 +21,7 @@ module Webgen
   class Context
 
     include Webgen::WebsiteAccess
+    public :website
 
     # Processing options
     attr_accessor :options

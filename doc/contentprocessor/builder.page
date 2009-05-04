@@ -52,7 +52,7 @@ a custom XML document (the `content` block has to be valid Ruby!):
     title: Person Object
     template: ~
     --- pipeline:builder
-    xml.persons(:path => node.absolute_lcn) do |p|
+    xml.persons(:path => context.node.absolute_lcn) do |p|
       p.person do |b|
         b.firstname('Thomas')
         b.lastname('Leitner')
