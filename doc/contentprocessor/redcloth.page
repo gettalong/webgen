@@ -12,6 +12,8 @@ RedCloth library. For detailed information about Textile have a look at the [Tex
 >     gem install RedCloth
 {.warning}
 
+You can use the configuration option `contentprocessor.redcloth.hard_breaks` to enable/disable the
+conversion of single newlines into HTML break tags.
 
 Example
 -------
