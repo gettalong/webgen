@@ -2,6 +2,36 @@
 title: Configuration Option Reference
 in_menu: false
 ---
+<%
+def convert_proc(data, indent)
+  res = if data.kind_of?(Array)
+    data.inspect
+  elsif data.kind_of?(String)
+    (data.empty? ? '""' : data)
+  elsif data.kind_of?(Hash)
+    res = data.collect do |k,v|
+      if v.kind_of?(Hash)
+        k.to_s + ":\n" + convert_proc(v, 2)
+      else
+        k.to_s + ": " + convert_proc(v, 0)
+      end
+    end.join("\n")
+    (res.empty? ? "{}" : res)
+  elsif data.kind_of?(NilClass)
+    "~"
+  else
+    data.inspect
+  end
+  res.split("\n").collect {|l| ' '*indent + l}.join("\n")
+end
+
+require 'tmpdir'
+ws = Webgen::Website.new(File.join(Dir.tmpdir, 'webgen' + Process.pid.to_s))
+ws.init
+show_default = lambda do |option|
+  "* Default value:\n\n#{convert_proc(ws.config[option], 10)}\n"
+end
+%>
 
 # Configuration Option Reference
 
@@ -23,6 +53,8 @@ configuration options) and/or how to use it in a webgen tag (for tag configurati
 
     * Syntax: `LANGUAGE` where `LANGUAGE` is a ISO-639-1/2 two or three letter language code
 
+    <%= show_default['website.lang'] %>
+
     * Example for setting the option in the configuration file:
 
           website.lang: de
@@ -34,6 +66,8 @@ configuration options) and/or how to use it in a webgen tag (for tag configurati
     used. Otherwise, only the title of the page is shown.
 
     * Syntax: `BOOLEAN` where `BOOLEAN` is `true` or `false`
+
+    <%= show_default['website.link_to_current_page'] %>
 
     * Example for setting the option in the configuration file:
 
@@ -49,6 +83,8 @@ configuration options) and/or how to use it in a webgen tag (for tag configurati
 
     * Syntax: `[TYPE, LOCATION]` where `TYPE` is one of `:file` or `:string`
 
+    <%= show_default['website.cache'] %>
+
     * Example for setting the option in the configuration file:
 
           website.cache: [:file, my.cache]
@@ -62,6 +98,8 @@ configuration options) and/or how to use it in a webgen tag (for tag configurati
     set.
 
     * Syntax: `BOOLEAN` where `BOOLEAN` is either `true` or `false`.
+
+    <%= show_default['common.sitemap.honor_in_menu'] %>
 
     * Example for setting the option in the configuration file:
 
@@ -79,6 +117,8 @@ configuration options) and/or how to use it in a webgen tag (for tag configurati
 
     * Syntax: `BOOLEAN` where `BOOLEAN` is either `true` or `false`.
 
+    <%= show_default['common.sitemap.any_lang'] %>
+
     * Example for setting the option in the configuration file:
 
           common.sitemap.any_lang: true
@@ -94,6 +134,8 @@ configuration options) and/or how to use it in a webgen tag (for tag configurati
     the kind `page`. If this is set to an empty array, any kind of node is used.
 
     * Syntax: `[KIND, ...]` where `KIND` is the kind of node that should be used.
+
+    <%= show_default['common.sitemap.used_kinds'] %>
 
     * Example for setting the option in the configuration file:
 
@@ -117,6 +159,8 @@ configuration options) and/or how to use it in a webgen tag (for tag configurati
       `Webgen::Source::FileSystem`) and `ARG1`, `ARG2` and so on are the parameters for the source
       class. The supported parameters can be found in the documentation for each source class.
 
+    <%= show_default['sources'] %>
+
     * Example for setting the option in the configuration file:
 
           sources: [[/, Webgen::Source::FileSystem, src], [/, Webgen::Source::FileSystem, /mnt/pictures, **/*.jpg]
@@ -133,6 +177,8 @@ configuration options) and/or how to use it in a webgen tag (for tag configurati
       `Webgen::Output::FileSystem`) and `ARG1`, `ARG2` and so on are the parameters for the output
       class. The supported parameters can be found in the documentation for each output class.
 
+    <%= show_default['output'] %>
+
     * Example for setting the option in the configuration file:
 
           output: [Webgen::Output::FileSystem, custom_out]
@@ -147,6 +193,8 @@ configuration options) and/or how to use it in a webgen tag (for tag configurati
 
     * Syntax: `\{NAME: [PATTERN, PATTERN, ...], ...}` where `NAME` is the
       name the name of a source handler and `PATTERN` are one or more path patterns.
+
+    <%= show_default['sourcehandler.patterns'] %>
 
     * Example for setting the option in `ext/init.rb`:
 
@@ -169,6 +217,8 @@ configuration options) and/or how to use it in a webgen tag (for tag configurati
       invocation (source handlers with a lower `ORDER` setting are executed earlier than ones with a
       higher `ORDER` setting) and `NAME` is the name of a source handler.
 
+    <%= show_default['sourcehandler.invoke'] %>
+
     * Example for setting the option in `ext/init.rb`:
 
           config = Webgen::WebsiteAccess.website.config
@@ -182,6 +232,8 @@ configuration options) and/or how to use it in a webgen tag (for tag configurati
 
     * Syntax: `BOOLEAN` where `BOOLEAN` is either `true` or `false`.
 
+    <%= show_default['sourcehandler.casefold'] %>
+
     * Example for setting the option in the configuration file:
 
           sourcehandler.casefold: true
@@ -192,6 +244,8 @@ configuration options) and/or how to use it in a webgen tag (for tag configurati
     Specifies whether hidden files (those starting with a dot) should be used.
 
     * Syntax: `BOOLEAN` where `BOOLEAN` is either `true` or `false`.
+
+    <%= show_default['sourcehandler.use_hidden_files'] %>
 
     * Example for setting the option in the configuration file:
 
@@ -205,6 +259,8 @@ configuration options) and/or how to use it in a webgen tag (for tag configurati
 
     * Syntax: `[PATTERN, ...]` where `PATTERN` is a valid path pattern.
 
+    <%= show_default['sourcehandler.ignore'] %>
+
     * Example for setting the option in the configuration file:
 
           sourcehandler.ignore: [**/*~, **/CVS/**]
@@ -216,6 +272,8 @@ configuration options) and/or how to use it in a webgen tag (for tag configurati
     name.
 
     * Syntax: `BOOLEAN` where `BOOLEAN` is either `true` or `false`.
+
+    <%= show_default['sourcehandler.default_lang_in_output_path'] %>
 
     * Example for setting the option in the configuration file:
 
@@ -231,6 +289,8 @@ configuration options) and/or how to use it in a webgen tag (for tag configurati
     * Syntax: `\{NAME: {MI_KEY: MI_VALUE, ...}, ...}` where `NAME` is either the name of a source
       handler or the special key `:all` which sets default meta info for all source handlers.
 
+    <%= show_default['sourcehandler.default_meta_info'] %>
+
     * Example for setting the option in the configuration file:
 
           default_meta_info:
@@ -245,7 +305,9 @@ configuration options) and/or how to use it in a webgen tag (for tag configurati
     Specifies the name of the default template file of a directory. This template is used as
     fallback when no specific template is specified.
 
-    * Syntax: `PATH` where `PATH` is the absolute localized canonical name of the default template.
+    * Syntax: `PATH` where `PATH` is the (absolute) localized canonical name of the default template.
+
+    <%= show_default['sourcehandler.template.default_template'] %>
 
     * Example for setting the option in the configuration file:
 
@@ -264,6 +326,8 @@ configuration options) and/or how to use it in a webgen tag (for tag configurati
     * Syntax: `\{SHORT: NAME, ...}` where `SHORT` is the short name of the content processor class
       `NAME`.
 
+    <%= show_default['contentprocessor.map'] %>
+
     * Examples for setting the option in `ext/init.rb`:
 
           config = Webgen::WebsiteAccess.website.config
@@ -276,6 +340,8 @@ configuration options) and/or how to use it in a webgen tag (for tag configurati
     when processing content.
 
     * Syntax: `BOOLEAN` where `BOOLEAN` is either `true` or `false`.
+
+    <%= show_default['contentprocessor.erubis.use_pi'] %>
 
     * Example for setting the option in the configuration file:
 
@@ -290,17 +356,21 @@ configuration options) and/or how to use it in a webgen tag (for tag configurati
     * Syntax: `\{KEY: VALUE, ...}` where `KEY` and `VALUE` are key-value pairs of options where
       `KEY` needs to be a Symbol and not a String.
 
+    <%= show_default['contentprocessor.erubis.options'] %>
+
     * Example for setting the option in the configuration file:
 
           contentprocessor.erubis.options: {:trim: true}
 
 
-*   ### contentprocessor.redcloth.hard_breaks
+*   ### contentprocessor.redcloth.hard\_breaks
 
     Specifies whether hard breaks (i.e. single newlines) in paragraphs are converted to HTML break
     tags.
 
     * Syntax: `BOOLEAN` where `BOOLEAN` is either `true` or `false`.
+
+    <%= show_default['contentprocessor.redcloth.hard_breaks'] %>
 
     * Example for setting the option in the configuration file:
 
@@ -314,6 +384,8 @@ configuration options) and/or how to use it in a webgen tag (for tag configurati
 
     * Syntax: `PREFIX` where `PREFIX` is the prefix name.
 
+    <%= show_default['contentprocessor.tags.prefix'] %>
+
     * Example for setting the option in the configuration file:
 
           contentprocessor.tags.prefix: webgen
@@ -326,6 +398,8 @@ configuration options) and/or how to use it in a webgen tag (for tag configurati
     only used by extensions to register the short name of a content processor.
 
     * Syntax: `\{SHORT: NAME, ...}` where `SHORT` is the short name of the tag class `NAME`.
+
+    <%= show_default['contentprocessor.tags.map'] %>
 
     * Example for setting the option in `ext/init.rb`:
 
@@ -348,6 +422,8 @@ shows how to set the option in the configuration file.
     * Syntax: `SEPARATOR` where `SEPARATOR` is a string (special HTML characters need to be properly
       escaped)
 
+    <%= show_default['tag.breadcrumbtrail.separator'] %>
+
     * Example for setting the option in the configuration file:
 
           tag.breadcrumbtrail.separator: '---'
@@ -362,6 +438,8 @@ shows how to set the option in the configuration file.
     Specifies that the last part of the breadcrumb trail should be omitted if it is an index path.
 
     * Syntax: `BOOLEAN` where `BOOLEAN` is either `true` or `false`.
+
+    <%= show_default['tag.breadcrumbtrail.omit_index_path'] %>
 
     * Example for setting the option in the configuration file:
 
@@ -388,6 +466,8 @@ shows how to set the option in the configuration file.
 
     * Syntax: `INTEGER` where `INTEGER` is any integer number
 
+    <%= show_default['tag.breadcrumbtrail.start_level'] %>
+
     * Example for setting the option in the configuration file:
 
           tag.breadcrumbtrail.start_level: 2
@@ -404,6 +484,8 @@ shows how to set the option in the configuration file.
 
     * Syntax: `INTEGER` where `INTEGER` is any integer number
 
+    <%= show_default['tag.breadcrumbtrail.end_level'] %>
+
     * Example for setting the option in the configuration file:
 
           tag.breadcrumbtrail.end_level: 2
@@ -418,6 +500,8 @@ shows how to set the option in the configuration file.
     Specifies the language that should be used for syntax highlighting.
 
     * Syntax: `LANG` where `LANG` is one of <%= (require 'coderay'; CodeRay::Scanners.list.map {|n| '`' + n + '`'}.join(', ')) %>.
+
+    <%= show_default['tag.coderay.lang'] %>
 
     * Example for setting the option in the configuration file:
 
@@ -434,6 +518,8 @@ shows how to set the option in the configuration file.
 
     * Syntax: `BOOLEAN` where `BOOLEAN` is either `true` or `false`.
 
+    <%= show_default['tag.coderay.process_body'] %>
+
     * Example for setting the option in the configuration file:
 
           tag.coderay.process_body: false
@@ -447,7 +533,9 @@ shows how to set the option in the configuration file.
 
     Specifies in which HTML element the highlighted code should be wrapped.
 
-    * Syntax: `WRAP` where `WRAP` is either `div` or `span`
+    * Syntax: `WRAP` where `WRAP` is either `:div` or `:span`
+
+    <%= show_default['tag.coderay.wrap'] %>
 
     * Example for setting the option in the configuration file:
 
@@ -464,6 +552,8 @@ shows how to set the option in the configuration file.
 
     * Syntax: `BOOLEAN` where `BOOLEAN` is either `true` or `false`.
 
+    <%= show_default['tag.coderay.line_numbers'] %>
+
     * Example for setting the option in the configuration file:
 
           tag.coderay.line_numbers: false
@@ -478,6 +568,8 @@ shows how to set the option in the configuration file.
     Specifies the line number that should be used for the first line.
 
     * Syntax: `NUMBER` where `NUMBER` is an integer value.
+
+    <%= show_default['tag.coderay.line_number_start'] %>
 
     * Example for setting the option in the configuration file:
 
@@ -494,6 +586,8 @@ shows how to set the option in the configuration file.
 
     * Syntax: `NUMBER` where `NUMBER` is an integer value.
 
+    <%= show_default['tag.coderay.bold_every'] %>
+
     * Example for setting the option in the configuration file:
 
           tag.coderay.bold_every: 2
@@ -508,6 +602,8 @@ shows how to set the option in the configuration file.
     Specifies the number of spaces that should be used to replace tabulator characters.
 
     * Syntax: `NUMBER` where `NUMBER` is an integer value.
+
+    <%= show_default['tag.coderay.tab_width'] %>
 
     * Example for setting the option in the configuration file:
 
@@ -526,6 +622,8 @@ shows how to set the option in the configuration file.
 
     * Syntax: `FORMAT` where `FORMAT` is a string.
 
+    <%= show_default['tag.date.format'] %>
+
     * Example for setting the option in the configuration file:
 
           tag.date.format: '%Y-%m-%d'
@@ -542,6 +640,8 @@ shows how to set the option in the configuration file.
 
     * Syntax: `COMMAND` where `COMMAND` is the to-be-executed command.
 
+    <%= show_default['tag.executecommand.command'] %>
+
     * Example for setting the option directly in a tag:
 
           executing a simple command \{exeucte_cmd: echo hallo}
@@ -553,6 +653,8 @@ shows how to set the option in the configuration file.
     content processor.
 
     * Syntax: `BOOLEAN` where `BOOLEAN` is either `true` or `false`.
+
+    <%= show_default['tag.executecommand.process_output'] %>
 
     * Example for setting the option in the configuration file:
 
@@ -568,6 +670,8 @@ shows how to set the option in the configuration file.
     Specifies whether special HTML characters in the output of the executed command should be escaped.
 
     * Syntax: `BOOLEAN` where `BOOLEAN` is either `true` or `false`.
+
+    <%= show_default['tag.executecommand.escape_html'] %>
 
     * Example for setting the option in the configuration file:
 
@@ -586,6 +690,8 @@ shows how to set the option in the configuration file.
 
     * Syntax: `FILENAME` where `FILENAME` is the name of a file
 
+    <%= show_default['tag.includefile.filename'] %>
+
     * Example for setting the option directly in a tag:
 
           including a file \{include_file: my_file.txt}
@@ -597,6 +703,8 @@ shows how to set the option in the configuration file.
     processor.
 
     * Syntax: `BOOLEAN` where `BOOLEAN` is either `true` or `false`.
+
+    <%= show_default['tag.includefile.process_output'] %>
 
     * Example for setting the option in the configuration file:
 
@@ -612,6 +720,8 @@ shows how to set the option in the configuration file.
     Specifies whether special HTML characters in the content of the file should be escaped.
 
     * Syntax: `BOOLEAN` where `BOOLEAN` is either `true` or `false`.
+
+    <%= show_default['tag.includefile.escape_html'] %>
 
     * Example for setting the option in the configuration file:
 
@@ -629,6 +739,8 @@ shows how to set the option in the configuration file.
     * Syntax: `SEPARATOR` where `SEPARATOR` is a string (special HTML characters need to be properly
       escaped)
 
+    <%= show_default['tag.langbar.separator'] %>
+
     * Example for setting the option in the configuration file:
 
           tag.langbar.separator: ' --- '
@@ -643,6 +755,8 @@ shows how to set the option in the configuration file.
     Specifies whether the link to the language of the current page should be displayed.
 
     * Syntax: `BOOLEAN` where `BOOLEAN` is either `true` or `false`.
+
+    <%= show_default['tag.langbar.show_own_lang'] %>
 
     * Example for setting the option in the configuration file:
 
@@ -659,6 +773,8 @@ shows how to set the option in the configuration file.
     (i.e. when there is only one page).
 
     * Syntax: `BOOLEAN` where `BOOLEAN` is either `true` or `false`.
+
+    <%= show_default['tag.langbar.show_single_lang'] %>
 
     * Example for setting the option in the configuration file:
 
@@ -677,6 +793,8 @@ shows how to set the option in the configuration file.
     * Syntax: `\{CODE: NAME, ...}` where `CODE` is a language code and `NAME` the associated language
       name of the code.
 
+    <%= show_default['tag.langbar.lang_names'] %>
+
     * Example for setting the option in the configuration file:
 
           tag.langbar.lang_names: \{de: Deutsch, en: English}
@@ -693,6 +811,8 @@ shows how to set the option in the configuration file.
 
     * Syntax: `PATH` where `PATH` is an (absolute) (localized) canonical name.
 
+    <%= show_default['tag.link.path'] %>
+
     * Example for setting the option directly in a tag:
 
           You will find more information on the \{link: docu.html} page!
@@ -704,6 +824,8 @@ shows how to set the option in the configuration file.
 
     * Syntax: `\{NAME: VALUE, ...}` where `NAME` is a valid HTML attribute name and `VALUE` its
       value.
+
+    <%= show_default['tag.link.attr'] %>
 
     * Example for setting the option in the configuration file:
 
@@ -723,6 +845,8 @@ shows how to set the option in the configuration file.
 
     * Syntax: `TYPE` where `TYPE` is one of `all`, `files` or `fragments`
 
+    <%= show_default['tag.menu.used_nodes'] %>
+
     * Example for setting the option in the configuration file:
 
           tag.menu.used_nodes: fragments
@@ -738,6 +862,8 @@ shows how to set the option in the configuration file.
     shown in the menu.
 
     * Syntax: `LEVEL` where `LEVEL` is a number that is greater or equal to one.
+
+    <%= show_default['tag.menu.start_level'] %>
 
     * Example for setting the option in the configuration file:
 
@@ -755,6 +881,8 @@ shows how to set the option in the configuration file.
 
     * Syntax: `LEVEL` where `LEVEL` is a number that is greater or equal to one.
 
+    <%= show_default['tag.menu.min_levels'] %>
+
     * Example for setting the option in the configuration file:
 
           tag.menu.min_levels: 2
@@ -770,6 +898,8 @@ shows how to set the option in the configuration file.
     example, if this is set to `2` then there are only shown at most two menu levels.
 
     * Syntax: `LEVEL` where `LEVEL` is a number that is greater or equal to one.
+
+    <%= show_default['tag.menu.max_levels'] %>
 
     * Example for setting the option in the configuration file:
 
@@ -787,6 +917,8 @@ shows how to set the option in the configuration file.
     at least two menu levels visible.
 
     * Syntax: `BOOLEAN` where `BOOLEAN` is either `true` or `false`.
+
+    <%= show_default['tag.menu.show_current_subtree_only'] %>
 
     * Example for setting the option in the configuration file:
 
@@ -825,6 +957,8 @@ shows how to set the option in the configuration file.
 
     * Syntax: `BOOLEAN` where `BOOLEAN` is either `true` or `false`.
 
+    <%= show_default['tag.menu.nested'] %>
+
     * Example for setting the option in the configuration file:
 
           tag.menu.nested: false
@@ -841,6 +975,8 @@ shows how to set the option in the configuration file.
 
     * Syntax: `PATH` where `PATH` is a (localized) canonical name.
 
+    <%= show_default['tag.relocatable.path'] %>
+
     * Example for setting the option directly in a tag:
 
           <a href="\{relocatable: ../features.html}">Some Path</a>
@@ -854,6 +990,8 @@ shows how to set the option in the configuration file.
 
     * Syntax: `PATH` where `PATH` is a relative or absolute source path.
 
+    <%= show_default['tag.tikz.path'] %>
+
     * Example for setting the option directly in a tag:
 
           \{tikz:: images/tikz.png}\tikz \draw (0,0) -- (0,2);{tikz}
@@ -865,6 +1003,8 @@ shows how to set the option in the configuration file.
     image.
 
     * Syntax: `[NAME, ...]` where `NAME` is the name of a TikZ library.
+
+    <%= show_default['tag.tikz.libraries'] %>
 
     * Example for setting the option in the configuration file:
 
@@ -883,6 +1023,8 @@ shows how to set the option in the configuration file.
 
     * Syntax: `OPTS` where `OPTS` is the string with the global options.
 
+    <%= show_default['tag.tikz.opts'] %>
+
     * Example for setting the option in the configuration file:
 
           tag.tikz.opts: 'scale=3, line cap=round'
@@ -899,10 +1041,12 @@ shows how to set the option in the configuration file.
     Specifies the render and output resolutions that should be used to convert the TikZ image in PDF
     format to the chosen image format. The first number specifies the render resolution and the
     second one the output resolution. If the render resolution is higher than the output resolution,
-    the final image quality is better but the image needs to scaled down to the output resolution.
+    the final image quality is better but the image needs to be scaled down to the output resolution.
 
     * Syntax: `RENDER_RES OUTPUT_RES` where `RENDER_RES` is the integer specifying the render
       resolution and `OUTPUT_RES` is the integer specifying the output resolution.
+
+    <%= show_default['tag.tikz.resolution'] %>
 
     * Example for setting the option in the configuration file:
 
@@ -923,6 +1067,8 @@ shows how to set the option in the configuration file.
 
     * Syntax: `BOOLEAN` where `BOOLEAN` is either `true` or `false`.
 
+    <%= show_default['tag.tikz.transparent'] %>
+
     * Example for setting the option in the configuration file:
 
           tag.tikz.transparent: true
@@ -940,6 +1086,8 @@ shows how to set the option in the configuration file.
 
     * Syntax: `\{KEY:VALUE, ...}` where `KEY` is a valid HTML `img` tag attribute name and `VALUE`
       the to-be-set value.
+
+    <%= show_default['tag.tikz.img_attr'] %>
 
     * Example for setting the option in the configuration file:
 
