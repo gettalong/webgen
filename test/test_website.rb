@@ -19,6 +19,15 @@ class TestWebsite < Test::Unit::TestCase
     assert_equal('dir', ws.directory)
     assert_throws(:called) { ws.init }
     assert_nil(Thread.current[:webgen_website])
+
+    ws = Webgen::Website.new
+    assert_equal(Dir.pwd, ws.directory)
+    ENV['WEBGEN_WEBSITE'] = 'hallo'
+    ws = Webgen::Website.new
+    assert_equal('hallo', ws.directory)
+    ENV['WEBGEN_WEBSITE'] = ''
+    ws = Webgen::Website.new
+    assert_equal(Dir.pwd, ws.directory)
   end
 
   def test_autoload_service

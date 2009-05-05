@@ -199,16 +199,17 @@ module Webgen
     # The website directory.
     attr_reader :directory
 
-    # Create a new webgen website for the website in the directory +dir+. You can provide a
-    # block (has to take the configuration object as parameter) for adjusting the configuration
-    # values during the initialization.
-    def initialize(dir, logger=Webgen::Logger.new($stdout, false), &block)
+    # Create a new webgen website for the website in the directory +dir+. If +dir+ is +nil+, the
+    # environment variable +WEBGEN_WEBSITE+ or, if it is not set either, the current working
+    # directory is used. You can provide a block (has to take the configuration object as parameter)
+    # for adjusting the configuration values during the initialization.
+    def initialize(dir = nil, logger=Webgen::Logger.new($stdout, false), &block)
       @blackboard = nil
       @cache = nil
       @config = nil
       @logger = logger
       @config_block = block
-      @directory = dir
+      @directory = (dir.nil? ? (ENV['WEBGEN_WEBSITE'].to_s.empty? ? Dir.pwd : ENV['WEBGEN_WEBSITE']) : dir)
     end
 
     # Define a service +service_name+ provided by the instance of +klass+. The parameter +method+

@@ -86,7 +86,7 @@ module Webgen
       # set or empty, the current working directory.
       def initialize # :nodoc:
         super(true)
-        @directory = (ENV['WEBGEN_WEBSITE'].to_s.empty? ? Dir.pwd : ENV['WEBGEN_WEBSITE'])
+        @directory = nil
         @verbosity = :normal
         @log_level = ::Logger::WARN
         @log_filter = nil
