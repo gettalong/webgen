@@ -7,7 +7,9 @@ This documentation is for the *repository version*{: style='color: red; font-wei
 webgen and therefore may state features that are not available in the latest released version.
 
 * The documentation for the *latest released 0.5.x*{: style='color: red; font-weight: bold'} version
-  can be found [here](http://webgen.rubyforge.org/documentation/0.5.x/index.html)
+  can be found [here](http://webgen.rubyforge.org/documentation/0.5.x/index.html). This
+  documentation can also be generated locally by running `rake htmldoc` in the root directory of the
+  weben distribution.
 
 * If you are looking for the documentation of the *0.4.x*{: style='color: red; font-weight: bold'}
   series, it can be found [here](http://webgen.rubyforge.org/documentation/0.4.x/index.html).
