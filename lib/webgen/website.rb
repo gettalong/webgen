@@ -284,11 +284,11 @@ module Webgen
     # The provided block is executed within a proper environment sothat any object can access the
     # Website object.
     def execute_in_env
-      set_back = Thread.current[:webgen_website].nil?
+      set_back = Thread.current[:webgen_website]
       Thread.current[:webgen_website] = self
       yield
     ensure
-      Thread.current[:webgen_website] = nil if set_back
+      Thread.current[:webgen_website] = set_back
     end
 
     #######

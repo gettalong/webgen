@@ -52,6 +52,14 @@ class TestWebsite < Test::Unit::TestCase
     ws = Webgen::Website.new('hallo')
     assert_nil(Webgen::WebsiteAccess.website)
     ws.execute_in_env { assert_not_nil(Webgen::WebsiteAccess.website) }
+    assert_nil(Webgen::WebsiteAccess.website)
+    ws.execute_in_env do
+      assert_equal(ws, Webgen::WebsiteAccess.website)
+      ws2 = Webgen::Website.new("hallo2")
+      ws2.execute_in_env { assert_equal(ws2, Webgen::WebsiteAccess.website) }
+      assert_equal(ws, Webgen::WebsiteAccess.website)
+    end
+    assert_equal(nil, Webgen::WebsiteAccess.website)
   end
 
   def test_read_config_file
