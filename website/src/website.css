@@ -31,3 +31,7 @@
     display: inline;
 }
 
+.news-date {
+    margin-bottom: 10px;
+    color: gray;
+}
