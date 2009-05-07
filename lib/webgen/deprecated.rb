@@ -36,7 +36,7 @@ module Webgen
 
       def deprecate(old, new, obj)
         klass = Class.new
-        klass.instance_methods.select {|m| m.to_s !~ /^(__|instance_eval)/}.each {|m| klass.__send__(:undef_method, m)}
+        klass.instance_methods.select {|m| m.to_s !~ /^(__|instance_eval|object_id)/}.each {|m| klass.__send__(:undef_method, m)}
         result = klass.new
         result.instance_eval { @old, @new, @obj = old, new, obj }
         def result.method_missing(sym, *args, &block)

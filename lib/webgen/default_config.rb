@@ -159,7 +159,7 @@ config.contentprocessor.tags.map({
 config.contentprocessor.erubis.use_pi(false, :doc => 'Specifies whether processing instructions should be used')
 config.contentprocessor.erubis.options({}, :doc => 'A hash of additional options')
 
-config.contentprocessor.redcloth.hard_breaks(true, :doc => 'Specifies whether new lines are turned into hard breaks')
+config.contentprocessor.redcloth.hard_breaks(false, :doc => 'Specifies whether new lines are turned into hard breaks')
 
 config.tag.relocatable.path(nil, :doc => 'The path which should be made relocatable', :mandatory => 'default')
 
