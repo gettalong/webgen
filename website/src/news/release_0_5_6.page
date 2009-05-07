@@ -5,8 +5,6 @@ sort_info: 2008-10-20
 created_at: 2008-10-20 16:16:00 +02:00
 modified_at: 2008-10-20 16:16:00 +02:00
 ---
-## {title:}
-
 <webgen:block name='notes' />
 
 ### Changes
