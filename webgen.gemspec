@@ -1,7 +1,7 @@
 --- !ruby/object:Gem::Specification 
 name: webgen
 version: !ruby/object:Gem::Version 
-  version: 0.5.7.20090227
+  version: 0.5.8.20090507
 platform: ruby
 authors: 
 - Thomas Leitner
@@ -9,7 +9,7 @@ autorequire:
 bindir: bin
 cert_chain: []
 
-date: 2009-02-27 00:00:00 +01:00
+date: 2009-05-07 00:00:00 +02:00
 default_executable: webgen
 dependencies: 
 - !ruby/object:Gem::Dependency 
@@ -18,7 +18,7 @@ dependencies:
   version_requirement: 
   version_requirements: !ruby/object:Gem::Requirement 
     requirements: 
-    - - "="
+    - - ">="
       - !ruby/object:Gem::Version 
         version: 2.0.2
     version: 
@@ -40,35 +40,35 @@ dependencies:
     requirements: 
     - - "="
       - !ruby/object:Gem::Version 
-        version: 2.4.3
+        version: 2.4.5
     version: 
 - !ruby/object:Gem::Dependency 
   name: rake
-  type: :runtime
+  type: :development
   version_requirement: 
   version_requirements: !ruby/object:Gem::Requirement 
     requirements: 
-    - - "="
+    - - ">="
       - !ruby/object:Gem::Version 
         version: 0.8.3
     version: 
 - !ruby/object:Gem::Dependency 
   name: ramaze
-  type: :runtime
+  type: :development
   version_requirement: 
   version_requirements: !ruby/object:Gem::Requirement 
     requirements: 
-    - - "="
+    - - ">="
       - !ruby/object:Gem::Version 
-        version: "2008.06"
+        version: "2009.04"
     version: 
 - !ruby/object:Gem::Dependency 
   name: launchy
-  type: :runtime
+  type: :development
   version_requirement: 
   version_requirements: !ruby/object:Gem::Requirement 
     requirements: 
-    - - "="
+    - - ">="
       - !ruby/object:Gem::Version 
         version: 0.3.2
     version: 
@@ -78,19 +78,9 @@ dependencies:
   version_requirement: 
   version_requirements: !ruby/object:Gem::Requirement 
     requirements: 
-    - - "="
+    - - ">="
       - !ruby/object:Gem::Version 
         version: 0.8.1.2.0
-    version: 
-- !ruby/object:Gem::Dependency 
-  name: dcov
-  type: :development
-  version_requirement: 
-  version_requirements: !ruby/object:Gem::Requirement 
-    requirements: 
-    - - "="
-      - !ruby/object:Gem::Version 
-        version: 0.2.2
     version: 
 - !ruby/object:Gem::Dependency 
   name: rubyforge
@@ -98,7 +88,7 @@ dependencies:
   version_requirement: 
   version_requirements: !ruby/object:Gem::Requirement 
     requirements: 
-    - - "="
+    - - ">="
       - !ruby/object:Gem::Version 
         version: 1.0.0
     version: 
@@ -108,9 +98,9 @@ dependencies:
   version_requirement: 
   version_requirements: !ruby/object:Gem::Requirement 
     requirements: 
-    - - "="
+    - - ">="
       - !ruby/object:Gem::Version 
-        version: 3.0.0
+        version: 4.1.9
     version: 
 - !ruby/object:Gem::Dependency 
   name: haml
@@ -118,9 +108,9 @@ dependencies:
   version_requirement: 
   version_requirements: !ruby/object:Gem::Requirement 
     requirements: 
-    - - "="
+    - - ">="
       - !ruby/object:Gem::Version 
-        version: 2.0.1
+        version: 2.0.9
     version: 
 - !ruby/object:Gem::Dependency 
   name: builder
@@ -128,9 +118,9 @@ dependencies:
   version_requirement: 
   version_requirements: !ruby/object:Gem::Requirement 
     requirements: 
-    - - "="
+    - - ">="
       - !ruby/object:Gem::Version 
-        version: 2.1.2
+        version: 2.1.0
     version: 
 - !ruby/object:Gem::Dependency 
   name: rdoc
@@ -138,9 +128,9 @@ dependencies:
   version_requirement: 
   version_requirements: !ruby/object:Gem::Requirement 
     requirements: 
-    - - "="
+    - - ">="
       - !ruby/object:Gem::Version 
-        version: 2.0.0
+        version: 2.4.2
     version: 
 - !ruby/object:Gem::Dependency 
   name: coderay
@@ -148,9 +138,9 @@ dependencies:
   version_requirement: 
   version_requirements: !ruby/object:Gem::Requirement 
     requirements: 
-    - - "="
+    - - ">="
       - !ruby/object:Gem::Version 
-        version: 0.7.4.215
+        version: 0.7.4.214
     version: 
 - !ruby/object:Gem::Dependency 
   name: feedtools
@@ -158,7 +148,7 @@ dependencies:
   version_requirement: 
   version_requirements: !ruby/object:Gem::Requirement 
     requirements: 
-    - - "="
+    - - ">="
       - !ruby/object:Gem::Version 
         version: 0.2.29
     version: 
@@ -168,7 +158,7 @@ dependencies:
   version_requirement: 
   version_requirements: !ruby/object:Gem::Requirement 
     requirements: 
-    - - "="
+    - - ">="
       - !ruby/object:Gem::Version 
         version: 2.6.2
     version: 
@@ -178,11 +168,26 @@ dependencies:
   version_requirement: 
   version_requirements: !ruby/object:Gem::Requirement 
     requirements: 
-    - - "="
+    - - ">="
       - !ruby/object:Gem::Version 
         version: 1.2.9
     version: 
-description: webgen is used to generate static websites from templates and content files (which can be written in a markup language). It can generate dynamic content like menus on the fly and comes with many powerful extensions.
+- !ruby/object:Gem::Dependency 
+  name: archive-tar-minitar
+  type: :development
+  version_requirement: 
+  version_requirements: !ruby/object:Gem::Requirement 
+    requirements: 
+    - - ">="
+      - !ruby/object:Gem::Version 
+        version: 0.5.2
+    version: 
+description: |
+  webgen is used to generate static websites from templates and content
+  files (which can be written in a markup language). It can generate
+  dynamic content like menus on the fly and comes with many powerful
+  extensions.
+
 email: t_leitner@gmx.at
 executables: 
 - webgen
@@ -201,8 +206,11 @@ files:
 - data/webgen
 - data/webgen/resources.yaml
 - data/webgen/webgui
+- data/webgen/webgui/app.rb
 - data/webgen/webgui/controller
 - data/webgen/webgui/controller/main.rb
+- data/webgen/webgui/layout
+- data/webgen/webgui/layout/default.xhtml
 - data/webgen/webgui/overrides
 - data/webgen/webgui/overrides/win32console.rb
 - data/webgen/webgui/public
@@ -216,12 +224,130 @@ files:
 - data/webgen/webgui/public/js
 - data/webgen/webgui/public/js/jquery.autocomplete.js
 - data/webgen/webgui/public/js/jquery.js
+- data/webgen/webgui/start.rb
 - data/webgen/webgui/view
 - data/webgen/webgui/view/create_website.xhtml
 - data/webgen/webgui/view/error.xhtml
 - data/webgen/webgui/view/index.xhtml
 - data/webgen/webgui/view/manage_website.xhtml
-- data/webgen/webgui/view/page.xhtml
+- data/webgen/website_bundles
+- data/webgen/website_bundles/default
+- data/webgen/website_bundles/default/README
+- data/webgen/website_bundles/default/src
+- data/webgen/website_bundles/default/src/index.page
+- data/webgen/website_bundles/style
+- data/webgen/website_bundles/style/1024px
+- data/webgen/website_bundles/style/1024px/README
+- data/webgen/website_bundles/style/1024px/src
+- data/webgen/website_bundles/style/1024px/src/default.css
+- data/webgen/website_bundles/style/1024px/src/default.template
+- data/webgen/website_bundles/style/1024px/src/images
+- data/webgen/website_bundles/style/1024px/src/images/background.gif
+- data/webgen/website_bundles/style/andreas00
+- data/webgen/website_bundles/style/andreas00/README
+- data/webgen/website_bundles/style/andreas00/src
+- data/webgen/website_bundles/style/andreas00/src/default.css
+- data/webgen/website_bundles/style/andreas00/src/default.template
+- data/webgen/website_bundles/style/andreas00/src/images
+- data/webgen/website_bundles/style/andreas00/src/images/bg.gif
+- data/webgen/website_bundles/style/andreas00/src/images/front.jpg
+- data/webgen/website_bundles/style/andreas00/src/images/menubg.gif
+- data/webgen/website_bundles/style/andreas00/src/images/menubg2.gif
+- data/webgen/website_bundles/style/andreas01
+- data/webgen/website_bundles/style/andreas01/README
+- data/webgen/website_bundles/style/andreas01/src
+- data/webgen/website_bundles/style/andreas01/src/default.css
+- data/webgen/website_bundles/style/andreas01/src/default.template
+- data/webgen/website_bundles/style/andreas01/src/images
+- data/webgen/website_bundles/style/andreas01/src/images/bg.gif
+- data/webgen/website_bundles/style/andreas01/src/images/front.jpg
+- data/webgen/website_bundles/style/andreas01/src/print.css
+- data/webgen/website_bundles/style/andreas03
+- data/webgen/website_bundles/style/andreas03/README
+- data/webgen/website_bundles/style/andreas03/src
+- data/webgen/website_bundles/style/andreas03/src/default.css
+- data/webgen/website_bundles/style/andreas03/src/default.template
+- data/webgen/website_bundles/style/andreas03/src/images
+- data/webgen/website_bundles/style/andreas03/src/images/bodybg.png
+- data/webgen/website_bundles/style/andreas03/src/images/contbg.png
+- data/webgen/website_bundles/style/andreas03/src/images/footerbg.png
+- data/webgen/website_bundles/style/andreas03/src/images/gradient1.png
+- data/webgen/website_bundles/style/andreas03/src/images/gradient2.png
+- data/webgen/website_bundles/style/andreas04
+- data/webgen/website_bundles/style/andreas04/README
+- data/webgen/website_bundles/style/andreas04/src
+- data/webgen/website_bundles/style/andreas04/src/default.css
+- data/webgen/website_bundles/style/andreas04/src/default.template
+- data/webgen/website_bundles/style/andreas04/src/images
+- data/webgen/website_bundles/style/andreas04/src/images/blinkarrow.gif
+- data/webgen/website_bundles/style/andreas04/src/images/bodybg.png
+- data/webgen/website_bundles/style/andreas04/src/images/contentbg.png
+- data/webgen/website_bundles/style/andreas04/src/images/entrybg.png
+- data/webgen/website_bundles/style/andreas04/src/images/flash.gif
+- data/webgen/website_bundles/style/andreas04/src/images/flash2.gif
+- data/webgen/website_bundles/style/andreas04/src/images/globe.gif
+- data/webgen/website_bundles/style/andreas04/src/images/globebottom.gif
+- data/webgen/website_bundles/style/andreas04/src/images/linkarrow.gif
+- data/webgen/website_bundles/style/andreas04/src/images/menuhover.png
+- data/webgen/website_bundles/style/andreas05
+- data/webgen/website_bundles/style/andreas05/README
+- data/webgen/website_bundles/style/andreas05/src
+- data/webgen/website_bundles/style/andreas05/src/default.css
+- data/webgen/website_bundles/style/andreas05/src/default.template
+- data/webgen/website_bundles/style/andreas05/src/images
+- data/webgen/website_bundles/style/andreas05/src/images/bodybg.gif
+- data/webgen/website_bundles/style/andreas05/src/images/front.png
+- data/webgen/website_bundles/style/andreas06
+- data/webgen/website_bundles/style/andreas06/README
+- data/webgen/website_bundles/style/andreas06/src
+- data/webgen/website_bundles/style/andreas06/src/default.css
+- data/webgen/website_bundles/style/andreas06/src/default.template
+- data/webgen/website_bundles/style/andreas06/src/images
+- data/webgen/website_bundles/style/andreas06/src/images/bodybg.gif
+- data/webgen/website_bundles/style/andreas06/src/images/boxbg.gif
+- data/webgen/website_bundles/style/andreas06/src/images/greypx.gif
+- data/webgen/website_bundles/style/andreas06/src/images/header.jpg
+- data/webgen/website_bundles/style/andreas06/src/images/innerbg.gif
+- data/webgen/website_bundles/style/andreas06/src/images/leaves.jpg
+- data/webgen/website_bundles/style/andreas06/src/images/tabs.gif
+- data/webgen/website_bundles/style/andreas07
+- data/webgen/website_bundles/style/andreas07/README
+- data/webgen/website_bundles/style/andreas07/src
+- data/webgen/website_bundles/style/andreas07/src/browserfix.css
+- data/webgen/website_bundles/style/andreas07/src/default.css
+- data/webgen/website_bundles/style/andreas07/src/default.template
+- data/webgen/website_bundles/style/andreas07/src/images
+- data/webgen/website_bundles/style/andreas07/src/images/bodybg.gif
+- data/webgen/website_bundles/style/andreas07/src/images/sidebarbg.gif
+- data/webgen/website_bundles/style/andreas08
+- data/webgen/website_bundles/style/andreas08/README
+- data/webgen/website_bundles/style/andreas08/src
+- data/webgen/website_bundles/style/andreas08/src/default.css
+- data/webgen/website_bundles/style/andreas08/src/default.template
+- data/webgen/website_bundles/style/andreas09
+- data/webgen/website_bundles/style/andreas09/README
+- data/webgen/website_bundles/style/andreas09/src
+- data/webgen/website_bundles/style/andreas09/src/default.css
+- data/webgen/website_bundles/style/andreas09/src/default.template
+- data/webgen/website_bundles/style/andreas09/src/images
+- data/webgen/website_bundles/style/andreas09/src/images/bodybg-black.jpg
+- data/webgen/website_bundles/style/andreas09/src/images/bodybg-green.jpg
+- data/webgen/website_bundles/style/andreas09/src/images/bodybg-orange.jpg
+- data/webgen/website_bundles/style/andreas09/src/images/bodybg-purple.jpg
+- data/webgen/website_bundles/style/andreas09/src/images/bodybg-red.jpg
+- data/webgen/website_bundles/style/andreas09/src/images/bodybg.jpg
+- data/webgen/website_bundles/style/andreas09/src/images/footerbg.jpg
+- data/webgen/website_bundles/style/andreas09/src/images/menuhover-black.jpg
+- data/webgen/website_bundles/style/andreas09/src/images/menuhover-green.jpg
+- data/webgen/website_bundles/style/andreas09/src/images/menuhover-orange.jpg
+- data/webgen/website_bundles/style/andreas09/src/images/menuhover-purple.jpg
+- data/webgen/website_bundles/style/andreas09/src/images/menuhover-red.jpg
+- data/webgen/website_bundles/style/andreas09/src/images/menuhover.jpg
+- data/webgen/website_bundles/style/simple
+- data/webgen/website_bundles/style/simple/README
+- data/webgen/website_bundles/style/simple/src
+- data/webgen/website_bundles/style/simple/src/default.css
+- data/webgen/website_bundles/style/simple/src/default.template
 - data/webgen/website_skeleton
 - data/webgen/website_skeleton/config.yaml
 - data/webgen/website_skeleton/ext
@@ -229,132 +355,6 @@ files:
 - data/webgen/website_skeleton/Rakefile
 - data/webgen/website_skeleton/README
 - data/webgen/website_skeleton/src
-- data/webgen/website_styles
-- data/webgen/website_styles/1024px
-- data/webgen/website_styles/1024px/README
-- data/webgen/website_styles/1024px/src
-- data/webgen/website_styles/1024px/src/default.css
-- data/webgen/website_styles/1024px/src/default.template
-- data/webgen/website_styles/1024px/src/images
-- data/webgen/website_styles/1024px/src/images/background.gif
-- data/webgen/website_styles/andreas00
-- data/webgen/website_styles/andreas00/README
-- data/webgen/website_styles/andreas00/src
-- data/webgen/website_styles/andreas00/src/default.css
-- data/webgen/website_styles/andreas00/src/default.template
-- data/webgen/website_styles/andreas00/src/images
-- data/webgen/website_styles/andreas00/src/images/bg.gif
-- data/webgen/website_styles/andreas00/src/images/front.jpg
-- data/webgen/website_styles/andreas00/src/images/menubg.gif
-- data/webgen/website_styles/andreas00/src/images/menubg2.gif
-- data/webgen/website_styles/andreas01
-- data/webgen/website_styles/andreas01/README
-- data/webgen/website_styles/andreas01/src
-- data/webgen/website_styles/andreas01/src/default.css
-- data/webgen/website_styles/andreas01/src/default.template
-- data/webgen/website_styles/andreas01/src/images
-- data/webgen/website_styles/andreas01/src/images/bg.gif
-- data/webgen/website_styles/andreas01/src/images/front.jpg
-- data/webgen/website_styles/andreas01/src/print.css
-- data/webgen/website_styles/andreas03
-- data/webgen/website_styles/andreas03/README
-- data/webgen/website_styles/andreas03/src
-- data/webgen/website_styles/andreas03/src/default.css
-- data/webgen/website_styles/andreas03/src/default.template
-- data/webgen/website_styles/andreas03/src/images
-- data/webgen/website_styles/andreas03/src/images/bodybg.png
-- data/webgen/website_styles/andreas03/src/images/contbg.png
-- data/webgen/website_styles/andreas03/src/images/footerbg.png
-- data/webgen/website_styles/andreas03/src/images/gradient1.png
-- data/webgen/website_styles/andreas03/src/images/gradient2.png
-- data/webgen/website_styles/andreas04
-- data/webgen/website_styles/andreas04/README
-- data/webgen/website_styles/andreas04/src
-- data/webgen/website_styles/andreas04/src/default.css
-- data/webgen/website_styles/andreas04/src/default.template
-- data/webgen/website_styles/andreas04/src/images
-- data/webgen/website_styles/andreas04/src/images/blinkarrow.gif
-- data/webgen/website_styles/andreas04/src/images/bodybg.png
-- data/webgen/website_styles/andreas04/src/images/contentbg.png
-- data/webgen/website_styles/andreas04/src/images/entrybg.png
-- data/webgen/website_styles/andreas04/src/images/flash.gif
-- data/webgen/website_styles/andreas04/src/images/flash2.gif
-- data/webgen/website_styles/andreas04/src/images/globe.gif
-- data/webgen/website_styles/andreas04/src/images/globebottom.gif
-- data/webgen/website_styles/andreas04/src/images/linkarrow.gif
-- data/webgen/website_styles/andreas04/src/images/menuhover.png
-- data/webgen/website_styles/andreas05
-- data/webgen/website_styles/andreas05/README
-- data/webgen/website_styles/andreas05/src
-- data/webgen/website_styles/andreas05/src/default.css
-- data/webgen/website_styles/andreas05/src/default.template
-- data/webgen/website_styles/andreas05/src/images
-- data/webgen/website_styles/andreas05/src/images/bodybg.gif
-- data/webgen/website_styles/andreas05/src/images/front.png
-- data/webgen/website_styles/andreas06
-- data/webgen/website_styles/andreas06/README
-- data/webgen/website_styles/andreas06/src
-- data/webgen/website_styles/andreas06/src/default.css
-- data/webgen/website_styles/andreas06/src/default.template
-- data/webgen/website_styles/andreas06/src/images
-- data/webgen/website_styles/andreas06/src/images/bodybg.gif
-- data/webgen/website_styles/andreas06/src/images/boxbg.gif
-- data/webgen/website_styles/andreas06/src/images/greypx.gif
-- data/webgen/website_styles/andreas06/src/images/header.jpg
-- data/webgen/website_styles/andreas06/src/images/innerbg.gif
-- data/webgen/website_styles/andreas06/src/images/leaves.jpg
-- data/webgen/website_styles/andreas06/src/images/tabs.gif
-- data/webgen/website_styles/andreas07
-- data/webgen/website_styles/andreas07/README
-- data/webgen/website_styles/andreas07/src
-- data/webgen/website_styles/andreas07/src/browserfix.css
-- data/webgen/website_styles/andreas07/src/default.css
-- data/webgen/website_styles/andreas07/src/default.template
-- data/webgen/website_styles/andreas07/src/images
-- data/webgen/website_styles/andreas07/src/images/bodybg.gif
-- data/webgen/website_styles/andreas07/src/images/sidebarbg.gif
-- data/webgen/website_styles/andreas08
-- data/webgen/website_styles/andreas08/README
-- data/webgen/website_styles/andreas08/src
-- data/webgen/website_styles/andreas08/src/default.css
-- data/webgen/website_styles/andreas08/src/default.template
-- data/webgen/website_styles/andreas09
-- data/webgen/website_styles/andreas09/README
-- data/webgen/website_styles/andreas09/src
-- data/webgen/website_styles/andreas09/src/default.css
-- data/webgen/website_styles/andreas09/src/default.template
-- data/webgen/website_styles/andreas09/src/images
-- data/webgen/website_styles/andreas09/src/images/bodybg-black.jpg
-- data/webgen/website_styles/andreas09/src/images/bodybg-green.jpg
-- data/webgen/website_styles/andreas09/src/images/bodybg-orange.jpg
-- data/webgen/website_styles/andreas09/src/images/bodybg-purple.jpg
-- data/webgen/website_styles/andreas09/src/images/bodybg-red.jpg
-- data/webgen/website_styles/andreas09/src/images/bodybg.jpg
-- data/webgen/website_styles/andreas09/src/images/footerbg.jpg
-- data/webgen/website_styles/andreas09/src/images/menuhover-black.jpg
-- data/webgen/website_styles/andreas09/src/images/menuhover-green.jpg
-- data/webgen/website_styles/andreas09/src/images/menuhover-orange.jpg
-- data/webgen/website_styles/andreas09/src/images/menuhover-purple.jpg
-- data/webgen/website_styles/andreas09/src/images/menuhover-red.jpg
-- data/webgen/website_styles/andreas09/src/images/menuhover.jpg
-- data/webgen/website_styles/simple
-- data/webgen/website_styles/simple/README
-- data/webgen/website_styles/simple/src
-- data/webgen/website_styles/simple/src/default.css
-- data/webgen/website_styles/simple/src/default.template
-- data/webgen/website_templates
-- data/webgen/website_templates/default
-- data/webgen/website_templates/default/README
-- data/webgen/website_templates/default/src
-- data/webgen/website_templates/default/src/index.page
-- data/webgen/website_templates/project
-- data/webgen/website_templates/project/README
-- data/webgen/website_templates/project/src
-- data/webgen/website_templates/project/src/about.page
-- data/webgen/website_templates/project/src/download.page
-- data/webgen/website_templates/project/src/features.page
-- data/webgen/website_templates/project/src/index.page
-- data/webgen/website_templates/project/src/screenshots.page
 - doc/contentprocessor
 - doc/contentprocessor/blocks.page
 - doc/contentprocessor/builder.page
@@ -378,6 +378,10 @@ files:
 - doc/manual.page
 - doc/reference_configuration.page
 - doc/reference_metainfo.page
+- doc/reference_website_styles.page
+- doc/source
+- doc/source/filesystem.page
+- doc/source/tararchive.page
 - doc/sourcehandler
 - doc/sourcehandler/copy.page
 - doc/sourcehandler/directory.page
@@ -404,8 +408,11 @@ files:
 - doc/tag.template
 - doc/upgrading.page
 - doc/webgen_page_format.page
+- doc/website_styles
+- doc/website_styles.metainfo
 - lib/webgen/blackboard.rb
 - lib/webgen/cache.rb
+- lib/webgen/cli/apply_command.rb
 - lib/webgen/cli/create_command.rb
 - lib/webgen/cli/run_command.rb
 - lib/webgen/cli/utils.rb
@@ -416,7 +423,6 @@ files:
 - lib/webgen/configuration.rb
 - lib/webgen/contentprocessor/blocks.rb
 - lib/webgen/contentprocessor/builder.rb
-- lib/webgen/contentprocessor/context.rb
 - lib/webgen/contentprocessor/erb.rb
 - lib/webgen/contentprocessor/erubis.rb
 - lib/webgen/contentprocessor/fragments.rb
@@ -428,8 +434,11 @@ files:
 - lib/webgen/contentprocessor/sass.rb
 - lib/webgen/contentprocessor/tags.rb
 - lib/webgen/contentprocessor.rb
+- lib/webgen/context/nodes.rb
+- lib/webgen/context.rb
 - lib/webgen/coreext.rb
 - lib/webgen/default_config.rb
+- lib/webgen/deprecated.rb
 - lib/webgen/languages.rb
 - lib/webgen/loggable.rb
 - lib/webgen/logger.rb
@@ -441,13 +450,13 @@ files:
 - lib/webgen/source/filesystem.rb
 - lib/webgen/source/resource.rb
 - lib/webgen/source/stacked.rb
+- lib/webgen/source/tararchive.rb
 - lib/webgen/source.rb
 - lib/webgen/sourcehandler/base.rb
 - lib/webgen/sourcehandler/copy.rb
 - lib/webgen/sourcehandler/directory.rb
 - lib/webgen/sourcehandler/feed.rb
 - lib/webgen/sourcehandler/fragment.rb
-- lib/webgen/sourcehandler/gallery.rb
 - lib/webgen/sourcehandler/memory.rb
 - lib/webgen/sourcehandler/metainfo.rb
 - lib/webgen/sourcehandler/page.rb
@@ -488,6 +497,7 @@ files:
 - misc/images/information.png
 - misc/images/quote.gif
 - misc/images/warning.png
+- misc/style.page
 - test/test_blackboard.rb
 - test/test_cache.rb
 - test/test_cli.rb
@@ -497,7 +507,6 @@ files:
 - test/test_contentprocessor.rb
 - test/test_contentprocessor_blocks.rb
 - test/test_contentprocessor_builder.rb
-- test/test_contentprocessor_context.rb
 - test/test_contentprocessor_erb.rb
 - test/test_contentprocessor_erubis.rb
 - test/test_contentprocessor_fragments.rb
@@ -508,6 +517,7 @@ files:
 - test/test_contentprocessor_redcloth.rb
 - test/test_contentprocessor_sass.rb
 - test/test_contentprocessor_tags.rb
+- test/test_context.rb
 - test/test_languages.rb
 - test/test_loggable.rb
 - test/test_logger.rb
@@ -518,6 +528,7 @@ files:
 - test/test_source_filesystem.rb
 - test/test_source_resource.rb
 - test/test_source_stacked.rb
+- test/test_source_tararchive.rb
 - test/test_sourcehandler_base.rb
 - test/test_sourcehandler_copy.rb
 - test/test_sourcehandler_directory.rb
@@ -550,6 +561,8 @@ files:
 - test/helper.rb
 has_rdoc: true
 homepage: http://webgen.rubyforge.org
+licenses: []
+
 post_install_message: |+
   
   
@@ -565,10 +578,9 @@ post_install_message: |+
   
 rdoc_options: 
 - --line-numbers
-- --inline-source
-- --promiscuous
+- --all
 - --main
-- Webgen
+- lib/webgen/website.rb
 require_paths: 
 - lib
 required_ruby_version: !ruby/object:Gem::Requirement 
@@ -586,9 +598,9 @@ required_rubygems_version: !ruby/object:Gem::Requirement
 requirements: []
 
 rubyforge_project: webgen
-rubygems_version: 1.3.1
+rubygems_version: 1.3.2
 signing_key: 
-specification_version: 2
+specification_version: 3
 summary: webgen beta build, not supported!!!
 test_files: []
 
