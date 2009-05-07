@@ -167,7 +167,7 @@ EOF
       s.add_development_dependency('launchy', '>= 0.3.2')
       s.add_development_dependency('rcov', '>= 0.8.1.2.0')
       s.add_development_dependency('rubyforge', '>= 1.0.0')
-      s.add_development_dependency('RedCloth', '>= 3.0.0')
+      s.add_development_dependency('RedCloth', '>= 4.1.9')
       s.add_development_dependency('haml', '>= 2.0.9')
       s.add_development_dependency('builder', '>= 2.1.0')
       s.add_development_dependency('rdoc', '>= 2.4.2')

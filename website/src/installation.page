@@ -154,7 +154,7 @@ it should normally work with newer versions, too!
 * (optional) [rake](http://rake.rubyforge.org) version 0.8.3 or higher for using the created
   website Rakefiles
 
-* (optional) [RedCloth](http://redcloth.rubyforge.org) version 3.0.0 or higher for Textile support
+* (optional) [RedCloth](http://redcloth.rubyforge.org) version 4.1.9 or higher for Textile support
 
 * (optional) [haml](http://haml.hamptoncatlin.com) version 2.0.9 or higher for haml and sass support
 
