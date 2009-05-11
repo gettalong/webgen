@@ -218,7 +218,11 @@ module Webgen::SourceHandler
       else
         return node
       end
-      node['modified_at'] = Time.now unless node['modified_at'].kind_of?(Time)
+
+      if !node['modified_at'].kind_of?(Time)
+        log(:warn) { "Meta information 'modified_at' set to current time in <#{node.absolute_lcn}> since its value '#{node['modified_at']}' was of type #{node['modified_at'].class}" } unless node['modified_at'].nil?
+        node['modified_at'] = Time.now
+      end
       node.node_info[:src] = path.source_path
       node.node_info[:creation_path] = path.path
       node.node_info[:processor] = self.class.name
