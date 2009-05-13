@@ -1,6 +1,7 @@
 # -*- encoding: utf-8 -*-
 
 require 'test/unit'
+require 'helper'
 require 'webgen/node'
 require 'webgen/tree'
 require 'webgen/contentprocessor'
