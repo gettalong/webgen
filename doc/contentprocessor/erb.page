@@ -8,7 +8,7 @@ a look at its documentation by executing `ri ERB` or the [ruby documentation
 site](http://www.ruby-doc.org/)!
 
 You can use the special object `context` in your ERB code which provides the whole rendering context
-and the following useful methods:
+and, for example, the following useful methods:
 
 * `website`: Provides access to the `Webgen::Website` object which can be used to access all aspects
   of the currently rendered website.
@@ -21,6 +21,9 @@ and the following useful methods:
 
 * `dest_node`: The node in which the result gets inserted. Should be used for calculating relative
   paths.
+
+For a complete list of supported methods have a look at the API documentation for
+[Webgen::Context](../rdoc/Webgen/Context.html).
 
 Here is a small usage example. The following put in a page file
 
@@ -53,5 +56,5 @@ output the result of the Ruby code (note the equation sign!). And the fourth lin
 
 > You may need to ensure that the ERB start and end tags are not processed by the content
 > processor. For example, when using the RedCloth content processor, you may need to surround the
-> ERB code with `<textile>` tags!
+> ERB code with `<notextile>` tags!
 {.important}
