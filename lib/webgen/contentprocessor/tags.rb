@@ -24,21 +24,32 @@ module Webgen::ContentProcessor
     def call(context)
       replace_tags(context.content, context.ref_node) do |tag, param_string, body|
         log(:debug) { "Replacing tag #{tag} with data '#{param_string}' and body '#{body}' in <#{context.ref_node.absolute_lcn}>" }
-
-        result = ''
-        processor = processor_for_tag(tag)
-        if !processor.nil?
-          processor.set_params(processor.create_tag_params(param_string, context.ref_node))
-          result, process_output = processor.call(tag, body, context)
-          processor.set_params(nil)
-
-          result = call(context.clone(:content => result)).content if process_output
-        end
-
-        result
+        process_tag(tag, param_string, body, context)
       end
       context
     end
+
+    # Process the +tag+ and return the result. The parameter +params+ needs to be a Hash holding all
+    # needed and optional parameters for the tag or a parameter String in YAML format and +body+ is
+    # the optional body for the tag. +context+ needs to be a valid Webgen::Context object.
+    def process_tag(tag, params, body, context)
+      result = ''
+      processor = processor_for_tag(tag)
+      if !processor.nil?
+        params = if params.kind_of?(String)
+                   processor.create_tag_params(params, context.ref_node)
+                 else
+                   processor.create_params_hash(params, context.ref_node)
+                 end
+        processor.set_params(params)
+        result, process_output = processor.call(tag, body, context)
+        processor.set_params(nil)
+
+        result = call(context.clone(:content => result)).content if process_output
+      end
+      result
+    end
+
 
     #######
     private

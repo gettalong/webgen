@@ -15,6 +15,8 @@ class TestContentProcessorTags < Test::Unit::TestCase
 
     def create_tag_params(*args); end
 
+    def create_params_hash(*args); end
+
     def call(tag, body, context)
       case tag
       when 'body'
@@ -44,6 +46,17 @@ class TestContentProcessorTags < Test::Unit::TestCase
     assert_equal('thebody', @obj.call(context.clone(:content => "{body::}thebody{body}")).content)
     assert_equal('test {other:}other test',
                   @obj.call(context.clone(:content => "test{bodyproc::} \\{other:}{other:} {bodyproc}test")).content)
+  end
+
+  def test_process_tag
+    context = Webgen::Context.new(:chain => [Webgen::Tree.new.dummy_root])
+    context.content = "{test: }"
+    assert_equal('', @obj.process_tag('test', {}, '', context))
+
+    add_test_tag
+    assert_equal('test', @obj.process_tag('test', {'something' => 'new'}, '', context))
+    assert_equal('test', @obj.process_tag('test', '{something: new}', '', context))
+    assert_equal('thebody', @obj.process_tag('body', '{something: new}', 'thebody', context))
   end
 
   def test_replace_tags
