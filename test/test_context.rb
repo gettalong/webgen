@@ -57,4 +57,14 @@ class TestContext < Test::Unit::TestCase
     assert_equal('mivalue', @context.tag('mivalue'))
   end
 
+  def test_render_methods
+    root = Webgen::Node.new(Webgen::Tree.new.dummy_root, '/', '/')
+    node = Webgen::Node.new(root, 'test', 'test')
+    node.node_info[:page] = Webgen::Page.from_data("--- name:content\ndata\n--- name:other\nother")
+    @context[:chain] = [root, node]
+
+    assert_equal('data', @context.render_block('content'))
+    assert_equal('other', @context.render_block(:name => 'other'))
+  end
+
 end

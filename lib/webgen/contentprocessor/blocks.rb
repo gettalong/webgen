@@ -10,7 +10,7 @@ module Webgen::ContentProcessor
     BLOCK_RE = /<webgen:block\s*?((?:\s\w+=('|")[^'"]+\2)+)\s*\/>/
     BLOCK_ATTR_RE = /(\w+)=('|")([^'"]+)\2/
 
-    # Replace that webgen:block xml tags with the rendered content of the specified node.
+    # Replace the webgen:block xml tags with the rendered content of the specified node.
     def call(context)
       context.content.gsub!(BLOCK_RE) do |match|
         attr = {}

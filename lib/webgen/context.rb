@@ -1,6 +1,7 @@
 # -*- encoding: utf-8 -*-
 require 'webgen/context/nodes'
 require 'webgen/context/tags'
+require 'webgen/context/render'
 
 module Webgen
 
@@ -14,7 +15,8 @@ module Webgen
   #   The content string that should be processed.
   #
   # [<tt>:processors</tt>]
-  #   Normally an AccessHash object providing access to all available content processors.
+  #   Normally an ContentProcessor::AccessHash object providing access to all available content
+  #   processors.
   #
   # [<tt>:chain</tt>]
   #   The chain of nodes that is processed. There are some utiltity methods for getting
