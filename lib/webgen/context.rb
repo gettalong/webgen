@@ -1,5 +1,6 @@
 # -*- encoding: utf-8 -*-
 require 'webgen/context/nodes'
+require 'webgen/context/tags'
 
 module Webgen
 

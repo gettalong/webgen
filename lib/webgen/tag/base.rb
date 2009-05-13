@@ -76,6 +76,25 @@ module Webgen::Tag::Base
     create_params_hash(config, ref_node)
   end
 
+  # Create and return the parameter hash from +config+ which needs to be a Hash, a String or +nil+.
+  def create_params_hash(config, node)
+    params = tag_params_list
+    result = case config
+             when Hash then create_from_hash(config, params, node)
+             when String then create_from_string(config, params, node)
+             when NilClass then {}
+             else
+               log(:error) { "Invalid parameter type (#{config.class}) for tag '#{self.class.name}' in <#{node.absolute_lcn}>" }
+               {}
+             end
+
+    unless params.all? {|k| !website.config.meta_info[k][:mandatory] || result.has_key?(k)}
+      log(:error) { "Not all mandatory parameters for tag '#{self.class.name}' in <#{node.absolute_lcn}> set" }
+    end
+
+    result
+  end
+
   # Set the current parameter configuration to +params+.
   def set_params(params)
     @params = params
@@ -120,25 +139,6 @@ module Webgen::Tag::Base
   def tag_params_list
     regexp = /^#{tag_config_base}/
     website.config.data.keys.select {|key| key =~ regexp}
-  end
-
-  # Create the parameter hash from +config+ which needs to be a Hash, a String or +nil+.
-  def create_params_hash(config, node)
-    params = tag_params_list
-    result = case config
-             when Hash then create_from_hash(config, params, node)
-             when String then create_from_string(config, params, node)
-             when NilClass then {}
-             else
-               log(:error) { "Invalid parameter type (#{config.class}) for tag '#{self.class.name}' in <#{node.absolute_lcn}>" }
-               {}
-             end
-
-    unless params.all? {|k| !website.config.meta_info[k][:mandatory] || result.has_key?(k)}
-      log(:error) { "Not all mandatory parameters for tag '#{self.class.name}' in <#{node.absolute_lcn}> set" }
-    end
-
-    result
   end
 
   # Return a valid parameter hash taking values from +config+ which has to be a Hash.
