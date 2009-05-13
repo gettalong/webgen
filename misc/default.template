@@ -7,7 +7,7 @@
 
     <link rel="stylesheet" href="{relocatable: default.css}" type="text/css" />
 
-    <title>webgen - static website generator - {title:}</title>
+    <title>{title:} | webgen - static website generator</title>
 
   </head>
 
