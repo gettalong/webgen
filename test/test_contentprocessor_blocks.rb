@@ -8,7 +8,9 @@ require 'webgen/contentprocessor'
 
 class TestContentProcessorBlocks < Test::Unit::TestCase
 
-  def test_process
+  include Test::WebsiteHelper
+
+  def test_call_and_render_node
     obj = Webgen::ContentProcessor::Blocks.new
     root = Webgen::Node.new(Webgen::Tree.new.dummy_root, '/', '/')
     node = Webgen::Node.new(root, 'test', 'test')
@@ -33,9 +35,11 @@ class TestContentProcessorBlocks < Test::Unit::TestCase
     context.content = '<webgen:block name="content" chain="invalid" /><webgen:block name="content" />'
     node.node_info[:used_nodes] = Set.new
     context[:chain] = [node, template, node]
+    context.dest_node.unflag(:dirty)
     obj.call(context)
-    assert_equal('<webgen:block name="content" chain="invalid" />beforedataafter', context.content)
+    assert_equal('beforedataafter', context.content)
     assert_equal(Set.new([template.absolute_lcn, node.absolute_lcn]), node.node_info[:used_nodes])
+    assert(context.dest_node.flagged?(:dirty))
 
     context.content = 'bef<webgen:block name="other" chain="template;test" notfound="ignore" />aft'
     obj.call(context)
@@ -64,6 +68,9 @@ class TestContentProcessorBlocks < Test::Unit::TestCase
     context.content = '<webgen:block name="other" node="current" chain="template"/>'
     obj.call(context)
     assert_equal('other', context.content)
+
+    assert_equal('other', obj.render_block(context, :chain => [template], :name => 'other', :node => 'current'))
+    assert_equal('beforedataafter', obj.render_block(context, :chain => [template, node], :name => 'content', :node => 'first'))
   end
 
 end
