@@ -10,9 +10,10 @@ module Webgen
   #
   # A source class only needs to respond to the method +paths+ which needs to return a set of paths
   # for the source. The returned paths must respond to the method <tt>changed?</tt> (has to return
-  # +true+ if the paths has changed since the last webgen run). The default implementation in the
-  # Path class just returns +true+. One can either derive a specialized path class or define
-  # singleton methods on each path object.
+  # +true+ if the paths has changed since the last webgen run). If a path represents a directory, it
+  # needs to have a trailing slash! The default implementation in the Path class just returns
+  # +true+. One can either derive a specialized path class or define singleton methods on each path
+  # object.
   #
   # == Sample Source Class
   #
@@ -36,10 +37,9 @@ module Webgen
   #   end
   #
   # You can use this source class in your website (after placing the code in, for example,
-  # <tt>ext/init.rb</tt>) by updating the <tt>sources</tt> configuration option (the following code
-  # has to be placed after the definition of the +MemorySource+ class):
+  # <tt>ext/init.rb</tt>) by updating the <tt>sources</tt> configuration option:
   #
-  #   WebsiteAccess.website.config['sources'] << ['/', MemorySource]
+  #   WebsiteAccess.website.config['sources'] << ['/', 'MemorySource']
   #
   module Source
 
