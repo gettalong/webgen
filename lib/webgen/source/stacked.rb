@@ -17,20 +17,27 @@ module Webgen::Source
   # source, it is discarded and not used.
   class Stacked
 
-    # Return the stack of Webgen::Source objects.
+    # Return the stack of mount point to Webgen::Source object maps.
     attr_reader :stack
 
+    # Specifies whether the result of #paths calls should be cached (default: +false+). If caching
+    # is activated, new maps cannot be added to the stacked source anymore!
+    attr_accessor :cache_paths
+
     # Create a new stack. The optional +map+ parameter can be used to provide initial mappings of
-    # mount points to source objects (see #add for details).
-    def initialize(map = {})
+    # mount points to source objects (see #add for details). You cannot add other maps after a call
+    # to #paths if +cache_paths+ is +true+
+    def initialize(map = {}, cache_paths = false)
       @stack = []
+      @cache_paths = cache_paths
       add(map)
     end
 
     # Add all mappings found in +maps+ to the stack. The parameter +maps+ should be an array of
-    # two-element arrays which contain an absolute directoriy (ie. starting with a slash) and a
+    # two-element arrays which contain an absolute directory (ie. starting with a slash) and a
     # source object.
     def add(maps)
+      raise "Cannot add new maps since caching is activated for this source" if defined?(@paths) && @cache_paths
       maps.each do |mp, source|
         raise "Invalid mount point specified: #{mp}" unless mp =~ /^\//
         @stack << [mp, source]
@@ -41,6 +48,7 @@ module Webgen::Source
     # returned by later source objects are not used if a prior source object has returned the same
     # path.
     def paths
+      return @paths if defined?(@paths) && @cache_paths
       @paths = Set.new
       @stack.each do |mp, source|
         source.paths.each do |path|
