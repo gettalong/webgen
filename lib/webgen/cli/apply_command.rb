@@ -44,7 +44,7 @@ module Webgen::CLI
     # Apply the style specified in <tt>args[0]</tt> to the webgen website.
     def execute(args)
       wm = Webgen::WebsiteManager.new(commandparser.directory)
-      if !File.directory?(commandparser.directory)
+      if !File.directory?(wm.website.directory)
         raise "You need to specify a valid webgen website directory!"
       elsif args.length == 0
         raise OptionParser::MissingArgument.new('STYLE')
