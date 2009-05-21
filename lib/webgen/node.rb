@@ -215,9 +215,13 @@ module Webgen
       end
     end
 
+    # This pattern is the the same as URI::UNSAFE except that the hash character (#) is also
+    # not escaped. This is needed sothat paths with fragments work correctly.
+    URL_UNSAFE_PATTERN = Regexp.new("[^#{URI::PATTERN::UNRESERVED}#{URI::PATTERN::RESERVED}#]") # :nodoc:
+
     # Construct an internal URL for the given +name+ which can be a acn/alcn/path.
     def self.url(name)
-      url = URI::parse(name)
+      url = URI::parse(URI::escape(name, URL_UNSAFE_PATTERN))
       url = URI::parse('webgen://webgen.localhost/') + url unless url.absolute?
       url
     end

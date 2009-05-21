@@ -363,5 +363,14 @@ class TestNode < Test::Unit::TestCase
                  nodes[:somename_en_frag].link_to(nodes[:somename_en_frag]))
   end
 
+  def test_url
+    assert_equal("webgen://webgen.localhost/hallo", Webgen::Node.url("hallo").to_s)
+    assert_equal("webgen://webgen.localhost/hallo%20du", Webgen::Node.url("hallo du").to_s)
+    assert_equal("webgen://webgen.localhost/hall%C3%B6chen", Webgen::Node.url("hallöchen").to_s)
+    assert_equal("webgen://webgen.localhost/hallo#du", Webgen::Node.url("hallo#du").to_s)
+
+    assert_equal("webgen://webgen.localhost/test", Webgen::Node.url("/test").to_s)
+    assert_equal("http://example.com/test", Webgen::Node.url("http://example.com/test").to_s)
+  end
 
 end
