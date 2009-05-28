@@ -4,8 +4,28 @@ require 'webgen/languages'
 
 module Webgen
 
-  # A path object provides information about a specific path as well as methods for accessing its
-  # content.
+  # == General Information
+  #
+  # A Path object provides information about a path that is used to create a node as well as methods
+  # for accessing its content. In contrast, output paths are always strings and just specify the
+  # location where a specific node should be written to.
+  #
+  # Note the +path+ and +source_path+ attributes of a Path object:
+  #
+  # * The +source_path+ specifies a path string that was directly created by a Source object. Each
+  #   Path object must have such a valid source path sothat webgen can infer the Path the lead to
+  #   the creation of a Node object later.
+  #
+  # * In contrast, the +path+ attribute specifies the path that is used to create the canonical name
+  #   (and by default the output path) of a Node object. Normally it is the same as the
+  #   +source_path+ but can differ (e.g. when fragment nodes are created for page file nodes).
+  #
+  # A Path object can represent one of three different things: a directory, a file or a fragment. If
+  # the +path+ ends with a slash character, then the path object represents a directory, if the path
+  # contains a hash character anywhere, then the path object represents a fragment and else it
+  # represents a file. Have a look at the webgen manual to see the exact format of a path!
+  #
+  # == Relation to Source classes
   #
   # A webgen source class needs to derive a specialized path class from this class and implement an
   # approriate #changed? method that returns +true+ if the path's content has changed since the last
@@ -13,15 +33,21 @@ module Webgen
   class Path
 
     # Helper class for easy access to the content of a path.
+    #
+    # This class is used sothat the creation of the real IO object for #stream can be delayed till
+    # it is actually needed. This is done by not directly requiring the user of this class to supply
+    # the IO object, but by requiring a block that creates the real IO object.
     class SourceIO
 
-      # Create a new SourceIO object. A block has to be specified that returns an IO object.
+      # Create a new SourceIO object. A block has to be specified that returns the to-be-wrapped IO
+      # object.
       def initialize(&block)
         @block = block
-        raise ArgumentError, 'Need to provide a block which returns an IO object' if @block.nil?
+        raise ArgumentError, 'You need to provide a block which returns an IO object' if @block.nil?
       end
 
-      # Provide direct access to the wrapped IO object.
+      # Provide direct access to the wrapped IO object by yielding it. After the method block
+      # returns the IO object is automatically closed.
       def stream
         io = @block.call
         yield(io)
@@ -29,7 +55,7 @@ module Webgen
         io.close
       end
 
-      # Return the content of the wrapped IO object as string.
+      # Return the whole content of the wrapped IO object as string.
       def data
         stream {|io| io.read}
       end
@@ -49,57 +75,60 @@ module Webgen
 
     include Comparable
 
-    # The full path.
+    # The full path for which this Path object was created.
     attr_accessor :path
 
-    # The source path that lead to the creation of this path.
+    # A string specifying the path that lead to the creation of this path.
     attr_accessor :source_path
 
-    # The basename part of the path.
+    # The string specifying the parent path
+    attr_accessor :parent_path
+
+    # The canonical name of the path without the extension.
     attr_accessor :basename
 
-    # The directory part of the path.
-    attr_accessor :directory
-
-    # The canonical name without the extension.
-    attr_accessor :cnbase
-
-    # The extension.
+    # The extension of the +path+.
     attr_accessor :ext
 
     # Extracted meta information for the path.
     attr_accessor :meta_info
 
+    # Specifies whether this path should be used during the "tree update" phase of a webgen run or
+    # only later during node resolution. Defaults to +false+, i.e. use during the "tree update"
+    # phase.
+    attr_accessor :passive
+
+
     # Create a new Path object for +path+. The optional +source_path+ parameter specifies the path
-    # that lead to the creation of this path. The optional block needs to return an IO object for
-    # the content of the path.
+    # string that lead to the creation of this path. The optional block needs to return an IO object
+    # for getting the content of the path.
+    #
+    # The +path+ needs to be in a well defined format which can be looked up in the webgen manual.
     def initialize(path, source_path = path, &ioblock)
       @meta_info = {}
       @io = block_given? ? SourceIO.new(&ioblock) : nil
       @source_path = source_path
+      @passive = false
       analyse(path)
     end
 
     # Mount this path at the mount point +mp+ optionally stripping +prefix+ from the path and return
     # the new path object.
     def mount_at(mp, prefix = nil)
-      temp = dup
-      temp.path = temp.path.sub(/^#{Regexp.escape(prefix.chomp("/"))}/, '') if prefix     #"
-      reanalyse = (@path == '/' || temp.path == '/')
-      temp.path = File.join(mp, temp.path)
-      temp.source_path = temp.path if @path == @source_path
-      if reanalyse
-        temp.send(:analyse, temp.path)
-      else
-        temp.directory = File.join(File.dirname(temp.path), '/')
-      end
-      temp
-    end
-
-    # Has the content of this path changed since the last webgen run? This default implementation
-    # always returns +true+, a specialized sub class needs to override this behaviour!
-    def changed?
-      true
+      path = File.join(mp, @path.sub(/^#{Regexp.escape(prefix.to_s.chomp('/'))}/, '')) #'
+      source_path = (@path == @source_path ? path : @source_path)
+      return self.class.new(path, source_path)
+      #       temp = dup
+      #       temp.path = temp.path.sub(/^#{Regexp.escape(prefix.chomp("/"))}/, '') if prefix     #"
+      #       reanalyse = (@path == '/' || temp.path == '/')
+      #       temp.path = File.join(mp, temp.path)
+      #       temp.source_path = temp.path if @path == @source_path
+      #       if reanalyse
+      #         temp.send(:analyse, temp.path)
+      #       else
+      #         temp.directory = File.join(File.dirname(temp.path), '/')
+      #       end
+      #       temp
     end
 
     # Duplicate the path object.
@@ -107,6 +136,12 @@ module Webgen
       temp = super
       temp.meta_info = @meta_info.dup
       temp
+    end
+
+    # Has the content of this path changed since the last webgen run? This default implementation
+    # always returns +true+, a specialized sub class needs to override this behaviour!
+    def changed?
+      true
     end
 
     # The SourceIO object associated with the path.
@@ -118,26 +153,45 @@ module Webgen
       end
     end
 
-    # The canonical name created from the filename (created from cnbase and extension).
+    # The canonical name created from the +path+ (namely from the parts +basename+ and +extension+).
     def cn
-      @cnbase + (@ext.length > 0 ? '.' + @ext : '')
+      @basename + (@ext.length > 0 ? '.' + @ext : '') + (@basename != '/' && @path =~ /.\/$/ ? '/' : '')
     end
 
-    # Utility method for creating the lcn from +cn+ and the language +lang+.
+    # Utility method for creating the lcn from the +cn+ and the language +lang+.
     def self.lcn(cn, lang)
       if lang.nil?
         cn
       else
-        cn.split('.').insert(1, lang.to_s).join('.')
+        cn.split('.').insert((cn =~ /^\./ ? 2 : 1), lang.to_s).join('.')
       end
     end
 
-    # The localized canonical name created from the filename.
+    # The localized canonical name created from the +path+.
     def lcn
       self.class.lcn(cn, @meta_info['lang'])
     end
 
-    # Compare this object to another Path or a String.
+    # The absolute canonical name of this path.
+    def acn
+      if @path =~ /#/
+        self.class.new(@parent_path).acn + cn
+      else
+        @parent_path + cn
+      end
+    end
+
+    # The absolute localized canonical name of this path.
+    def alcn
+      if @path =~ /#/
+        self.class.new(@parent_path).alcn + lcn
+      else
+        @parent_path + lcn
+      end
+    end
+
+    # Equality -- Return +true+ if +other+ is a Path object with the same #path or if +other+ is a
+    # String equal to the #path. Else return +false+.
     def ==(other)
       if other.kind_of?(Path)
         other.path == @path
@@ -149,13 +203,12 @@ module Webgen
     end
     alias_method(:eql?, :==)
 
-    # Implemented sothat a Path looks like a String when used as key in a hash.
+    # Compare the #path of this object to <tt>other.path</tt>
     def <=>(other)
-      @path <=> other.to_str
+      @path <=> other.path
     end
 
-    # Implemented sothat a Path looks like a String when used as key in a hash.
-    def hash
+    def hash #:nodoc:
       @path.hash
     end
 
@@ -172,21 +225,46 @@ module Webgen
     private
     #######
 
-    FILENAME_RE = /^(?:(\d+)\.)?([^.]*?)(?:\.(\w\w\w?)(?=.))?(?:\.(.*))?$/
-
     # Analyse the +path+ and fill the object with the extracted information.
     def analyse(path)
       @path = path
-      @basename = File.basename(path)
-      @directory = File.join(File.dirname(path), '/')
-      matchData = FILENAME_RE.match(@basename)
+      if @path =~ /#/
+        analyse_fragment
+      elsif @path =~ /\/$/
+        analyse_directory
+      else
+        analyse_file
+      end
+      @meta_info['title'] = @basename.tr('_-', ' ').capitalize
+      @ext ||= ''
+      raise "The basename of a path may not be empty: #{@path}" if @basename.empty? || @basename == '#'
+      raise "The parent path must start with a slash: #{@path}" if @path !~ /^\// && @path != '/'
+    end
 
-      @meta_info['sort_info'] = (matchData[1].nil? ? nil : matchData[1].to_i)
-      @cnbase                 = matchData[2]
-      @meta_info['lang']      = Webgen::LanguageManager.language_for_code(matchData[3])
-      @ext                    = (@meta_info['lang'].nil? && !matchData[3].nil? ? matchData[3].to_s + '.' : '') + matchData[4].to_s
+    # Analyse the path assuming it is a file.
+    def analyse_directory
+      @parent_path = (@path == '/' ? '' : File.join(File.dirname(@path), '/'))
+      @basename = File.basename(@path)
+    end
 
-      @meta_info['title']     = @cnbase.tr('_-', ' ').capitalize
+    FILENAME_RE = /^(?:(\d+)\.)?(\.?[^.]*?)(?:\.(\w\w\w?)(?=\.))?(?:\.(.*))?$/
+
+    # Analyse the path assuming it is a file.
+    def analyse_file
+      @parent_path = File.join(File.dirname(@path), '/')
+      match_data = FILENAME_RE.match(File.basename(@path))
+
+      @meta_info['sort_info'] = (match_data[1].nil? ? nil : match_data[1].to_i)
+      @basename               = match_data[2]
+      @meta_info['lang']      = Webgen::LanguageManager.language_for_code(match_data[3])
+      @ext                    = (@meta_info['lang'].nil? && !match_data[3].nil? ? match_data[3].to_s : '') + match_data[4].to_s
+    end
+
+    # Analyse the path assuming it is a fragment.
+    def analyse_fragment
+      @parent_path, @basename =  @path.scan(/^(.*?)(#.*?)$/).first
+      raise "The parent path of a fragment path must be a file path and not a directory path: #{@path}" if @parent_path =~ /\/$/
+      raise "A fragment path must only contain one hash character: #{path}" if @path.count("#") > 1
     end
 
   end

@@ -43,6 +43,7 @@ end
 
 # All things regarding sources
 config.sources [['/', "Webgen::Source::FileSystem", 'src']], :doc => 'One or more sources from which files are read, relative to website directory'
+config.passive_sources([['/', "Webgen::Source::Resource", "webgen-passive-sources"]], :doc => 'One or more sources for delayed node creation on node resolution')
 
 # All things regarding source handler
 config.sourcehandler.patterns({
@@ -70,7 +71,7 @@ config.sourcehandler.default_lang_in_output_path(false, :doc => 'Specifies wheth
 config.sourcehandler.default_meta_info({
                                          :all => {
                                            'output_path' => 'standard',
-                                           'output_path_style' => [:parent, :cnbase, ['.', :lang], :ext]
+                                           'output_path_style' => [:parent, :basename, ['.', :lang], :ext]
                                          },
                                          'Webgen::SourceHandler::Copy' => {
                                            'kind' => 'asset'
