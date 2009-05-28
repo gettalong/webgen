@@ -9,6 +9,20 @@ module Webgen
 
   end
 
+  class Path
+
+    def cnbase
+      warn("Deprecation warning: this method will be removed in one of the next releases - use Path#basename instead!")
+      @basename
+    end
+
+    def cnbase=(value)
+      warn("Deprecation warning: this method will be removed in one of the next releases - use Path#basename= instead!")
+      basename = value
+    end
+
+  end
+
   def self.const_missing(const)
     if const.to_s == 'Block'
       warn("Deprecation warning: Webgen::Block name will be removed in one of the next releases - use Webgen::Page::Block instead!")
