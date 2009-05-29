@@ -76,13 +76,13 @@ module Webgen
     include Comparable
 
     # The full path for which this Path object was created.
-    attr_accessor :path
+    attr_reader :path
 
     # A string specifying the path that lead to the creation of this path.
-    attr_accessor :source_path
+    attr_reader :source_path
 
     # The string specifying the parent path
-    attr_accessor :parent_path
+    attr_reader :parent_path
 
     # The canonical name of the path without the extension.
     attr_accessor :basename
@@ -112,29 +112,37 @@ module Webgen
       analyse(path)
     end
 
-    # Mount this path at the mount point +mp+ optionally stripping +prefix+ from the path and return
-    # the new path object.
+    # Mount this path at the mount point +mp+, optionally stripping +prefix+ from the parent path,
+    # and return the new path object.
+    #
+    # The parameters +mp+ and +prefix+ have to be absolute directory paths, ie. they have to start
+    # and end with a slash and must not contain any hash characters!
+    #
+    #--
+    # Can't use self.class.new(...) here because the semantics of the sub constructors is not know
+    #++
     def mount_at(mp, prefix = nil)
-      path = File.join(mp, @path.sub(/^#{Regexp.escape(prefix.to_s.chomp('/'))}/, '')) #'
-      source_path = (@path == @source_path ? path : @source_path)
-      return self.class.new(path, source_path)
-      #       temp = dup
-      #       temp.path = temp.path.sub(/^#{Regexp.escape(prefix.chomp("/"))}/, '') if prefix     #"
-      #       reanalyse = (@path == '/' || temp.path == '/')
-      #       temp.path = File.join(mp, temp.path)
-      #       temp.source_path = temp.path if @path == @source_path
-      #       if reanalyse
-      #         temp.send(:analyse, temp.path)
-      #       else
-      #         temp.directory = File.join(File.dirname(temp.path), '/')
-      #       end
-      #       temp
+      raise(ArgumentError, "The mount point (#{mp}) must be a valid directory path") if mp =~ /^[^\/]|#|[^\/]$/
+      raise(ArgumentError, "The strip prefix (#{prefix}) must be a valid directory path") if !prefix.nil? && prefix =~ /^[^\/]|#|[^\/]$/
+
+      temp = dup
+      strip_re = /^#{Regexp.escape(prefix.to_s)}/
+      temp.instance_variable_set(:@path, temp.path.sub(strip_re, ''))
+      reanalyse = (@path == '/' || temp.path == '')
+      temp.instance_variable_set(:@path, File.join(mp, temp.path))
+      temp.instance_variable_set(:@source_path, temp.path) if @path == @source_path
+      if reanalyse
+        temp.send(:analyse, temp.path)
+      else
+        temp.instance_variable_set(:@parent_path, File.join(mp, temp.parent_path.sub(strip_re, '')))
+      end
+      temp
     end
 
     # Duplicate the path object.
     def dup
       temp = super
-      temp.meta_info = @meta_info.dup
+      temp.instance_variable_set(:@meta_info, @meta_info.dup)
       temp
     end
 
@@ -241,7 +249,7 @@ module Webgen
       raise "The parent path must start with a slash: #{@path}" if @path !~ /^\// && @path != '/'
     end
 
-    # Analyse the path assuming it is a file.
+    # Analyse the path assuming it is a directory.
     def analyse_directory
       @parent_path = (@path == '/' ? '' : File.join(File.dirname(@path), '/'))
       @basename = File.basename(@path)

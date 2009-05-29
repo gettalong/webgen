@@ -72,13 +72,20 @@ class TestPath < Test::Unit::TestCase
 
   def test_mount_at
     p = Webgen::Path.new('/test.de.page')
-    p = p.mount_at('/somedir')
+    assert_raise(ArgumentError) { p.mount_at('no_start_slash/') }
+    assert_raise(ArgumentError) { p.mount_at('/no_end_slash') }
+    assert_raise(ArgumentError) { p.mount_at('/no_with_hash#_char/') }
+    assert_raise(ArgumentError) { p.mount_at('/', 'no_start_slash/') }
+    assert_raise(ArgumentError) { p.mount_at('/', '/no_end_slash') }
+    assert_raise(ArgumentError) { p.mount_at('/', '/no_with_hash#_char/') }
+
+    p = p.mount_at('/somedir/')
     assert_equal('/somedir/test.de.page', p.path)
     assert_equal('/somedir/test.de.page', p.source_path)
     assert_equal('/somedir/', p.parent_path)
 
     p = Webgen::Path.new('/')
-    p = p.mount_at('/somedir')
+    p = p.mount_at('/somedir/')
     assert_equal('/somedir/', p.path)
     assert_equal('/somedir/', p.source_path)
     assert_equal('/', p.parent_path)
@@ -94,7 +101,7 @@ class TestPath < Test::Unit::TestCase
     assert_equal('Test', p.meta_info['title'])
 
     p = Webgen::Path.new('/source/')
-    p = p.mount_at('/', '/source')
+    p = p.mount_at('/', '/source/')
     assert_equal('/', p.path)
     assert_equal('/', p.source_path)
     assert_equal('', p.parent_path)
