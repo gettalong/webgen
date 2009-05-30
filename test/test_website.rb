@@ -110,6 +110,8 @@ class TestWebsite < Test::Unit::TestCase
     assert(File.directory?(File.join(dir, 'out')))
     ws.clean(true)
     assert(!File.directory?(File.join(dir, 'out')))
+  ensure
+    FileUtils.rm_rf(dir)
   end
 
 end

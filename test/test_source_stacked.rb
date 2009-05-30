@@ -4,7 +4,7 @@ require 'test/unit'
 require 'helper'
 require 'webgen/source'
 
-class TestSourceFileSystemStacked < Test::Unit::TestCase
+class TestSourceStacked < Test::Unit::TestCase
 
   class TestSource
     def initialize(paths); @paths = paths; end
@@ -25,19 +25,19 @@ class TestSourceFileSystemStacked < Test::Unit::TestCase
     assert_raise(RuntimeError) { source.add(['dir', 6]) }
 
     test_source = TestSource.new([Webgen::Path.new('/temp')])
-    source.add('/temp' => test_source)
-    assert_equal([['/temp', test_source]], source.stack)
+    source.add('/temp/' => test_source)
+    assert_equal([['/temp/', test_source]], source.stack)
 
     source.cache_paths = true
-    source.add('/dir' => test_source)
+    source.add('/dir/' => test_source)
     source.paths
-    assert_raise(RuntimeError) { source.add('/dir1' => test_source) }
+    assert_raise(RuntimeError) { source.add('/dir1/' => test_source) }
   end
 
   def test_paths
     source = Webgen::Source::Stacked.new
     source.add('/' => TestSource.new([Webgen::Path.new('/hallo/dir'), Webgen::Path.new('/other')]))
-    source.add('/hallo' => TestSource.new([Webgen::Path.new('/dir'), Webgen::Path.new('/other')]))
+    source.add('/hallo/' => TestSource.new([Webgen::Path.new('/dir'), Webgen::Path.new('/other')]))
     assert_equal(Set.new([Webgen::Path.new('/hallo/dir'), Webgen::Path.new('/other'),
                           Webgen::Path.new('/hallo/other')]), source.paths)
 
