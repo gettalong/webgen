@@ -34,8 +34,8 @@ module Webgen::Source
     end
 
     # Add all mappings found in +maps+ to the stack. The parameter +maps+ should be an array of
-    # two-element arrays which contain an absolute directory (ie. starting with a slash) and a
-    # source object.
+    # two-element arrays which contain an absolute directory (ie. starting and ending with a slash)
+    # and a source object.
     def add(maps)
       raise "Cannot add new maps since caching is activated for this source" if defined?(@paths) && @cache_paths
       maps.each do |mp, source|
