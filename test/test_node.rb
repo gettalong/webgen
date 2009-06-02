@@ -49,22 +49,22 @@ class TestNode < Test::Unit::TestCase
       mi.each {|k,v| assert_equal(v, node[k])}
     end
 
-    node = Webgen::Node.new(@tree.dummy_root, 'test/', 'test', {'lang' => 'de', :test => :value})
-    check_proc.call(node, @tree.dummy_root, 'test/', 'test', 'test', '/test', nil, {:test => :value})
+    node = Webgen::Node.new(@tree.dummy_root, '/', '/', {'lang' => 'de', :test => :value})
+    check_proc.call(node, @tree.dummy_root, '/', '/', '/', '/', nil, {:test => :value})
 
     child = Webgen::Node.new(node, 'somename.html', 'somename.page',  {'lang' => 'de'})
     check_proc.call(child, node, 'somename.html', 'somename.page', 'somename.de.page',
-                    '/test/somename.de.page', 'de', {})
+                    '/somename.de.page', 'de', {})
 
     ['http://webgen.rubyforge.org', 'c:\\test'].each_with_index do |abspath, index|
       cn = 'test' + index.to_s + '.html'
       c = Webgen::Node.new(node, abspath, cn)
-      check_proc.call(c, node, abspath, cn, cn, '/test/' + cn, nil, {})
+      check_proc.call(c, node, abspath, cn, cn, '/' + cn, nil, {})
     end
 
     child.reinit('somename.en.html', {'lang' => 'de', 'title' => 'test'})
     check_proc.call(child, node, 'somename.en.html', 'somename.page', 'somename.de.page',
-                    '/test/somename.de.page', 'de', {'title' => 'test'})
+                    '/somename.de.page', 'de', {'title' => 'test'})
   end
 
   def test_type_checkers
@@ -156,12 +156,13 @@ class TestNode < Test::Unit::TestCase
     assert_equal(nodes[:dir2_index_en], nodes[:dir2].resolve('index.html', 'en'))
 
     assert_equal(nodes[:dir], nodes[:somename_en].resolve('/dir/'))
+    assert_equal(nodes[:dir], nodes[:somename_en].resolve('/dir'))
     assert_equal(nodes[:root], nodes[:somename_en].resolve('/'))
   end
 
   def test_introspection
-    node = Webgen::Node.new(@tree.dummy_root, 'test/', 'test', {'lang' => 'de', :test => :value})
-    assert(node.inspect =~ /alcn=\/test/)
+    node = Webgen::Node.new(@tree.dummy_root, '/', '/', {'lang' => 'de', :test => :value})
+    assert(node.inspect =~ /alcn=\//)
   end
 
   def test_changed
