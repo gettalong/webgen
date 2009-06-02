@@ -76,7 +76,7 @@ module Webgen
     # found, the node is language neutral.
     def initialize(parent, path, cn, meta_info = {})
       @parent = parent
-      @cn = cn.chomp('/').freeze
+      @cn = cn.freeze
       @children = []
       reinit(path, meta_info)
       init_rest
@@ -211,7 +211,7 @@ module Webgen
       else
         parent = parent.parent while parent.is_fragment? # Handle fragment nodes specially in case they are nested
         parent_name = (type == :alcn ? parent.absolute_lcn : parent.absolute_cn)
-        parent_name + (parent_name !~ /\/$/ && (parent.is_directory? || parent == parent.tree.dummy_root) ? '/' : '') + name
+        parent_name + name
       end
     end
 
@@ -257,17 +257,16 @@ module Webgen
     # correct localized node according to +lang+ is returned or if no such node exists but an
     # unlocalized version does, the unlocalized node is returned.
     def resolve(path, lang = nil)
-      url = self.class.url(self.is_directory? ? File.join(@absolute_lcn, '/') : @absolute_lcn) + path
+      url = self.class.url(@absolute_lcn) + path
 
       path = url.path + (url.fragment.nil? ? '' : '#' + url.fragment)
-      path.chomp!('/') unless path == '/'
       return nil if path =~ /^\/\.\./
 
       node = @tree[path, :alcn]
       if node && node.absolute_cn != path
         node
       else
-        (node = @tree[path, :acn]) && node.in_lang(lang)
+        (node = (@tree[path, :acn] || @tree[path + '/', :acn])) && node.in_lang(lang)
       end
     end
 
