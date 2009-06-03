@@ -169,8 +169,7 @@ module Webgen
             handler_paths = paths_for_handler(shn, paths)
             used_paths.merge(handler_paths)
             handler_paths.sort {|a,b| a.path.length <=> b.path.length}.each do |path|
-              parent_dir = path.directory.split('/').collect {|p| Path.new(p).cn}.join('/')
-              parent_dir += '/' if path != '/' && parent_dir == ''
+              parent_dir = (path.parent_path == '' ? '' : Webgen::Path.new(path.parent_path).alcn)
               create_nodes(tree, parent_dir, path, sh)
             end
           end

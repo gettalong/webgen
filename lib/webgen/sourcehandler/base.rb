@@ -181,9 +181,7 @@ module Webgen::SourceHandler
       if OutputPathHelpers.public_instance_methods(false).map(&:to_s).include?(method)
         name = send(method, parent, path, use_lang_part)
         name += '/'  if path.path =~ /\/$/ && name !~ /\/$/
-        if (node = node_exists?(parent, path, name)) && node.lang == path.meta_info['lang']
-          name = node.path
-        elsif node
+        if (node = node_exists?(parent, path, name)) && node.lang != path.meta_info['lang']
           name = send(method, parent, path, (path.meta_info['lang'].nil? ? false : true))
           name += '/'  if path.path =~ /\/$/ && name !~ /\/$/
         end
@@ -196,7 +194,7 @@ module Webgen::SourceHandler
     # Check if the node alcn and output path which would be created by #create_node exists. The
     # +output_path+ to check for can individually be set.
     def node_exists?(parent, path, output_path = self.output_path(parent, path))
-      parent.tree[Webgen::Node.absolute_name(parent, path.lcn, :alcn)] || (!path.meta_info['no_output'] && parent.tree[output_path, :path])
+      parent.tree[path.alcn] || (!path.meta_info['no_output'] && parent.tree[output_path, :path])
     end
 
     # Create a node under +parent+ from +path+ if it does not already exists or needs to be
