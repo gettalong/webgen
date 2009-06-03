@@ -59,9 +59,9 @@ Webgen::WebgenTask.new('htmldoc') do |site|
     prefix = "webgen-website-bundle-"
     config['resources'].select {|name, data| name =~ /^#{prefix}style/}.each do |name, data|
       config['sources'] <<
-        ["/website_styles/#{name.sub(prefix, '')}", "Webgen::Source::FileSystem", 'misc', 'style.page']
+        ["/website_styles/#{name.sub(prefix, '')}/", "Webgen::Source::FileSystem", 'misc', 'style.page']
       config['sources'] <<
-        ["/website_styles/#{name.sub(prefix, '')}", 'Webgen::Source::Resource', name, '/src/**', '/src']
+        ["/website_styles/#{name.sub(prefix, '')}/", 'Webgen::Source::Resource', name, '/src/**', '/src/']
     end
     config['output'] = ['Webgen::Output::FileSystem', 'htmldoc']
   end
@@ -279,9 +279,9 @@ The official version is called 'webgen' and can be installed via
       prefix = "webgen-website-bundle-"
       config['resources'].select {|name, data| name =~ /^#{prefix}style/}.each do |name, data|
         config['sources'] <<
-          ["/documentation/website_styles/#{name.sub(prefix, '')}", "Webgen::Source::FileSystem", '../misc', 'style.page']
+          ["/documentation/website_styles/#{name.sub(prefix, '')}/", "Webgen::Source::FileSystem", '../misc', 'style.page']
         config['sources'] <<
-          ["/documentation/website_styles/#{name.sub(prefix, '')}", 'Webgen::Source::Resource', name, '/src/**', '/src']
+          ["/documentation/website_styles/#{name.sub(prefix, '')}/", 'Webgen::Source::Resource', name, '/src/**', '/src/']
       end
     end
   end
