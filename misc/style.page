@@ -23,7 +23,7 @@ Or it can be applied later on to an already existing website by using the follow
 <dl>
 <%
 require 'webgen/websitemanager'
-infos = Webgen::WebsiteManager.new(context.website).bundles[context.content_node.parent.cn]
+infos = Webgen::WebsiteManager.new(context.website).bundles[context.content_node.parent.cn.chomp('/')]
 infos.instance_eval {@table}.sort {|(ak,av), (bk,bv)| ak.to_s <=> bk.to_s}.each do |name, value|
 next if name.to_s == 'paths'
 %>
