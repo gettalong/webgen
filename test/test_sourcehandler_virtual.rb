@@ -44,7 +44,7 @@ EOF
 
     path_de = @root.tree['/path.de.html']
     path_en = @root.tree['/directory/path.en.html']
-    dir = @root.tree['/dir']
+    dir = @root.tree['/dir/']
     assert_not_nil(path_de)
     assert_not_nil(dir)
     assert_not_nil(path_en)

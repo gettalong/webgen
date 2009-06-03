@@ -26,13 +26,13 @@ class TestTree < Test::Unit::TestCase
 
   def test_register_node_and_register_path
     # Tree#register_node/_path is called when creating a node
-    node = Webgen::Node.new(@tree.dummy_root, 'dummy/', 'dummy')
-    assert_equal(node, @tree['/dummy', :alcn])
-    assert_equal(node, @tree['/dummy', :acn])
-    assert_equal(node, @tree['dummy/', :path])
+    node = Webgen::Node.new(@tree.dummy_root, '/', '/')
+    assert_equal(node, @tree['/', :alcn])
+    assert_equal(node, @tree['/', :acn])
+    assert_equal(node, @tree['/', :path])
     assert_raise(RuntimeError) { Webgen::Node.new(@tree.dummy_root, '/', 'dummy') }
-    assert_raise(RuntimeError) { Webgen::Node.new(@tree.dummy_root, 'dummy/', 'other') }
-    assert_nothing_raised { Webgen::Node.new(@tree.dummy_root, 'dummy/', 'unknown', {'no_output' => true}) }
+    assert_raise(RuntimeError) { Webgen::Node.new(@tree.dummy_root, 'dummy', '/') }
+    assert_nothing_raised { Webgen::Node.new(@tree.dummy_root, '/', 'unknown', {'no_output' => true}) }
     Webgen::Node.new(@tree.dummy_root, 'new', 'new', {'no_output' => true})
     assert(!@tree['new', :path])
   end

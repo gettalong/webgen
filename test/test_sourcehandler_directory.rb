@@ -24,12 +24,12 @@ class TestSourceHandlerDirectory < Test::Unit::TestCase
   def test_create_directories
     @obj = Webgen::SourceHandler::Directory.new
     shm = Webgen::SourceHandler::Main.new # for using service :create_nodes
-    root = Webgen::Node.new(Webgen::Tree.new.dummy_root, 'test/', 'test')
+    root = Webgen::Node.new(Webgen::Tree.new.dummy_root, '/', '/')
     dir = @obj.create_node(root, path_with_meta_info('/dir/'))
 
-    assert_equal(dir, @obj.create_directories(root, '/dir/', path_with_meta_info('/test')))
-    assert_equal(dir, @obj.create_directories(root, 'dir/', path_with_meta_info('/test')))
-    assert_equal(dir, @obj.create_directories(root, 'dir', path_with_meta_info('/test')))
+    assert_equal(dir, @obj.create_directories(root, '/dir/', path_with_meta_info('/')))
+    assert_equal(dir, @obj.create_directories(root, 'dir/', path_with_meta_info('/')))
+    assert_equal(dir, @obj.create_directories(root, 'dir', path_with_meta_info('/')))
 
     which = @obj.create_directories(root, 'dir/under/which', path_with_meta_info('/test'))
     assert_equal(which, @obj.create_directories(root, 'dir/under/which', path_with_meta_info('/test')))

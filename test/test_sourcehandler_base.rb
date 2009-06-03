@@ -50,14 +50,14 @@ class TestSourceHandlerBase < Test::Unit::TestCase
   def test_node_exists
     @tree = Webgen::Tree.new
     node = Webgen::Node.new(@tree.dummy_root, '/', '/', {'lang' => 'de', :test => :value})
-    child_de = Webgen::Node.new(node, '/somename.html', 'somename.page', {'lang' => 'de'})
+    child_de = Webgen::Node.new(node, '/somename.html', 'somename.html', {'lang' => 'de'})
     frag_de = Webgen::Node.new(child_de, '/somename.html#data1', '#othertest')
 
-    assert_equal(child_de, @obj.node_exists?(node, path_with_meta_info('/somename.de.page')))
+    assert_equal(child_de, @obj.node_exists?(node, path_with_meta_info('/somename.de.html')))
     assert_equal(child_de, @obj.node_exists?(node, path_with_meta_info('/other.page'), @obj.output_path(node, path_with_meta_info('/somename.html'))))
-    assert_equal(false, @obj.node_exists?(node, path_with_meta_info('/somename.en.page', {'no_output' => true}),
+    assert_equal(false, @obj.node_exists?(node, path_with_meta_info('/somename.en.html', {'no_output' => true}),
                                           @obj.output_path(node, path_with_meta_info('/somename.html'))))
-    assert_equal(frag_de, @obj.node_exists?(child_de, path_with_meta_info('/somename.html#othertest')))
+    assert_equal(frag_de, @obj.node_exists?(child_de, path_with_meta_info('/somename.de.html#othertest')))
     assert_equal(nil, @obj.node_exists?(node, path_with_meta_info('/unknown')))
   end
 
@@ -93,8 +93,17 @@ class TestSourceHandlerBase < Test::Unit::TestCase
 
     path = path_with_meta_info('/')
     assert_equal('/', @obj.output_path(@tree.dummy_root, path))
-    path = path_with_meta_info('/', 'output_path_style' => [:parent, 'hallo', 56])
+    path = path_with_meta_info('/test/', 'output_path_style' => [:parent, 'hallo', 56])
     assert_equal('hallo/', @obj.output_path(@tree.dummy_root, path))
+
+    path = path_with_meta_info('/index.en.html')
+    assert_equal('/index.html', @obj.output_path(node, path))
+    index_en = Webgen::Node.new(node, '/index.html', 'index.page', {'lang' => 'en'})
+    assert_equal('/index.html', @obj.output_path(node, path))
+    path = path_with_meta_info('/index.en.html', 'output_path_style' => [:parent, 'hallo.html'])
+    assert_equal('/hallo.html', @obj.output_path(node, path))
+    path = path_with_meta_info('/other.de.html', 'output_path_style' => [:parent, 'index', ['.', :lang], :ext])
+    assert_equal('/index.de.html', @obj.output_path(node, path))
 
     assert_raise(RuntimeError) do
       path = path_with_meta_info('/path.html', 'output_path_style' => [:parent, :year, '/', :month, '/', :basename, :ext])
