@@ -26,19 +26,19 @@ EOF
   end
 
   def test_create_node
-    sitemap = @obj.create_node(@nodes[:root], @path)
+    sitemap = @obj.create_node(@path)
 
     assert_not_nil(sitemap)
     assert_equal('/test.xml', sitemap.path)
     assert_equal('/test.xml', sitemap.absolute_lcn)
 
     assert_raise(RuntimeError) do
-      @obj.create_node(@nodes[:root], path_with_meta_info('/test.sitemap', {}, @obj.class.name) {StringIO.new('')})
+      @obj.create_node(path_with_meta_info('/test.sitemap', {}, @obj.class.name) {StringIO.new('')})
     end
   end
 
   def test_content
-    sitemap = @obj.create_node(@nodes[:root], @path)
+    sitemap = @obj.create_node(@path)
     content = sitemap.content
     assert_match(/<changefreq>daily<\/changefreq>/, content)
     assert_match(/<changefreq>hourly<\/changefreq>/, content)

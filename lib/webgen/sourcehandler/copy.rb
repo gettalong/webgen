@@ -9,9 +9,9 @@ module Webgen::SourceHandler
     include Webgen::WebsiteAccess
     include Base
 
-    # Create the node for +parent+ and +path+. If the +path+ has the name of a content processor as
-    # the first part in the extension, it is preprocessed.
-    def create_node(parent, path)
+    # Create the node for +path+. If the +path+ has the name of a content processor as the first
+    # part in the extension, it is preprocessed.
+    def create_node(path)
       if path.ext.index('.')
         processor, *rest = path.ext.split('.')
         if website.blackboard.invoke(:content_processor_names).include?(processor)
@@ -20,7 +20,7 @@ module Webgen::SourceHandler
           processor = nil
         end
       end
-      super(parent, path) do |node|
+      super(path) do |node|
         node.node_info[:preprocessor] = processor
       end
     end

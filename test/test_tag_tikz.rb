@@ -25,7 +25,7 @@ class TestTagTikZ < Test::Unit::TestCase
   end
 
   def test_call
-    root = Webgen::Node.new(Webgen::Tree.new.dummy_root, '/', '/')
+    root = Webgen::Node.new(@website.tree.dummy_root, '/', '/')
     node = Webgen::Node.new(root, '/file.html', 'file.page')
     context = Webgen::Context.new(:chain => [node])
 
@@ -55,7 +55,7 @@ class TestTagTikZ < Test::Unit::TestCase
   end
 
   def test_run_command
-    root = Webgen::Node.new(Webgen::Tree.new.dummy_root, '/', '/')
+    root = Webgen::Node.new(@website.tree.dummy_root, '/', '/')
     context = Webgen::Context.new(:chain => [root])
     assert_equal("hallo\n", @obj.send(:run_command, echo_cmd('hallo'), context))
     assert_nil(@obj.send(:run_command, 'unknown_command 2>&1', context))

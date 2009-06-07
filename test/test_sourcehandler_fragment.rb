@@ -44,9 +44,9 @@ EOF
 
   def test_create_fragment_nodes
     @obj = Webgen::SourceHandler::Fragment.new
-    root = Webgen::Node.new(Webgen::Tree.new.dummy_root, '/', '/')
+    root = Webgen::Node.new(@website.tree.dummy_root, '/', '/')
     path = path_with_meta_info('/hallo.html') {StringIO.new('')}
-    node = @obj.create_node(root, path)
+    node = @obj.create_node(path)
     @website.blackboard.add_service(:create_nodes, method(:create_nodes_service))
 
     sections = @obj.parse_html_headers(YAML::load(TEST_CONTENT).first['data'])
@@ -56,8 +56,8 @@ EOF
     assert_equal(node.resolve('#test'), node.resolve('#other').parent)
   end
 
-  def create_nodes_service(tree, alcn, path, sh)
-    [yield(tree[alcn], path_with_meta_info(path.path))]
+  def create_nodes_service(path, sh)
+    [yield(path_with_meta_info(path.path))]
   end
 
   def check_sections(sections, valid)

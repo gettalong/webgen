@@ -46,19 +46,20 @@ module Webgen::SourceHandler
     end
 
     # Create nested fragment nodes under +parent+ from +sections+ (which can be created using
-    # +parse_html_headers+). +path+ is the source path that defines the fragments. The meta
-    # information +in_menu+ of the fragment nodes is set to the parameter +in_menu+ and the meta
-    # info +sort_info+ is calculated from the base +si+ value.
+    # +parse_html_headers+). +path+ is the source path that defines the fragments (which is not the
+    # same as the creation path for +parent+). The meta information +in_menu+ of the fragment nodes
+    # is set to the parameter +in_menu+ and the meta info +sort_info+ is calculated from the base
+    # +si+ value.
     def create_fragment_nodes(sections, parent, path, in_menu, si = 1000)
       sections.each do |level, id, title, sub_sections|
         fragment_path = parent.absolute_lcn.sub(/#.*$/, '') + '#' + id
-        node = website.blackboard.invoke(:create_nodes, parent.tree, parent.absolute_lcn,
+        node = website.blackboard.invoke(:create_nodes,
                                          Webgen::Path.new(fragment_path, path.source_path),
-                                         self) do |cn_parent, cn_path|
+                                         self) do |cn_path|
           cn_path.meta_info['title'] = title
           cn_path.meta_info['in_menu'] = in_menu
           cn_path.meta_info['sort_info'] = si = si.succ
-          create_node(cn_parent, cn_path)
+          create_node(cn_path, :parent => parent)
         end.first
         create_fragment_nodes(sub_sections, node, path, in_menu, si.succ)
       end

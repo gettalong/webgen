@@ -15,13 +15,12 @@ module Webgen::SourceHandler
       end
     end
 
-    # Create a node under +parent+ for the +path+. The +source_alcn+ specified the node that creates
-    # this memory node when written. You have two options for providing the content for this node:
-    # either you set +data+ to a string (or a Webgen::Path::SourceIO object) or you provide a block
-    # which takes the created node as argument and return a string (or a Webgen::Path::SourceIO
-    # object).
-    def create_node(parent, path, source_alcn, data = nil)
-      super(parent, path) do |node|
+    # Create a node for the +path+. The +source_alcn+ specifies the node that creates this memory
+    # node when written. You have two options for providing the content for this node: either you
+    # set +data+ to a string (or a Webgen::Path::SourceIO object) or you provide a block which takes
+    # the created node as argument and returns a string (or a Webgen::Path::SourceIO object).
+    def create_node(path, source_alcn, data = nil)
+      super(path) do |node|
         node.node_info[:memory_source_alcn] = source_alcn
         (@data ||= {})[node.absolute_lcn] = lambda { data || yield(node) }
       end

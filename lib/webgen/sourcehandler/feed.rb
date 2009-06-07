@@ -15,10 +15,10 @@ module Webgen::SourceHandler
       website.blackboard.add_listener(:node_changed?, method(:node_changed?))
     end
 
-    # Create atom and/or rss feed files from +parent+ and +path+.
-    def create_node(parent, path)
+    # Create atom and/or rss feed files from +path+.
+    def create_node(path)
       page = page_from_path(path)
-      path.meta_info['link'] ||= parent.absolute_lcn
+      path.meta_info['link'] ||= path.parent_path
 
       if MANDATORY_INFOS.any? {|t| path.meta_info[t].nil?}
         raise "One of #{MANDATORY_INFOS.join('/')} information missing for feed <#{path}>"
@@ -26,7 +26,7 @@ module Webgen::SourceHandler
 
       create_feed_node = lambda do |type|
         path.ext = type
-        super(parent, path) do |node|
+        super(path) do |node|
           node.node_info[:feed] = page
           node.node_info[:feed_type] = type
         end

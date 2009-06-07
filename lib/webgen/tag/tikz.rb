@@ -39,9 +39,8 @@ EOF
       parent = website.blackboard.invoke(:create_directories, context.ref_node.tree.root, File.dirname(path), src_path)
       params = @params
 
-      node = website.blackboard.invoke(:create_nodes, parent.tree, parent.absolute_lcn,
-                                       Webgen::Path.new(path, src_path), mem_handler) do |node_parent, node_path|
-        mem_handler.create_node(node_parent, node_path, context.ref_node.absolute_lcn) do |pic_node|
+      node = website.blackboard.invoke(:create_nodes, Webgen::Path.new(path, src_path), mem_handler) do |node_path|
+        mem_handler.create_node(node_path, context.ref_node.absolute_lcn) do |pic_node|
           set_params(params)
           document = ERB.new(LATEX_TEMPLATE).result(binding)
           pic_path = compile(document, File.extname(path), context)

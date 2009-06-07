@@ -32,8 +32,8 @@ EOF
     end
 
     @obj = Webgen::SourceHandler::Metainfo.new
-    @root = Webgen::Node.new(Webgen::Tree.new.dummy_root, '/', '/')
-    @node = @obj.create_node(@root, path_with_meta_info('/metainfo', {}, @obj.class.name) {StringIO.new(CONTENT)})
+    @root = Webgen::Node.new(@website.tree.dummy_root, '/', '/')
+    @node = @obj.create_node(path_with_meta_info('/metainfo', {}, @obj.class.name) {StringIO.new(CONTENT)})
   end
 
   def test_create_node
@@ -43,20 +43,20 @@ EOF
   end
 
   def test_empty_metainfo_file
-    node = @obj.create_node(@root, path_with_meta_info('/test', {}, @obj.class.name) {StringIO.new('')})
+    node = @obj.create_node(path_with_meta_info('/test', {}, @obj.class.name) {StringIO.new('')})
     assert_equal({}, node.node_info[:mi_paths])
     assert_equal({}, node.node_info[:mi_alcn])
   end
 
   def test_meta_info_changed
-    other = TestSH.new.create_node(@root, path_with_meta_info('/default.css'))
+    other = TestSH.new.create_node(path_with_meta_info('/default.css'))
     assert(!@obj.send(:meta_info_changed?, @node, other))
     assert(@obj.send(:meta_info_changed?, @node, other, :force))
     assert(!@obj.send(:meta_info_changed?, @node, other, :no_old_data))
   end
 
   def test_mark_all_matched_dirty
-    other = TestSH.new.create_node(@root, path_with_meta_info('/default.css'))
+    other = TestSH.new.create_node(path_with_meta_info('/default.css'))
 
     other.unflag(:dirty_meta_info)
     @obj.send(:mark_all_matched_dirty, @node)
@@ -73,18 +73,18 @@ EOF
 
   def test_before_node_created
     path = path_with_meta_info('/default.css')
-    @website.blackboard.dispatch_msg(:before_node_created, @root, path)
+    @website.blackboard.dispatch_msg(:before_node_created, path)
     assert('valbef', path.meta_info['before'])
   end
 
   def test_after_node_created
-    other = TestSH.new.create_node(@root, path_with_meta_info('/default.css'))
+    other = TestSH.new.create_node(path_with_meta_info('/default.css'))
     @website.blackboard.dispatch_msg(:after_node_created, @node)
     assert('valaft', other['after'])
   end
 
   def test_before_node_deleted
-    other = TestSH.new.create_node(@root, path_with_meta_info('/default.css'))
+    other = TestSH.new.create_node(path_with_meta_info('/default.css'))
     @website.blackboard.dispatch_msg(:before_node_deleted, @node)
     assert(other.flagged?(:dirty_meta_info))
     assert(@obj.nodes.empty?)
@@ -106,12 +106,12 @@ EOF
   end
 
   def test_deletion_of_metainfo
-    other = TestSH.new.create_node(@root, path_with_meta_info('/other.page'))
+    other = TestSH.new.create_node(path_with_meta_info('/other.page'))
     @website.blackboard.dispatch_msg(:after_node_created, other)
     assert_equal('Not Other', other['title'])
 
     @node.flag(:reinit)
-    @node = @obj.create_node(@root, path_with_meta_info('/metainfo', {}, @obj.class.name) {StringIO.new("")})
+    @node = @obj.create_node(path_with_meta_info('/metainfo', {}, @obj.class.name) {StringIO.new("")})
     assert(other.flagged?(:dirty_meta_info))
   end
 

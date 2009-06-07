@@ -22,15 +22,15 @@ module Webgen::SourceHandler
       self.nodes ||= []
     end
 
-    # Create a meta info node from +parent+ and +path+.
-    def create_node(parent, path)
+    # Create a meta info node from +path+.
+    def create_node(path)
       page = page_from_path(path)
-      super(parent, path) do |node|
+      super(path) do |node|
         [[:mi_paths, 'paths'], [:mi_alcn, 'alcn']].each do |mi_key, block_name|
           node.node_info[mi_key] = {}
           if page.blocks.has_key?(block_name) && (data = YAML::load(page.blocks[block_name].content))
             data.each do |key, value|
-              key = Webgen::Common.absolute_path(key, parent.absolute_lcn)
+              key = Webgen::Common.absolute_path(key, path.parent_path)
               node.node_info[mi_key][key] = value
             end
           end
@@ -87,7 +87,7 @@ module Webgen::SourceHandler
     end
 
     # Update the meta info of matched path before a node is created.
-    def before_node_created(parent, path)
+    def before_node_created(path)
       self.nodes.each do |node|
         node.node_info[:mi_paths].each do |pattern, mi|
           path.meta_info.update(mi) if Webgen::Path.match(path, pattern)

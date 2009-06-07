@@ -19,26 +19,25 @@ module Webgen::SourceHandler
       @path_data = {}
     end
 
-    # Create all virtual nodes under +parent+ which are specified in +path+.
-    def create_node(parent, path)
+    # Create all virtual nodes which are specified in +path+.
+    def create_node(path)
       nodes = []
       read_data(path).each do |key, meta_info|
         cache_data = [key, meta_info.dup]
 
-        key = Webgen::Common.absolute_path(key, parent.absolute_lcn) + (key =~ /\/$/ ? '/' : '')
-        temp_parent = create_directories(parent.tree.root, File.dirname(key), path)
+        key = Webgen::Common.absolute_path(key, path.parent_path) + (key =~ /\/$/ ? '/' : '')
+        temp_parent = create_directories(File.dirname(key), path)
 
         output_path = meta_info.delete('url') || key
         output_path = (URI::parse(output_path).absolute? || output_path =~ /^\// ?
                        output_path : File.join(temp_parent.absolute_lcn, output_path))
 
         if key =~ /\/$/
-          nodes << create_directory(temp_parent, key, path, meta_info)
+          nodes << create_directory(key, path, meta_info)
         else
-          nodes += website.blackboard.invoke(:create_nodes, parent.tree, temp_parent.absolute_lcn,
-                                             Webgen::Path.new(key, path.source_path), self) do |cn_parent, cn_path|
+          nodes += website.blackboard.invoke(:create_nodes, Webgen::Path.new(key, path.source_path), self) do |cn_path|
             cn_path.meta_info.update(meta_info)
-            super(cn_parent, cn_path, output_path) do |n|
+            super(cn_path, :output_path => output_path) do |n|
               n.node_info[:sh_virtual_cache_data] = cache_data
             end
           end
@@ -69,25 +68,28 @@ module Webgen::SourceHandler
     end
 
     # Create the needed parent directories for a virtual node.
-    def create_directories(parent, dirname, path)
-      dirname.sub(/^\//, '').split('/').each do |dir|
-        parent = create_directory(parent, File.join(parent.absolute_lcn, dir), path)
+    def create_directories(dirname, path)
+      parent = website.tree.root
+      dirname.sub(/^\//, '').split('/').inject('/') do |parent_path, dir|
+        parent_path = File.join(parent_path, dir)
+        parent = create_directory(parent_path, path)
       end
       parent
     end
 
     # Create a virtual directory if it does not already exist.
-    def create_directory(parent, dir, path, meta_info = nil)
+    def create_directory(dir, path, meta_info = nil)
       dir_handler = website.cache.instance('Webgen::SourceHandler::Directory')
-      website.blackboard.invoke(:create_nodes, parent.tree, parent.absolute_lcn,
+      parent = website.tree.root
+      website.blackboard.invoke(:create_nodes,
                                 Webgen::Path.new(File.join(dir, '/'), path.source_path),
-                                dir_handler) do |par, temp_path|
-        parent = dir_handler.node_exists?(par, temp_path)
+                                dir_handler) do |temp_path|
+        parent = dir_handler.node_exists?(temp_path)
         if (parent && (parent.node_info[:src] == path.source_path) && !meta_info.nil?) ||
             !parent
           temp_path.meta_info.update(meta_info) if meta_info
           parent.flag(:reinit) if parent
-          parent = dir_handler.create_node(par, temp_path)
+          parent = dir_handler.create_node(temp_path)
         end
         parent
       end

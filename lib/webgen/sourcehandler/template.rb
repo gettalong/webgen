@@ -9,10 +9,10 @@ module Webgen::SourceHandler
     include Webgen::Loggable
     include Base
 
-    # Create a template node in +parent+ for +path+.
-    def create_node(parent, path)
+    # Create a template node for +path+.
+    def create_node(path)
       page = page_from_path(path)
-      super(parent, path) do |node|
+      super(path) do |node|
         node.node_info[:page] = page
       end
     end
