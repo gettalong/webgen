@@ -25,7 +25,7 @@ module Webgen::SourceHandler
       read_data(path).each do |key, meta_info|
         cache_data = [key, meta_info.dup]
 
-        key = Webgen::Common.absolute_path(key, path.parent_path) + (key =~ /\/$/ ? '/' : '')
+        key = Webgen::Path.make_absolute(path.parent_path, key) + (key =~ /\/$/ ? '/' : '')
         temp_parent = create_directories(File.dirname(key), path)
 
         output_path = meta_info.delete('url') || key
