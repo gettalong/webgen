@@ -173,7 +173,7 @@ class TestPath < Test::Unit::TestCase
     assert(!Webgen::Path.match(path, '/'))
   end
 
-  def test_absolute_path
+  def test_apath
     assert_raise(ArgumentError) { Webgen::Path.make_absolute('test', 'test') }
     assert_equal('/', Webgen::Path.make_absolute('/', '/'))
     assert_equal('/dir', Webgen::Path.make_absolute('/other', '/dir'))

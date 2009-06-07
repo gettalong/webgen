@@ -31,11 +31,11 @@ module Webgen::SourceHandler
       chain = [templates, node].flatten
 
       if chain.first.node_info[:page].blocks.has_key?(block_name)
-        node.node_info[:used_nodes] << chain.first.absolute_lcn
+        node.node_info[:used_nodes] << chain.first.alcn
         context = chain.first.node_info[:page].blocks[block_name].render(Webgen::Context.new(:chain => chain))
         context.content
       else
-        raise "Error rendering <#{node.absolute_lcn}>: no block named '#{block_name}' in <#{chain.first.absolute_lcn}>"
+        raise "Error rendering <#{node.alcn}>: no block named '#{block_name}' in <#{chain.first.alcn}>"
       end
     end
     alias_method :content, :render_node

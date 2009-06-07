@@ -30,7 +30,7 @@ EOF
 
     assert_not_nil(sitemap)
     assert_equal('/test.xml', sitemap.path)
-    assert_equal('/test.xml', sitemap.absolute_lcn)
+    assert_equal('/test.xml', sitemap.alcn)
 
     assert_raise(RuntimeError) do
       @obj.create_node(path_with_meta_info('/test.sitemap', {}, @obj.class.name) {StringIO.new('')})

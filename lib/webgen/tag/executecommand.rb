@@ -19,7 +19,7 @@ module Webgen::Tag
       command = param('tag.executecommand.command')
       output = `#{command} 2> #{BIT_BUCKET}`
       if ($? >> 8) != 0
-        raise "Command '#{command}' in <#{context.ref_node.absolute_lcn}> has return value != 0: #{output}"
+        raise "Command '#{command}' in <#{context.ref_node.alcn}> has return value != 0: #{output}"
       end
       output = CGI::escapeHTML(output) if param('tag.executecommand.escape_html')
       [output, param('tag.executecommand.process_output')]

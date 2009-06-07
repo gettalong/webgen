@@ -44,7 +44,7 @@ module Webgen::Tag
 
       # Return the menu tree under the node as nested list of alcn values.
       def to_lcn_list
-        self.children.inject([]) {|temp, n| temp << n.node.absolute_lcn; temp += ((t = n.to_lcn_list).empty? ? [] : [t]) }
+        self.children.inject([]) {|temp, n| temp << n.node.alcn; temp += ((t = n.to_lcn_list).empty? ? [] : [t]) }
       end
 
     end
@@ -57,7 +57,7 @@ module Webgen::Tag
     def call(tag, body, context)
       tree = specific_menu_tree_for(context.content_node)
 
-      (context.dest_node.node_info[:tag_menu_menus] ||= {})[[@params.to_a.sort, context.content_node.absolute_lcn]] = (tree ? tree.to_lcn_list : nil)
+      (context.dest_node.node_info[:tag_menu_menus] ||= {})[[@params.to_a.sort, context.content_node.alcn]] = (tree ? tree.to_lcn_list : nil)
 
       if !tree || tree.children.empty?
         ''

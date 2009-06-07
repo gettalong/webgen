@@ -15,13 +15,13 @@ class TestTree < Test::Unit::TestCase
 
   def test_initialize
     assert_not_nil(@tree.dummy_root)
-    assert_equal('', @tree.dummy_root.absolute_lcn)
+    assert_equal('', @tree.dummy_root.alcn)
   end
 
   def test_root
     root = Webgen::Node.new(@tree.dummy_root, '/', '/')
     assert_equal(root, @tree.root)
-    assert_equal('/', root.absolute_lcn)
+    assert_equal('/', root.alcn)
   end
 
   def test_register_node_and_register_path

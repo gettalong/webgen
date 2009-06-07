@@ -30,7 +30,7 @@ module Webgen::SourceHandler
 
         output_path = meta_info.delete('url') || key
         output_path = (URI::parse(output_path).absolute? || output_path =~ /^\// ?
-                       output_path : File.join(temp_parent.absolute_lcn, output_path))
+                       output_path : File.join(temp_parent.alcn, output_path))
 
         if key =~ /\/$/
           nodes << create_directory(key, path, meta_info)

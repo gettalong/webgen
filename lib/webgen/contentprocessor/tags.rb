@@ -23,7 +23,7 @@ module Webgen::ContentProcessor
     # Replace all webgen tags in the content of +context+ with the rendered content.
     def call(context)
       replace_tags(context.content, context.ref_node) do |tag, param_string, body|
-        log(:debug) { "Replacing tag #{tag} with data '#{param_string}' and body '#{body}' in <#{context.ref_node.absolute_lcn}>" }
+        log(:debug) { "Replacing tag #{tag} with data '#{param_string}' and body '#{body}' in <#{context.ref_node.alcn}>" }
         process_tag(tag, param_string, body, context)
       end
       context
@@ -83,7 +83,7 @@ module Webgen::ContentProcessor
         when :in_start_tag
           data.brackets += (scanner[1] == '{' ? 1 : -1) while data.brackets != 0 && scanner.skip_until(BRACKETS_RE)
           if data.brackets != 0
-            log(:error) { "Unbalanced curly brackets in <#{node.absolute_lcn}>!" }
+            log(:error) { "Unbalanced curly brackets in <#{node.alcn}>!" }
             data.state = :done
           else
             data.params_end_pos = data.body_end_pos = data.end_pos = scanner.pos - 1
@@ -117,7 +117,7 @@ module Webgen::ContentProcessor
             data.end_pos = scanner.pos - 1
             data.body_end_pos = scanner.pos - scanner.matched.length + scanner[1].length / 2
           else
-            log(:error) { "Invalid body part in <#{node.absolute_lcn}>!" }
+            log(:error) { "Invalid body part in <#{node.alcn}>!" }
             data.state = :done
           end
 

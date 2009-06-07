@@ -50,8 +50,8 @@ require 'webgen/websiteaccess'
 #
 #     def call(tag, body, context)
 #       result = param('do_reverse') ? body.reverse : body
-#       result += "Node: " + context.content_node.absolute_lcn + " (" + context.content_node['title'] + ")"
-#       result += "Reference node: " + context.ref_node.absolute_lcn
+#       result += "Node: " + context.content_node.alcn + " (" + context.content_node['title'] + ")"
+#       result += "Reference node: " + context.ref_node.alcn
 #       result
 #     end
 #
@@ -70,7 +70,7 @@ module Webgen::Tag::Base
     begin
       config = YAML::load("--- #{tag_config}")
     rescue ArgumentError => e
-      log(:error) { "Could not parse the tag params '#{tag_config}' in <#{ref_node.absolute_lcn}>: #{e.message}" }
+      log(:error) { "Could not parse the tag params '#{tag_config}' in <#{ref_node.alcn}>: #{e.message}" }
       config = {}
     end
     create_params_hash(config, ref_node)
@@ -84,12 +84,12 @@ module Webgen::Tag::Base
              when String then create_from_string(config, params, node)
              when NilClass then {}
              else
-               log(:error) { "Invalid parameter type (#{config.class}) for tag '#{self.class.name}' in <#{node.absolute_lcn}>" }
+               log(:error) { "Invalid parameter type (#{config.class}) for tag '#{self.class.name}' in <#{node.alcn}>" }
                {}
              end
 
     unless params.all? {|k| !website.config.meta_info[k][:mandatory] || result.has_key?(k)}
-      log(:error) { "Not all mandatory parameters for tag '#{self.class.name}' in <#{node.absolute_lcn}> set" }
+      log(:error) { "Not all mandatory parameters for tag '#{self.class.name}' in <#{node.alcn}> set" }
     end
 
     result
@@ -150,7 +150,7 @@ module Webgen::Tag::Base
       elsif params.include?(tag_config_base + '.' + key)
         result[tag_config_base + '.' + key] = value
       else
-        log(:warn) { "Invalid parameter '#{key}' for tag '#{self.class.name}' in <#{node.absolute_lcn}>" }
+        log(:warn) { "Invalid parameter '#{key}' for tag '#{self.class.name}' in <#{node.alcn}>" }
       end
     end
     result
@@ -160,7 +160,7 @@ module Webgen::Tag::Base
   def create_from_string(value, params, node)
     param_name = params.find {|k| website.config.meta_info[k][:mandatory] == 'default'}
     if param_name.nil?
-      log(:error) { "No default mandatory parameter specified for tag '#{self.class.name}' but set in <#{node.absolute_lcn}>"}
+      log(:error) { "No default mandatory parameter specified for tag '#{self.class.name}' but set in <#{node.alcn}>"}
       {}
     else
       {param_name => value}

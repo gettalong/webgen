@@ -29,11 +29,11 @@ module Webgen::ContentProcessor
                   else
                     ::Erubis::Eruby.new(context.content, options)
                   end
-      erubis.filename = context.ref_node.absolute_lcn
+      erubis.filename = context.ref_node.alcn
       context.content = erubis.result(binding)
       context
     rescue Exception => e
-      raise RuntimeError, "Erubis processing failed in <#{context.ref_node.absolute_lcn}>: #{e.message}", e.backtrace
+      raise RuntimeError, "Erubis processing failed in <#{context.ref_node.alcn}>: #{e.message}", e.backtrace
     end
 
   end

@@ -47,12 +47,12 @@ module Webgen
 
     # A utility method called by Node#initialize. This method should not be used directly!
     def register_node(node)
-      if @node_access[:alcn].has_key?(node.absolute_lcn)
-        raise "Can't have two nodes with same absolute lcn: #{node.absolute_lcn}"
+      if @node_access[:alcn].has_key?(node.alcn)
+        raise "Can't have two nodes with same absolute lcn: #{node.alcn}"
       else
-        @node_access[:alcn][node.absolute_lcn] = node
+        @node_access[:alcn][node.alcn] = node
       end
-      (@node_access[:acn][node.absolute_cn] ||= []) << node
+      (@node_access[:acn][node.acn] ||= []) << node
       register_path(node)
     end
 
@@ -78,11 +78,11 @@ module Webgen
 
       website.blackboard.dispatch_msg(:before_node_deleted, n)
       n.parent.children.delete(n)
-      @node_access[:alcn].delete(n.absolute_lcn)
-      @node_access[:acn][n.absolute_cn].delete(n)
+      @node_access[:alcn].delete(n.alcn)
+      @node_access[:acn][n.acn].delete(n)
       @node_access[:path].delete(n.path)
 
-      node_info.delete(n.absolute_lcn)
+      node_info.delete(n.alcn)
     end
 
   end

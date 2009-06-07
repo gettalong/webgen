@@ -128,7 +128,7 @@ module Webgen
                    end
             output.write(node.path, content, type)
           rescue
-            raise RuntimeError, "Error while processing <#{node.absolute_lcn}>: #{$!.message}", $!.backtrace
+            raise RuntimeError, "Error while processing <#{node.alcn}>: #{$!.message}", $!.backtrace
           end
         end
       end

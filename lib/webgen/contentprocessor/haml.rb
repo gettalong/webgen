@@ -18,11 +18,11 @@ module Webgen::ContentProcessor
         :ref_node => deprecate('ref_node', 'context.ref_node', context.ref_node),
         :dest_node => deprecate('dest_node', 'context.dest_node', context.dest_node)
       }
-      context.content = ::Haml::Engine.new(context.content, :filename => context.ref_node.absolute_lcn).
+      context.content = ::Haml::Engine.new(context.content, :filename => context.ref_node.alcn).
         render(Object.new, locals)
       context
     rescue Exception => e
-      raise RuntimeError, "Error converting Haml markup to HTML in <#{context.ref_node.absolute_lcn}>: #{e.message}", e.backtrace
+      raise RuntimeError, "Error converting Haml markup to HTML in <#{context.ref_node.alcn}>: #{e.message}", e.backtrace
     end
 
   end

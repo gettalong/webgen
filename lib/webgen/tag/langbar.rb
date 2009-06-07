@@ -15,7 +15,7 @@ module Webgen::Tag
     # Return a list of all translations of the content page.
     def call(tag, body, context)
       lang_nodes = all_lang_nodes(context.content_node)
-      (context.dest_node.node_info[:tag_langbar_data] ||= {})[context.content_node.absolute_cn] = lang_nodes.map {|n| n.absolute_lcn}
+      (context.dest_node.node_info[:tag_langbar_data] ||= {})[context.content_node.acn] = lang_nodes.map {|n| n.alcn}
       result = lang_nodes.
         reject {|n| (context.content_node.lang == n.lang && !param('tag.langbar.show_own_lang'))}.
         sort {|a, b| a.lang <=> b.lang}.
@@ -31,7 +31,7 @@ module Webgen::Tag
 
     # Return all nodes with the same absolute cn as +node+.
     def all_lang_nodes(node)
-      node.tree.node_access[:acn][node.absolute_cn]
+      node.tree.node_access[:acn][node.acn]
     end
 
     # Check if the langbar tag for +node+ changed.
