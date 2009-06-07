@@ -11,7 +11,7 @@ class TestNode < Test::Unit::TestCase
 
   def setup
     super
-    @tree = Webgen::Tree.new
+    @tree = @website.tree
   end
 
   def create_default_nodes
@@ -233,12 +233,6 @@ class TestNode < Test::Unit::TestCase
     assert(node =~ '/**/somefile.*.html')
     assert(node !~ '/somefile.html')
     assert(node !~ '**/*.test')
-  end
-
-  def test_absolute_name
-    root = Webgen::Node.new(@tree.dummy_root, '/', '/')
-    node = Webgen::Node.new(root, 'somepath', 'somefile.html', {'lang' => 'de'})
-    assert_equal('/somefile.de.html', node.absolute_lcn)
   end
 
   def test_route_to

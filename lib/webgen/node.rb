@@ -203,18 +203,6 @@ module Webgen
       self_so <=> other_so
     end
 
-    # Construct the absolute (localized) canonical name by using the +parent+ node and +name+ (which
-    # can be a cn or an lcn). The +type+ can be either <tt>:alcn</tt> or <tt>:acn</tt>.
-    def self.absolute_name(parent, name, type)
-      if parent.kind_of?(Tree)
-        ''
-      else
-        parent = parent.parent while parent.is_fragment? # Handle fragment nodes specially in case they are nested
-        parent_name = (type == :alcn ? parent.absolute_lcn : parent.absolute_cn)
-        parent_name + name
-      end
-    end
-
     # This pattern is the the same as URI::UNSAFE except that the hash character (#) is also
     # not escaped. This is needed sothat paths with fragments work correctly.
     URL_UNSAFE_PATTERN = Regexp.new("[^#{URI::PATTERN::UNRESERVED}#{URI::PATTERN::RESERVED}#]") # :nodoc:
@@ -354,8 +342,8 @@ module Webgen
     # Do the rest of the initialization.
     def init_rest
       @lcn = Path.lcn(@cn, @lang)
-      @absolute_cn = self.class.absolute_name(@parent, @cn, :acn)
-      @absolute_lcn = self.class.absolute_name(@parent, @lcn, :alcn)
+      @absolute_cn = (@parent.kind_of?(Tree) ? '' : @parent.absolute_cn.sub(/#.*$/, '') + @cn)
+      @absolute_lcn = (@parent.kind_of?(Tree) ? '' : @parent.absolute_lcn.sub(/#.*$/, '') + @lcn)
 
       @level = -1
       @tree = @parent
