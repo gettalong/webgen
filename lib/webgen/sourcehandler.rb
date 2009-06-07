@@ -39,30 +39,31 @@ module Webgen
         website.blackboard.add_listener(:node_meta_info_changed?, method(:meta_info_changed?))
       end
 
-      # Render the nodes provided in the +tree+. Before the actual rendering is done, the sources
-      # are checked (nodes for deleted sources are deleted, nodes for new and changed sources).
-      def render(tree)
+      # Render the current website. Before the actual rendering is done, the sources are checked for
+      # changes, i.e. nodes for deleted sources are deleted, nodes for new and changed sources are
+      # updated.
+      def render
         begin
           website.logger.mark_new_cycle if website.logger
 
           puts "Updating tree..."
           time = Benchmark.measure do
             website.cache.reset_volatile_cache
-            update_tree(tree)
+            update_tree
           end
           puts "...done in " + ('%2.4f' % time.real) + ' seconds'
 
-          if !tree.root
+          if !website.tree.root
             puts 'No source files found - maybe not a webgen website?'
             return nil
           end
 
           puts "Writing changed nodes..."
           time = Benchmark.measure do
-            write_tree(tree)
+            write_tree
           end
           puts "...done in " + ('%2.4f' % time.real) + ' seconds'
-        end while tree.node_access[:alcn].any? {|name,node| node.flagged?(:created) || node.flagged?(:reinit)}
+        end while website.tree.node_access[:alcn].any? {|name,node| node.flagged?(:created) || node.flagged?(:reinit)}
         :success
       end
 
@@ -70,16 +71,16 @@ module Webgen
       private
       #######
 
-      # Update the +tree+ by creating/reinitializing all needed nodes.
-      def update_tree(tree)
+      # Update the <tt>website.tree</tt> by creating/reinitializing all needed nodes.
+      def update_tree
         unused_paths = Set.new
         begin
           used_paths = Set.new(find_all_source_paths.keys) - unused_paths
           paths_to_use = Set.new
           nodes_to_delete = Set.new
 
-          tree.node_access[:alcn].each do |alcn, node|
-            next if node == tree.dummy_root
+          website.tree.node_access[:alcn].each do |alcn, node|
+            next if node == website.tree.dummy_root
             used_paths.delete(node.node_info[:src])
 
             deleted = !find_all_source_paths.include?(node.node_info[:src])
@@ -94,21 +95,21 @@ module Webgen
             end
           end
 
-          nodes_to_delete.each {|node| tree.delete_node(node)}
+          nodes_to_delete.each {|node| website.tree.delete_node(node)}
           used_paths.merge(paths_to_use)
-          paths = create_nodes_from_paths(tree, used_paths.to_a.sort)
+          paths = create_nodes_from_paths(used_paths.to_a.sort)
           unused_paths.merge(used_paths - paths)
-          tree.node_access[:alcn].each {|name, node| tree.delete_node(node) if node.flagged?(:reinit)}
+          website.tree.node_access[:alcn].each {|name, node| website.tree.delete_node(node) if node.flagged?(:reinit)}
           website.cache.reset_volatile_cache
         end until used_paths.empty?
       end
 
-      # Write out all changed nodes of the +tree+.
-      def write_tree(tree)
+      # Write out all changed nodes of the <tt>website.tree</tt>.
+      def write_tree
         output = website.blackboard.invoke(:output_instance)
 
-        tree.node_access[:alcn].select do |name, node|
-          use_node = (node != tree.dummy_root && node.flagged?(:dirty))
+        website.tree.node_access[:alcn].select do |name, node|
+          use_node = (node != website.tree.dummy_root && node.flagged?(:dirty))
           node.unflag(:dirty_meta_info)
           node.unflag(:created)
           node.unflag(:dirty)
@@ -160,8 +161,8 @@ module Webgen
         end
       end
 
-      # Use the source handlers to create nodes for the +paths+ in the +tree+.
-      def create_nodes_from_paths(tree, paths)
+      # Use the source handlers to create nodes for the +paths+ in the <tt>website.tree</tt>.
+      def create_nodes_from_paths(paths)
         used_paths = Set.new
         website.config['sourcehandler.invoke'].sort.each do |priority, shns|
           shns.each do |shn|
@@ -169,30 +170,26 @@ module Webgen
             handler_paths = paths_for_handler(shn, paths)
             used_paths.merge(handler_paths)
             handler_paths.sort {|a,b| a.path.length <=> b.path.length}.each do |path|
-              parent_dir = (path.parent_path == '' ? '' : Webgen::Path.new(path.parent_path).alcn)
-              create_nodes(tree, parent_dir, path, sh)
+              create_nodes(path, sh)
             end
           end
         end
         used_paths
       end
 
-      # Prepare everything to create nodes under the absolute lcn path +parent_path_name+ in the
-      # +tree from the +path+ using the +source_handler+. If a block is given, the actual creation
-      # of the nodes is deferred to it. After the nodes are created, it is also checked if they have
-      # all needed properties.
-      def create_nodes(tree, parent_path_name, path, source_handler) #:yields: parent, path
-        if !(parent = tree[parent_path_name])
-          raise "The specified parent path <#{parent_path_name}> does not exist"
-        end
+      # Prepare everything to create from the +path+ using the +source_handler+. If a block is
+      # given, the actual creation of the nodes is deferred to it. Otherwise the #create_node method
+      # of the +source_handler+ is used. After the nodes are created, it is also checked if they
+      # have all needed properties.
+      def create_nodes(path, source_handler) #:yields: path
         path = path.dup
         path.meta_info = default_meta_info(path, source_handler.class.name)
         (website.cache[:sourcehandler_path_mi] ||= {})[[path.path, source_handler.class.name]] = path.meta_info.dup
-        website.blackboard.dispatch_msg(:before_node_created, parent, path)
+        website.blackboard.dispatch_msg(:before_node_created, path)
         *nodes = if block_given?
-                   yield(parent, path)
+                   yield(path)
                  else
-                   source_handler.create_node(parent, path)
+                   source_handler.create_node(path)
                  end
         nodes.flatten.compact.each do |node|
           website.blackboard.dispatch_msg(:after_node_created, node)

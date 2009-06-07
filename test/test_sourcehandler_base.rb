@@ -21,44 +21,42 @@ class TestSourceHandlerBase < Test::Unit::TestCase
   end
 
   def test_create_node
-    tree = Webgen::Tree.new
     path = path_with_meta_info('/path.html')
     count = 0
 
     path.instance_eval { @source_path = '/path'}
-    node = @obj.create_node(tree.dummy_root, path) {|n| count +=1 }
+    node = @obj.create_node(path, :parent => @website.tree.dummy_root) {|n| count +=1 }
     assert_equal('/path', node.node_info[:src])
     assert_equal('Object', node.node_info[:processor])
     assert_kind_of(Time, node['modified_at'])
     assert_equal(1, count)
 
-    other_node = @obj.create_node(tree.dummy_root, path) {|n| count +=1 }
+    other_node = @obj.create_node(path, :parent => @website.tree.dummy_root) {|n| count +=1 }
     assert_equal(node, other_node)
     assert_equal(1, count)
 
     node.flag(:reinit)
-    other_node = @obj.create_node(tree.dummy_root, path) {|n| count +=1 }
+    other_node = @obj.create_node(path, :parent => @website.tree.dummy_root) {|n| count +=1 }
     assert_equal(node, other_node)
     assert_equal(2, count)
 
     path.instance_eval { @source_path = '/other' }
-    other_node = @obj.create_node(tree.dummy_root, path) {|n| count +=1 }
+    other_node = @obj.create_node(path, :parent => @website.tree.dummy_root) {|n| count +=1 }
     assert_equal(node, other_node)
     assert_equal(2, count)
   end
 
   def test_node_exists
-    @tree = Webgen::Tree.new
-    node = Webgen::Node.new(@tree.dummy_root, '/', '/', {'lang' => 'de', :test => :value})
+    node = Webgen::Node.new(@website.tree.dummy_root, '/', '/', {'lang' => 'de', :test => :value})
     child_de = Webgen::Node.new(node, '/somename.html', 'somename.html', {'lang' => 'de'})
     frag_de = Webgen::Node.new(child_de, '/somename.html#data1', '#othertest')
 
-    assert_equal(child_de, @obj.node_exists?(node, path_with_meta_info('/somename.de.html')))
-    assert_equal(child_de, @obj.node_exists?(node, path_with_meta_info('/other.page'), @obj.output_path(node, path_with_meta_info('/somename.html'))))
-    assert_equal(false, @obj.node_exists?(node, path_with_meta_info('/somename.en.html', {'no_output' => true}),
+    assert_equal(child_de, @obj.node_exists?(path_with_meta_info('/somename.de.html')))
+    assert_equal(child_de, @obj.node_exists?(path_with_meta_info('/other.page'), @obj.output_path(node, path_with_meta_info('/somename.html'))))
+    assert_equal(false, @obj.node_exists?(path_with_meta_info('/somename.en.html', {'no_output' => true}),
                                           @obj.output_path(node, path_with_meta_info('/somename.html'))))
-    assert_equal(frag_de, @obj.node_exists?(child_de, path_with_meta_info('/somename.de.html#othertest')))
-    assert_equal(nil, @obj.node_exists?(node, path_with_meta_info('/unknown')))
+    assert_equal(frag_de, @obj.node_exists?(path_with_meta_info('/somename.de.html#othertest')))
+    assert_equal(nil, @obj.node_exists?(path_with_meta_info('/unknown')))
   end
 
   def test_output_path
@@ -67,8 +65,7 @@ class TestSourceHandlerBase < Test::Unit::TestCase
   end
 
   def test_standard_output_path
-    @tree = Webgen::Tree.new
-    node = Webgen::Node.new(@tree.dummy_root, '/', '/', {'lang' => 'de', :test => :value})
+    node = Webgen::Node.new(@website.tree.dummy_root, '/', '/', {'lang' => 'de', :test => :value})
 
     path = path_with_meta_info('/path.html')
     assert_equal('/path.html', @obj.output_path(node, path))
@@ -92,9 +89,9 @@ class TestSourceHandlerBase < Test::Unit::TestCase
     assert_equal('/path.html#frag1', @obj.output_path(frag, path))
 
     path = path_with_meta_info('/')
-    assert_equal('/', @obj.output_path(@tree.dummy_root, path))
+    assert_equal('/', @obj.output_path(@website.tree.dummy_root, path))
     path = path_with_meta_info('/test/', 'output_path_style' => [:parent, 'hallo', 56])
-    assert_equal('hallo/', @obj.output_path(@tree.dummy_root, path))
+    assert_equal('hallo/', @obj.output_path(@website.tree.dummy_root, path))
 
     path = path_with_meta_info('/index.en.html')
     assert_equal('/index.html', @obj.output_path(node, path))

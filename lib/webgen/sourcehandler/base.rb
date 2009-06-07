@@ -19,7 +19,7 @@ module Webgen::SourceHandler
   #
   # The paths that are handled by a source handler are specified via path patterns (see
   # below). During a webgen run the #create_node method for each source paths that matches a
-  # specified path pattern is called. And when it is time to write out the node, the the #content
+  # specified path pattern is called. And when it is time to write out the node, the #content
   # method is called to retrieve the rendered content.
   #
   # A source handler must not take any parameters on initialization and when this module is not
@@ -35,6 +35,7 @@ module Webgen::SourceHandler
   # It also provides other utility methods:
   # * #page_from_path
   # * #content
+  # * #parent_node
   #
   # == Nodes Created for Paths
   #
@@ -109,10 +110,11 @@ module Webgen::SourceHandler
   #   class SimpleCopy
   #
   #     include Webgen::SourceHandler::Base
+  #     include Webgen::WebsiteAccess
   #
-  #     def create_node(parent, path)
+  #     def create_node(path)
   #       path.ext += '.copied'
-  #       super(parent, path)
+  #       super(path)
   #     end
   #
   #     def content(node)
@@ -181,7 +183,7 @@ module Webgen::SourceHandler
       if OutputPathHelpers.public_instance_methods(false).map(&:to_s).include?(method)
         name = send(method, parent, path, use_lang_part)
         name += '/'  if path.path =~ /\/$/ && name !~ /\/$/
-        if (node = node_exists?(parent, path, name)) && node.lang != path.meta_info['lang']
+        if (node = node_exists?(path, name)) && node.lang != path.meta_info['lang']
           name = send(method, parent, path, (path.meta_info['lang'].nil? ? false : true))
           name += '/'  if path.path =~ /\/$/ && name !~ /\/$/
         end
@@ -191,24 +193,38 @@ module Webgen::SourceHandler
       end
     end
 
-    # Check if the node alcn and output path which would be created by #create_node exists. The
+    # Check if the node alcn and output path which would be created by #create_node exist. The
     # +output_path+ to check for can individually be set.
-    def node_exists?(parent, path, output_path = self.output_path(parent, path))
-      parent.tree[path.alcn] || (!path.meta_info['no_output'] && parent.tree[output_path, :path])
+    def node_exists?(path, output_path = self.output_path(parent_node(path), path))
+      Webgen::WebsiteAccess.website.tree[path.alcn] || (!path.meta_info['no_output'] && Webgen::WebsiteAccess.website.tree[output_path, :path])
     end
 
-    # Create a node under +parent+ from +path+ if it does not already exists or needs to be
-    # re-initialized. The found node or the newly created node is returned afterwards. +nil+ is
-    # returned if no node can be created (e.g. when <tt>path.meta_info['draft']</tt> is set). Some
-    # additional node information like <tt>:src</tt> and <tt>:processor</tt> is set and the meta
-    # information is checked for validness. The created/re-initialized node is yielded if a block is
-    # given.
-    def create_node(parent, path, output_path = self.output_path(parent, path))
+    # Create a node from +path+ if it does not already exists or re-initalize an already existing
+    # node. The found node or the newly created node is returned afterwards. +nil+ is returned if no
+    # node can be created (e.g. when <tt>path.meta_info['draft']</tt> is set).
+    #
+    # The +options+ parameter can be used for providing the optional parameters:
+    #
+    # [<tt>:parent</tt>] The parent node under which the new node should be created. If this is not
+    #                    specified (the usual case), the parent node is determined by the
+    #                    #parent_node method.
+    #
+    # [<tt>:output_path</tt>] The output path that should be used for the node. If this is not
+    #                         specified (the usual case), the output path is determined via the
+    #                         #output_path method.
+    #
+    # Some additional node information like <tt>:src</tt> and <tt>:processor</tt> is set and the
+    # meta information is checked for validness. The created/re-initialized node is yielded if a
+    # block is given.
+    def create_node(path, options = {})
       return nil if path.meta_info['draft']
-      node = node_exists?(parent, path, output_path)
+      parent = options[:parent] || parent_node(path)
+      output_path = options[:output_path] || self.output_path(parent, path)
+      node = node_exists?(path, output_path)
+
       if node && (node.node_info[:src] != path.source_path || node.node_info[:processor] != self.class.name)
         log(:warn) { "Node already exists: source = #{path.source_path} | path = #{node.path} | alcn = #{node.absolute_lcn}"}
-        return node
+        return node #TODO: think! should nil be returned?
       elsif !node
         node = Webgen::Node.new(parent, output_path, path.cn, path.meta_info)
       elsif node.flagged?(:reinit)
@@ -228,7 +244,10 @@ module Webgen::SourceHandler
       node
     end
 
-    # Return the content of the given +node+. This default +content+ method just returns +nil+.
+    # Return the content of the given +node+. If the return value is not +nil+ then the node gets
+    # written, otherwise it is ignored.
+    #
+    # This default +content+ method just returns +nil+.
     def content(node)
       nil
     end
@@ -243,6 +262,15 @@ module Webgen::SourceHandler
       end
       path.meta_info = page.meta_info
       page
+    end
+
+    # Return the parent node for the given +path+.
+    def parent_node(path)
+      parent_dir = (path.parent_path == '' ? '' : Webgen::Path.new(path.parent_path).alcn)
+      if !(parent = Webgen::WebsiteAccess.website.tree[parent_dir])
+        raise "The needed parent path <#{parent_dir}> for <#{path.path}> does not exist"
+      end
+      parent
     end
 
   end

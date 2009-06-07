@@ -246,7 +246,7 @@ module Webgen
 
         puts "Starting webgen..."
         shm = SourceHandler::Main.new
-        result = shm.render(@tree)
+        result = shm.render
         save_tree_and_cache if result
         puts "Finished"
 

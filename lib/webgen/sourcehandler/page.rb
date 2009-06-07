@@ -12,13 +12,13 @@ module Webgen::SourceHandler
       website.blackboard.add_listener(:node_meta_info_changed?, method(:meta_info_changed?))
     end
 
-    # Create a page file from +parent+ and +path+.
-    def create_node(parent, path)
+    # Create a page file from +path+.
+    def create_node(path)
       page = page_from_path(path)
       path.meta_info['lang'] ||= website.config['website.lang']
       path.ext = 'html' if path.ext == 'page'
 
-      super(parent, path) do |node|
+      super(path) do |node|
         node.node_info[:sh_page_node_mi] = Webgen::Page.meta_info_from_data(path.io.data)
         node.node_info[:page] = page
       end

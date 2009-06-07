@@ -18,16 +18,16 @@ class TestSourceHandlerTemplate < Test::Unit::TestCase
   end
 
   def test_create_node
-    root = Webgen::Node.new(Webgen::Tree.new.dummy_root, 'test/', 'test', {'lang' => 'de', :test => :value})
-    node = @obj.create_node(root, path_with_meta_info('/default.template') {StringIO.new('')})
+    root = Webgen::Node.new(@website.tree.dummy_root, '/', '/', {'lang' => 'de', :test => :value})
+    node = @obj.create_node(path_with_meta_info('/default.template') {StringIO.new('')})
 
     assert_not_nil(node)
     assert_not_nil(node.node_info[:page])
-    assert_equal('test/default.template', node.path)
+    assert_equal('/default.template', node.path)
   end
 
   def test_templates_for_node
-    root = Webgen::Node.new(Webgen::Tree.new.dummy_root, '/', '/', {:test => :value})
+    root = Webgen::Node.new(@website.tree.dummy_root, '/', '/', {:test => :value})
     default_template = Webgen::Node.new(root, '/default.template', 'default.template')
     default_de_template = Webgen::Node.new(root, '/default.de.template', 'default.template', {'lang' => 'de'})
     other_template = Webgen::Node.new(root, '/other.template', 'other.template')
@@ -52,7 +52,7 @@ class TestSourceHandlerTemplate < Test::Unit::TestCase
   end
 
   def test_default_template
-    root = Webgen::Node.new(Webgen::Tree.new.dummy_root, '/', '/', {:test => :value})
+    root = Webgen::Node.new(@website.tree.dummy_root, '/', '/', {:test => :value})
     dir = Webgen::Node.new(root, '/dir/', 'dir/')
     template = Webgen::Node.new(root, '/default.template', 'default.template')
 

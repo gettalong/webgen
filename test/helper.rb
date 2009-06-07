@@ -27,7 +27,7 @@ module Test
 
     def create_sitemap_nodes
       {
-        :root => root = Webgen::Node.new(Webgen::Tree.new.dummy_root, '/', '/', {'index_path' => 'index.html'}),
+        :root => root = Webgen::Node.new(@website.tree.dummy_root, '/', '/', {'index_path' => 'index.html'}),
         :dir1 => dir1 = Webgen::Node.new(root, '/dir1/', 'dir1/'),
         :file11_en => file11 = Webgen::Node.new(dir1, '/dir1/file11.en.html', 'file11.html', {'lang' => 'en', 'in_menu' => true, 'kind' => 'page'}),
         :file11_en_f1 => file11_f1 = Webgen::Node.new(file11, '/dir1/file11.en.html#f1', '#f1', {'in_menu' => true}),

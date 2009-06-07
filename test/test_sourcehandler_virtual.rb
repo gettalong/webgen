@@ -25,16 +25,20 @@ class TestSourceHandlerVirtual < Test::Unit::TestCase
 - api.html:
     url: http://www.example.com
     title: Absolute
+
+- other.html:
+    url: directory/path.en.html
+    title: Nothing
 EOF
 
   def setup
     super
     @obj = Webgen::SourceHandler::Virtual.new
-    @root = Webgen::Node.new(Webgen::Tree.new.dummy_root, '/', '/')
+    @root = Webgen::Node.new(@website.tree.dummy_root, '/', '/')
     shm = Webgen::SourceHandler::Main.new # for using service :create_nodes
     @time = Time.now
     @path = path_with_meta_info('/virtuals', {'modified_at' => @time}, @obj.class.name) {StringIO.new(CONTENT)}
-    @nodes = @obj.create_node(@root, @path)
+    @nodes = @obj.create_node(@path)
     @website.blackboard.del_service(:source_paths)
     @website.blackboard.add_service(:source_paths) {{@path.path => @path}}
   end
@@ -74,7 +78,7 @@ EOF
 
     # Reinit node, meta info of path_de should not change, #create_node should only return one node
     path_de.flag(:reinit)
-    assert(1, @obj.create_node(@root, @path).length)
+    assert(1, @obj.create_node(@path).length)
     @obj.send(:node_meta_info_changed?, path_de)
     assert(!path_de.flagged?(:dirty_meta_info))
 
@@ -86,7 +90,7 @@ EOF
     # Remove path from which virtual node is created, meta info should naturally change
     @root.tree.delete_node(path_de)
     @path.instance_eval { @io = Webgen::Path::SourceIO.new {StringIO.new("path.de.html:\n  title: hallo")} }
-    @obj.create_node(@root, @path)
+    @obj.create_node(@path)
     path_de = @root.tree['/path.de.html']
     @website.blackboard.del_service(:source_paths)
     @website.blackboard.add_service(:source_paths) { {} }

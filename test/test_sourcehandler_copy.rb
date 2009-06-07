@@ -17,21 +17,21 @@ class TestSourceHandlerCopy < Test::Unit::TestCase
     super
     @website.config['contentprocessor.map']['test'] = 'TestSourceHandlerCopy::TestCP'
     @obj = Webgen::SourceHandler::Copy.new
-    @root = Webgen::Node.new(Webgen::Tree.new.dummy_root, 'test/', 'test')
-    @without = @obj.create_node(@root, path_with_meta_info('/default.css') {StringIO.new('# header')})
-    @with = @obj.create_node(@root, path_with_meta_info('/other.test.css') {StringIO.new('# header')})
+    @root = Webgen::Node.new(@website.tree.dummy_root, '/', '/')
+    @without = @obj.create_node(path_with_meta_info('/default.css') {StringIO.new('# header')})
+    @with = @obj.create_node(path_with_meta_info('/other.test.css') {StringIO.new('# header')})
   end
 
   def test_create_node
     assert_not_nil(@without)
     assert_equal(nil, @without.node_info[:preprocessor])
-    assert_equal('test/default.css', @without.path)
+    assert_equal('/default.css', @without.path)
 
     assert_not_nil(@with)
     assert_equal('test', @with.node_info[:preprocessor])
-    assert_equal('test/other.css', @with.path)
+    assert_equal('/other.css', @with.path)
 
-    node = @obj.create_node(@root, path_with_meta_info('/other.unknown.css') {StringIO.new('# header')})
+    node = @obj.create_node(path_with_meta_info('/other.unknown.css') {StringIO.new('# header')})
     assert_equal(nil, node.node_info[:preprocessor])
   end
 

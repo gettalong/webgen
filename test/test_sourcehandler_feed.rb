@@ -21,7 +21,7 @@ EOF
   def setup
     super
     @nodes = {
-      :root => root = Webgen::Node.new(Webgen::Tree.new.dummy_root, '/', '/', {'index_path' => 'index.html'}),
+      :root => root = Webgen::Node.new(@website.tree.dummy_root, '/', '/', {'index_path' => 'index.html'}),
       :file1_en => Webgen::Node.new(root, '/file1.en.html', 'file1.html', {'lang' => 'en', 'in_menu' => true, 'modified_at' => Time.now}),
       :index_en => Webgen::Node.new(root, '/index.en.html', 'index.html', {'lang' => 'en', 'modified_at' => Time.now - 1, 'author' => 'test'}),
     }
@@ -31,7 +31,7 @@ EOF
   end
 
   def test_create_node
-    atom_node, rss_node = @obj.create_node(@nodes[:root], @path)
+    atom_node, rss_node = @obj.create_node(@path)
 
     assert_not_nil(atom_node)
     assert_not_nil(rss_node)
@@ -39,24 +39,24 @@ EOF
     assert_equal('atom', atom_node.node_info[:feed_type])
     assert_equal('rss', rss_node.node_info[:feed_type])
 
-    assert_equal([atom_node, rss_node], @obj.create_node(@nodes[:root], @path))
+    assert_equal([atom_node, rss_node], @obj.create_node(@path))
   end
 
   def test_content
-    atom_node, rss_node = @obj.create_node(@nodes[:root], @path)
+    atom_node, rss_node = @obj.create_node(@path)
     assert_equal('hallo', rss_node.content)
     assert(atom_node.content =~ /Thomas Leitner/)
     assert(atom_node.content =~ /RealContent/)
   end
 
   def test_feed_entries
-    atom_node, rss_node = @obj.create_node(@nodes[:root], @path)
+    atom_node, rss_node = @obj.create_node(@path)
     assert_equal([@nodes[:index_en]], atom_node.feed_entries)
     assert_equal([@nodes[:index_en]], rss_node.feed_entries)
   end
 
   def test_node_changed
-    atom_node, rss_node = @obj.create_node(@nodes[:root], @path)
+    atom_node, rss_node = @obj.create_node(@path)
     assert(atom_node.changed?)
 
     atom_node.content # populate cache

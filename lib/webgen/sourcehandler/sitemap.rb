@@ -14,12 +14,12 @@ module Webgen::SourceHandler
     include Webgen::WebsiteAccess
     include Base
 
-    # Create an XML sitemap from +parent+ and +path+.
-    def create_node(parent, path)
+    # Create an XML sitemap from +path+.
+    def create_node(path)
       page_from_path(path)
       path.ext = 'xml'
       raise "Needed information site_url missing for sitemap <#{path}>" if path.meta_info['site_url'].nil?
-      super(parent, path)
+      super(path)
     end
 
     # Return the rendered feed represented by +node+.
