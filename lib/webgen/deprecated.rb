@@ -3,7 +3,7 @@ module Webgen
   class Node
 
     def flagged(key)
-      warn("Deprecation warning: this method will be removed in one of the next releases - use Node#flagged? instead!")
+      warn("Deprecation warning (~ #{caller.first}): this method will be removed in one of the next releases - use Node#flagged? instead!")
       flagged?(key)
     end
 
@@ -12,12 +12,12 @@ module Webgen
   class Path
 
     def cnbase
-      warn("Deprecation warning: this method will be removed in one of the next releases - use Path#basename instead!")
+      warn("Deprecation warning (~ #{caller.first}): this method will be removed in one of the next releases - use Path#basename instead!")
       @basename
     end
 
     def cnbase=(value)
-      warn("Deprecation warning: this method will be removed in one of the next releases - use Path#basename= instead!")
+      warn("Deprecation warning (~ #{caller.first}): this method will be removed in one of the next releases - use Path#basename= instead!")
       basename = value
     end
 
@@ -25,10 +25,10 @@ module Webgen
 
   def self.const_missing(const)
     if const.to_s == 'Block'
-      warn("Deprecation warning: Webgen::Block name will be removed in one of the next releases - use Webgen::Page::Block instead!")
+      warn("Deprecation warning (~ #{caller.first}): Webgen::Block name will be removed in one of the next releases - use Webgen::Page::Block instead!")
       Webgen::Page::Block
     elsif const.to_s == "WebgenPageFormatError"
-      warn("Deprecation warning: Webgen::WebgenPageFormatError name will be removed in one of the next releases - use Webgen::Page::FormatError instead!")
+      warn("Deprecation warning (~ #{caller.first}): Webgen::WebgenPageFormatError name will be removed in one of the next releases - use Webgen::Page::FormatError instead!")
       Webgen::Page::FormatError
     else
       super
@@ -39,7 +39,7 @@ module Webgen
 
     def self.const_missing(const)
       if const.to_s == 'Context'
-        warn("Deprecation warning: Webgen::ContentProcessor::Context is now named Webgen::Context! This alias will be removed in one of the next releases.")
+        warn("Deprecation warning (~ #{caller.first}): Webgen::ContentProcessor::Context is now named Webgen::Context! This alias will be removed in one of the next releases.")
         Webgen::Context
       else
         super
@@ -60,6 +60,15 @@ module Webgen
         result
       end
 
+    end
+
+  end
+
+  module Common
+
+    def self.absolute_path(path, base)
+      warn("Deprecation warning (~ #{caller.first}): this method will be removed in one of the next releases - use Webgen::Path.make_absolute(base, path) instead!")
+      Path.make_absolute(base, path)
     end
 
   end

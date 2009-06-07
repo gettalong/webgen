@@ -55,7 +55,7 @@ module Webgen::SourceHandler
     # Helper method for returning the entries for the feed node +node+.
     def feed_entries(node)
       nr_items = (node['number_of_entries'].to_i == 0 ? 10 : node['number_of_entries'].to_i)
-      patterns = [node['entries']].flatten.map {|pat| Webgen::Common.absolute_path(pat, node.parent.absolute_lcn)}
+      patterns = [node['entries']].flatten.map {|pat| Webgen::Path.make_absolute(node.parent.absolute_lcn, pat)}
 
       node.tree.node_access[:alcn].values.
         select {|node| patterns.any? {|pat| node =~ pat} && node.node_info[:page]}.

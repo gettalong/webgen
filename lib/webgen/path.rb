@@ -1,5 +1,6 @@
 # -*- encoding: utf-8 -*-
 
+require 'pathname'
 require 'webgen/languages'
 
 module Webgen
@@ -62,6 +63,13 @@ module Webgen
 
     end
 
+
+    # Make the given +path+ absolute by prepending the absolute directory path +base+ if necessary.
+    # Also resolves all '..' and '.' references in +path+.
+    def self.make_absolute(base, path)
+      raise(ArgumentError, 'base has to be an absolute path, ie. needs to start with a slash') unless base =~ /\//
+      Pathname.new(path =~ /^\// ? path : File.join(base, path)).cleanpath.to_s
+    end
 
     # Return +true+ if the given +path+ matches the given +pattern+ (trailing slashes of directories
     # are not respected). For information on which patterns are supported, have a look at the

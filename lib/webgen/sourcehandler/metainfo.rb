@@ -30,7 +30,7 @@ module Webgen::SourceHandler
           node.node_info[mi_key] = {}
           if page.blocks.has_key?(block_name) && (data = YAML::load(page.blocks[block_name].content))
             data.each do |key, value|
-              key = Webgen::Common.absolute_path(key, path.parent_path)
+              key = Webgen::Path.make_absolute(path.parent_path, key)
               node.node_info[mi_key][key] = value
             end
           end
