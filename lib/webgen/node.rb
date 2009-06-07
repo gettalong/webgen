@@ -38,13 +38,13 @@ module Webgen
     attr_reader :cn
 
     # The absolute canonical name of this node.
-    attr_reader :absolute_cn
+    attr_reader :acn
 
     # The localized canonical name of this node.
     attr_reader :lcn
 
     # The absolute localized canonical name of this node.
-    attr_reader :absolute_lcn
+    attr_reader :alcn
 
     # The level of the node. The level specifies how deep the node is in the hierarchy.
     attr_reader :level
@@ -111,7 +111,7 @@ module Webgen
 
     # Return the node information hash which contains information for processing the node.
     def node_info
-      tree.node_info[@absolute_lcn] ||= {}
+      tree.node_info[@alcn] ||= {}
     end
 
     # Check if the node is a directory.
@@ -161,8 +161,8 @@ module Webgen
     def changed?
       if_not_checked(:node) do
         flag(:dirty) if meta_info_changed? ||
-          node_info[:used_nodes].any? {|n| n != @absolute_lcn && (!tree[n] || tree[n].changed?)} ||
-          node_info[:used_meta_info_nodes].any? {|n| n != @absolute_lcn && (!tree[n] || tree[n].meta_info_changed?)}
+          node_info[:used_nodes].any? {|n| n != @alcn && (!tree[n] || tree[n].changed?)} ||
+          node_info[:used_meta_info_nodes].any? {|n| n != @alcn && (!tree[n] || tree[n].meta_info_changed?)}
         website.blackboard.dispatch_msg(:node_changed?, self) unless flagged?(:dirty)
       end
       flagged?(:dirty)
@@ -183,12 +183,12 @@ module Webgen
 
     # Return an informative representation of the node.
     def inspect
-      "<##{self.class.name}: alcn=#{@absolute_lcn}>"
+      "<##{self.class.name}: alcn=#{@alcn}>"
     end
 
     # Return +true+ if the alcn matches the pattern. See File.fnmatch for useable patterns.
     def =~(pattern)
-      File.fnmatch(pattern, @absolute_lcn, File::FNM_DOTMATCH|File::FNM_CASEFOLD|File::FNM_PATHNAME)
+      File.fnmatch(pattern, @alcn, File::FNM_DOTMATCH|File::FNM_CASEFOLD|File::FNM_PATHNAME)
     end
 
     # Sort nodes by using the meta info +sort_info+ (or +title+ if +sort_info+ is not set) of both
@@ -227,7 +227,7 @@ module Webgen
     # exists, an unlocalized version of the node. If no such node is found either, +nil+ is
     # returned.
     def in_lang(lang)
-      avail = @tree.node_access[:acn][@absolute_cn]
+      avail = @tree.node_access[:acn][@acn]
       avail.find do |n|
         n = n.parent while n.is_fragment?
         n.lang == lang
@@ -245,13 +245,13 @@ module Webgen
     # correct localized node according to +lang+ is returned or if no such node exists but an
     # unlocalized version does, the unlocalized node is returned.
     def resolve(path, lang = nil)
-      url = self.class.url(@absolute_lcn) + path
+      url = self.class.url(@alcn) + path
 
       path = url.path + (url.fragment.nil? ? '' : '#' + url.fragment)
       return nil if path =~ /^\/\.\./
 
       node = @tree[path, :alcn]
-      if node && node.absolute_cn != path
+      if node && node.acn != path
         node
       else
         (node = (@tree[path, :acn] || @tree[path + '/', :acn])) && node.in_lang(lang)
@@ -286,7 +286,7 @@ module Webgen
       if !is_directory?
         self
       else
-        key = [absolute_lcn, :index_node, lang]
+        key = [alcn, :index_node, lang]
         vcache = website.cache.volatile
         return vcache[key] if vcache.has_key?(key)
 
@@ -297,10 +297,10 @@ module Webgen
           index_node = resolve(index_path, lang)
           if index_node
             vcache[key] = index_node
-            log(:info) { "Directory index path for <#{absolute_lcn}> => <#{index_node.absolute_lcn}>" }
+            log(:info) { "Directory index path for <#{alcn}> => <#{index_node.alcn}>" }
           elsif log_warning
             vcache[key] = self
-            log(:warn) { "No directory index path found for directory <#{absolute_lcn}>" }
+            log(:warn) { "No directory index path found for directory <#{alcn}>" }
           end
         end
         vcache[key] || self
@@ -342,8 +342,8 @@ module Webgen
     # Do the rest of the initialization.
     def init_rest
       @lcn = Path.lcn(@cn, @lang)
-      @absolute_cn = (@parent.kind_of?(Tree) ? '' : @parent.absolute_cn.sub(/#.*$/, '') + @cn)
-      @absolute_lcn = (@parent.kind_of?(Tree) ? '' : @parent.absolute_lcn.sub(/#.*$/, '') + @lcn)
+      @acn = (@parent.kind_of?(Tree) ? '' : @parent.acn.sub(/#.*$/, '') + @cn)
+      @alcn = (@parent.kind_of?(Tree) ? '' : @parent.alcn.sub(/#.*$/, '') + @lcn)
 
       @level = -1
       @tree = @parent

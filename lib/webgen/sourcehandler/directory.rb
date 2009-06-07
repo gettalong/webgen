@@ -16,7 +16,7 @@ module Webgen::SourceHandler
     # ignored). The path +path+ is the path that lead to the creation of these directories.
     def create_directories(parent, dirname, path)
       dirname.sub(/^\//, '').split('/').each do |dir|
-        dir_path = Webgen::Path.new(File.join(parent.absolute_lcn, dir, '/'), path)
+        dir_path = Webgen::Path.new(File.join(parent.alcn, dir, '/'), path)
         nodes = website.blackboard.invoke(:create_nodes, dir_path, self) do |dir_path|
           node_exists?(dir_path) || create_node(dir_path)
         end

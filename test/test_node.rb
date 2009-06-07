@@ -39,7 +39,7 @@ class TestNode < Test::Unit::TestCase
       assert_equal(path, node.path)
       assert_equal(cn, node.cn)
       assert_equal(lcn, node.lcn)
-      assert_equal(alcn, node.absolute_lcn)
+      assert_equal(alcn, node.alcn)
       assert_equal(lang, node.lang)
       assert_kind_of(Webgen::Language, node.lang) if node.lang
       assert(node.flagged?(:dirty))
@@ -178,16 +178,16 @@ class TestNode < Test::Unit::TestCase
 
     # Test :used_nodes array checking
     node.unflag(:dirty)
-    node.node_info[:used_nodes] << node.absolute_lcn
+    node.node_info[:used_nodes] << node.alcn
     node.node_info[:used_nodes] << 'unknown alcn'
-    node.node_info[:used_nodes] << @tree.dummy_root.absolute_lcn
+    node.node_info[:used_nodes] << @tree.dummy_root.alcn
     assert(node.changed?)
     assert_equal(1, calls)
 
     # Test :used_nodes array checking
     node.unflag(:dirty)
     node.node_info[:used_nodes] = Set.new
-    node.node_info[:used_meta_info_nodes] << node.absolute_lcn
+    node.node_info[:used_meta_info_nodes] << node.alcn
     assert(node.changed?)
     assert_equal(2, calls)
     node.unflag(:dirty)
@@ -199,8 +199,8 @@ class TestNode < Test::Unit::TestCase
     other_node = Webgen::Node.new(@tree.dummy_root, '/other', 'test.l', {'lang' => 'de', :test => :value})
     other_node.flag(:dirty, :created)
     node.flag(:dirty)
-    other_node.node_info[:used_nodes] = [node.absolute_lcn]
-    node.node_info[:used_nodes] = [other_node.absolute_lcn]
+    other_node.node_info[:used_nodes] = [node.alcn]
+    node.node_info[:used_nodes] = [other_node.alcn]
     node.changed?
   end
 

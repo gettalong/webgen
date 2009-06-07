@@ -32,7 +32,7 @@ EOF
     # Create a graphic from the commands in the body of the tag.
     def call(tag, body, context)
       path = param('tag.tikz.path')
-      path = Webgen::Path.make_absolute(context.ref_node.parent.absolute_lcn, path)
+      path = Webgen::Path.make_absolute(context.ref_node.parent.alcn, path)
 
       mem_handler = website.cache.instance('Webgen::SourceHandler::Memory')
       src_path = context.ref_node.node_info[:src]
@@ -40,7 +40,7 @@ EOF
       params = @params
 
       node = website.blackboard.invoke(:create_nodes, Webgen::Path.new(path, src_path), mem_handler) do |node_path|
-        mem_handler.create_node(node_path, context.ref_node.absolute_lcn) do |pic_node|
+        mem_handler.create_node(node_path, context.ref_node.alcn) do |pic_node|
           set_params(params)
           document = ERB.new(LATEX_TEMPLATE).result(binding)
           pic_path = compile(document, File.extname(path), context)
@@ -73,7 +73,7 @@ EOF
       output = `#{cmd_prefix} pdflatex --shell-escape -interaction=batchmode #{File.basename(file.path)}.tex`
       if $?.exitstatus != 0
         errors = output.scan(/^!(.*\n.*)/).join("\n")
-        log(:error) { "There was an error creating a TikZ picture in <#{context.ref_node.absolute_lcn}>: #{errors}"}
+        log(:error) { "There was an error creating a TikZ picture in <#{context.ref_node.alcn}>: #{errors}"}
         context.dest_node.flag(:dirty)
         nil
       else
@@ -105,7 +105,7 @@ EOF
     def run_command(cmd, context)
       output = `#{cmd}`
       if $?.exitstatus != 0
-        log(:error) { "There was an error running a command for a TikZ picture in <#{context.ref_node.absolute_lcn}>: #{output}"}
+        log(:error) { "There was an error running a command for a TikZ picture in <#{context.ref_node.alcn}>: #{output}"}
         context.dest_node.flag(:dirty)
         nil
       else

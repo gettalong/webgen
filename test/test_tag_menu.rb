@@ -111,12 +111,12 @@ class TestTagMenu < Test::Unit::TestCase
     expected = [nodes[:dir1], nodes[:dir11], nodes[:file111_en], nodes[:index11_en],
                 nodes[:file11_en], nodes[:file11_en_f1], nodes[:file11_en_f11], nodes[:file11_en_f2],
                 nodes[:dir2], nodes[:file21_en],
-                nodes[:dir3], nodes[:file31_en], nodes[:file31_en_f1]].collect {|n| n.absolute_lcn}
+                nodes[:dir3], nodes[:file31_en], nodes[:file31_en_f1]].collect {|n| n.alcn}
 
     assert_equal(expected, tree_en.to_lcn_list.flatten)
 
     tree_de = @obj.send(:menu_tree_for_lang, 'de', nodes[:root])
-    expected = [nodes[:dir1], nodes[:dir11], nodes[:file111_de], nodes[:file1_de]].collect {|n| n.absolute_lcn}
+    expected = [nodes[:dir1], nodes[:dir11], nodes[:file111_de], nodes[:file1_de]].collect {|n| n.alcn}
 
     assert_equal(expected, tree_de.to_lcn_list.flatten)
   end
@@ -126,26 +126,26 @@ class TestTagMenu < Test::Unit::TestCase
 
     # testing min_levels and max_levels
     output = build_menu(nodes[:index_en], [1, 1, 1, true])
-    expected = [nodes[:dir1], nodes[:dir2], nodes[:dir3]].collect {|n| n.absolute_lcn}
+    expected = [nodes[:dir1], nodes[:dir2], nodes[:dir3]].collect {|n| n.alcn}
     assert_equal(expected, output.to_lcn_list.flatten)
 
     output = build_menu(nodes[:index_en], [1, 2, 1, true])
-    expected = [nodes[:dir1], nodes[:dir2], nodes[:dir3]].collect {|n| n.absolute_lcn}
+    expected = [nodes[:dir1], nodes[:dir2], nodes[:dir3]].collect {|n| n.alcn}
     assert_equal(expected, output.to_lcn_list.flatten)
 
     output = build_menu(nodes[:index_en], [1, 2, 2, true])
     expected = [nodes[:dir1], nodes[:dir11], nodes[:file11_en], nodes[:dir2], nodes[:file21_en],
-                nodes[:dir3], nodes[:file31_en]].collect {|n| n.absolute_lcn}
+                nodes[:dir3], nodes[:file31_en]].collect {|n| n.alcn}
     assert_equal(expected, output.to_lcn_list.flatten)
 
     # testing show_current_subtree_only
     output = build_menu(nodes[:file11_en], [1, 1, 2, true])
-    expected = [nodes[:dir1], nodes[:dir11], nodes[:file11_en], nodes[:dir2], nodes[:dir3]].collect {|n| n.absolute_lcn}
+    expected = [nodes[:dir1], nodes[:dir11], nodes[:file11_en], nodes[:dir2], nodes[:dir3]].collect {|n| n.alcn}
     assert_equal(expected, output.to_lcn_list.flatten)
 
     output = build_menu(nodes[:file11_en], [1, 1, 2, false])
     expected = [nodes[:dir1], nodes[:dir11], nodes[:file11_en], nodes[:dir2], nodes[:file21_en],
-                nodes[:dir3], nodes[:file31_en]].collect {|n| n.absolute_lcn}
+                nodes[:dir3], nodes[:file31_en]].collect {|n| n.alcn}
     assert_equal(expected, output.to_lcn_list.flatten)
 
     # testing start_level
@@ -153,38 +153,38 @@ class TestTagMenu < Test::Unit::TestCase
     assert_equal([], output.to_lcn_list.flatten)
 
     output = build_menu(nodes[:file11_en], [2, 1, 2, true])
-    expected = [nodes[:dir11], nodes[:file11_en]].collect {|n| n.absolute_lcn}
+    expected = [nodes[:dir11], nodes[:file11_en]].collect {|n| n.alcn}
     assert_equal(expected, output.to_lcn_list.flatten)
 
     output = build_menu(nodes[:file11_en], [2, 1, 2, false])
-    expected = [nodes[:dir11], nodes[:file11_en]].collect {|n| n.absolute_lcn}
+    expected = [nodes[:dir11], nodes[:file11_en]].collect {|n| n.alcn}
     assert_equal(expected, output.to_lcn_list.flatten)
 
     output = build_menu(nodes[:file11_en], [2, 2, 2, false])
     expected = [nodes[:dir11], nodes[:file111_en], nodes[:index11_en],
-                nodes[:file11_en], nodes[:file11_en_f1], nodes[:file11_en_f2]].collect {|n| n.absolute_lcn}
+                nodes[:file11_en], nodes[:file11_en_f1], nodes[:file11_en_f2]].collect {|n| n.alcn}
     assert_equal(expected, output.to_lcn_list.flatten)
 
     output = build_menu(nodes[:file111_en], [2, 1, 2, true])
-    expected = [nodes[:dir11], nodes[:file111_en], nodes[:index11_en], nodes[:file11_en]].collect {|n| n.absolute_lcn}
+    expected = [nodes[:dir11], nodes[:file111_en], nodes[:index11_en], nodes[:file11_en]].collect {|n| n.alcn}
     assert_equal(expected, output.to_lcn_list.flatten)
 
     # testing used_nodes=files setting
     output = build_menu(nodes[:file11_en], [2, 2, 2, false, 'files'])
-    expected = [nodes[:dir11], nodes[:file111_en], nodes[:index11_en], nodes[:file11_en]].collect {|n| n.absolute_lcn}
+    expected = [nodes[:dir11], nodes[:file111_en], nodes[:index11_en], nodes[:file11_en]].collect {|n| n.alcn}
     assert_equal(expected, output.to_lcn_list.flatten)
 
     output = build_menu(nodes[:file11_en], [1, 1, 1, true, 'files'])
-    expected = [nodes[:dir1], nodes[:dir2]].collect {|n| n.absolute_lcn}
+    expected = [nodes[:dir1], nodes[:dir2]].collect {|n| n.alcn}
     assert_equal(expected, output.to_lcn_list.flatten)
 
     # testing used_nodes=fragments setting
     output = build_menu(nodes[:file11_en], [1, 1, 2, false, 'fragments'])
-    expected = [nodes[:file11_en_f1], nodes[:file11_en_f2]].collect {|n| n.absolute_lcn}
+    expected = [nodes[:file11_en_f1], nodes[:file11_en_f2]].collect {|n| n.alcn}
     assert_equal(expected, output.to_lcn_list.flatten)
 
     output = build_menu(nodes[:file11_en], [1, 2, 2, false, 'fragments'])
-    expected = [nodes[:file11_en_f1], nodes[:file11_en_f11], nodes[:file11_en_f2]].collect {|n| n.absolute_lcn}
+    expected = [nodes[:file11_en_f1], nodes[:file11_en_f11], nodes[:file11_en_f2]].collect {|n| n.alcn}
     assert_equal(expected, output.to_lcn_list.flatten)
   end
 

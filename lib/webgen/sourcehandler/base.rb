@@ -223,7 +223,7 @@ module Webgen::SourceHandler
       node = node_exists?(path, output_path)
 
       if node && (node.node_info[:src] != path.source_path || node.node_info[:processor] != self.class.name)
-        log(:warn) { "Node already exists: source = #{path.source_path} | path = #{node.path} | alcn = #{node.absolute_lcn}"}
+        log(:warn) { "Node already exists: source = #{path.source_path} | path = #{node.path} | alcn = #{node.alcn}"}
         return node #TODO: think! should nil be returned?
       elsif !node
         node = Webgen::Node.new(parent, output_path, path.cn, path.meta_info)
@@ -234,7 +234,7 @@ module Webgen::SourceHandler
       end
 
       if !node['modified_at'].kind_of?(Time)
-        log(:warn) { "Meta information 'modified_at' set to current time in <#{node.absolute_lcn}> since its value '#{node['modified_at']}' was of type #{node['modified_at'].class}" } unless node['modified_at'].nil?
+        log(:warn) { "Meta information 'modified_at' set to current time in <#{node.alcn}> since its value '#{node['modified_at']}' was of type #{node['modified_at'].class}" } unless node['modified_at'].nil?
         node['modified_at'] = Time.now
       end
       node.node_info[:src] = path.source_path

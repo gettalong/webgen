@@ -19,11 +19,11 @@ module Webgen::ContentProcessor
       dest_node = deprecate('dest_node', 'context.dest_node', context.dest_node)
 
       xml = ::Builder::XmlMarkup.new(:indent => 2)
-      eval(context.content, binding, context.ref_node.absolute_lcn)
+      eval(context.content, binding, context.ref_node.alcn)
       context.content = xml.target!
       context
     rescue Exception => e
-      raise RuntimeError, "Error using Builder in <#{context.ref_node.absolute_lcn}> to generate XML: #{e.message}", e.backtrace
+      raise RuntimeError, "Error using Builder in <#{context.ref_node.alcn}> to generate XML: #{e.message}", e.backtrace
     end
 
   end

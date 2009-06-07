@@ -52,7 +52,7 @@ module Webgen::SourceHandler
     # +si+ value.
     def create_fragment_nodes(sections, parent, path, in_menu, si = 1000)
       sections.each do |level, id, title, sub_sections|
-        fragment_path = parent.absolute_lcn.sub(/#.*$/, '') + '#' + id
+        fragment_path = parent.alcn.sub(/#.*$/, '') + '#' + id
         node = website.blackboard.invoke(:create_nodes,
                                          Webgen::Path.new(fragment_path, path.source_path),
                                          self) do |cn_path|

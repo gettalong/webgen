@@ -22,15 +22,15 @@ module Webgen::SourceHandler
     def create_node(path, source_alcn, data = nil)
       super(path) do |node|
         node.node_info[:memory_source_alcn] = source_alcn
-        (@data ||= {})[node.absolute_lcn] = lambda { data || yield(node) }
+        (@data ||= {})[node.alcn] = lambda { data || yield(node) }
       end
     end
 
     # Return the content of the memory +node+. If the memory node was not created in this webgen
     # run, it will be flagged for reinitialization (and therefore recreation).
     def content(node)
-      if @data && @data[node.absolute_lcn]
-        @data[node.absolute_lcn].call
+      if @data && @data[node.alcn]
+        @data[node.alcn].call
       else
         node.flag(:reinit)
         nil

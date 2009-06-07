@@ -63,7 +63,7 @@ class TestTagLink < Test::Unit::TestCase
     node.node_info[:used_meta_info_nodes] = Set.new
     @obj.set_params('tag.link.path' => 'dir/file.html')
     call(context)
-    assert(Set.new([file.absolute_lcn]), node.node_info[:used_meta_info_nodes])
+    assert(Set.new([file.alcn]), node.node_info[:used_meta_info_nodes])
   end
 
 end

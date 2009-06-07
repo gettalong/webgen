@@ -38,13 +38,13 @@ module Webgen::SourceHandler
 
         mark_all_matched_dirty(node, :no_old_data)
 
-        website.cache.permanent[[:sh_metainfo_node_mi, node.absolute_lcn]] = {
+        website.cache.permanent[[:sh_metainfo_node_mi, node.alcn]] = {
           :mi_paths => node.node_info[:mi_paths],
           :mi_alcn => node.node_info[:mi_alcn]
         }
 
         self.nodes << node unless self.nodes.include?(node)
-        self.nodes = self.nodes.sort_by {|n| n.absolute_lcn}
+        self.nodes = self.nodes.sort_by {|n| n.alcn}
       end
     end
 
@@ -62,7 +62,7 @@ module Webgen::SourceHandler
 
     # Return +true+ if any meta information for +node+ provided by +mi_node+ has changed.
     def meta_info_changed?(mi_node, node, option = nil)
-      cached = website.cache.permanent[[:sh_metainfo_node_mi, mi_node.absolute_lcn]]
+      cached = website.cache.permanent[[:sh_metainfo_node_mi, mi_node.alcn]]
       (mi_node.node_info[:mi_paths].any? do |pattern, mi|
          Webgen::Path.match(node.node_info[:creation_path], pattern) &&
            (option == :force || (!cached && option == :no_old_data) || mi != cached[:mi_paths][pattern])
@@ -119,7 +119,7 @@ module Webgen::SourceHandler
     def before_node_deleted(node)
       return unless node.node_info[:processor] == self.class.name
       mark_all_matched_dirty(node, :force)
-      website.cache.permanent.delete([:sh_metainfo_node_mi, node.absolute_lcn])
+      website.cache.permanent.delete([:sh_metainfo_node_mi, node.alcn])
       self.nodes.delete(node)
     end
 

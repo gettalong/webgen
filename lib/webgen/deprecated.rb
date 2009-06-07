@@ -7,6 +7,16 @@ module Webgen
       flagged?(key)
     end
 
+    def absolute_cn
+      warn("Deprecation warning (~ #{caller.first}): this method will be removed in one of the next releases - use Node#acn instead!")
+      acn
+    end
+
+    def absolute_lcn
+      warn("Deprecation warning (~ #{caller.first}): this method will be removed in one of the next releases - use Node#alcn instead!")
+      alcn
+    end
+
   end
 
   class Path

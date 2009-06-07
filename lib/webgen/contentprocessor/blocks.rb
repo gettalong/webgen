@@ -49,7 +49,7 @@ module Webgen::ContentProcessor
           temp_node = context.ref_node.resolve(path.strip, context.dest_node.lang)
           if temp_node.nil?
             context.dest_node.flag(:dirty)
-            log(:error) { "Could not resolve <#{path.strip}> in <#{context.ref_node.absolute_lcn}> while rendering blocks" }
+            log(:error) { "Could not resolve <#{path.strip}> in <#{context.ref_node.alcn}> while rendering blocks" }
           end
           temp_node
         end.compact
@@ -68,13 +68,13 @@ module Webgen::ContentProcessor
         if options[:notfound] == 'ignore'
           return ''
         elsif block_node
-          raise "Node <#{block_node.absolute_lcn}> has no block named '#{options[:name]}'"
+          raise "Node <#{block_node.alcn}> has no block named '#{options[:name]}'"
         else
           raise "No node in the chain has a block named '#{options[:name]}'"
         end
       end
 
-      context.dest_node.node_info[:used_nodes] << block_node.absolute_lcn
+      context.dest_node.node_info[:used_nodes] << block_node.alcn
       tmp_context = block_node.node_info[:page].blocks[options[:name]].render(context.clone(:chain => used_chain, :dest_node => dest_node))
       tmp_context.content
     end

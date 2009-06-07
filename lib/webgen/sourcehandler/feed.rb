@@ -41,7 +41,7 @@ module Webgen::SourceHandler
 
     # Return the rendered feed represented by +node+.
     def content(node)
-      website.cache[[:sourcehandler_feed, node.node_info[:src]]] = feed_entries(node).map {|n| n.absolute_lcn}
+      website.cache[[:sourcehandler_feed, node.node_info[:src]]] = feed_entries(node).map {|n| n.alcn}
       block_name = node.node_info[:feed_type] + '_template'
       if node.node_info[:feed].blocks.has_key?(block_name)
         node.node_info[:feed].blocks[block_name].
@@ -55,7 +55,7 @@ module Webgen::SourceHandler
     # Helper method for returning the entries for the feed node +node+.
     def feed_entries(node)
       nr_items = (node['number_of_entries'].to_i == 0 ? 10 : node['number_of_entries'].to_i)
-      patterns = [node['entries']].flatten.map {|pat| Webgen::Path.make_absolute(node.parent.absolute_lcn, pat)}
+      patterns = [node['entries']].flatten.map {|pat| Webgen::Path.make_absolute(node.parent.alcn, pat)}
 
       node.tree.node_access[:alcn].values.
         select {|node| patterns.any? {|pat| node =~ pat} && node.node_info[:page]}.
@@ -108,7 +108,7 @@ module Webgen::SourceHandler
     def node_changed?(node)
       return if node.node_info[:processor] != self.class.name
       entries = node.feed_entries
-      node.flag(:dirty) if entries.map {|n| n.absolute_lcn } != website.cache[[:sourcehandler_feed, node.node_info[:src]]] ||
+      node.flag(:dirty) if entries.map {|n| n.alcn } != website.cache[[:sourcehandler_feed, node.node_info[:src]]] ||
         entries.any? {|n| n.changed?}
     end
 

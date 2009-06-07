@@ -17,7 +17,7 @@ class TestCommonSitemap < Test::Unit::TestCase
   end
 
   def do_assert(node, lang, honor_in_menu, any_lang, used_kinds, result)
-    assert_equal(result.map {|name| @nodes[name].absolute_lcn },
+    assert_equal(result.map {|name| @nodes[name].alcn },
                  @obj.create_sitemap(node, lang, {
                                        'common.sitemap.honor_in_menu' => honor_in_menu,
                                        'common.sitemap.any_lang' => any_lang,

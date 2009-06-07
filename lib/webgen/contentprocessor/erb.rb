@@ -17,11 +17,11 @@ module Webgen::ContentProcessor
       dest_node = deprecate('dest_node', 'context.dest_node', context.dest_node)
 
       erb = ERB.new(context.content)
-      erb.filename = context.ref_node.absolute_lcn
+      erb.filename = context.ref_node.alcn
       context.content = erb.result(binding)
       context
     rescue Exception => e
-      raise RuntimeError, "Erb processing failed in <#{context.ref_node.absolute_lcn}>: #{e.message}", e.backtrace
+      raise RuntimeError, "Erb processing failed in <#{context.ref_node.alcn}>: #{e.message}", e.backtrace
     end
 
   end

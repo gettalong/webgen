@@ -23,7 +23,7 @@ class TestContentProcessorBlocks < Test::Unit::TestCase
     context.content = '<webgen:block name="content" /><webgen:block name="content" chain="template;test" />'
     obj.call(context)
     assert_equal('databeforedataafter', context.content)
-    assert_equal(Set.new([node.absolute_lcn, template.absolute_lcn]), node.node_info[:used_nodes])
+    assert_equal(Set.new([node.alcn, template.alcn]), node.node_info[:used_nodes])
 
     context.content = '<webgen:block name="content" node="next" /><webgen:block name="content" chain="template;test" />'
     obj.call(context)
@@ -38,7 +38,7 @@ class TestContentProcessorBlocks < Test::Unit::TestCase
     context.dest_node.unflag(:dirty)
     obj.call(context)
     assert_equal('beforedataafter', context.content)
-    assert_equal(Set.new([template.absolute_lcn, node.absolute_lcn]), node.node_info[:used_nodes])
+    assert_equal(Set.new([template.alcn, node.alcn]), node.node_info[:used_nodes])
     assert(context.dest_node.flagged?(:dirty))
 
     context.content = 'bef<webgen:block name="other" chain="template;test" notfound="ignore" />aft'

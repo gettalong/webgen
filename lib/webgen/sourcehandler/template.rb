@@ -19,20 +19,20 @@ module Webgen::SourceHandler
 
     # Return the template chain for +node+.
     def templates_for_node(node, lang = node.lang)
-      cached_template = (website.cache.volatile[[node.absolute_lcn, :templates]] ||= {})
+      cached_template = (website.cache.volatile[[node.alcn, :templates]] ||= {})
       if cached_template[lang]
         template_node = cached_template[lang]
       elsif node['template'].kind_of?(String)
         template_node = node.resolve(node['template'], lang)
         if template_node.nil?
-          log(:warn) { "Specified template '#{node['template']}' for <#{node.absolute_lcn}> not found, using default template!" }
+          log(:warn) { "Specified template '#{node['template']}' for <#{node.alcn}> not found, using default template!" }
           template_node = default_template(node.parent, lang)
         end
         cached_template[lang] = template_node
       elsif node.meta_info.has_key?('template') && node['template'].nil?
         template_node = cached_template[lang] = nil
       else
-        log(:info) { "Using default template in language '#{lang}' for <#{node.absolute_lcn}>" }
+        log(:info) { "Using default template in language '#{lang}' for <#{node.alcn}>" }
         template_node = default_template(node.parent, lang)
         if template_node == node && !node.parent.is_root?
           template_node = default_template(node.parent.parent, lang)
