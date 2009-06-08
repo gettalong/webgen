@@ -366,6 +366,9 @@ class TestNode < Test::Unit::TestCase
 
     assert_equal("webgen://webgen.localhost/test", Webgen::Node.url("/test").to_s)
     assert_equal("http://example.com/test", Webgen::Node.url("http://example.com/test").to_s)
+
+    assert_equal("test", Webgen::Node.url("test", false).to_s)
+    assert_equal("http://example.com/test", Webgen::Node.url("http://example.com/test", false).to_s)
   end
 
 end

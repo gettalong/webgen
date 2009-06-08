@@ -207,10 +207,12 @@ module Webgen
     # not escaped. This is needed sothat paths with fragments work correctly.
     URL_UNSAFE_PATTERN = Regexp.new("[^#{URI::PATTERN::UNRESERVED}#{URI::PATTERN::RESERVED}#]") # :nodoc:
 
-    # Construct an internal URL for the given +name+ which can be a acn/alcn/path.
-    def self.url(name)
+    # Construct an internal URL for the given +name+ which can be an acn/alcn/path. If the parameter
+    # +make_absolute+ is +true+, then a relative URL will be made absolute by prepending the special
+    # URL <tt>webgen:://webgen.localhost/</tt>.
+    def self.url(name, make_absolute = true)
       url = URI::parse(URI::escape(name, URL_UNSAFE_PATTERN))
-      url = URI::parse('webgen://webgen.localhost/') + url unless url.absolute?
+      url = URI::parse('webgen://webgen.localhost/') + url unless url.absolute? || !make_absolute
       url
     end
 
