@@ -16,20 +16,11 @@ module Webgen::Tag
 
     # Return the relativized path for the path provided in the tag definition.
     def call(tag, body, context)
-      uri_string = param('tag.relocatable.path')
+      path = param('tag.relocatable.path')
       result = ''
-      unless uri_string.nil?
+      unless path.nil?
         begin
-          uri = URI.parse(uri_string)
-          if uri.absolute?
-            result = uri_string
-          else
-            result = resolve_path(uri_string, context)
-          end
-          if result.empty?
-            log(:error) { "Could not resolve path '#{uri_string}' in <#{context.ref_node.alcn}>" }
-            context.dest_node.flag(:dirty)
-          end
+          result = (Webgen::Node.url(path, false).absolute? ? path : resolve_path(path, context))
         rescue URI::InvalidURIError => e
           log(:error) { "Error while parsing path for tag relocatable in <#{context.ref_node.alcn}>: #{e.message}" }
           context.dest_node.flag(:dirty)
@@ -42,11 +33,18 @@ module Webgen::Tag
     private
     #######
 
-    # Resolve the path +uri+ using the reference node and return the correct relative path from the
+    # Resolve the path +path+ using the reference node and return the correct relative path from the
     # destination node.
-    def resolve_path(uri, context)
-      dest_node = context.ref_node.resolve(uri, context.dest_node.lang)
-      (dest_node ? context.dest_node.route_to(dest_node) : '')
+    def resolve_path(path, context)
+      dest_node = context.ref_node.resolve(path, context.dest_node.lang)
+      if dest_node
+        context.dest_node.node_info[:used_meta_info_nodes] << dest_node.alcn
+        context.dest_node.route_to(dest_node)
+      else
+        log(:error) { "Could not resolve path '#{path}' in <#{context.ref_node.alcn}>" }
+        context.dest_node.flag(:dirty)
+        ''
+      end
     end
 
   end
