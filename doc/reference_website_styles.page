@@ -17,7 +17,7 @@ browser:
 
 <%
 context.content_node.tree.node_access[:alcn].select do |name, node|
-  node.is_directory? && node.parent == context.content_node.tree[File.join(context.content_node.parent.absolute_lcn, '/website_styles/')]
+  node.is_directory? && node.parent == context.content_node.tree[File.join(context.content_node.parent.alcn, '/website_styles/')]
 end.sort.each do |name, node|
 %>
 <h2 id="<%= node.cn %>"><%= node.cn %></h2>
