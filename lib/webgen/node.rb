@@ -22,10 +22,11 @@ module Webgen
     include WebsiteAccess
     include Loggable
 
-    # The parent node.
+    # The parent node. This is in all but one case a Node object. The one exception is that the
+    # parent of the Tree#dummy_node is a Tree object.
     attr_reader :parent
 
-    # The children of this node.
+    # The child nodes of this node.
     attr_reader :children
 
     # The full output path of this node.
@@ -247,7 +248,7 @@ module Webgen
     # correct localized node according to +lang+ is returned or if no such node exists but an
     # unlocalized version does, the unlocalized node is returned.
     def resolve(path, lang = nil)
-      url = self.class.url(@alcn) + path
+      url = self.class.url(@alcn) + self.class.url(path, false)
 
       path = url.path + (url.fragment.nil? ? '' : '#' + url.fragment)
       return nil if path =~ /^\/\.\./
@@ -256,7 +257,7 @@ module Webgen
       if node && node.acn != path
         node
       else
-        (node = (@tree[path, :acn] || @tree[path + '/', :acn])) && node.in_lang(lang)
+        (node = (@tree[path, :acn] || @tree[path + '/', :acn])) && (node = node.in_lang(lang))
       end
     end
 

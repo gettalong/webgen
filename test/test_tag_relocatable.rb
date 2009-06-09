@@ -20,7 +20,7 @@ class TestTagRelocatable < Test::Unit::TestCase
   end
 
   def test_call
-    root = Webgen::Node.new(Webgen::Tree.new.dummy_root, '/', '/')
+    root = Webgen::Node.new(@website.tree.dummy_root, '/', '/')
     node = Webgen::Node.new(root, '/file.html', 'file.html', {'lang' => 'en'})
     dir = Webgen::Node.new(root, '/dir/', 'dir/', 'index_path' => "index.html")
     file = Webgen::Node.new(dir, '/dir/file.html', 'file.html', {'lang' => 'en'})
@@ -34,6 +34,7 @@ class TestTagRelocatable < Test::Unit::TestCase
     # basic node resolving
     @obj.set_params('tag.relocatable.path' => 'dir/file.html')
     assert_equal('dir/file.html', call(context))
+    assert(context.dest_node.node_info[:used_meta_info_nodes].include?(file.alcn))
     @obj.set_params('tag.relocatable.path' => 'dir/other.html')
     assert_equal('', call(context))
 

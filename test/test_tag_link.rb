@@ -34,12 +34,13 @@ class TestTagLink < Test::Unit::TestCase
     # no path set
     node.unflag(:dirty)
     @obj.set_params('tag.link.path' => nil)
-    assert_equal('', call(context))
-    assert(node.flagged?(:dirty))
+    assert_equal('<span></span>', call(context))
+    assert(!node.flagged?(:dirty))
 
     # invalid paths
     @obj.set_params('tag.link.path' => ':/asdf=-)')
     assert_equal('', call(context))
+    assert(node.flagged?(:dirty))
 
     # basic node resolving
     @obj.set_params('tag.link.path' => 'dir/file.html')
