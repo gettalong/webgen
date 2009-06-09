@@ -25,9 +25,9 @@ following configuration options:
 
 * `contentprocessor.erubis.use_pi`: Use processing instructions instead of ERB like
   instructions. Normally you use statements like `<%% result = some_method_call(opts) %>` or `<%%=
-  context.content_node.absolute_lcn %>` in your content. When setting this option to `true`, you can
+  context.content_node.alcn %>` in your content. When setting this option to `true`, you can
   use XML processing instructions instead, like this: `<?rb result = some_method_call(opts) ?>` or
-  `@{context.content_node.absolute_lcn}@`.
+  `@{context.content_node.alcn}@`.
 
 * `contentprocessor.erubis.options`: This is hash which is passed to the Erubis interpreter and
   which can be used to set additional options.
