@@ -67,7 +67,7 @@ class TestPath < Test::Unit::TestCase
     path = Webgen::Path.new('/test/', '/other.path')
     assert_equal('/other.path', path.source_path)
     assert_equal('/test/', path.path)
-    assert_equal(false, path.passive)
+    assert_equal(false, path.passive?)
   end
 
   def test_mount_at

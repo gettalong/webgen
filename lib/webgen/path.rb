@@ -102,9 +102,12 @@ module Webgen
     attr_accessor :meta_info
 
     # Specifies whether this path should be used during the "tree update" phase of a webgen run or
-    # only later during node resolution. Defaults to +false+, i.e. use during the "tree update"
-    # phase.
-    attr_accessor :passive
+    # only later during node resolution.
+    attr_writer :passive
+
+    # Is this path only used later during node resolution? Defaults to +false+, i.e. used during the
+    # "tree update" phase.
+    def passive?; @passive; end
 
 
     # Create a new Path object for +path+. The optional +source_path+ parameter specifies the path
