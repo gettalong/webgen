@@ -18,13 +18,11 @@ module Webgen::Tag
     def call(tag, body, context)
       path = param('tag.relocatable.path')
       result = ''
-      unless path.nil?
-        begin
-          result = (Webgen::Node.url(path, false).absolute? ? path : resolve_path(path, context))
-        rescue URI::InvalidURIError => e
-          log(:error) { "Error while parsing path for tag relocatable in <#{context.ref_node.alcn}>: #{e.message}" }
-          context.dest_node.flag(:dirty)
-        end
+      begin
+        result = (Webgen::Node.url(path, false).absolute? ? path : resolve_path(path, context))
+      rescue URI::InvalidURIError => e
+        log(:error) { "Error while parsing path for tag relocatable in <#{context.ref_node.alcn}>: #{e.message}" }
+        context.dest_node.flag(:dirty)
       end
       result
     end

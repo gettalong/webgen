@@ -36,7 +36,7 @@ class TestTagBase < Test::Unit::TestCase
     @website.logger.level = Logger::WARN
 
     output.string = ''
-    assert_equal({}, @obj.create_tag_params("--\nhal:param1\ntest:[;", Webgen::Tree.new.dummy_root))
+    assert_equal([{}, true], @obj.create_tag_params("--\nhal:param1\ntest:[;", Webgen::Tree.new.dummy_root))
     output.rewind; assert_match(/Could not parse the tag params/, output.read)
 
     output.string = ''
@@ -79,7 +79,7 @@ class TestTagBase < Test::Unit::TestCase
   end
 
   def set_params(params)
-    @obj.set_params(@obj.send(:create_params_hash, params, Webgen::Tree.new.dummy_root))
+    @obj.set_params(@obj.send(:create_params_hash, params, Webgen::Tree.new.dummy_root).first)
   end
 
 end

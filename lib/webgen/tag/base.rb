@@ -21,7 +21,7 @@ require 'webgen/websiteaccess'
 # the actual processing. And the +initialize+ method must not take any parameters!
 #
 # Tag classes *can* also choose to not use this module. If they don't use it they have to provide
-# the following methods: +set_params+, +create_tag_params+, +call+.
+# the following methods: +set_params+, +create_tag_params+, +create_params_hash+, +call+.
 #
 # == Tag parameters
 #
@@ -65,7 +65,10 @@ module Webgen::Tag::Base
   include Webgen::Loggable
   include Webgen::WebsiteAccess
 
-  # Return a hash with parameter values extracted from the string +tag_config+.
+  # Create a hash with parameter values extracted from the string +tag_config+.
+  #
+  # Returns the parameter hash and a boolean which is +true+ if any mandatory parameters are
+  # missing.
   def create_tag_params(tag_config, ref_node)
     begin
       config = YAML::load("--- #{tag_config}")
@@ -77,6 +80,9 @@ module Webgen::Tag::Base
   end
 
   # Create and return the parameter hash from +config+ which needs to be a Hash, a String or +nil+.
+  #
+  # Returns the parameter hash and a boolean which is +true+ if any mandatory parameters are
+  # missing.
   def create_params_hash(config, node)
     params = tag_params_list
     result = case config
@@ -88,11 +94,13 @@ module Webgen::Tag::Base
                {}
              end
 
+    mandatory_params_missing = false
     unless params.all? {|k| !website.config.meta_info[k][:mandatory] || result.has_key?(k)}
       log(:error) { "Not all mandatory parameters for tag '#{self.class.name}' in <#{node.alcn}> set" }
+      mandatory_params_missing = true
     end
 
-    result
+    [result, mandatory_params_missing]
   end
 
   # Set the current parameter configuration to +params+.
