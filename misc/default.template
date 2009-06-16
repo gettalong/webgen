@@ -14,7 +14,7 @@
   <body>
     <!-- header starts here -->
     <div id="header"><div id="header-content">
-
+      <img id="logo-image" src="{relocatable: /images/webgen_logo.png}" alt="webgen logo" />
       <h1 id="logo">webgen</h1>
       <h2 id="slogan">static website generation made easy</h2>
 
