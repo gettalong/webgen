@@ -163,10 +163,31 @@ configuration options) and/or how to use it in a webgen tag (for tag configurati
 
     * Example for setting the option in the configuration file:
 
-          sources: [[/, Webgen::Source::FileSystem, src], [/, Webgen::Source::FileSystem, /mnt/pictures, **/*.jpg]
+          sources: [[/, Webgen::Source::FileSystem, src], [/, Webgen::Source::FileSystem, /mnt/pictures, **/*.jpg]]
 
       Also have a look at the [file system source documentation]({relocatable:
       source/filesystem.html}) for more examples!
+
+
+*   ### passive\_sources
+
+    Specifies one or more sources which are not actively used during the node creation time, ie. no
+    nodes are created from these sources by default. Instead, they lie dormant until later and are
+    only used if resolving a path fails. Then it is checked if a passive source for the requested
+    path exists and if so, a node is created from it. If a node created from a passive source is not
+    used anymore, it is automatically deleted.
+
+    * Syntax: `[[MOUNT POINT, NAME, ARG1, ARG2, ...], ...]` where `MOUNT POINT` is the path under
+      which the source should be mounted, `NAME` is the name of the source class (for example,
+      `Webgen::Source::FileSystem`) and `ARG1`, `ARG2` and so on are the parameters for the source
+      class. The supported parameters can be found in the documentation for each source class.
+
+    <%= show_default['passive_sources'] %>
+
+    * Example for setting the option in the configuration file:
+
+          passive_sources:
+            [[/, Webgen::Source::Resource, webgen-passive-sources], [/, Webgen::Source::FileSystem, /mnt/pictures, **/*.jpg]]
 
 
 *   ### output

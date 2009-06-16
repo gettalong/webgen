@@ -9,7 +9,7 @@ module Test
 
     def setup
       super
-      @website = Webgen::Website.new('test', nil)
+      @website = Webgen::Website.new('test', nil) {|cfg| cfg['passive_sources'] = []}
       @website.init
       Thread.current[:webgen_website] = @website
     end
