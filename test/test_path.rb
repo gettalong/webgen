@@ -139,6 +139,14 @@ class TestPath < Test::Unit::TestCase
     assert_not_equal(5, p)
   end
 
+  def test_comparison
+    p1 = Webgen::Path.new('/test.de.page')
+    p2 = Webgen::Path.new('/test.en.page')
+    assert_equal(0, p1 <=> p1)
+    assert_equal(-1, p1 <=> p2)
+    assert_equal(1, p2 <=> p1)
+  end
+
   # Problem with hashing under 1.8.6 when changing from 'test.de.page' to '/test.de.page'...
   #   def test_hashing
   #     path = Webgen::Path.new('test.de.page')
