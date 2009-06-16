@@ -253,9 +253,31 @@ feeling of what files are handled by webgen.
 ## Source Paths Naming Convention {#source-naming}
 
 webgen assumes that the paths provided by the sources follow a special naming convention sothat meta
-information can be extracted correctly from the path name:
+information can be extracted correctly from the path names. There are three different cases
+depending on the type of path (the individual parts of a path are explained below):
 
-    [sort_info.]basename[.lang].extension
+*   The path specifies a directory. It must end with a slash character and must not contain any hash
+    characters. A directory path has to follow the scheme:
+
+        /parent_path/basename/
+
+*   The path specifies a file. It must not end with a slash character and must not contain any hash
+    characters. A file path has to follow the scheme:
+
+        /parent_path/[sort_info.]basename[.lang][.extension]
+
+*   The path specifies a fragment (e.g. part of a file). It must contain exactly one hash character
+    and it has to follow the scheme (where `/parent_path` needs to be a file path):
+
+        /parent_path#basename
+
+Following is the explanation of the parts of the path names:
+
+*   `/parent_path`
+
+    This part specifies the path of the parent of this path and is used internally to create a
+    hierarchy of paths. Although the leading slash is explicitly written here, it is part of the
+    parent path, i.e. each parent path begins with a slash.
 
 *   `sort_info`
 
@@ -265,46 +287,54 @@ information can be extracted correctly from the path name:
 *   `basename`
 
     This part is used on the one hand to generate the `title` meta information (but with `_` and `-`
-    replaced by spaces). And on the other hand, the canonical name is derived from it. `basename`
-    must not contain any dots, spaces or any character from the following list: ``; / ? * : ` & = +
-    $ ,``. If you do use one of them webgen may not work correctly!
+    replaced by spaces). And on the other hand, the [canonical name]({relocatable: '#source-cn'}) is
+    derived from it. `basename` must not contain any dots, spaces or any character from the
+    following list: ``; ? * : ` & = + $ ,``. If you do use one of them, webgen may not work
+    correctly!
 
-    > If two paths have the same `basename` and `extension` part, they should define the same
+    > If two file paths have the same `basename` and `extension` part, they should define the same
     > content but for different languages. This allows webgen to automatically deliver the right
-    > language version of the content
+    > language version of the content.
     {.important}
 
 *   `lang`
 
     This part is optional and has to be an [ISO-639-1/2](http://www.loc.gov/standards/iso639-2/)
-    language identifier (two or three characters (a-z) long). If not specified, it is assumed that
-    the path is language independent (for example, images are normally not specific for a specific
-    language). However, this behaviour may be different for some source handler classes (for
-    example, all paths handled by SourceHandler::Page are assigned the default language if none is
-    set).
+    language identifier (two or three characters (a-z) long). It can only be specified if an
+    extension is also specified. If the file path should not have an extension, then just add a
+    trailing dot, e.g. `/dir/file.de.` - the trailing dot is ignored by webgen.
+
+    If the language part is not specified, it is assumed that the path is language independent (for
+    example, images are normally not specific for a specific language). However, this behaviour may
+    be different for some source handler classes (for example, all paths handled by
+    SourceHandler::Page are assigned the default language if none is set).
 
     If the language identifier can't be matched to a valid language, it is assumed that this part
     isn't actually a language identifier but a part of the extension. This also means that in the
     special case where the first part of an extension is also a valid language identifier, the first
-    part is interpreted as language identifier and not as part of the extension.
+    part is interpreted as language identifier and not as part of the extension!
 
 *   `extension`
 
     The file extension can be anything and can include dots.
 
-Following are some examples of source path names:
+Following are some examples of source path names (the acn and alcn parts are explained
+[below]({relocatable: '#source-cn'})):
 
-|Path name                 | Parsed meta information
-|--------------------------|------------------------------------------------
-|`name.png`                | title: Name, language: none, sort\_info: 0, basename: name, cn: name.png
-|`name.de.png`             | title: Name, language: de, sort\_info: 0, basename: name, cn: name.png
-|`01.name_of-file.eo.page` | title: Name of file, language: eo, sort\_info: 1, basename: name_of-file, cn: name_of-file.page
-|`name.tar.bz2`            | title: Name, language: none, sort\_info: 0, basename: name, cn: name.tar.bz2
-|`name.de.tar.bz2`         | title: Name, language: de, sort\_info: 0, basename: name, cn: name.tar.bz2
+| Path                       | Basename     | Language | `title`      | `sort_info` | acn                    | alcn                    |
+|----------------------------|--------------|----------|--------------|-------------|------------------------|-------------------------|
+| `/directory/`              | directory    | -none-   | Directory    |      -none- | `/directory/`          | `/directory/`           |
+| `/image.png`               | image        | -none-   | Image        |           0 | `/image.png`           | `/image.png`            |
+| `/image.de.png`            | image        | de       | Image        |           0 | `/image.png`           | `/image.de.png`         |
+| `/01.name_of-file.eo.page` | name_of-file | eo       | Name of file |           1 | `/name_of-file.page`   | `/name_of-file.eo.page` |
+| `/archive.tar.bz2`         | archive      | -none-   | Archive      |           0 | `/archive.tar.bz2`     | `/archive.tar.bz2`      |
+| `/archive.de.tar.bz2`      | archive      | de       | Archive      |           0 | `/archive.tar.bz2`     | `/archive.de.tar.bz2`   |
+| `/manual.html#sources`     | manual       | -none-   | Manual       |      -none- | `/manual.html#sources` | `/manual.html#sources`  |
+{#source-path-example-table style="border: 1px solid black; width: 100%"}
 
-Notice: The first two and the last two examples define the same content for two different languages
-(or more exactly: the first one is unlocalized and the second one localized to German) as they have
-the same canonical name.
+Notice: The first two file path and the last two file path examples define the same content for two
+different languages (or more exactly: the first one is unlocalized in both cases and the second one
+localized to German) as they have the same canonical name.
 
 
 ## Canonical Name of a File ### {#source-cn}
