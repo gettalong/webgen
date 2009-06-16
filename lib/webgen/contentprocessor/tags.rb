@@ -36,16 +36,19 @@ module Webgen::ContentProcessor
       result = ''
       processor = processor_for_tag(tag)
       if !processor.nil?
-        params = if params.kind_of?(String)
-                   processor.create_tag_params(params, context.ref_node)
-                 else
-                   processor.create_params_hash(params, context.ref_node)
-                 end
-        processor.set_params(params)
-        result, process_output = processor.call(tag, body, context)
-        processor.set_params(nil)
-
-        result = call(context.clone(:content => result)).content if process_output
+        params, mandatory_missing = if params.kind_of?(String)
+                                      processor.create_tag_params(params, context.ref_node)
+                                    else
+                                      processor.create_params_hash(params, context.ref_node)
+                                    end
+        if mandatory_missing
+          context.dest_node.flag(:dirty)
+        else
+          processor.set_params(params)
+          result, process_output = processor.call(tag, body, context)
+          processor.set_params(nil)
+          result = call(context.clone(:content => result)).content if process_output
+        end
       end
       result
     end
