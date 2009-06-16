@@ -35,6 +35,7 @@ module Webgen
 
       def initialize #:nodoc:
         website.blackboard.add_service(:create_nodes, method(:create_nodes))
+        website.blackboard.add_service(:create_nodes_from_paths, method(:create_nodes_from_paths))
         website.blackboard.add_service(:source_paths, method(:find_all_source_paths))
         website.blackboard.add_listener(:node_meta_info_changed?, method(:meta_info_changed?))
       end
@@ -74,26 +75,41 @@ module Webgen
       # Update the <tt>website.tree</tt> by creating/reinitializing all needed nodes.
       def update_tree
         unused_paths = Set.new
+        referenced_nodes = Set.new
         begin
           used_paths = Set.new(find_all_source_paths.keys) - unused_paths
           paths_to_use = Set.new
           nodes_to_delete = Set.new
+          passive_nodes = Set.new
 
           website.tree.node_access[:alcn].each do |alcn, node|
             next if node == website.tree.dummy_root
             used_paths.delete(node.node_info[:src])
 
-            deleted = !find_all_source_paths.include?(node.node_info[:src])
-            if deleted
+            src_path = find_all_source_paths[node.node_info[:src]]
+            if !src_path
               nodes_to_delete << node
               #TODO: delete output path
-            elsif (!node.flagged?(:created) && find_all_source_paths[node.node_info[:src]].changed?) || node.meta_info_changed?
+            elsif (!node.flagged?(:created) && src_path.changed?) || node.meta_info_changed?
               node.flag(:reinit)
               paths_to_use << node.node_info[:src]
             elsif node.changed?
-              # nothing to be done here
+              # nothing to be done here but method node.changed? has to be called
+            end
+
+            if src_path && src_path.passive?
+              passive_nodes << node
+            elsif src_path
+              referenced_nodes += node.node_info[:used_meta_info_nodes] + node.node_info[:used_nodes]
             end
           end
+
+          # add unused passive nodes to node_to_delete set
+          unreferenced_passive_nodes, other_passive_nodes = passive_nodes.partition do |pnode|
+            !referenced_nodes.include?(pnode.alcn)
+          end
+          refs = other_passive_nodes.collect {|n| (n.node_info[:used_meta_info_nodes] + n.node_info[:used_nodes]).to_a}.flatten
+          unreferenced_passive_nodes.each {|n| nodes_to_delete << n if !refs.include?(n.alcn)}
 
           nodes_to_delete.each {|node| website.tree.delete_node(node)}
           used_paths.merge(paths_to_use)
@@ -136,9 +152,15 @@ module Webgen
       # Return a hash with all source paths.
       def find_all_source_paths
         if !defined?(@paths)
-          source = Webgen::Source::Stacked.new(website.config['sources'].collect do |mp, name, *args|
-                                                 [mp, constant(name).new(*args)]
-                                               end)
+          active_source = Webgen::Source::Stacked.new(website.config['sources'].collect do |mp, name, *args|
+                                                        [mp, constant(name).new(*args)]
+                                                      end)
+          passive_source = Webgen::Source::Stacked.new(website.config['passive_sources'].collect do |mp, name, *args|
+                                                         [mp, constant(name).new(*args)]
+                                                       end, true)
+          passive_source.paths.each {|path| path.passive = true }
+          source = Webgen::Source::Stacked.new([['/', active_source], ['/', passive_source]])
+
           @paths = {}
           source.paths.each do |path|
             if !(website.config['sourcehandler.ignore'].any? {|pat| File.fnmatch(pat, path, File::FNM_CASEFOLD|File::FNM_DOTMATCH)})
@@ -149,27 +171,32 @@ module Webgen
         @paths
       end
 
-      # Return only the subset of +paths+ which are handled by the source handler +name+.
-      def paths_for_handler(name, paths)
+      # Return only the subset of +paths+ which are handled by the source handler +name+. If
+      # +use_passive+ is +true+, then paths from passive sources are also considered.
+      def paths_for_handler(name, paths, use_passive = false)
         patterns = website.config['sourcehandler.patterns'][name]
         return [] if patterns.nil?
 
         options = (website.config['sourcehandler.casefold'] ? File::FNM_CASEFOLD : 0) |
           (website.config['sourcehandler.use_hidden_files'] ? File::FNM_DOTMATCH : 0)
-        find_all_source_paths.values_at(*paths).select do |path|
-          patterns.any? {|pat| File.fnmatch(pat, path, options)}
+        find_all_source_paths.values_at(*paths).compact.select do |path|
+          (use_passive || !path.passive?) && patterns.any? {|pat| File.fnmatch(pat, path, options)}
         end
       end
 
-      # Use the source handlers to create nodes for the +paths+ in the <tt>website.tree</tt>.
-      def create_nodes_from_paths(paths)
+      # Use the source handlers to create nodes for the +paths+ in the <tt>website.tree</tt>. If
+      # +use_passive+ is +true+, then paths from passive sources are also considered.
+      def create_nodes_from_paths(paths, use_passive = false)
         used_paths = Set.new
         website.config['sourcehandler.invoke'].sort.each do |priority, shns|
           shns.each do |shn|
             sh = website.cache.instance(shn)
-            handler_paths = paths_for_handler(shn, paths)
+            handler_paths = paths_for_handler(shn, paths, use_passive)
             used_paths.merge(handler_paths)
             handler_paths.sort {|a,b| a.path.length <=> b.path.length}.each do |path|
+              if !website.tree[path.parent_path]
+                used_paths.merge(create_nodes_from_paths([path.parent_path], use_passive))
+              end
               create_nodes(path, sh)
             end
           end

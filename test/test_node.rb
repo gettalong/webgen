@@ -160,6 +160,19 @@ class TestNode < Test::Unit::TestCase
     assert_equal(nodes[:root], nodes[:somename_en].resolve('/'))
   end
 
+  def test_resolve_passive_nodes
+    nodes = create_default_nodes
+
+    assert_nil(nodes[:root].resolve('/images/webgen_logo.png'))
+
+    shm = Webgen::SourceHandler::Main.new
+    @website.config['passive_sources'] << ['/', "Webgen::Source::Resource", "webgen-passive-sources"]
+    node = nodes[:root].resolve('/images/webgen_logo.png')
+    assert_not_nil(node)
+    assert_equal('/images/webgen_logo.png', node.alcn)
+    assert_equal(['/images/', '/images/webgen_logo.png'].to_set, node.node_info[:used_meta_info_nodes])
+  end
+
   def test_introspection
     node = Webgen::Node.new(@tree.dummy_root, '/', '/', {'lang' => 'de', :test => :value})
     assert(node.inspect =~ /alcn=\//)

@@ -247,18 +247,23 @@ module Webgen
     # If the +path+ is an alcn and a node is found, it is returned. If the +path+ is an acn, the
     # correct localized node according to +lang+ is returned or if no such node exists but an
     # unlocalized version does, the unlocalized node is returned.
-    def resolve(path, lang = nil)
+    def resolve(path, lang = nil, use_passive_sources = true)
+      orig_path = path
       url = self.class.url(@alcn) + self.class.url(path, false)
 
       path = url.path + (url.fragment.nil? ? '' : '#' + url.fragment)
       return nil if path =~ /^\/\.\./
 
       node = @tree[path, :alcn]
-      if node && node.acn != path
-        node
-      else
+      if !node || node.acn == path
         (node = (@tree[path, :acn] || @tree[path + '/', :acn])) && (node = node.in_lang(lang))
       end
+      if !node && use_passive_sources && !website.config['passive_sources'].empty?
+        nodes = website.blackboard.invoke(:create_nodes_from_paths, [path], true)
+        node = resolve(orig_path, lang, false)
+        node.node_info[:used_meta_info_nodes] += nodes.collect {|n| n.alcn} if node
+      end
+      node
     end
 
     # Return the relative path to the given path +other+. The parameter +other+ can be a Node or a
