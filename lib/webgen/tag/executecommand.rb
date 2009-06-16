@@ -12,13 +12,13 @@ module Webgen::Tag
 
     include Webgen::Tag::Base
 
-    BIT_BUCKET = (Config::CONFIG['arch'].include?('mswin32') ?  "nul" : "/dev/null")
+    BIT_BUCKET = (Config::CONFIG['host_os'] =~ /mswin|mingw/ ?  "nul" : "/dev/null")
 
     # Execute the command and return the standard output.
     def call(tag, body, context)
       command = param('tag.executecommand.command')
       output = `#{command} 2> #{BIT_BUCKET}`
-      if ($? >> 8) != 0
+      if $?.exitstatus != 0
         raise "Command '#{command}' in <#{context.ref_node.alcn}> has return value != 0: #{output}"
       end
       output = CGI::escapeHTML(output) if param('tag.executecommand.escape_html')

@@ -35,7 +35,7 @@ class TestTagExecuteCommand < Test::Unit::TestCase
   end
 
   def echo_cmd(data)
-    (Config::CONFIG['arch'].include?('mswin32') ?  "echo #{data}" : "echo '#{data}'")
+    (Config::CONFIG['host_os'] =~ /mswin|mingw/ ?  "echo #{data}" : "echo '#{data}'")
   end
 
 end

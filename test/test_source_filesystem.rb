@@ -62,7 +62,7 @@ class TestSourceFileSystem < Test::Unit::TestCase
   end
 
   def test_handling_of_invalid_link
-    return if Config::CONFIG['arch'].include?('mswin32')
+    return if Config::CONFIG['host_os'] =~ /mswin|mingw/
     dir = File.join(Dir.tmpdir, 'webgen-link-test')
     FileUtils.mkdir_p(dir)
     FileUtils.touch(File.join(dir, 'test'))
