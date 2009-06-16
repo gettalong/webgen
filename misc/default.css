@@ -171,6 +171,12 @@ blockquote pre {
   padding: 0;
 }
 
+#header-content #logo-image {
+  position: absolute;
+  margin: 0; padding: 0;
+  top: 20px; left: 10px;
+}
+
 #header-content #logo {
   position: absolute;
   font: bold 50px Verdana, 'Trebuchet Ms', Sans-serif;
@@ -178,7 +184,7 @@ blockquote pre {
   color: #FCFFF5;
   margin: 0; padding: 0;
 
-  top: 5px; left: 20px;
+  top: 5px; left: 100px;
 }
 
 #header-content #slogan {
@@ -188,7 +194,7 @@ blockquote pre {
   color: #CCC;
   margin: 0; padding: 0;
 
-  top: 65px; left: 35px;
+  top: 65px; left: 115px;
 }
 
 /* header menu */
