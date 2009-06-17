@@ -115,6 +115,8 @@ website.autoload_service(:parse_html_headers, 'Webgen::SourceHandler::Fragment')
 
 # All things regarding output
 config.output ["Webgen::Output::FileSystem", 'out'], :doc => 'The class which is used to output the generated paths.'
+config.output.do_deletion(false, :doc => 'Specifies whether the generated output paths should be deleted once the sources are deleted')
+
 
 Webgen::WebsiteAccess.website.blackboard.add_service(:output_instance, Webgen::Output.method(:instance))
 

@@ -205,6 +205,20 @@ configuration options) and/or how to use it in a webgen tag (for tag configurati
           output: [Webgen::Output::FileSystem, custom_out]
 
 
+*   ### output.do\_deletion
+
+    Specifies whether the output class should delete generated paths once the source paths are not
+    available anymore.
+
+    * Syntax: `BOOLEAN` where `BOOLEAN` is either `true` or `false`.
+
+    <%= show_default['output.do_deletion'] %>
+
+    * Example for setting the option in the configuration file:
+
+          output.do_deletion: true
+
+
 *   ### sourcehandler.patterns
 
     Specifies the path patterns that are used by the individual source handlers. This configuration
