@@ -104,6 +104,7 @@ require 'webgen/deprecated'
 # <tt>:create_sitemap</tt>:: Common::Sitemap#create_sitemap
 # <tt>:create_directories</tt>:: SourceHandler::Directory#create_directories
 # <tt>:create_nodes</tt>:: SourceHandler::Main#create_nodes
+# <tt>:create_nodes_from_paths</tt>:: SourceHandler::Main#create_nodes_from_paths
 # <tt>:source_paths</tt>:: SourceHandler::Main#find_all_source_paths
 #
 # Following is the list of all messages that can be listened to:
@@ -242,7 +243,7 @@ module Webgen
     def render
       result = nil
       execute_in_env do
-        init unless @config
+        init
 
         puts "Starting webgen..."
         shm = SourceHandler::Main.new

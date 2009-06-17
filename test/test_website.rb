@@ -57,6 +57,19 @@ class TestWebsite < Test::Unit::TestCase
     assert(ws.config['website.cache'][1].length == 0)
   end
 
+  def test_render
+    dir = File.join(Dir.tmpdir, 'webgen-' + Process.pid.to_s)
+    FileUtils.mkdir_p(dir)
+    FileUtils.mkdir_p(File.join(dir, 'src'))
+    FileUtils.touch(File.join(dir, 'src', 'test.jpg'))
+
+    ws = Webgen::Website.new(dir, nil)
+    assert_equal(:success, ws.render)
+    assert_equal(:success, ws.render)
+  ensure
+    FileUtils.rm_rf(dir)
+  end
+
   def test_execute_in_env
     ws = Webgen::Website.new('hallo')
     assert_nil(Webgen::WebsiteAccess.website)
