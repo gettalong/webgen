@@ -28,6 +28,7 @@ module Webgen
     # * collects all source paths using the source classes
     # * creates nodes using the source handler classes
     # * writes changed nodes out using an output class
+    # * deletes old nodes
     class Main
 
       include WebsiteAccess
@@ -38,6 +39,10 @@ module Webgen
         website.blackboard.add_service(:create_nodes_from_paths, method(:create_nodes_from_paths))
         website.blackboard.add_service(:source_paths, method(:find_all_source_paths))
         website.blackboard.add_listener(:node_meta_info_changed?, method(:meta_info_changed?))
+
+        website.blackboard.add_listener(:before_node_deleted) do |node|
+          website.blackboard.invoke(:output_instance).delete(node.path)
+        end if website.config['output.do_deletion']
       end
 
       # Render the current website. Before the actual rendering is done, the sources are checked for
@@ -89,7 +94,6 @@ module Webgen
             src_path = find_all_source_paths[node.node_info[:src]]
             if !src_path
               nodes_to_delete << node
-              #TODO: delete output path
             elsif (!node.flagged?(:created) && src_path.changed?) || node.meta_info_changed?
               node.flag(:reinit)
               paths_to_use << node.node_info[:src]
