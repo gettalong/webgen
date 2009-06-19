@@ -259,7 +259,7 @@ module Webgen
         (node = (@tree[path, :acn] || @tree[path + '/', :acn])) && (node = node.in_lang(lang))
       end
       if !node && use_passive_sources && !website.config['passive_sources'].empty?
-        nodes = website.blackboard.invoke(:create_nodes_from_paths, [path], true)
+        nodes = website.blackboard.invoke(:create_nodes_from_paths, [path])
         node = resolve(orig_path, lang, false)
         node.node_info[:used_meta_info_nodes] += nodes.collect {|n| n.alcn} if node
       end

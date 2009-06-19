@@ -81,8 +81,9 @@ module Webgen
       def update_tree
         unused_paths = Set.new
         referenced_nodes = Set.new
+        all_but_passive_paths = Set.new(find_all_source_paths.select {|name, path| !path.passive?}.collect {|name, path| name})
         begin
-          used_paths = Set.new(find_all_source_paths.keys) - unused_paths
+          used_paths = all_but_passive_paths - unused_paths
           paths_to_use = Set.new
           nodes_to_delete = Set.new
           passive_nodes = Set.new
@@ -175,31 +176,29 @@ module Webgen
         @paths
       end
 
-      # Return only the subset of +paths+ which are handled by the source handler +name+. If
-      # +use_passive+ is +true+, then paths from passive sources are also considered.
-      def paths_for_handler(name, paths, use_passive = false)
+      # Return only the subset of +paths+ which are handled by the source handler +name+.
+      def paths_for_handler(name, paths)
         patterns = website.config['sourcehandler.patterns'][name]
         return [] if patterns.nil?
 
         options = (website.config['sourcehandler.casefold'] ? File::FNM_CASEFOLD : 0) |
           (website.config['sourcehandler.use_hidden_files'] ? File::FNM_DOTMATCH : 0)
         find_all_source_paths.values_at(*paths).compact.select do |path|
-          (use_passive || !path.passive?) && patterns.any? {|pat| File.fnmatch(pat, path, options)}
+          patterns.any? {|pat| File.fnmatch(pat, path, options)}
         end
       end
 
-      # Use the source handlers to create nodes for the +paths+ in the <tt>website.tree</tt>. If
-      # +use_passive+ is +true+, then paths from passive sources are also considered.
-      def create_nodes_from_paths(paths, use_passive = false)
+      # Use the source handlers to create nodes for the +paths+ in the <tt>website.tree</tt>.
+      def create_nodes_from_paths(paths)
         used_paths = Set.new
         website.config['sourcehandler.invoke'].sort.each do |priority, shns|
           shns.each do |shn|
             sh = website.cache.instance(shn)
-            handler_paths = paths_for_handler(shn, paths, use_passive)
+            handler_paths = paths_for_handler(shn, paths)
             used_paths.merge(handler_paths)
             handler_paths.sort {|a,b| a.path.length <=> b.path.length}.each do |path|
               if !website.tree[path.parent_path]
-                used_paths.merge(create_nodes_from_paths([path.parent_path], use_passive))
+                used_paths.merge(create_nodes_from_paths([path.parent_path]))
               end
               create_nodes(path, sh)
             end
