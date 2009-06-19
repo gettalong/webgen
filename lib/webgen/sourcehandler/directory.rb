@@ -25,11 +25,6 @@ module Webgen::SourceHandler
       parent
     end
 
-    # Return an empty string to signal that the directory should be written to the output.
-    def content(node)
-      ''
-    end
-
   end
 
 end
