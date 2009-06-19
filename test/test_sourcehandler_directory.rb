@@ -35,8 +35,4 @@ class TestSourceHandlerDirectory < Test::Unit::TestCase
     assert_equal(which, @obj.create_directories(root, 'dir/under/which', path_with_meta_info('/test')))
   end
 
-  def test_content
-    assert_equal('', Webgen::SourceHandler::Directory.new.content(nil))
-  end
-
 end
