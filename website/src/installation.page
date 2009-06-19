@@ -163,7 +163,7 @@ it should normally work with newer versions, too!
 
 * (optional) [rdoc](http://rdoc.rubyforge.org/) version 2.4.2 or higher for RDoc markup support
 
-* (optional) [coderay](http://coderay.rubychan.de/) version 0.7.4.214 or higher for syntax
+* (optional) [coderay](http://coderay.rubychan.de/) version 0.8.312 or higher for syntax
   highlighting
 
 * (optional) [feedtools](http://sporkmonger.com/projects/feedtools) version 0.2.29 or higher for
