@@ -42,17 +42,18 @@ module Webgen::SourceHandler
     # Return the rendered feed represented by +node+.
     def content(node)
       website.cache[[:sourcehandler_feed, node.node_info[:src]]] = feed_entries(node).map {|n| n.alcn}
+
       block_name = node.node_info[:feed_type] + '_template'
       if node.node_info[:feed].blocks.has_key?(block_name)
-        node.node_info[:feed].blocks[block_name].
-          render(Webgen::Context.new(:chain => [node])).content
+        node.node_info[:feed].blocks[block_name].render(Webgen::Context.new(:chain => [node])).content
       else
-        feed = (website.cache.volatile[:sourcehandler_feed] ||= {})[node.node_info[:src]] ||= build_feed_for(node)
-        feed.build_xml(node.node_info[:feed_type], (node.node_info[:feed_type] == 'rss' ? node['rss_version'] || 2.0 : nil))
+        chain = [node.resolve("/templates/#{node.node_info[:feed_type]}_feed.template"), node]
+        node.node_info[:used_nodes] << chain.first.alcn
+        chain.first.node_info[:page].blocks['content'].render(Webgen::Context.new(:chain => chain)).content
       end
     end
 
-    # Helper method for returning the entries for the feed node +node+.
+    # Return the entries for the feed +node+.
     def feed_entries(node)
       nr_items = (node['number_of_entries'].to_i == 0 ? 10 : node['number_of_entries'].to_i)
       patterns = [node['entries']].flatten.map {|pat| Webgen::Path.make_absolute(node.parent.alcn, pat)}
@@ -62,46 +63,19 @@ module Webgen::SourceHandler
         sort {|a,b| a['modified_at'] <=> b['modified_at']}[0, nr_items]
     end
 
+    # Return the feed link URL for the feed +node+.
+    def feed_link(node)
+      Webgen::Node.url(File.join(node['site_url'], node.tree[node['link']].path), false)
+    end
+
+    # Return the content of an +entry+ of the feed +node+.
+    def entry_content(node, entry)
+      entry.node_info[:page].blocks[node['content_block_name'] || 'content'].render(Webgen::Context.new(:chain => [entry])).content
+    end
+
     #######
     private
     #######
-
-    # Return the populated FeedTools::Feed object for +node+.
-    def build_feed_for(node)
-      require 'feed_tools'
-      require 'time'
-
-      site_url = node['site_url']
-
-      feed = FeedTools::Feed.new
-      feed.title = node['title']
-      feed.description = node['description']
-      feed.author = node['author']
-      feed.author.url = node['author_url']
-      feed.base_uri = site_url
-      feed.link = File.join(site_url, node.tree[node['link']].path)
-      feed.id = feed.link
-
-      feed.published = (node['created_at'].kind_of?(Time) ? node['created_at'] : Time.now)
-      feed.updated = Time.now
-      feed.generator = 'webgen - Webgen::SourceHandler::Feed'
-
-      node.feed_entries.each do |entry|
-        item = FeedTools::FeedItem.new
-        item.title = entry['title']
-        item.link = File.join(site_url, entry.path)
-        item.content = entry.node_info[:page].blocks[node['content_block_name'] || 'content'].render(Webgen::Context.new(:chain => [entry])).content
-        item.updated = entry['modified_at']
-        item.published = entry['created_at'] if entry['created_at'].kind_of?(Time)
-        if entry['author']
-          item.author = entry['author']
-          item.author.url = entry['author_url']
-        end
-        item.id = item.link
-        feed << item
-      end
-      feed
-    end
 
     # Check if the any of the nodes used by this feed +node+ have changed and then mark the node as
     # dirty.
