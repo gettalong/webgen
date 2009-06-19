@@ -10,6 +10,7 @@ module Webgen::ContentProcessor
     # Process the Ruby statements embedded in the content of +context+.
     def call(context)
       require 'erb'
+      extend(ERB::Util)
 
       website = deprecate('website', 'context.website', context.website)
       node = deprecate('node', 'context.node', context.content_node)

@@ -35,6 +35,7 @@ require 'webgen/tag'
 require 'webgen/path'
 require 'webgen/node'
 require 'webgen/page'
+require 'webgen/version'
 
 # Load deprecated classes/methods/...
 require 'webgen/deprecated'
