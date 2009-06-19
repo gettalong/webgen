@@ -20,6 +20,9 @@ hallo
 EOF
   def setup
     super
+    shm = Webgen::SourceHandler::Main.new
+    @website.blackboard.del_listener(:node_meta_info_changed?, shm.method(:meta_info_changed?))
+    @website.config['passive_sources'] << ['/', "Webgen::Source::Resource", "webgen-passive-sources"]
     @nodes = {
       :root => root = Webgen::Node.new(@website.tree.dummy_root, '/', '/', {'index_path' => 'index.html'}),
       :file1_en => Webgen::Node.new(root, '/file1.en.html', 'file1.html', {'lang' => 'en', 'in_menu' => true, 'modified_at' => Time.now}),
@@ -68,6 +71,7 @@ EOF
     atom_node.unflag(:dirty)
     @nodes[:file1_en].unflag(:dirty)
     @nodes[:index_en].unflag(:dirty)
+    @website.tree['/templates/atom_feed.template'].unflag(:dirty)
     assert(!atom_node.changed?)
 
     atom_node['entries'] = 'file.*.html'

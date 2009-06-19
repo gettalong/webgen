@@ -33,10 +33,7 @@ See the platform specific installation notes for more information!
 Furthermore, webgen should also run on jruby 1.1.3 and ruby 1.9.1 but that has not been extensively
 tested.
 
-> Ruby 1.9.1 support notes (as of 2009-05-03):
->
-> * All unit tests run fine except those which use libraries that have not been fixed to work with
->   1.9.1 yet (ie. feedtools).
+> Ruby 1.9.1 support notes (as of 2009-06-19):
 >
 > * There may be problems with Maruku and character encodings.
 {.information}
@@ -165,9 +162,6 @@ it should normally work with newer versions, too!
 
 * (optional) [coderay](http://coderay.rubychan.de/) version 0.8.312 or higher for syntax
   highlighting
-
-* (optional) [feedtools](http://sporkmonger.com/projects/feedtools) version 0.2.29 or higher for
-  built-in feed generation support
 
 * (optional) [erubis](http://www.kuwata-lab.com/erubis/) version 2.6.2 or higher for Erubis
   (enhanced ERB) support

@@ -1,0 +1,28 @@
+---
+template: ~
+--- pipeline:erb
+<?xml version="1.0" encoding="utf-8" ?>
+<rss version="2.0">
+  <channel>
+    <title><%= h(context.node['title']) %></title>
+    <link><%= context.node.feed_link %>"</link>
+    <description><%= h(context.node['description']) %></description>
+    <pubDate><%= Time.now.rfc822 %></pubDate>
+    <lastBuildDate><%= Time.now.rfc822 %></lastBuildDate>
+    <generator>webgen - Webgen::SourceHandler::Feed</generator>
+
+    <% context.node.feed_entries.each do |entry| %>
+    <item>
+      <title><%= h(entry['title']) %></title>
+      <link><%= Webgen::Node.url(File.join(context.node['site_url'], entry.path), false) %></link>
+      <description><%= h(context.node.entry_content(entry)) %></description>
+      <pubDate><%= entry['modified_at'].rfc822 %></pubDate>
+      <guid isPermaLink="true"><%= Webgen::Node.url(File.join(context.node['site_url'], entry.path), false) %></guid>
+    </item>
+    <% end %>
+
+  </channel>
+</rss>
+
+
+
