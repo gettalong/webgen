@@ -1,7 +1,7 @@
 --- !ruby/object:Gem::Specification 
 name: webgen
 version: !ruby/object:Gem::Version 
-  version: 0.5.8.20090507
+  version: 0.5.9.20090620
 platform: ruby
 authors: 
 - Thomas Leitner
@@ -9,7 +9,7 @@ autorequire:
 bindir: bin
 cert_chain: []
 
-date: 2009-05-07 00:00:00 +02:00
+date: 2009-06-20 00:00:00 +02:00
 default_executable: webgen
 dependencies: 
 - !ruby/object:Gem::Dependency 
@@ -140,17 +140,7 @@ dependencies:
     requirements: 
     - - ">="
       - !ruby/object:Gem::Version 
-        version: 0.7.4.214
-    version: 
-- !ruby/object:Gem::Dependency 
-  name: feedtools
-  type: :development
-  version_requirement: 
-  version_requirements: !ruby/object:Gem::Requirement 
-    requirements: 
-    - - ">="
-      - !ruby/object:Gem::Version 
-        version: 0.2.29
+        version: 0.8.312
     version: 
 - !ruby/object:Gem::Dependency 
   name: erubis
@@ -204,6 +194,13 @@ files:
 - GPL
 - bin/webgen
 - data/webgen
+- data/webgen/passive_sources
+- data/webgen/passive_sources/images
+- data/webgen/passive_sources/images/generated_by_webgen.png
+- data/webgen/passive_sources/images/webgen_logo.png
+- data/webgen/passive_sources/templates
+- data/webgen/passive_sources/templates/atom_feed.template
+- data/webgen/passive_sources/templates/rss_feed.template
 - data/webgen/resources.yaml
 - data/webgen/webgui
 - data/webgen/webgui/app.rb
@@ -435,6 +432,8 @@ files:
 - lib/webgen/contentprocessor/tags.rb
 - lib/webgen/contentprocessor.rb
 - lib/webgen/context/nodes.rb
+- lib/webgen/context/render.rb
+- lib/webgen/context/tags.rb
 - lib/webgen/context.rb
 - lib/webgen/coreext.rb
 - lib/webgen/default_config.rb
@@ -497,11 +496,11 @@ files:
 - misc/images/information.png
 - misc/images/quote.gif
 - misc/images/warning.png
+- misc/logo.svg
 - misc/style.page
 - test/test_blackboard.rb
 - test/test_cache.rb
 - test/test_cli.rb
-- test/test_common.rb
 - test/test_common_sitemap.rb
 - test/test_configuration.rb
 - test/test_contentprocessor.rb
@@ -534,6 +533,7 @@ files:
 - test/test_sourcehandler_directory.rb
 - test/test_sourcehandler_feed.rb
 - test/test_sourcehandler_fragment.rb
+- test/test_sourcehandler_main.rb
 - test/test_sourcehandler_memory.rb
 - test/test_sourcehandler_metainfo.rb
 - test/test_sourcehandler_page.rb
