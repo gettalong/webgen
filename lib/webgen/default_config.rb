@@ -89,7 +89,7 @@ config.sourcehandler.default_meta_info({
                                            'kind' => 'fragment'
                                          },
                                          'Webgen::SourceHandler::Template' => {
-                                           'blocks' => {'default' => {'pipeline' => 'erb,tags,blocks'}}
+                                           'blocks' => {'default' => {'pipeline' => 'erb,tags,blocks,head'}}
                                          },
                                          'Webgen::SourceHandler::Metainfo' => {
                                            'blocks' => {1 => {'name' => 'paths'}, 2 => {'name' => 'alcn'}}
@@ -137,6 +137,7 @@ config.contentprocessor.map({
                               'erubis' => 'Webgen::ContentProcessor::Erubis',
                               'rdiscount' => 'Webgen::ContentProcessor::RDiscount',
                               'fragments' => 'Webgen::ContentProcessor::Fragments',
+                              'head' => 'Webgen::ContentProcessor::Head'
                             }, :doc => 'Content processor name to class map')
 
 Webgen::WebsiteAccess.website.blackboard.add_service(:content_processor_names, Webgen::ContentProcessor.method(:list))

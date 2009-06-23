@@ -67,6 +67,7 @@ module Webgen
     autoload :Erubis, 'webgen/contentprocessor/erubis'
     autoload :RDiscount, 'webgen/contentprocessor/rdiscount'
     autoload :Fragments, 'webgen/contentprocessor/fragments'
+    autoload :Head, 'webgen/contentprocessor/head'
 
     # Return the list of all available content processors.
     def self.list
