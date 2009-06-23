@@ -1,0 +1,21 @@
+---
+title: Webgen::ContentProcessor::Head
+---
+## Description
+
+This processor inserts before the end of the HTML head section links to used javascript and css
+files, inline javascript and css content and general meta tags. This functionality can be used, for
+example, by webgen tags to add needed javascript or css fragments on a page-per-page basis.
+
+It can also be used to insert arbitrary meta tags on a page-per-page basis. This can be done by
+setting the meta information named [`meta`]({relocatable: ../reference_metainfo.html#meta}) on a
+page file.
+
+This content processor should be used on template files since its output is only useful in the head
+section of an HTML file. And it should be the last content processor in the pipeline because
+otherwise not all needed information is available! There is no need for a special markup since the
+HTML head end tag is unique in a HTML element and therefore the insertion place can easily be found.
+
+Developers wanting to use the functionality of this content processor should have a look at its [API
+documentation](../rdoc/Webgen/ContentProcessor/Head.html).
+

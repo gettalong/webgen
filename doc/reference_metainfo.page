@@ -110,7 +110,7 @@ information for nodes created by them.
 
 {:miref}
 * String: `de`
-* Page files
+* Any
 
 Sets the language for the path. Has to be a valid ISO-639-1/2 character code for the language. This
 meta information needs to be set before a node gets created.
@@ -123,6 +123,16 @@ meta information needs to be set before a node gets created.
 
 Specifies additional attribute-value pairs (in form of a Hash) that should be added to a link to the
 path.
+
+### meta
+
+{:miref}
+* Hash: `\{author: Thomas Leitner, generator: My program}`
+* Any
+
+Specifies names and values for `<meta>` HTML tags. These key-value pairs are then properly escaped
+and inserted into the output file by [`ContentProcessor::Head`]({relocatable:
+contentprocessor/head.html}).
 
 ### modified\_at
 
