@@ -354,12 +354,14 @@ configuration options) and/or how to use it in a webgen tag (for tag configurati
 *   ### contentprocessor.map
 
     This configuration option maps short names for content processor to their class names. The short
-    names are used, for example, in the procesing pipeline of a content block of a file in Webgen
+    names are used, for example, in the processing pipeline of a content block of a file in Webgen
     Page Format. This configuration option is normally only used by extensions to register the short
     name of a content processor!
 
-    * Syntax: `\{SHORT: NAME, ...}` where `SHORT` is the short name of the content processor class
-      `NAME`.
+    * Syntax: `\{SHORT: NAME, SHORT: [NAME, TYPE], ...}` where `SHORT` is the short name of the
+      content processor class `NAME`. The second form allows one to additionally specify the type
+      `TYPE` of the content processor which has to be `:binary` or `:text`. If the first form is
+      used, then the type defaults to `:text`.
 
     <%= show_default['contentprocessor.map'] %>
 
@@ -367,6 +369,7 @@ configuration options) and/or how to use it in a webgen tag (for tag configurati
 
           config = Webgen::WebsiteAccess.website.config
           config['contentprocessor.map']['newcp'] = 'Extension::MyNewContentProcessor'
+          config['contentprocessor.map']['newcp'] = ['Extension::MyNewContentProcessor', :binary]
 
 
 *   ### contentprocessor.erubis.use\_pi
