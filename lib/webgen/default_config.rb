@@ -142,6 +142,7 @@ config.contentprocessor.map({
 
 Webgen::WebsiteAccess.website.blackboard.add_service(:content_processor_names, Webgen::ContentProcessor.method(:list))
 Webgen::WebsiteAccess.website.blackboard.add_service(:content_processor, Webgen::ContentProcessor.method(:for_name))
+Webgen::WebsiteAccess.website.blackboard.add_service(:content_processor_binary?, Webgen::ContentProcessor.method(:is_binary?))
 
 # All things regarding tags
 config.contentprocessor.tags.prefix('', :doc => 'The prefix used for tag names to avoid name clashes when another content processor uses similar markup.')

@@ -567,14 +567,21 @@ There are several types of extensions:
     Webgen Page Format. It is not specified how they have to process the content but this type of
     extension can basically be divided into two groups:
 
-    * Markup processors: Processors like Maruku or RedCloth belong to this group and they convert
-      markup text that is easy to read and write to a more structure format like HTML. This allows
-      you to write an HTML page without knowing HTML.
+    * Text content processors: These processors are used to process textual content like files in
+      Webgen Page Format. This group can furthe be divided:
 
-    * String replacers: These processors normally process special strings and substitute them with
-      other content. For example, the `erb` processors replaces delimited strings interpreted as
-      Ruby code with the interpreted value. Another example would be webgen's `tags` processor which
-      replaces strings like `\{relocatable: ../index.html}` with a processed value.
+        * Markup processors: Processors like Maruku or RedCloth belong to this group and they
+          convert markup text that is easy to read and write to a more structure format like HTML.
+          This allows you to write an HTML page without knowing HTML.
+
+        * String replacers: These processors normally process special strings and substitute them
+          with other content. For example, the `erb` processors replaces delimited strings
+          interpreted as Ruby code with the interpreted value. Another example would be webgen's
+          `tags` processor which replaces strings like `\{relocatable: ../index.html}` with a
+          processed value.
+
+    * Binary content processors: These processors are used to process binary data. For example, one
+      might want to process an image to produce a thumbnailed version of it.
 
 *   **Source Handler**: These extensions are used for handling source paths. They read the content of
     a path and produce one or more nodes (the internal representation of an output path, see [source

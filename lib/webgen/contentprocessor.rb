@@ -18,8 +18,13 @@ module Webgen
   #
   # After writing the content processor class, one needs to add it to the
   # <tt>contentprocessor.map</tt> hash so that it is used by webgen. The key for the entry needs to
-  # be a short name without special characters or spaces and the value is the class name, not as
-  # constant but as a string.
+  # be a short name without special characters or spaces and the value can be:
+  #
+  # * the class name, not as constant but as a string - then this content processor is assumed to
+  #   work with textual data -, or
+  #
+  # * an array with the class name like before and the type, which needs to be <tt>:binary</tt> or
+  #   <tt>:text</tt>.
   #
   # == Sample Content Processor
   #
@@ -52,6 +57,8 @@ module Webgen
   #   end
   #
   #   WebsiteAccess.website.config['contentprocessor.map']['replacer'] = 'SampleProcessor'
+  #   # Or one could equally write
+  #   # WebsiteAccess.website.config['contentprocessor.map']['replacer'] = ['SampleProcessor', :text]
   #
   module ContentProcessor
 
@@ -76,8 +83,14 @@ module Webgen
 
     # Return the content processor object identified by +name+.
     def self.for_name(name)
-      klass = WebsiteAccess.website.config['contentprocessor.map'][name]
+      klass, cp_type = WebsiteAccess.website.config['contentprocessor.map'][name]
       klass.nil? ? nil : WebsiteAccess.website.cache.instance(klass)
+    end
+
+    # Return whether the content processor identified by +name+ is processing binary data.
+    def self.is_binary?(name)
+      WebsiteAccess.website.config['contentprocessor.map'][name].kind_of?(Array) &&
+        WebsiteAccess.website.config['contentprocessor.map'][name].last == :binary
     end
 
     # Helper class for accessing content processors in a Webgen::Context object.
