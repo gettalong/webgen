@@ -14,7 +14,7 @@ module Webgen
 
       # Create a new object with absolute path +path+ for the file system path +fs_path+.
       def initialize(path, fs_path)
-        super(path) { File.open(fs_path, 'rb') }
+        super(path) {|mode| File.open(fs_path, mode) }
         @fs_path = fs_path
         WebsiteAccess.website.cache[[:fs_path, @fs_path]] = File.mtime(@fs_path)
         @meta_info['modified_at'] = File.mtime(@fs_path)

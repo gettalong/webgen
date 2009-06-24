@@ -3,6 +3,7 @@
 require 'test/unit'
 require 'webgen/path'
 require 'stringio'
+require 'tmpdir'
 
 class TestPath < Test::Unit::TestCase
 
@@ -130,6 +131,19 @@ class TestPath < Test::Unit::TestCase
     p = Webgen::Path.new('/test.de.page') { StringIO.new('hallo') }
     assert_equal('hallo', p.io.data)
     assert_equal('hallo', p.io.stream {|f| f.read })
+
+    if RUBY_VERSION >= '1.9'
+      begin
+        dir = File.join(Dir.tmpdir, 'webgen-' + Process.pid.to_s)
+        FileUtils.mkdir_p(dir)
+        File.open(File.join(dir, 'src'), 'wb+') {|f| f.write("\303\274")}
+        sio = Webgen::Path::SourceIO.new {|mode| File.open(File.join(dir, 'src'), mode) }
+        assert_equal(1, sio.data('r:UTF-8').length)
+        assert_equal(2, sio.data('rb').length)
+      ensure
+        FileUtils.rm_rf(dir) if dir
+      end
+    end
   end
 
   def test_equality

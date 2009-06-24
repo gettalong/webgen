@@ -24,7 +24,7 @@ module Webgen
 
       # Create a new tar archive path object for the entry +entry+.
       def initialize(path, data, mtime, uri)
-        super(path) { StringIO.new(data.to_s) }
+        super(path) {|mode| StringIO.new(data.to_s, mode) }
         @uri = uri
         @mtime = mtime
         WebsiteAccess.website.cache[[:tararchive_path, @uri, path]] = @mtime if WebsiteAccess.website
