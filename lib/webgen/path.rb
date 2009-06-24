@@ -49,16 +49,21 @@ module Webgen
 
       # Provide direct access to the wrapped IO object by yielding it. After the method block
       # returns the IO object is automatically closed.
-      def stream
-        io = @block.call
+      #
+      # The parameter +mode+ specifies the mode in which the wrapped IO object should be opened.
+      # This can be used, for example, to open a file in binary mode (or specify a certain input
+      # encoding under Ruby 1.9).
+      def stream(mode = 'r')
+        io = @block.call(mode)
         yield(io)
       ensure
         io.close
       end
 
-      # Return the whole content of the wrapped IO object as string.
-      def data
-        stream {|io| io.read}
+      # Return the whole content of the wrapped IO object as string. For a description of the
+      # parameter +mode+ see #stream.
+      def data(mode = 'r')
+        stream(mode) {|io| io.read}
       end
 
     end

@@ -50,7 +50,7 @@ module Webgen::Output
         if data.kind_of?(String)
           File.open(dest, 'wb') {|f| f.write(data) }
         else
-          data.stream do |source|
+          data.stream('rb') do |source|
             File.open(dest, 'wb') {|f| FileUtils.copy_stream(source, f) }
           end
         end
@@ -59,9 +59,9 @@ module Webgen::Output
       end
     end
 
-    # Return the content of the given +path+.
-    def read(path)
-      File.open(File.join(@root, path), 'rb') {|f| f.read}
+    # Return the content of the given +path+ which is opened in +mode+.
+    def read(path, mode = 'rb')
+      File.open(File.join(@root, path), mode) {|f| f.read}
     end
 
   end
