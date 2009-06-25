@@ -116,7 +116,7 @@ module Webgen
     end
 
     # Check if the node is a directory.
-    def is_directory?; @path[-1] == ?/; end
+    def is_directory?; @path[-1] == ?/ && !is_fragment?; end
 
     # Check if the node is a file.
     def is_file?; !is_directory? && !is_fragment?; end
