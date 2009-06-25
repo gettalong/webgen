@@ -30,7 +30,8 @@ module Webgen::SourceHandler
     def content(node)
       io = website.blackboard.invoke(:source_paths)[node.node_info[:src]].io
       if node.node_info[:preprocessor]
-        context = Webgen::Context.new(:content => io.data, :chain => [node])
+        is_binary = website.blackboard.invoke(:content_processor_binary?, node.node_info[:preprocessor])
+        context = Webgen::Context.new(:content => io.data(is_binary ? 'rb' : 'r'), :chain => [node])
         website.blackboard.invoke(:content_processor, node.node_info[:preprocessor]).call(context)
         context.content
       else
