@@ -182,6 +182,7 @@ class TestPath < Test::Unit::TestCase
     path = '/dir/'
     assert(Webgen::Path.match(path, '/dir/'))
     assert(Webgen::Path.match(path, '/dir'))
+    assert(Webgen::Path.match(path, '/*/'))
 
     path = '/dir'
     assert(Webgen::Path.match(path, '/dir/'))

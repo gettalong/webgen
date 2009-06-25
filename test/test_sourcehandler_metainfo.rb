@@ -15,6 +15,9 @@ class TestSourceHandlerMetainfo < Test::Unit::TestCase
 /default.*:
   title: new title
   before: valbef
+
+/*/:
+  title: test
 ---
 /default.css:
   after: valaft
@@ -28,6 +31,7 @@ EOF
     @website.blackboard.add_service(:source_paths) do
       {'/default.css' => path_with_meta_info('/default.css') {StringIO.new('# header')},
         '/other.page' => path_with_meta_info('/other.page') {StringIO.new('other page')},
+        '/hallo/' => path_with_meta_info('/hallo/')
       }
     end
 
@@ -37,7 +41,8 @@ EOF
   end
 
   def test_create_node
-    assert_equal({'/default.*' => {'title' => 'new title', 'before' => 'valbef'}}, @node.node_info[:mi_paths])
+    assert_equal({'/default.*' => {'title' => 'new title', 'before' => 'valbef'},
+                 '/*' => {'title' => 'test'}}, @node.node_info[:mi_paths])
     assert_equal({'/default.css' => {'after' => 'valaft'},
                  '/other.page' => {'title' => 'Not Other'}}, @node.node_info[:mi_alcn])
   end
@@ -75,6 +80,10 @@ EOF
     path = path_with_meta_info('/default.css')
     @website.blackboard.dispatch_msg(:before_node_created, path)
     assert('valbef', path.meta_info['before'])
+
+    path = path_with_meta_info('/hallo/')
+    @website.blackboard.dispatch_msg(:before_node_created, path)
+    assert('test', path.meta_info['title'])
   end
 
   def test_after_node_created
