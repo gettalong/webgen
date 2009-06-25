@@ -7,12 +7,6 @@ This source handler automatically generates a sitemap based on the specification
 [sitemaps.org](http://sitemaps.org) from a file in [Webgen Page Format]({relocatable:
 ../webgen_page_format.html}).
 
-> This extension can only be used if you have installed the [builder](http://builder.rubyforge.org)
-> library. The preferred way to do this is via Rubygems:
->
->     gem install builder
-{.warning}
-
 The following meta information keys are supported:
 
 *   `site_url` (MANDATORY)
@@ -44,3 +38,9 @@ The following meta information keys of files are used if they are specified:
 *   `priority`
 
     The priority of the file in respect to the other files.
+
+The generation of the sitemap is done via a template and the template used needs to be located under
+the ALCN `/templates/sitemap.template`. This default template is automatically created and used if
+no such path exists in the webgen website. You can also override the default generation mechanism on
+a file per file basis by adding a `template` block in the sitemap file which is then used to generate
+the sitemap.

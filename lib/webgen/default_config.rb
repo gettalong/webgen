@@ -96,12 +96,14 @@ config.sourcehandler.default_meta_info({
                                          },
                                          'Webgen::SourceHandler::Feed' => {
                                            'rss' => true,
-                                           'atom' => true
+                                           'atom' => true,
+                                           'blocks' => {'default' => {'pipeline' => 'erb'}}
                                          },
                                          'Webgen::SourceHandler::Sitemap' => {
                                            'default_priority' => 0.5,
                                            'default_change_freq' => 'weekly',
-                                           'common.sitemap.any_lang' => true
+                                           'common.sitemap.any_lang' => true,
+                                           'blocks' => {'default' => {'pipeline' => 'erb'}}
                                          }
                                        }, :doc => "Default meta information for all nodes and for nodes belonging to a specific source handler")
 
