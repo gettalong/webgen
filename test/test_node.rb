@@ -23,7 +23,7 @@ class TestNode < Test::Unit::TestCase
       :other_en => Webgen::Node.new(node, '/other1.html', 'other.page', {'lang' => 'en'}),
       :somename_en_frag => frag_en = Webgen::Node.new(child_en, '/somename.en.html#frag', '#othertest', {'title' => 'frag'}),
       :somename_de_frag => Webgen::Node.new(child_de, '/somename.de.html#frag', '#othertest'),
-      :somename_en_fragnest => Webgen::Node.new(frag_en, '/somename.en.html#fragnest', '#nestedpath'),
+      :somename_en_fragnest => Webgen::Node.new(frag_en, '/somename.en.html#fragnest/', '#nestedpath'),
       :dir => dir = Webgen::Node.new(node, '/dir/', 'dir/'),
       :dir_file => dir_file = Webgen::Node.new(dir, '/dir/file.html', 'file.html'),
       :dir_file_frag => Webgen::Node.new(dir_file, '/dir/file.html#frag', '#frag'),
@@ -74,6 +74,8 @@ class TestNode < Test::Unit::TestCase
     assert(nodes[:somename_en_frag].is_fragment?)
     assert(nodes[:root].is_root?)
     assert(!nodes[:somename_en].is_root?)
+    assert(nodes[:somename_en_fragnest].is_fragment?)
+    assert(!nodes[:somename_en_fragnest].is_directory?)
   end
 
   def test_meta_info_assignment
