@@ -1,7 +1,7 @@
 --- !ruby/object:Gem::Specification 
 name: webgen
 version: !ruby/object:Gem::Version 
-  version: 0.5.9.20090620
+  version: 0.5.9.20090626
 platform: ruby
 authors: 
 - Thomas Leitner
@@ -9,7 +9,7 @@ autorequire:
 bindir: bin
 cert_chain: []
 
-date: 2009-06-20 00:00:00 +02:00
+date: 2009-06-26 00:00:00 +02:00
 default_executable: webgen
 dependencies: 
 - !ruby/object:Gem::Dependency 
@@ -201,6 +201,7 @@ files:
 - data/webgen/passive_sources/templates
 - data/webgen/passive_sources/templates/atom_feed.template
 - data/webgen/passive_sources/templates/rss_feed.template
+- data/webgen/passive_sources/templates/sitemap.template
 - data/webgen/resources.yaml
 - data/webgen/webgui
 - data/webgen/webgui/app.rb
@@ -359,6 +360,7 @@ files:
 - doc/contentprocessor/erubis.page
 - doc/contentprocessor/fragments.page
 - doc/contentprocessor/haml.page
+- doc/contentprocessor/head.page
 - doc/contentprocessor/maruku.page
 - doc/contentprocessor/rdiscount.page
 - doc/contentprocessor/rdoc.page
@@ -424,6 +426,7 @@ files:
 - lib/webgen/contentprocessor/erubis.rb
 - lib/webgen/contentprocessor/fragments.rb
 - lib/webgen/contentprocessor/haml.rb
+- lib/webgen/contentprocessor/head.rb
 - lib/webgen/contentprocessor/maruku.rb
 - lib/webgen/contentprocessor/rdiscount.rb
 - lib/webgen/contentprocessor/rdoc.rb
@@ -510,6 +513,7 @@ files:
 - test/test_contentprocessor_erubis.rb
 - test/test_contentprocessor_fragments.rb
 - test/test_contentprocessor_haml.rb
+- test/test_contentprocessor_head.rb
 - test/test_contentprocessor_maruku.rb
 - test/test_contentprocessor_rdiscount.rb
 - test/test_contentprocessor_rdoc.rb
