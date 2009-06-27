@@ -5,7 +5,8 @@ title: Webgen::SourceHandler::Sitemap
 
 This source handler automatically generates a sitemap based on the specification of
 [sitemaps.org](http://sitemaps.org) from a file in [Webgen Page Format]({relocatable:
-../webgen_page_format.html}).
+../webgen_page_format.html}). The output and canonical names have the extension `xml` instead of
+`sitemap`.
 
 The following meta information keys are supported:
 

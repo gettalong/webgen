@@ -25,11 +25,13 @@ The following meta information keys are supported:
 
 *   `atom` (OPTIONAL)
 
-    An atom feed is generated if this key is set to `true`. Defaults to `true`.
+    An atom feed is generated if this key is set to `true`. Defaults to `true`. The generated file
+    name derives from the feed file name but the extension is changed to `atom`.
 
 *   `rss` (OPTIONAL)
 
-    A RSS feed is generated if this key is set to `true`. Defaults to `true`.
+    A RSS feed is generated if this key is set to `true`. Defaults to `true`. The generated file
+    name derives from the feed file name but the extension is changed to `rss`.
 
 *   `rss_version` (OPTIONAL)
 
