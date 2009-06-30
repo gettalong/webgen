@@ -49,7 +49,7 @@ module Webgen
 
 
     # Raised during parsing of data in Webgen Page Format if the data is invalid.
-    class FormatError < RuntimeError; end
+    class FormatError < StandardError; end
 
 
     # :stopdoc:
@@ -57,7 +57,7 @@ module Webgen
     RE_META_INFO = /\A---\s*(?:\n|\r|\r\n).*?(?:\n|\r|\r\n)(?=---.*?(?:\n|\r|\r\n)|\Z)/m
     RE_BLOCKS_OPTIONS = /^--- *?(?: *((?:\w+:[^\s]* *)*))?$|^$/
     RE_BLOCKS_START = /^--- .*?$|^--- *$/
-    RE_BLOCKS = /(?:(#{RE_BLOCKS_START})|\A)(.*?)(?:(?=#{RE_BLOCKS_START})|\Z)/m
+    RE_BLOCKS = /(?:(#{RE_BLOCKS_START})|\A)\n?(.*?)(?:(?=#{RE_BLOCKS_START})|\z)/m
     # :startdoc:
 
     class << self
@@ -100,7 +100,7 @@ module Webgen
               raise FormatError, "Invalid structure of meta information block: expected YAML hash but found #{meta_info.class}"
             end
           rescue ArgumentError => e
-            raise FormatError, e.message
+            raise FormatError, "Invalid YAML syntax in meta information block: #{e.message}"
           end
           meta_info
         end
@@ -126,7 +126,7 @@ module Webgen
           raise(FormatError, "Previously used name '#{name}' also used for block #{index+1}") if blocks.has_key?(name)
           content ||= ''
           content.gsub!(/^(\\+)(---.*?)$/) {|m| "\\" * ($1.length / 2) + $2}
-          content.strip!
+          content.chomp!("\n") unless index + 1 == scanned.length
           blocks[name] = blocks[index+1] = Block.new(name, content, options)
         end
         meta_info.delete('blocks')

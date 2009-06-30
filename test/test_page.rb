@@ -34,11 +34,11 @@ class TestPage < Test::Unit::TestCase
     - name: content
       content: "block1"
     - name: block2
-      content: "block2"
+      content: "  block2  "
     - name: block3
       content: ''
     - name: block4
-      content: 'yes'
+      content: "yes\\n"
 
 # empty file
 - in: ""
@@ -84,7 +84,7 @@ class TestPage < Test::Unit::TestCase
   meta_info: {}
   blocks:
     - name: content
-      content: "before\\n--- in\\nafter"
+      content: "before\\n--- in\\nafter\\n"
 
 # no meta info, starting with block with name
 - in: |
@@ -99,11 +99,12 @@ class TestPage < Test::Unit::TestCase
     --- name:block
     content doing -
     with?: with some things
+
     --- other:options test1:true test2:false test3:542 pipeline:
   meta_info: {}
   blocks:
     - name: block
-      content: "content doing -\\nwith?: with some things"
+      content: "content doing -\\nwith?: with some things\\n"
     - name: block2
       content: ''
       options: {other: options, test1: true, test2: false, test3: 542, pipeline: ~}
@@ -117,7 +118,24 @@ class TestPage < Test::Unit::TestCase
   meta_info: {}
   blocks:
     - name: block
-      content: "content\\n----------- some block start???\\nthings"
+      content: "content\\n----------- some block start???\\nthings\\n"
+
+# last block ending with no whitespace at tend
+- in: "--- name:block\\nblock\\n\\n--- name:block1\\ncontent"
+  meta_info: {}
+  blocks:
+    - name: block
+      content: "block\\n"
+    - name: block1
+      content: "content"
+
+# last block ending with empty line
+- in: "content\\n\\n"
+  meta_info: {}
+  blocks:
+    - name: content
+      content: "content\\n\\n"
+
 EOF
 
   INVALID_MI=<<EOF
