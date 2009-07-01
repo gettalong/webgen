@@ -5,6 +5,10 @@
 require 'webgen/cli'
 begin
   Webgen::CLI::CommandParser.new.parse
+rescue Webgen::Error => e
+  puts e.pretty_message
+  puts e.backtrace if $DEBUG
+  exit(-1)
 rescue
   puts 'An error has occurred:   ' + $!.message
   puts $!.backtrace if $DEBUG

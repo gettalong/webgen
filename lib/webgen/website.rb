@@ -21,6 +21,7 @@ require 'webgen/websiteaccess'
 require 'webgen/blackboard'
 require 'webgen/cache'
 require 'webgen/tree'
+require 'webgen/error'
 
 # Files for autoloading
 require 'webgen/common'
