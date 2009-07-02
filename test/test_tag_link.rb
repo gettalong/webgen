@@ -39,8 +39,7 @@ class TestTagLink < Test::Unit::TestCase
 
     # invalid paths
     @obj.set_params('tag.link.path' => ':/asdf=-)')
-    assert_equal('', call(context))
-    assert(node.flagged?(:dirty))
+    assert_raise(Webgen::RenderError) { call(context) }
 
     # basic node resolving
     @obj.set_params('tag.link.path' => 'dir/file.html')
@@ -49,6 +48,7 @@ class TestTagLink < Test::Unit::TestCase
     assert_equal('<a href="dir/file.html" title="other">Dir/File</a>', call(context))
     @obj.set_params('tag.link.path' => 'dir/other.html')
     assert_equal('', call(context))
+    assert(node.flagged?(:dirty))
 
     # non-existing fragments
     @obj.set_params('tag.link.path' => 'file.html#hallo')

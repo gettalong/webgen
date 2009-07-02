@@ -22,7 +22,7 @@ module Webgen::ContentProcessor
 
     # Replace all webgen tags in the content of +context+ with the rendered content.
     def call(context)
-      replace_tags(context.content, context.ref_node) do |tag, param_string, body|
+      replace_tags(context) do |tag, param_string, body|
         log(:debug) { "Replacing tag #{tag} with data '#{param_string}' and body '#{body}' in <#{context.ref_node.alcn}>" }
         process_tag(tag, param_string, body, context)
       end
@@ -36,19 +36,19 @@ module Webgen::ContentProcessor
       result = ''
       processor = processor_for_tag(tag)
       if !processor.nil?
-        params, mandatory_missing = if params.kind_of?(String)
-                                      processor.create_tag_params(params, context.ref_node)
-                                    else
-                                      processor.create_params_hash(params, context.ref_node)
-                                    end
-        if mandatory_missing
-          context.dest_node.flag(:dirty)
-        else
-          processor.set_params(params)
-          result, process_output = processor.call(tag, body, context)
-          processor.set_params(nil)
-          result = call(context.clone(:content => result)).content if process_output
-        end
+        params = if params.kind_of?(String)
+                   processor.create_tag_params(params, context.ref_node)
+                 else
+                   processor.create_params_hash(params, context.ref_node)
+                 end
+
+        processor.set_params(params)
+        result, process_output = processor.call(tag, body, context)
+        processor.set_params(nil)
+        result = call(context.clone(:content => result)).content if process_output
+      else
+        raise Webgen::RenderError.new("No tag processor for '#{tag}' found", self.class.name,
+                                      context.dest_node.alcn, context.ref_node.alcn)
       end
       result
     end
@@ -62,11 +62,11 @@ module Webgen::ContentProcessor
     ProcessingStruct = Struct.new(:state, :tag, :simple_tag, :backslashes, :brackets, :start_pos, :end_pos,
                                   :params_start_pos, :params_end_pos, :body_end_pos)
 
-    # Return the +content+ provided by +node+ with all webgen tags replaced. When a webgen tag is
-    # encountered by the parser, the method yields all found information and substitutes the
-    # returned string for the tag.
-    def replace_tags(content, node) #:yields: tag_name, param_string, body
-      scanner = StringScanner.new(content)
+    # Return the <tt>context.content</tt> provided by <tt>context.ref_node</tt> with all webgen tags
+    # replaced. When a webgen tag is encountered by the parser, the method yields all found
+    # information and substitutes the returned string for the tag.
+    def replace_tags(context) #:yields: tag_name, param_string, body
+      scanner = StringScanner.new(context.content)
       data = ProcessingStruct.new(:before_tag)
       while true
         case data.state
@@ -86,8 +86,8 @@ module Webgen::ContentProcessor
         when :in_start_tag
           data.brackets += (scanner[1] == '{' ? 1 : -1) while data.brackets != 0 && scanner.skip_until(BRACKETS_RE)
           if data.brackets != 0
-            log(:error) { "Unbalanced curly brackets in <#{node.alcn}>!" }
-            data.state = :done
+            raise Webgen::RenderError.new("Unbalanced curly brackets for tag '#{data.tag}'", self.class.name,
+                                          context.dest_node.alcn, context.ref_node.alcn)
           else
             data.params_end_pos = data.body_end_pos = data.end_pos = scanner.pos - 1
             data.state = (data.simple_tag ? :process : :in_body)
@@ -120,8 +120,8 @@ module Webgen::ContentProcessor
             data.end_pos = scanner.pos - 1
             data.body_end_pos = scanner.pos - scanner.matched.length + scanner[1].length / 2
           else
-            log(:error) { "Invalid body part in <#{node.alcn}>!" }
-            data.state = :done
+            raise Webgen::RenderError.new("Invalid body part - no end tag found for '#{data.tag}'", self.class.name,
+                                          context.dest_node.alcn, context.ref_node.alcn)
           end
 
         when :done
@@ -129,6 +129,9 @@ module Webgen::ContentProcessor
         end
       end
       scanner.string
+    rescue Webgen::RenderError => e
+      e.line = scanner.string[0...scanner.pos].scan("\n").size + 1 unless e.line
+      raise
     end
 
     # Return the tag processor for +tag+ or +nil+ if +tag+ is unknown.
@@ -139,7 +142,6 @@ module Webgen::ContentProcessor
               elsif map.has_key?(:default)
                 map[:default]
               else
-                log(:error) { "No tag processor for tag #{tag.inspect} found" }
                 nil
               end
       klass.nil? ? nil : website.cache.instance(klass)

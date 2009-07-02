@@ -38,9 +38,6 @@ class TestContentProcessorTags < Test::Unit::TestCase
 
   def test_call
     context = Webgen::Context.new(:chain => [Webgen::Tree.new.dummy_root])
-    context.content = "{test: }"
-    assert_equal('', @obj.call(context).content)
-
     add_test_tag
     assert_equal('test', @obj.call(context.clone(:content => "{test: }")).content)
     assert_equal('thebody', @obj.call(context.clone(:content => "{body::}thebody{body}")).content)
@@ -50,8 +47,8 @@ class TestContentProcessorTags < Test::Unit::TestCase
 
   def test_process_tag
     context = Webgen::Context.new(:chain => [Webgen::Tree.new.dummy_root])
-    context.content = "{test: }"
-    assert_equal('', @obj.process_tag('test', {}, '', context))
+    context.content = "\n{test: }"
+    assert_error_on_line(Webgen::RenderError, 2) { @obj.call(context) }
 
     add_test_tag
     assert_equal('test', @obj.process_tag('test', {'something' => 'new'}, '', context))
@@ -63,9 +60,9 @@ class TestContentProcessorTags < Test::Unit::TestCase
     check_returned_tags('sdfsdf{asd', [])
     check_returned_tags('sdfsdf}asd', [])
     check_returned_tags('sdfsdf{asd}', [])
-    check_returned_tags('sdfsdf{asd: {}as', [])
+    check_returned_tags('sdfsdf{asd: {}as', [], true)
     check_returned_tags('sdfsdf{test: {test1: }}', [['test', ' {test1: }', '']], 'sdfsdftest1')
-    check_returned_tags('sdfsdf{test: {test1: {}}', [['test', '', '']], 'sdfsdf{test: {test1: {}}')
+    check_returned_tags('sdfsdf{test: {test1: {}}', [], true)
     check_returned_tags('sdfsdf{test:}{test1: }', [['test', '', ''], ['test1', ' ', '']], 'sdfsdftest1test2')
     check_returned_tags('sdfsdf{test:}\\{test1: }', [['test', '', '']], "sdfsdftest1{test1: }")
     check_returned_tags('sdfsdf\\{test:}{test1:}', [['test1', '', '']], "sdfsdf{test:}test1")
@@ -75,7 +72,7 @@ class TestContentProcessorTags < Test::Unit::TestCase
     check_returned_tags('sdfsdf\\\\\\{test: asdf}sdf', [['test', ' asdf', '']], "sdfsdf\\{test: asdf}sdf")
 
     check_returned_tags('before{test::}body{test}', [['test', '', 'body']], "beforetest1")
-    check_returned_tags('before{test::}body{testno}', [], "before{test::}body{testno}")
+    check_returned_tags('before{test::}body{testno}', [], true)
     check_returned_tags('before{test::}body\\{test}other{test}', [['test', '', 'body{test}other']], "beforetest1")
     check_returned_tags('before{test::}body\\{test}{test}', [['test', '', 'body{test}']], "beforetest1")
     check_returned_tags('before{test::}body\\{test}\\\\{test}after', [['test', '', 'body{test}\\']], "beforetest1after")
@@ -105,7 +102,12 @@ class TestContentProcessorTags < Test::Unit::TestCase
       i += 1
       'test' + i.to_s
     end
-    assert_equal(result, @obj.instance_eval { replace_tags(content, Webgen::Tree.new.dummy_root, &check_proc) })
+    context = Webgen::Context.new(:chain => [Webgen::Tree.new.dummy_root], :content => content)
+    if result.kind_of?(TrueClass)
+      assert_error_on_line(Webgen::RenderError, 1) { @obj.send(:replace_tags, context, &check_proc) }
+    else
+      assert_equal(result, @obj.instance_eval { replace_tags(context, &check_proc) })
+    end
     assert(i, data.length)
   end
 

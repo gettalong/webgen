@@ -61,7 +61,7 @@ class TestSourceHandlerBase < Test::Unit::TestCase
 
   def test_output_path
     node = Webgen::Node.new(Webgen::Tree.new.dummy_root, '/', '/')
-    assert_raise(RuntimeError) { @obj.output_path(node, path_with_meta_info('/test.page', 'output_path' => 'non'))}
+    assert_raise(Webgen::NodeCreationError) { @obj.output_path(node, path_with_meta_info('/test.page', 'output_path' => 'non'))}
   end
 
   def test_standard_output_path
@@ -102,7 +102,7 @@ class TestSourceHandlerBase < Test::Unit::TestCase
     path = path_with_meta_info('/other.de.html', 'output_path_style' => [:parent, 'index', ['.', :lang], :ext])
     assert_equal('/index.de.html', @obj.output_path(node, path))
 
-    assert_raise(RuntimeError) do
+    assert_raise(Webgen::NodeCreationError) do
       path = path_with_meta_info('/path.html', 'output_path_style' => [:parent, :year, '/', :month, '/', :basename, :ext])
       @obj.output_path(node, path)
     end
@@ -123,7 +123,14 @@ class TestSourceHandlerBase < Test::Unit::TestCase
     assert_equal('value1', path.meta_info['key'])
 
     path = path_with_meta_info('/other.page') { StringIO.new("---\:dfk")}
-    assert_raise(RuntimeError) { @obj.page_from_path(path) }
+    assert_raise(Webgen::NodeCreationError) { @obj.page_from_path(path) }
+  end
+
+  def test_parent_node
+    assert_equal(@website.tree.dummy_root, @obj.parent_node(path_with_meta_info('/')))
+    root = Webgen::Node.new(@website.tree.dummy_root, '/', '/')
+    assert_equal(root, @obj.parent_node(path_with_meta_info('/test/')))
+    assert_raise(Webgen::NodeCreationError) { @obj.parent_node(path_with_meta_info('/hallo/other.page')) }
   end
 
 end

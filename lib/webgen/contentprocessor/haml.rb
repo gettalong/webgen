@@ -21,8 +21,10 @@ module Webgen::ContentProcessor
       context.content = ::Haml::Engine.new(context.content, :filename => context.ref_node.alcn).
         render(Object.new, locals)
       context
+    rescue ::Haml::Error => e
+      raise Webgen::RenderError.new(e, self.class.name, context.dest_node.alcn, context.ref_node.alcn, (e.line + 1 if e.line))
     rescue Exception => e
-      raise RuntimeError, "Error converting Haml markup to HTML in <#{context.ref_node.alcn}>: #{e.message}", e.backtrace
+      raise Webgen::RenderError.new(e, self.class.name, context.dest_node.alcn, context.ref_node.alcn)
     end
 
   end

@@ -13,12 +13,13 @@ module Webgen::Tag
         context.dest_node.node_info[:used_meta_info_nodes] << dest_node.alcn
         context.dest_node.link_to(dest_node, param('tag.link.attr').merge(:lang => context.content_node.lang))
       else
-        raise ArgumentError, 'Resolving of path failed'
+        log(:error) { "Could not resolve path '#{param('tag.link.path')}' in <#{context.ref_node.alcn}>" }
+        context.dest_node.flag(:dirty)
+        ''
       end
-    rescue ArgumentError, URI::InvalidURIError => e
-      log(:error) { "Could not link to path '#{param('tag.link.path')}' in <#{context.ref_node.alcn}>: #{e.message}" }
-      context.dest_node.flag(:dirty)
-      ''
+    rescue URI::InvalidURIError => e
+      raise Webgen::RenderError.new("Error while parsing path '#{param('tag.link.path')}': #{e.message}",
+                                    self.class.name, context.dest_node, context.ref_node)
     end
 
   end

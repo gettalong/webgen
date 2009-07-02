@@ -35,7 +35,8 @@ module Webgen::SourceHandler
         context = chain.first.node_info[:page].blocks[block_name].render(Webgen::Context.new(:chain => chain))
         context.content
       else
-        raise "Error rendering <#{node.alcn}>: no block named '#{block_name}' in <#{chain.first.alcn}>"
+        raise Webgen::RenderError.new("No block named '#{block_name}'",
+                                      self.class.name, node.alcn, chain.first.alcn)
       end
     end
     alias_method :content, :render_node

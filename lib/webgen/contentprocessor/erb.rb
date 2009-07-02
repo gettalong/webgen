@@ -22,7 +22,8 @@ module Webgen::ContentProcessor
       context.content = erb.result(binding)
       context
     rescue Exception => e
-      raise RuntimeError, "Erb processing failed in <#{context.ref_node.alcn}>: #{e.message}", e.backtrace
+      line = (e.is_a?(::SyntaxError) ? e.message : e.backtrace[0]).scan(/:(\d+)/).first.first.to_i
+      raise Webgen::RenderError.new(e, self.class.name, context.dest_node.alcn, context.ref_node.alcn, line)
     end
 
   end

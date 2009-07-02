@@ -49,7 +49,7 @@ class TestSourceHandlerPage < Test::Unit::TestCase
   def test_render_node
     node = @obj.create_node(@path)
     assert_equal("content", @obj.render_node(node))
-    assert_raise(RuntimeError) { @obj.render_node(node, 'other') }
+    assert_raise(Webgen::RenderError) { @obj.render_node(node, 'other') }
   end
 
   def test_meta_info_changed

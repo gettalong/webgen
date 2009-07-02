@@ -41,8 +41,7 @@ module Webgen
 
     # See Error#pretty_message.
     def pretty_message
-      msg = 'Error '
-      msg += 'while creating a node'
+      msg = 'Error while creating a node'
       msg += (@alcn ? " from <#{@alcn}>" : '')
       msg += " with #{@class_name}" if @class_name
       msg + ":\n    " + self.message

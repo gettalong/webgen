@@ -38,7 +38,7 @@ class TestTagTikZ < Test::Unit::TestCase
     output = call(context, '\tikz \asdfasdfasf', 'test.png', [], '', '72 72', false, {})
     assert_equal('<img src="test.png" />', output)
     assert(root.tree['/test.png'])
-    assert_nil(root.tree['/test.png'].content)
+    assert_raise(Webgen::RenderError) { root.tree['/test.png'].content }
     root.tree.delete_node('/test.png')
 
     output = call(context, '\tikz \draw (0,0) -- (0,1);', '/images/test.gif', ['arrows'], '->', '72 72', true, {'alt' => 'title'})
@@ -58,7 +58,7 @@ class TestTagTikZ < Test::Unit::TestCase
     root = Webgen::Node.new(@website.tree.dummy_root, '/', '/')
     context = Webgen::Context.new(:chain => [root])
     assert_equal("hallo\n", @obj.send(:run_command, echo_cmd('hallo'), context))
-    assert_nil(@obj.send(:run_command, 'unknown_command 2>&1', context))
+    assert_raise(Webgen::RenderError) { @obj.send(:run_command, 'unknown_command 2>&1', context) }
   end
 
   def echo_cmd(data)

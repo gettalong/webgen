@@ -43,7 +43,7 @@ EOF
     assert_equal('/test.xml', sitemap.path)
     assert_equal('/test.xml', sitemap.alcn)
 
-    assert_raise(RuntimeError) do
+    assert_raise(Webgen::NodeCreationError) do
       @obj.create_node(path_with_meta_info('/test.sitemap', {}, @obj.class.name) {StringIO.new('')})
     end
   end
@@ -53,7 +53,7 @@ EOF
     sitemap = @obj.create_node(@path)
     sitemap['title'] = 'test'
     assert_not_nil(sitemap)
-    assert_equal('Yeah test', sitemap.content)
+    assert_equal("Yeah test\n", sitemap.content)
   end
 
   def test_content

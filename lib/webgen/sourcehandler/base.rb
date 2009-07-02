@@ -153,7 +153,8 @@ module Webgen::SourceHandler
           when :year, :month, :day
             ctime = path.meta_info['created_at']
             if !ctime.kind_of?(Time)
-              raise "Invalid meta info 'created_at' for #{path}, needed because of used output path style"
+              raise Webgen::NodeCreationError.new("Invalid meta info 'created_at', needed because of used output path style",
+                                                  self.class.name, path)
             end
             ctime.send(part).to_s.rjust(2, '0')
           when Symbol  then path.send(part)
@@ -189,7 +190,8 @@ module Webgen::SourceHandler
         end
         name
       else
-        raise "Unknown method for creating output path: #{method}"
+        raise Webgen::NodeCreationError.new("Unknown method for creating output path: #{path.meta_info['output_path']}",
+                                            self.class.name, path)
       end
     end
 
@@ -258,7 +260,8 @@ module Webgen::SourceHandler
       begin
         page = Webgen::Page.from_data(path.io.data, path.meta_info)
       rescue Webgen::Page::FormatError => e
-        raise "Error reading source path <#{path}>: #{e.message}"
+        raise Webgen::NodeCreationError.new("Error reading source path: #{e.message}",
+                                            self.class.name, path)
       end
       path.meta_info = page.meta_info
       page
@@ -268,7 +271,8 @@ module Webgen::SourceHandler
     def parent_node(path)
       parent_dir = (path.parent_path == '' ? '' : Webgen::Path.new(path.parent_path).alcn)
       if !(parent = Webgen::WebsiteAccess.website.tree[parent_dir])
-        raise "The needed parent path <#{parent_dir}> for <#{path.path}> does not exist"
+        raise Webgen::NodeCreationError.new("The needed parent path <#{parent_dir}> does not exist",
+                                            self.class.name, path)
       end
       parent
     end

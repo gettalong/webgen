@@ -33,43 +33,22 @@ class TestTagBase < Test::Unit::TestCase
     @website.logger = ::Logger.new(output)
     @website.logger.level = Logger::WARN
 
-    output.string = ''
-    assert_equal([{}, true], @obj.create_tag_params("--\nhal:param1\ntest:[;", Webgen::Tree.new.dummy_root))
-    output.rewind; assert_match(/Could not parse the tag params/, output.read)
+    assert_raise(Webgen::RenderError) { @obj.create_tag_params("--\nhal:param1\ntest:[;", Webgen::Tree.new.dummy_root) }
 
-    output.string = ''
-    set_params(5)
-    assert_equal('param1', @obj.param('testtagbase.testtag.param1'))
-    output.rewind; assert_match(/Not all mandatory parameters/, output.read)
-    output.rewind; assert_match(/Invalid parameter type/, output.read)
-
-    output.string = ''
-    set_params(nil)
-    assert_equal('param1', @obj.param('testtagbase.testtag.param1'))
-    output.rewind; assert_match(/Not all mandatory parameters/, output.read)
-
-    output.string = ''
-    set_params({})
-    assert_equal('param1', @obj.param('testtagbase.testtag.param1'))
-    output.rewind; assert_match(/Not all mandatory parameters/, output.read)
-
-    output.string = ''
-    set_params('test_value')
-    assert_equal('test_value', @obj.param('testtagbase.testtag.param3'))
-    output.rewind; assert_match(/Not all mandatory parameters/, output.read)
+    assert_raise(Webgen::RenderError) { set_params(5) }
+    assert_raise(Webgen::RenderError) { set_params(nil) }
+    assert_raise(Webgen::RenderError) { set_params({}) }
+    assert_raise(Webgen::RenderError) { set_params('test_value') }
 
     output.string = ''
     set_params({'param2' => 'test2', 'testtagbase.testtag.param3' => 'test3', 'invalid' => 5})
     assert_equal('test2', @obj.param('testtagbase.testtag.param2'))
     assert_equal('test3', @obj.param('testtagbase.testtag.param3'))
-    output.rewind; assert_no_match(/Not all mandatory parameters/, output.read)
     output.rewind; assert_match(/Invalid parameter 'invalid'/, output.read)
 
     @website.config.data.delete('testtagbase.testtag.param3')
     @website.config.meta_info.delete('testtagbase.testtag.param3')
-    output.string = ''
-    set_params('default_value')
-    output.rewind; assert_match(/No default mandatory parameter specified for tag/, output.read)
+    assert_raise(Webgen::RenderError) { set_params('default_value') }
   end
 
   def test_call
@@ -77,7 +56,7 @@ class TestTagBase < Test::Unit::TestCase
   end
 
   def set_params(params)
-    @obj.set_params(@obj.send(:create_params_hash, params, Webgen::Tree.new.dummy_root).first)
+    @obj.set_params(@obj.send(:create_params_hash, params, Webgen::Tree.new.dummy_root))
   end
 
 end

@@ -7,6 +7,8 @@ require 'webgen/contentprocessor'
 
 class TestContentProcessorBuilder < Test::Unit::TestCase
 
+  include Test::WebgenAssertions
+
   def test_call
     obj = Webgen::ContentProcessor::Builder.new
     root = Webgen::Node.new(Webgen::Tree.new.dummy_root, '/', '/')
@@ -18,7 +20,12 @@ class TestContentProcessorBuilder < Test::Unit::TestCase
     assert_equal("<div path=\"/test\">\n  <strong>test</strong>\n</div>\n", obj.call(context).content)
 
     context.content = 'raise "bla"'
-    assert_raise(RuntimeError) { obj.call(context).content }
+
+    context.content = "xml.div do \n5+5\n+=+6\nend"
+    assert_error_on_line(Webgen::RenderError, 3) { obj.call(context) }
+
+    context.content = "xml.div do \n5+5\nunknown\n++6\nend"
+    assert_error_on_line(Webgen::RenderError, 3) { obj.call(context) }
   end
 
 end

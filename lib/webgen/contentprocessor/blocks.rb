@@ -14,6 +14,8 @@ module Webgen::ContentProcessor
     def call(context)
       context.content.gsub!(BLOCK_RE) do |match|
         attr = {}
+        match_object = $~
+        attr[:line_nr_proc] = lambda { match_object.pre_match.scan("\n").size + 1 }
         match.scan(BLOCK_ATTR_RE) {|name, sep, content| attr[name.to_sym] = content}
         render_block(context, attr)
       end
@@ -48,8 +50,9 @@ module Webgen::ContentProcessor
         used_chain = paths.collect do |path|
           temp_node = context.ref_node.resolve(path.strip, context.dest_node.lang)
           if temp_node.nil?
-            context.dest_node.flag(:dirty)
-            log(:error) { "Could not resolve <#{path.strip}> in <#{context.ref_node.alcn}> while rendering blocks" }
+            raise Webgen::RenderError.new("Could not resolve <#{path.strip}>",
+                                          self.class.name, context.dest_node.alcn,
+                                          context.ref_node.alcn, (options[:line_nr_proc].call if options[:line_nr_proc]))
           end
           temp_node
         end.compact
@@ -68,9 +71,13 @@ module Webgen::ContentProcessor
         if options[:notfound] == 'ignore'
           return ''
         elsif block_node
-          raise "Node <#{block_node.alcn}> has no block named '#{options[:name]}'"
+          raise Webgen::RenderError.new("No block named '#{options[:name]}' found in <#{block_node.alcn}>",
+                                        self.class.name, context.dest_node.alcn,
+                                        context.ref_node.alcn, (options[:line_nr_proc].call if options[:line_nr_proc]))
         else
-          raise "No node in the chain has a block named '#{options[:name]}'"
+          raise Webgen::RenderError.new("No node in the render chain has a block named '#{options[:name]}'",
+                                        self.class.name, context.dest_node.alcn,
+                                        context.ref_node.alcn, (options[:line_nr_proc].call if options[:line_nr_proc]))
         end
       end
 

@@ -73,9 +73,8 @@ EOF
       output = `#{cmd_prefix} pdflatex --shell-escape -interaction=batchmode #{File.basename(file.path)}.tex`
       if $?.exitstatus != 0
         errors = output.scan(/^!(.*\n.*)/).join("\n")
-        log(:error) { "There was an error creating a TikZ picture in <#{context.ref_node.alcn}>: #{errors}"}
-        context.dest_node.flag(:dirty)
-        nil
+        raise Webgen::RenderError.new("Error while creating a TikZ picture: #{errors}",
+                                      self.class.name, context.dest_node, context.ref_node)
       else
         cmd = cmd_prefix + "pdfcrop #{File.basename(file.path)}.pdf #{File.basename(file.path)}.pdf; "
         return unless run_command(cmd, context)
@@ -105,9 +104,8 @@ EOF
     def run_command(cmd, context)
       output = `#{cmd}`
       if $?.exitstatus != 0
-        log(:error) { "There was an error running a command for a TikZ picture in <#{context.ref_node.alcn}>: #{output}"}
-        context.dest_node.flag(:dirty)
-        nil
+        raise Webgen::RenderError.new("Error while running a command for a TikZ picture: #{output}",
+                                      self.class.name, context.dest_node, context.ref_node)
       else
         output
       end
