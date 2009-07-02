@@ -31,7 +31,11 @@ task :auto_webgen do
     # you may need to adjust the glob so that all your sources are included
     paths = Dir['src/**/*'].sort
     if old_paths != paths || paths.any? {|p| File.mtime(p) > time}
-      Rake::Task['webgen'].execute({})
+      begin
+        Rake::Task['webgen'].execute({})
+      rescue Webgen::Error => e
+        puts e.pretty_message
+      end
     end
     time = Time.now
     old_paths = paths
