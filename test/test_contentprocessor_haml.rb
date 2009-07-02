@@ -7,6 +7,8 @@ require 'webgen/contentprocessor'
 
 class TestContentProcessorHaml < Test::Unit::TestCase
 
+  include Test::WebgenAssertions
+
   def test_call
     obj = Webgen::ContentProcessor::Haml.new
     root = Webgen::Node.new(Webgen::Tree.new.dummy_root, '/', '/')
@@ -17,8 +19,11 @@ class TestContentProcessorHaml < Test::Unit::TestCase
     obj.call(context)
     assert_equal("<div id='content'>\n  <h1>Hallo</h1>\n  /test/test/test/test\n</div>\n", context.content)
 
+    context.content = "#cont\n    %unknown"
+    assert_error_on_line(Webgen::RenderError, 2) { obj.call(context) }
+
     context.content = "#cont\n  = unknown"
-    assert_raise(RuntimeError) { obj.call(context) }
+    assert_raise(Webgen::RenderError) { obj.call(context) }
   end
 
 end

@@ -31,7 +31,7 @@ class TestTagExecuteCommand < Test::Unit::TestCase
     assert_equal([test_text, true], call(context, echo_cmd(test_text), true, false))
     assert_equal(['a&quot;b&quot;', true], call(context, echo_cmd(test_text), true, true))
     assert_equal(['a&quot;b&quot;', true], call(context, echo_cmd(test_text), true, true))
-    assert_raise(RuntimeError) { call(context, 'invalid_echo_command', true, true) }
+    assert_raise(Webgen::RenderError) { call(context, 'invalid_echo_command', true, true) }
   end
 
   def echo_cmd(data)

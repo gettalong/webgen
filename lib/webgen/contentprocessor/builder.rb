@@ -23,7 +23,8 @@ module Webgen::ContentProcessor
       context.content = xml.target!
       context
     rescue Exception => e
-      raise RuntimeError, "Error using Builder in <#{context.ref_node.alcn}> to generate XML: #{e.message}", e.backtrace
+      line = (e.is_a?(::SyntaxError) ? e.message : e.backtrace[0]).scan(/:(\d+)/).first.first.to_i
+      raise Webgen::RenderError.new(e, self.class.name, context.dest_node.alcn, context.ref_node.alcn, line)
     end
 
   end

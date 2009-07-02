@@ -15,7 +15,7 @@ class TestContentProcessorMaruku < Test::Unit::TestCase
     assert_equal('<h1 id=\'header\'>header</h1>', @obj.call(context).content)
 
     context.content = "# head*d* {#das .dsaf "
-    assert_raise(RuntimeError) { @obj.call(context)}
+    assert_raise(Webgen::RenderError) { @obj.call(context)}
   end
 
   def test_call_fix_for_invalid_id

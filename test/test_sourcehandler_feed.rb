@@ -43,11 +43,15 @@ EOF
     assert_equal('rss', rss_node.node_info[:feed_type])
 
     assert_equal([atom_node, rss_node], @obj.create_node(@path))
+
+    assert_raise(Webgen::NodeCreationError) do
+      @obj.create_node(path_with_meta_info('/test.feed', {}, @obj.class.name) {StringIO.new("---\nsite_url: test\n---\n")})
+    end
   end
 
   def test_content
     atom_node, rss_node = @obj.create_node(@path)
-    assert_equal('hallo', rss_node.content)
+    assert_equal("hallo\n", rss_node.content)
     assert(atom_node.content =~ /Thomas Leitner/)
     assert(atom_node.content =~ /RealContent/)
   end

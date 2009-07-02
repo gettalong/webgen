@@ -65,24 +65,18 @@ module Webgen::Tag::Base
   include Webgen::Loggable
   include Webgen::WebsiteAccess
 
-  # Create a hash with parameter values extracted from the string +tag_config+.
-  #
-  # Returns the parameter hash and a boolean which is +true+ if any mandatory parameters are
-  # missing.
+  # Create a hash with parameter values extracted from the string +tag_config+ and return it.
   def create_tag_params(tag_config, ref_node)
     begin
       config = YAML::load("--- #{tag_config}")
     rescue ArgumentError => e
-      log(:error) { "Could not parse the tag params '#{tag_config}' in <#{ref_node.alcn}>: #{e.message}" }
-      config = {}
+      raise Webgen::RenderError.new("Could not parse the tag params '#{tag_config}': #{e.message}",
+                                    self.class.name, nil, ref_node.alcn)
     end
     create_params_hash(config, ref_node)
   end
 
   # Create and return the parameter hash from +config+ which needs to be a Hash, a String or +nil+.
-  #
-  # Returns the parameter hash and a boolean which is +true+ if any mandatory parameters are
-  # missing.
   def create_params_hash(config, node)
     params = tag_params_list
     result = case config
@@ -90,17 +84,15 @@ module Webgen::Tag::Base
              when String then create_from_string(config, params, node)
              when NilClass then {}
              else
-               log(:error) { "Invalid parameter type (#{config.class}) for tag '#{self.class.name}' in <#{node.alcn}>" }
-               {}
+               raise Webgen::RenderError.new("Invalid parameter type (#{config.class})",
+                                             self.class.name, nil, node.alcn)
              end
 
-    mandatory_params_missing = false
     unless params.all? {|k| !website.config.meta_info[k][:mandatory] || result.has_key?(k)}
-      log(:error) { "Not all mandatory parameters for tag '#{self.class.name}' in <#{node.alcn}> set" }
-      mandatory_params_missing = true
+      raise Webgen::RenderError.new("Not all mandatory parameters set", self.class.name, nil, node.alcn)
     end
 
-    [result, mandatory_params_missing]
+    result
   end
 
   # Set the current parameter configuration to +params+.

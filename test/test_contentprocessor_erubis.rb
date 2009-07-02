@@ -20,8 +20,11 @@ class TestContentProcessorErubis < Test::Unit::TestCase
     context.content = "<%= context[:doit] %>6\n<%= context.ref_node.alcn %>\n<%= context.node.alcn %>\n<%= context.dest_node.alcn %><% context.website %>"
     assert_equal("hallo6\n/test\n/test\n/test", obj.call(context).content)
 
-    context.content = '<%= 5* %>'
-    assert_raise(RuntimeError) { obj.call(context) }
+    context.content = "\n<%= 5* %>"
+    assert_error_on_line(Webgen::RenderError, 2) { obj.call(context) }
+
+    context.content = "\n\n<% unknown %>"
+    assert_error_on_line(Webgen::RenderError, 3) { obj.call(context) }
 
     context.content = "<% for i in [1] %>\n<%= i %>\n<% end %>"
     assert_equal("1\n", obj.call(context).content)

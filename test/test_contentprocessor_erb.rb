@@ -7,6 +7,8 @@ require 'webgen/contentprocessor'
 
 class TestContentProcessorErb < Test::Unit::TestCase
 
+  include Test::WebgenAssertions
+
   def test_call
     obj = Webgen::ContentProcessor::Erb.new
     root = Webgen::Node.new(Webgen::Tree.new.dummy_root, '/', '/')
@@ -17,8 +19,11 @@ class TestContentProcessorErb < Test::Unit::TestCase
     obj.call(context)
     assert_equal("hallo6\n/test\n/test\n/test", context.content)
 
-    context.content = '<%= 5* %>'
-    assert_raise(RuntimeError) { obj.call(context) }
+    context.content = "\n<%= 5* %>"
+    assert_error_on_line(Webgen::RenderError, 2) { obj.call(context) }
+
+    context.content = "\n\n<% unknown %>"
+    assert_error_on_line(Webgen::RenderError, 3) { obj.call(context) }
   end
 
 end

@@ -54,7 +54,7 @@ class TestTagRelocatable < Test::Unit::TestCase
 
     # invalid paths
     @obj.set_params('tag.relocatable.path' => ':/asdf=-)')
-    assert_equal('', call(context))
+    assert_raise(Webgen::RenderError) { call(context) }
   end
 
 end

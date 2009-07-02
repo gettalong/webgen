@@ -21,7 +21,8 @@ module Webgen::SourceHandler
       path.meta_info['link'] ||= path.parent_path
 
       if MANDATORY_INFOS.any? {|t| path.meta_info[t].nil?}
-        raise "One of #{MANDATORY_INFOS.join('/')} information missing for feed <#{path}>"
+        raise Webgen::NodeCreationError.new("At least one of #{MANDATORY_INFOS.join('/')} is missing",
+                                            self.class.name, path)
       end
 
       create_feed_node = lambda do |type|

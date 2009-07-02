@@ -21,8 +21,8 @@ module Webgen::Tag
       begin
         result = (Webgen::Node.url(path, false).absolute? ? path : resolve_path(path, context))
       rescue URI::InvalidURIError => e
-        log(:error) { "Error while parsing path for tag relocatable in <#{context.ref_node.alcn}>: #{e.message}" }
-        context.dest_node.flag(:dirty)
+        raise Webgen::RenderError.new("Error while parsing path '#{path}': #{e.message}",
+                                      self.class.name, context.dest_node, context.ref_node)
       end
       result
     end

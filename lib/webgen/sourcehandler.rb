@@ -71,6 +71,10 @@ module Webgen
           puts "...done in " + ('%2.4f' % time.real) + ' seconds'
         end while website.tree.node_access[:alcn].any? {|name,node| node.flagged?(:created) || node.flagged?(:reinit)}
         :success
+      rescue Webgen::Error
+        raise
+      rescue Exception => e
+        raise Webgen::Error.new(e)
       end
 
       #######
@@ -90,22 +94,30 @@ module Webgen
 
           website.tree.node_access[:alcn].each do |alcn, node|
             next if node == website.tree.dummy_root
-            used_paths.delete(node.node_info[:src])
 
-            src_path = find_all_source_paths[node.node_info[:src]]
-            if !src_path
-              nodes_to_delete << node
-            elsif (!node.flagged?(:created) && src_path.changed?) || node.meta_info_changed?
-              node.flag(:reinit)
-              paths_to_use << node.node_info[:src]
-            elsif node.changed?
-              # nothing to be done here but method node.changed? has to be called
-            end
+            begin
+              used_paths.delete(node.node_info[:src])
 
-            if src_path && src_path.passive?
-              passive_nodes << node
-            elsif src_path
-              referenced_nodes += node.node_info[:used_meta_info_nodes] + node.node_info[:used_nodes]
+              src_path = find_all_source_paths[node.node_info[:src]]
+              if !src_path
+                nodes_to_delete << node
+              elsif (!node.flagged?(:created) && src_path.changed?) || node.meta_info_changed?
+                node.flag(:reinit)
+                paths_to_use << node.node_info[:src]
+              elsif node.changed?
+                # nothing to be done here but method node.changed? has to be called
+              end
+
+              if src_path && src_path.passive?
+                passive_nodes << node
+              elsif src_path
+                referenced_nodes += node.node_info[:used_meta_info_nodes] + node.node_info[:used_nodes]
+              end
+            rescue Webgen::Error => e
+              e.alcn = node.alcn unless e.alcn
+              raise
+            rescue Exception => e
+              raise Webgen::Error.new(e, nil, node.alcn)
             end
           end
 
@@ -136,9 +148,9 @@ module Webgen
           node.unflag(:dirty)
           use_node
         end.sort.each do |name, node|
-          next if node['no_output'] || !(content = node.content)
-
           begin
+            next if node['no_output'] || !(content = node.content)
+
             puts " "*4 + name, :verbose
             type = if node.is_directory?
                      :directory
@@ -148,8 +160,11 @@ module Webgen
                      :file
                    end
             output.write(node.path, content, type)
-          rescue
-            raise RuntimeError, "Error while processing <#{node.alcn}>: #{$!.message}", $!.backtrace
+          rescue Webgen::Error => e
+            e.alcn = node.alcn unless e.alcn
+            raise
+          rescue Exception => e
+            raise Webgen::RenderError.new(e, nil, node.alcn)
           end
         end
       end
@@ -225,6 +240,11 @@ module Webgen
           website.blackboard.dispatch_msg(:after_node_created, node)
         end
         nodes
+      rescue Webgen::Error => e
+        e.alcn = path unless e.alcn
+        raise
+      rescue Exception => e
+        raise Webgen::NodeCreationError.new(e, source_handler.class.name, path)
       end
 
       # Return the default meta info for the pair of +path+ and +sh_name+.

@@ -5,7 +5,23 @@ require 'webgen/website'
 
 module Test
 
+  module WebgenAssertions
+
+    def assert_error_on_line(error_class, line)
+      begin
+        yield
+      rescue error_class => e
+        assert_equal(line, e.line)
+      else
+        fail "No exception raised though #{error_class} expected"
+      end
+    end
+
+  end
+
   module WebsiteHelper
+
+    include WebgenAssertions
 
     def setup
       super

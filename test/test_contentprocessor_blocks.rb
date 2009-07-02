@@ -29,24 +29,25 @@ class TestContentProcessorBlocks < Test::Unit::TestCase
     obj.call(context)
     assert_equal('databeforedataafter', context.content)
 
-    context.content = '<webgen:block name="nothing"/>'
-    assert_raise(RuntimeError) { obj.call(context) }
+    context.content = "\nsadfasdf<webgen:block name='nothing'/>"
+    assert_error_on_line(Webgen::RenderError, 2) { obj.call(context) }
 
-    context.content = '<webgen:block name="content" chain="invalid" /><webgen:block name="content" />'
+    context.content = '<webgen:block name="content" chain="invalid" />'
+    assert_error_on_line(Webgen::RenderError, 1) { obj.call(context) }
+
+    context.content = '<webgen:block name="content" />'
     node.node_info[:used_nodes] = Set.new
     context[:chain] = [node, template, node]
-    context.dest_node.unflag(:dirty)
     obj.call(context)
     assert_equal('beforedataafter', context.content)
     assert_equal(Set.new([template.alcn, node.alcn]), node.node_info[:used_nodes])
-    assert(context.dest_node.flagged?(:dirty))
 
     context.content = 'bef<webgen:block name="other" chain="template;test" notfound="ignore" />aft'
     obj.call(context)
     assert_equal('befaft', context.content)
 
     context.content = '<webgen:block name="other" chain="template" node="first" />'
-    assert_raise(RuntimeError) { obj.call(context) }
+    assert_error_on_line(Webgen::RenderError, 1) { obj.call(context) }
 
     context.content = '<webgen:block name="other" chain="template;test" node="first" />'
     obj.call(context)
