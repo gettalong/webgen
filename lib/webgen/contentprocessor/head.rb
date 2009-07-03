@@ -9,8 +9,9 @@ module Webgen::ContentProcessor
   # processor should be the last in the processing pipeline so that all other processors have been
   # able to set the data.
   #
-  # The key <tt>:cp_head</tt> of <tt>context.options</tt> is used and it has to be a Hash with the
-  # following values:
+  # The key <tt>:cp_head</tt> of <tt>context.persistent</tt> is used (the normal
+  # <tt>context.options</tt> won't do because the data needs to be shared 'backwards' during the
+  # rendering) and it has to be a Hash with the following values:
   #
   # [:js_file] An array of already resolved relative or absolute paths to Javascript files.
   # [:js_inline] An array of Javascript fragments to be inserted directly into the head section.
@@ -20,6 +21,8 @@ module Webgen::ContentProcessor
   #         the values will be properly escaped before insertion. The entries in the meta
   #         information <tt>meta</tt> of the content node are also used and take precedence over
   #         these entries.
+  #
+  # Duplicate values will be removed from the above mentioned arrays before generating the output.
   class Head
 
     include Webgen::Loggable
@@ -31,26 +34,26 @@ module Webgen::ContentProcessor
       require 'erb'
       context.content.sub!(HTML_HEAD_END_RE) do |match|
         result = ''
-        if context[:cp_head].kind_of?(Hash)
-          context[:cp_head][:js_file].each do |js_file|
+        if context.persistent[:cp_head].kind_of?(Hash)
+          context.persistent[:cp_head][:js_file].uniq.each do |js_file|
             result += "\n<script type=\"text/javascript\" src=\"#{js_file}\"></script>"
-          end if context[:cp_head][:js_file].kind_of?(Array)
+          end if context.persistent[:cp_head][:js_file].kind_of?(Array)
 
-          context[:cp_head][:js_inline].each do |content|
+          context.persistent[:cp_head][:js_inline].uniq.each do |content|
             result += "\n<script type=\"text/javascript\">\n#{content}\n</script>"
-          end if context[:cp_head][:js_inline].kind_of?(Array)
+          end if context.persistent[:cp_head][:js_inline].kind_of?(Array)
 
-          context[:cp_head][:css_file].each do |css_file|
+          context.persistent[:cp_head][:css_file].uniq.each do |css_file|
             result += "\n<link rel=\"stylesheet\" href=\"#{css_file}\" type=\"text/css\"/>"
-          end if context[:cp_head][:css_file].kind_of?(Array)
+          end if context.persistent[:cp_head][:css_file].kind_of?(Array)
 
-          context[:cp_head][:css_inline].each do |content|
+          context.persistent[:cp_head][:css_inline].uniq.each do |content|
             result += "\n<style type=\"text/css\"><![CDATA[/\n#{content}\n]]></style>"
-          end if context[:cp_head][:css_inline].kind_of?(Array)
+          end if context.persistent[:cp_head][:css_inline].kind_of?(Array)
 
-          context[:cp_head][:meta].merge(context.node['meta'] || {}).each do |name, content|
+          context.persistent[:cp_head][:meta].merge(context.node['meta'] || {}).each do |name, content|
             result += "\n<meta name=\"#{ERB::Util.h(name)}\" content=\"#{ERB::Util.h(content)}\" />"
-          end if context[:cp_head][:meta].kind_of?(Hash)
+          end if context.persistent[:cp_head][:meta].kind_of?(Hash)
         end
         result + match
       end
