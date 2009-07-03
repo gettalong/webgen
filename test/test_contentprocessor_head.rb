@@ -21,10 +21,10 @@ class TestContentProcessorHead < Test::Unit::TestCase
     assert_equal('</head>', context.content)
 
     context.content = '</head>'
-    context[:cp_head] = {
-      :js_file => ['hallo.js', 'hallo2.js'],
+    context.clone.persistent[:cp_head] = {
+      :js_file => ['hallo.js', 'hallo2.js', 'hallo.js'],
       :js_inline => ["somescript", "anotherscript"],
-      :css_file => ['hallo.css', 'hallo2.css'],
+      :css_file => ['hallo.css', 'hallo2.css', 'hallo.css'],
       :css_inline => ["somestyle", "anotherstyle"],
       :meta => {:lucky => 'me<"'}
     }
