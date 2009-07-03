@@ -16,7 +16,18 @@ class TestContext < Test::Unit::TestCase
   def test_initialize
     context = Webgen::Context.new
     assert_equal('', context.content)
+    assert_equal({}, context.persistent)
     assert_kind_of(Webgen::ContentProcessor::AccessHash, context[:processors])
+
+    context = Webgen::Context.new(:content => 'test', :key => :value)
+    assert_equal('test', context.content)
+    assert_equal(:value, context[:key])
+    assert_equal({}, context.persistent)
+
+    context = Webgen::Context.new({:content => 'test', :key => :value}, {:other => :val})
+    assert_equal('test', context.content)
+    assert_equal(:value, context[:key])
+    assert_equal({:other => :val}, context.persistent)
   end
 
   def test_clone

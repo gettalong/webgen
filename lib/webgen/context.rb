@@ -21,12 +21,17 @@ module Webgen
   # [<tt>:chain</tt>]
   #   The chain of nodes that is processed. There are some utiltity methods for getting
   #   special nodes of the chain (see #ref_node, #content_node and #dest_node).
+  #
+  # The +persistent+ options hash is shared by all cloned Context objects.
   class Context
 
     include Webgen::WebsiteAccess
     public :website
 
-    # Processing options
+    # The persistent options. Once initialized, all cloned objects refer to the same hash.
+    attr_reader :persistent
+
+    # Processing options.
     attr_accessor :options
 
     # Create a new Context object. You can use the +options+ hash to set needed options.
@@ -38,17 +43,18 @@ module Webgen
     #
     # [<tt>:processors</tt>]
     #   Is set to a new AccessHash.
-    def initialize(options = {})
+    def initialize(options = {}, persistent = {})
       @options = {
         :content => '',
         :processors => Webgen::ContentProcessor::AccessHash.new
       }.merge(options)
+      @persistent = persistent
     end
 
     # Create a copy of the current object. You can use the +options+ parameter to override options
     # of the current Context object in the newly created Context object.
     def clone(options = {})
-      self.class.new(@options.merge(options))
+      self.class.new(@options.merge(options), @persistent)
     end
 
     # Return the value of the option +name+.
