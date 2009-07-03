@@ -203,6 +203,7 @@ config.tag.coderay.line_numbers(true, :doc => 'Show line numbers')
 config.tag.coderay.line_number_start(1, :doc => 'Line number of first line')
 config.tag.coderay.bold_every(10, :doc => 'The interval at which the line number appears bold')
 config.tag.coderay.tab_width(8, :doc => 'Number of spaces used for a tabulator')
+config.tag.coderay.css(:style, :doc => 'Specifies how the highlighted code should be styled')
 
 config.tag.date.format('%Y-%m-%d %H:%M:%S', :doc => 'The format of the date (same options as Ruby\'s Time#strftime)')
 
