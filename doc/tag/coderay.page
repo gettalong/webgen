@@ -8,12 +8,16 @@ used_options:
   - tag.coderay.line_number_start
   - tag.coderay.bold_every
   - tag.coderay.tab_width
+  - tag.coderay.css
 ---
 ## Description
 
 This tag applies syntax highlighting to its body by using the [coderay][1] library which can be used
 to highlight many different languages (see `tag.coderay.lang` documentation). The body of the tag
 specifies what should be highlighted.
+
+By using the configuration option `tag.coderay.css` you can specify whether you want to have inline
+styles, the default external stylesheet file or your own stylesheet file.
 
 > It is easy to include and highlight an entire file by combining this tag with the `include_file` tag:
 >
@@ -43,7 +47,7 @@ specifies what should be highlighted.
   <% end %>
 </tr>
 <tr>
-  <td>\{coderay:: {lang: ruby, wrap: span}}puts 5+5{coderay}</td>
-  <td><code>{coderay:: {lang: ruby, wrap: span}}puts 5+5{coderay}</code></td>
+  <td>\{coderay:: {lang: ruby, wrap: span, css: class}}puts 5+5{coderay}</td>
+  <td><code>{coderay:: {lang: ruby, wrap: span, css: class}}puts 5+5{coderay}</code></td>
 </tr>
 </table>

@@ -652,6 +652,32 @@ shows how to set the option in the configuration file.
           tabulator == 4 spaces: \{coderay:: {lang: ruby, tab_width: 4}}puts 5 + 5{coderay}
 
 
+*   ### tag.coderay.css
+
+    Specifies how the highlighted code should be styled.
+
+    If set to `style`, the CSS style attributes are set directly on the various HTML elements.
+
+    If set to `class`, only classes are set on the HTML elements and a default external stylesheet
+    is used - the [content processor head]({relocatable: contentprocessor/head.html}) is needed for
+    this to work.
+
+    If set to `other`, only classes are set like with the `class` value but no default external
+    stylesheet is used. You have to provide the styles yourself.
+
+    * Syntax: `STYLE` where `STYLE` is either `style`, `css` or `other`.
+
+    <%= show_default['tag.coderay.css'] %>
+
+    * Example for setting the option in the configuration file:
+
+          tag.coderay.css: style
+
+      Example for setting the option directly in a tag:
+
+          with external stylesheet: \{coderay:: {lang: ruby, css: class}}puts 5 + 5{coderay}
+
+
 *   ### tag.date.format
 
     Specifies the format that should be used for formatting the current date. The format string

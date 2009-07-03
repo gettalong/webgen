@@ -8,3 +8,7 @@ different license. These files/directories are listed here:
 data/webgen/website_style/*:
   The copyright information for each included website styles can be
   found in the README file of the website style.
+
+data/webgen/passive_sources/stylesheets/coderay-default.css:
+  This file has been generated with the coderay_stylesheet binary and
+  falls under the LGPL.
