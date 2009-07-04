@@ -13,12 +13,12 @@ class TestContentProcessorHead < Test::Unit::TestCase
   def test_call
     obj = Webgen::ContentProcessor::Head.new
     root = Webgen::Node.new(Webgen::Tree.new.dummy_root, '/', '/')
-    node = Webgen::Node.new(root, 'test', 'test')
+    node = Webgen::Node.new(root, 'test', 'test', {'meta' => {'other' => 'me'}})
 
     context = Webgen::Context.new(:chain => [node])
     context.content = '</head>'
     obj.call(context)
-    assert_equal('</head>', context.content)
+    assert_equal("\n<meta name=\"other\" content=\"me\" /></head>", context.content)
 
     context.content = '</head>'
     context.clone.persistent[:cp_head] = {
@@ -28,6 +28,7 @@ class TestContentProcessorHead < Test::Unit::TestCase
       :css_inline => ["somestyle", "anotherstyle"],
       :meta => {:lucky => 'me<"'}
     }
+    node['meta'].clear
     obj.call(context)
     assert_equal("\n<script type=\"text/javascript\" src=\"hallo.js\"></script>" +
                  "\n<script type=\"text/javascript\" src=\"hallo2.js\"></script>" +

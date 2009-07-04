@@ -50,10 +50,9 @@ module Webgen::ContentProcessor
           context.persistent[:cp_head][:css_inline].uniq.each do |content|
             result += "\n<style type=\"text/css\"><![CDATA[/\n#{content}\n]]></style>"
           end if context.persistent[:cp_head][:css_inline].kind_of?(Array)
-
-          context.persistent[:cp_head][:meta].merge(context.node['meta'] || {}).each do |name, content|
-            result += "\n<meta name=\"#{ERB::Util.h(name)}\" content=\"#{ERB::Util.h(content)}\" />"
-          end if context.persistent[:cp_head][:meta].kind_of?(Hash)
+        end
+        ((context.persistent[:cp_head] || {})[:meta] || {}).merge(context.node['meta'] || {}).each do |name, content|
+          result += "\n<meta name=\"#{ERB::Util.h(name)}\" content=\"#{ERB::Util.h(content)}\" />"
         end
         result + match
       end
