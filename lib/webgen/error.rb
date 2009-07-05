@@ -11,6 +11,8 @@ module Webgen
     # This is either the source path or the node alcn which is responsible for the error.
     attr_accessor :alcn
 
+    # The plain error message.
+    attr_reader :plain_message
 
     # Create a new Error using the provided values.
     #
@@ -19,19 +21,20 @@ module Webgen
     def initialize(msg_or_error, class_name = nil, alcn = nil)
       if msg_or_error.kind_of?(String)
         super(msg_or_error)
+        @plain_message = msg_or_error
       else
         super(msg_or_error.message)
         set_backtrace(msg_or_error.backtrace)
+        @plain_message = msg_or_error.message
       end
       @class_name, @alcn = class_name, alcn
     end
 
-    # Return a beefed-up error message including the +class_name+ and +alcn+.
-    def pretty_message
+    def message # :nodoc:
       msg = 'Error while working'
       msg += (@alcn ? " on <#{@alcn}>" : '')
       msg += " with #{@class_name}" if @class_name
-      msg + ":\n    " + self.message
+      msg + ":\n    " + plain_message
     end
 
   end
@@ -39,12 +42,11 @@ module Webgen
   # This error is raised when an error condition occurs during the creation of a node.
   class NodeCreationError < Error
 
-    # See Error#pretty_message.
-    def pretty_message
+    def message # :nodoc:
       msg = 'Error while creating a node'
       msg += (@alcn ? " from <#{@alcn}>" : '')
       msg += " with #{@class_name}" if @class_name
-      msg + ":\n    " + self.message
+      msg + ":\n    " + plain_message
     end
 
   end
@@ -69,8 +71,7 @@ module Webgen
       @error_alcn, @line = error_alcn, line
     end
 
-    # See Error#pretty_message.
-    def pretty_message
+    def message # :nodoc:
       msg = 'Error '
       if @error_alcn
         msg += "in <#{@error_alcn}"
@@ -80,7 +81,7 @@ module Webgen
       msg += 'while rendering '
       msg += (@alcn ? "<#{@alcn}>" : 'the website')
       msg += " with #{@class_name}" if @class_name
-      msg + ":\n    " + self.message
+      msg + ":\n    " + plain_message
     end
 
   end

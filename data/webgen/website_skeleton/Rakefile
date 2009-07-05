@@ -34,7 +34,7 @@ task :auto_webgen do
       begin
         Rake::Task['webgen'].execute({})
       rescue Webgen::Error => e
-        puts e.pretty_message
+        puts e.message
       end
     end
     time = Time.now
