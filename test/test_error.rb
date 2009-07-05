@@ -47,3 +47,35 @@ class TestRenderError < Test::Unit::TestCase
   end
 
 end
+
+class TestLoadError < Test::Unit::TestCase
+
+  def test_all
+    e = Webgen::LoadError.new(Exception.new("something"), 'KlassName', '/path')
+    assert_nil(e.library)
+    assert_nil(e.gem)
+    assert_match(/Error while working on <\/path> with KlassName:.*something/m, e.pretty_message)
+
+    e = Webgen::LoadError.new("test", 'KlassName', '/path')
+    assert_equal("test", e.library)
+    assert_nil(e.gem)
+    assert_match(/Error while working on <\/path> with KlassName:.*The needed library 'test' is missing/m, e.pretty_message)
+
+    e = Webgen::LoadError.new("test", 'KlassName', '/path', 'gem')
+    assert_equal("test", e.library)
+    assert_equal('gem', e.gem)
+    assert_match(/Error while working on <\/path> with KlassName:.*The needed library 'test' is missing.*gem install gem/m, e.pretty_message)
+  end
+
+end
+
+
+class TestCommandNotFoundError < Test::Unit::TestCase
+
+  def test_all
+    e = Webgen::CommandNotFoundError.new("test", 'KlassName', '/path')
+    assert_equal("test", e.cmd)
+    assert_match(/Error while working on <\/path> with KlassName:.*The needed command 'test' is missing/m, e.pretty_message)
+  end
+
+end

@@ -33,6 +33,8 @@ module Webgen::Tag
         body = website.blackboard.invoke(:content_processor, 'tags').call(context.clone(:content => body)).content
       end
       CodeRay.scan(body, param('tag.coderay.lang').to_sym).html(options)
+    rescue LoadError
+      raise Webgen::LoadError.new('coderay', self.class.name, context.dest_node.alcn, 'coderay')
     end
 
   end

@@ -21,6 +21,8 @@ module Webgen::ContentProcessor
       context.content = ::Haml::Engine.new(context.content, :filename => context.ref_node.alcn).
         render(Object.new, locals)
       context
+    rescue LoadError
+      raise Webgen::LoadError.new('haml', self.class.name, context.dest_node.alcn, 'haml')
     rescue ::Haml::Error => e
       raise Webgen::RenderError.new(e, self.class.name, context.dest_node.alcn, context.ref_node.alcn, (e.line + 1 if e.line))
     rescue Exception => e
