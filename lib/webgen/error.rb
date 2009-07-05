@@ -85,4 +85,50 @@ module Webgen
 
   end
 
+
+  # This error is raised when a needed library is not found.
+  class LoadError < Error
+
+    # The name of the library that is missing.
+    attr_reader :library
+
+    # The name of the Rubygem that provides the missing library.
+    attr_reader :gem
+
+    # Create a new LoadError using the provided values.
+    #
+    # If +library_or_error+ is a String, it is treated as the missing library name and an approriate
+    # error message is created. If it is an exception, the exception is wrapped.
+    def initialize(library_or_error, class_name = nil, alcn = nil, gem = nil)
+      if library_or_error.kind_of?(String)
+        msg = "The needed library '#{library_or_error}' is missing."
+        msg += " You can install it via rubygems with 'gem install #{gem}'!" if gem
+        super(msg, class_name, alcn)
+        @library = library_or_error
+      else
+        super(library_or_error, class_name, alcn)
+        @library = nil
+      end
+      @gem = gem
+    end
+
+  end
+
+
+  # This error is raised when a needed external command is not found.
+  class CommandNotFoundError < Error
+
+    # The command that is missing.
+    attr_reader :cmd
+
+    # Create a new CommandNotFoundError using the provided values.
+    #
+    # The parameter +cmd+ specifies the command that is missing.
+    def initialize(cmd, class_name = nil, alcn = nil)
+      super("The needed command '#{cmd}' is missing!", class_name, alcn)
+      @cmd = cmd
+    end
+
+  end
+
 end

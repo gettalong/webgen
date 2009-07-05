@@ -32,6 +32,8 @@ module Webgen::ContentProcessor
       erubis.filename = context.ref_node.alcn
       context.content = erubis.result(binding)
       context
+    rescue LoadError
+      raise Webgen::LoadError.new('erubis', self.class.name, context.dest_node.alcn, 'erubis')
     rescue Exception => e
       line = (e.is_a?(::SyntaxError) ? e.message : e.backtrace[0]).scan(/:(\d+)/).first.first.to_i
       raise Webgen::RenderError.new(e, self.class.name, context.dest_node.alcn, context.ref_node.alcn, line)

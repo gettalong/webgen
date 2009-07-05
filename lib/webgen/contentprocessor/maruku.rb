@@ -11,6 +11,8 @@ module Webgen::ContentProcessor
       $uid = 0 #fix for invalid fragment ids on second run
       context.content = ::Maruku.new(context.content, :on_error => :raise).to_html
       context
+    rescue LoadError
+      raise Webgen::LoadError.new('maruku', self.class.name, context.dest_node.alcn, 'maruku')
     rescue Exception => e
       raise Webgen::RenderError.new(e, self.class.name, context.dest_node.alcn, context.ref_node.alcn)
     end

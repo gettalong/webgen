@@ -12,6 +12,8 @@ module Webgen::ContentProcessor
       doc.hard_breaks = context.website.config['contentprocessor.redcloth.hard_breaks']
       context.content = doc.to_html
       context
+    rescue LoadError
+      raise Webgen::LoadError.new('redcloth', self.class.name, context.dest_node.alcn, 'RedCloth')
     end
 
   end

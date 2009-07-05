@@ -22,6 +22,8 @@ module Webgen::ContentProcessor
       eval(context.content, binding, context.ref_node.alcn)
       context.content = xml.target!
       context
+    rescue LoadError
+      raise Webgen::LoadError.new('builder', self.class.name, context.dest_node.alcn, 'builder')
     rescue Exception => e
       line = (e.is_a?(::SyntaxError) ? e.message : e.backtrace[0]).scan(/:(\d+)/).first.first.to_i
       raise Webgen::RenderError.new(e, self.class.name, context.dest_node.alcn, context.ref_node.alcn, line)
