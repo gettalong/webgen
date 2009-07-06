@@ -8,7 +8,7 @@ extension, be it a source handler, a tag or any other extension. Each meta infor
 follows the same pattern:
 
 * First the type of the value and an example value are listed.
-* Then the paths for which this item is valid are listed.
+* Then the paths for which this item is useful are listed.
 * And at last follows a detailed description.
 
 
@@ -128,7 +128,7 @@ path.
 
 {:miref}
 * Hash: `\{author: Thomas Leitner, generator: My program}`
-* Any
+* Page files
 
 Specifies names and values for `<meta>` HTML tags. These key-value pairs are then properly escaped
 and inserted into the output file by [`ContentProcessor::Head`]({relocatable:
