@@ -75,6 +75,7 @@ module Webgen
     autoload :RDiscount, 'webgen/contentprocessor/rdiscount'
     autoload :Fragments, 'webgen/contentprocessor/fragments'
     autoload :Head, 'webgen/contentprocessor/head'
+    autoload :Tidy, 'webgen/contentprocessor/tidy'
 
     # Return the list of all available content processors.
     def self.list
