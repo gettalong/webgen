@@ -1,0 +1,14 @@
+---
+title: Webgen::ContentProcessor::Tidy
+---
+## Description
+
+This content processor uses the [`tidy`][1] program to convert the input into valid (X)HTML. It
+supports a vast amount of options for specifying how the input should be processed. These options
+can be set throught the configuration option [`contentprocessor.tidy.options`]({relocatable:
+../reference_configuration.html#contentprocessortidyoptions}).
+
+The options `-q` and `-f FILE` are always set because they are needed internally and should
+therefore not be set through `contentprocessor.tidy.options`!
+
+[1]: http://tidy.sf.net

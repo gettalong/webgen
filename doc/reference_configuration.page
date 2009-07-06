@@ -445,6 +445,20 @@ configuration options) and/or how to use it in a webgen tag (for tag configurati
           config['contentprocessor.tags.map']['highlight'] = 'Extension::MyHighlightingTag'
 
 
+*   ### contentprocessor.tidy.options
+
+    This configuration option can be used to set the command line options for the `tidy` program
+    which is used by the [content processor `tidy`]({relocatable: contentprocessor/tidy.html}).
+
+    * Syntax: `STRING` where `STRING` is the string holding the command line options.
+
+    <%= show_default['contentprocessor.tidy.options'] %>
+
+    * Example for setting the option in the configuration file:
+
+          contentprocessor.tidy.options: "-utf8"
+
+
 ## Tag Specific Options
 
 These options are not normally set in the configuration file but given directly as options to the
