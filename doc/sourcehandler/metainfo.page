@@ -13,12 +13,17 @@ This source handler provides the ability to set meta information for any path. I
 * `alcn`: This block specifies meta information for nodes and this meta information is applied
   directly after a node has been created. When specifying patterns, remember that the patterns are
   matched against absolute localized canonical names! So you always need to take the language part
-  into account, ie. `/index.html` won't match but `/index.en.html`.
+  into account, ie. `/index.html` won't match but `/index.en.html` will.
 
 When no name is specified in the meta information file, the first block is assumed to be the `paths`
 block and the second block is assumed to be the `alcn` block. The format of the two blocks is the
 same: they need to be in YAML format and provide a hash with path patterns as keys and the
-to-be-assigned meta information as values. This is best showed in an example:
+to-be-assigned meta information as values. The patterns can be normal file system paths or node
+(a)lcns but you can also use some special characters like `*` (match any file), `**` (match
+recursively or expansively) and `?` (match a single character). You can find the full information in
+the documentation for [File.fnmatch].
+
+All this is best showed in an example:
 
     --- name:paths
     /**/index.page:
@@ -39,3 +44,5 @@ second form is taken relative to the directory in which the meta information fil
 
 And last but not least, all nodes with a localized canonical name of `index.en.html` will show up in
 the menu (again, notice that the pattern is relative).
+
+[File.fnmatch]: http://ruby-doc.org/core/classes/File.html#M002603

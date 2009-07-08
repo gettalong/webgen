@@ -7,9 +7,10 @@ module Webgen
 
   # == General Information
   #
-  # A Path object provides information about a path that is used to create a node as well as methods
-  # for accessing its content. In contrast, output paths are always strings and just specify the
-  # location where a specific node should be written to.
+  # A Path object provides information about a path that is used to create one or more nodes as well
+  # as methods for accessing the path's content. So a Path object always refers to a source path. In
+  # contrast, output paths are always strings and just specify the location where a specific node
+  # should be written to.
   #
   # Note the +path+ and +source_path+ attributes of a Path object:
   #

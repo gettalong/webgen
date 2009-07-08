@@ -15,6 +15,9 @@ module Webgen
   # +true+. One can either derive a specialized path class or define singleton methods on each path
   # object.
   #
+  # Also note that the returned Path objects should have the meta information <tt>modified_at</tt>
+  # set to the correct last modification time of the path, ie. the value has to be a Time object!
+  #
   # == Sample Source Class
   #
   # Following is a simple source class which has stored the paths and their contents in a hash:

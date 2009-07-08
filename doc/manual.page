@@ -38,11 +38,12 @@ Following is a short overview of the available commands:
 
 *   `apply [-f] (BUNDLE_NAME|BUNDLE_URL)`
 
-    The argument may either be a valid bundle name or an URL to a bundle archive (a (gzipped) tar
-    archive). The command applies the bundle to the given webgen website. The files that will be
-    written to website directory are shown and the user is asked to confirm that the shown files
-    should indeed be written (and sometimes overwritten). If the `-f` option is used, the files are
-    always written.
+    The argument may either be a valid bundle name or an URL (in this case you will need to have all
+    dependencies for [Source::TarArchive]({relocatable: source/tararchive.html}) installed) to a
+    bundle archive (a (gzipped) tar archive). The command applies the bundle to the given webgen
+    website. The files that will be written to website directory are shown and the user is asked to
+    confirm that the shown files should indeed be written (and sometimes overwritten). If the `-f`
+    option is used, the files are always written.
 
     You can get the full list of available bundle names by running `webgen help apply`!
 
@@ -277,7 +278,8 @@ Following is the explanation of the parts of the path names:
 
     This part specifies the path of the parent of this path and is used internally to create a
     hierarchy of paths. Although the leading slash is explicitly written here, it is part of the
-    parent path, i.e. each parent path begins with a slash.
+    parent path, i.e. each parent path begins with a slash. Also note that the parent path will end
+    with a slash if it is a directory!
 
 *   `sort_info`
 
@@ -337,10 +339,34 @@ different languages (or more exactly: the first one is unlocalized in both cases
 localized to German) as they have the same canonical name.
 
 
-## Canonical Name of a File ### {#source-cn}
+## Canonical Name (CN) of a File ### {#source-cn}
 
 webgen provides the functionality to define the same content in more than one language, ie. to
 localize content. This is achieved with the _canonical name_ of a path, short CN.
+
+The canonical name as well as all the other variants (\[absolute] \[localized] canonical name, all
+described below) are created directly from the source paths sothat one can easily derive the
+canonical name onself. Here are some examples:
+
+| Source path           | CN         | ACN                | LCN           | ALCN                  |
+|-----------------------|------------|--------------------|---------------|-----------------------|
+| `/images/test/`       | `test/`    | `/images/test/`    | `test/`       | `/images/test/`       |
+| `/images/logo.png`    | `logo.png` | `/images/logo.png` | `logo.png`    | `/images/logo.png`    |
+| `/images/logo.de.png` | `logo.png` | `/images/logo.png` | `logo.de.png` | `/images/logo.de.png` |
+| `/test.de.html#frag`  | `#frag`    | `/test.html#frag`  | `#frag`       | `/test.de.html#frag`  |
+{#cn-example-table style="border: 1px solid black; width: 100%"}
+
+What one can immediately see is that if a source path is unlocalized, the CN is the same as the LCN
+and the ACN is the same as the ALCN. This is always true for directory and fragment paths since they
+are always unlocalized! The first example shows a directory path - note the trailing slash! And the
+last example shows a fragment path - note the difference in the ACN and the ALCN! Another
+good-to-know fact is that an LCN is unique within its hierarchy level and that an ALCN is globally
+unique!
+
+> Source handlers can change some parts of a source path. For example, the page source handler
+> changes the extension from `page` to `html`. This has to be taken into account when specifying
+> canonical names! These changes are documented on the documentation pages for the source handlers!
+{.information}
 
 When multiple paths share the same canonical name, webgen assumes that they have the same content
 but in different languages. It is also possible to specify a _language independent_ path (i.e. one
@@ -374,7 +400,7 @@ specified language is ignored as it is assumed that the user really only wants t
 specified language!
 
 Continuing the above example, this means that `images/my.de.jpg` is always returned when one
-specifies `images/my.de.jpg` in any of the index page files, e.g. in `index.fr.page`.
+specifies `images/my.de.jpg` in any of the index page files, e.g. even in `index.fr.page`.
 
 Both canonical and localized canonical names can be absolute (ACN and ALCN) which is done by using
 the full path starting with a slash. This is especially useful when you don't exactly know in which
@@ -383,7 +409,9 @@ hierarchy level a certain canoncial name gets evaluated.
 Everything said above also means that all paths are not resolved using their real source or output
 names but using the (localized) canonical name! So when specifying paths for extensions, for example
 when using the [relocatable tag]({relocatable: tag/relocatable.html}), you always have to use the
-(absolute) (localized) canonical names. This is different from previous webgen versions!
+(absolute) (localized) canonical names. This is different from previous webgen versions! However, it
+allows for using a naming scheme based on the source paths to be used independently from the output
+paths and therefore the output paths may change but no changes in the files themselves are needed.
 
 
 ## Output Path Name Construction ### {#source-output}
