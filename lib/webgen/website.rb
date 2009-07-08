@@ -85,6 +85,33 @@ require 'webgen/deprecated'
 #                     an easy way for users to include dynamic content such as automatically
 #                     generated menus.
 #
+#
+# == General information
+#
+# Here are some detail on the internals of webgen that will help you while developing for webgen:
+#
+# * webgen uses a not so complex system for determining whether a node needs to be recreated or
+#   re-rendered. However, for this to work correctly all extensions have to follow some rules:
+#
+#   * It is necessary that all node alcns from which the content is used are put into the
+#     destination node's <tt>node_info[:used_nodes]</tt> set.
+#
+#   * It is necessary that all other node alcns that are used for a node in any way, even if they
+#     are only referenced or the route to their output path used, have to be put into the node's
+#     <tt>node_info[:used_meta_info_nodes]</tt> set.
+#
+# * Any node that is created during the rendering phase, ie. via a content processor, a tag or in
+#   the #content method of a source handler needs to be put into the rendered node's
+#   <tt>node_info[:used_meta_info_nodes]</tt> or <tt>node_info[:used_nodes]</tt> set (see above for
+#   details)! This is especially necessary when using resolved nodes since resolved nodes can be
+#   created by passive sources!
+#
+# * webgen provides various Error classes. However, errors should only be raised if additional runs
+#   won't correct the problem. For example, if a path cannot be resolved, it is possible that in the
+#   next run a node will be created and that the path can be resolved then. This is always the case,
+#   for example, with fragment nodes! In such cases an error message should be written out to the
+#   log to inform the user that there is a potential problem.
+#
 # == Blackboard services
 #
 # The Blackboard class provides an easy communication facility between objects. It implements the

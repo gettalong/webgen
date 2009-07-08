@@ -95,7 +95,8 @@ The following meta information keys of page files are used if they are specified
     The URL of the homepage of the author. Only used if the `author` meta information is also set.
 
 The default implementation supports the generation of atom and RSS feeds by using templates shipped
-with webgen. The default templates are located under the ALCNs `/templates/atom_feed.template` and
+with webgen (the extension `feed` is changed to `atom` for atom feeds and to `rss` for rss feeds).
+The default templates are located under the ALCNs `/templates/atom_feed.template` and
 `/templates/rss_feed.template` and are automatically created and used if no such paths exist in the
 webgen website. You can also override the default generation mechanism on a file per file basis by
 adding an `atom_template` and/or `rss_template` block in the feed file which are then used to
