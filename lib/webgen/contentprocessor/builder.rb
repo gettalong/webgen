@@ -25,7 +25,7 @@ module Webgen::ContentProcessor
     rescue LoadError
       raise Webgen::LoadError.new('builder', self.class.name, context.dest_node.alcn, 'builder')
     rescue Exception => e
-      line = (e.is_a?(::SyntaxError) ? e.message : e.backtrace[0]).scan(/:(\d+)/).first.first.to_i
+      line = (e.is_a?(::SyntaxError) ? e.message : e.backtrace[0]).scan(/:(\d+)/).first.first.to_i rescue nil
       raise Webgen::RenderError.new(e, self.class.name, context.dest_node.alcn, context.ref_node.alcn, line)
     end
 
