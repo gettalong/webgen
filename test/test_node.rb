@@ -219,6 +219,20 @@ class TestNode < Test::Unit::TestCase
     node.changed?
   end
 
+  def test_user_nodes_changed?
+    nodes = create_default_nodes
+
+    assert(!nodes[:dir2_index_en].send(:user_nodes_changed?))
+    nodes[:dir2_index_en]['used_nodes'] = '/some*.page'
+    assert(nodes[:dir2_index_en].send(:user_nodes_changed?))
+    nodes[:dir2_index_en]['used_nodes'] = '../some*.page'
+    assert(nodes[:dir2_index_en].send(:user_nodes_changed?))
+    nodes[:dir2_index_en]['used_nodes'] = '/someAA*.page'
+    assert(!nodes[:dir2_index_en].send(:user_nodes_changed?))
+    nodes[:dir2_index_en]['used_nodes'] = 'index.de.html'
+    assert(nodes[:dir2_index_en].send(:user_nodes_changed?))
+  end
+
   def test_meta_info_changed
     node = Webgen::Node.new(@tree.dummy_root, '/', '/')
     node.unflag(:dirty, :created)

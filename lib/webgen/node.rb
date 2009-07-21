@@ -161,13 +161,22 @@ module Webgen
     # thinks it is dirty.
     def changed?
       if_not_checked(:node) do
-        flag(:dirty) if meta_info_changed? ||
+        flag(:dirty) if meta_info_changed? || user_nodes_changed? ||
           node_info[:used_nodes].any? {|n| n != @alcn && (!tree[n] || tree[n].changed?)} ||
           node_info[:used_meta_info_nodes].any? {|n| n != @alcn && (!tree[n] || tree[n].meta_info_changed?)}
         website.blackboard.dispatch_msg(:node_changed?, self) unless flagged?(:dirty)
       end
       flagged?(:dirty)
     end
+
+    # Return +true+ if any node matching a pattern from the meta information +used_nodes+ has changed.
+    def user_nodes_changed?
+      pattern = [@meta_info['used_nodes']].flatten.compact.collect {|pat| Webgen::Path.make_absolute(parent.alcn, pat)}
+      tree.node_access[:alcn].any? do |path, n|
+        pattern.any? {|pat| n =~ pat && n.changed?}
+      end if pattern.length > 0
+    end
+    private :user_nodes_changed?
 
     # Return +true+ if the meta information of the node has changed.
     #
