@@ -230,3 +230,13 @@ Sets the template for the page/template file overriding the default value. If se
 * Any
 
 Sets the title for the path.
+
+### used\_nodes
+
+{:miref}
+* Array: `[*.en.html, test.de.html]`
+* Any
+
+The value of this meta information needs to be an array of alcn patterns. All nodes that match at
+least one of the patterns are considered to be dependencies of the node. Therefore if any of these
+nodes change, the node will be regenerated, too.
