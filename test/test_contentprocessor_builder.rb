@@ -26,6 +26,9 @@ class TestContentProcessorBuilder < Test::Unit::TestCase
 
     context.content = "xml.div do \n5+5\nunknown\n++6\nend"
     assert_error_on_line(Webgen::RenderError, 3) { obj.call(context) }
+
+    def obj.require(lib); raise LoadError; end
+    assert_raise(Webgen::LoadError) { obj.call(context) }
   end
 
 end

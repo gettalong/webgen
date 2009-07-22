@@ -16,6 +16,9 @@ class TestContentProcessorMaruku < Test::Unit::TestCase
 
     context.content = "# head*d* {#das .dsaf "
     assert_raise(Webgen::RenderError) { @obj.call(context)}
+
+    def @obj.require(lib); raise LoadError; end
+    assert_raise(Webgen::LoadError) { @obj.call(context) }
   end
 
   def test_call_fix_for_invalid_id

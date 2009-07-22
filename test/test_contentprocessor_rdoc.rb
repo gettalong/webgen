@@ -14,6 +14,9 @@ class TestContentProcessorRDoc < Test::Unit::TestCase
     context = Webgen::Context.new(:content => "* hello",
                                                     :chain => [node])
     assert_equal("<ul>\n<li>hello\n\n</li>\n</ul>\n", obj.call(context).content)
+
+    def obj.require(lib); raise LoadError; end
+    assert_raise(Webgen::LoadError) { obj.call(context) }
   end
 
 end

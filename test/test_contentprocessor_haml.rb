@@ -24,6 +24,9 @@ class TestContentProcessorHaml < Test::Unit::TestCase
 
     context.content = "#cont\n  = unknown"
     assert_raise(Webgen::RenderError) { obj.call(context) }
+
+    def obj.require(lib); raise LoadError; end
+    assert_raise(Webgen::LoadError) { obj.call(context) }
   end
 
 end
