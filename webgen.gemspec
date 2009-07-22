@@ -1,7 +1,7 @@
 --- !ruby/object:Gem::Specification 
 name: webgen
 version: !ruby/object:Gem::Version 
-  version: 0.5.9.20090626
+  version: 0.5.9.20090725
 platform: ruby
 authors: 
 - Thomas Leitner
@@ -9,7 +9,7 @@ autorequire:
 bindir: bin
 cert_chain: []
 
-date: 2009-06-26 00:00:00 +02:00
+date: 2009-07-25 00:00:00 +02:00
 default_executable: webgen
 dependencies: 
 - !ruby/object:Gem::Dependency 
@@ -198,6 +198,8 @@ files:
 - data/webgen/passive_sources/images
 - data/webgen/passive_sources/images/generated_by_webgen.png
 - data/webgen/passive_sources/images/webgen_logo.png
+- data/webgen/passive_sources/stylesheets
+- data/webgen/passive_sources/stylesheets/coderay-default.css
 - data/webgen/passive_sources/templates
 - data/webgen/passive_sources/templates/atom_feed.template
 - data/webgen/passive_sources/templates/rss_feed.template
@@ -367,6 +369,7 @@ files:
 - doc/contentprocessor/redcloth.page
 - doc/contentprocessor/sass.page
 - doc/contentprocessor/tags.page
+- doc/contentprocessor/tidy.page
 - doc/contentprocessor.template
 - doc/extensions.metainfo
 - doc/extensions.page
@@ -433,6 +436,7 @@ files:
 - lib/webgen/contentprocessor/redcloth.rb
 - lib/webgen/contentprocessor/sass.rb
 - lib/webgen/contentprocessor/tags.rb
+- lib/webgen/contentprocessor/tidy.rb
 - lib/webgen/contentprocessor.rb
 - lib/webgen/context/nodes.rb
 - lib/webgen/context/render.rb
@@ -441,6 +445,7 @@ files:
 - lib/webgen/coreext.rb
 - lib/webgen/default_config.rb
 - lib/webgen/deprecated.rb
+- lib/webgen/error.rb
 - lib/webgen/languages.rb
 - lib/webgen/loggable.rb
 - lib/webgen/logger.rb
@@ -520,7 +525,9 @@ files:
 - test/test_contentprocessor_redcloth.rb
 - test/test_contentprocessor_sass.rb
 - test/test_contentprocessor_tags.rb
+- test/test_contentprocessor_tidy.rb
 - test/test_context.rb
+- test/test_error.rb
 - test/test_languages.rb
 - test/test_loggable.rb
 - test/test_logger.rb
