@@ -428,7 +428,7 @@ information key is an array which can have the following values:
 * strings (for inserting arbitrary text into output names)
 * arrays (for grouping values - only interesting for the language part)
 * symbols for inserting special values:
-  * `:cnbase`: The basename of the path.
+  * `:basename`: The basename of the path.
   * `:parent`: The parent path.
   * `:lang`: The language.
   * `:ext`: The file extension including the leading dot.
@@ -442,7 +442,7 @@ information key is an array which can have the following values:
 Following are some examples of output path names for given source path names (assuming that `en` is
 the default language and that the path is under a directory called `/img/`):
 
-*   `output_path_style=[:parent, :cnbase, [., :lang], :ext]` (the default)
+*   `output_path_style=[:parent, :basename, [., :lang], :ext]` (the default)
 
     *   `index.jpg` --> `/img/index.jpg`
 
@@ -463,13 +463,13 @@ the default language and that the path is under a directory called `/img/`):
 
         Since `de` is not the default language, the language part is always used!
 
-*   `output_path_style=[:parent, :cnbase, :ext, ., :lang]`
+*   `output_path_style=[:parent, :basename, :ext, ., :lang]`
 
     *   `index.jpg` --> `/img/index.jpg.`
 
         Be aware of the trailing dot since the `:lang` value is not defined in a sub array!
 
-*   `output_path_style=[:parent, :year, /, :month, /, :cnbase, [., :lang], :ext]`
+*   `output_path_style=[:parent, :year, /, :month, /, :basename, [., :lang], :ext]`
 
     *   `index.jpg` --> `/img/2008/09/index.jpg`
 

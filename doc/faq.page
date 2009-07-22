@@ -124,14 +124,14 @@ You have several options of varying granularity:
 
       default_meta_info:
         :all:
-          output_path_style: [:parent, :cnbase, [., :lang], :ext]
+          output_path_style: [:parent, :basename, [., :lang], :ext]
 
 * Set the meta information `output_path_style` for a specific source handler to only change the
   output paths of this source handler (the page source handler in the following example):
 
       default_meta_info:
         Page:
-          output_path_style: [:parent, :cnbase, [., :lang], :ext]
+          output_path_style: [:parent, :basename, [., :lang], :ext]
 
 * Add the meta information `output_path_style` to a single file via, for example, a meta information
   backing file.

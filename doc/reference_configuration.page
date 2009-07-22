@@ -330,7 +330,7 @@ configuration options) and/or how to use it in a webgen tag (for tag configurati
 
           default_meta_info:
             :all:
-              output_path_style: [:parent, :cnbase, :lang, :ext]
+              output_path_style: [:parent, :basename, :lang, :ext]
             Webgen::SourceHandler::Page:
               in_menu: true
 
