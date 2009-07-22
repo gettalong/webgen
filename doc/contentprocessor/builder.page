@@ -48,7 +48,7 @@ Following is a complete example which shows how to use this extension in a page 
 a custom XML document (the `content` block has to be valid Ruby!):
 
     ---
-    output_path_style: [:parent, :cnbase, ['.', :lang], '.xml']
+    output_path_style: [:parent, :basename, ['.', :lang], '.xml']
     title: Person Object
     template: ~
     --- pipeline:builder

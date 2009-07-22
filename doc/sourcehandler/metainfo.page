@@ -27,7 +27,7 @@ All this is best showed in an example:
 
     --- name:paths
     /**/index.page:
-      output_path_style: [:parent, :cnbase, :ext, [., :lang]]
+      output_path_style: [:parent, :basename, :ext, [., :lang]]
 
     mypic.jpg:
       in_menu: true
