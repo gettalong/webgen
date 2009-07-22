@@ -1,0 +1,136 @@
+---
+title: webgen 0.5.9 released
+in_menu: true
+sort_info: 2009-07-25 08:10
+created_at: 2009-07-25 08:10:00 +02:00
+modified_at: 2009-07-25 08:10:00 +02:00
+---
+<webgen:block name='notes' />
+
+### Changes
+
+<webgen:block name='changes' />
+
+--- name:notes pipeline:tags,maruku
+
+This release does not bring many new and cool features (some naturally made it into this release ;-)
+but it is another step to bringing more advanced functionality like image gallery and blog support
+to webgen. Since gallery and blog template files will rely heavily on embedded Ruby scripts via erb,
+haml and thelike, the functionality of the `context` object has been expanded to allow the
+programmatic inclusion of tags and the rendering of blocks.
+
+Another important change in this release is that the naming convention for paths has been made
+stricter sothat it is easier to derive the (a)(l)cn from a source path.
+
+Also note that there have been some incompatible API changes!
+
+--- name:changes pipeline:tags,maruku
+
+* Major enhancements:
+
+  - webgen tags can now be accessed and used via the `context` object provided by some content
+    processors ([builder][1], [erb][2], [erubis][3], and [haml][4]).
+
+    > Tag handlers that do not use the `Webgen::Tag::Base` module now need to provide one more
+    > method - see the [API documentation](../documentation/rdoc/Webgen/Tag/Base.html)!
+    {.information}
+
+  - Likewise, blocks can now be rendered via the `context` object in the same way as can be done via
+    the [`blocks` content processor][5].
+
+  - Change in source path naming convention: only files have different parts now (sort information,
+    basename, extension), directories and fragments not - see [Source Paths Naming Convention][6]!
+    Also note that directories now always have a trailing slash (source paths and canonical names)!
+
+    > This change may lead to unexpected behaviour if you used the sort information part or an
+    > extension in your directory names! Check this before upgrading to this version!
+    {.warning}
+
+  - There is the new notion of *passive sources* which do not actively create nodes from paths but
+    only on-demand when a to-be-resolved path is not found. This is, for example, very useful for
+    shipping default files that can easily be overridden with custom files by putting the custom
+    files under the to-be-resolve path in a normal source directory.
+
+  - There is now a better system for error reporting which allows for more detailed and more
+    specific (with path name and approximate line number) error reports.
+
+
+* Minor enhancements:
+
+  - Added new content processor [`head`][8] for inserting CSS/JS fragments and links into the head
+    section of an HTML file. Arbitrary `meta` tags can also be inserted.
+  - Added new content processor [`tidy`][10] for running tidy over a (most often generated) HTML
+    file (requested by Michael Franzl).
+  - Special characters like German umlauts and spaces are now allowed in paths (suggested by Michael
+    Franzl). However, note that using paths with such characters may lead to problems when accessing
+    them later on the server!
+  - Added new configuration option [`output.do_deletion`][7] for specifying if generated files
+    should be deleted if their respective source is deleted (suggested by Matthias Kirschner).
+  - Added new configuration option [`tag.coderay.css`][9] which allows the inclusion of external
+    stylesheets.
+  - Added new meta information [`used_nodes`][11] for specifying dependencies for a node (suggested
+    by Hermann Schichl).
+  - The feed source handler now uses the passive sources system for finding its templates and does
+    not rely on the `feedtools` library anymore (which gives a huge speedup).
+  - The sitemap source handler now uses the passive sources system for finding its templates and dos
+    not rely on the `builder` library anymore. And the format of a `*.sitemap` file is now similar
+    to that of a `*.feed` file for consistency.
+  - The `ERB::Util` module is now available when using the `erb` content processor.
+  - Directories are not created anymore if they do not contain any files.
+  - There is now the distinction between textual and binary content processors.
+  - The leading and trailing whitespace of content blocks in Webgen Page Format is not removed
+    anymore.
+
+
+* Bug fixes:
+
+  - Fixed bug RF#25943: apply command did not work without explicitly specifying a directory
+  - `Tag::Relocatable`: the resolved node is now additionally used as dependency for detecting a
+    change
+  - Switching on `host_os` instead of `arch` for specifying Windows specific behaviour (in
+    preparation for the change of the Windows Ruby Installer).
+  - Using `$?.exitstatus` instead of bit shifting to fix a JRuby issue
+  - webgen tag handlers are now called only if all mandatory parameters are set
+  - Fixed `Website#render` to work when called multiple times
+  - Fixed `Node#is_directory?` to also work when called on a fragment with a trailing slash
+
+
+* Incompatible API changes:
+
+  - Since one can now get at the parent node of a to-be-created node directly via the Path object,
+    the interface for creating nodes has been simplified. The method
+    `SourceHandler::Base#create_node` now only takes a path parameter and optionally an options hash
+    for special cases (fragment nodes and virtual nodes), `SourceHandler::Base#node_exists` has seen
+    a similar change.
+
+    The `create_nodes` service signature also changed. Also note that the `before_node_created`
+    message now only sends the path instead of parent and path.
+
+    > These changes will in most cases render custom source handlers nonfunctional! Read the API
+    > documentation and have a look at the shipped source handlers!
+    {.warning}
+
+  - `Node.absolute_name` has been removed since it has no purpose anymore!
+
+
+* Deprecation notes:
+
+  - `Path#cnbase` and `Path#cnbase=` are now deprecated, use `Path#basename` and `Path#basename=`
+    instead!
+  - `Common.absolute_path(path, base)` is deprecated, use `Path.make_absolute(base, path)` instead!
+    Note the different parameter order!
+  - `Node#absolute_cn` and `Node#absolute_lcn` are now deprecated, use `Node#acn` and `Node#alcn`
+    instead!
+
+
+[1]: {relocatable: ../documentation/contentprocessor/builder.html}
+[2]: {relocatable: ../documentation/contentprocessor/erb.html}
+[3]: {relocatable: ../documentation/contentprocessor/erubis.html}
+[4]: {relocatable: ../documentation/contentprocessor/haml.html}
+[5]: {relocatable: ../documentation/contentprocessor/blocks.html}
+[6]: {relocatable: ../documentation/manual.html#source-naming}
+[7]: {relocatable: ../documentation/reference_configuration.html#outputdo_deletion}
+[8]: {relocatable: ../documentation/contentprocessor/head.html}
+[9]: {relocatable: ../documentation/reference_configuration.html#tagcoderaycss}
+[10]: {relocatable: ../documentation/contentprocessor/tidy.html}
+[11]: {relocatable: ../documentation/reference_metainfo.html#used_nodes}
