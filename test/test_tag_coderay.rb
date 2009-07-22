@@ -37,6 +37,9 @@ class TestTagCoderay < Test::Unit::TestCase
     assert(call(context, 'TestData', 'ruby', false, 'class').include?('class="co"'))
     assert(@website.tree['/stylesheets/coderay-default.css'])
     assert_equal('stylesheets/coderay-default.css', context.persistent[:cp_head][:css_file].first)
+
+    def @obj.require(lib); raise LoadError; end
+    assert_raise(Webgen::LoadError) { @obj.call('coderay', '', context) }
   end
 
 end

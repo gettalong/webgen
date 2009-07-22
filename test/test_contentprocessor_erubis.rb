@@ -47,6 +47,9 @@ class TestContentProcessorErubis < Test::Unit::TestCase
 
     page = Webgen::Page.from_data("--- pipeline:erubis erubis_trim:false erubis_use_pi:false\n<% for i in [1] %>\n<%== i %>\n<% end %>")
     assert_equal("\n1\n", page.blocks['content'].render(context).content)
+
+    def obj.require(lib); raise LoadError; end
+    assert_raise(Webgen::LoadError) { obj.call(context) }
   end
 
 end

@@ -13,6 +13,9 @@ class TestContentProcessorRDiscount < Test::Unit::TestCase
     node = Webgen::Node.new(Webgen::Node.new(Webgen::Tree.new.dummy_root, '/', '/'), 'test', 'test')
     context = Webgen::Context.new(:content => '# header', :chain => [node])
     assert_equal("<h1>header</h1>\n", @obj.call(context).content)
+
+    def @obj.require(lib); raise LoadError; end
+    assert_raise(Webgen::LoadError) { @obj.call(context) }
   end
 
 end

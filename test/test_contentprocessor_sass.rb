@@ -20,6 +20,9 @@ class TestContentProcessorSass < Test::Unit::TestCase
 
     context.content = "#cont\n = 5"
     assert_error_on_line(Webgen::RenderError, 2) { obj.call(context) }
+
+    def obj.require(lib); raise LoadError; end
+    assert_raise(Webgen::LoadError) { obj.call(context) }
   end
 
 end
