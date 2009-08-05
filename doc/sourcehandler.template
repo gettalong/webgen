@@ -13,9 +13,11 @@ meta_info = context.website.config['sourcehandler.default_meta_info'][context.co
 if meta_info
 %>
 Following is the default meta information set on any node created by this source handler:
+
 <pre>
 <%= meta_info.to_yaml.gsub(/^---/, '').strip %>
 </pre>
 <% end %>
+
 --- name:content
 <webgen:block name='content' />
