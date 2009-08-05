@@ -4,4 +4,4 @@
 <h1>News Feed</h1>
 <p>
   <a href="{relocatable: news.atom}"><img src="{relocatable: /images/feed.gif}" alt='feed icon' />&nbsp;Subscribe to webgen's news feed</a>
-<p>
+</p>
