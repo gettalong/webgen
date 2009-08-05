@@ -28,6 +28,7 @@ modified_at: ???
 * Bug fixes:
 
   - `Tag::TikZ`: the generated image tags now always have an `alt` attribute
+  - Fixed problem with the webgui when creating a new website
 
 * Incompatible API changes:
 

@@ -104,8 +104,8 @@ class MainController < Ramaze::Controller
       if !@cur_bundle.nil?
         ws = Webgen::Website.new('unknown', nil) do |config|
           config['sources'] = [
-                               ['/', 'Webgen::Source::Resource', 'webgen-website-bundle-default', '/src/**', '/src'],
-                               ['/', 'Webgen::Source::Resource', 'webgen-website-bundle-' + @cur_bundle, '/src/**', '/src']
+                               ['/', 'Webgen::Source::Resource', 'webgen-website-bundle-default', '/src/**', '/src/'],
+                               ['/', 'Webgen::Source::Resource', 'webgen-website-bundle-' + @cur_bundle, '/src/**', '/src/']
                               ]
           config['output'] = ['MemoryOutput']
           config['website.cache'] = [:memory, '']
