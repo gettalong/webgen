@@ -76,6 +76,7 @@ module Webgen
     autoload :Fragments, 'webgen/contentprocessor/fragments'
     autoload :Head, 'webgen/contentprocessor/head'
     autoload :Tidy, 'webgen/contentprocessor/tidy'
+    autoload :Xmllint, 'webgen/contentprocessor/xmllint'
 
     # Return the list of all available content processors.
     def self.list

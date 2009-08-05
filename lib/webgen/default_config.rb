@@ -140,7 +140,8 @@ config.contentprocessor.map({
                               'rdiscount' => 'Webgen::ContentProcessor::RDiscount',
                               'fragments' => 'Webgen::ContentProcessor::Fragments',
                               'head' => 'Webgen::ContentProcessor::Head',
-                              'tidy' => 'Webgen::ContentProcessor::Tidy'
+                              'tidy' => 'Webgen::ContentProcessor::Tidy',
+                              'xmllint' => 'Webgen::ContentProcessor::Xmllint'
                             }, :doc => 'Content processor name to class map')
 
 Webgen::WebsiteAccess.website.blackboard.add_service(:content_processor_names, Webgen::ContentProcessor.method(:list))
@@ -170,6 +171,8 @@ config.contentprocessor.erubis.options({}, :doc => 'A hash of additional options
 config.contentprocessor.redcloth.hard_breaks(false, :doc => 'Specifies whether new lines are turned into hard breaks')
 
 config.contentprocessor.tidy.options("-raw", :doc => "The options passed to the tidy command")
+
+config.contentprocessor.xmllint.options("--catalogs --noout --valid", :doc => 'Options passed to the xmllint command')
 
 config.tag.relocatable.path(nil, :doc => 'The path which should be made relocatable', :mandatory => 'default')
 

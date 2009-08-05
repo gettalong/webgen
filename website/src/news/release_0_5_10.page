@@ -1,0 +1,37 @@
+---
+title: webgen 0.5.10 released
+in_menu: true
+draft: true
+sort_info: ???
+created_at: ???
+modified_at: ???
+---
+<webgen:block name='notes' />
+
+### Changes
+
+<webgen:block name='changes' />
+
+--- name:notes pipeline:tags,maruku
+
+
+--- name:changes pipeline:tags,maruku
+
+* Major enhancements:
+
+
+* Minor enhancements:
+
+  - Added content processor [`xmllint`][1] for checking an XML (XHTML) file for well-formedness and
+    validness
+
+* Bug fixes:
+
+  - `Tag::TikZ`: the generated image tags now always have an `alt` attribute
+
+* Incompatible API changes:
+
+* Deprecation notes:
+
+
+[1]: {relocatable: ../documentation/contentprocessor/xmllint.html}
