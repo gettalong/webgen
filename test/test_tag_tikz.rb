@@ -30,13 +30,13 @@ class TestTagTikZ < Test::Unit::TestCase
     context = Webgen::Context.new(:chain => [node])
 
     output = call(context, '\tikz \draw (0,0) -- (0,1);', 'test.png', [], '', '72 72', false, {})
-    assert_equal('<img src="test.png" />', output)
+    assert_equal('<img src="test.png" alt="" />', output)
     assert(root.tree['/test.png'])
     assert_not_nil(root.tree['/test.png'].content)
     root.tree.delete_node('/test.png')
 
     output = call(context, '\tikz \asdfasdfasf', 'test.png', [], '', '72 72', false, {})
-    assert_equal('<img src="test.png" />', output)
+    assert_equal('<img src="test.png" alt="" />', output)
     assert(root.tree['/test.png'])
     assert_raise(Webgen::RenderError) { root.tree['/test.png'].content }
     root.tree.delete_node('/test.png')
@@ -48,7 +48,7 @@ class TestTagTikZ < Test::Unit::TestCase
     root.tree.delete_node('/images/test.gif')
 
     output = call(context, '\tikz \draw (0,0) -- (0,1);', 'images/../img/test.png', [], '', '300 72', true, {})
-    assert_equal('<img src="img/test.png" />', output)
+    assert_equal('<img src="img/test.png" alt="" />', output)
     assert(root.tree['/img/test.png'])
     assert_not_nil(root.tree['/img/test.png'].content)
     root.tree.delete_node('/img/test.png')
