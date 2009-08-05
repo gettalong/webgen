@@ -53,7 +53,7 @@ EOF
           end
         end
       end.first
-      attrs = param('tag.tikz.img_attr').collect {|name,value| "#{name.to_s}=\"#{value}\"" }.sort.unshift('').join(' ')
+      attrs = {'alt' => ''}.merge(param('tag.tikz.img_attr')).collect {|name,value| "#{name.to_s}=\"#{value}\"" }.sort.unshift('').join(' ')
       "<img src=\"#{context.dest_node.route_to(node)}\"#{attrs} />"
     end
 
