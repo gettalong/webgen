@@ -183,10 +183,13 @@ class TestPath < Test::Unit::TestCase
     assert(Webgen::Path.match(path, '/dir/'))
     assert(Webgen::Path.match(path, '/dir'))
     assert(Webgen::Path.match(path, '/*/'))
+    assert(Webgen::Path.match(path, '/*'))
 
-    path = '/dir'
-    assert(Webgen::Path.match(path, '/dir/'))
-    assert(Webgen::Path.match(path, '/dir'))
+    path = '/file'
+    assert(!Webgen::Path.match(path, '/file/'))
+    assert(Webgen::Path.match(path, '/file'))
+    assert(!Webgen::Path.match(path, '/*/'))
+    assert(Webgen::Path.match(path, '/*'))
 
     path = '/'
     assert(Webgen::Path.match(path, '/'))

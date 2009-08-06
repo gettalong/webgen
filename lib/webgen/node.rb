@@ -196,9 +196,9 @@ module Webgen
       "<##{self.class.name}: alcn=#{@alcn}>"
     end
 
-    # Return +true+ if the alcn matches the pattern. See File.fnmatch for useable patterns.
+    # Return +true+ if the alcn matches the pattern. See Webgen::Path.match for more information.
     def =~(pattern)
-      File.fnmatch(pattern, @alcn, File::FNM_DOTMATCH|File::FNM_CASEFOLD|File::FNM_PATHNAME)
+      Webgen::Path.match(@alcn, pattern)
     end
 
     # Sort nodes by using the meta info +sort_info+ (or +title+ if +sort_info+ is not set) of both
