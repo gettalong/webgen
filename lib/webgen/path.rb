@@ -77,13 +77,11 @@ module Webgen
       Pathname.new(path =~ /^\// ? path : File.join(base, path)).cleanpath.to_s
     end
 
-    # Return +true+ if the given +path+ matches the given +pattern+ (trailing slashes of directories
-    # are not respected). For information on which patterns are supported, have a look at the
-    # documentation of File.fnmatch.
+    # Return +true+ if the given +path+ matches the given +pattern+. For information on which
+    # patterns are supported, have a look at the documentation of File.fnmatch.
     def self.match(path, pattern)
-      path = path.to_s.chomp('/') unless path == '/'
-      pattern = pattern.to_s.chomp('/') unless pattern == '/'
-      File.fnmatch(pattern, path, File::FNM_DOTMATCH|File::FNM_CASEFOLD|File::FNM_PATHNAME)
+      pattern += '/' if path =~ /\/$/ && pattern !~ /\/$|^$/
+      File.fnmatch(pattern, path.to_s, File::FNM_DOTMATCH|File::FNM_CASEFOLD|File::FNM_PATHNAME)
     end
 
 
