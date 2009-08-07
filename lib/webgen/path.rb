@@ -280,7 +280,7 @@ module Webgen
       @meta_info['sort_info'] = (match_data[1].nil? ? nil : match_data[1].to_i)
       @basename               = match_data[2]
       @meta_info['lang']      = Webgen::LanguageManager.language_for_code(match_data[3])
-      @ext                    = (@meta_info['lang'].nil? && !match_data[3].nil? ? match_data[3].to_s : '') + match_data[4].to_s
+      @ext                    = (@meta_info['lang'].nil? && !match_data[3].nil? ? match_data[3].to_s + '.' : '') + match_data[4].to_s
     end
 
     # Analyse the path assuming it is a fragment.

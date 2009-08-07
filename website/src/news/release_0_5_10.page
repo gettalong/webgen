@@ -30,6 +30,8 @@ modified_at: ???
   - `Tag::TikZ`: the generated image tags now always have an `alt` attribute
   - Fixed problem with the webgui when creating a new website
   - Fixed problem with matching directory nodes (reported by Hermann Schichl)
+  - Fixed bug RF#26885: paths with dots in the extension and without a language part were handled
+    incorrectly (reported by John Lockman)
 
 * Incompatible API changes:
 

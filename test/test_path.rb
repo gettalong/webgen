@@ -38,6 +38,8 @@ class TestPath < Test::Unit::TestCase
                     '/dir/',  'default', nil, 'png', 'default.png', 'default.png', '/dir/default.png', '/dir/default.png', nil, 'Default')
     check_proc.call(Webgen::Path.new('/default.deu.png'),
                     '/', 'default', 'de', 'png', 'default.png', 'default.de.png', '/default.png', '/default.de.png', nil, 'Default')
+    check_proc.call(Webgen::Path.new('/default.tar.bz2'),
+                    '/', 'default', nil, 'tar.bz2', 'default.tar.bz2', 'default.tar.bz2', '/default.tar.bz2', '/default.tar.bz2', nil, 'Default')
     check_proc.call(Webgen::Path.new('/default.en.tar.bz2'),
                     '/', 'default', 'en', 'tar.bz2', 'default.tar.bz2', 'default.en.tar.bz2', '/default.tar.bz2', '/default.en.tar.bz2', nil, 'Default')
     check_proc.call(Webgen::Path.new('/default.deu.'),
