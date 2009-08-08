@@ -54,6 +54,13 @@ class TestPath < Test::Unit::TestCase
                     '/', '.htaccess', 'en', '', '.htaccess', '.htaccess.en', '/.htaccess', '/.htaccess.en', nil, '.htaccess')
     check_proc.call(Webgen::Path.new('/.htaccess.en.page'),
                     '/', '.htaccess', 'en', 'page', '.htaccess.page', '.htaccess.en.page', '/.htaccess.page', '/.htaccess.en.page', nil, '.htaccess')
+    check_proc.call(Webgen::Path.new('/5.png'),
+                    '/', '5', nil, 'png', '5.png', '5.png', '/5.png', '/5.png', nil, '5')
+    check_proc.call(Webgen::Path.new('/5.de.png'),
+                    '/', 'de', nil, 'png', 'de.png', 'de.png', '/de.png', '/de.png', 5, 'De')
+    check_proc.call(Webgen::Path.new('/5.66.png'),
+                    '/', '66', nil, 'png', '66.png', '66.png', '/66.png', '/66.png', 5, '66')
+
 
     # Check fragment paths
     assert_raises(RuntimeError) { Webgen::Path.new("/#hallo")}

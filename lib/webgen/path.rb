@@ -277,10 +277,15 @@ module Webgen
       @parent_path = File.join(File.dirname(@path), '/')
       match_data = FILENAME_RE.match(File.basename(@path))
 
-      @meta_info['sort_info'] = (match_data[1].nil? ? nil : match_data[1].to_i)
-      @basename               = match_data[2]
-      @meta_info['lang']      = Webgen::LanguageManager.language_for_code(match_data[3])
-      @ext                    = (@meta_info['lang'].nil? && !match_data[3].nil? ? match_data[3].to_s + '.' : '') + match_data[4].to_s
+      if !match_data[1].nil? && match_data[3].nil? && match_data[4].nil? # handle special case of sort_info.basename as basename.ext
+        @basename = match_data[1]
+        @ext = match_data[2]
+      else
+        @meta_info['sort_info'] = (match_data[1].nil? ? nil : match_data[1].to_i)
+        @basename               = match_data[2]
+        @meta_info['lang']      = Webgen::LanguageManager.language_for_code(match_data[3])
+        @ext                    = (@meta_info['lang'].nil? && !match_data[3].nil? ? match_data[3].to_s + '.' : '') + match_data[4].to_s
+      end
     end
 
     # Analyse the path assuming it is a fragment.

@@ -267,6 +267,10 @@ depending on the type of path (the individual parts of a path are explained belo
 
         /parent_path/[sort_info.]basename[.lang][.extension]
 
+    There is one special case: if the file path has only one dot and only numbers are before the
+    dot, then the first part is considered to be the basename and the second part the extension (eg.
+    `53.png`)!
+
 *   The path specifies a fragment (e.g. part of a file). It must contain exactly one hash character
     and it has to follow the scheme (where `/parent_path` needs to be a file path):
 
@@ -324,11 +328,12 @@ Following are some examples of source path names (the acn and alcn parts are exp
 [below]({relocatable: '#source-cn'})):
 
 | Path                       | Basename     | Language | `title`      | `sort_info` | acn                    | alcn                    |
-|----------------------------|--------------|----------|--------------|-------------|------------------------|-------------------------|
+|----------------------------+--------------+----------+--------------+-------------+------------------------+-------------------------|
 | `/directory/`              | directory    | -none-   | Directory    |      -none- | `/directory/`          | `/directory/`           |
 | `/image.png`               | image        | -none-   | Image        |           0 | `/image.png`           | `/image.png`            |
 | `/image.de.png`            | image        | de       | Image        |           0 | `/image.png`           | `/image.de.png`         |
 | `/01.name_of-file.eo.page` | name_of-file | eo       | Name of file |           1 | `/name_of-file.page`   | `/name_of-file.eo.page` |
+| `/53.png`                  | 53           | -none-   | 53           |           0 | `/53.png`              | `/53.png`               |
 | `/archive.tar.bz2`         | archive      | -none-   | Archive      |           0 | `/archive.tar.bz2`     | `/archive.tar.bz2`      |
 | `/archive.de.tar.bz2`      | archive      | de       | Archive      |           0 | `/archive.tar.bz2`     | `/archive.de.tar.bz2`   |
 | `/manual.html#sources`     | manual       | -none-   | Manual       |      -none- | `/manual.html#sources` | `/manual.html#sources`  |
