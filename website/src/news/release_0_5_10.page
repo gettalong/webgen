@@ -34,6 +34,8 @@ modified_at: ???
     incorrectly (reported by John Lockman)
   - Fixed bug RF#26890: detecting unused paths did not always work correctly (reported by John
     Lockman)
+  - Fixed problem with handling paths of the form `NUMBER.REST` (e.g. `1340.png`): the number part
+    is now considered the basename and the rest is the extension
 
 * Incompatible API changes:
 
