@@ -130,7 +130,7 @@ module Webgen
 
           nodes_to_delete.each {|node| website.tree.delete_node(node)}
           used_paths.merge(paths_to_use)
-          paths = create_nodes_from_paths(used_paths.to_a.sort)
+          paths = create_nodes_from_paths(used_paths.to_a.sort).collect {|n| n.node_info[:src]}
           unused_paths.merge(used_paths - paths)
           website.tree.node_access[:alcn].each {|name, node| website.tree.delete_node(node) if node.flagged?(:reinit)}
           website.cache.reset_volatile_cache
@@ -203,23 +203,23 @@ module Webgen
         end
       end
 
-      # Use the source handlers to create nodes for the +paths+ in the <tt>website.tree</tt>.
+      # Use the source handlers to create nodes for the +paths+ in the <tt>website.tree</tt> and
+      # return the nodes that have been created.
       def create_nodes_from_paths(paths)
-        used_paths = Set.new
+        nodes = Set.new
         website.config['sourcehandler.invoke'].sort.each do |priority, shns|
           shns.each do |shn|
             sh = website.cache.instance(shn)
             handler_paths = paths_for_handler(shn, paths)
-            used_paths.merge(handler_paths)
             handler_paths.sort {|a,b| a.path.length <=> b.path.length}.each do |path|
               if !website.tree[path.parent_path]
-                used_paths.merge(create_nodes_from_paths([path.parent_path]))
+                nodes.merge(create_nodes_from_paths([path.parent_path]))
               end
-              create_nodes(path, sh)
+              nodes += create_nodes(path, sh)
             end
           end
         end
-        used_paths
+        nodes
       end
 
       # Prepare everything to create from the +path+ using the +source_handler+. If a block is

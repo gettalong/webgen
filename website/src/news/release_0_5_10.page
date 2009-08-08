@@ -32,6 +32,8 @@ modified_at: ???
   - Fixed problem with matching directory nodes (reported by Hermann Schichl)
   - Fixed bug RF#26885: paths with dots in the extension and without a language part were handled
     incorrectly (reported by John Lockman)
+  - Fixed bug RF#26890: detecting unused paths did not always work correctly (reported by John
+    Lockman)
 
 * Incompatible API changes:
 
