@@ -130,7 +130,7 @@ module Webgen
 
           nodes_to_delete.each {|node| website.tree.delete_node(node)}
           used_paths.merge(paths_to_use)
-          paths = create_nodes_from_paths(used_paths.to_a.sort).collect {|n| n.node_info[:src]}
+          paths = create_nodes_from_paths(used_paths).collect {|n| n.node_info[:src]}
           unused_paths.merge(used_paths - paths)
           website.tree.node_access[:alcn].each {|name, node| website.tree.delete_node(node) if node.flagged?(:reinit)}
           website.cache.reset_volatile_cache
@@ -236,9 +236,8 @@ module Webgen
                  else
                    source_handler.create_node(path)
                  end
-        nodes.flatten.compact.each do |node|
-          website.blackboard.dispatch_msg(:after_node_created, node)
-        end
+        nodes = nodes.flatten.compact
+        nodes.each {|node| website.blackboard.dispatch_msg(:after_node_created, node)}
         nodes
       rescue Webgen::Error => e
         e.alcn = path unless e.alcn
