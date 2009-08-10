@@ -42,7 +42,7 @@ EOF
 
   def test_create_node
     assert_equal({'/default.*' => {'title' => 'new title', 'before' => 'valbef'},
-                 '/*' => {'title' => 'test'}}, @node.node_info[:mi_paths])
+                 '/*/' => {'title' => 'test'}}, @node.node_info[:mi_paths])
     assert_equal({'/default.css' => {'after' => 'valaft'},
                  '/other.page' => {'title' => 'Not Other'}}, @node.node_info[:mi_alcn])
   end

@@ -73,14 +73,14 @@ module Webgen
     # Make the given +path+ absolute by prepending the absolute directory path +base+ if necessary.
     # Also resolves all '..' and '.' references in +path+.
     def self.make_absolute(base, path)
-      raise(ArgumentError, 'base has to be an absolute path, ie. needs to start with a slash') unless base =~ /\//
-      Pathname.new(path =~ /^\// ? path : File.join(base, path)).cleanpath.to_s
+      raise(ArgumentError, 'base has to be an absolute path, ie. needs to start with a slash') unless base =~ /^\//
+      Pathname.new(path =~ /^\// ? path : File.join(base, path)).cleanpath.to_s + (path =~ /.\/$/ ? '/' : '')
     end
 
     # Return +true+ if the given +path+ matches the given +pattern+. For information on which
     # patterns are supported, have a look at the documentation of File.fnmatch.
     def self.match(path, pattern)
-      pattern += '/' if path =~ /\/$/ && pattern !~ /\/$|^$/
+      pattern += '/' if path.to_s =~ /\/$/ && pattern !~ /\/$|^$/
       File.fnmatch(pattern, path.to_s, File::FNM_DOTMATCH|File::FNM_CASEFOLD|File::FNM_PATHNAME)
     end
 
