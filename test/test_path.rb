@@ -206,12 +206,20 @@ class TestPath < Test::Unit::TestCase
 
     path = ''
     assert(!Webgen::Path.match(path, '/'))
+
+    path = Webgen::Path.new('/dir/')
+    assert(Webgen::Path.match(path, '/dir/'))
+    assert(Webgen::Path.match(path, '/dir'))
+    assert(Webgen::Path.match(path, '/*/'))
+    assert(Webgen::Path.match(path, '/*'))
   end
 
   def test_apath
     assert_raise(ArgumentError) { Webgen::Path.make_absolute('test', 'test') }
+    assert_raise(ArgumentError) { Webgen::Path.make_absolute('test/', 'test') }
     assert_equal('/', Webgen::Path.make_absolute('/', '/'))
     assert_equal('/dir', Webgen::Path.make_absolute('/other', '/dir'))
+    assert_equal('/dir/', Webgen::Path.make_absolute('/other', '/dir/'))
     assert_equal('/other/dir', Webgen::Path.make_absolute('/other', 'dir'))
     assert_equal('/test/dir', Webgen::Path.make_absolute('/other', '../test/dir'))
     assert_equal('/', Webgen::Path.make_absolute('/', '/..'))
