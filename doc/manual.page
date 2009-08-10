@@ -328,7 +328,7 @@ Following are some examples of source path names (the acn and alcn parts are exp
 [below]({relocatable: '#source-cn'})):
 
 | Path                       | Basename     | Language | `title`      | `sort_info` | acn                    | alcn                    |
-|----------------------------+--------------+----------+--------------+-------------+------------------------+-------------------------|
+|----------------------------|--------------|----------|--------------|-------------|------------------------|-------------------------|
 | `/directory/`              | directory    | -none-   | Directory    |      -none- | `/directory/`          | `/directory/`           |
 | `/image.png`               | image        | -none-   | Image        |           0 | `/image.png`           | `/image.png`            |
 | `/image.de.png`            | image        | de       | Image        |           0 | `/image.png`           | `/image.de.png`         |
