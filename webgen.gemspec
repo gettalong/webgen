@@ -1,7 +1,7 @@
 --- !ruby/object:Gem::Specification 
 name: webgen
 version: !ruby/object:Gem::Version 
-  version: 0.5.9.20090725
+  version: 0.5.10.20090810
 platform: ruby
 authors: 
 - Thomas Leitner
@@ -9,7 +9,7 @@ autorequire:
 bindir: bin
 cert_chain: []
 
-date: 2009-07-25 00:00:00 +02:00
+date: 2009-08-10 00:00:00 +02:00
 default_executable: webgen
 dependencies: 
 - !ruby/object:Gem::Dependency 
@@ -370,6 +370,7 @@ files:
 - doc/contentprocessor/sass.page
 - doc/contentprocessor/tags.page
 - doc/contentprocessor/tidy.page
+- doc/contentprocessor/xmllint.page
 - doc/contentprocessor.template
 - doc/extensions.metainfo
 - doc/extensions.page
@@ -437,6 +438,7 @@ files:
 - lib/webgen/contentprocessor/sass.rb
 - lib/webgen/contentprocessor/tags.rb
 - lib/webgen/contentprocessor/tidy.rb
+- lib/webgen/contentprocessor/xmllint.rb
 - lib/webgen/contentprocessor.rb
 - lib/webgen/context/nodes.rb
 - lib/webgen/context/render.rb
@@ -526,6 +528,7 @@ files:
 - test/test_contentprocessor_sass.rb
 - test/test_contentprocessor_tags.rb
 - test/test_contentprocessor_tidy.rb
+- test/test_contentprocessor_xmllint.rb
 - test/test_context.rb
 - test/test_error.rb
 - test/test_languages.rb
