@@ -1,10 +1,9 @@
 ---
 title: webgen 0.5.10 released
 in_menu: true
-draft: true
-sort_info: ???
-created_at: ???
-modified_at: ???
+sort_info: 2009-08-10 07:04
+created_at: 2009-08-10 08:45:00 +02:00
+modified_at: 2009-08-10 08:45:00 +02:00
 ---
 <webgen:block name='notes' />
 
@@ -14,11 +13,10 @@ modified_at: ???
 
 --- name:notes pipeline:tags,maruku
 
+This is just a small bug fix release. The only change feature wise was the addition of a content
+processor for checking XML (XHTML) files for validness.
 
 --- name:changes pipeline:tags,maruku
-
-* Major enhancements:
-
 
 * Minor enhancements:
 
@@ -36,10 +34,5 @@ modified_at: ???
     Lockman)
   - Fixed problem with handling paths of the form `NUMBER.REST` (e.g. `1340.png`): the number part
     is now considered the basename and the rest is the extension
-
-* Incompatible API changes:
-
-* Deprecation notes:
-
 
 [1]: {relocatable: ../documentation/contentprocessor/xmllint.html}
