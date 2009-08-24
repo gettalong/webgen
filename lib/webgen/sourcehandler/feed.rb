@@ -61,7 +61,7 @@ module Webgen::SourceHandler
 
       node.tree.node_access[:alcn].values.
         select {|node| patterns.any? {|pat| node =~ pat} && node.node_info[:page]}.
-        sort {|a,b| a['modified_at'] <=> b['modified_at']}[0, nr_items]
+        sort {|a,b| a['modified_at'] <=> b['modified_at']}.reverse[0, nr_items]
     end
 
     # Return the feed link URL for the feed +node+.
