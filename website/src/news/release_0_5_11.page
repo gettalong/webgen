@@ -1,0 +1,20 @@
+---
+title: webgen 0.5.11 released
+in_menu: true
+sort_info: 2009-09-?? ??:??:??
+created_at: 2009-08-?? ??:??:??
+modified_at: 2009-08-?? ??:??:??
+---
+<webgen:block name='notes' />
+
+### Changes
+
+<webgen:block name='changes' />
+
+--- name:notes pipeline:tags,maruku
+
+
+--- name:changes pipeline:tags,maruku
+
+* Bug fixes:
+
