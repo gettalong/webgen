@@ -27,8 +27,10 @@ EOF
       :root => root = Webgen::Node.new(@website.tree.dummy_root, '/', '/', {'index_path' => 'index.html'}),
       :file1_en => Webgen::Node.new(root, '/file1.en.html', 'file1.html', {'lang' => 'en', 'in_menu' => true, 'modified_at' => Time.now}),
       :index_en => Webgen::Node.new(root, '/index.en.html', 'index.html', {'lang' => 'en', 'modified_at' => Time.now - 1, 'author' => 'test'}),
+      :file2_en => Webgen::Node.new(root, '/file2.en.html', 'file2.html', {'lang' => 'en', 'modified_at' => Time.now - 2}),
     }
     @nodes[:index_en].node_info[:page] = Webgen::Page.from_data("--- name:content\nMyContent\n--- name:abstract\nRealContent")
+    @nodes[:file2_en].node_info[:page] = Webgen::Page.from_data("--- name:content\nCContent\n--- name:abstract\nAContent")
     @obj = Webgen::SourceHandler::Feed.new
     @path = path_with_meta_info('/test.feed', {}, @obj.class.name) {StringIO.new(FEED_CONTENT)}
   end
@@ -58,8 +60,8 @@ EOF
 
   def test_feed_entries
     atom_node, rss_node = @obj.create_node(@path)
-    assert_equal([@nodes[:index_en]], atom_node.feed_entries)
-    assert_equal([@nodes[:index_en]], rss_node.feed_entries)
+    assert_equal([@nodes[:index_en], @nodes[:file2_en]], atom_node.feed_entries)
+    assert_equal([@nodes[:index_en], @nodes[:file2_en]], rss_node.feed_entries)
   end
 
   def test_node_changed
@@ -75,6 +77,7 @@ EOF
     atom_node.unflag(:dirty)
     @nodes[:file1_en].unflag(:dirty)
     @nodes[:index_en].unflag(:dirty)
+    @nodes[:file2_en].unflag(:dirty)
     @website.tree['/templates/atom_feed.template'].unflag(:dirty)
     assert(!atom_node.changed?)
 

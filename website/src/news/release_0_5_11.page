@@ -18,3 +18,5 @@ modified_at: 2009-08-?? ??:??:??
 
 * Bug fixes:
 
+  - Fixed atom feed template to produce completely valid feeds
+  - Fixed order of feed entries (now sorted from most recent to oldest)

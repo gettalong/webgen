@@ -11,6 +11,7 @@ template: ~
   </author>
 
   <link href="<%= context.node.feed_link %>" rel="alternate" />
+  <link href="<%= Webgen::Node.url(File.join(context.node['site_url'], context.node.path), false) %>" rel="self" />
   <generator uri="http://webgen.rubyforge.org/documentation/sourcehandler/feed.html" version="<%= Webgen::VERSION %>">
     webgen - Webgen::SourceHandler::Feed
   </generator>
