@@ -142,7 +142,7 @@ it should normally work with newer versions, too!
 
 * (mandatory) [facets](http://facets.rubyforge.org) version 2.4.5
 
-* (mandatory) [maruku](http://maruku.rubyforge.org) version 0.5.9
+* (mandatory) [maruku](http://maruku.rubyforge.org) version 0.6.0
 
 * (mandatory for webgui) [ramaze](http://ramaze.net) version 2009.04
 
