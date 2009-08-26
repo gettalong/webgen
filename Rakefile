@@ -160,7 +160,7 @@ EOF
 
       s.files = PKG_FILES.to_a
       s.add_dependency('cmdparse', '>= 2.0.2')
-      s.add_dependency('maruku', '0.5.9')
+      s.add_dependency('maruku', '0.6.0')
       s.add_dependency('facets', '2.4.5')
       s.add_development_dependency('rake', '>= 0.8.3')
       s.add_development_dependency('ramaze', '>= 2009.04')
