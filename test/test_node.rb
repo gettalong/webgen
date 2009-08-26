@@ -17,19 +17,21 @@ class TestNode < Test::Unit::TestCase
   def create_default_nodes
     {
       :root => node = Webgen::Node.new(@tree.dummy_root, '/', '/'),
-      :somename_en => child_en = Webgen::Node.new(node, '/somename.en.html', 'somename.page', {'lang' => 'en', 'title' => 'somename'}),
-      :somename_de => child_de = Webgen::Node.new(node, '/somename.de.html', 'somename.page', {'lang' => 'de'}),
-      :other => Webgen::Node.new(node, '/other.html', 'other.page', {}),
-      :other_en => Webgen::Node.new(node, '/other1.html', 'other.page', {'lang' => 'en'}),
+      :somename_en => child_en = Webgen::Node.new(node, '/somename.en.html', 'somename.html', {'lang' => 'en', 'title' => 'somename en'}),
+      :somename_de => child_de = Webgen::Node.new(node, '/somename.de.html', 'somename.html', {'lang' => 'de', 'title' => 'somename de', 'sort_test' => 1}),
+      :other => Webgen::Node.new(node, '/other.html', 'other.html', {'title' => 'other', 'sort_test' => 5}),
+      :other_en => Webgen::Node.new(node, '/other1.html', 'other.html', {'lang' => 'en', 'title' => 'other en', 'sort_test' => 4}),
       :somename_en_frag => frag_en = Webgen::Node.new(child_en, '/somename.en.html#frag', '#othertest', {'title' => 'frag'}),
-      :somename_de_frag => Webgen::Node.new(child_de, '/somename.de.html#frag', '#othertest'),
-      :somename_en_fragnest => Webgen::Node.new(frag_en, '/somename.en.html#fragnest/', '#nestedpath'),
-      :dir => dir = Webgen::Node.new(node, '/dir/', 'dir/'),
-      :dir_file => dir_file = Webgen::Node.new(dir, '/dir/file.html', 'file.html'),
-      :dir_file_frag => Webgen::Node.new(dir_file, '/dir/file.html#frag', '#frag'),
+      :somename_de_frag => Webgen::Node.new(child_de, '/somename.de.html#frag', '#othertest', {'title' => 'frag'}),
+      :somename_en_fragnest => Webgen::Node.new(frag_en, '/somename.en.html#fragnest/', '#nestedpath', {'title' => 'fragnest'}),
+      :dir => dir = Webgen::Node.new(node, '/dir/', 'dir/', {'title' => 'dir'}),
+      :dir_file => dir_file = Webgen::Node.new(dir, '/dir/file.html', 'file.html', {'title' => 'file'}),
+      :dir_file_frag => Webgen::Node.new(dir_file, '/dir/file.html#frag', '#frag', {'title' => 'frag'}),
       :dir2 => dir2 = Webgen::Node.new(node, '/dir2/', 'dir2/', {'index_path' => 'index.html', 'title' => 'dir2'}),
-      :dir2_index_en => Webgen::Node.new(dir2, '/dir2/index.html', 'index.html', {'lang' => 'en', 'routed_title' => 'routed', 'title' => 'index'}),
-      :dir2_index_de => Webgen::Node.new(dir2, '/dir2/index.de.html', 'index.html', {'lang' => 'de', 'routed_title' => 'routed_de', 'title' => 'index'}),
+      :dir2_index_en => Webgen::Node.new(dir2, '/dir2/index.html', 'index.html',
+                                         {'lang' => 'en', 'routed_title' => 'routed', 'title' => 'index en', 'sort_info' => 1}),
+      :dir2_index_de => Webgen::Node.new(dir2, '/dir2/index.de.html', 'index.html',
+                                         {'lang' => 'de', 'routed_title' => 'routed_de', 'title' => 'index de', 'sort_info' => 2}),
     }
   end
 
@@ -52,9 +54,9 @@ class TestNode < Test::Unit::TestCase
     node = Webgen::Node.new(@tree.dummy_root, '/', '/', {'lang' => 'de', :test => :value})
     check_proc.call(node, @tree.dummy_root, '/', '/', '/', '/', nil, {:test => :value})
 
-    child = Webgen::Node.new(node, 'somename.html', 'somename.page',  {'lang' => 'de'})
-    check_proc.call(child, node, 'somename.html', 'somename.page', 'somename.de.page',
-                    '/somename.de.page', 'de', {})
+    child = Webgen::Node.new(node, 'somename.html', 'somename.html',  {'lang' => 'de'})
+    check_proc.call(child, node, 'somename.html', 'somename.html', 'somename.de.html',
+                    '/somename.de.html', 'de', {})
 
     ['http://webgen.rubyforge.org', 'c:\\test'].each_with_index do |abspath, index|
       cn = 'test' + index.to_s + '.html'
@@ -63,8 +65,8 @@ class TestNode < Test::Unit::TestCase
     end
 
     child.reinit('somename.en.html', {'lang' => 'de', 'title' => 'test'})
-    check_proc.call(child, node, 'somename.en.html', 'somename.page', 'somename.de.page',
-                    '/somename.de.page', 'de', {'title' => 'test'})
+    check_proc.call(child, node, 'somename.en.html', 'somename.html', 'somename.de.html',
+                    '/somename.de.html', 'de', {'title' => 'test'})
   end
 
   def test_type_checkers
@@ -126,33 +128,33 @@ class TestNode < Test::Unit::TestCase
     nodes = create_default_nodes
 
     [nodes[:root], nodes[:somename_de], nodes[:somename_en], nodes[:other]].each do |n|
-      assert_equal(nil, n.resolve('somename.page', nil))
-      assert_equal(nodes[:somename_en], n.resolve('somename.page', 'en'))
-      assert_equal(nodes[:somename_de], n.resolve('somename.page', 'de'))
-      assert_equal(nil, n.resolve('somename.page', 'fr'))
-      assert_equal(nodes[:somename_en], n.resolve('somename.en.page', nil))
-      assert_equal(nodes[:somename_en], n.resolve('somename.en.page', 'en'))
-      assert_equal(nodes[:somename_en], n.resolve('somename.en.page', 'de'))
-      assert_equal(nil, n.resolve('somename.fr.page', 'de'))
+      assert_equal(nil, n.resolve('somename.html', nil))
+      assert_equal(nodes[:somename_en], n.resolve('somename.html', 'en'))
+      assert_equal(nodes[:somename_de], n.resolve('somename.html', 'de'))
+      assert_equal(nil, n.resolve('somename.html', 'fr'))
+      assert_equal(nodes[:somename_en], n.resolve('somename.en.html', nil))
+      assert_equal(nodes[:somename_en], n.resolve('somename.en.html', 'en'))
+      assert_equal(nodes[:somename_en], n.resolve('somename.en.html', 'de'))
+      assert_equal(nil, n.resolve('somename.fr.html', 'de'))
 
-      assert_equal(nodes[:other], n.resolve('other.page', nil))
-      assert_equal(nodes[:other], n.resolve('other.page', 'fr'))
-      assert_equal(nodes[:other_en], n.resolve('other.page', 'en'))
-      assert_equal(nodes[:other_en], n.resolve('other.en.page', nil))
-      assert_equal(nodes[:other_en], n.resolve('other.en.page', 'de'))
-      assert_equal(nil, n.resolve('other.fr.page', nil))
-      assert_equal(nil, n.resolve('other.fr.page', 'en'))
+      assert_equal(nodes[:other], n.resolve('other.html', nil))
+      assert_equal(nodes[:other], n.resolve('other.html', 'fr'))
+      assert_equal(nodes[:other_en], n.resolve('other.html', 'en'))
+      assert_equal(nodes[:other_en], n.resolve('other.en.html', nil))
+      assert_equal(nodes[:other_en], n.resolve('other.en.html', 'de'))
+      assert_equal(nil, n.resolve('other.fr.html', nil))
+      assert_equal(nil, n.resolve('other.fr.html', 'en'))
     end
 
     assert_equal(nodes[:somename_en_frag], nodes[:somename_en].resolve('#othertest', 'de'))
     assert_equal(nodes[:somename_en_frag], nodes[:somename_en].resolve('#othertest', nil))
     assert_equal(nodes[:somename_en_fragnest], nodes[:somename_en].resolve('#nestedpath', nil))
 
-    assert_equal(nil, nodes[:root].resolve('/somename.page#othertest', nil))
-    assert_equal(nodes[:somename_en_frag], nodes[:root].resolve('/somename.page#othertest', 'en'))
-    assert_equal(nodes[:somename_de_frag], nodes[:root].resolve('/somename.page#othertest', 'de'))
-    assert_equal(nodes[:somename_en_frag], nodes[:root].resolve('/somename.en.page#othertest'))
-    assert_equal(nodes[:somename_de_frag], nodes[:root].resolve('/somename.de.page#othertest'))
+    assert_equal(nil, nodes[:root].resolve('/somename.html#othertest', nil))
+    assert_equal(nodes[:somename_en_frag], nodes[:root].resolve('/somename.html#othertest', 'en'))
+    assert_equal(nodes[:somename_de_frag], nodes[:root].resolve('/somename.html#othertest', 'de'))
+    assert_equal(nodes[:somename_en_frag], nodes[:root].resolve('/somename.en.html#othertest'))
+    assert_equal(nodes[:somename_de_frag], nodes[:root].resolve('/somename.de.html#othertest'))
 
     assert_equal(nil, nodes[:dir2].resolve('index.html'))
     assert_equal(nodes[:dir2_index_en], nodes[:dir2].resolve('index.html', 'en'))
@@ -223,11 +225,11 @@ class TestNode < Test::Unit::TestCase
     nodes = create_default_nodes
 
     assert(!nodes[:dir2_index_en].send(:user_nodes_changed?))
-    nodes[:dir2_index_en]['used_nodes'] = '/some*.page'
+    nodes[:dir2_index_en]['used_nodes'] = '/some*.html'
     assert(nodes[:dir2_index_en].send(:user_nodes_changed?))
-    nodes[:dir2_index_en]['used_nodes'] = '../some*.page'
+    nodes[:dir2_index_en]['used_nodes'] = '../some*.html'
     assert(nodes[:dir2_index_en].send(:user_nodes_changed?))
-    nodes[:dir2_index_en]['used_nodes'] = '/someAA*.page'
+    nodes[:dir2_index_en]['used_nodes'] = '/someAA*.html'
     assert(!nodes[:dir2_index_en].send(:user_nodes_changed?))
     nodes[:dir2_index_en]['used_nodes'] = 'index.de.html'
     assert(nodes[:dir2_index_en].send(:user_nodes_changed?))
@@ -361,7 +363,7 @@ class TestNode < Test::Unit::TestCase
                  nodes[:somename_en].link_to(nodes[:somename_en_frag], 'attr1' => 'val1'))
     assert_equal('<a href="#frag">frag</a>',
                  nodes[:somename_en].link_to(nodes[:somename_en_frag], :attr1 => 'val1'))
-    assert_equal('<a href="dir2/index.html">index</a>',
+    assert_equal('<a href="dir2/index.html">index en</a>',
                  nodes[:somename_en].link_to(nodes[:dir2_index_en]))
 
     nodes[:somename_en_frag]['link_attrs'] = {:link_text => 'Default Text', 'class'=>'help'}
@@ -398,6 +400,65 @@ class TestNode < Test::Unit::TestCase
 
     assert_equal("test", Webgen::Node.url("test", false).to_s)
     assert_equal("http://example.com/test", Webgen::Node.url("http://example.com/test", false).to_s)
+  end
+
+  def test_find
+    nodes = create_default_nodes
+
+    check = lambda do |correct, result|
+      assert_equal(correct.collect {|n| nodes[n].alcn }, result.to_list.flatten)
+    end
+
+    check.call([:somename_en, :somename_en_frag, :somename_en_fragnest, :somename_de, :somename_de_frag,
+                :other, :other_en, :dir, :dir_file, :dir_file_frag, :dir2, :dir2_index_en, :dir2_index_de],
+               nodes[:root].find())
+
+    # :levels
+    check.call([],
+               nodes[:root].find(:levels => 0))
+    check.call([:somename_en, :somename_de, :other, :other_en, :dir, :dir2],
+               nodes[:root].find(:levels => 1))
+
+    # :alcn
+    check.call([:somename_en, :somename_en_frag, :somename_en_fragnest, :somename_de, :somename_de_frag,
+                :other, :other_en, :dir, :dir2],
+               nodes[:root].find(:alcn => '*'))
+    check.call([:somename_en, :somename_de, :other, :other_en, :dir, :dir2],
+               nodes[:root].find(:alcn => '*', :levels => 1))
+    check.call([:somename_en, :other_en],
+               nodes[:root].find(:alcn => '/*.en.html'))
+
+    # :sort
+    check.call([:somename_en, :somename_en_frag, :somename_en_fragnest, :somename_de, :somename_de_frag,
+                :other, :other_en, :dir, :dir_file, :dir_file_frag, :dir2, :dir2_index_en, :dir2_index_de],
+               nodes[:root].find(:sort => false))
+    check.call([:dir, :dir_file, :dir_file_frag, :dir2, :dir2_index_en, :dir2_index_de, :other, :other_en,
+                :somename_de, :somename_de_frag, :somename_en, :somename_en_frag, :somename_en_fragnest],
+               nodes[:root].find(:sort => true))
+    check.call([:somename_en, :somename_en_frag, :somename_en_fragnest, :dir, :dir_file, :dir_file_frag, :dir2, :dir2_index_en, :dir2_index_de,
+                :somename_de, :somename_de_frag, :other_en, :other],
+               nodes[:root].find(:sort => 'sort_test'))
+
+    # :limit
+    check.call([:somename_en, :somename_en_frag, :somename_en_fragnest, :somename_de, :somename_de_frag],
+               nodes[:root].find(:limit => 5))
+    check.call([:somename_en, :somename_en_frag, :somename_en_fragnest, :somename_de, :somename_de_frag,
+                :other, :other_en, :dir, :dir_file, :dir_file_frag, :dir2, :dir2_index_en, :dir2_index_de],
+               nodes[:root].find(:limit => 100))
+    check.call([:somename_en, :somename_en_frag, :somename_en_fragnest, :somename_de, :somename_de_frag,
+                :other, :other_en, :dir, :dir_file, :dir_file_frag, :dir2, :dir2_index_en, :dir2_index_de],
+               nodes[:root].find(:limit => 'hallo'))
+
+    # :offset
+    check.call([:somename_en, :somename_en_frag, :somename_en_fragnest, :somename_de, :somename_de_frag,
+                :other, :other_en, :dir, :dir_file, :dir_file_frag, :dir2, :dir2_index_en, :dir2_index_de],
+               nodes[:root].find(:offset => 0))
+    check.call([:other, :other_en, :dir, :dir_file, :dir_file_frag, :dir2, :dir2_index_en, :dir2_index_de],
+               nodes[:root].find(:offset => 5))
+    check.call([:somename_en, :somename_en_frag, :somename_en_fragnest, :somename_de, :somename_de_frag,
+                :other, :other_en, :dir, :dir_file, :dir_file_frag, :dir2, :dir2_index_en, :dir2_index_de],
+               nodes[:root].find(:offset => 'hallo'))
+
   end
 
 end

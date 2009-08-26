@@ -352,6 +352,36 @@ module Webgen
       (use_link ? "<a#{attrs}>#{link_text}</a>" : "<span#{attrs}>#{link_text}</span>")
     end
 
+    def find(opts = {})
+      if opts[:alcn]
+        opts[:alcn] = Path.make_absolute(is_directory? ? alcn : parent.alcn.sub(/#.*$/, ''), opts[:alcn].to_s)
+      end
+      opts[:levels] = 100000 unless opts.has_key?(:levels)
+
+      result = find_nodes(opts, nil, 1)
+      result.flatten! if result && (opts[:limit] || opts[:offset])
+      result.sort!(opts[:sort]) if result
+      result.children = result.children[(opts[:offset].to_s.to_i)..(opts[:limit] ? opts[:offset].to_s.to_i + opts[:limit].to_s.to_i - 1 : -1)]
+      result
+    end
+
+    def find_nodes(opts, parent, level)
+      result = ProxyNode.new(parent, self)
+
+      children.each do |child|
+        c_result = child.find_nodes(opts, result, level + 1)
+        result.children << c_result unless c_result.nil?
+      end if opts[:levels] && level <= opts[:levels]
+
+      (!result.children.empty? || find_match?(opts) ? result : nil)
+    end
+    protected :find_nodes
+
+    def find_match?(opts)
+      (!opts[:alcn] || self =~ opts[:alcn])
+    end
+    private :find_match?
+
     #######
     private
     #######
@@ -392,6 +422,68 @@ module Webgen
       else
         super
       end
+    end
+
+  end
+
+  # Encapsulates a node. This class is needed when a hierarchy of nodes should be created but the
+  # original hierarchy should not be destroyed.
+  class ProxyNode
+
+    # Array of child proxy nodes.
+    attr_accessor :children
+
+    # The parent proxy node.
+    attr_accessor :parent
+
+    # The encapsulated node.
+    attr_reader :node
+
+    # Create a new proxy node under +parent+ (also has to be a ProxyNode object) for the real node
+    # +node+.
+    def initialize(parent, node)
+      @parent = parent
+      @node = node
+      @children = []
+    end
+
+    # Sort recursively all children of the node using the wrapped nodes. If +value+ is +false+, no
+    # sorting is done at all. If it is +true+, then the default sort mechanism is used (see
+    # Node#<=>). Otherwise +value+ has to be a meta information key on which should be sorted.
+    def sort!(value = true)
+      return self unless value
+
+      if value.kind_of?(String)
+        self.children.sort! do |a,b|
+          aval, bval = a.node[value].to_s, b.node[value].to_s
+          if aval !~ /\D/ && aval !~ /\D/
+            aval = aval.to_i
+            bval = bval.to_i
+          end
+          aval <=> bval
+        end
+      else
+        self.children.sort! {|a,b| a.node <=> b.node}
+      end
+      self.children.each {|child| child.sort!(value)}
+      self
+    end
+
+    # Turn the hierarchy of proxy nodes into a flat list.
+    def flatten!
+      result = []
+      while !self.children.empty?
+        result << self.children.shift
+        result.last.parent = self
+        self.children.unshift(*result.last.children)
+        result.last.children = []
+      end
+      self.children = result
+    end
+
+    # Return the hierarchy under this node as nested list of alcn values.
+    def to_list
+      self.children.inject([]) {|temp, n| temp << n.node.alcn; temp += ((t = n.to_list).empty? ? [] : [t]) }
     end
 
   end
