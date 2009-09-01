@@ -73,6 +73,7 @@ module Webgen::SourceHandler
       dirname.sub(/^\//, '').split('/').inject('/') do |parent_path, dir|
         parent_path = File.join(parent_path, dir)
         parent = create_directory(parent_path, path)
+        parent_path
       end
       parent
     end
