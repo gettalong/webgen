@@ -29,6 +29,10 @@ class TestSourceHandlerVirtual < Test::Unit::TestCase
 - other.html:
     url: directory/path.en.html
     title: Nothing
+
+- /dirnew/dirnew/dirnew/:
+    url: /
+    title: root
 EOF
 
   def setup
@@ -52,6 +56,7 @@ EOF
     assert_not_nil(path_de)
     assert_not_nil(dir)
     assert_not_nil(path_en)
+    assert_not_nil(@root.tree['/dirnew/dirnew/dirnew/'])
 
     assert_equal('new title', path_en['title'])
     assert_equal(@time, path_en['modified_at'])
