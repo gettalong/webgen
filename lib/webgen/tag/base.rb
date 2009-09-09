@@ -57,7 +57,7 @@ require 'webgen/websiteaccess'
 #
 #   end
 #
-#   WebsiteAccess.website.config.reverser.do_reverse nil, :mandatory => default
+#   WebsiteAccess.website.config.reverser.do_reverse nil, :mandatory => 'default'
 #   WebsiteAccess.website.config['contentprocessor.tags.map']['reverse'] = 'Reverser'
 #
 module Webgen::Tag::Base
