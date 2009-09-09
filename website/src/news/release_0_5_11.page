@@ -22,3 +22,4 @@ modified_at: 2009-08-?? ??:??:??
   - Fixed order of feed entries (now sorted from most recent to oldest) (reported by Tuomo Valkonen)
   - Fixed error in `SourceHandler::Virtual` when creating virtual directories (reported by Tuomo
     Valkonen)
+  - Fixed RF#27075: Typo in webgen documentation (reported by Luis Parravicini)
