@@ -5,20 +5,6 @@ sort_info: 25
 ---
 ## Download & Installation
 
-There are currently two versions of webgen:
-
-* The 0.5.x series: This is the new *stable* series. A completely new implementation of the core
-  allows for advanced features like partial site regeneration. It provides many features out of the
-  box (though currently a bit less than the old 0.4.x series) and is very user friendly.
-
-* The 0.4.x series: This is the old stable series which can still be used but is not updated
-  anymore. The complete documentation (including installation information and needed libraries) for
-  the last version of the 0.4.x series can be found [here](documentation/0.4.x/index.html).
-
-The installation notes below focus on the 0.5.x series since the 0.4.x series is not actively
-developed anymore.
-
-
 ## Compatibility Notes
 
 webgen should run on any platform which supports Ruby. It has been successfully tested on the
@@ -44,7 +30,7 @@ tested.
 ### Linux
 
 There are a variety of Linux distributions out there with different package management systems. So I
-will focus on instructions for Ubuntu 8.10 here (which should also work for any recent Debian based
+will focus on instructions for Ubuntu 9.04 here (which should also work for any recent Debian based
 distribution).
 
 After running the following commands, webgen and all the mandatory dependencies are installed:
@@ -52,11 +38,16 @@ After running the following commands, webgen and all the mandatory dependencies 
     sudo aptitude install ruby rubygems
     sudo gem1.8 install webgen
 
+> You will also need to add `export PATH=$PATH:/var/lib/gems/1.8/bin` to your `~/.bashrc` because
+> this is the binary path the executable files get installed.
+{.information}
+
 > Ubuntu has a package for the old 0.4.7 version of webgen. If you want to use that, you just need
 > to run
 >
 >     sudo aptitude install webgen0.4
 {.information}
+
 
 ### Mac OS X
 
@@ -70,6 +61,7 @@ After that your system is ready for installing webgen:
 
     sudo gem install webgen
 
+
 ### Windows
 
 You need to install Ruby first. This can easily be done by using the One-Click-Installer - just
@@ -81,6 +73,7 @@ click on `Ok`) and type in the following:
 
 [1]: http://rubyforge.org/frs/?group_id=167
 
+
 ## Generic Installation Instructions
 
 ### Using Rubygems
@@ -89,16 +82,12 @@ If you are using Rubygems, installing the latest version of webgen is as simple 
 
     gem install webgen
 
-or, if you want to install the latest version of the old series, just use
-
-    gem install webgen -v '< 0.5.0'
-
 After this command has finished, everything is ready for creating websites. Be sure to have a look
 at the optional dependencies which provide additional functionality.
 
 > Rubygems 1.2.0 has a bug that prevents the correct resolution of development dependencies.
-> Therefore you should upgrade to at least 1.3.0 which fixes this bug. Otherwise you will
-> have to use the following command to install webgen:
+> Therefore you should upgrade to at least 1.3.3 which fixes this and some other bugs. Otherwise you
+> will have to use the following command to install webgen:
 >
 >     gem install --development webgen
 {.error}
