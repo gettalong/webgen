@@ -8,7 +8,7 @@ require 'zlib'
 begin
   require 'archive/tar/minitar'
 rescue LoadError
-  raise Webgen::LoadError.new('archive/tar/minitar', self.class.name, context.dest_node.alcn, 'archive-tar-minitar')
+  raise Webgen::LoadError.new('archive/tar/minitar', self.class.name, nil, 'archive-tar-minitar')
 end
 
 module Webgen
