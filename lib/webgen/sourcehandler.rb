@@ -1,6 +1,7 @@
 # -*- encoding: utf-8 -*-
 
 require 'webgen/loggable'
+require 'webgen/common'
 require 'benchmark'
 
 module Webgen
@@ -173,10 +174,10 @@ module Webgen
       def find_all_source_paths
         if !defined?(@paths)
           active_source = Webgen::Source::Stacked.new(website.config['sources'].collect do |mp, name, *args|
-                                                        [mp, constant(name).new(*args)]
+                                                        [mp, Webgen::Common.const_for_name(name).new(*args)]
                                                       end)
           passive_source = Webgen::Source::Stacked.new(website.config['passive_sources'].collect do |mp, name, *args|
-                                                         [mp, constant(name).new(*args)]
+                                                         [mp, Webgen::Common.const_for_name(name).new(*args)]
                                                        end, true)
           passive_source.paths.each {|path| path.passive = true }
           source = Webgen::Source::Stacked.new([['/', active_source], ['/', passive_source]])

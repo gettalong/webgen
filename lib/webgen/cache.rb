@@ -1,7 +1,6 @@
 # -*- encoding: utf-8 -*-
 
 require 'set'
-require 'facets/kernel/constant'
 
 module Webgen
 
@@ -74,12 +73,12 @@ module Webgen
       @volatile = {:classes => @volatile[:classes]}
     end
 
-    # Return the unique instance of the class +name+. This method should be used when it is
-    # essential that webgen uses only one object of a class or when an object should automatically
-    # be recreated upon cache restoration (see #restore).
+    # Return the unique instance of the class +name+ (a String). This method should be used when it
+    # is essential that webgen uses only one object of a class or when an object should
+    # automatically be recreated upon cache restoration (see #restore).
     def instance(name)
       @permanent[:classes] << name unless @permanent[:classes].include?(name)
-      (@volatile[:classes] ||= {})[name] ||= constant(name).new
+      (@volatile[:classes] ||= {})[name] ||= Common.const_for_name(name).new
     end
 
   end

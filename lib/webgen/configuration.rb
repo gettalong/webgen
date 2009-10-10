@@ -1,7 +1,5 @@
 # -*- encoding: utf-8 -*-
 
-require 'facets/symbol/to_proc'
-
 module Webgen
 
   # Stores the configuration for a webgen website.
@@ -105,7 +103,7 @@ module Webgen
       # Complete +sh_name+ by checking if a source handler called
       # <tt>Webgen::SourceHandler::SH_NAME</tt> exists.
       def complete_source_handler_name(sh_name)
-        (Webgen::SourceHandler.constants.map(&:to_s).include?(sh_name) ? 'Webgen::SourceHandler::' + sh_name : sh_name)
+        (Webgen::SourceHandler.constants.map {|c| c.to_s}.include?(sh_name) ? 'Webgen::SourceHandler::' + sh_name : sh_name)
       end
       private :complete_source_handler_name
 

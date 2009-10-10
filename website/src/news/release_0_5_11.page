@@ -16,6 +16,10 @@ modified_at: 2009-08-?? ??:??:??
 
 --- name:changes pipeline:tags,maruku
 
+* Minor changes:
+
+  - Removed dependency on facets
+
 * Bug fixes:
 
   - Fixed atom feed template to produce completely valid feeds
