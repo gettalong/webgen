@@ -2,6 +2,7 @@
 
 require 'webgen/websiteaccess'
 require 'webgen/source'
+require 'webgen/common'
 
 module Webgen::Source
 
@@ -30,7 +31,7 @@ module Webgen::Source
       if !defined?(@paths)
         stack = Stacked.new
         website.config['resources'].select {|name, infos| File.fnmatch(@glob, name)}.sort.each do |name, infos|
-          stack.add([['/', constant(infos.first).new(*infos[1..-1])]])
+          stack.add([['/', Webgen::Common.const_for_name(infos.first).new(*infos[1..-1])]])
         end
         @paths = stack.paths
         @paths = @paths.select {|p| File.fnmatch(@paths_glob, p)} if @paths_glob

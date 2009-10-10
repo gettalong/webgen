@@ -1,10 +1,6 @@
 # -*- encoding: utf-8 -*-
 
-require 'facets/ansicode'
 require 'rbconfig'
-
-ANSICode.define_ansicolor_method(:lred, '1;31')
-ANSICode.define_ansicolor_method(:lblue, '1;34')
 
 module Webgen::CLI
 
@@ -18,10 +14,25 @@ module Webgen::CLI
                       ((size = %x{stty size 2>/dev/null}).length > 0 ? size.split.last.to_i : 72) rescue 72
                     end
 
+    module Color
+
+      @@colors = {:bold => [0, 1], :green => [0, 32], :lred => [1, 31], :reset => [0, 0]}
+
+      @@colors.each do |color, values|
+        module_eval <<-EOF
+        def Color.#{color.to_s}(text = nil)
+            "\e[#{values[0]};#{values[1]}m" + (text.nil? ? '' : text + self.reset)
+        end
+        EOF
+      end
+
+    end
+
+
     # Used for dynamically formatting the text (setting color, bold face, ...).
     def self.method_missing(id, text = nil)
-      if USE_ANSI_COLORS && ANSICode.respond_to?(id)
-        ANSICode.send(id, text.to_s)
+      if USE_ANSI_COLORS && Color.respond_to?(id)
+        Color.send(id, text.to_s)
       else
         text.to_s
       end

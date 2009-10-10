@@ -1,5 +1,7 @@
 # -*- encoding: utf-8 -*-
 
+require 'webgen/common'
+
 module Webgen
 
   # Namespace for all classes that know how to write out node content.
@@ -74,7 +76,7 @@ module Webgen
       classes = (WebsiteAccess.website.cache.volatile[:classes] ||= {})
       unless classes.has_key?(:output_instance)
         klass, *args = WebsiteAccess.website.config['output']
-        classes[:output_instance] = Object.constant(klass).new(*args)
+        classes[:output_instance] = Common.const_for_name(klass).new(*args)
       end
       classes[:output_instance]
     end

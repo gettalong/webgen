@@ -1,6 +1,5 @@
 # -*- encoding: utf-8 -*-
 
-require 'facets/symbol/to_proc'
 require 'webgen/websiteaccess'
 require 'webgen/loggable'
 require 'webgen/page'
@@ -181,7 +180,7 @@ module Webgen::SourceHandler
                         Webgen::WebsiteAccess.website.config['sourcehandler.default_lang_in_output_path'] ||
                           Webgen::WebsiteAccess.website.config['website.lang'] != path.meta_info['lang']
                       end
-      if OutputPathHelpers.public_instance_methods(false).map(&:to_s).include?(method)
+      if OutputPathHelpers.public_instance_methods(false).map {|c| c.to_s}.include?(method)
         name = send(method, parent, path, use_lang_part)
         name += '/'  if path.path =~ /\/$/ && name !~ /\/$/
         if (node = node_exists?(path, name)) && node.lang != path.meta_info['lang']

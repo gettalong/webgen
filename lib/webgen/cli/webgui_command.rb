@@ -1,7 +1,6 @@
 # -*- encoding: utf-8 -*-
 
 require 'webgen/cli'
-require 'facets/kernel/silence'
 
 module Webgen::CLI
 
@@ -22,7 +21,8 @@ module Webgen::CLI
       $:.unshift File.join(Webgen.data_dir, 'webgui', 'overrides')
       require 'win32console'
       $:.shift
-      silence_warnings do
+      begin
+        oldv, $VERBOSE = $VERBOSE, nil
         begin
           require 'ramaze/snippets/object/__dir__'
           Object.__send__(:include, Ramaze::CoreExtensions::Object)
@@ -32,6 +32,8 @@ module Webgen::CLI
           puts "You can install it via 'gem install ramaze --version 2009.04'"
           return
         end
+      ensure
+        $VERBOSE = oldv
       end
       def Ramaze.shutdown; # :nodoc:
       end

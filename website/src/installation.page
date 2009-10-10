@@ -129,8 +129,6 @@ it should normally work with newer versions, too!
 
 * (mandatory) [cmdparse](http://cmdparse.rubyforge.org) version 2.0.2 or higher
 
-* (mandatory) [facets](http://facets.rubyforge.org) version 2.4.5
-
 * (mandatory) [maruku](http://maruku.rubyforge.org) version 0.6.0
 
 * (mandatory for webgui) [ramaze](http://ramaze.net) version 2009.04
