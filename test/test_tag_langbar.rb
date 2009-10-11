@@ -26,11 +26,10 @@ class TestTagLangbar < Test::Unit::TestCase
     nodes = create_default_nodes
 
     de_link = '<a href="index.de.html">de</a>'
-    en_link = '<span>en</span>'
+    en_link = '<span class="webgen-langbar-current-lang">en</span>'
     check_results(nodes[:index_en], "#{de_link} | #{en_link}", de_link, "#{de_link} | #{en_link}", de_link)
 
-    link = '<span>en</span>'
-    check_results(nodes[:file_en], link, '', '', '')
+    check_results(nodes[:file_en], en_link, '', '', '')
 
     @obj.set_params('tag.langbar.show_single_lang' => true, 'tag.langbar.show_own_lang' => true, 'tag.langbar.separator' => ' --- ')
     assert_equal(["#{de_link} --- #{en_link}", false],

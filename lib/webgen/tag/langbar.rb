@@ -19,8 +19,11 @@ module Webgen::Tag
       result = lang_nodes.
         reject {|n| (context.content_node.lang == n.lang && !param('tag.langbar.show_own_lang'))}.
         sort {|a, b| a.lang <=> b.lang}.
-        collect {|n| context.dest_node.link_to(n, :link_text => (param('tag.langbar.lang_names')[n.lang] || n.lang), :lang => n.lang)}.
-        join(param('tag.langbar.separator'))
+        collect do |n|
+        attrs = {:link_text => (param('tag.langbar.lang_names')[n.lang] || n.lang), :lang => n.lang}
+        attrs['class'] = 'webgen-langbar-current-lang' if context.content_node.lang == n.lang
+        context.dest_node.link_to(n, attrs)
+      end.join(param('tag.langbar.separator'))
 
       [(param('tag.langbar.show_single_lang') || lang_nodes.length > 1 ? result : ""), param('tag.langbar.process_output')]
     end
