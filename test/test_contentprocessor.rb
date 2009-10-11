@@ -10,7 +10,7 @@ class TestContentProcessor < Test::Unit::TestCase
 
   def setup
     super
-    @website.config.data['contentprocessor.map'] = {'test' => Hash, 'binary' => [Hash, :binary]}
+    @website.config.data['contentprocessor.map'] = {'test' => 'Hash', 'binary' => ['Hash', :binary]}
   end
 
   def test_access_hash
