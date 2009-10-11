@@ -198,27 +198,6 @@ EOF
       pkg.need_tar = true
     end
 
-    desc 'Generate gemspec file for github'
-    task :gemspec do
-      spec.version = Webgen::VERSION + '.' + Time.now.strftime('%Y%m%d')
-      spec.summary = 'webgen beta build, not supported!!!'
-      spec.files = spec.files.reject {|f| f == 'VERSION' || f == 'ChangeLog'}
-      spec.post_install_message = "
-
-
-WARNING: This is an unsupported BETA version of webgen which may
-still contain bugs!
-
-The official version is called 'webgen' and can be installed via
-
-    gem install webgen
-
-
-
-"
-      File.open('webgen.gemspec', 'w+') {|f| f.write(spec.to_yaml)}
-    end
-
   end
 
   desc "Upload webgen documentation to Rubyforge homepage"
