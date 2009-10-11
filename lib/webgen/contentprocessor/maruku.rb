@@ -1,5 +1,19 @@
 # -*- encoding: utf-8 -*-
 
+require 'rexml/parsers/baseparser'
+
+class REXML::Parsers::BaseParser
+
+  alias :"old_stream=" :"stream="
+
+  def stream=(source)
+    self.old_stream=(source)
+    @nsstack << Set.new(['webgen'])
+  end
+
+end
+
+
 module Webgen::ContentProcessor
 
   # Processes content in Markdown format using the +maruku+ library.
