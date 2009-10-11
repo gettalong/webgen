@@ -1,5 +1,7 @@
 # -*- encoding: utf-8 -*-
 
+require 'webgen/common'
+
 module Webgen::ContentProcessor
 
   # Processes content in Haml markup using the +haml+ library.
@@ -24,9 +26,14 @@ module Webgen::ContentProcessor
     rescue LoadError
       raise Webgen::LoadError.new('haml', self.class.name, context.dest_node.alcn, 'haml')
     rescue ::Haml::Error => e
-      raise Webgen::RenderError.new(e, self.class.name, context.dest_node.alcn, context.ref_node.alcn, (e.line + 1 if e.line))
+      line = if e.line
+               e.line + 1
+             else
+               Webgen::Common.error_line(e)
+             end
+      raise Webgen::RenderError.new(e, self.class.name, context.dest_node.alcn, context.ref_node.alcn, line)
     rescue Exception => e
-      raise Webgen::RenderError.new(e, self.class.name, context.dest_node.alcn, context.ref_node.alcn)
+      raise Webgen::RenderError.new(e, self.class.name, context.dest_node.alcn, context.ref_node.alcn, Webgen::Common.error_line(e))
     end
 
   end

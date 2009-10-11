@@ -12,6 +12,11 @@ module Webgen
       name.split('::').inject(Object) {|b,n| b.const_get(n)}
     end
 
+    # Return the error line by inspecting the backtrace of the given +error+ instance.
+    def self.error_line(error)
+      (error.is_a?(::SyntaxError) ? error.message : error.backtrace[0]).scan(/:(\d+)/).first.first.to_i rescue nil
+    end
+
   end
 
 end
