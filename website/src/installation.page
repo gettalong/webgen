@@ -140,20 +140,20 @@ it should normally work with newer versions, too!
 
 * (optional) [RedCloth](http://redcloth.rubyforge.org) version 4.1.9 or higher for Textile support
 
-* (optional) [haml](http://haml.hamptoncatlin.com) version 2.0.9 or higher for haml and sass support
+* (optional) [haml](http://haml.hamptoncatlin.com) version 2.2.7 or higher for haml and sass support
 
 * (optional) [builder](http://builder.rubyforge.org) version 2.1.0 or higher for programmatic xml
   generation support
 
-* (optional) [rdoc](http://rdoc.rubyforge.org/) version 2.4.2 or higher for RDoc markup support
+* (optional) [rdoc](http://rdoc.rubyforge.org/) version 2.4.3 or higher for RDoc markup support
 
 * (optional) [coderay](http://coderay.rubychan.de/) version 0.8.312 or higher for syntax
   highlighting
 
-* (optional) [erubis](http://www.kuwata-lab.com/erubis/) version 2.6.2 or higher for Erubis
+* (optional) [erubis](http://www.kuwata-lab.com/erubis/) version 2.6.5 or higher for Erubis
   (enhanced ERB) support
 
-* (optional) [rdiscount](http://github.com/rtomayko/rdiscount) version 1.2.9 or higher for fast
+* (optional) [rdiscount](http://github.com/rtomayko/rdiscount) version 1.3.5 or higher for fast
   Markdown support
 
 * (optional) [archive-tar-minitar](http://rubyforge.org/projects/ruwiki/) version 0.5.2 or higher
