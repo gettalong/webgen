@@ -18,6 +18,8 @@ modified_at: 2009-08-?? ??:??:??
 
 * Minor changes:
 
+  - Added a CSS class to the HTML tag of the currently selected language of [Tag::Langbar][1]
+    (requested by Damien Robert)
   - Removed dependency on facets
 
 * Bug fixes:
@@ -28,3 +30,6 @@ modified_at: 2009-08-?? ??:??:??
     Valkonen)
   - Fixed RF#27075: Typo in webgen documentation (reported by Luis Parravicini)
   - Fixed bug which occured when archive-tar-minitar was not installed
+
+
+[1]: {relocatable: ../documentation/tag/langbar.html}
