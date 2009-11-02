@@ -56,9 +56,9 @@ module Webgen
   #
   #   end
   #
-  #   WebsiteAccess.website.config['contentprocessor.map']['replacer'] = 'SampleProcessor'
+  #   Webgen::WebsiteAccess.website.config['contentprocessor.map']['replacer'] = 'SampleProcessor'
   #   # Or one could equally write
-  #   # WebsiteAccess.website.config['contentprocessor.map']['replacer'] = ['SampleProcessor', :text]
+  #   # Webgen::WebsiteAccess.website.config['contentprocessor.map']['replacer'] = ['SampleProcessor', :text]
   #
   module ContentProcessor
 
