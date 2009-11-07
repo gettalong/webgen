@@ -30,6 +30,7 @@ modified_at: 2009-08-?? ??:??:??
     Valkonen)
   - Fixed RF#27075: Typo in webgen documentation (reported by Luis Parravicini)
   - Fixed bug which occured when archive-tar-minitar was not installed
-
+  - Fixed bug in `ContentProcessor::Blocks`: `context.dest_node` was not correctly set when
+    `#render_block` was called via the context object
 
 [1]: {relocatable: ../documentation/tag/langbar.html}

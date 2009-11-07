@@ -45,6 +45,7 @@ module Webgen::ContentProcessor
         used_chain = (context[:chain].length > 1 ? context[:chain][1..-1] : context[:chain]).dup
       elsif options[:chain].kind_of?(Array)
         used_chain = options[:chain]
+        dest_node = context.content_node
       else
         paths = options[:chain].split(';')
         used_chain = paths.collect do |path|
