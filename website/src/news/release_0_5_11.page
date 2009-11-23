@@ -16,6 +16,10 @@ modified_at: 2009-08-?? ??:??:??
 
 --- name:changes pipeline:tags,maruku
 
+* Major changes:
+
+  - Added content processor [kramdown][2] (faster Markdown parser)
+
 * Minor changes:
 
   - Added a CSS class to the HTML tag of the currently selected language of [Tag::Langbar][1]
@@ -34,3 +38,4 @@ modified_at: 2009-08-?? ??:??:??
     `#render_block` was called via the context object
 
 [1]: {relocatable: ../documentation/tag/langbar.html}
+[2]: {relocatable: ../documentation/contentprocessor/kramdown.html}

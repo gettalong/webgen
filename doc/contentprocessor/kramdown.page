@@ -1,0 +1,36 @@
+---
+title: Webgen::ContentProcessor::Kramdown
+---
+## Description
+
+This processor converts the content, which is assumed to be in kramdown format, to HTML by using the
+[kramdown][1] library. The kramdown format is basically Markdown with some extensions like automatic
+header ID generation, using markup inside HTML elements and so on. There are a [quick reference][2]
+and a detailed [syntax documentation][3] available on the kramdown homepage.
+
+Example
+-------
+
+Here is a short sample of a text in kramdown markup:
+
+    # This a h1 header
+    {:#myid}
+
+    You can just write *your* paragraphs here and
+    [link][1] them below. This is **nice** format!
+
+    > Citations are easy too.
+    > Really. And you can assign them attributes.
+    {:.information}
+
+    * Lists
+    * aren't
+    * difficult
+    * either.
+
+    [1]: http://someurl.com
+
+
+[1]: http://kramdown.rubyforge.org/
+[2]: http://kramdown.rubyforge.org/syntax.html
+[3]: http://kramdown.rubyforge.org/quickref.html
