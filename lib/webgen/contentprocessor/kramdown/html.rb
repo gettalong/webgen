@@ -17,12 +17,12 @@ module Webgen::ContentProcessor
       new(doc, context).convert(doc.tree)
     end
 
-    def convert_a(el, inner, indent)
+    def convert_a(el, indent, opts)
       el.options[:attr]['href'] = @context.tag('relocatable', {'path' => el.options[:attr]['href']}) if @do_convert
-      "<a#{options_for_element(el)}>#{inner}</a>"
+      "<a#{options_for_element(el)}>#{inner(el, indent, opts)}</a>"
     end
 
-    def convert_img(el, inner, indent)
+    def convert_img(el, indent, opts)
       el.options[:attr]['src'] = @context.tag('relocatable', {'path' => el.options[:attr]['src']}) if @do_convert
       "<img#{options_for_element(el)} />"
     end
