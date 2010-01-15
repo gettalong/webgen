@@ -10,7 +10,7 @@ using the Haml library. For detailed information about Sass have a look at the [
 > do this is via Rubygems:
 >
 >     gem install haml
-{.warning}
+{:.warning}
 
 
 ## Example

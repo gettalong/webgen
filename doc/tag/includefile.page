@@ -12,7 +12,7 @@ relative to the website directory or as an absolute filename.
 
 > By surrounding the include file tag with a syntax highlighting tag it is possible to highlight the
 > contents of a file.
-{.information}
+{:.information}
 
 
 ## Examples

@@ -8,7 +8,7 @@ files, inline javascript and css content and general meta tags. This functionali
 example, by webgen tags to add needed javascript or css fragments on a page-per-page basis.
 
 It can also be used to insert arbitrary meta tags on a page-per-page basis. This can be done by
-setting the meta information named [`meta`]({relocatable: ../reference_metainfo.html#meta}) on a
+setting the meta information named [`meta`](../reference_metainfo.html#meta) on a
 page file.
 
 This content processor should be used on template files since its output is only useful in the head

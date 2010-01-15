@@ -8,12 +8,11 @@ Here are step-by-step instructions on how to update your webgen website from 0.4
 * **Update the configuration file `config.yaml`**
 
   The configuration file syntax as well as the names of the configuration options and some defaults
-  changed. For example, the default processing pipeline now uses Maruku (a Markdown converter) as
+  changed. For example, the default processing pipeline now uses kramdown (a Markdown converter) as
   markup language processor instead of Textile. You can find an overview over all available
-  configuration options in the [configuration option reference]({relocatable:
-  reference_configuration.html}). Also have a look at the [configuration file
-  documentation]({relocatable: manual.html#website-configfile}) for more information on the syntax
-  of this file and the available helpers.
+  configuration options in the [configuration option reference](reference_configuration.html). Also
+  have a look at the [configuration file documentation](manual.html#website-configfile) for more
+  information on the syntax of this file and the available helpers.
 
   * Name changes: All configuration options now use underscores to separate word parts instead of
     camelCase.
@@ -32,22 +31,22 @@ Here are step-by-step instructions on how to update your webgen website from 0.4
   This file is not supported anymore since webgen 0.5.x uses a more flexible way for specifying meta
   information and virtual paths. You need to migrate its data to `metainfo` and `virtual` files in
   the source directory. Have a look at the documentation of the [metainfo source
-  handler]({relocatable: sourcehandler/metainfo.html}) and the [virtual source
-  handler]({relocatable: sourcehandler/virtual.html}).
+  handler](sourcehandler/metainfo.html) and the [virtual source
+  handler](sourcehandler/virtual.html).
 
 * **Update meta information names and values**
 
   The names of some meta information keys have been changed. Meta information names are not
-  specified in camelCase anymore but with under\_scores. You can find a complete list of supported
-  meta information names in the [meta information reference]({relocatable:
-  reference_metainfo.html}). The most notable changes are:
+  specified in camelCase anymore but with under_scores. You can find a complete list of supported
+  meta information names in the [meta information reference](reference_metainfo.html). The most
+  notable changes are:
 
-  * directoryName → routed\_title
-  * inMenu → in\_menu
-  * indexFile → index\_path
-  * omitIndexPath → omit\_index\_path
-  * outputNameStyle → output\_path\_style
-  * orderInfo → sort\_info
+  * directoryName → routed_title
+  * inMenu → in_menu
+  * indexFile → index_path
+  * omitIndexPath → omit_index_path
+  * outputNameStyle → output_path_style
+  * orderInfo → sort_info
 
   Also be aware that the syntax of some meta information keys has changed. For example, all meta
   information keys that took a source path name, e.g. `index_path`, now take an localized canonical
@@ -59,7 +58,7 @@ Here are step-by-step instructions on how to update your webgen website from 0.4
   * `virtual` files
   * page and template files
 
-* **Files in [Webgen Page Format]({relocatable: webgen_page_format.html})**
+* **Files in [Webgen Page Format](webgen_page_format.html)**
 
   Since the format of these files changed a little bit you may need to adapt all your files that use
   it, that are primarily page and template files. The main change in the format was a different use
@@ -71,15 +70,15 @@ Here are step-by-step instructions on how to update your webgen website from 0.4
   options. Two options are currently used by webgen: `name` and `pipeline`. So you could change the
   name and the processing pipeline of a block by using a block start line like:
 
-      --- name:other pipeline:tags,maruku,blocks
+      --- name:other pipeline:tags,kramdown,blocks
 
 * **Block inclusion in template/page files**
 
   The way how named blocks are included has changed. This feature is now provided by the content
-  processor [blocks]({relocatable: contentprocessor/blocks.html}) instead of the tag `block`. This
-  allows you to specify the point in the processing pipeline when a block should be included. So you
-  definitely need to update your `default.template` file as well as any other page/template file
-  where you used the `block` tag.
+  processor [blocks](contentprocessor/blocks.html) instead of the tag `block`. This allows you to
+  specify the point in the processing pipeline when a block should be included. So you definitely
+  need to update your `default.template` file as well as any other page/template file where you used
+  the `block` tag.
 
   So you need to look for `\{block: content}` tags (where `content` is just a place holder for the
   name of the block that should be included) and replace them with `<webgen:block name='content'
@@ -87,16 +86,16 @@ Here are step-by-step instructions on how to update your webgen website from 0.4
 
 * **Update tag names and parameters**
 
-  Since the names of the configuration options changed (from using camelCase to using under\_scores)
+  Since the names of the configuration options changed (from using camelCase to using under_scores)
   and some tags have different options, you need to change all tag parameters. You may also need to
-  convert old tag names to new ones (same reason: camelCase to under\_score), for example,
+  convert old tag names to new ones (same reason: camelCase to under_score), for example,
   `includeFile` is now `include_file`.
 
 * **Update your ERB code**
 
   If you have any ERB code in your template or page files you will most certainly have to adapt them
-  to the new [API]({relocatable: api.html}). One thing that has been used often is the check if a
-  page file has a certain block:
+  to the new [API](api.html). One thing that has been used often is the check if a page file has a
+  certain block:
 
       <%% if node.node_info[:page_data].blocks.has_key?('NAME') %>
       ...
@@ -111,10 +110,10 @@ Here are step-by-step instructions on how to update your webgen website from 0.4
 * **Extensions development**
 
   Since the complete core of webgen has changed you need to rewrite all your plugins for the 0.5.x
-  series. Howver, webgen has complete [API documentation]({relocatable: api.html}) now which
-  provides you with all needed information as well as examples on how to implement source handlers,
-  tags, content processors, ... If you still have any questions, don't hesitate to contact me or
-  write a mail to the mailing list!
+  series. Howver, webgen has complete [API documentation](api.html) now which provides you with all
+  needed information as well as examples on how to implement source handlers, tags, content
+  processors, ... If you still have any questions, don't hesitate to contact me or write a mail to
+  the mailing list!
 
 * **Running webgen on the converted website**
 

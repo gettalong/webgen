@@ -10,14 +10,15 @@ attribute set.
 > context! This is to ensure that fragment nodes are not created from multiple block of one page
 > file. So this content processor has no effect when used in the pipeline of blocks except if the
 > block is named `content`.
-{.warning}
+{:.warning}
 
-The default markup language Maruku automatically generates an `id` attribute for all headers. If you
-use another markup language or plain old HTML, you might need to set the `id` attributes by hand.
+The default markup language kramdown automatically generates an `id` attribute for all headers. If
+you use another markup language or plain old HTML, you might need to set the `id` attributes by
+hand.
 
 > The reason why only header tags with an `id` attribute are used is that only those can be
 > referenced and linked to later.
-{.information}
+{:.information}
 
 The generated fragment nodes can be used like any other node. So you can link to them and use them
 in a menu. Concerning the menu, there is a setting for the `tag.menu.used_nodes` option called

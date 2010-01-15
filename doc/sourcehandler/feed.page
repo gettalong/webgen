@@ -4,8 +4,7 @@ title: Webgen::SourceHandler::Feed
 ## Description
 
 This source handler automatically generates an atom or RSS feed for a set of files from a file in
-[Webgen Page Format]({relocatable: ../webgen_page_format.html}) (the format which is also used for
-page files).
+[Webgen Page Format](../webgen_page_format.html) (the format which is also used for page files).
 
 The following meta information keys are supported:
 
@@ -17,7 +16,7 @@ The following meta information keys are supported:
     > Be aware that if you want to include a single file or files in a specific language only you
     > need to include the language part since this is a LCN and not a CN pattern, eg. `mypage.html`
     > won't work but `mypage.en.html` will!
-    {.information}
+    {:.information}
 
 *   `number_of_entries` (OPTIONAL)
 
@@ -80,7 +79,7 @@ The following meta information keys of page files are used if they are specified
     updated.
 
     > This is the field that is used to sort the entries.
-    {.information}
+    {:.information}
 
 *   `title`
 

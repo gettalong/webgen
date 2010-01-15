@@ -11,7 +11,7 @@ accessible via the http(s) and ftp protcols.
 > preferred way to do this is via Rubygems:
 >
 >     gem install archive-tar-minitar
-{.warning}
+{:.warning}
 
 The first parameter for the tar archive source is the URL of the archive and the second, optional,
 parameter specifies a glob (see [File.fnmatch]) for selecting the to-be-used files/directories in the
@@ -22,9 +22,9 @@ tar archive.
 
 ## Examples
 
-The used sources can be specified via the [`sources` configuration option]({relocatable:
-../reference_configuration.html#sources}), so each of the examples below can be specified in the
-`config.yaml` file.
+The used sources can be specified via the [`sources` configuration
+option](../reference_configuration.html#sources), so each of the examples below can be specified in
+the `config.yaml` file.
 
 1.  Using all files/directories from a local tar archive in addition the default configuration:
 

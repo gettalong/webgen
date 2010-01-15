@@ -57,4 +57,4 @@ output the result of the Ruby code (note the equation sign!). And the fourth lin
 > You may need to ensure that the ERB start and end tags are not processed by the content
 > processor. For example, when using the RedCloth content processor, you may need to surround the
 > ERB code with `<notextile>` tags!
-{.important}
+{:.important}

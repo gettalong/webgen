@@ -5,8 +5,8 @@ title: Webgen::SourceHandler::Template
 
 The template handler processes the templates files. Templates, as the name already implies, normally
 specify the layout and the overall "picture" of a web page that is defined using a page file. These
-files are in [Webgen Page Format]({relocatable: ../webgen_page_format.html}) (the format which is
-also used for page files).
+files are in [Webgen Page Format](../webgen_page_format.html) (the format which is also used for
+page files).
 
 The configuration option `sourcehandler.template.default_template` specifies the name of the default
 template which is used when no explicit template is set via the meta information `template`. webgen

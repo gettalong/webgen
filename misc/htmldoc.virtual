@@ -3,3 +3,12 @@ api.html:
   title: API
   in_menu: true
   sort_info: 60
+
+/rdoc/index.html:
+  title: API
+
+/rdoc/Webgen/Context.html:
+  title: Webgen::Context
+
+/rdoc/Webgen/ContentProcessor/Head.html:
+  title: Webgen::ContentProcessor::Head
