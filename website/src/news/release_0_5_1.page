@@ -11,7 +11,7 @@ modified_at: 2008-07-31 18:25:35 +02:00
 
 <webgen:block name='changes' />
 
---- name:notes pipeline:maruku
+--- name:notes pipeline:kramdown
 
 Since the 0.5.0 release did not have as many features as the older 0.4.x releases, this release as
 well as the next few releases concentrate on porting features from the latest 0.4.x version. The
@@ -25,25 +25,25 @@ also be created.
 
 [google-group]: http://groups.google.com/group/webgen-users/
 
---- name:changes pipeline:tags,maruku
+--- name:changes pipeline:tags,kramdown
 
 * Major feature enhancements:
 
   - ported 4 content processors: [haml], [sass], [rdoc] and [builder]
-  - ported 5 tags: [breadcrumb\_trail], [langbar], [include\_file], [execute\_cmd] and [date]
+  - ported 5 tags: [breadcrumb_trail], [langbar], [include_file], [execute_cmd] and [date]
   - implemented 1 new tag: [coderay]
 
 * Bug fixes:
 
   - fixed bug RF#21387: webgen CLI now works correctly when `stty` is not available
 
-[haml]:              {relocatable: ../documentation/contentprocessor/haml.html}
-[sass]:              {relocatable: ../documentation/contentprocessor/sass.html}
-[rdoc]:              {relocatable: ../documentation/contentprocessor/rdoc.html}
-[builder]:           {relocatable: ../documentation/contentprocessor/builder.html}
-[breadcrumb\_trail]: {relocatable: ../documentation/tag/breadcrumbtrail.html}
-[langbar]:           {relocatable: ../documentation/tag/langbar.html}
-[include\_file]:     {relocatable: ../documentation/tag/includefile.html}
-[execute_cmd]:       {relocatable: ../documentation/tag/executecommand.html}
-[coderay]:           {relocatable: ../documentation/tag/coderay.html}
-[date]:              {relocatable: ../documentation/tag/date.html}
+[haml]:             {relocatable: ../documentation/contentprocessor/haml.html}
+[sass]:             {relocatable: ../documentation/contentprocessor/sass.html}
+[rdoc]:             {relocatable: ../documentation/contentprocessor/rdoc.html}
+[builder]:          {relocatable: ../documentation/contentprocessor/builder.html}
+[breadcrumb_trail]: {relocatable: ../documentation/tag/breadcrumbtrail.html}
+[langbar]:          {relocatable: ../documentation/tag/langbar.html}
+[include_file]:     {relocatable: ../documentation/tag/includefile.html}
+[execute_cmd]:      {relocatable: ../documentation/tag/executecommand.html}
+[coderay]:          {relocatable: ../documentation/tag/coderay.html}
+[date]:             {relocatable: ../documentation/tag/date.html}

@@ -4,11 +4,14 @@ api.html:
   in_menu: true
   sort_info: 60
 
-/rdoc/index.html:
+rdoc/index.html:
   title: API
 
-/rdoc/Webgen/Context.html:
+rdoc/Webgen/Context.html:
   title: Webgen::Context
 
-/rdoc/Webgen/ContentProcessor/Head.html:
+rdoc/Webgen/ContentProcessor/Head.html:
   title: Webgen::ContentProcessor::Head
+
+rdoc/Webgen/Tag/Base.html:
+  title: Webgen::Tag::Base

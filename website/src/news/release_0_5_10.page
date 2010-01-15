@@ -11,12 +11,12 @@ modified_at: 2009-08-10 08:45:00 +02:00
 
 <webgen:block name='changes' />
 
---- name:notes pipeline:tags,maruku
+--- name:notes pipeline:tags,kramdown
 
 This is just a small bug fix release. The only change feature wise was the addition of a content
 processor for checking XML (XHTML) files for validness.
 
---- name:changes pipeline:tags,maruku
+--- name:changes pipeline:tags,kramdown
 
 * Minor enhancements:
 

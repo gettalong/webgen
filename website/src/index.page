@@ -25,7 +25,7 @@ write a static website by hand, of course. But by using webgen you have several 
     relative ones. This allows one to preview a generated site without a web server!
 
 The above list should just give you a glimpse of what is possible with webgen. Have a look at the
-[features page]({relocatable: features.html}) for a more complete list and a feature comparison to
+[features page](features.html) for a more complete list and a feature comparison to
 other static website generators.
 
 Although webgen is very powerful it is also very easy to use. A basic website can be created in just
@@ -43,7 +43,7 @@ browser:
 
 Actually, this website was generated with webgen and provides an online demonstration of its
 features. For example, the menu that you can see at the top was created dynamically. For more
-information have a look at the [documentation]({relocatable: /documentation/})!
+information have a look at the [documentation](/documentation/)!
 
 
 ## Feature requests, bugs, ...
@@ -74,13 +74,13 @@ found whenever I'm online.
 
 ## Download/Install webgen
 
-<div id='download-box-inner'>
+<div id='download-box-inner' markdown="1">
 The latest webgen version
 
-<div id='download-box-version'>0\.5.10</div>
+<div id='download-box-version'>0.5.10</div>
 
-was released on [*2009-08-10*]({relocatable: news/index.html}) and can be installed by following the
-instructions on the [installation]({relocatable: installation.html}) page!
+was released on [*2009-08-10*](news/index.html) and can be installed by following the
+instructions on the [installation](installation.html) page!
 
 </div>
 

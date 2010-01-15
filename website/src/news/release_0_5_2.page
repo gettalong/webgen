@@ -11,7 +11,7 @@ modified_at: 2008-08-13 17:13:22 +02:00
 
 <webgen:block name='changes' />
 
---- name:notes pipeline:maruku
+--- name:notes pipeline:kramdown
 
 This release brings some updates to the core as well as a browser based GUI, some bug fixes and
 better Windows support. The most noteable update to the core is better partial site generation
@@ -33,7 +33,7 @@ line interface. It features
 The preview mode when creating a website is very useful for choosing the right template and style
 for a new website, especially for people new to webgen.
 
---- name:changes pipeline:tags,maruku
+--- name:changes pipeline:tags,kramdown
 
 * Major enhancements:
 

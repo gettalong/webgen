@@ -11,7 +11,7 @@ modified_at: 2009-02-27 15:56:23 +02:00
 
 <webgen:block name='changes' />
 
---- name:notes pipeline:tags,maruku
+--- name:notes pipeline:tags,kramdown
 
 Although this is a just a minor interim release, the 0.5.x series is declared stable with this
 release and should be used instead of the old stable 0.4.x series! The one exception is when you
@@ -20,7 +20,7 @@ rely on features of the 0.4.x series that have not been ported to 0.5.x yet.
 Aside from this this release brings some new features, various issues were fixed and the homepage
 was updated sothat the current version and release date are visible from the start page.
 
---- name:changes pipeline:tags,maruku
+--- name:changes pipeline:tags,kramdown
 
 * Major enhancements:
 

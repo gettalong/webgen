@@ -22,7 +22,7 @@ tested.
 > Ruby 1.9.1 support notes (as of 2009-06-19):
 >
 > * There may be problems with Maruku and character encodings.
-{.information}
+{:.information}
 
 
 ## Platform Specific Installation Instructions
@@ -40,13 +40,13 @@ After running the following commands, webgen and all the mandatory dependencies 
 
 > You will also need to add `export PATH=$PATH:/var/lib/gems/1.8/bin` to your `~/.bashrc` because
 > this is the binary path the executable files get installed.
-{.information}
+{:.information}
 
 > Ubuntu has a package for the old 0.4.7 version of webgen. If you want to use that, you just need
 > to run
 >
 >     sudo aptitude install webgen0.4
-{.information}
+{:.information}
 
 
 ### Mac OS X
@@ -90,7 +90,7 @@ at the optional dependencies which provide additional functionality.
 > will have to use the following command to install webgen:
 >
 >     gem install --development webgen
-{.error}
+{:.error}
 
 
 ### Manual Installation
@@ -129,7 +129,7 @@ it should normally work with newer versions, too!
 
 * (mandatory) [cmdparse](http://cmdparse.rubyforge.org) version 2.0.2 or higher
 
-* (mandatory) [maruku](http://maruku.rubyforge.org) version 0.6.0
+* (mandatory) [kramdown](http://kramdown.rubyforge.org) version 0.4.0 or higher
 
 * (mandatory for webgui) [ramaze](http://ramaze.net) version 2009.04
 
@@ -139,6 +139,8 @@ it should normally work with newer versions, too!
   website Rakefiles
 
 * (optional) [RedCloth](http://redcloth.rubyforge.org) version 4.1.9 or higher for Textile support
+
+* (optional) [maruku](http://maruku.rubyforge.org) version 0.6.0 or higher
 
 * (optional) [haml](http://haml.hamptoncatlin.com) version 2.2.7 or higher for haml and sass support
 

@@ -11,7 +11,7 @@ modified_at: 2008-09-08 09:38:34 +02:00
 
 <webgen:block name='changes' />
 
---- name:notes pipeline:tags,maruku
+--- name:notes pipeline:tags,kramdown
 
 This release features updated documentation and some enhancements and fixes. The [upgrading
 instructions] have been expanded and provide now more details on how to convert an old 0.4.x site to
@@ -19,7 +19,7 @@ instructions] have been expanded and provide now more details on how to convert 
 
 [upgrading instructions]: {relocatable: ../documentation/upgrading.html}
 
---- name:changes pipeline:tags,maruku
+--- name:changes pipeline:tags,kramdown
 
 * Major enhancements:
 
