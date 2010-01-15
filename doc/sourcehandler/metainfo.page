@@ -4,7 +4,7 @@ title: Webgen::SourceHandler::Metainfo
 ## Description
 
 This source handler provides the ability to set meta information for any path. It uses files in
-[Webgen Page Format]({relocatable: ../webgen_page_format.html}) which can have two special blocks:
+[Webgen Page Format](../webgen_page_format.html) which can have two special blocks:
 
 * `paths`: This block specifies meta information for paths and therefore this meta information is
   applied before a node for a path is created. This can be used, for example, to change the output

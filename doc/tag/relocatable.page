@@ -15,7 +15,7 @@ ensuring that the relative path to file is valid.
 
 > You can only use the `relocatable` tag with paths that are handled by webgen. If you want to
 > handle paths that are not normally handled by webgen, create a virtual path for them.
-{.important}
+{:.important}
 
 If the specified path is an absolute URL (like `http://webgen.rubyforge.org`), it will just return
 it. And if you specify an URL fragment, this fragment has to exist. If you don't want to resolve a

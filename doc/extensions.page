@@ -10,7 +10,6 @@ pattern = /#{File.join(context.node.parent.alcn, '/')}(contentprocessor|output|s
 context.node.tree.node_access[:alcn].select {|alcn, n| alcn =~ pattern}.sort.each do |alcn, n|
 next if n.is_fragment?
 %>
-* <%= context.dest_node.link_to(n) %>
-<%
+* <%= context.dest_node.link_to(n) %><%
 end
 %>

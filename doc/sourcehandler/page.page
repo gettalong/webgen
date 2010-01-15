@@ -4,9 +4,9 @@ title: Webgen::SourceHandler::Page
 ## Description
 
 This source handler uses page files which are used to specify the actual content for the website.
-These files are written using [Webgen Page Format]({relocatable: ../webgen_page_format.html}).
-Therefore they contain the content for the web page and, optionally, meta information. The extension
-`page` is changed to `html` for the output file and canonical names.
+These files are written using [Webgen Page Format](../webgen_page_format.html). Therefore they
+contain the content for the web page and, optionally, meta information. The extension `page` is
+changed to `html` for the output file and canonical names.
 
 *In contrast* to other handled files, page files can never be unlocalized! If they have no language
 set, the default language specified using the configuration option `website.lang` is used. This

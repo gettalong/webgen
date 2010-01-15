@@ -5,8 +5,21 @@ title: Webgen::ContentProcessor::Kramdown
 
 This processor converts the content, which is assumed to be in kramdown format, to HTML by using the
 [kramdown][1] library. The kramdown format is basically Markdown with some extensions like automatic
-header ID generation, using markup inside HTML elements and so on. There are a [quick reference][2]
-and a detailed [syntax documentation][3] available on the kramdown homepage.
+header ID generation, using markup inside HTML elements and some more. There are a [quick
+reference][2] and a detailed [syntax documentation][3] available on the kramdown homepage.
+
+One can customize how this processor works by using the following configuration options:
+
+* `contentprocessor.kramdown.handle_links`: If `true` (the default), then all link URLs created via
+  kramdown syntax are automatically run through the [relocatble tag](../tag/relocatable.html). This
+  avoids using the `relocatable` tag explicitly but ensures valid links nonetheless.
+
+* `contentprocesoor.kramdown.options`: This configuration option can be used to customize the
+  kramdown processor. Have a look at the [kramdown homepage][1] for available options.
+
+> kramdown is the default markup content processor for webgen as its markup syntax is easy to learn
+> and nice to look at. Give it a try!
+{:.info}
 
 Example
 -------

@@ -1,6 +1,6 @@
---- pipeline:erb,tags,maruku,blocks
-[Back]({relocatable: extensions.html}) to the extension listing.
-{.backlink}
+--- pipeline:erb,tags,kramdown,blocks
+[Back](extensions.html) to the extension listing.
+{:.backlink}
 
 # {title:}
 
@@ -13,5 +13,5 @@
 
 <webgen:block name='content' />
 
-[Back]({relocatable: extensions.html}) to the extension listing.
-{.backlink}
+[Back](extensions.html) to the extension listing.
+{:.backlink}

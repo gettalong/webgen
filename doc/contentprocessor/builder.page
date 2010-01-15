@@ -5,14 +5,13 @@ title: Webgen::ContentProcessor::Builder
 
 This content processor can be used to programatically create XHTML/XML documents
 ([Reference][1]). The top builder object is provided through the `xml` object. There are also other
-objects provided by webgen available - have a look at the [erb documentation]({relocatable:
-erb.html}).
+objects provided by webgen available - have a look at the [erb documentation](erb.html).
 
 > This extension is only available if you have installed the [builder][1] library. The preferred way
 > to do this is via Rubygems:
 >
 >     gem install builder
-{.warning}
+{:.warning}
 
 
 ## Examples

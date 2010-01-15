@@ -28,7 +28,7 @@ For information on how to create such a tag classes have a look at the API docum
 class Webgen::Tag::Base.
 
 
-## Syntax for webgen Tags  {#syntax}
+## Syntax for webgen Tags       {#syntax}
 
 webgen tags are defined using a special markup construct which consists of the tag name, a parameter
 part and a body part.
@@ -52,7 +52,7 @@ A tag can be specified in one of the following ways:
 
     > The parameters defined using this syntax are actually specified using a hash in YAML
     > markup. So you can use any valid YAML construct in the YAML hash definition.
-    {.information}
+    {:.information}
 
 *   Additionally, you can use a body part with any of the above forms. To specify that the tag has a
     body part, just use two colons instead of one after the tag name and don't forget the closing

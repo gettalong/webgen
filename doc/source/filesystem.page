@@ -7,7 +7,7 @@ This is the default source extension used when creating a new webgen website. It
 match a certain glob (default value for the glob is to match all files) under a specific directory.
 
 > The default configuration for a new website uses all files under the `src` directory.
-{.information}
+{:.information}
 
 The first parameter for the file system source is the directory under which the to-be-used files are
 and the second, optional, parameter specifies a glob (see [Dir.glob]).
@@ -16,9 +16,9 @@ and the second, optional, parameter specifies a glob (see [Dir.glob]).
 
 ## Examples
 
-The used sources can be specified via the [`sources` configuration option]({relocatable:
-../reference_configuration.html#sources}), so each of the examples below can be specified in the
-`config.yaml` file.
+The used sources can be specified via the [`sources` configuration
+option](../reference_configuration.html#sources), so each of the examples below can be specified in
+the `config.yaml` file.
 
 1.  The default configuration: all files under the `src` folder of the website directory
 

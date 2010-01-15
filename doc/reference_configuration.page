@@ -60,7 +60,7 @@ configuration options) and/or how to use it in a webgen tag (for tag configurati
           website.lang: de
 
 
-*   ### website.link\_to\_current\_page
+*   ### website.link_to_current_page
 
     If this option is set to `true`, automatically generated links from a page to itself are
     used. Otherwise, only the title of the page is shown.
@@ -92,7 +92,7 @@ configuration options) and/or how to use it in a webgen tag (for tag configurati
 
 ## Commonly Used Options
 
-*   ### common.sitemap.honor\_in\_menu
+*   ### common.sitemap.honor_in_menu
 
     Specifies whether the sitemap should only include nodes that have the meta information `in_menu`
     set.
@@ -110,7 +110,7 @@ configuration options) and/or how to use it in a webgen tag (for tag configurati
           Sitemap with in-menu nodes: \{sitemap: {honor_in_menu: true}}
 
 
-*   ### common.sitemap.any\_lang
+*   ### common.sitemap.any_lang
 
     Specifies whether the sitemap should include nodes in any language or only those without a
     language or with the language of the node in which the sitemap tag is used.
@@ -128,7 +128,7 @@ configuration options) and/or how to use it in a webgen tag (for tag configurati
           Sitemap with nodes in any language: \{sitemap: {any_lang: true}}
 
 
-*   ### common.sitemap.used\_kinds
+*   ### common.sitemap.used_kinds
 
     Specifies the kind of nodes that should be used in the sitemap. This defaults to all nodes with
     the kind `page`. If this is set to an empty array, any kind of node is used.
@@ -169,7 +169,7 @@ configuration options) and/or how to use it in a webgen tag (for tag configurati
       source/filesystem.html}) for more examples!
 
 
-*   ### passive\_sources
+*   ### passive_sources
 
     Specifies one or more sources which are not actively used during the node creation time, ie. no
     nodes are created from these sources by default. Instead, they lie dormant until later and are
@@ -205,7 +205,7 @@ configuration options) and/or how to use it in a webgen tag (for tag configurati
           output: [Webgen::Output::FileSystem, custom_out]
 
 
-*   ### output.do\_deletion
+*   ### output.do_deletion
 
     Specifies whether the output class should delete generated paths once the source paths are not
     available anymore.
@@ -274,7 +274,7 @@ configuration options) and/or how to use it in a webgen tag (for tag configurati
           sourcehandler.casefold: true
 
 
-*   ### sourcehandler.use\_hidden\_files
+*   ### sourcehandler.use_hidden_files
 
     Specifies whether hidden files (those starting with a dot) should be used.
 
@@ -301,7 +301,7 @@ configuration options) and/or how to use it in a webgen tag (for tag configurati
           sourcehandler.ignore: [**/*~, **/CVS/**]
 
 
-*   ### sourcehandler.default\_lang\_in\_output\_path
+*   ### sourcehandler.default_lang_in_output_path
 
     Specifies whether output paths in the default language should have the language code in their
     name.
@@ -315,7 +315,7 @@ configuration options) and/or how to use it in a webgen tag (for tag configurati
           sourcehandler.default_lang_in_output_path: true
 
 
-*   ### sourcehandler.default\_meta\_info
+*   ### sourcehandler.default_meta_info
 
     Specifies default meta information for all source handlers or for specific ones. The
     configuration file provides a shortcut for setting meta information items using the special
@@ -335,7 +335,7 @@ configuration options) and/or how to use it in a webgen tag (for tag configurati
               in_menu: true
 
 
-*   ### sourcehandler.template.default\_template
+*   ### sourcehandler.template.default_template
 
     Specifies the name of the default template file of a directory. This template is used as
     fallback when no specific template is specified.
@@ -372,7 +372,7 @@ configuration options) and/or how to use it in a webgen tag (for tag configurati
           config['contentprocessor.map']['newcp'] = ['Extension::MyNewContentProcessor', :binary]
 
 
-*   ### contentprocessor.erubis.use\_pi
+*   ### contentprocessor.erubis.use_pi
 
     Specifies whether Erubis should look for XML processing instructions or the standard ERB tags
     when processing content.
@@ -410,7 +410,7 @@ configuration options) and/or how to use it in a webgen tag (for tag configurati
 
     * Syntax: `BOOLEAN` where `BOOLEAN` is either `true` or `false`.
 
-    <%= show_default['contentprocessor.kramdown.handle_links] %>
+    <%= show_default['contentprocessor.kramdown.handle_links'] %>
 
     * Example for setting the option in the configuration file:
 
@@ -424,14 +424,14 @@ configuration options) and/or how to use it in a webgen tag (for tag configurati
 
     * Syntax: `\{KEY: VALUE, ...}` where `KEY` and `VALUE` are key-value pairs of kramdown options
 
-    <%= show_default['contentprocessor.kramdown.options] %>
+    <%= show_default['contentprocessor.kramdown.options'] %>
 
     * Example for setting the option in the configuration file:
 
           contentprocessor.kramdown.options: {:auto_ids: false}
 
 
-*   ### contentprocessor.redcloth.hard\_breaks
+*   ### contentprocessor.redcloth.hard_breaks
 
     Specifies whether hard breaks (i.e. single newlines) in paragraphs are converted to HTML break
     tags.
@@ -530,7 +530,7 @@ shows how to set the option in the configuration file.
           Breadcrumb trail with different separator: \{breadcrumb_trail: {separator: ' --- '}}
 
 
-*   ### tag.breadcrumbtrail.omit\_index\_path
+*   ### tag.breadcrumbtrail.omit_index_path
 
     Specifies that the last part of the breadcrumb trail should be omitted if it is an index path.
 
@@ -547,7 +547,7 @@ shows how to set the option in the configuration file.
           Breadcrumb trail with index path omitted: \{breadcrumb_trail: {omit_index_path: true}}
 
 
-*   ### tag.breadcrumbtrail.start\_level
+*   ### tag.breadcrumbtrail.start_level
 
     Specifies the level at which the breadcrumb trail starts. The default of 0 means to start a the
     root directory. Setting this option to 1 starts the breadcrumb trail at the first level. If you
@@ -574,7 +574,7 @@ shows how to set the option in the configuration file.
           Breadcrumb trail starting at level 2: \{breadcrumb_trail: {start_level: 2}}
 
 
-*   ### tag.breadcrumbtrail.end\_level
+*   ### tag.breadcrumbtrail.end_level
 
     Specifies the level at which the breadcrumb trail ends. Have a look at the documentation for
     `tag.breadcrumbtrail.start_level` for more information on the useable level numbers.
@@ -609,7 +609,7 @@ shows how to set the option in the configuration file.
           highlighting some ruby code \{coderay:: ruby}puts 5 + 5{coderay}
 
 
-*   ### tag.coderay.process\_body
+*   ### tag.coderay.process_body
 
     Specifies whether the body of the tag should be processed by the tags content processor first.
 
@@ -643,7 +643,7 @@ shows how to set the option in the configuration file.
           wrapping in a span: \{coderay:: {lang: ruby, wrap: span}}puts 5 + 5{coderay}
 
 
-*   ### tag.coderay.line\_numbers
+*   ### tag.coderay.line_numbers
 
     Specifies whether line numbers should be shown.
 
@@ -660,7 +660,7 @@ shows how to set the option in the configuration file.
           not showing line numbers: \{coderay:: {lang: ruby, line_numbers: false}}puts 5 + 5{coderay}
 
 
-*   ### tag.coderay.line\_number\_start
+*   ### tag.coderay.line_number_start
 
     Specifies the line number that should be used for the first line.
 
@@ -677,7 +677,7 @@ shows how to set the option in the configuration file.
           starting with line 4: \{coderay:: {lang: ruby, line_number_start: 4}}puts 5 + 5{coderay}
 
 
-*   ### tag.coderay.bold\_every
+*   ### tag.coderay.bold_every
 
     Specifies the interval at which the line numbers should appear bold.
 
@@ -694,7 +694,7 @@ shows how to set the option in the configuration file.
           every other line bold: \{coderay:: {lang: ruby, bold_every: 2}}puts 5 + 5{coderay}
 
 
-*   ### tag.coderay.tab\_width
+*   ### tag.coderay.tab_width
 
     Specifies the number of spaces that should be used to replace tabulator characters.
 
@@ -770,7 +770,7 @@ shows how to set the option in the configuration file.
           executing a simple command \{exeucte_cmd: echo hallo}
 
 
-*   ### tag.executecommand.process\_output
+*   ### tag.executecommand.process_output
 
     Specifies whether the output of the executed command should be further processed by the tags
     content processor.
@@ -788,7 +788,7 @@ shows how to set the option in the configuration file.
           executing command without further processing \{execute_cmd: {command: 'echo hallo', process_output: false}}
 
 
-*   ### tag.executecommand.escape\_html
+*   ### tag.executecommand.escape_html
 
     Specifies whether special HTML characters in the output of the executed command should be escaped.
 
@@ -820,7 +820,7 @@ shows how to set the option in the configuration file.
           including a file \{include_file: my_file.txt}
 
 
-*   ### tag.includefile.process\_output
+*   ### tag.includefile.process_output
 
     Specifies whether the content of the file should be further processed by the tags content
     processor.
@@ -838,7 +838,7 @@ shows how to set the option in the configuration file.
           including a file without further processing \{include_file: {filename: my_file.txt, process_output: false}}
 
 
-*   ### tag.includefile.escape\_html
+*   ### tag.includefile.escape_html
 
     Specifies whether special HTML characters in the content of the file should be escaped.
 
@@ -873,7 +873,7 @@ shows how to set the option in the configuration file.
           Langbar with another separator: \{langbar: {separator: ' --- '}}
 
 
-*   ### tag.langbar.show\_own\_lang
+*   ### tag.langbar.show_own_lang
 
     Specifies whether the link to the language of the current page should be displayed.
 
@@ -890,7 +890,7 @@ shows how to set the option in the configuration file.
           Langbar with current page's lang not shown: \{langbar: {show_own_lang: false}}
 
 
-*   ### tag.langbar.show\_single\_lang
+*   ### tag.langbar.show_single_lang
 
     Specifies whether the list should be displayed even if there are no translations of the page
     (i.e. when there is only one page).
@@ -908,7 +908,7 @@ shows how to set the option in the configuration file.
           Langbar with single language not shown: \{langbar: {show_single_lang: false}}
 
 
-*   ### tag.langbar.lang\_names
+*   ### tag.langbar.lang_names
 
     This configuration option can be used to specify the language names that should be displayed
     instead of the language codes.
@@ -959,7 +959,7 @@ shows how to set the option in the configuration file.
           You will find more info on the \{link: {path: docu.html, attr: {title: DocuPage}}} page!
 
 
-*   ### tag.menu.used\_nodes
+*   ### tag.menu.used_nodes
 
     Specifies the type of nodes that should be used for menu generation. If `all` is specified then
     all available menu nodes are used, if `files` is specified then only menu nodes that represent
@@ -979,7 +979,7 @@ shows how to set the option in the configuration file.
           Show the fragment node menu: \{menu: {used_nodes: fragments}}
 
 
-*   ### tag.menu.start\_level
+*   ### tag.menu.start_level
 
     Specifies the start level for the menu. All nodes with a lower level than this number are not
     shown in the menu.
@@ -997,7 +997,7 @@ shows how to set the option in the configuration file.
           Menu starting at level 2: \{menu: {start_level: 2}}
 
 
-*   ### tag.menu.min\_levels
+*   ### tag.menu.min_levels
 
     Specifies the minimum number of levels that should always be shown. For example, if this is set
     to `2` then two menu levels are always shown.
@@ -1015,7 +1015,7 @@ shows how to set the option in the configuration file.
           Menu that always shows at least 2 levels : \{menu: {min_levels: 2}}
 
 
-*   ### tag.menu.max\_levels
+*   ### tag.menu.max_levels
 
     Specifies the maximum number of levels that should be shown even if there would be more. For
     example, if this is set to `2` then there are only shown at most two menu levels.
@@ -1033,7 +1033,7 @@ shows how to set the option in the configuration file.
           Menu that always shows at most 2 levels : \{menu: {max_levels: 2}}
 
 
-*   ### tag.menu.show\_current\_subtree\_only
+*   ### tag.menu.show_current_subtree_only
 
     Specifies whether only the current subtree (ie. the subtree in which the node is that is
     displayed) should be shown in the menu or all subtrees. This option takes effect when there are
@@ -1203,7 +1203,7 @@ shows how to set the option in the configuration file.
           {tikz}
 
 
-*   ### tag.tikz.img\_attr
+*   ### tag.tikz.img_attr
 
     Specifies additional HTML attributes that should be set on the generated `img` tag.
 

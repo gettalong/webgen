@@ -16,7 +16,7 @@ its many options that let you decide every detail of the menu.
 > The menu is constructed using HTML lists with `ul` and `li` tags.  However, the menu normally
 > looks better if no discs are shown for the menu items (using the CSS directive `list-style-type:
 > none`).
-{.information}
+{:.information}
 
 It uses the meta information `in_menu` and `sort_info` to determine which nodes should be in the
 menu and how they should be ordered. A separate menu tree is then created from all nodes for each
@@ -30,7 +30,7 @@ generating an in-page content menu of all the header sections.
 >
 > However, when using the value `all` for `tag.menu.used_nodes`, some nodes which have `in_menu` set
 > to `false` may appear in the menu if they have fragments beneath them that are in the menu!
-{.important}
+{:.important}
 
 The rendered menu consists of `ul` and `li` tags and the links (or `span` elements) to the menu
 entries . The `li` tags have special CSS classes set for styling. These CSS class names are as
@@ -51,7 +51,7 @@ menu.
 
 > Set `tag.menu.nested` to `false` if you want to generate, for example, a horizontal menu, ie. a
 > menu that has one horizontal bar for each menu level.
-{.information}
+{:.information}
 
 ## "Static" Menus
 
