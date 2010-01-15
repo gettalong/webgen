@@ -64,6 +64,7 @@ Webgen::WebgenTask.new('htmldoc') do |site|
         ["/website_styles/#{name.sub(prefix, '')}/", 'Webgen::Source::Resource', name, '/src/**', '/src/']
     end
     config['output'] = ['Webgen::Output::FileSystem', 'htmldoc']
+    config.default_processing_pipeline('Page' => 'erb,tags,kramdown,blocks,fragments')
   end
 end
 
@@ -160,7 +161,8 @@ EOF
 
       s.files = PKG_FILES.to_a
       s.add_dependency('cmdparse', '>= 2.0.2')
-      s.add_dependency('maruku', '0.6.0')
+      s.add_dependency('kramdown', '>= 0.4.0')
+      s.add_development_dependency('maruku', '>= 0.6.0')
       s.add_development_dependency('rake', '>= 0.8.3')
       s.add_development_dependency('ramaze', '>= 2009.04')
       s.add_development_dependency('launchy', '>= 0.3.2')
@@ -260,6 +262,7 @@ EOF
         config['sources'] <<
           ["/documentation/website_styles/#{name.sub(prefix, '')}/", 'Webgen::Source::Resource', name, '/src/**', '/src/']
       end
+      config.default_processing_pipeline('Page' => 'erb,tags,kramdown,blocks,fragments')
     end
   end
 
