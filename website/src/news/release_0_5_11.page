@@ -33,10 +33,12 @@ modified_at: 2009-08-?? ??:??:??
   - Fixed order of feed entries (now sorted from most recent to oldest) (reported by Tuomo Valkonen)
   - Fixed error in `SourceHandler::Virtual` when creating virtual directories (reported by Tuomo
     Valkonen)
-  - Fixed RF#27075: Typo in webgen documentation (reported by Luis Parravicini)
-  - Fixed bug which occured when archive-tar-minitar was not installed
   - Fixed bug in `ContentProcessor::Blocks`: `context.dest_node` was not correctly set when
     `#render_block` was called via the context object
+  - Fixed bug in `Sourcehandler::Main`: an error was raised when the configuration option
+    `output.do_deletion` was set to `true` (reported by Thomas Deselaers)
+  - Fixed RF#27075: Typo in webgen documentation (reported by Luis Parravicini)
+  - Fixed bug which occured when archive-tar-minitar was not installed
   - Fixed CSS bug with sub directories in style bundle 'andreas07' (reported by Thomas Deselaers)
 
 [1]: {relocatable: ../documentation/tag/langbar.html}

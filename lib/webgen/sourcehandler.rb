@@ -42,7 +42,9 @@ module Webgen
         website.blackboard.add_listener(:node_meta_info_changed?, method(:meta_info_changed?))
 
         website.blackboard.add_listener(:before_node_deleted) do |node|
-          website.blackboard.invoke(:output_instance).delete(node.path)
+          unless node.is_fragment? || node['no_output'] || node.path == '/' || node == node.tree.dummy_root
+            website.blackboard.invoke(:output_instance).delete(node.path)
+          end
         end if website.config['output.do_deletion']
       end
 
