@@ -11,7 +11,7 @@ modified_at: 2008-10-20 16:16:00 +02:00
 
 <webgen:block name='changes' />
 
---- name:notes pipeline:tags,maruku
+--- name:notes pipeline:tags,kramdown
 
 The main emphasis on this release lies on a new implementation of the update tree/write tree cycle
 which now also allows the creation of nodes not only in the update tree phase but also in the write
@@ -23,7 +23,7 @@ now executed as often as needed (which amounts to two times in nearly all situat
 > Since the internal code changed a lot from the last release, you may need to update your
 > extensions to comply with the new internal API! Have a look at the ChangeLog or the `git log` to
 > see all changes.
-{.warning}
+{:.warning}
 
 Building on the above changes a new webgen tag for generating high quality graphics using the LaTeX
 library PGF/TikZ is now available.
@@ -31,7 +31,7 @@ library PGF/TikZ is now available.
 The next release of webgen will concentrate on the blog support. For example, a source handler for
 automatically generating tag pages is in the works. Stay tuned!
 
---- name:changes pipeline:tags,maruku
+--- name:changes pipeline:tags,kramdown
 
 * Major enhancements:
 
@@ -58,4 +58,4 @@ automatically generating tag pages is in the works. Stay tuned!
 [link]: {relocatable: ../documentation/tag/link.html}
 [tikz]: {relocatable: ../documentation/tag/tikz.html}
 [fragments]: {relocatable: ../documentation/contentprocessor/fragments.html}
-[langnames]: {relocatable: ../documentation/reference_configuration.html#taglangbarlang_names}
+[langnames]: {relocatable: ../documentation/reference_configuration.html#taglangbarlangnames}

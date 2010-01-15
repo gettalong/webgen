@@ -11,7 +11,7 @@ modified_at: 2008-08-25 19:55:11 +02:00
 
 <webgen:block name='changes' />
 
---- name:notes pipeline:tags,maruku
+--- name:notes pipeline:tags,kramdown
 
 This release brings some usability and feature enhancements to webgen as well as several bug
 fixes. Also note that this release requires facets version 2.4.3 instead of 2.4.1!
@@ -33,12 +33,12 @@ fixes. Also note that this release requires facets version 2.4.3 instead of 2.4.
 
   > **Attention**: This may break websites which relied on the surrounding `div` tag with the
   > `webgen-menu` CSS class for styling.
-  {.error}
+  {:.error}
 
 * I have added [upgrading]({relocatable: ../documentation/upgrading.html}) information for upgrading
   0.4.x websites to 0.5.x.
 
---- name:changes pipeline:tags,maruku
+--- name:changes pipeline:tags,kramdown
 
 * Major enhancements:
 

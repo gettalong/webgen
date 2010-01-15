@@ -23,8 +23,8 @@ Below is a list of features that webgen supports or will shortly support.
     webgen content files can be written in a number of different content formats and new content
     formats can be easily added. Currently webgen supports:
 
-    * **Markdown** (including special syntax like setting header ids and html attributes through the Maruku
-      library)
+    * **Markdown** (including special syntax like setting header ids and html attributes through the
+      kramdown library)
     * **Textile**
     * **Haml and Sass**
     * RDoc (the native API documentation format for Ruby)

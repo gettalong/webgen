@@ -11,7 +11,7 @@ modified_at: 2009-05-07 09:40:00 +02:00
 
 <webgen:block name='changes' />
 
---- name:notes pipeline:tags,maruku
+--- name:notes pipeline:tags,kramdown
 
 This release brings some very useful new features and paves the way for more new features in the
 next versions!
@@ -36,7 +36,7 @@ As usual, some minor enhancements, many bug fixes and many documentation updates
 release! See the changes section for a complete list of changes and also note that some parts of the
 API got deprecated!
 
---- name:changes pipeline:tags,maruku
+--- name:changes pipeline:tags,kramdown
 
 * Major enhancements:
 
@@ -117,5 +117,5 @@ API got deprecated!
 [3]: {relocatable: ../documentation/source/tararchive.html}
 [4]: {relocatable: ../documentation/source/filesystem.html}
 [5]: {relocatable: ../documentation/reference_website_styles.html}
-[6]: {relocatable: ../documentation/reference_configuration.html#contentprocessorredclothhard_breaks}
+[6]: {relocatable: ../documentation/reference_configuration.html#contentprocessorredclothhardbreaks}
 [7]: {relocatable: ../documentation/reference_configuration.html}
