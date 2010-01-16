@@ -20,6 +20,7 @@ modified_at: 2009-08-?? ??:??:??
 * Major changes:
 
   - Added content processor [kramdown][2] (faster Markdown parser)
+  - Added content processor [less][3] (extends CSS with variables, mixins, operations, ...)
 
 * Minor changes:
 
@@ -41,5 +42,6 @@ modified_at: 2009-08-?? ??:??:??
   - Fixed bug which occured when archive-tar-minitar was not installed
   - Fixed CSS bug with sub directories in style bundle 'andreas07' (reported by Thomas Deselaers)
 
-[1]: {relocatable: ../documentation/tag/langbar.html}
-[2]: {relocatable: ../documentation/contentprocessor/kramdown.html}
+[1]: ../documentation/tag/langbar.html
+[2]: ../documentation/contentprocessor/kramdown.html
+[2]: ../documentation/contentprocessor/less.html
