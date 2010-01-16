@@ -142,7 +142,8 @@ config.contentprocessor.map({
                               'head' => 'Webgen::ContentProcessor::Head',
                               'tidy' => 'Webgen::ContentProcessor::Tidy',
                               'xmllint' => 'Webgen::ContentProcessor::Xmllint',
-                              'kramdown' => 'Webgen::ContentProcessor::Kramdown'
+                              'kramdown' => 'Webgen::ContentProcessor::Kramdown',
+                              'less' => 'Webgen::ContentProcessor::Less'
                             }, :doc => 'Content processor name to class map')
 
 Webgen::WebsiteAccess.website.blackboard.add_service(:content_processor_names, Webgen::ContentProcessor.method(:list))
