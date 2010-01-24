@@ -41,6 +41,7 @@ modified_at: 2009-08-?? ??:??:??
   - Fixed RF#27075: Typo in webgen documentation (reported by Luis Parravicini)
   - Fixed bug which occured when archive-tar-minitar was not installed
   - Fixed CSS bug with sub directories in style bundle 'andreas07' (reported by Thomas Deselaers)
+  - Fixed a bug with path patterns not matching correctly (reported by Damien Robert)
 
 [1]: ../documentation/tag/langbar.html
 [2]: ../documentation/contentprocessor/kramdown.html
