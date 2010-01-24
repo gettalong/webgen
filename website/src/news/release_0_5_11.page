@@ -42,6 +42,8 @@ modified_at: 2009-08-?? ??:??:??
   - Fixed bug which occured when archive-tar-minitar was not installed
   - Fixed CSS bug with sub directories in style bundle 'andreas07' (reported by Thomas Deselaers)
   - Fixed a bug with path patterns not matching correctly (reported by Damien Robert)
+  - Fixed bug in `ContentProcessor::Tags` with regard to parsing strings/files with a multi-byte
+    encoding under Ruby 1.9 (reported by Stefano Crocco)
 
 [1]: ../documentation/tag/langbar.html
 [2]: ../documentation/contentprocessor/kramdown.html

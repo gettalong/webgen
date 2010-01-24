@@ -94,14 +94,32 @@ module Webgen::ContentProcessor
           end
 
         when :process
-          if data.backslashes % 2 == 0
-            result = yield(data.tag, scanner.string[data.params_start_pos...data.params_end_pos],
-                            scanner.string[(data.params_end_pos+1)...data.body_end_pos]).to_s
-            scanner.string[data.start_pos..data.end_pos] = "\\" * (data.backslashes / 2) + result
-            scanner.pos = data.start_pos + result.length
+          if RUBY_VERSION >= '1.9'
+            begin
+              enc = scanner.string.encoding
+              scanner.string.force_encoding('ASCII-8BIT')
+              if data.backslashes % 2 == 0
+                result = yield(data.tag, scanner.string[data.params_start_pos...data.params_end_pos].force_encoding(enc),
+                               scanner.string[(data.params_end_pos+1)...data.body_end_pos].to_s.force_encoding(enc)).to_s
+                scanner.string[data.start_pos..data.end_pos] = "\\" * (data.backslashes / 2) + result.force_encoding('ASCII-8BIT')
+                scanner.pos = data.start_pos + result.length
+              else
+                scanner.string[data.start_pos, 1 + data.backslashes / 2] = ''
+                scanner.pos -= 1 + data.backslashes / 2
+              end
+            ensure
+              scanner.string.force_encoding(enc) if RUBY_VERSION >= '1.9'
+            end
           else
-            scanner.string[data.start_pos, 1 + data.backslashes / 2] = ''
-            scanner.pos -= 1 + data.backslashes / 2
+            if data.backslashes % 2 == 0
+              result = yield(data.tag, scanner.string[data.params_start_pos...data.params_end_pos],
+                             scanner.string[(data.params_end_pos+1)...data.body_end_pos]).to_s
+              scanner.string[data.start_pos..data.end_pos] = "\\" * (data.backslashes / 2) + result
+              scanner.pos = data.start_pos + result.length
+            else
+              scanner.string[data.start_pos, 1 + data.backslashes / 2] = ''
+              scanner.pos -= 1 + data.backslashes / 2
+            end
           end
           data.state = :before_tag
 
