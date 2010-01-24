@@ -78,6 +78,14 @@ class TestContentProcessorTags < Test::Unit::TestCase
     check_returned_tags('before{test::}body\\{test}\\\\{test}after', [['test', '', 'body{test}\\']], "beforetest1after")
     check_returned_tags('before\\{test::}body{test}', [['test', '', 'body']], "before{test::}body{test}")
     check_returned_tags('before\\\\{test:: asdf}body{test}after', [['test', ' asdf', 'body']], "before\\test1after")
+
+    check_returned_tags('sdfsüdf{test: }', [['test', ' ', '']], "sdfsüdftest1")
+    check_returned_tags('sdfsüüdf{test: asdf}', [['test', ' asdf', '']], "sdfsüüdftest1")
+    check_returned_tags('sdfsüüdf{test: asüdf}a', [['test', ' asüdf', '']], "sdfsüüdftest1a")
+    check_returned_tags('sdfsüüdf\\{test: asdf}ab', [], "sdfsüüdf{test: asdf}ab")
+    check_returned_tags('sdfsüüdf\\\\{test: asdf}ab', [['test', ' asdf', '']], "sdfsüüdf\\test1ab")
+    check_returned_tags('sdfsüüdf\\\\\\{test: asdf}ab', [], "sdfsüüdf\\{test: asdf}ab")
+    check_returned_tags('sdfsüüdf{test:: asdf}abü{test}ab', [['test', ' asdf', 'abü']], "sdfsüüdftest1ab")
   end
 
   def test_processor_for_tag
