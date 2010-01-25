@@ -11,7 +11,7 @@ reference][2] and a detailed [syntax documentation][3] available on the kramdown
 One can customize how this processor works by using the following configuration options:
 
 * `contentprocessor.kramdown.handle_links`: If `true` (the default), then all link URLs created via
-  kramdown syntax are automatically run through the [relocatble tag](../tag/relocatable.html). This
+  kramdown syntax are automatically run through the [relocatable tag](../tag/relocatable.html). This
   avoids using the `relocatable` tag explicitly but ensures valid links nonetheless.
 
 * `contentprocesoor.kramdown.options`: This configuration option can be used to customize the
