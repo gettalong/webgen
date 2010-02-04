@@ -29,11 +29,16 @@ module Webgen::ContentProcessor
 
     HTML_HEAD_END_RE = /<\/head\s*>/i #:nodoc:
 
+    LINK_DOCUMENT_ATTRS = {'type' => 'text/html'} #:nodoc:
+    LINK_DOCUMENT_TYPES = %w{start next prev contents index glossary chapter section subsection appendix help} #:nodoc:
+
     # Insert the additional header information.
     def call(context)
       require 'erb'
       context.content.sub!(HTML_HEAD_END_RE) do |match|
         result = ''
+
+        # add content set programmatically
         if context.persistent[:cp_head].kind_of?(Hash)
           context.persistent[:cp_head][:js_file].uniq.each do |js_file|
             result += "\n<script type=\"text/javascript\" src=\"#{js_file}\"></script>"
@@ -54,6 +59,65 @@ module Webgen::ContentProcessor
         ((context.persistent[:cp_head] || {})[:meta] || {}).merge(context.node['meta'] || {}).each do |name, content|
           result += "\n<meta name=\"#{ERB::Util.h(name)}\" content=\"#{ERB::Util.h(content)}\" />"
         end
+
+        # add links to other languages of same page
+        context.dest_node.tree.node_access[:acn][context.dest_node.acn].
+          select {|n| n.alcn != context.dest_node.alcn}.each do |node|
+          context.dest_node.node_info[:used_meta_info_nodes] << node.alcn
+          result += "\n<link type=\"text/html\" rel=\"alternate\" hreflang=\"#{node.lang}\" "
+          result += "href=\"#{context.dest_node.route_to(node)}\" "
+          if node['title'] && !node['title'].empty?
+            result += "lang=\"#{node.lang}\" title=\"#{ERB::Util.h(node['title'])}\" "
+          end
+          result += "/>"
+        end
+
+        link = (context.node['link'] || {}).dup
+
+        handle_files = lambda do |files|
+          [files].flatten.compact.collect do |file|
+            if !Webgen::Node.url(file, false).absolute?
+              file = context.node.resolve(file, context.dest_node.lang)
+              if file
+                context.dest_node.node_info[:used_meta_info_nodes] << file.alcn
+                file = context.dest_node.route_to(file)
+              else
+                log(:error) { "Could not resolve path '#{file}' used in 'link' meta information in <#{context.node.alcn}>" }
+                context.dest_node.flag(:dirty)
+              end
+            end
+            file
+          end.compact
+        end
+
+        # Add user defined javascript and CSS links
+        handle_files.call(link.delete('javascript')).each do |file|
+          result += "\n<script type=\"text/javascript\" src=\"#{file}\"></script>"
+        end
+        handle_files.call(link.delete('css')).each do |file|
+          result += "\n<link rel=\"stylesheet\" href=\"#{file}\" type=\"text/css\" />"
+        end
+
+        # add generic links specified via the +link+ meta information
+        link.sort.each do |link_type, vals|
+          link_type = link_type.downcase
+          [vals.dup].flatten.each do |val|
+            val = {'href' => val} if val.kind_of?(String)
+            val['rel'] ||= link_type
+            val = LINK_DOCUMENT_ATTRS.merge(val) if LINK_DOCUMENT_TYPES.include?(link_type)
+            if href = val.delete('href')
+              href = handle_files.call(href).first
+            else
+              log(:error) { "No link target specified for link type '#{link_type}' in 'link' meta information in <#{context.node.alcn}>" }
+            end
+            if href
+              s = "\n<link href=\"#{href}\" "
+              val.sort.each {|k,v| s += "#{k}=\"#{ERB::Util.h(v)}\" "}
+              result += s + "/>"
+            end
+          end
+        end
+
         result + match
       end
       context

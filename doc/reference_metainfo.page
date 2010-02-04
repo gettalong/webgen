@@ -115,6 +115,30 @@ information for nodes created by them.
 Sets the language for the path. Has to be a valid ISO-639-1/2 character code for the language. This
 meta information needs to be set before a node gets created.
 
+### link
+
+* Hash: `\{next: next_doc.html, prev: prev_doc.html}`
+* Page files
+
+Specifies additional information, for example, about the position of the page file regarding other
+files. A sample usage would be to express that the page file is logically followed or preceded by
+certain page file.
+
+The value needs to be hash and its keys need to be [link types] except for the special `javascript`
+and `css` keys (which will be discussed below). The link type is used to specify the relation of the
+page to the linked file. The value can either be a string which is interpreted as a path to the
+internal or external file; or a hash with arbitrary key-value pairs (use lower case key names) but
+it should include at least a `href` key to specify the path to the internal or external file; or an
+array containing strings or hashes to specify more than one linked file for a given link type.
+
+The special keys `javascript` and `css` may have an array of strings or a string as value which are
+interpreted as path to javascript/CSS files that should be included.
+
+This information is used by [`ContentProcessor::Head`](contentprocessor/head.html) to insert the
+approriate tags in the head section of an HTML document.
+
+[link types]: http://www.w3.org/TR/html401/types.html#type-links
+
 ### link_attrs
 
 * Hash: `\{title: Hallo, class: extra}`
