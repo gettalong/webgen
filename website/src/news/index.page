@@ -1,5 +1,9 @@
 ---
 title: News
+link:
+  alternate:
+    href: news.atom
+    type: application/atom+xml
 ---
 # Latest news
 
