@@ -21,6 +21,8 @@ modified_at: 2009-08-?? ??:??:??
 
   - Added content processor [kramdown][2] (faster Markdown parser)
   - Added content processor [less][3] (extends CSS with variables, mixins, operations, ...)
+  - Updated content processor [head][4] to allow the specification of arbitrary `link` tags and
+    links to javascript and CSS files by the user
 
 * Minor changes:
 
@@ -47,4 +49,5 @@ modified_at: 2009-08-?? ??:??:??
 
 [1]: ../documentation/tag/langbar.html
 [2]: ../documentation/contentprocessor/kramdown.html
-[2]: ../documentation/contentprocessor/less.html
+[3]: ../documentation/contentprocessor/less.html
+[4]: ../documentation/contentprocessor/head.html
