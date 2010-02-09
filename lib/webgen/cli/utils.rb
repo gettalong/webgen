@@ -11,7 +11,7 @@ module Webgen::CLI
     DEFAULT_WIDTH = if Config::CONFIG['host_os'] =~ /mswin|mingw/
                       72
                     else
-                      ((size = %x{stty size 2>/dev/null}).length > 0 ? size.split.last.to_i : 72) rescue 72
+                      ((size = %x{stty size 2>/dev/null}).length > 0 && (size = size.split.last.to_i) > 0 ? size : 72) rescue 72
                     end
 
     module Color
