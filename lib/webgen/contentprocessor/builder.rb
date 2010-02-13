@@ -8,17 +8,10 @@ module Webgen::ContentProcessor
   # library.
   class Builder
 
-    include Deprecated
-
     # Process the content of +context+ which needs to be valid Ruby code. The special variable +xml+
     # should be used to construct the XML content.
     def call(context)
       require 'builder'
-
-      website = deprecate('website', 'context.website', context.website)
-      node = deprecate('node', 'context.node', context.content_node)
-      ref_node = deprecate('ref_node', 'context.ref_node', context.ref_node)
-      dest_node = deprecate('dest_node', 'context.dest_node', context.dest_node)
 
       xml = ::Builder::XmlMarkup.new(:indent => 2)
       eval(context.content, binding, context.ref_node.alcn)
