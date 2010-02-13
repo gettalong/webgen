@@ -7,7 +7,7 @@ link:
 ---
 # Latest news
 
-<webgen:block name='content' chain='news.template; release_0_5_10.html' />
+<webgen:block name='content' chain='news.template; release_0_5_11.html' />
 
 # News listing
 
