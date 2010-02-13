@@ -1,6 +1,7 @@
 ---
 title: Website Styles Reference
 ---
+# Website Styles Reference
 
 Following is a list of all website styles that are included in the webgen distribution. Each style
 can be used when creating a website by using the command
@@ -13,7 +14,10 @@ or applied later using the command
 
 When you click on the link provided for each website style, you will get a full browser preview of
 the respective website style. You can then return to this list by using the *back button* of your
-browser:
+browser.
+
+If you want to create such a style yourself, you may want to read
+[this](manual.html#create-website-style)!
 
 <%
 context.content_node.tree.node_access[:alcn].select do |name, node|

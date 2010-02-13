@@ -669,3 +669,46 @@ documentation](rdoc/index.html), along with sample implementations for all major
 and detailed information about the inner workings of webgen. Have a look at the [extension
 directory](#website-ext) section for more information on naming files and where to put the
 extensions.
+
+
+# Creating a Website Style Bundle   {#create-website-style}
+
+webgen ships some style bundles sothat one can create a basic website out of the box. However, if
+you want to create a website style bundle yourself, it is easy.
+
+The following assumes that you already have a website template, i.e. an HTML file with your layout,
+the accompanying CSS file and the needed images. The example below assume you have one downloaded
+from <http://www.openwebdesign.org/>.
+
+* First create the needed directories and the README file:
+
+  * The bundle directory: `BUNDLE`
+  * The source directory: `BUNDLE/src`
+  * The README file: `BUNDLE/README`
+
+  The README file contains information about your style bundle in YAML format. You should include at
+  least the `description` and `author` keys:
+
+      description: Website template based on the OSWD template BUNDLE
+      author: Me Myself
+
+* Unzip the the archive from OSWD and move the extracted files into the `BUNDLE/src` directory.
+
+* Rename the file `BUNDLE/src/index.html` (or whatever the main HTML file is called) to
+  `default.template`. Now go through this file and augment relative URLs to style sheets and images
+  with [relocatable tags](tag/relocatable.html).
+
+* Identify the location of the main menu items, remove them and and use a [menu tag](tag/menu.html)
+  instead. You may need to restrict the shown menu levels to a single level if the template is built
+  for only one main menu level. Then adjust the CSS used to style the menu to include the webgen
+  specific CSS classes for showing the currently selected link. Remember that you need to take care
+  of styling not only `<a>` tags but also `<span>` tags. See the [menu tag
+  documentation](tag/menu.html) for more information on how the menu is output by webgen and what
+  CSS classes can be used!
+
+* Adjust the `<title>` tag in the `<head>` section of the `default.template` file -- you can use the
+  `\{title:}` to insert the title of the processed page file.
+
+The BUNDLE directory can now be directly used since it is a valid webgen website directory. If you
+want to publish your style bundle, just create a (gzipped) tar archive from the contents of the
+BUNDLE directory.
