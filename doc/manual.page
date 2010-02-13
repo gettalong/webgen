@@ -70,6 +70,12 @@ Following is a short overview of the available commands:
 
     Renders the given webgen website.
 
+    > If you run webgen in verbose mode using the global `-v` option, it prints out information
+    > about the written files. Note, however, that the shown paths are the **internally used** path
+    > names which may be different from the actual output path names! For more information on this
+    > have a look at the [canonical path name](#source-cn) section!
+    {:.information}
+
 *   `version`
 
     Displays the version of webgen.

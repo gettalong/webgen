@@ -46,6 +46,11 @@ Easy! webgen has used all files in the `src` directory and created the HTML outp
 `out`. Now you just need to open the `out/index.html` file to view your website! However, as we did
 not write any content yet, there is not much to see (only the default page). So let's do that now!
 
+> If you run webgen in verbose mode, it prints out information about the written files. Note,
+> however, that the shown paths are the **internal** path names which may be different from the
+> actual output path names!
+{:.information}
+
 > Since webgen automatically creates relative links, you will have a fully functional website
 > without needing a web server! This also implies that you can deploy your website to any directory
 > on your web server and it will *just work*!
