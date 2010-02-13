@@ -7,18 +7,11 @@ module Webgen::ContentProcessor
   # Processes embedded Ruby statements with the +erubis+ library.
   class Erubis
 
-    include Deprecated
-
     # Process the Ruby statements embedded in the content of +context+.
     def call(context)
       require 'erubis'
       # including Erubis because of problem with resolving Erubis::XmlHelper et al
       self.class.class_eval "include ::Erubis"
-
-      website = deprecate('website', 'context.website', context.website)
-      node = deprecate('node', 'context.node', context.content_node)
-      ref_node = deprecate('ref_node', 'context.ref_node', context.ref_node)
-      dest_node = deprecate('dest_node', 'context.dest_node', context.dest_node)
 
       options = context.website.config['contentprocessor.erubis.options']
       if context[:block]
