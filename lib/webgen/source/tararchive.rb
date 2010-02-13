@@ -64,7 +64,8 @@ module Webgen
           @paths = input.collect do |entry|
             path = entry.full_name
             next unless File.fnmatch(@glob, path, File::FNM_DOTMATCH|File::FNM_CASEFOLD|File::FNM_PATHNAME)
-            path += '/' if entry.directory? && path[-1] != ?/
+            path += '/' if entry.directory? && path[-1,1] != '/'
+            path = '/' + path unless path[0,1] == '/'
             Path.new(path, entry.read, Time.at(entry.mtime), @uri)
           end.compact.to_set
         end
