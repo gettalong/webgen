@@ -22,9 +22,9 @@
 #####
 
 ## The default processing pipeline for page files. If you use a different markup language you need to
-## change 'kramdown' to the short name of the content processor for the markup language.
+## change 'markdown' to the short name of the content processor for the markup language.
 default_processing_pipeline:
-  Page: erb,tags,kramdown,blocks,fragments
+  Page: erb,tags,markdown,blocks,fragments
 
 ## Setting the default language. The argument must be an ISO-639-1/2 language code.
 # website.lang: de
