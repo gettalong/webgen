@@ -83,7 +83,7 @@ config.sourcehandler.default_meta_info({
                                          'Webgen::SourceHandler::Page' => {
                                            'kind' => 'page',
                                            'fragments_in_menu' => true,
-                                           'blocks' => {'default' => {'pipeline' => 'erb,tags,maruku,blocks,fragments'}}
+                                           'blocks' => {'default' => {'pipeline' => 'erb,tags,markdown,blocks,fragments'}}
                                          },
                                          'Webgen::SourceHandler::Fragment' => {
                                            'kind' => 'fragment'
@@ -125,7 +125,7 @@ Webgen::WebsiteAccess.website.blackboard.add_service(:output_instance, Webgen::O
 
 # All things regarding content processors
 config.contentprocessor.map({
-                              'markdown' => 'Webgen::ContentProcessor::Maruku',
+                              'markdown' => 'Webgen::ContentProcessor::Kramdown',
                               'maruku' => 'Webgen::ContentProcessor::Maruku',
                               'textile' => 'Webgen::ContentProcessor::RedCloth',
                               'redcloth' => 'Webgen::ContentProcessor::RedCloth',
