@@ -335,13 +335,16 @@ module Webgen
              else
                config['website.cache'].last
              end
-      cache_data, @tree = Marshal.load(data) rescue nil
-      @cache.restore(cache_data) if cache_data
+      cache_data, tree, version = Marshal.load(data) rescue nil
+      if cache_data && version == Webgen::VERSION
+        @cache.restore(cache_data)
+        @tree = tree
+      end
     end
 
     # Save the +tree+ and the +cache+ to +website.cache+.
     def save_tree_and_cache
-      cache_data = [@cache.dump, @tree]
+      cache_data = [@cache.dump, @tree, Webgen::VERSION]
       if config['website.cache'].first == :file
         cache_file = File.join(@directory, config['website.cache'].last)
         File.open(cache_file, 'wb') {|f| Marshal.dump(cache_data, f)}
