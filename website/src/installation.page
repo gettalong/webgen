@@ -129,7 +129,7 @@ it should normally work with newer versions, too!
 
 * (mandatory) [cmdparse](http://cmdparse.rubyforge.org) version 2.0.2 or higher
 
-* (mandatory) [kramdown](http://kramdown.rubyforge.org) version 0.4.0 or higher
+* (mandatory) [kramdown](http://kramdown.rubyforge.org) version 0.5.0 or higher
 
 * (mandatory for webgui) [ramaze](http://ramaze.net) version 2009.04
 
