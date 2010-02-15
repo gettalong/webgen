@@ -230,6 +230,10 @@ EOF
       files = %w[.gem .tgz .zip].collect {|ext| "pkg/webgen-#{Webgen::VERSION}" + ext}
 
       rf.add_release('webgen', 'webgen', Webgen::VERSION, *files)
+
+      print 'Pushing gem to gemcutter'
+      sh "gem push pkg/webgen-#{Webgen::VERSION}.gem"
+
       puts 'done'
     end
 
