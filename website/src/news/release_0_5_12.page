@@ -1,0 +1,27 @@
+---
+title: webgen 0.5.12 released
+in_menu: true
+sort_info: 2010-02-15 10:30:00
+created_at: 2010-02-15 10:30:00 +02:00
+modified_at: 2010-02-15 10:30:00 +02:00
+---
+<webgen:block name='notes' />
+
+### Changes
+
+<webgen:block name='changes' />
+
+--- name:notes pipeline:tags,kramdown
+
+
+--- name:changes pipeline:tags,kramdown
+
+* Major changes:
+
+
+* Minor changes:
+
+
+* Bug fixes:
+
+  - All error messages now display useful path names (reported by Eric Sunshine)
