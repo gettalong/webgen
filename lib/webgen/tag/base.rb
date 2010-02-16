@@ -103,7 +103,7 @@ module Webgen::Tag::Base
   # Retrieve the parameter value for +name+. The value is taken from the current parameter
   # configuration if the parameter is specified there or from the website configuration otherwise.
   def param(name)
-    (@params && @params.has_key?(name) ? @params[name] : website.config[name])
+    (defined?(@params) && @params.has_key?(name) ? @params[name] : website.config[name])
   end
 
   # Default implementation for processing a tag. The parameter +tag+ specifies the name of the tag
