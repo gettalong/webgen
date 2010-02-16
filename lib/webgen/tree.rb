@@ -48,7 +48,7 @@ module Webgen
     # A utility method called by Node#initialize. This method should not be used directly!
     def register_node(node)
       if @node_access[:alcn].has_key?(node.alcn)
-        raise "Can't have two nodes with same absolute lcn: #{node.alcn}"
+        raise "Can't have two nodes with same absolute lcn: #{node}"
       else
         @node_access[:alcn][node.alcn] = node
       end

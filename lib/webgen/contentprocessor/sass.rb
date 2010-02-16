@@ -12,9 +12,9 @@ module Webgen::ContentProcessor
       context.content = ::Sass::Engine.new(context.content, :filename => context.ref_node.alcn).render
       context
     rescue LoadError
-      raise Webgen::LoadError.new('sass', self.class.name, context.dest_node.alcn, 'haml')
+      raise Webgen::LoadError.new('sass', self.class.name, context.dest_node, 'haml')
     rescue ::Sass::SyntaxError => e
-      raise Webgen::RenderError.new(e, self.class.name, context.dest_node.alcn, context.ref_node.alcn, (e.sass_line if e.sass_line))
+      raise Webgen::RenderError.new(e, self.class.name, context.dest_node, context.ref_node, (e.sass_line if e.sass_line))
     end
 
   end

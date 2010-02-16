@@ -182,6 +182,11 @@ class TestNode < Test::Unit::TestCase
     assert(node.inspect =~ /alcn=\//)
   end
 
+  def test_to_s
+    node = Webgen::Node.new(@tree.dummy_root, '/', '/', {'lang' => 'de', :test => :value})
+    assert_equal(node.alcn, node.to_s)
+  end
+
   def test_changed
     node = Webgen::Node.new(@tree.dummy_root, 'test/', 'test', {'lang' => 'de', :test => :value})
     node.unflag(:dirty, :dirty_meta_info, :created)

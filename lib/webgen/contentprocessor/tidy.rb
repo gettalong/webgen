@@ -15,7 +15,7 @@ module Webgen::ContentProcessor
 
       `tidy -v 2>&1`
       if $?.exitstatus != 0
-        raise Webgen::CommandNotFoundError.new('tidy', self.class.name, context.dest_node.alcn)
+        raise Webgen::CommandNotFoundError.new('tidy', self.class.name, context.dest_node)
       end
 
       cmd = "tidy -q -f #{error_file.path} #{context.website.config['contentprocessor.tidy.options']}"
@@ -26,7 +26,7 @@ module Webgen::ContentProcessor
       end
       if $?.exitstatus != 0
         File.readlines(error_file.path).each do |line|
-          log($?.exitstatus == 1 ? :warn : :error) { "Tidy reported problems for <#{context.dest_node.alcn}>: #{line}" }
+          log($?.exitstatus == 1 ? :warn : :error) { "Tidy reported problems for <#{context.dest_node}>: #{line}" }
         end
       end
       context.content = result

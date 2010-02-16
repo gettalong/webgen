@@ -13,7 +13,7 @@ module Webgen::Tag
         context.dest_node.node_info[:used_meta_info_nodes] << dest_node.alcn
         context.dest_node.link_to(dest_node, param('tag.link.attr').merge(:lang => context.content_node.lang))
       else
-        log(:error) { "Could not resolve path '#{param('tag.link.path')}' in <#{context.ref_node.alcn}>" }
+        log(:error) { "Could not resolve path '#{param('tag.link.path')}' in <#{context.ref_node}>" }
         context.dest_node.flag(:dirty)
         ''
       end

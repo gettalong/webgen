@@ -191,6 +191,11 @@ module Webgen
       flagged?(:dirty_meta_info)
     end
 
+    # Return the string representation of the node which is just the alcn.
+    def to_s
+      @alcn
+    end
+
     # Return an informative representation of the node.
     def inspect
       "<##{self.class.name}: alcn=#{@alcn}>"
@@ -314,7 +319,7 @@ module Webgen
           index_node = resolve(index_path, lang)
           if index_node
             vcache[key] = index_node
-            log(:info) { "Directory index path for <#{alcn}> => <#{index_node.alcn}>" }
+            log(:info) { "Directory index path for <#{alcn}> => <#{index_node}>" }
           elsif log_warning
             vcache[key] = self
             log(:warn) { "No directory index path found for directory <#{alcn}>" }

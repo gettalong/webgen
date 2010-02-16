@@ -15,7 +15,7 @@ module Webgen::ContentProcessor
 
       `xmllint --version 2>&1`
       if $?.exitstatus != 0
-        raise Webgen::CommandNotFoundError.new('xmllint', self.class.name, context.dest_node.alcn)
+        raise Webgen::CommandNotFoundError.new('xmllint', self.class.name, context.dest_node)
       end
 
       cmd = "xmllint #{context.website.config['contentprocessor.xmllint.options']} - 2>'#{error_file.path}'"
@@ -26,7 +26,7 @@ module Webgen::ContentProcessor
       end
       if $?.exitstatus != 0
         File.read(error_file.path).scan(/^-:(\d+):(.*?\n)(.*?\n)/).each do |line, error_msg, line_context|
-          log(:warn) { "xmllint reported problems for <#{context.dest_node.alcn}:~#{line}>: #{error_msg.strip} (context: #{line_context.strip})" }
+          log(:warn) { "xmllint reported problems for <#{context.dest_node}:~#{line}>: #{error_msg.strip} (context: #{line_context.strip})" }
         end
       end
       context

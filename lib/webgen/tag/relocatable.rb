@@ -39,7 +39,7 @@ module Webgen::Tag
         context.dest_node.node_info[:used_meta_info_nodes] << dest_node.alcn
         context.dest_node.route_to(dest_node)
       else
-        log(:error) { "Could not resolve path '#{path}' in <#{context.ref_node.alcn}>" }
+        log(:error) { "Could not resolve path '#{path}' in <#{context.ref_node}>" }
         context.dest_node.flag(:dirty)
         ''
       end

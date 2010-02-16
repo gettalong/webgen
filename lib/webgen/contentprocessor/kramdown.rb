@@ -14,11 +14,11 @@ module Webgen::ContentProcessor
       doc = ::Kramdown::Document.new(context.content, context.website.config['contentprocessor.kramdown.options'])
       context.content = KramdownHtmlConverter.convert(doc, context)
       doc.warnings.each do |warn|
-        log(:warn) { "Warning while parsing <#{context.ref_node.alcn}> with kramdown: #{warn}" }
+        log(:warn) { "Warning while parsing <#{context.ref_node}> with kramdown: #{warn}" }
       end
       context
     rescue LoadError
-      raise Webgen::LoadError.new('kramdown', self.class.name, context.dest_node.alcn, 'kramdown')
+      raise Webgen::LoadError.new('kramdown', self.class.name, context.dest_node, 'kramdown')
     end
 
   end

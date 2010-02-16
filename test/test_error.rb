@@ -1,6 +1,8 @@
 # -*- encoding: utf-8 -*-
 
 require 'test/unit'
+require 'webgen/tree'
+require 'webgen/node'
 require 'webgen/error'
 
 class TestError < Test::Unit::TestCase
@@ -20,6 +22,9 @@ class TestError < Test::Unit::TestCase
     assert_equal('KlassName', e.class_name)
     assert_equal('/path', e.alcn)
     assert_match(/Error while working on <\/path> with KlassName:/, e.message)
+
+    e = Webgen::Error.new("test", 'KlassName', Webgen::Node.new(Webgen::Tree.new.dummy_root, '/hallo', '/hallo'))
+    assert_equal('/hallo', e.alcn)
 
     e = Webgen::Error.new(Exception.new("test"))
     assert_equal("test", e.plain_message)
@@ -48,6 +53,9 @@ class TestRenderError < Test::Unit::TestCase
     e = Webgen::RenderError.new("test", 'KlassName', '/path', '/error', 5)
     assert_equal("/error", e.error_alcn)
     assert_match(/Error in <\/error:~5> while rendering <\/path>/, e.message)
+
+    e = Webgen::RenderError.new("test", 'KlassName', '/path', Webgen::Node.new(Webgen::Tree.new.dummy_root, '/hallo', '/hallo'), 5)
+    assert_equal('/hallo', e.error_alcn)
   end
 
 end

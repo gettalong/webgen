@@ -16,16 +16,16 @@ module Webgen::ContentProcessor
         render(Object.new, locals)
       context
     rescue LoadError
-      raise Webgen::LoadError.new('haml', self.class.name, context.dest_node.alcn, 'haml')
+      raise Webgen::LoadError.new('haml', self.class.name, context.dest_node, 'haml')
     rescue ::Haml::Error => e
       line = if e.line
                e.line + 1
              else
                Webgen::Common.error_line(e)
              end
-      raise Webgen::RenderError.new(e, self.class.name, context.dest_node.alcn, context.ref_node.alcn, line)
+      raise Webgen::RenderError.new(e, self.class.name, context.dest_node, context.ref_node, line)
     rescue Exception => e
-      raise Webgen::RenderError.new(e, self.class.name, context.dest_node.alcn, context.ref_node.alcn, Webgen::Common.error_line(e))
+      raise Webgen::RenderError.new(e, self.class.name, context.dest_node, context.ref_node, Webgen::Common.error_line(e))
     end
 
   end

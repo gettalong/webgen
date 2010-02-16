@@ -28,9 +28,9 @@ module Webgen::ContentProcessor
       context.content = erubis.result(binding)
       context
     rescue LoadError
-      raise Webgen::LoadError.new('erubis', self.class.name, context.dest_node.alcn, 'erubis')
+      raise Webgen::LoadError.new('erubis', self.class.name, context.dest_node, 'erubis')
     rescue Exception => e
-      raise Webgen::RenderError.new(e, self.class.name, context.dest_node.alcn, context.ref_node.alcn, Webgen::Common.error_line(e))
+      raise Webgen::RenderError.new(e, self.class.name, context.dest_node, context.ref_node, Webgen::Common.error_line(e))
     end
 
   end

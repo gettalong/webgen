@@ -25,14 +25,14 @@ module Webgen::SourceHandler
       elsif node['template'].kind_of?(String)
         template_node = node.resolve(node['template'], lang)
         if template_node.nil?
-          log(:warn) { "Specified template '#{node['template']}' for <#{node.alcn}> not found, using default template!" }
+          log(:warn) { "Specified template '#{node['template']}' for <#{node}> not found, using default template!" }
           template_node = default_template(node.parent, lang)
         end
         cached_template[lang] = template_node
       elsif node.meta_info.has_key?('template') && node['template'].nil?
         template_node = cached_template[lang] = nil
       else
-        log(:info) { "Using default template in language '#{lang}' for <#{node.alcn}>" }
+        log(:info) { "Using default template in language '#{lang}' for <#{node}>" }
         template_node = default_template(node.parent, lang)
         if template_node == node && !node.parent.is_root?
           template_node = default_template(node.parent.parent, lang)
