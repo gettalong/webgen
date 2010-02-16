@@ -23,7 +23,7 @@ module Webgen::ContentProcessor
     # Replace all webgen tags in the content of +context+ with the rendered content.
     def call(context)
       replace_tags(context) do |tag, param_string, body|
-        log(:debug) { "Replacing tag #{tag} with data '#{param_string}' and body '#{body}' in <#{context.ref_node.alcn}>" }
+        log(:debug) { "Replacing tag #{tag} with data '#{param_string}' and body '#{body}' in <#{context.ref_node}>" }
         process_tag(tag, param_string, body, context)
       end
       context
@@ -48,7 +48,7 @@ module Webgen::ContentProcessor
         result = call(context.clone(:content => result)).content if process_output
       else
         raise Webgen::RenderError.new("No tag processor for '#{tag}' found", self.class.name,
-                                      context.dest_node.alcn, context.ref_node.alcn)
+                                      context.dest_node, context.ref_node)
       end
       result
     end
@@ -87,7 +87,7 @@ module Webgen::ContentProcessor
           data.brackets += (scanner[1] == '{' ? 1 : -1) while data.brackets != 0 && scanner.skip_until(BRACKETS_RE)
           if data.brackets != 0
             raise Webgen::RenderError.new("Unbalanced curly brackets for tag '#{data.tag}'", self.class.name,
-                                          context.dest_node.alcn, context.ref_node.alcn)
+                                          context.dest_node, context.ref_node)
           else
             data.params_end_pos = data.body_end_pos = data.end_pos = scanner.pos - 1
             data.state = (data.simple_tag ? :process : :in_body)
@@ -139,7 +139,7 @@ module Webgen::ContentProcessor
             data.body_end_pos = scanner.pos - scanner.matched.length + scanner[1].length / 2
           else
             raise Webgen::RenderError.new("Invalid body part - no end tag found for '#{data.tag}'", self.class.name,
-                                          context.dest_node.alcn, context.ref_node.alcn)
+                                          context.dest_node, context.ref_node)
           end
 
         when :done

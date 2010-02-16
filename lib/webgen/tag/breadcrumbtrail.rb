@@ -19,7 +19,7 @@ module Webgen::Tag
       (context.dest_node.node_info[:tag_breadcrumb_trail] ||= {})[[@params.to_a.sort, context.content_node.alcn]] = out.map {|n| n.alcn}
       out = out.map {|n| context.dest_node.link_to(n, :lang => context.content_node.lang) }.
         join(param('tag.breadcrumbtrail.separator'))
-      log(:debug) { "Breadcrumb trail for <#{context.content_node.alcn}>: #{out}" }
+      log(:debug) { "Breadcrumb trail for <#{context.content_node}>: #{out}" }
       out
     end
 

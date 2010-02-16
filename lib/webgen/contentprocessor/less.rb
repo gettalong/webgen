@@ -14,20 +14,20 @@ module Webgen::ContentProcessor
       context
     rescue ::Less::SyntaxError => e
       line = e.message.scan(/on line (\d+):/).first.first.to_i rescue nil
-      raise Webgen::RenderError.new(e, self.class.name, context.dest_node.alcn, context.ref_node.alcn, line)
+      raise Webgen::RenderError.new(e, self.class.name, context.dest_node, context.ref_node, line)
     rescue ::Less::MixedUnitsError => e
       raise Webgen::RenderError.new("Can't mix different units together: #{e}",
-                                    self.class.name, context.dest_node.alcn, context.ref_node.alcn)
+                                    self.class.name, context.dest_node, context.ref_node)
     rescue ::Less::VariableNameError => e
       raise Webgen::RenderError.new("Variable name is undefined: #{e}",
-                                    self.class.name, context.dest_node.alcn, context.ref_node.alcn)
+                                    self.class.name, context.dest_node, context.ref_node)
     rescue ::Less::MixinNameError => e
       raise Webgen::RenderError.new("Mixin name is undefined: #{e}",
-                                    self.class.name, context.dest_node.alcn, context.ref_node.alcn)
+                                    self.class.name, context.dest_node, context.ref_node)
     rescue ::Less::ImportError => e
-      raise Webgen::RenderError.new(e, self.class.name, context.dest_node.alcn, context.ref_node.alcn)
+      raise Webgen::RenderError.new(e, self.class.name, context.dest_node, context.ref_node)
     rescue LoadError
-      raise Webgen::LoadError.new('less', self.class.name, context.dest_node.alcn, 'less')
+      raise Webgen::LoadError.new('less', self.class.name, context.dest_node, 'less')
     end
 
   end

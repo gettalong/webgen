@@ -34,7 +34,7 @@ module Webgen::Tag
       end
       CodeRay.scan(body, param('tag.coderay.lang').to_sym).html(options)
     rescue LoadError
-      raise Webgen::LoadError.new('coderay', self.class.name, context.dest_node.alcn, 'coderay')
+      raise Webgen::LoadError.new('coderay', self.class.name, context.dest_node, 'coderay')
     end
 
   end

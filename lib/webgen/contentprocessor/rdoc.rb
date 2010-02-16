@@ -12,7 +12,7 @@ module Webgen::ContentProcessor
       context.content = ::RDoc::Markup::ToHtml.new.convert(context.content)
       context
     rescue LoadError
-      raise Webgen::LoadError.new('rdoc/markup/to_html', self.class.name, context.dest_node.alcn, 'rdoc')
+      raise Webgen::LoadError.new('rdoc/markup/to_html', self.class.name, context.dest_node, 'rdoc')
     end
 
   end

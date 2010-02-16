@@ -11,7 +11,7 @@ module Webgen::ContentProcessor
       context.content = ::RDiscount.new(context.content).to_html
       context
     rescue LoadError
-      raise Webgen::LoadError.new('rdiscount', self.class.name, context.dest_node.alcn, 'rdiscount')
+      raise Webgen::LoadError.new('rdiscount', self.class.name, context.dest_node, 'rdiscount')
     end
 
   end

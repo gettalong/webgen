@@ -82,7 +82,7 @@ module Webgen::ContentProcessor
                 context.dest_node.node_info[:used_meta_info_nodes] << file.alcn
                 file = context.dest_node.route_to(file)
               else
-                log(:error) { "Could not resolve path '#{file}' used in 'link' meta information in <#{context.node.alcn}>" }
+                log(:error) { "Could not resolve path '#{file}' used in 'link' meta information in <#{context.node}>" }
                 context.dest_node.flag(:dirty)
               end
             end
@@ -108,7 +108,7 @@ module Webgen::ContentProcessor
             if href = val.delete('href')
               href = handle_files.call(href).first
             else
-              log(:error) { "No link target specified for link type '#{link_type}' in 'link' meta information in <#{context.node.alcn}>" }
+              log(:error) { "No link target specified for link type '#{link_type}' in 'link' meta information in <#{context.node}>" }
             end
             if href
               s = "\n<link href=\"#{href}\" "

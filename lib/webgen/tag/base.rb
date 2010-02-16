@@ -71,7 +71,7 @@ module Webgen::Tag::Base
       config = YAML::load("--- #{tag_config}")
     rescue ArgumentError => e
       raise Webgen::RenderError.new("Could not parse the tag params '#{tag_config}': #{e.message}",
-                                    self.class.name, nil, ref_node.alcn)
+                                    self.class.name, nil, ref_node)
     end
     create_params_hash(config, ref_node)
   end
@@ -85,11 +85,11 @@ module Webgen::Tag::Base
              when NilClass then {}
              else
                raise Webgen::RenderError.new("Invalid parameter type (#{config.class})",
-                                             self.class.name, nil, node.alcn)
+                                             self.class.name, nil, node)
              end
 
     unless params.all? {|k| !website.config.meta_info[k][:mandatory] || result.has_key?(k)}
-      raise Webgen::RenderError.new("Not all mandatory parameters set", self.class.name, nil, node.alcn)
+      raise Webgen::RenderError.new("Not all mandatory parameters set", self.class.name, nil, node)
     end
 
     result
@@ -150,7 +150,7 @@ module Webgen::Tag::Base
       elsif params.include?(tag_config_base + '.' + key)
         result[tag_config_base + '.' + key] = value
       else
-        log(:warn) { "Invalid parameter '#{key}' for tag '#{self.class.name}' in <#{node.alcn}>" }
+        log(:warn) { "Invalid parameter '#{key}' for tag '#{self.class.name}' in <#{node}>" }
       end
     end
     result
@@ -160,7 +160,7 @@ module Webgen::Tag::Base
   def create_from_string(value, params, node)
     param_name = params.find {|k| website.config.meta_info[k][:mandatory] == 'default'}
     if param_name.nil?
-      log(:error) { "No default mandatory parameter specified for tag '#{self.class.name}' but set in <#{node.alcn}>"}
+      log(:error) { "No default mandatory parameter specified for tag '#{self.class.name}' but set in <#{node}>"}
       {}
     else
       {param_name => value}

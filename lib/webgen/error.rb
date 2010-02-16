@@ -27,7 +27,7 @@ module Webgen
         set_backtrace(msg_or_error.backtrace)
         @plain_message = msg_or_error.message
       end
-      @class_name, @alcn = class_name, alcn
+      @class_name, @alcn = class_name, (alcn.kind_of?(Node) ? alcn.to_s : alcn)
     end
 
     def message # :nodoc:
@@ -68,7 +68,7 @@ module Webgen
     # exception is wrapped.
     def initialize(msg_or_error, class_name = nil, alcn = nil, error_alcn = nil, line = nil)
       super(msg_or_error, class_name, alcn)
-      @error_alcn, @line = error_alcn, line
+      @error_alcn, @line = (error_alcn.kind_of?(Node) ? error_alcn.to_s : error_alcn), line
     end
 
     def message # :nodoc:

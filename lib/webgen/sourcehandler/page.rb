@@ -36,7 +36,7 @@ module Webgen::SourceHandler
         context.content
       else
         raise Webgen::RenderError.new("No block named '#{block_name}'",
-                                      self.class.name, node.alcn, chain.first.alcn)
+                                      self.class.name, node, chain.first)
       end
     end
     alias_method :content, :render_node

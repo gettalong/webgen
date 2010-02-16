@@ -120,7 +120,7 @@ module Webgen
               e.alcn = node.alcn unless e.alcn
               raise
             rescue Exception => e
-              raise Webgen::Error.new(e, nil, node.alcn)
+              raise Webgen::Error.new(e, nil, node)
             end
           end
 
@@ -167,7 +167,7 @@ module Webgen
             e.alcn = node.alcn unless e.alcn
             raise
           rescue Exception => e
-            raise Webgen::RenderError.new(e, nil, node.alcn)
+            raise Webgen::RenderError.new(e, nil, node)
           end
         end
       end

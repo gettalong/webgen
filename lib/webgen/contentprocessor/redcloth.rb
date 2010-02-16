@@ -13,7 +13,7 @@ module Webgen::ContentProcessor
       context.content = doc.to_html
       context
     rescue LoadError
-      raise Webgen::LoadError.new('redcloth', self.class.name, context.dest_node.alcn, 'RedCloth')
+      raise Webgen::LoadError.new('redcloth', self.class.name, context.dest_node, 'RedCloth')
     end
 
   end
