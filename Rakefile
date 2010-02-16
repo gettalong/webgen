@@ -8,6 +8,7 @@ rescue LoadError
 end
 
 require 'rdoc/task'
+require 'rdoc/rdoc'
 
 begin
   require 'rubyforge'
@@ -72,7 +73,7 @@ rd = RDoc::Task.new do |rdoc|
   rdoc.rdoc_dir = 'htmldoc/rdoc'
   rdoc.title = 'webgen'
   rdoc.main = 'lib/webgen/website.rb'
-  rdoc.options << '--line-numbers' << '--all'
+  rdoc.options << '--line-numbers'
   rdoc.rdoc_files.include('lib')
 end
 
@@ -185,7 +186,7 @@ EOF
       #### Documentation
 
       s.has_rdoc = true
-      s.rdoc_options = ['--line-numbers', '--all', '--main', 'lib/webgen/website.rb']
+      s.rdoc_options = ['--line-numbers', '--main', 'lib/webgen/website.rb']
 
       #### Author and project details
 
@@ -202,16 +203,13 @@ EOF
 
   end
 
+  desc 'Release webgen version ' + Webgen::VERSION
+  task :release => [:clobber, :package, :publish_files, :publish_doc, :website, :publish_website, :post_news]
+
   desc "Upload webgen documentation to Rubyforge homepage"
   task :publish_doc => [:doc] do
     sh "rsync -avc --delete htmldoc/ gettalong@rubyforge.org:/var/www/gforge-projects/webgen/documentation/#{(Webgen::VERSION.split('.')[0..-2] + ['x']).join('.')}"
   end
-
-  desc 'Release webgen version ' + Webgen::VERSION
-  task :release => [:clobber, :package, :publish_files, :publish_doc]
-
-  desc 'Announce webgen version ' + Webgen::VERSION
-  task :announce => [:clobber, :post_news, :website, :publish_website]
 
   if defined? RubyForge
     desc "Upload the release to Rubyforge"
@@ -231,7 +229,6 @@ EOF
 
       rf.add_release('webgen', 'webgen', Webgen::VERSION, *files)
 
-      print 'Pushing gem to gemcutter'
       sh "gem push pkg/webgen-#{Webgen::VERSION}.gem"
 
       puts 'done'
