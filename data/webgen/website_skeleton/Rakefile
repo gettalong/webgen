@@ -9,13 +9,38 @@
 #
 
 require 'webgen/webgentask'
+require 'webgen/website'
 
 task :default => :webgen
 
+webgen_config = lambda do |config|
+  # you can set configuration options here
+end
+
 Webgen::WebgenTask.new do |website|
   website.clobber_outdir = true
-  website.config_block = lambda do |config|
-    # you can set configuration options here
+  website.config_block = webgen_config
+end
+
+desc "Show outdated translations"
+task :outdated do
+  puts "Listing outdated translations"
+  puts
+  puts "(Note: Information is taken from the last webgen run. To get the"
+  puts "       useful information, run webgen once before this task!)"
+  puts
+
+  website = Webgen::Website.new(Dir.pwd, Webgen::Logger.new($stdout), &webgen_config)
+  website.execute_in_env do
+    website.init
+    website.tree.node_access[:acn].each do |acn, versions|
+      main = versions.find {|v| v.lang == website.config['website.lang']}
+      next unless main
+      outdated = versions.select do |v|
+         main != v && main['modified_at'] > v['modified_at']
+      end.map {|v| v.lang}.join(', ')
+      puts "ACN #{acn}: #{outdated}" if outdated.length > 0
+    end
   end
 end
 
