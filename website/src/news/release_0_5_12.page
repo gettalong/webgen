@@ -21,7 +21,11 @@ modified_at: 2010-02-15 10:30:00 +02:00
 
 * Minor changes:
 
+  - Added a rake task to show outdated translations
 
 * Bug fixes:
 
   - All error messages now display useful path names (reported by Eric Sunshine)
+  - Fixed another CSS bug with sub directories in style bundle 'andreas07' (reported by Thomas
+    Deselaers)
+
