@@ -701,8 +701,8 @@ from <http://www.openwebdesign.org/>.
 * Unzip the the archive from OSWD and move the extracted files into the `BUNDLE/src` directory.
 
 * Rename the file `BUNDLE/src/index.html` (or whatever the main HTML file is called) to
-  `default.template`. Now go through this file and augment relative URLs to style sheets and images
-  with [relocatable tags](tag/relocatable.html).
+  `default.template`. Now go through this file and augment relative URLs to style sheets, images and
+  other files with [relocatable tags](tag/relocatable.html).
 
 * Identify the location of the main menu items, remove them and and use a [menu tag](tag/menu.html)
   instead. You may need to restrict the shown menu levels to a single level if the template is built
@@ -714,6 +714,13 @@ from <http://www.openwebdesign.org/>.
 
 * Adjust the `<title>` tag in the `<head>` section of the `default.template` file -- you can use the
   `\{title:}` to insert the title of the processed page file.
+
+* Identify the location where the page content should go and put `<webgen:block name="content' />`
+  there. This tells webgen to insert the block named `content` of the page file that uses the
+  template at this location.
+
+* If the template features a breadcrumb trail area, use the [breadcrumb trail
+  tag](tag/breadcrumbtrail.html) so that the breadcrumb trail gets created automatically.
 
 The BUNDLE directory can now be directly used since it is a valid webgen website directory. If you
 want to publish your style bundle, just create a (gzipped) tar archive from the contents of the
