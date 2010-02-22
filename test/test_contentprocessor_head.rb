@@ -85,6 +85,12 @@ class TestContentProcessorHead < Test::Unit::TestCase
                  "\n<link href=\"test.en\" rel=\"alternate\" type=\"text/html\" />" +
                  "\n<link href=\"test.en\" rel=\"next\" type=\"text/html\" />" +
                  "\n<link href=\"http://example.org\" rel=\"start\" type=\"text/xhtml\" /></head>", context.content)
+    context.content = '</head>'
+    @obj.call(context)
+    assert_equal("\n<link href=\"test.en\" rel=\"alternate\" />" +
+                 "\n<link href=\"test.en\" rel=\"alternate\" type=\"text/html\" />" +
+                 "\n<link href=\"test.en\" rel=\"next\" type=\"text/html\" />" +
+                 "\n<link href=\"http://example.org\" rel=\"start\" type=\"text/xhtml\" /></head>", context.content)
   end
 
 end

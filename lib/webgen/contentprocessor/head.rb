@@ -72,7 +72,7 @@ module Webgen::ContentProcessor
           result += "/>"
         end
 
-        link = (context.node['link'] || {}).dup
+        link = Marshal.load(Marshal.dump(context.node['link'] || {}))
 
         handle_files = lambda do |files|
           [files].flatten.compact.collect do |file|
@@ -101,7 +101,7 @@ module Webgen::ContentProcessor
         # add generic links specified via the +link+ meta information
         link.sort.each do |link_type, vals|
           link_type = link_type.downcase
-          [vals.dup].flatten.each do |val|
+          [vals].flatten.each do |val|
             val = {'href' => val} if val.kind_of?(String)
             val['rel'] ||= link_type
             val = LINK_DOCUMENT_ATTRS.merge(val) if LINK_DOCUMENT_TYPES.include?(link_type)
