@@ -1,4 +1,5 @@
 # -*- encoding: utf-8 -*-
+require 'erb'
 
 module Webgen::Tag
 
@@ -13,7 +14,7 @@ module Webgen::Tag
       if tag == 'lang'
         output = context.content_node.lang
       elsif context.content_node[tag]
-        output = context.content_node[tag].to_s
+        output = ERB::Util.h(context.content_node[tag].to_s)
       else
         log(:error) { "No value for meta info key '#{tag}' in <#{context.ref_node}> found in <#{context.content_node}>" }
       end
