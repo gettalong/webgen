@@ -959,6 +959,23 @@ shows how to set the option in the configuration file.
           You will find more info on the \{link: {path: docu.html, attr: {title: DocuPage}}} page!
 
 
+*   ### tag.metainfo.escape_html
+
+    Specifies whether special HTML characters in the meta information value should be escaped.
+
+    * Syntax: `BOOLEAN` where `BOOLEAN` is either `true` or `false`.
+
+    <%= show_default['tag.metainfo.escape_html'] %>
+
+    * Example for setting the option in the configuration file:
+
+          tag.metainfo.escape_html: false
+
+      Example for setting the option directly in a tag:
+
+          value of meta info `title` is not escaped \{title: {escape_html: false}}
+
+
 *   ### tag.menu.used_nodes
 
     Specifies the type of nodes that should be used for menu generation. If `all` is specified then
