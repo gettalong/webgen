@@ -13,6 +13,10 @@ modified_at: 2010-02-15 10:30:00 +02:00
 
 --- name:notes pipeline:tags,kramdown
 
+The output of the [meta information tag][1] is now escaped by default. This can be changed by
+setting the `tag.metainfo.escape_html` option in the configuration file.
+
+[1]: ../documentation/tag/metainfo.html
 
 --- name:changes pipeline:tags,kramdown
 
@@ -22,6 +26,7 @@ modified_at: 2010-02-15 10:30:00 +02:00
 * Minor changes:
 
   - Added a rake task to show outdated translations
+  - Added a [configuration option][1] for specifying whether a meta info value should be escaped
 
 * Bug fixes:
 
@@ -29,5 +34,5 @@ modified_at: 2010-02-15 10:30:00 +02:00
   - Fixed another CSS bug with sub directories in style bundle 'andreas07' (reported by Thomas
     Deselaers)
   - Fixed problem with unintentionally modified `link` meta information that lead to errors
-  - Fixed bug in `Tag::Metainfo` where special HTML characters were not escaped
 
+[1]: ../documentation/reference_configuration.html#tagmetainfoescapehtml

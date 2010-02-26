@@ -180,6 +180,8 @@ config.contentprocessor.kramdown.options({:auto_ids => true}, :doc => 'The optio
 config.contentprocessor.kramdown.handle_links(true, :doc => 'Whether all links in a kramdown document should be handled by webgen')
 
 
+config.tag.metainfo.escape_html(true, :doc => 'Special HTML characters in the output will be escaped if true')
+
 config.tag.relocatable.path(nil, :doc => 'The path which should be made relocatable', :mandatory => 'default')
 
 config.tag.menu.start_level(1, :doc => 'The level at which the menu starts.')
