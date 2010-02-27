@@ -119,14 +119,10 @@ module Webgen
 
       # :nodoc:
       def parse(argv = ARGV)
-        super do |level, cmd_name|
-          if level == 0
-            create_website.init
-            Webgen::CLI.constants.select {|c| c =~ /.+Command$/ }.each do |c|
-              self.add_command(Webgen::CLI.const_get(c).new, (c.to_s == 'RunCommand' ? true : false))
-            end
-          end
+        Webgen::CLI.constants.select {|c| c =~ /.+Command$/ }.each do |c|
+          self.add_command(Webgen::CLI.const_get(c).new, (c.to_s == 'RunCommand' ? true : false))
         end
+        super
       end
 
     end

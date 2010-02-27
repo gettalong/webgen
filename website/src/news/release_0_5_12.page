@@ -34,5 +34,6 @@ setting the `tag.metainfo.escape_html` option in the configuration file.
   - Fixed another CSS bug with sub directories in style bundle 'andreas07' (reported by Thomas
     Deselaers)
   - Fixed problem with unintentionally modified `link` meta information that lead to errors
+  - Commands are now correctly shown when running `webgen --help`
 
 [1]: ../documentation/reference_configuration.html#tagmetainfoescapehtml
