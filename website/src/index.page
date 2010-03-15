@@ -85,10 +85,3 @@ instructions on the [installation](installation.html) page!
 </div>
 
 </div>
-
-<script type="text/javascript">
-  $(function() {
-    $('#download-box').corner();
-    $('#download-box-inner').corner();
-  });
-</script>
