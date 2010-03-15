@@ -2,20 +2,39 @@
     margin: 20px 50px;
     padding: 5px;
     background-color: #193441;
+    color: black;
+    border-radius: 10px;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
 }
 
 #download-box h2 {
     text-align: center;
     color: white;
+    font-size: 150%;
 }
 
 #download-box-inner {
     padding: 5px;
     background-color: #FCFFF5;
+    border-radius: 10px;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
 }
 
 #download-box p {
     padding: 0px;
+}
+
+#download-box #download-box-inner a, #download-box #download-box-inner a:visited {
+    color: #A0080D;
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+#download-box #download-box-inner a:hover {
+    background-color: #A0080D;
+    color: white;
 }
 
 #download-box-version {
@@ -24,11 +43,6 @@
     font-size: 2em;
     color: #A0080D;
     margin: 10px 0px;
-}
-
-#download-box em {
-    color: #A0080D;
-    display: inline;
 }
 
 .news-date {

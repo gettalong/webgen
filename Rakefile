@@ -253,7 +253,7 @@ EOF
     site.clobber_outdir = true
     site.config_block = lambda do |config|
       config['sources'] += [['/documentation/', 'Webgen::Source::FileSystem', '../doc'],
-                            ['/', "Webgen::Source::FileSystem", '../misc', 'default.css'],
+                            ['/', "Webgen::Source::FileSystem", '../misc', 'default.less.css'],
                             ['/documentation/', "Webgen::Source::FileSystem", '../misc', 'htmldoc.virtual'],
                             ['/', "Webgen::Source::FileSystem", '../misc', 'images/**/*']]
       prefix = "webgen-website-bundle-"
