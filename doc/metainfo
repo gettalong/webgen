@@ -27,3 +27,6 @@ output/:
 
 output/*:
   template: ../extensions.template
+
+references/:
+  index_path: ../index.html#reference-documentation

@@ -35,4 +35,4 @@ option in the configuration file. And a rake task for showing outdated translati
   - Commands are now correctly shown when running `webgen --help`
   - Fixed a problem where an incorrect path was shown in error messages
 
-[1]: ../documentation/reference_configuration.html#tagmetainfoescapehtml
+[1]: ../documentation/references/configuration.html#tagmetainfoescapehtml

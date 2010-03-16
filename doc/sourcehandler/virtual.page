@@ -3,10 +3,10 @@ title: Webgen::SourceHandler::Virtual
 ---
 ## Description
 
-This source handler uses files in [Webgen Page Format](../webgen_page_format.html) which are used to
-specify virtual paths. Virtual paths don't really exist as source paths but are useful nonetheless.
-For example, they allow to include links to external content in automatically generated menus. They
-are never written out since they define no real content!
+This source handler uses files in [Webgen Page Format](../references/webgen_page_format.html) which
+are used to specify virtual paths. Virtual paths don't really exist as source paths but are useful
+nonetheless. For example, they allow to include links to external content in automatically generated
+menus. They are never written out since they define no real content!
 
 The `content` block of the source path is used and its content needs to be a hash in YAML
 format. The keys are relative or absolute source paths names and the values meta information for

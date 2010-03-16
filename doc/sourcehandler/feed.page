@@ -4,7 +4,8 @@ title: Webgen::SourceHandler::Feed
 ## Description
 
 This source handler automatically generates an atom or RSS feed for a set of files from a file in
-[Webgen Page Format](../webgen_page_format.html) (the format which is also used for page files).
+[Webgen Page Format](../references/webgen_page_format.html) (the format which is also used for page
+files).
 
 The following meta information keys are supported:
 

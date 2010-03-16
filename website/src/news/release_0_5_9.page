@@ -129,8 +129,8 @@ Also note that there have been some incompatible API changes!
 [4]: {relocatable: ../documentation/contentprocessor/haml.html}
 [5]: {relocatable: ../documentation/contentprocessor/blocks.html}
 [6]: {relocatable: ../documentation/manual.html#source-naming}
-[7]: {relocatable: ../documentation/reference_configuration.html#outputdodeletion}
+[7]: {relocatable: ../documentation/references/configuration.html#outputdodeletion}
 [8]: {relocatable: ../documentation/contentprocessor/head.html}
-[9]: {relocatable: ../documentation/reference_configuration.html#tagcoderaycss}
+[9]: {relocatable: ../documentation/references/configuration.html#tagcoderaycss}
 [10]: {relocatable: ../documentation/contentprocessor/tidy.html}
-[11]: {relocatable: ../documentation/reference_metainfo.html#usednodes}
+[11]: {relocatable: ../documentation/references/metainfo.html#usednodes}

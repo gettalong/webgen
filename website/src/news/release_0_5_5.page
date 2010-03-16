@@ -33,7 +33,7 @@ and are updated more often than the official gem for testing purposes.
   - New configuration option [`tag.menu.nested`][nested]
   - Depending on fixed gem version (using `=` instead of `>=`)
 
-[nested]: {relocatable: ../documentation/reference_configuration.html#tagmenunested}
+[nested]: {relocatable: ../documentation/references/configuration.html#tagmenunested}
 
 * Bug fixes:
 

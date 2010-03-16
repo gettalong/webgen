@@ -36,7 +36,7 @@ end
 # Configuration Option Reference
 
 This reference describes all available configurations that can be set via the [configuration
-file]({relocatable: manual.html#website-configfile}) `config.yaml` (or, if you want to have more
+file]({relocatable: ../manual.html#website-configfile}) `config.yaml` (or, if you want to have more
 control, via an extension file).
 
 The reference is splitted into sections to provide better navigation. A sub header under a category
@@ -166,7 +166,7 @@ configuration options) and/or how to use it in a webgen tag (for tag configurati
           sources: [[/, Webgen::Source::FileSystem, src], [/, Webgen::Source::FileSystem, /mnt/pictures, **/*.jpg]]
 
       Also have a look at the [file system source documentation]({relocatable:
-      source/filesystem.html}) for more examples!
+      ../source/filesystem.html}) for more examples!
 
 
 *   ### passive_sources
@@ -224,7 +224,7 @@ configuration options) and/or how to use it in a webgen tag (for tag configurati
     Specifies the path patterns that are used by the individual source handlers. This configuration
     option is not normally set directly in the configuration file but either in an extension file
     (e.g. `ext/init.rb`) or using a [configuration file helper]({relocatable:
-    manual.html#website-configfile}) because otherwise the default entries would be overwritten.
+    ../manual.html#website-configfile}) because otherwise the default entries would be overwritten.
 
     * Syntax: `\{NAME: [PATTERN, PATTERN, ...], ...}` where `NAME` is the
       name the name of a source handler and `PATTERN` are one or more path patterns.
@@ -404,9 +404,9 @@ configuration options) and/or how to use it in a webgen tag (for tag configurati
 *   ### contentprocessor.kramdown.handle_links
 
     This configuration option can be used to specify whether all links generated via kramdown syntax
-    should be automatically run through the [relocatable tag]({relocatable: tag/relocatable.html}).
-    This saves some typing and makes the document more robust since all links are automatically
-    checked and warnings displayed if the link target is not found.
+    should be automatically run through the [relocatable tag]({relocatable:
+    ../tag/relocatable.html}). This saves some typing and makes the document more robust since all
+    links are automatically checked and warnings displayed if the link target is not found.
 
     * Syntax: `BOOLEAN` where `BOOLEAN` is either `true` or `false`.
 
@@ -478,7 +478,7 @@ configuration options) and/or how to use it in a webgen tag (for tag configurati
 *   ### contentprocessor.tidy.options
 
     This configuration option can be used to set the command line options for the `tidy` program
-    which is used by the [content processor `tidy`]({relocatable: contentprocessor/tidy.html}).
+    which is used by the [content processor `tidy`]({relocatable: ../contentprocessor/tidy.html}).
 
     * Syntax: `STRING` where `STRING` is the string holding the command line options.
 
@@ -492,7 +492,8 @@ configuration options) and/or how to use it in a webgen tag (for tag configurati
 *   ### contentprocessor.xmllint.options
 
     This configuration option can be used to set the command line options for the `xmllint` program
-    which is used by the [content processor `xmllint`]({relocatable: contentprocessor/xmllint.html}).
+    which is used by the [content processor `xmllint`]({relocatable:
+    ../contentprocessor/xmllint.html}).
 
     * Syntax: `STRING` where `STRING` is the string holding the command line options.
 
@@ -718,8 +719,8 @@ shows how to set the option in the configuration file.
     If set to `style`, the CSS style attributes are set directly on the various HTML elements.
 
     If set to `class`, only classes are set on the HTML elements and a default external stylesheet
-    is used - the [content processor head]({relocatable: contentprocessor/head.html}) is needed for
-    this to work.
+    is used - the [content processor head]({relocatable: ../contentprocessor/head.html}) is needed
+    for this to work.
 
     If set to `other`, only classes are set like with the `class` value but no default external
     stylesheet is used. You have to provide the styles yourself.

@@ -23,7 +23,7 @@ files/directories in the tar archive.
 ## Examples
 
 The used sources can be specified via the [`sources` configuration
-option](../reference_configuration.html#sources), so each of the examples below can be specified in
+option](../references/configuration.html#sources), so each of the examples below can be specified in
 the `config.yaml` file.
 
 1.  Using all files/directories from a local tar archive in addition the default configuration:

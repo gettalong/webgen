@@ -10,7 +10,7 @@ Here are step-by-step instructions on how to update your webgen website from 0.4
   The configuration file syntax as well as the names of the configuration options and some defaults
   changed. For example, the default processing pipeline now uses kramdown (a Markdown converter) as
   markup language processor instead of Textile. You can find an overview over all available
-  configuration options in the [configuration option reference](reference_configuration.html). Also
+  configuration options in the [configuration option reference](references/configuration.html). Also
   have a look at the [configuration file documentation](manual.html#website-configfile) for more
   information on the syntax of this file and the available helpers.
 
@@ -38,7 +38,7 @@ Here are step-by-step instructions on how to update your webgen website from 0.4
 
   The names of some meta information keys have been changed. Meta information names are not
   specified in camelCase anymore but with under_scores. You can find a complete list of supported
-  meta information names in the [meta information reference](reference_metainfo.html). The most
+  meta information names in the [meta information reference](references/metainfo.html). The most
   notable changes are:
 
   * directoryName → routed_title
@@ -58,7 +58,7 @@ Here are step-by-step instructions on how to update your webgen website from 0.4
   * `virtual` files
   * page and template files
 
-* **Files in [Webgen Page Format](webgen_page_format.html)**
+* **Files in [Webgen Page Format](references/webgen_page_format.html)**
 
   Since the format of these files changed a little bit you may need to adapt all your files that use
   it, that are primarily page and template files. The main change in the format was a different use

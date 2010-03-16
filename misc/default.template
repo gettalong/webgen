@@ -22,7 +22,7 @@
       </div>
     </div>
     <div id="location-bar">
-      {breadcrumb_trail:}
+      {breadcrumb_trail: {omit_index_path: true}}
     </div>
 
     <!-- content-wrap starts here -->

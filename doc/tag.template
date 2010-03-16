@@ -14,7 +14,7 @@ This tag uses the following options:
 for option in context.content_node['used_options']
   temp = 'mandatory' if !context.website.config.meta_info[option][:mandatory].nil?
   temp += ' default' if context.website.config.meta_info[option][:mandatory] == 'default'
-%>* [`<%= option %>`]({relocatable: reference_configuration.html#<%= option.tr('._', '') %>}) <%= temp ? '(' + temp + ')' : '' %>
+%>* [`<%= option %>`]({relocatable: references/configuration.html#<%= option.tr('._', '') %>}) <%= temp ? '(' + temp + ')' : '' %>
 <%
   temp = nil
 end

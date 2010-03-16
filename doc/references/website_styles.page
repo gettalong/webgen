@@ -17,16 +17,16 @@ the respective website style. You can then return to this list by using the *bac
 browser.
 
 If you want to create such a style yourself, you may want to read
-[this](manual.html#create-website-style)!
+[this](../manual.html#create-website-style)!
 
 <%
 context.content_node.tree.node_access[:alcn].select do |name, node|
   node.is_directory? && node.parent == context.content_node.tree[File.join(context.content_node.parent.alcn, '/website_styles/')]
 end.sort.each do |name, node|
 %>
-<h2 id="<%= node.cn.chomp('/') %>"><%= node.cn %></h2>
+<h2 id="<%= node.cn.chomp('/') %>"><%= node.cn.chomp('/') %></h2>
 <div class="website-styles">
 <%= context.dest_node.link_to(node, :link_text => "Full window version") %>
-<object type="text/html" data="<%= context.dest_node.route_to(node) %>">Nothing</object>
+<object type="text/html" data="<%= context.dest_node.route_to(node) %>" style="overflow: hidden">Nothing</object>
 </div>
 <% end %>

@@ -74,7 +74,7 @@ uniquely identifies a content block and is used to access it. The only option us
 `pipeline` option which specifies the processing pipeline for the block. The processing pipeline is
 used for rendering the block by using the specified content processors in the specified order. There
 are many different content processors available - have a look at the [extensions
-page](extensions.html) for an overview.
+page](../extensions.html) for an overview.
 
 webgen extensions that use files in Webgen Page Format may specify defaults for the name and the
 options of a block but these defaults can be overwritten. You can use one of two ways to do this:

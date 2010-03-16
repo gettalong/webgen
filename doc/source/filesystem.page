@@ -19,7 +19,7 @@ Patterns](../manual.html#source-pathpattern) and [Dir.glob]).
 ## Examples
 
 The used sources can be specified via the [`sources` configuration
-option](../reference_configuration.html#sources), so each of the examples below can be specified in
+option](../references/configuration.html#sources), so each of the examples below can be specified in
 the `config.yaml` file.
 
 1.  The default configuration: all files under the `src` folder of the website directory

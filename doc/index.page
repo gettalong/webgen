@@ -2,17 +2,56 @@
 title: Overview
 in_menu: false
 ---
+# Documentation
 
-This documentation is for the *repository version*{: style='color: red; font-weight: bold'} of
-webgen and therefore may state features that are not available in the latest released version.
+Depending on whether you are new to webgen, you want more information about a specific topic or read
+a reference, you will find all the documentation you need.
 
-* The documentation for the *latest released 0.5.x*{: style='color: red; font-weight: bold'} version
-  can be found [here](http://webgen.rubyforge.org/documentation/0.5.x/index.html). This
-  documentation can also be generated locally by running `rake htmldoc` in the root directory of the
-  weben distribution.
+## Tutorials & Manual
 
-* If you are looking for the documentation of the *0.4.x*{: style='color: red; font-weight: bold'}
-  series, it can be found [here](http://webgen.rubyforge.org/documentation/0.4.x/index.html).
+* [**Getting Started Guide**](getting_started.html): If you are new to webgen, this should be your
+  first read. It explains the usage of the CLI command and how to create your first website with
+  webgen.
+
+* [**Manual**](manual.html): Detailed information about how webgen works can be found here. After
+  reading the Getting Started Guide, this should be the next read. Have a look at the section
+  headers to get a quick overview of what can be found here.
+
+## Reference Documentation
+
+Following is a list of all the reference documentation of webgen:
+
+* [**Extensions Documentation**](extensions.html): Detailed information on every usage related
+  extension class (**source handlers, tags, content processors**, ...)
+
+* [**Webgen Page Format**](references/webgen_page_format.html): Information about/Specification of
+  the format used, for example, by page and template files
+
+* [**Meta Information Reference**](references/metainfo.html): Descriptions for every meta information
+  key that is used by webgen.
+
+* [**Configuration Options Reference**](references/configuration.html): Overview of all configuration
+  options.
+
+* [**Website Styles Reference**](references/website_styles.html): Previews of all website styles that
+  ship with webgen.
+
+
+## Other Documentation
+
+* [**FAQ**](faq.html): If you want to do something with webgen, but you don't know how, this page is
+  exactly for you. It provides answers to frequently asked questions and HowTos. If you have a
+  question which you think should be added, just mail me.
+
+* [**Upgrade information**](upgrading.html): This document provides some information on upgrading a
+  website from the 0.4.x to the 0.5.x series.
+
+* [**API documentation**](rdoc/index.html): webgen makes it easy to extend its functionality by
+  writing simple extension classes. All information about how to do this as well as examples for all
+  existing extension types are in the API documentation.
+
+
+# Additional User Resources
 
 If you don't find an answer to your questions in the documentation, there are also:
 
@@ -25,47 +64,8 @@ If you don't find an answer to your questions in the documentation, there are al
 [ml]: http://rubyforge.org/mail/?group_id=296
 [google-group]: http://groups.google.com/group/webgen-users/
 
-# User Documentation
 
-Depending on whether you are new to webgen, you want more information about a specific topic or read
-a reference, go to one of the following pages:
+# webgen 0.4.x documentation
 
-* [**Getting Started Guide**](getting_started.html): If you are new to webgen, this should be your
-  first read. It explains the usage of the CLI command and how to create your first website with
-  webgen.
-
-* [**Manual**](manual.html): Detailed information about how webgen works can be found here. After
-  reading the Getting Started Guide, this should be the next read. Have a look at the section
-  headers to get a quick overview of what can be found here.
-
-* [**FAQ**](faq.html): If you want to do something with webgen, but you don't know how, this page is
-  exactly for you. It provides answers to frequently asked questions and HowTos. If you have a
-  question which you think should be added, just mail me.
-
-* [**Upgrade information**](upgrading.html): This document provides some information on upgrading a
-  website from the 0.4.x to the 0.5.x series.
-
-
-Following is a list of all the reference documentation of webgen:
-
-* [**Extensions Documentation**](extensions.html): Detailed information on every usage related
-  extension class (**source handlers, tags, content processors**, ...)
-
-* [**Webgen Page Format**](webgen_page_format.html): Information about/Specification of the format
-  used, for example, by page and template files
-
-* [**Meta Information Reference**](reference_metainfo.html): Descriptions for every meta information
-  key that is used by webgen.
-
-* [**Configuration Options Reference**](reference_configuration.html): Overview of all configuration
-  options.
-
-* [**Website Styles Reference**](reference_website_styles.html): Previews of all website styles that
-  ship with webgen.
-
-
-# Developer Documentation
-
-webgen makes it easy to extend its functionality by writing simple extension classes. All
-information about how to do this is provided in the [API documentation](rdoc/index.html). You will
-also find examples for all existing extension types there.
+If you are looking for the documentation of the *0.4.x*{: style='color: red; font-weight: bold'}
+series, it can be found [here](http://webgen.rubyforge.org/documentation/0.4.x/index.html).

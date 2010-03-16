@@ -31,7 +31,7 @@ available bundles by passing their names to the `-b` option of the `create` comm
 {:.information}
 
 Don't worry if you don't like the used website style - you can easily change it later using the
-`webgen apply` command. Have a look at the [Website Styles Reference](reference_website_styles.html)
+`webgen apply` command. Have a look at the [Website Styles Reference](references/website_styles.html)
 to see demonstrations for all shipped website templates and styles!
 
 Since the basic parts are now in place, you can generate the HTML files. There are two
@@ -69,8 +69,9 @@ provides you with some default files, you will normally have at least the follow
 
 > *Template files* and *page files* are the heart of webgen. Template files are used to define a
 > general layout for web pages and page files define the real content. Both file types are written
-> in [Webgen Page Format](webgen_page_format.html). Page files are normally written in a markup
-> language like Markdown or Textile which is easier to learn and edit for non-technical persons.
+> in [Webgen Page Format](references/webgen_page_format.html). Page files are normally written in a
+> markup language like Markdown or Textile which is easier to learn and edit for non-technical
+> persons.
 {:.information}
 
 The basic scaffolding is already in place. Now we only have to adapt the page file `index.page` and
@@ -124,7 +125,7 @@ to change any configuration option. However, most users need to change some conf
 sometime. The configuration file is called `config.yaml` and has to be placed directly under the
 website directory. It uses YAML as file format.
 
-> Have a look at the [Configuration Options Reference](reference_configuration.html) to get an
+> Have a look at the [Configuration Options Reference](references/configuration.html) to get an
 > overview over all available configuration options.
 {:.information}
 

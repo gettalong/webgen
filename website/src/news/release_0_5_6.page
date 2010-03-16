@@ -58,4 +58,4 @@ automatically generating tag pages is in the works. Stay tuned!
 [link]: {relocatable: ../documentation/tag/link.html}
 [tikz]: {relocatable: ../documentation/tag/tikz.html}
 [fragments]: {relocatable: ../documentation/contentprocessor/fragments.html}
-[langnames]: {relocatable: ../documentation/reference_configuration.html#taglangbarlangnames}
+[langnames]: {relocatable: ../documentation/references/configuration.html#taglangbarlangnames}

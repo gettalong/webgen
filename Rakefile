@@ -60,9 +60,9 @@ Webgen::WebgenTask.new('htmldoc') do |site|
     prefix = "webgen-website-bundle-"
     config['resources'].select {|name, data| name =~ /^#{prefix}style/}.each do |name, data|
       config['sources'] <<
-        ["/website_styles/#{name.sub(prefix, '')}/", "Webgen::Source::FileSystem", 'misc', 'style.page']
+        ["/references/website_styles/#{name.sub(prefix, '')}/", "Webgen::Source::FileSystem", 'misc', 'style.page']
       config['sources'] <<
-        ["/website_styles/#{name.sub(prefix, '')}/", 'Webgen::Source::Resource', name, '/src/**', '/src/']
+        ["/references/website_styles/#{name.sub(prefix, '')}/", 'Webgen::Source::Resource', name, '/src/**', '/src/']
     end
     config['output'] = ['Webgen::Output::FileSystem', 'htmldoc']
     config.default_processing_pipeline('Page' => 'erb,tags,kramdown,blocks,fragments')
@@ -259,9 +259,9 @@ EOF
       prefix = "webgen-website-bundle-"
       config['resources'].select {|name, data| name =~ /^#{prefix}style/}.each do |name, data|
         config['sources'] <<
-          ["/documentation/website_styles/#{name.sub(prefix, '')}/", "Webgen::Source::FileSystem", '../misc', 'style.page']
+          ["/documentation/references/website_styles/#{name.sub(prefix, '')}/", "Webgen::Source::FileSystem", '../misc', 'style.page']
         config['sources'] <<
-          ["/documentation/website_styles/#{name.sub(prefix, '')}/", 'Webgen::Source::Resource', name, '/src/**', '/src/']
+          ["/documentation/references/website_styles/#{name.sub(prefix, '')}/", 'Webgen::Source::Resource', name, '/src/**', '/src/']
       end
       config.default_processing_pipeline('Page' => 'erb,tags,kramdown,blocks,fragments')
     end
