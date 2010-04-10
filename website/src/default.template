@@ -16,21 +16,22 @@
   </head>
 
   <body>
-    <div id="header">
+    <div id="header-wrapper"><div id="header">
       <h1>webgen</h1>
       <h2>static website generation made easy</h2>
 
       <div id="menu">
         {menu: {used_nodes: files, start_level: 1, max_levels: 1}}
       </div>
-    </div>
-    <div id="location-bar">
+    </div></div>
+
+    <div id="location-wrapper"><div id="location">
       {breadcrumb_trail: {omit_index_path: true}}
-    </div>
+    </div></div>
 
     <!-- content-wrap starts here -->
     <div id="content">
-      <div id="sidebar" ><div id="sidebar-content">
+      <div id="sidebar"><div id="sidebar-content">
         <webgen:block name="sidebarbefore" node="first" notfound="ignore" />
 
         <% if !context.content_node.children.empty? %>
@@ -62,7 +63,7 @@
     </div>
 
     <!-- footer starts here -->
-    <div id="footer">
+    <div id="footer-wrapper"><div id="footer">
 
       <div class="float-left">
         <h2>Links</h2>
@@ -89,7 +90,7 @@
         </p>
       </div>
 
-    </div>
+    </div></div>
     <!-- footer ends here -->
 
     <!-- Start of StatCounter Code -->

@@ -1,5 +1,5 @@
-@body-bg: #21457F; // #152C52;
-@sidebar-bg: #5A88D3; //@body-bg + #111;//#194C9E;
+@body-bg: #152C52; //#21457F; // #152C52;
+@sidebar-bg: @body-bg + #565656; //#5A88D3; //@body-bg + #111;//#194C9E;
 @location-bg: @body-bg + #222; //#336BCC;
 
 @sidebar-link: #fff;
@@ -15,9 +15,7 @@ body {
     padding: 0;
     color: #000;
     text-align: left;
-    min-width: 600px;
-    max-width: 1200px;
-    background: @body-bg url('images/bg.png') repeat;
+    min-width: 700px;
 }
 
 body, table, code {
@@ -25,27 +23,38 @@ body, table, code {
     //font-family: "Calisto MT", "Bookman Old Style", Bookman, "Goudy Old Style", Garamond, "Hoefler Text", "Bitstream Charter", Georgia, serif;
 }
 
+.with-margin {
+    margin: 0 auto;
+    width: 85%;
+}
+
 /* header */
+#header-wrapper {
+    background: @body-bg;
+    background-image: -moz-linear-gradient(top, rgba(21,44,82,1), rgba(48,71,109,1));
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(21,44,82,1)), to(rgba(48,71,109,1)));
+}
+
 #header {
+    .with-margin;
     position: relative;
-    padding: 0 0 0 30px;
-    margin: 0;
+    padding: 0;
     height: 100px;
 
     h1 {
-        color: white;
+        color: #eee;
         font: italic 50px Georgia, "Times New Roman", Times, serif;
         width: 5em;
     }
 
     h2 {
-        color: white;
+        color: #ccc;
         font: italic 20px Georgia, "Times New Roman", Times, serif;
         width: 20em;
     }
 }
 
-/* menu */
+/* header menu */
 #menu {
     height: 60px;
     position: absolute;
@@ -87,7 +96,7 @@ body, table, code {
             }
 
             a:hover {
-                background: @body-bg;
+                background: @location-bg + #252525;
                 color: white;
                 height: 40px;
                 margin-top: 10px;
@@ -118,30 +127,30 @@ body, table, code {
     }
 }
 
-#location-bar {
+/* location bar */
+#location-wrapper {
+    background: @location-bg;
+    background-image: -moz-linear-gradient(top, @location-bg, @location-bg + #252525);
+    background-image: -webkit-gradient(linear, left top, left bottom, from(@location-bg), to(@location-bg + #252525));
+}
+
+#location {
+    .with-margin;
     position: relative;
     height: 40px;
     line-height: 40px;
-    padding-left: 10px;
-    background: @location-bg;
-    background-image: -moz-linear-gradient(top, rgba(0,0,0,0.3), rgba(255,255,255, 0.1) 30%, rgba(255,255,255, 0.1) 70%, rgba(0,0,0,0.3));
-    background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(0,0,0,0.3)), to(rgba(0,0,0,0.3)), color-stop(0.3, rgba(255,255,255, 0.1)), color-stop(0.7, rgba(255,255,255, 0.1)));
     color: white;
     clear: both;
-    border-top-right-radius: 10px;
-    -webkit-border-top-right-radius: 10px;
-    -moz-border-radius-topright: 10px;
-    border-top-left-radius: 10px;
-    -webkit-border-top-left-radius: 10px;
-    -moz-border-radius-topleft: 10px;
-    border-bottom: 1px solid @body-bg;
 
-    a {
+    a, span {
         text-decoration: none;
         padding: 3px;
         line-height: 1.5ex;
-        text-decoration: underline;
         color: white;
+    }
+
+    a {
+        text-decoration: underline;
     }
 
     a:hover {
@@ -153,17 +162,13 @@ body, table, code {
 
 /* content */
 #content {
+    .with-margin;
+
     position: relative;
     clear: both;
-    padding: 0 0 10px 10px;
+    padding: 0;
     margin-top: 0px;
-    background-color: @body-bg + #565656;
-    border-bottom-right-radius: 10px;
-    -webkit-border-bottom-right-radius: 10px;
-    -moz-border-radius-bottomright: 10px;
-    border-bottom-left-radius: 10px;
-    -webkit-border-bottom-left-radius: 10px;
-    -moz-border-radius-bottomleft: 10px;
+    background-color: @sidebar-bg;
 
 
     #sidebar {
@@ -213,41 +218,74 @@ body, table, code {
         width: 70%;
         min-width: 300px;
         background-color: white;
-        border-bottom-right-radius: 10px;
-        -webkit-border-bottom-right-radius: 10px;
-        -moz-border-radius-bottomright: 10px;
-        border-bottom-left-radius: 10px;
-        -webkit-border-bottom-left-radius: 10px;
-        -moz-border-radius-bottomleft: 10px;
-
 
         #main-content {
-            padding: 5px 20px;
+            padding: 5px 20px 30px 0;
+        }
+
+        #intro {
+            margin: 15px -20px 15px -50px;
+            background-color: #e6e8e9;
+            border-left: 10px solid #ccc;
+            border-bottom: 10px solid #ccc;
+            border-top: 10px solid #ccc;
+            border-bottom-left-radius: 10px;
+            -webkit-border-bottom-left-radius: 10px;
+            -moz-border-radius-bottomleft: 10px;
+            border-top-left-radius: 10px;
+            -webkit-border-top-left-radius: 10px;
+            -moz-border-radius-topleft: 10px;
+            padding: 5px;
+
+            h1, h2, h3, h4, h5, h6, p, ul, ol, dl, table, pre, blockquote {
+                margin-top: 5px;
+            }
         }
 
         h1, h2, h3, h4, h5, h6 {
             font-family: Perpetua, Baskerville, "Big Caslon", "Palatino Linotype", Palatino, "URW Palladio L", "Nimbus Roman No9 L", serif;
             font-weight: bold;
-            text-shadow: 1px 1px 2px #888;
             line-height: 1.5em;
         }
-        h1 { font-size: 230%; }
-        h2 { font-size: 190%; }
-        h3 { font-size: 160%; }
-        h4 { font-size: 130%; }
-
-        h1, h2, h3, h4 {
+        h1 {
+            font-size: 230%;
             margin: 40px 0px 0px;
+            text-shadow: 1px 1px 2px #888;
+        }
+        h2 {
+            font-size: 190%;
+            margin: 30px 0px 0px;
+            text-shadow: 1px 1px 2px #888;
+        }
+        h3 {
+            font-size: 160%;
+            margin: 20px 0px 0px;
+        }
+        h4 {
+            font-size: 130%;
+            margin: 20px 0px 0px;
         }
 
         p, ul, ol, dl, table, pre, blockquote {
-            margin: 20px 0px 0px
+            margin: 20px 0px;
         }
 
         ul, ol {
             margin-left: 10px;
             padding: 0 15px;
             color: #000;
+        }
+
+        dt {
+            padding: 2px;
+            margin-top: 10px;
+            background-color: @sidebar-bg;
+            color: white;
+            font-weight: bold;
+        }
+
+        dd {
+            margin-left: 20px;
         }
 
         a {
@@ -257,7 +295,7 @@ body, table, code {
         }
 
         a:hover {
-            color: black;
+            color: white;
             background-color: @sidebar-bg;
         }
 
@@ -273,7 +311,6 @@ body, table, code {
             text-align: left;
             overflow: visible;
             font: 'Lucida Console', 'courier new', monospace;
-            color: white;
             background: #eee;
             border-top: 1px solid @body-bg;
             border-bottom: 1px solid @body-bg;
@@ -288,7 +325,7 @@ body, table, code {
             display:block;
             padding: 5px;
             margin: -5px -5px 5px -5px;
-            background: @body-bg;
+            background: @sidebar-bg;
             color: white;
             content:attr(title);
             font: bold 100% 'Helvetica Neue', 'Trebuchet MS', Arial, Sans-serif;
@@ -364,22 +401,29 @@ body, table, code {
             }
 
             th {
-                background-color: @body-bg;
+                background-color: @sidebar-bg;
                 color: white;
             }
         }
 
     }
+
 }
 
 /* footer */
-#footer {
+#footer-wrapper {
+    background-color: #e6e8e9;
+    height: 80px;
     clear: both;
-    margin: 0 10px;
+}
+
+#footer {
+    .with-margin;
+    clear: both;
     padding: 5px 20px;
     font-size: 92%;
     text-align: left;
-    color: white;
+    color: black;
 
     h2, p {
         padding-left: 0;
@@ -387,7 +431,8 @@ body, table, code {
 
     a {
         text-decoration: none;
-        color: #CCC;
+        color: @body-bg;
+        font-weight: bold;
     }
 
     a:hover {
@@ -396,7 +441,7 @@ body, table, code {
     }
 
     ul {
-        margin: 0;
+        margin: 0 0 0 20px;
         padding: 0;
     }
 }
