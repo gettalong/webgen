@@ -2,10 +2,12 @@
 title: Overview
 in_menu: false
 ---
+<div id="intro" markdown="1">
 # Documentation
 
 Depending on whether you are new to webgen, you want more information about a specific topic or read
 a reference, you will find all the documentation you need.
+</div>
 
 ## Tutorials & Manual
 
@@ -51,7 +53,7 @@ Following is a list of all the reference documentation of webgen:
   existing extension types are in the API documentation.
 
 
-# Additional User Resources
+## Additional User Resources
 
 If you don't find an answer to your questions in the documentation, there are also:
 
@@ -65,7 +67,7 @@ If you don't find an answer to your questions in the documentation, there are al
 [google-group]: http://groups.google.com/group/webgen-users/
 
 
-# webgen 0.4.x documentation
+## webgen 0.4.x documentation
 
 If you are looking for the documentation of the *0.4.x*{: style='color: red; font-weight: bold'}
 series, it can be found [here](http://webgen.rubyforge.org/documentation/0.4.x/index.html).
