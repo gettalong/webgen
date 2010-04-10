@@ -3,13 +3,75 @@ title: Extensions
 ---
 # Extension Listing
 
-Following is a listing of all available extensions:
+Following is a listing of the available extensions that are shipped and can be used with webgen.
 
 <%
-pattern = /#{File.join(context.node.parent.alcn, '/')}(contentprocessor|output|source|sourcehandler|tag|)\/.*html$/
-context.node.tree.node_access[:alcn].select {|alcn, n| alcn =~ pattern}.sort.each do |alcn, n|
-next if n.is_fragment?
-%>
-* <%= context.dest_node.link_to(n) %><%
+describe = lambda do |ext|
+  n = context.node.tree["#{File.join(context.node.parent.alcn, '/')}#{ext}"]
+  "* #{context.dest_node.link_to(n)}: #{h(n['summary'])}"
 end
 %>
+
+## Content Processors
+
+These extensions process content, i.e. they either convert data from one format to another or make
+other changes to the data. Content processors are used, for example, in the transformation pipeline
+of page and template files.
+
+It is not specified how content processors have to process the content, they are free to do
+anything, even binary transformations (e.g. creating a thumbnail from a picture). This type of
+extension can be divided into several groups:
+
+Special purpose processors
+
+: The following processors don't fit in any of the other categories
+  below and perform very useful tasks which are nearly always used in the transformation pipeline of
+  page/template files:
+
+  <%= describe['contentprocessor/blocks.en.html'] %>
+  <%= describe['contentprocessor/tags.en.html'] %>
+  <%= describe['contentprocessor/fragments.en.html'] %>
+  <%= describe['contentprocessor/head.en.html'] %>
+
+
+Markup processors
+
+: These processors convert markup text that is easy to read and write to a more
+  structured format like HTML. This allows you to write an HTML page without knowing HTML.
+
+  <%= describe['contentprocessor/kramdown.en.html'] %>
+  <%= describe['contentprocessor/maruku.en.html'] %>
+  <%= describe['contentprocessor/rdiscount.en.html'] %>
+  <%= describe['contentprocessor/rdoc.en.html'] %>
+  <%= describe['contentprocessor/redcloth.en.html'] %>
+
+
+Template engines
+
+: These processors are used to add dynamic parts to the processed content.
+
+  <%= describe['contentprocessor/builder.en.html'] %>
+  <%= describe['contentprocessor/erb.en.html'] %>
+  <%= describe['contentprocessor/erubis.en.html'] %>
+  <%= describe['contentprocessor/haml.en.html'] %>
+
+
+CSS preprocessors
+
+: These processors allow you to write CSS files in an easier way, for example,
+  they allow the usage of variables to avoid spreading the same data over the whole file.
+
+  <%= describe['contentprocessor/less.en.html'] %>
+  <%= describe['contentprocessor/sass.en.html'] %>
+
+
+Post processors
+
+: These processors are used to post-process HTML files.
+
+  <%= describe['contentprocessor/tidy.en.html'] %>
+  <%= describe['contentprocessor/xmllint.en.html'] %>
+
+
+
+(contentprocessor|output|source|sourcehandler|tag|)

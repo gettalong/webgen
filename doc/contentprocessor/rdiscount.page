@@ -1,5 +1,6 @@
 ---
 title: Webgen::ContentProcessor::RDiscount
+summary: Converts content written in Markdown to HTML
 ---
 ## Description
 

@@ -1,5 +1,6 @@
 ---
 title: Webgen::ContentProcessor::Blocks
+summary: Replaces a special xml tag with the rendered block of a path in Webgen Page Format
 ---
 ## Description
 

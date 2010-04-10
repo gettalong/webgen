@@ -1,17 +1,17 @@
 contentprocessor/:
-  index_path: ~
+  index_path: ../extensions.html#content-processors
 
 contentprocessor/*:
   template: ../contentprocessor.template
 
 sourcehandler/:
-  index_path: ~
+  index_path: ../extensions.html#source-handlers
 
 sourcehandler/*:
   template: ../sourcehandler.template
 
 tag/:
-  index_path: ~
+  index_path: ../extensions.html#tags
 
 tag/*:
   template: ../tag.template

@@ -1,5 +1,6 @@
 ---
 title: Webgen::ContentProcessor::RedCloth
+summary: Converts content written in Textile markup to HTML
 ---
 ## Description
 

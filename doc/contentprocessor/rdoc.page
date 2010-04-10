@@ -1,5 +1,6 @@
 ---
 title: Webgen::ContentProcessor::RDoc
+summary: Converts content written in RDoc markup to HTML
 ---
 ## Description
 

@@ -1,5 +1,6 @@
 ---
 title: Webgen::ContentProcessor::Sass
+summary: Converts content written in the Sass meta language to valid CSS
 ---
 ## Description
 

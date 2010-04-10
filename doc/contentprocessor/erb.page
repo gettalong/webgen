@@ -1,5 +1,6 @@
 ---
 title: Webgen::ContentProcessor::Erb
+summary: Allows one to use ERB (embedded Ruby) in the content
 ---
 ## Description
 

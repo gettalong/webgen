@@ -1,5 +1,6 @@
 ---
 title: Webgen::ContentProcessor::Tidy
+summary: Uses the `tidy` program to convert the content into valid (X)HTML
 ---
 ## Description
 

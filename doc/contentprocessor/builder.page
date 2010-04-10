@@ -1,5 +1,6 @@
 ---
 title: Webgen::ContentProcessor::Builder
+summary: Allows one to programatically create valid XHTML/XML documents
 ---
 ## Description
 

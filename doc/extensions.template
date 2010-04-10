@@ -1,17 +1,17 @@
 --- pipeline:erb,tags,kramdown,blocks
-[Back](extensions.html) to the extension listing.
-{:.backlink}
-
+<div id="intro" markdown="1">
 # {title:}
 
+<%= h(context.node['summary']) %>
 <% if (context[:chain][1] || context[:chain][0]).node_info[:page].blocks.has_key?('summary') %>
-## Summary
-
-<webgen:block name='summary' />
-
+<webgen:block name='summary' notfound="ignore" node="first" />
 <% end %>
+</div>
+
+[Back](extensions.html) to the extension listing.
+{:.backlink}
 
 <webgen:block name='content' />
 
-[Back](extensions.html) to the extension listing.
-{:.backlink}
+--- name:sidebarbefore pipeline:erb,tags,kramdown,blocks
+<!-- TODO: Add special extensions menu showing only extensions once multiple menu impl. is ready -->

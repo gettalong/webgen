@@ -1,5 +1,7 @@
 ---
 title: Webgen::ContentProcessor::Fragments
+summary: Generates (nested) fragment nodes from all HTML headers tags which have an `id`
+         attribute set
 ---
 ## Description
 

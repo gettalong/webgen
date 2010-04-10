@@ -1,5 +1,6 @@
 ---
 title: Webgen::ContentProcessor::Less
+summary: Converts content in LESS format to valid CSS
 ---
 ## Description
 

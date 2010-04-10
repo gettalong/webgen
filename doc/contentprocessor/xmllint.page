@@ -1,5 +1,6 @@
 ---
 title: Webgen::ContentProcessor::Xmllint
+summary: Uses the `xmllint` program to check the content for well-formedness and/or validness
 ---
 ## Description
 

@@ -1,5 +1,7 @@
 ---
 title: Webgen::ContentProcessor::Head
+summary: Automatically inserts various HTML tags like links to CSS or Javascript files into the
+         HTML `head` tag if this tag is found in the content
 ---
 ## Description
 

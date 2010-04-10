@@ -1,5 +1,6 @@
 ---
 title: Webgen::ContentProcessor::Kramdown
+summary: Converts content written in a superset of Markdown to HTML
 ---
 ## Description
 

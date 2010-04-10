@@ -1,5 +1,7 @@
 ---
 title: Webgen::ContentProcessor::Erubis
+summary: Allows one to use ERB (embedded Ruby) in the content (this one is faster than the standard
+         processor)
 ---
 ## Description
 

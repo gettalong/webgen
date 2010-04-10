@@ -1,5 +1,6 @@
 ---
 title: Webgen::ContentProcessor::Haml
+summary: Allows one to write the content in the Haml markup language
 ---
 ## Description
 
