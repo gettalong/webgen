@@ -1,5 +1,6 @@
 ---
 title: Webgen::SourceHandler::Page
+summary: Generates HTML files from page files
 ---
 ## Description
 

@@ -1,5 +1,6 @@
 ---
 title: Webgen::SourceHandler::Template
+summary: Handles template files for layouting page and other template files
 ---
 ## Description
 

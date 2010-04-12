@@ -1,5 +1,6 @@
 ---
 title: Webgen::SourceHandler::Metainfo
+summary: Provides the ability to set meta information for any path
 ---
 ## Description
 

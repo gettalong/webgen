@@ -107,4 +107,29 @@ handlers](#source-handlers). By default, all paths under the `src` directory are
 <%= describe['source/tararchive.en.html'] %>
 
 
+
+## Source Handlers
+
+These extensions are used for handling source paths. They read the content of a path and produce one
+or more nodes (the internal representation of an output path, see [source
+handling](manual.html#source-handling) for more information on nodes). A source handler can do
+something simple like just copying a source path to the output path but they can also do complex
+things like creating a whole image gallery from just one source path.
+
+The path patterns (see the [path pattern documentation](manual.html#source-pathpattern) for more
+information) which match the source paths that a source handler uses, are listed on the description
+page of each source handler. Additionally, the meta information that is set on any node created by a
+specific source handler is also documented.
+
+<%= describe['sourcehandler/copy.en.html'] %>
+<%= describe['sourcehandler/directory.en.html'] %>
+<%= describe['sourcehandler/feed.en.html'] %>
+<%= describe['sourcehandler/metainfo.en.html'] %>
+<%= describe['sourcehandler/sitemap.en.html'] %>
+<%= describe['sourcehandler/page.en.html'] %>
+<%= describe['sourcehandler/template.en.html'] %>
+<%= describe['sourcehandler/virtual.en.html'] %>
+
+
+
 (|sourcehandler|tag|)

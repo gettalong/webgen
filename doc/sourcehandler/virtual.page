@@ -1,5 +1,6 @@
 ---
 title: Webgen::SourceHandler::Virtual
+summary: Creates nodes from `virtual` paths
 ---
 ## Description
 
