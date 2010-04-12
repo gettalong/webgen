@@ -11,7 +11,7 @@
 [Back](extensions.html) to the extension listing.
 {:.backlink}
 
-<webgen:block name='content' />
+<webgen:block name='content' node="first" />
 
 --- name:sidebarbefore pipeline:erb,tags,kramdown,blocks
 <!-- TODO: Add special extensions menu showing only extensions once multiple menu impl. is ready -->

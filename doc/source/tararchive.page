@@ -1,5 +1,6 @@
 ---
 title: Webgen::Source::TarArchive
+summary: Provides paths from a specified (gzipped) tar archive that match a certain pattern
 ---
 ## Description
 
@@ -20,13 +21,14 @@ files/directories in the tar archive.
 [File.fnmatch]: http://ruby-doc.org/core/classes/File.html#M002603
 [1]: http://raa.ruby-lang.org/project/minitar/
 
+
 ## Examples
 
 The used sources can be specified via the [`sources` configuration
 option](../references/configuration.html#sources), so each of the examples below can be specified in
 the `config.yaml` file.
 
-1.  Using all files/directories from a local tar archive in addition the default configuration:
+1.  Using all files/directories from a local tar archive in addition to the default configuration:
 
         sources:
           - [/, Webgen::Source::FileSystem, src]

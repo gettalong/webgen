@@ -1,5 +1,6 @@
 ---
 title: Webgen::Source::FileSystem
+summary: Provides paths under a specified directory that match a certain pattern
 ---
 ## Description
 
@@ -7,14 +8,12 @@ This is the default source extension used when creating a new webgen website. It
 match a certain path pattern (default value for the path pattern is to match all files) under a
 specific directory.
 
-> The default configuration for a new website uses all files under the `src` directory.
-{:.information}
-
 The first parameter for the file system source is the directory under which the to-be-used files are
 and the second, optional, parameter specifies a path pattern (see [Path
 Patterns](../manual.html#source-pathpattern) and [Dir.glob]).
 
 [Dir.glob]: http://ruby-doc.org/core/classes/Dir.html#M002375
+
 
 ## Examples
 

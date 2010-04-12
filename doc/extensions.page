@@ -3,7 +3,15 @@ title: Extensions
 ---
 # Extension Listing
 
-Following is a listing of the available extensions that are shipped and can be used with webgen.
+webgen comes with many extensions that allow for rapid creation of static websites. The variety of
+the extensions allows you to use your tools of choice, for example, your preferred markup
+language. And if your choice is not available, you can write the extension for it yourself or make a
+feature request!
+
+Extensions are only loaded when they are needed. For example, if you don't use `.feed` files for
+automatically generating atom/RSS feeds for your website, the source handler that handles these
+files will never be loaded. Therefore you don't need to explicitly enable extensions, they just sit
+in the background and wait until the webgen core needs them.
 
 <%
 describe = lambda do |ext|
@@ -19,8 +27,12 @@ other changes to the data. Content processors are used, for example, in the tran
 of page and template files.
 
 It is not specified how content processors have to process the content, they are free to do
-anything, even binary transformations (e.g. creating a thumbnail from a picture). This type of
-extension can be divided into several groups:
+anything, even binary transformations (e.g. creating a thumbnail from a picture). Each content
+processor is identified by one or more *short names* (used, for example, in the `pipeline` option of
+a block in a file in [Webgen Page Format](references/webgen_page_format.html)) which are listed on
+the description page of a content processor.
+
+This type of extension can be divided into several groups:
 
 Special purpose processors
 
@@ -74,4 +86,25 @@ Post processors
 
 
 
-(contentprocessor|output|source|sourcehandler|tag|)
+## Outputs
+
+Output extensions are used to write out the generated content. The default configuration for a new
+website writes the generated content to the `out` directory of the website directory.
+
+However, one could, for example, create an output extension which directly writes to an FTP or SSH
+server.
+
+<%= describe['output/filesystem.en.html'] %>
+
+
+
+## Sources
+
+Source extensions provide the paths (and their contents) that are then processed by the [source
+handlers](#source-handlers). By default, all paths under the `src` directory are potentially used.
+
+<%= describe['source/filesystem.en.html'] %>
+<%= describe['source/tararchive.en.html'] %>
+
+
+(|sourcehandler|tag|)

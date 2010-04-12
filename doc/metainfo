@@ -17,13 +17,13 @@ tag/*:
   template: ../tag.template
 
 source/:
-  index_path: ~
+  index_path: ../extensions.html#sources
 
 source/*:
   template: ../extensions.template
 
 output/:
-  index_path: ~
+  index_path: ../extensions.html#outputs
 
 output/*:
   template: ../extensions.template

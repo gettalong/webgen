@@ -2,10 +2,5 @@
 template: extensions.template
 --- name:summary pipeline:erb,tags,kramdown,blocks
 
-As short name for the content processor (used, for example, in the `pipeline` option of a block in a
-file in [Webgen Page Format](references/webgen_page_format.html)) one of the following can be
-used: `<%= context.website.config['contentprocessor.map'].select {|k,v| v ==
+Short names: `<%= context.website.config['contentprocessor.map'].select {|k,v| v ==
 context.content_node['title']}.map {|k,v| k}.join(', ') %>`.
-
---- name:content
-<webgen:block name='content' />
