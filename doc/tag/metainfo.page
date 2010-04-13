@@ -1,5 +1,8 @@
 ---
 title: Webgen::Tag::Metainfo
+summary: Outputs the content of a given meta information key of the generated page
+used_options:
+  - tag.metainfo.escape_html
 ---
 ## Description
 

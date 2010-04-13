@@ -1,5 +1,6 @@
 ---
 title: Webgen::Tag::BreadcrumbTrail
+summary: Creates a breadcrumb trail (i.e. shows the directory hierarchy) for the generated page
 used_options:
   - tag.breadcrumbtrail.separator
   - tag.breadcrumbtrail.omit_index_path

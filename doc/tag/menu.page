@@ -1,5 +1,6 @@
 ---
 title: Webgen::Tag::Menu
+summary: Creates a customizable menu
 used_options:
   - tag.menu.used_nodes
   - tag.menu.start_level

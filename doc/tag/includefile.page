@@ -1,5 +1,6 @@
 ---
 title: Webgen::Tag::IncludeFile
+summary: Includes the content of a file
 used_options:
   - tag.includefile.filename
   - tag.includefile.process_output

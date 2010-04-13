@@ -1,5 +1,6 @@
 ---
 title: Webgen::Tag::Relocatable
+summary: Makes the given path relative to the generated page
 used_options:
   - tag.relocatable.path
 ---

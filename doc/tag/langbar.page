@@ -1,5 +1,6 @@
 ---
 title: Webgen::Tag::Langbar
+summary: Displays a list of links to translations of the generated page
 used_options:
   - tag.langbar.separator
   - tag.langbar.show_own_lang

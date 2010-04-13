@@ -1,5 +1,6 @@
 ---
 title: Webgen::Tag::Sitemap
+summary: Creates a customizable sitemap
 used_options:
   - common.sitemap.honor_in_menu
   - common.sitemap.any_lang

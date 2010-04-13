@@ -132,4 +132,21 @@ specific source handler is also documented.
 
 
 
-(|sourcehandler|tag|)
+## Tags
+
+These extensions allow the easy inclusion of dynamic content in, for example, page and template
+files. No knowledge of a programming language is needed to make effective use of tags and each tag
+is used for a specific task like creating a menu or a breadcrumb trail.
+
+<%= describe['tag/breadcrumbtrail.en.html'] %>
+<%= describe['tag/coderay.en.html'] %>
+<%= describe['tag/date.en.html'] %>
+<%= describe['tag/executecommand.en.html'] %>
+<%= describe['tag/includefile.en.html'] %>
+<%= describe['tag/langbar.en.html'] %>
+<%= describe['tag/link.en.html'] %>
+<%= describe['tag/menu.en.html'] %>
+<%= describe['tag/metainfo.en.html'] %>
+<%= describe['tag/relocatable.en.html'] %>
+<%= describe['tag/sitemap.en.html'] %>
+<%= describe['tag/tikz.en.html'] %>

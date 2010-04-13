@@ -1,5 +1,6 @@
 ---
 title: Webgen::Tag::TikZ
+summary: Generates an output image from the specified TikZ commands
 used_options:
   - tag.tikz.path
   - tag.tikz.libraries

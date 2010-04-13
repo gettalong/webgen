@@ -1,5 +1,6 @@
 ---
 title: Webgen::Tag::Date
+summary: Displays the current date/time in a customizable format
 used_options:
   - tag.date.format
 ---

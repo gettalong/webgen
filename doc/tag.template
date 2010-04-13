@@ -1,25 +1,22 @@
 ---
 template: extensions.template
---- name:summary pipeline:erb,tags,maruku,blocks
+--- name:summary pipeline:erb,tags,kramdown,blocks
 
-The following tag names are registered for this tag class:
-<%= context.website.config['contentprocessor.tags.map'].
+Tag names: <%= context.website.config['contentprocessor.tags.map'].
       select {|k,v| v == context.content_node['title']}.
       map {|k,v| '`' + (k.kind_of?(Symbol) ? k.inspect : k.to_s) + '`'}.join(', ') %>
 
 <% if context.content_node['used_options'] %>
-This tag uses the following options:
+Used options:
 
 <%
 for option in context.content_node['used_options']
   temp = 'mandatory' if !context.website.config.meta_info[option][:mandatory].nil?
   temp += ' default' if context.website.config.meta_info[option][:mandatory] == 'default'
-%>* [`<%= option %>`]({relocatable: references/configuration.html#<%= option.tr('._', '') %>}) <%= temp ? '(' + temp + ')' : '' %>
+%>* [`<%= option %>`](references/configuration.html#<%= option.tr('._', '') %>) <%= temp ? '(' + temp + ')' : '' %>
 <%
   temp = nil
 end
- %>
+%>
 
 <% end %>
---- name:content
-<webgen:block name='content' />

@@ -1,5 +1,6 @@
 ---
 title: Webgen::Tag::Link
+summary: Creates a link to a given path
 used_options:
   - tag.link.path
   - tag.link.attr

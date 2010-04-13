@@ -1,5 +1,6 @@
 ---
 title: Webgen::Tag::Coderay
+summary: Applies syntax highlighting to the tag body
 used_options:
   - tag.coderay.lang
   - tag.coderay.process_body
