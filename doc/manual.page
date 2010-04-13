@@ -586,33 +586,6 @@ There is clearly defined order in which meta information is applied to a node fo
    the SourceHandler::Metainfo assigns meta information specified for nodes at this stage.
 
 
-
-# webgen Extensions
-
-webgen comes with many extensions that allow for rapid creation of static websites. The variety of
-the extensions allows you to use your tools of choice, for example, your preferred markup
-language. And if your choice is not available, you can write the extension for it yourself or make a
-feature request!
-
-Extensions are only loaded when they are needed. For example, if you don't use `.feed` files for
-automatically generating atom/RSS feeds for your website, the source handler that handles these
-files will never be loaded. Therefore you don't need to explicitly enable extensions, they just sit
-in the background and wait till the webgen core needs them.
-
-There are several types of extensions:
-
-*   **Source Handler**: These extensions are used for handling source paths. They read the content of
-    a path and produce one or more nodes (the internal representation of an output path, see [source
-    handling](#source-handling) for more information on nodes). So a source handler can do something
-    simple like just copying a source path to the output directory but they can also do complex
-    things like creating a whole image gallery from just one source path.
-
-*   **Tags**: This type of extension allows the easy inclusion of dynamic content in, for example,
-    page and template files. Each tag extension is used for a specific task like creating a menu or
-    a breadcrumb trail.
-
-
-
 # A webgen Run
 
 When webgen is started, it first looks for a cache file and uses it if it exists. The cache file
