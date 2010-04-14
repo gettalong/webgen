@@ -562,8 +562,8 @@ specified in several ways, including:
 * Some file types allow meta information to be specified directly in the file, for example page
   files in [Webgen Page Format](references/webgen_page_format.html).
 
-* Meta information can also be specified in special meta information backing files. These files are
-  handled by the source handler [SourceHandler::Metainfo](sourcehandler/metainfo.html).
+* Meta information can also be specified in special meta information files. These files are handled
+  by [SourceHandler::Metainfo](sourcehandler/metainfo.html).
 
 There is clearly defined order in which meta information is applied to a node for a path:
 

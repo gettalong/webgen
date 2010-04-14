@@ -134,7 +134,7 @@ You have several options of varying granularity:
           output_path_style: [:parent, :basename, [., :lang], :ext]
 
 * Add the meta information `output_path_style` to a single file via, for example, a meta information
-  backing file.
+  file.
 
 ### ... modify the template chain?
 

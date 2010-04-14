@@ -11,7 +11,7 @@ when using the `relocatable` tag) the index path is returned.
 
 The name of the index path is specified with the meta information `index_path` which is set to
 `index.html` by default. This meta information needs to be set directly on the directory node (for
-example, via a meta information backing file).
+example, via a meta information file).
 
 The title for a directory can be set via the `title` meta information on the directory itself.
 However, if the directory has an index path, the meta information `routed_title` of the index path
@@ -20,7 +20,7 @@ is used for the directory title. This enables webgen to provide correctly locali
 Normally, webgen shows a warning if it can not find the directory index path for a directory.
 However, there are most certainly directories which should not have an index path, for example, a
 directory containing only images. To prevent webgen from displaying warnings for such directories,
-you can set a null index path using a meta information backing file:
+you can set a null index path using a meta information file:
 
     dirWithOnlyImages:
       index_path: ~

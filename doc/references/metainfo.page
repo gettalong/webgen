@@ -203,7 +203,7 @@ specified in a sub-array, the whole sub-array is omitted, if the configuration o
 at the [output path creation section](../manual.html#source-output) of the manual!
 
 > This meta information has to be set BEFORE a node gets created. Setting this value is therefore
-> only useful, for example, in the `paths` block of a meta information backing file.
+> only useful, for example, in the `paths` block of a meta information file.
 {:.important}
 
 ### priority
