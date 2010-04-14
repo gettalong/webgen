@@ -25,6 +25,13 @@ class TestContentProcessorHaml < Test::Unit::TestCase
     context.content = "#cont\n  = unknown"
     assert_error_on_line(Webgen::RenderError, 2) { obj.call(context) }
 
+    context.content = "#cont\n  = context.node.link_to(nil)"
+    begin
+      obj.call(context)
+    rescue Webgen::RenderError => e
+      assert(e.error_alcn =~ /\/lib\/webgen\/node.rb$/)
+    end
+
     def obj.require(lib); raise LoadError; end
     assert_raise(Webgen::LoadError) { obj.call(context) }
   end

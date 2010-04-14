@@ -26,6 +26,13 @@ class TestContentProcessorErubis < Test::Unit::TestCase
     context.content = "\n\n<% unknown %>"
     assert_error_on_line(Webgen::RenderError, 3) { obj.call(context) }
 
+    context.content = "<% context.node.link_to(nil) %>"
+    begin
+      obj.call(context)
+    rescue Webgen::RenderError => e
+      assert(e.error_alcn =~ /\/lib\/webgen\/node.rb$/)
+    end
+
     context.content = "<% for i in [1] %>\n<%= i %>\n<% end %>"
     assert_equal("1\n", obj.call(context).content)
     @website.config['contentprocessor.erubis.options'][:trim] = false

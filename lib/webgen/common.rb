@@ -17,6 +17,11 @@ module Webgen
       (error.is_a?(::SyntaxError) ? error.message : error.backtrace[0]).scan(/:(\d+)/).first.first.to_i rescue nil
     end
 
+    # Return the file name where the error occured.
+    def self.error_file(error)
+      (error.is_a?(::SyntaxError) ? error.message : error.backtrace[0]).scan(/(?:^|\s)(.*?):(\d+)/).first.first
+    end
+
   end
 
 end

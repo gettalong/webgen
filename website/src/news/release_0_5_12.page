@@ -35,5 +35,6 @@ setting the `tag.metainfo.escape_html` option in the configuration file.
     Deselaers)
   - Fixed problem with unintentionally modified `link` meta information that lead to errors
   - Commands are now correctly shown when running `webgen --help`
+  - Fixed a problem where an incorrect path was shown in error messages
 
 [1]: ../documentation/reference_configuration.html#tagmetainfoescapehtml
