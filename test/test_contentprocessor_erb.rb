@@ -22,8 +22,12 @@ class TestContentProcessorErb < Test::Unit::TestCase
     context.content = "\n<%= 5* %>"
     assert_error_on_line(Webgen::RenderError, 2) { obj.call(context) }
 
-    context.content = "\n\n<% unknown %>"
-    assert_error_on_line(Webgen::RenderError, 3) { obj.call(context) }
+    context.content = "<% context.node.link_to(nil) %>"
+    begin
+      obj.call(context)
+    rescue Webgen::RenderError => e
+      assert(e.error_alcn =~ /\/lib\/webgen\/node.rb$/)
+    end
   end
 
 end
