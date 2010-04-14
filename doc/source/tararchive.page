@@ -14,8 +14,8 @@ accessible via the http(s) and ftp protcols.
 {:.warning}
 
 The first parameter for the tar archive source is the URL of the archive and the second, optional,
-parameter specifies a glob (see [File.fnmatch]) for selecting the to-be-used files/directories in the
-tar archive.
+parameter specifies a path pattern (see [File.fnmatch]) for selecting the to-be-used
+files/directories in the tar archive.
 
 [File.fnmatch]: http://ruby-doc.org/core/classes/File.html#M002603
 [1]: http://raa.ruby-lang.org/project/minitar/
