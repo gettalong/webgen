@@ -11,7 +11,8 @@ module Webgen::ContentProcessor
     def call(context)
       require 'kramdown'
       require 'webgen/contentprocessor/kramdown/html'
-      doc = ::Kramdown::Document.new(context.content, context.website.config['contentprocessor.kramdown.options'])
+      doc = ::Kramdown::Document.new(context.content,
+                                     context.website.config['contentprocessor.kramdown.options'].merge(context.options['contentprocessor.kramdown.options'] || {}))
       context.content = KramdownHtmlConverter.convert(doc, context)
       doc.warnings.each do |warn|
         log(:warn) { "Warning while parsing <#{context.ref_node}> with kramdown: #{warn}" }
