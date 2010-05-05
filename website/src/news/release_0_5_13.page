@@ -1,0 +1,25 @@
+---
+title: webgen 0.5.13 released
+in_menu: true
+sort_info: 2010-04-14 20:30:00
+created_at: 2010-04-14 20:30:00 +02:00
+modified_at: 2010-04-14 20:30:00 +02:00
+---
+<webgen:block name='notes' />
+
+### Changes
+
+<webgen:block name='changes' />
+
+--- name:notes pipeline:tags,kramdown
+
+
+--- name:changes pipeline:tags,kramdown
+
+* Minor changes:
+
+  - Specifying a prefix for kramdown generated header IDs is now possible
+
+* Bug fixes:
+
+  - Fixed problem in ContentProcessor::Less where a non-useful error message was shown
