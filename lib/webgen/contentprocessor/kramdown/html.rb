@@ -9,7 +9,11 @@ module Webgen::ContentProcessor
     def initialize(doc, context) #:nodoc:
       super(doc)
       @context = context
-      @do_convert = context.website.config['contentprocessor.kramdown.handle_links']
+      @do_convert = if context.options.has_key?('contentprocessor.kramdown.handle_links')
+                      context.options['contentprocessor.kramdown.handle_links']
+                    else
+                      context.website.config['contentprocessor.kramdown.handle_links']
+                    end
     end
 
     # Convert the Kramdown document +doc+ to HTML using the webgen +context+ object.
