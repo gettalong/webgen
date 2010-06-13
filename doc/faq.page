@@ -101,7 +101,7 @@ to `true` for all page files use the following in your configuration file:
 
     default_meta_info:
       Page:
-        inMenu: true
+        in_menu: true
 
 The key `default_meta_info` is a special key in the configuration file which allows to update the
 default meta information for a source handler and not to substitute it.
