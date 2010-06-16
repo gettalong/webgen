@@ -25,6 +25,8 @@ option in the configuration file. And a rake task for showing outdated translati
 
   - Added a rake task to show outdated translations
   - Added a [configuration option][1] for specifying whether a meta info value should be escaped
+  - Added support for [Sassy CSS][2]
+  - A haml version greater than 3.0.0 is now needed
 
 * Bug fixes:
 
@@ -36,3 +38,4 @@ option in the configuration file. And a rake task for showing outdated translati
   - Fixed a problem where an incorrect path was shown in error messages
 
 [1]: ../documentation/references/configuration.html#tagmetainfoescapehtml
+[2]: ../documentation/contentprocessor/scss.html
