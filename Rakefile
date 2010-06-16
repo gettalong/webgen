@@ -30,7 +30,7 @@ require 'webgen/webgentask'
 require 'webgen/version'
 require 'webgen/page'
 
-# End user tasks ################################################################
+# End user tasks ###############################################################
 
 task :default => :test
 
