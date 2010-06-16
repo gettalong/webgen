@@ -19,7 +19,11 @@ modified_at: 2010-04-14 20:30:00 +02:00
 * Minor changes:
 
   - Specifying a prefix for kramdown generated header IDs is now possible
+  - Added support for [Sassy CSS][1]
+  - A haml version greater than 3.0.0 is now needed
 
 * Bug fixes:
 
   - Fixed problem in ContentProcessor::Less where a non-useful error message was shown
+
+[1]: ../documentation/contentprocessor/scss.html

@@ -137,7 +137,7 @@ it should normally work with newer versions, too!
 
 * (optional) [maruku](http://maruku.rubyforge.org) version 0.6.0 or higher
 
-* (optional) [haml](http://haml.hamptoncatlin.com) version 2.2.7 or higher for haml and sass support
+* (optional) [haml](http://haml.hamptoncatlin.com) version 3.0.12 or higher for haml, sass and scss support
 
 * (optional) [builder](http://builder.rubyforge.org) version 2.1.0 or higher for programmatic xml
   generation support

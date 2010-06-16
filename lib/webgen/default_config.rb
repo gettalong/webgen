@@ -134,6 +134,7 @@ config.contentprocessor.map({
                               'erb' => 'Webgen::ContentProcessor::Erb',
                               'haml' => 'Webgen::ContentProcessor::Haml',
                               'sass' => 'Webgen::ContentProcessor::Sass',
+                              'scss' => 'Webgen::ContentProcessor::Scss',
                               'rdoc' => 'Webgen::ContentProcessor::RDoc',
                               'builder' => 'Webgen::ContentProcessor::Builder',
                               'erubis' => 'Webgen::ContentProcessor::Erubis',
