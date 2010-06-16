@@ -69,6 +69,7 @@ module Webgen
     autoload :Erb, 'webgen/contentprocessor/erb'
     autoload :Haml, 'webgen/contentprocessor/haml'
     autoload :Sass, 'webgen/contentprocessor/sass'
+    autoload :Scss, 'webgen/contentprocessor/scss'
     autoload :RDoc, 'webgen/contentprocessor/rdoc'
     autoload :Builder, 'webgen/contentprocessor/builder'
     autoload :Erubis, 'webgen/contentprocessor/erubis'
