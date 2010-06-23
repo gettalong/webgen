@@ -75,6 +75,7 @@ CSS preprocessors
 
   <%= describe['contentprocessor/less.en.html'] %>
   <%= describe['contentprocessor/sass.en.html'] %>
+  <%= describe['contentprocessor/scss.en.html'] %>
 
 
 Post processors
