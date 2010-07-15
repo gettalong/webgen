@@ -19,11 +19,6 @@ See the platform specific installation notes for more information!
 Furthermore, webgen should also run on jruby 1.1.3 and ruby 1.9.1 but that has not been extensively
 tested.
 
-> Ruby 1.9.1 support notes (as of 2009-06-19):
->
-> * There may be problems with Maruku and character encodings.
-{:.information}
-
 
 ## Platform Specific Installation Instructions
 
