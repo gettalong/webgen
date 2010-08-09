@@ -12,7 +12,7 @@ specific directory.
 
 The first parameter for the file system source is the directory under which the to-be-used files are
 and the second, optional, parameter specifies a path pattern (see [Path
-Patterns](../manual.html#path-patterns) and [Dir.glob]).
+Patterns](../manual.html#source-pathpattern) and [Dir.glob]).
 
 [Dir.glob]: http://ruby-doc.org/core/classes/Dir.html#M002375
 

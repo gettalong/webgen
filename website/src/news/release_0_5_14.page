@@ -1,0 +1,26 @@
+---
+title: webgen 0.5.14 released
+in_menu: true
+sort_info: 2010-08-09 08:50:00
+created_at: 2010-08-09 08:50:00 +02:00
+modified_at: 2010-08-09 08:50:00 +02:00
+---
+<webgen:block name='notes' />
+
+### Changes
+
+<webgen:block name='changes' />
+
+--- name:notes pipeline:tags,kramdown
+
+This release changes the version of the kramdown library to 0.10.0 and contains one small bug fix.
+
+--- name:changes pipeline:tags,kramdown
+
+* Minor changes:
+
+  - kramdown version equal to 0.10.0 is now needed
+
+* Bug fixes:
+
+  - Fixed bug RF#28392: problem with rdoc test (reported by Hans de Graaff)
