@@ -1,0 +1,22 @@
+---
+title: webgen 0.5.15 released
+in_menu: true
+sort_info: 2010-08-09 08:50:00
+created_at: 2010-08-09 08:50:00 +02:00
+modified_at: 2010-08-09 08:50:00 +02:00
+---
+<webgen:block name='notes' />
+
+### Changes
+
+<webgen:block name='changes' />
+
+--- name:notes pipeline:tags,kramdown
+
+
+--- name:changes pipeline:tags,kramdown
+
+* Minor changes:
+
+
+* Bug fixes:
