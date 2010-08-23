@@ -88,7 +88,10 @@ module Webgen
     # Create the basic website skeleton (without any bundle applied).
     def create_website
       raise "Directory <#{@website.directory}> does already exist!" if File.exists?(@website.directory)
-      @website.execute_in_env { write_paths(Webgen::Source::Resource.new('webgen-website-skeleton').paths) }
+      @website.execute_in_env do
+        write_paths(Webgen::Source::Resource.new('webgen-website-skeleton').paths) +
+          [FileUtils.mkdir_p(File.join(@website.directory, 'src'))] # fixes Rubygems bug (see RF#28393)
+      end
     end
 
     # Apply the given +bundle+ to the website by copying the files.
