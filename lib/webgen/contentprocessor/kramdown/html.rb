@@ -6,8 +6,8 @@ module Webgen::ContentProcessor
 
   class KramdownHtmlConverter < ::Kramdown::Converter::Html
 
-    def initialize(doc, context) #:nodoc:
-      super(doc)
+    def initialize(root, options, context) #:nodoc:
+      super(root, options)
       @context = context
       @do_convert = if context.options.has_key?('contentprocessor.kramdown.handle_links')
                       context.options['contentprocessor.kramdown.handle_links']
@@ -16,19 +16,19 @@ module Webgen::ContentProcessor
                     end
     end
 
-    # Convert the Kramdown document +doc+ to HTML using the webgen +context+ object.
-    def self.convert(doc, context)
-      new(doc, context).convert(doc.tree)
+    # Convert the element tree under +root+ to HTML using the webgen +context+ object.
+    def self.convert(root, options, context)
+      new(root, options, context).convert(root)
     end
 
-    def convert_a(el, indent, opts)
+    def convert_a(el, indent)
       el.attr['href'] = @context.tag('relocatable', {'path' => el.attr['href']}) if @do_convert
-      "<a#{html_attributes(el)}>#{inner(el, indent, opts)}</a>"
+      "<a#{html_attributes(el.attr)}>#{inner(el, indent)}</a>"
     end
 
-    def convert_img(el, indent, opts)
+    def convert_img(el, indent)
       el.attr['src'] = @context.tag('relocatable', {'path' => el.attr['src']}) if @do_convert
-      "<img#{html_attributes(el)} />"
+      "<img#{html_attributes(el.attr)} />"
     end
 
   end
