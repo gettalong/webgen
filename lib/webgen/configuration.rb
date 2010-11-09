@@ -1,149 +1,145 @@
 # -*- encoding: utf-8 -*-
 
+require 'yaml'
+require 'webgen/error'
+
 module Webgen
 
   # Stores the configuration for a webgen website.
   #
-  # Configuration options should be created like this:
+  # Configuration options can be created by using the #define_option method:
   #
-  #   config.my.new.config 'value', :doc => 'some', :meta => 'info'
+  #   config.define_option "my.new.option", 'default value', 'desc'
   #
-  # and later accessed or set using the accessor methods #[] and #[]= or a configuration helper.
-  # These helpers are defined in the Helpers module and provide easier access to complex
-  # configuration options. Also see the {webgen
-  # manual}[http://webgen.rubyforge.org/documentation/manual.html#website-configfile] for
-  # information about the configuration helpers.
+  # and later accessed or set using the accessor methods #[] and #[]=. A validation block can also
+  # be specified when defining an option. This validation block is called when a new value should be
+  # set and it should return the value to be set:
+  #
+  #   config.define_option "my.new.option", 'default value', 'desc' do |val|
+  #     raise "Option must be a string" unless val.kind_of?(String)
+  #     val.upcase
+  #   end
+  #
   class Configuration
 
-    # Helper class for providing an easy method to define configuration options.
-    class MethodChain
+    # Raised by the Webgen::Configuration class.
+    class Error < Webgen::Error; end
 
-      def initialize(config) #:nodoc:
-        @config = config
-        @name = ''
-      end
-
-      def method_missing(id, *args) #:nodoc:
-        @name += (@name.empty? ? '' : '.') + id.id2name.sub(/(!|=)$/,'')
-        if args.length > 0
-          value = args.shift
-          @config.data[@name] = value unless @config.data.has_key?(@name) # value is set only the first time
-          @config.meta_info[@name] ||= {}
-          @config.meta_info[@name].update(*args) if args.length > 0
-          nil
-        else
-          self
-        end
-      end
-
-    end
-
-    # This module provides methods for setting more complex configuration options. It is mixed into
-    # Webgen::Configuration so that its methods can be used. Detailed information on the use of the
-    # methods can be found in the "User Manual" in the "Configuration File" section.
-    #
-    # All public methods defined in this module are available for direct use in the
-    # configuration file, e.g. the method named +default_meta_info+ can be used like this:
-    #
-    #   default_meta_info:
-    #     Webgen::SourceHandler::Page:
-    #       in_menu : true
-    #       :action : replace
-    #
-    # All methods have to take exactly one argument, a Hash.
-    #
-    # The special key <tt>:action</tt> should be used for specifying how the configuration option
-    # should be set:
-    #
-    # [replace]  Replace the configuration option with the new values.
-    # [modify]   Replace old values with new values and add missing ones (useful for hashes and
-    #            normally the default value)
-    module Helpers
-
-      # Set the default meta information for source handlers.
-      def default_meta_info(args)
-        args.each do |sh_name, mi|
-          raise ArgumentError, 'Invalid argument for configuration helper default_meta_info' unless mi.kind_of?(Hash)
-          action = mi.delete(:action) || 'modify'
-          mi_hash = (self['sourcehandler.default_meta_info'][complete_source_handler_name(sh_name)] ||= {})
-          case action
-          when 'replace' then mi_hash.replace(mi)
-          else mi_hash.update(mi)
-          end
-        end
-      end
+    # Struct class for storing a configuration option.
+    Option = Struct.new(:default, :desc, :validator)
 
 
-      # Set the path patterns used by source handlers.
-      def patterns(args)
-        args.each do |sh_name, data|
-          pattern_arr = (self['sourcehandler.patterns'][complete_source_handler_name(sh_name)] ||= [])
-          case data
-          when Array then pattern_arr.replace(data)
-          when Hash
-            (data['del'] || []).each {|pat| pattern_arr.delete(pat)}
-            (data['add'] || []).each {|pat| pattern_arr << pat}
-          else
-            raise ArgumentError, 'Invalid argument for configuration helper patterns'
-          end
-        end
-      end
-
-
-      # Set the default processing pipeline for a source handler.
-      def default_processing_pipeline(args)
-        args.each do |sh_name, pipeline|
-          raise ArgumentError, 'Invalid argument for configuration helper pipeline' unless pipeline.kind_of?(String)
-          mi_hash = (self['sourcehandler.default_meta_info'][complete_source_handler_name(sh_name)] ||= {})
-          ((mi_hash['blocks'] ||= {})['default'] ||= {})['pipeline'] = pipeline
-        end
-      end
-
-
-      # Complete +sh_name+ by checking if a source handler called
-      # <tt>Webgen::SourceHandler::SH_NAME</tt> exists.
-      def complete_source_handler_name(sh_name)
-        (Webgen::SourceHandler.constants.map {|c| c.to_s}.include?(sh_name) ? 'Webgen::SourceHandler::' + sh_name : sh_name)
-      end
-      private :complete_source_handler_name
-
-    end
-
-
-    include Helpers
-
-    # The hash which stores the meta info for the configuration options.
-    attr_reader :meta_info
-
-    # The configuration options hash.
-    attr_reader :data
+    # Contains all the defined configuration options.
+    attr_reader :options
 
     # Create a new Configuration object.
     def initialize
-      @data = {}
-      @meta_info = {}
+      @options = {}
+      @values = {}
     end
 
-    # Return the configuration option +name+.
+    # Define a new option +name+ with a default value of +default+ and the description +desc+. If a
+    # validation block is provided, it is called with the new value when one is set and should
+    # return a (possibly altered) value to be set.
+    def define_option(name, default, desc, &validator)
+      if @options.has_key?(name)
+        raise ArgumentError, "Configuration option '#{name}' has already be defined"
+      else
+        @options[name] = Option.new
+        @options[name].default = default.freeze
+        @options[name].desc = desc.freeze
+        @options[name].validator = validator.freeze
+        @options[name].freeze
+      end
+    end
+
+    # Return the value for the configuration option +name+.
     def [](name)
-      if @data.has_key?(name)
-        @data[name]
+      if @options.has_key?(name)
+        @values.has_key?(name) ? @values[name] : @options[name].default
       else
-        raise ArgumentError, "No such configuration option: #{name}"
+        raise Error, "Configuration option '#{name}' does not exist"
       end
     end
 
-    # Set the configuration option +name+ to the provided +value+.
+    # Use +value+ as value for the configuration option +name+.
     def []=(name, value)
-      if @data.has_key?(name)
-        @data[name] = value
+      if @options.has_key?(name)
+        begin
+          @values[name] = (@options[name].validator ? @options[name].validator.call(value) : value)
+        rescue
+          raise Error, "Problem setting configuration option '#{name}': #{$!.message}", $!.backtrace
+        end
       else
-        raise ArgumentError, "No such configuration option: #{name}"
+        raise Error, "Configuration option '#{name}' does not exist"
       end
     end
 
-    def method_missing(id, *args) #:nodoc:
-      MethodChain.new(self).method_missing(id, *args)
+    # Set the configuration values from the Hash +values+. The hash can either contain full
+    # configuration option names or namespaced option names, ie. in YAML format:
+    #
+    #   my.option: value
+    #
+    #   website:
+    #     lang: en
+    #     url: my_url
+    #
+    # The above hash will set the option <tt>my.option</tt> to +value+, <tt>website.lang</tt> to
+    # +en+ and <tt>website.url</tt> to +my_url+.
+    #
+    # Returns an array with the unknown configuration options.
+    def set_values(values)
+      unknown_options = []
+      process = proc do |name, value|
+        if @options.has_key?(name)
+          self[name] = value
+        elsif value.kind_of?(Hash)
+          value.each {|k,v| process.call("#{name}.#{k}", v)}
+        else
+          unknown_options << name
+        end
+      end
+      values.each(&process)
+      unknown_options
+    end
+
+    # Load the configuration values. If +filename+ is a String, it is treated as the name of the
+    # configuration file from which the values should be loaded. If +filename+ responds to \#read,
+    # it is treated as an IO object from which the values should be loaded. The IO object is
+    # automatically closed afterwards.
+    #
+    # The configuration needs to be in YAML format. More specifically, it needs to contain a YAML
+    # hash which is further processed by #set_values.
+    def load_from_file(filename)
+      data = if String === filename || filename.respond_to?(:read)
+               begin
+                 YAML::load(String === filename ? File.read(filename) : filename.read) || {}
+               rescue RuntimeError, ArgumentError => e
+                 raise Error, "Problem parsing configuration data (it needs to contain a YAML hash): #{e.message}", e.backtrace
+               end
+             else
+               raise ArgumentError, "Need a String or IO object, not a #{filename.class}"
+             end
+      raise Error, 'Structure of configuration file is invalid, it has to be a Hash' unless data.kind_of?(Hash)
+      set_values(data)
+    end
+
+
+    @@static = self.new
+
+    # Return the static configuration object that is used to define the options that are needed by
+    # webgen itself. This object should *not* be used by website extensions to define configuration
+    # options!
+    #
+    # If a block is provided, the static configuration object is yielded.
+    def self.static
+      yield(@@static) if block_given?
+      @@static
+    end
+
+    # See #define_option.
+    def self.define_option(*args, &block)
+      @@static.define_option(*args, &block)
     end
 
   end
