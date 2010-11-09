@@ -2,51 +2,52 @@
 
 module Webgen
 
-  # Custom webgen error.
+  # This error class and its descendants are only used in webgen when user-visible errors need to be
+  # created. For example, when the format of the configuration is not valid. Use the built-in Ruby
+  # error classes for all other error situations!
   class Error < StandardError
 
-    # The name of the class where the error happened.
-    attr_reader :class_name
+    # The location where the error happened (this can be set to a file name, a class name, ...).
+    attr_reader :location
 
-    # This is either the source path or the node alcn which is responsible for the error.
-    attr_accessor :alcn
+    # Contains the path name if the error is related to a specific source or destination path,
+    attr_reader :path
 
-    # The plain error message.
-    attr_reader :plain_message
-
-    # Create a new Error using the provided values.
+    # Create a new Error object.
     #
     # If +msg_or_error+ is a String, it is treated as the error message. If it is an exception, the
-    # exception is wrapped.
-    def initialize(msg_or_error, class_name = nil, alcn = nil)
+    # exception is wrapped. The +location+ parameter can be used to further describe where the error
+    # happened and the +path+ parameter can be used to associate a source or destination path with
+    # the error.
+    def initialize(msg_or_error, location = nil, path = nil)
       if msg_or_error.kind_of?(String)
         super(msg_or_error)
-        @plain_message = msg_or_error
       else
         super(msg_or_error.message)
         set_backtrace(msg_or_error.backtrace)
-        @plain_message = msg_or_error.message
       end
-      @class_name, @alcn = class_name, (alcn.kind_of?(Node) ? alcn.to_s : alcn)
+      @location, @path = location, path.to_s
     end
 
     def message # :nodoc:
-      msg = 'Error while working'
-      msg += (@alcn ? " on <#{@alcn}>" : '')
-      msg += " with #{@class_name}" if @class_name
-      msg + ":\n    " + plain_message
+      msg = 'Error'
+      msg << " at #{@location}" if @location
+      msg << (!@path.empty? ? " while working on <#{@path}>" : '')
+      msg << ":\n    " << super
     end
 
   end
+
 
   # This error is raised when an error condition occurs during the creation of a node.
   class NodeCreationError < Error
 
     def message # :nodoc:
-      msg = 'Error while creating a node'
-      msg += (@alcn ? " from <#{@alcn}>" : '')
-      msg += " with #{@class_name}" if @class_name
-      msg + ":\n    " + plain_message
+      msg = 'Error'
+      msg << " at #{@location}" if @location
+      msg << ' while creating a node'
+      msg << (@path ? " from <#{@path}>" : '')
+      msg << ":\n    " << super
     end
 
   end
@@ -55,33 +56,30 @@ module Webgen
   # This error is raised when an error condition occurs during rendering of a node.
   class RenderError < Error
 
-    # The alcn of the file where the error happened. This can be different from #alcn (e.g. a page
+    # The path of the file where the error happened. This can be different from #path (e.g. a page
     # file is rendered but the error happens in a used template).
-    attr_accessor :error_alcn
+    attr_accessor :error_path
 
-    # The line number in the +error_alcn+ where the errror happened.
+    # The line number in the +error_path+ where the errror happened.
     attr_accessor :line
 
-    # Create a new RenderError using the provided values.
-    #
-    # If +msg_or_error+ is a String, it is treated as the error message. If it is an exception, the
-    # exception is wrapped.
-    def initialize(msg_or_error, class_name = nil, alcn = nil, error_alcn = nil, line = nil)
-      super(msg_or_error, class_name, alcn)
-      @error_alcn, @line = (error_alcn.kind_of?(Node) ? error_alcn.to_s : error_alcn), line
+    # Create a new RenderError.
+    def initialize(msg_or_error, location = nil, path = nil, error_path = nil, line = nil)
+      super(msg_or_error, location, path)
+      @error_path, @line = error_path.to_s, line
     end
 
     def message # :nodoc:
-      msg = 'Error '
-      if @error_alcn
-        msg += "in <#{@error_alcn}"
+      msg = 'Error'
+      if @error_path
+        msg += " in <#{@error_path}"
         msg += ":~#{@line}" if @line
-        msg += "> "
+        msg += ">"
       end
-      msg += 'while rendering '
-      msg += (@alcn ? "<#{@alcn}>" : 'the website')
-      msg += " with #{@class_name}" if @class_name
-      msg + ":\n    " + plain_message
+      msg << ' while rendering'
+      msg << (@path ? " <#{@path}>" : ' the website')
+      msg << " at #{@location}" if @location
+      msg << ":\n    " << super
     end
 
   end
@@ -96,18 +94,18 @@ module Webgen
     # The name of the Rubygem that provides the missing library.
     attr_reader :gem
 
-    # Create a new LoadError using the provided values.
+    # Create a new LoadError.
     #
     # If +library_or_error+ is a String, it is treated as the missing library name and an approriate
     # error message is created. If it is an exception, the exception is wrapped.
-    def initialize(library_or_error, class_name = nil, alcn = nil, gem = nil)
+    def initialize(library_or_error, location = nil, path = nil, gem = nil)
       if library_or_error.kind_of?(String)
         msg = "The needed library '#{library_or_error}' is missing."
-        msg += " You can install it via rubygems with 'gem install #{gem}'!" if gem
-        super(msg, class_name, alcn)
+        msg << " You can install it with rubygems by running 'gem install #{gem}'!" if gem
+        super(msg, location, path)
         @library = library_or_error
       else
-        super(library_or_error, class_name, alcn)
+        super(library_or_error, location, path)
         @library = nil
       end
       @gem = gem
@@ -122,11 +120,11 @@ module Webgen
     # The command that is missing.
     attr_reader :cmd
 
-    # Create a new CommandNotFoundError using the provided values.
+    # Create a new CommandNotFoundError.
     #
     # The parameter +cmd+ specifies the command that is missing.
-    def initialize(cmd, class_name = nil, alcn = nil)
-      super("The needed command '#{cmd}' is missing!", class_name, alcn)
+    def initialize(cmd, location = nil, path = nil)
+      super("The needed command '#{cmd}' is missing!", location, path)
       @cmd = cmd
     end
 
