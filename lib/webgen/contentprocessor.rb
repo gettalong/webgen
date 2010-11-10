@@ -1,5 +1,7 @@
 # -*- encoding: utf-8 -*-
 
+require 'webgen/common'
+
 module Webgen
 
   # Namespace for all content processors.
@@ -7,24 +9,16 @@ module Webgen
   # == Implementing a content processor
   #
   # Content processors are used to process the content of files, normally of files in Webgen Page
-  # Format. A content processor only needs to respond to one method called +call+ and must not take
-  # any parameters in the +initialize+ method. This method is invoked with a
-  # Webgen::Context object that provides the whole context (especially the content
-  # and the node chain) and the method needs to return this object. During processing a content
-  # processor normally changes the content of the context but it does not need to.
+  # Format. A content processor class only needs to respond to one method called +call+ and must not
+  # take any parameters in the +initialize+ method. This method is invoked with a Webgen::Context
+  # object that provides the whole context (especially the content and the node chain) and the
+  # method needs to return this object. During processing a content processor normally changes the
+  # content of the context but it does not need to.
   #
-  # A self-written content processor does not need to be in the Webgen::ContentProcessor namespace
-  # but all shipped ones do.
+  # The content processor has to be registered so that webgen knows about it, see ::register for
+  # more information.
   #
-  # After writing the content processor class, one needs to add it to the
-  # <tt>contentprocessor.map</tt> hash so that it is used by webgen. The key for the entry needs to
-  # be a short name without special characters or spaces and the value can be:
-  #
-  # * the class name, not as constant but as a string - then this content processor is assumed to
-  #   work with textual data -, or
-  #
-  # * an array with the class name like before and the type, which needs to be <tt>:binary</tt> or
-  #   <tt>:text</tt>.
+  # Another way to implement a content processor is to provide a block to the ::register method.
   #
   # == Sample Content Processor
   #
@@ -32,11 +26,11 @@ module Webgen
   # strings of the form <tt>replace_key:path/to/node</tt> with a link to the specified node if it is
   # found.
   #
-  # Note how the content node, the reference node and the destination node are used sothat the
+  # Note how the content node, the reference node and the destination node are used so that the
   # correct meta information is used, the node is correctly resolved and the correct relative link
   # is calculated respectively!
   #
-  #   class SampleProcessor
+  #   class Replacer
   #
   #     def call(context)
   #       if !context.content_node['replace_key'].to_s.empty?
@@ -56,61 +50,103 @@ module Webgen
   #
   #   end
   #
-  #   Webgen::WebsiteAccess.website.config['contentprocessor.map']['replacer'] = 'SampleProcessor'
-  #   # Or one could equally write
-  #   # Webgen::WebsiteAccess.website.config['contentprocessor.map']['replacer'] = ['SampleProcessor', :text]
+  #   Webgen::ContentProcessor.register 'Replacer'
   #
   module ContentProcessor
 
-    autoload :Tags, 'webgen/contentprocessor/tags'
-    autoload :Blocks, 'webgen/contentprocessor/blocks'
-    autoload :Maruku, 'webgen/contentprocessor/maruku'
-    autoload :RedCloth, 'webgen/contentprocessor/redcloth'
-    autoload :Erb, 'webgen/contentprocessor/erb'
-    autoload :Haml, 'webgen/contentprocessor/haml'
-    autoload :Sass, 'webgen/contentprocessor/sass'
-    autoload :Scss, 'webgen/contentprocessor/scss'
-    autoload :RDoc, 'webgen/contentprocessor/rdoc'
-    autoload :Builder, 'webgen/contentprocessor/builder'
-    autoload :Erubis, 'webgen/contentprocessor/erubis'
-    autoload :RDiscount, 'webgen/contentprocessor/rdiscount'
-    autoload :Fragments, 'webgen/contentprocessor/fragments'
-    autoload :Head, 'webgen/contentprocessor/head'
-    autoload :Tidy, 'webgen/contentprocessor/tidy'
-    autoload :Xmllint, 'webgen/contentprocessor/xmllint'
-    autoload :Kramdown, 'webgen/contentprocessor/kramdown'
-    autoload :Less, 'webgen/contentprocessor/less'
+    module Callable # :nodoc:
 
-    # Return the list of all available content processors.
-    def self.list
-      WebsiteAccess.website.config['contentprocessor.map'].keys
-    end
-
-    # Return the content processor object identified by +name+.
-    def self.for_name(name)
-      klass, cp_type = WebsiteAccess.website.config['contentprocessor.map'][name]
-      klass.nil? ? nil : WebsiteAccess.website.cache.instance(klass)
-    end
-
-    # Return whether the content processor identified by +name+ is processing binary data.
-    def self.is_binary?(name)
-      WebsiteAccess.website.config['contentprocessor.map'][name].kind_of?(Array) &&
-        WebsiteAccess.website.config['contentprocessor.map'][name].last == :binary
-    end
-
-    # Helper class for accessing content processors in a Webgen::Context object.
-    class AccessHash
-
-      # Check if a content processor called +name+ exists.
-      def has_key?(name)
-        Webgen::ContentProcessor.list.include?(name)
+      def call(context)
+        new.call(context)
       end
 
-      # Return (and proboably initialize) the content processor called +name+.
-      def [](name)
-        Webgen::ContentProcessor.for_name(name)
-      end
     end
+
+    @@processors = {}
+
+    # Register a content processor. The parameter +klass+ has to contain the class name. If the
+    # class is located under this module, only the class name without the hierarchy part is needed,
+    # otherwise the full class name including parent modules/classes is needed. All other parameters
+    # can be set through the options hash if the default values aren't sufficient.
+    #
+    # Instead of registering a class, you can also provide a block that has to take one parameter
+    # (the context object).
+    #
+    # === Options:
+    #
+    # [:short_name] The short name for the content processor. If not set, it defaults to the
+    #               lowercase version of the class name (without the hierarchy part). It should only
+    #               contain letters.
+    #
+    # [:type] Defines which type of content the content processor can process. Can be set to either
+    #         <tt>:text</tt> (the default) or <tt>:binary</tt>.
+    #
+    # === Examples:
+    #
+    #   Webgen::ContentProcessor.register(:Kramdown)
+    #
+    #   Webgen::ContentProcessor.register('MyModule::Doit', type: :binary)
+    #
+    #   Webgen::ContentProcessor.register('doit') do |context|
+    #     context.content = 'Nothing left.'
+    #   end
+    #
+    def self.register(klass, options={}, &block)
+      short_name = options[:short_name] || klass.to_s.downcase
+      type = options[:type] || :text
+      @@processors[short_name.to_sym] = [block_given? ? block : klass.to_s, type]
+      autoload(klass.to_sym, "webgen/contentprocessor/#{short_name}") unless block_given? || klass.to_s.include?('::')
+    end
+
+    # Return +true+ if there is a content processor with the given short name.
+    def self.registered?(short_name)
+      @@processors.has_key?(short_name.to_sym)
+    end
+
+    # Return the short names of all available content processors.
+    def self.short_names
+      @@processors.keys {|k| k.to_s}.sort
+    end
+
+    # Call the content processor object identified by the given short name with the given context.
+    def self.call(short_name, context)
+      return nil unless registered?(short_name)
+      class_or_name = @@processors[short_name.to_sym].first
+      if String === class_or_name
+        class_or_name =  if !class_or_name.include?('::') && const_defined?(class_or_name.to_sym)
+                           const_get(class_or_name)
+                         else
+                           Webgen::Common.const_for_name(class_or_name)
+                         end
+        class_or_name.extend(Callable)
+        @@processors[short_name.to_sym][0] = class_or_name
+      end
+      class_or_name.call(context)
+    end
+
+    # Return whether the content processor is processing binary data.
+    def self.is_binary?(short_name)
+      registered?(short_name) && @@processors[short_name.to_sym].last == :binary
+    end
+
+    register :Tags
+    register :Blocks
+    register :Maruku
+    register :RedCloth
+    register :Erb
+    register :Haml
+    register :Sass
+    register :Scss
+    register :RDoc
+    register :Builder
+    register :Erubis
+    register :RDiscount
+    register :Fragments
+    register :Head
+    register :Tidy
+    register :Xmllint
+    register :Kramdown
+    register :Less
 
   end
 
