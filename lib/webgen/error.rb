@@ -29,11 +29,17 @@ module Webgen
       @location, @path = location, path.to_s
     end
 
-    def message # :nodoc:
+    def message(wrapped_msg_only = false) # :nodoc:
+      return super() if wrapped_msg_only
       msg = 'Error'
       msg << " at #{@location}" if @location
       msg << (!@path.empty? ? " while working on <#{@path}>" : '')
-      msg << ":\n    " << super
+      msg << ":\n    " << super()
+    end
+
+    # Return the error line by inspecting the backtrace of the given +error+ instance.
+    def self.error_line(error)
+      (error.is_a?(::SyntaxError) ? error.message : error.backtrace[0]).scan(/:(\d+)/).first.first.to_i rescue nil
     end
 
   end
@@ -46,8 +52,8 @@ module Webgen
       msg = 'Error'
       msg << " at #{@location}" if @location
       msg << ' while creating a node'
-      msg << (@path ? " from <#{@path}>" : '')
-      msg << ":\n    " << super
+      msg << (!@path.empty? ? " from <#{@path}>" : '')
+      msg << ":\n    " << super(true)
     end
 
   end
@@ -66,20 +72,21 @@ module Webgen
     # Create a new RenderError.
     def initialize(msg_or_error, location = nil, path = nil, error_path = nil, line = nil)
       super(msg_or_error, location, path)
-      @error_path, @line = error_path.to_s, line
+      @error_path = error_path.to_s
+      @line = line || (Exception === msg_or_error ? self.class.error_line(msg_or_error) : nil)
     end
 
     def message # :nodoc:
       msg = 'Error'
+      msg << " at #{@location}" if @location
       if @error_path
         msg += " in <#{@error_path}"
         msg += ":~#{@line}" if @line
         msg += ">"
       end
       msg << ' while rendering'
-      msg << (@path ? " <#{@path}>" : ' the website')
-      msg << " at #{@location}" if @location
-      msg << ":\n    " << super
+      msg << (!@path.empty? ? " <#{@path}>" : ' the website')
+      msg << ":\n    " << super(true)
     end
 
   end
