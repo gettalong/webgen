@@ -9,16 +9,23 @@ module Webgen
   # == Implementing a content processor
   #
   # Content processors are used to process the content of files, normally of files in Webgen Page
-  # Format. A content processor class only needs to respond to one method called +call+ and must not
-  # take any parameters in the +initialize+ method. This method is invoked with a Webgen::Context
-  # object that provides the whole context (especially the content and the node chain) and the
-  # method needs to return this object. During processing a content processor normally changes the
-  # content of the context but it does not need to.
+  # Format. However, they can potentially process any type of content, even binary content.
+  #
+  # There are basically three ways to implement a content processor.
+  #
+  # A content processor only needs to respond to one method called +call+. This method is invoked
+  # with a Webgen::Context object that provides the whole context (especially the content and the
+  # node chain) and the method needs to return this object. During processing a content processor
+  # normally changes the content of the context but it does not need to.
+  #
+  # This allows one to implement a content processor as a class with a class method called +call+.
+  # Or as a class with an instance method +call+ because then webgen automatically extends the class
+  # so that it has a suitable class method +call+ (note that the +initialize+ method must not take
+  # any parameters). Or as a Proc object.
   #
   # The content processor has to be registered so that webgen knows about it, see ::register for
   # more information.
   #
-  # Another way to implement a content processor is to provide a block to the ::register method.
   #
   # == Sample Content Processor
   #
@@ -64,10 +71,11 @@ module Webgen
 
     @@processors = {}
 
-    # Register a content processor. The parameter +klass+ has to contain the class name. If the
-    # class is located under this module, only the class name without the hierarchy part is needed,
-    # otherwise the full class name including parent modules/classes is needed. All other parameters
-    # can be set through the options hash if the default values aren't sufficient.
+    # Register a content processor. The parameter +klass+ has to contain the name of the class which
+    # has to respond to +call+ or which has an instance method +call+. If the class is located under
+    # this module, only the class name without the hierarchy part is needed, otherwise the full
+    # class name including parent module/class names is needed. All other parameters can be set
+    # through the options hash if the default values aren't sufficient.
     #
     # Instead of registering a class, you can also provide a block that has to take one parameter
     # (the context object).
@@ -95,7 +103,7 @@ module Webgen
       short_name = options[:short_name] || klass.to_s.downcase
       type = options[:type] || :text
       @@processors[short_name.to_sym] = [block_given? ? block : klass.to_s, type]
-      autoload(klass.to_sym, "webgen/contentprocessor/#{short_name}") unless block_given? || klass.to_s.include?('::')
+      autoload(klass.to_sym, "webgen/content_processor/#{short_name}") unless block_given? || klass.to_s.include?('::')
     end
 
     # Return +true+ if there is a content processor with the given short name.

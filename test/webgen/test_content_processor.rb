@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*-
 
 require 'minitest/autorun'
-require 'webgen/contentprocessor'
+require 'webgen/content_processor'
 
 class Webgen::ContentProcessor::MyProcessor
 

@@ -1,5 +1,8 @@
 # -*- encoding: utf-8 -*-
 
+require 'webgen/contentprocessor'
+require 'webgen/error'
+
 module Webgen::ContentProcessor
 
   # Replaces special xml tags with the rendered content of a node.
