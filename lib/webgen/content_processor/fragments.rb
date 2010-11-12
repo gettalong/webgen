@@ -1,5 +1,7 @@
 # -*- encoding: utf-8 -*-
 
+require 'webgen/content_processor'
+
 module Webgen::ContentProcessor
 
   # Uses the HTML headers h1, h2, ..., h6 to generate nested fragment nodes.

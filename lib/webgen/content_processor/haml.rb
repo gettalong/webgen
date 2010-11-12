@@ -1,6 +1,7 @@
 # -*- encoding: utf-8 -*-
 
-require 'webgen/common'
+require 'webgen/content_processor'
+webgen_require 'haml'
 
 module Webgen::ContentProcessor
 
@@ -9,24 +10,12 @@ module Webgen::ContentProcessor
 
     # Convert the content in +haml+ markup to HTML.
     def call(context)
-      require 'haml'
-
-      locals = {:context => context}
       context.content = ::Haml::Engine.new(context.content, :filename => context.ref_node.alcn).
-        render(Object.new, locals)
+        render(Object.new, :context => context)
       context
-    rescue LoadError
-      raise Webgen::LoadError.new('haml', self.class.name, context.dest_node, 'haml')
     rescue ::Haml::Error => e
-      line = if e.line
-               e.line + 1
-             else
-               Webgen::Common.error_line(e)
-             end
+      line = (e.line ? e.line + 1 : Webgen::Error.error_line(e))
       raise Webgen::RenderError.new(e, self.class.name, context.dest_node, context.ref_node, line)
-    rescue Exception => e
-      raise Webgen::RenderError.new(e, self.class.name, context.dest_node,
-                                    Webgen::Common.error_file(e), Webgen::Common.error_line(e))
     end
 
   end

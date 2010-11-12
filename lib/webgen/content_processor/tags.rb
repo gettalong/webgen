@@ -2,6 +2,7 @@
 
 require 'yaml'
 require 'strscan'
+require 'webgen/content_processor'
 require 'webgen/tag'
 
 module Webgen::ContentProcessor

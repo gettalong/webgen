@@ -1,5 +1,6 @@
 # -*- encoding: utf-8 -*-
 
+require 'webgen/coreext'
 require 'webgen/common'
 require 'webgen/error'
 
@@ -62,13 +63,15 @@ module Webgen
   #
   module ContentProcessor
 
-    module Callable # :nodoc:
+    # :stopdoc:
+    module Callable
 
       def call(context)
         new.call(context)
       end
 
     end
+    # :startdoc:
 
     @@processors = {}
 

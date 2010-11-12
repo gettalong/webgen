@@ -1,6 +1,6 @@
 # -*- encoding: utf-8 -*-
 
-require 'webgen/contentprocessor'
+require 'webgen/content_processor'
 require 'webgen/error'
 
 module Webgen::ContentProcessor

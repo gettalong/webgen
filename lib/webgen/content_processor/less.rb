@@ -1,5 +1,8 @@
 # -*- encoding: utf-8 -*-
 
+require 'webgen/content_processor'
+webgen_require 'less'
+
 module Webgen::ContentProcessor
 
   # Generates valid CSS from CSS-like input, supporting variables, nesting and mixins.
@@ -9,7 +12,6 @@ module Webgen::ContentProcessor
 
     # Convert the content in +context+ to valid CSS.
     def call(context)
-      require 'less'
       context.content = ::Less.parse(context.content)
       context
     rescue LoadError

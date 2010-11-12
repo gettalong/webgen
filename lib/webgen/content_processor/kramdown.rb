@@ -1,5 +1,9 @@
 # -*- encoding: utf-8 -*-
 
+require 'webgen/content_processor'
+webgen_require 'kramdown'
+require 'webgen/contentprocessor/kramdown/html'
+
 module Webgen::ContentProcessor
 
   # Processes content in kramdown format (based on Markdown) using the +kramdown+ library.
@@ -9,8 +13,6 @@ module Webgen::ContentProcessor
 
     # Convert the content in +context+ to HTML.
     def call(context)
-      require 'kramdown'
-      require 'webgen/contentprocessor/kramdown/html'
       doc = ::Kramdown::Document.new(context.content,
                                      context.website.config['contentprocessor.kramdown.options'].merge(context.options['contentprocessor.kramdown.options'] || {}))
       context.content = KramdownHtmlConverter.convert(doc.root, doc.options, context)
@@ -18,8 +20,6 @@ module Webgen::ContentProcessor
         log(:warn) { "Warning while parsing <#{context.ref_node}> with kramdown: #{warn}" }
       end
       context
-    rescue LoadError
-      raise Webgen::LoadError.new('kramdown', self.class.name, context.dest_node, 'kramdown')
     end
 
   end

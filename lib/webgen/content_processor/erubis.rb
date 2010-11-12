@@ -1,18 +1,18 @@
 # -*- encoding: utf-8 -*-
 
-require 'webgen/common'
+require 'webgen/content_processor'
+webgen_require 'erubis'
 
 module Webgen::ContentProcessor
 
   # Processes embedded Ruby statements with the +erubis+ library.
   class Erubis
 
+    # Including Erubis because of problem with resolving Erubis::XmlHelper et al
+    include ::Erubis
+
     # Process the Ruby statements embedded in the content of +context+.
     def call(context)
-      require 'erubis'
-      # including Erubis because of problem with resolving Erubis::XmlHelper et al
-      self.class.class_eval "include ::Erubis"
-
       options = context.website.config['contentprocessor.erubis.options']
       if context[:block]
         use_pi = context[:block].options['erubis_use_pi']
@@ -27,11 +27,6 @@ module Webgen::ContentProcessor
       erubis.filename = context.ref_node.alcn
       context.content = erubis.result(binding)
       context
-    rescue LoadError
-      raise Webgen::LoadError.new('erubis', self.class.name, context.dest_node, 'erubis')
-    rescue Exception => e
-      raise Webgen::RenderError.new(e, self.class.name, context.dest_node,
-                                    Webgen::Common.error_file(e), Webgen::Common.error_line(e))
     end
 
   end

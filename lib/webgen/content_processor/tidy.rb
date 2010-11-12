@@ -1,5 +1,7 @@
 # -*- encoding: utf-8 -*-
+
 require 'tempfile'
+require 'webgen/content_processor'
 
 module Webgen::ContentProcessor
 

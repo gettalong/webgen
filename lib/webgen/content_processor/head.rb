@@ -1,5 +1,8 @@
 # -*- encoding: utf-8 -*-
 
+require 'webgen/content_processor'
+require 'erb'
+
 module Webgen::ContentProcessor
 
   # Inserts additional links to CSS/JS files and other HTML head meta info directly before the HTML
@@ -34,7 +37,6 @@ module Webgen::ContentProcessor
 
     # Insert the additional header information.
     def call(context)
-      require 'erb'
       context.content.sub!(HTML_HEAD_END_RE) do |match|
         result = ''
 
