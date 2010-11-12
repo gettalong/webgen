@@ -1,6 +1,7 @@
 # -*- encoding: utf-8 -*-
 
 require 'webgen/common'
+require 'webgen/error'
 
 module Webgen
 
@@ -130,6 +131,11 @@ module Webgen
         @@processors[short_name.to_sym][0] = class_or_name
       end
       class_or_name.call(context)
+    rescue Webgen::Error
+      raise
+    rescue Exception => e
+      raise Webgen::RenderError.new(e, (class_or_name.respond_to?(:name) ? class_or_name.name : nil),
+                                    context.dest_node, context.ref_node)
     end
 
     # Return whether the content processor is processing binary data.
