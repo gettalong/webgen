@@ -5,6 +5,17 @@ module Webgen
   # Namespace for classes and methods that provide common functionality.
   module Common
 
+    # :stopdoc:
+    module Callable
+
+      def call(*args, &block)
+        new.call(*args, &block)
+      end
+
+    end
+    # :startdoc:
+
+
     autoload :Sitemap, 'webgen/common/sitemap'
 
     # Return the constant object for the given absolute constant +name+.

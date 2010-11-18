@@ -19,18 +19,20 @@ end
 # :startdoc:
 
 
-module Webgen::ContentProcessor
+module Webgen
+  class ContentProcessor
 
-  # Processes content in Markdown format using the +maruku+ library.
-  class Maruku
+    # Processes content in Markdown format using the +maruku+ library.
+    class Maruku
 
-    # Convert the content in +context+ to HTML.
-    def call(context)
-      $uid = 0 # fix for invalid fragment IDs on second run
-      context.content = ::Maruku.new(context.content, :on_error => :raise).to_html
-      context
+      # Convert the content in +context+ to HTML.
+      def call(context)
+        $uid = 0 # fix for invalid fragment IDs on second run
+        context.content = ::Maruku.new(context.content, :on_error => :raise).to_html
+        context
+      end
+
     end
 
   end
-
 end
