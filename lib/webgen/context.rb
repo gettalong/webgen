@@ -1,7 +1,4 @@
 # -*- encoding: utf-8 -*-
-require 'webgen/context/nodes'
-require 'webgen/context/tags'
-require 'webgen/context/render'
 
 module Webgen
 
@@ -9,52 +6,52 @@ module Webgen
   # content processor.
   #
   # The needed context variables are stored in the +options+ hash. You can set any options you like,
-  # however, there are three noteworthy options:
+  # however, there are two noteworthy options:
   #
   # [<tt>:content</tt>]
-  #   The content string that should be processed.
-  #
-  # [<tt>:processors</tt>]
-  #   Normally an ContentProcessor::AccessHash object providing access to all available content
-  #   processors.
+  #   The content string that should be processed. This option is always set.
   #
   # [<tt>:chain</tt>]
   #   The chain of nodes that is processed. There are some utiltity methods for getting
-  #   special nodes of the chain (see #ref_node, #content_node and #dest_node).
+  #   special nodes of the chain (see Nodes#ref_node, Nodes#content_node and Nodes#dest_node).
   #
   # The +persistent+ options hash is shared by all cloned Context objects.
   class Context
 
-    include Webgen::WebsiteAccess
-    public :website
+    require 'webgen/context/nodes'
+    require 'webgen/context/webgen_tags'
+    require 'webgen/context/rendering'
+
+    include Nodes
+    include WebgenTags
+    include Rendering
+
 
     # The persistent options. Once initialized, all cloned objects refer to the same hash.
     attr_reader :persistent
 
     # Processing options.
-    attr_accessor :options
+    attr_reader :options
 
-    # Create a new Context object. You can use the +options+ hash to set needed options.
+    # The website object to which the render context belongs.
+    attr_reader :website
+
+    # Create a new Context object belonging to the website object +website+.
     #
     # The following options are set by default and can be overridden via the +options+ hash:
     #
     # [<tt>:content</tt>]
     #   Is set to an empty string.
-    #
-    # [<tt>:processors</tt>]
-    #   Is set to a new AccessHash.
-    def initialize(options = {}, persistent = {})
-      @options = {
-        :content => '',
-        :processors => Webgen::ContentProcessor::AccessHash.new
-      }.merge(options)
+    def initialize(website, options = {}, persistent = {})
+      @website = website
+      @options = {:content => ''}.merge(options)
       @persistent = persistent
     end
 
     # Create a copy of the current object. You can use the +options+ parameter to override options
     # of the current Context object in the newly created Context object.
     def clone(options = {})
-      self.class.new(@options.merge(options), @persistent)
+      self.class.new(@website, @options.merge(options), @persistent)
     end
 
     # Return the value of the option +name+.

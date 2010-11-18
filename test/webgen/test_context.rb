@@ -1,30 +1,26 @@
 # -*- encoding: utf-8 -*-
 
-require 'test/unit'
-require 'helper'
+require 'minitest/autorun'
 require 'webgen/context'
 
-class TestContext < Test::Unit::TestCase
-
-  include Test::WebsiteHelper
+class TestContext < MiniTest::Unit::TestCase
 
   def setup
-    super
-    @context = Webgen::Context.new(:content => 'test', :key => :value, :chain => [:first, :last])
+    @context = Webgen::Context.new(:website, :content => 'test', :key => :value, :chain => [:first, :last])
   end
 
   def test_initialize
-    context = Webgen::Context.new
+    context = Webgen::Context.new(:website)
     assert_equal('', context.content)
     assert_equal({}, context.persistent)
-    assert_kind_of(Webgen::ContentProcessor::AccessHash, context[:processors])
+    assert_equal(:website, context.website)
 
-    context = Webgen::Context.new(:content => 'test', :key => :value)
+    context = Webgen::Context.new(:website, :content => 'test', :key => :value)
     assert_equal('test', context.content)
     assert_equal(:value, context[:key])
     assert_equal({}, context.persistent)
 
-    context = Webgen::Context.new({:content => 'test', :key => :value}, {:other => :val})
+    context = Webgen::Context.new(:website, {:content => 'test', :key => :value}, {:other => :val})
     assert_equal('test', context.content)
     assert_equal(:value, context[:key])
     assert_equal({:other => :val}, context.persistent)
@@ -54,18 +50,16 @@ class TestContext < Test::Unit::TestCase
   end
 
   def test_tags_methods
-    @context[:chain] = [Webgen::Tree.new.dummy_root]
+    tag = MiniTest::Mock.new
+    ext = MiniTest::Mock.new
+    website = MiniTest::Mock.new
+    context = Webgen::Context.new(website)
+    website.expect(:ext, ext)
+    ext.expect(:tag, tag)
+    tag.expect(:call, 'value', ['mytag', {'opt' => 'val'}, 'body', context])
 
-    klass = Class.new do
-      def set_params(*args); end
-      def create_tag_params(*args); end
-      def create_params_hash(*args); end
-      def call(tag, body, context); 'mivalue'; end
-    end
-    (@website.cache.volatile[:classes] ||= {})['TestTag'] = klass.new
-    @website.config['contentprocessor.tags.map'].update(:default => 'TestTag')
-
-    assert_equal('mivalue', @context.tag('mivalue'))
+    assert_equal('value', context.tag('mytag', {'opt' => 'val'}, 'body'))
+    tag.verify
   end
 
   def test_render_methods
