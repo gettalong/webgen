@@ -7,13 +7,13 @@ module Webgen
 
   # Stores the configuration for a webgen website.
   #
-  # Configuration options can be created by using the #define_option method:
+  # Configuration options can be created by using the define_option method:
   #
   #   config.define_option "my.new.option", 'default value', 'desc'
   #
   # and later accessed or set using the accessor methods #[] and #[]=. A validation block can also
   # be specified when defining an option. This validation block is called when a new value should be
-  # set and it should return the value to be set:
+  # set and it should return the (possibly changed) value to be set:
   #
   #   config.define_option "my.new.option", 'default value', 'desc' do |val|
   #     raise "Option must be a string" unless val.kind_of?(String)
@@ -38,6 +38,12 @@ module Webgen
       @values = {}
     end
 
+    def initialize_copy(orig) #:nodoc:
+      super
+      @values = orig.instance_eval { @values.clone }
+      @options = orig.instance_eval { @options.clone }
+    end
+
     # Define a new option +name+ with a default value of +default+ and the description +desc+. If a
     # validation block is provided, it is called with the new value when one is set and should
     # return a (possibly altered) value to be set.
@@ -53,6 +59,11 @@ module Webgen
       end
     end
 
+    # Return +true+ if the given option exists.
+    def option?(name)
+      @options.has_key?(name)
+    end
+
     # Return the value for the configuration option +name+.
     def [](name)
       if @options.has_key?(name)
@@ -66,7 +77,7 @@ module Webgen
     def []=(name, value)
       if @options.has_key?(name)
         begin
-          @values[name] = (@options[name].validator ? @options[name].validator.call(value) : value)
+          @values[name] = (@options[name].validator ? @options[name].validator.call(value) : value).freeze
         rescue
           raise Error, "Problem setting configuration option '#{name}': #{$!.message}", $!.backtrace
         end
@@ -137,7 +148,7 @@ module Webgen
       @@static
     end
 
-    # See #define_option.
+    # See Configuration#define_option.
     def self.define_option(*args, &block)
       @@static.define_option(*args, &block)
     end
