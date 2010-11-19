@@ -6,7 +6,7 @@ require 'webgen/coreext'
 class TestCoreExtensions < MiniTest::Unit::TestCase
 
   def test_array_to_hash
-    assert_equal({x: 5, y: 6}, [[:x, 5], [:y, 6]].to_hash)
+    assert_equal({:x => 5, :y => 6}, [[:x, 5], [:y, 6]].to_hash)
   end
 
   def test_webgen_require

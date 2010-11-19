@@ -42,9 +42,6 @@ module Webgen
       private
       #######
 
-      # Parse the parameter string and return the result.
-      def parse_param_string(param_string, context)
-
       BRACKETS_RE = /([{}])/
       ProcessingStruct = Struct.new(:state, :tag, :simple_tag, :backslashes, :brackets, :start_pos, :end_pos,
                                     :params_start_pos, :params_end_pos, :body_end_pos)

@@ -62,7 +62,7 @@ class TestContentProcessor < MiniTest::Unit::TestCase
 
   def test_call
     @cp.register('MyProcessor')
-    @cp.register('Webgen::ContentProcessor::MyProcessor', short_name: 'other')
+    @cp.register('Webgen::ContentProcessor::MyProcessor', :short_name => 'other')
     @cp.register('doit') do |context|
       raise 'msg' if context == 'error'
       context + 'value'
