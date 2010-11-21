@@ -15,7 +15,7 @@ module Webgen
     end
     # :startdoc:
 
-
+    autoload :ExtensionManager, 'webgen/common/extension_manager'
     autoload :Sitemap, 'webgen/common/sitemap'
 
     # Return the constant object for the given absolute constant +name+.

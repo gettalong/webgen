@@ -63,17 +63,8 @@ module Webgen
   #
   class Tag
 
-    # Create a new object for managing tags.
-    def initialize
-      @tags = {}
-    end
-
-    def initialize_copy(orig) #:nodoc:
-      super
-      @tags = {}
-      orig.instance_eval { @tags }.each {|k,v| @tags[k] = v.clone}
-    end
-
+    include Webgen::Common::ExtensionManager
+    extend ClassMethods
 
     # Register a tag. The parameter +klass+ has to contain the name of the class which has to
     # respond to +call+ or which has an instance method +call+. If the class is located under this
@@ -116,15 +107,10 @@ module Webgen
       tag_names = [options[:names] || klass_name.downcase].flatten
       config_base = options[:config_base] || klass.gsub(/::/, '.').gsub(/^Webgen\./, '').downcase
       data = [block_given? ? block : klass, config_base, options[:mandatory] || [], false]
-      tag_names.each {|tname| @tags[tname] = data}
+      tag_names.each {|tname| @extensions[tname] = data}
 
       autoload_file = options[:autoload] || "webgen/tag/#{klass_name.downcase}"
       autoload(klass_name.to_sym, autoload_file) if !block_given? && klass =~ /^Webgen::Tag/
-    end
-
-    # Return +true+ if there the tag name is registered.
-    def registered?(tag)
-      @tags.has_key?(tag)
     end
 
     # Process the +tag+ and return the result. The parameter +params+ (can be a Hash, a String or
@@ -200,7 +186,7 @@ module Webgen
 
     # Return the tag data for +tag+ or +nil+ if +tag+ is unknown.
     def tag_data(tag, context)
-      tdata = @tags[tag] || @tags[:default]
+      tdata = @extensions[tag] || @extensions[:default]
       if tdata && !tdata.last
         if String === tdata.first
           klass = Webgen::Common.const_for_name(tdata.first)
@@ -218,20 +204,6 @@ module Webgen
         tdata[3] = true
       end
       tdata
-    end
-
-    @@static = self.new
-
-    # Return the static tag object that is used for managing the built-in tags. This object should
-    # *not* be used by website extensions to define new tags or to override mappings!
-    def self.static
-      yield(@@static) if block_given?
-      @@static
-    end
-
-    # See Tag#register.
-    def self.register(*args, &block)
-      @@static.register(*args, &block)
     end
 
     register 'Relocatable', :names => ['relocatable', 'r']

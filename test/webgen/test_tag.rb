@@ -24,9 +24,11 @@ class TestTag < MiniTest::Unit::TestCase
 
   def test_register
     @tag.register('Webgen::Tag::MyTag')
+    assert_equal(['Webgen::Tag::MyTag', 'tag.mytag', [], false], @tag.instance_eval { @extensions['mytag'] })
     assert(@tag.registered?('mytag'))
 
     @tag.register('MyTag', :names => ['mytag', 'other'])
+    assert_equal(['Webgen::Tag::MyTag', 'tag.mytag', [], false], @tag.instance_eval { @extensions['mytag'] })
     assert(@tag.registered?('mytag'))
     assert(@tag.registered?('other'))
 
@@ -34,25 +36,10 @@ class TestTag < MiniTest::Unit::TestCase
       'doit: now'
     end
     assert(@tag.registered?('doit'))
-  end
-
-  def test_registered
-    refute(@tag.registered?('mytag'))
-    @tag.register('MyTag')
-    assert(@tag.registered?('mytag'))
-  end
-
-  def test_tag_data
-    @tag.register('Webgen::Tag::MyTag')
-    assert_equal(['Webgen::Tag::MyTag', 'tag.mytag', [], false], @tag.instance_eval { @tags['mytag'] })
-
-    @tag.register('MyTag')
-    assert_equal(['Webgen::Tag::MyTag', 'tag.mytag', [], false], @tag.instance_eval { @tags['mytag'] })
 
     @tag.register('MyTag', :names => ['other'], :config_base => 'other', :mandatory => ['mandatory'])
-    assert_equal(['Webgen::Tag::MyTag', 'other', ['mandatory'], false], @tag.instance_eval { @tags['other'] })
+    assert_equal(['Webgen::Tag::MyTag', 'other', ['mandatory'], false], @tag.instance_eval { @extensions['other'] })
   end
-
 
   def test_call
     logger_output = StringIO.new('')
@@ -102,19 +89,6 @@ class TestTag < MiniTest::Unit::TestCase
 
     result = @tag.call('mytag', 'unknown', 'body', context)
     assert_equal('mytagbodyunknown', result)
-  end
-
-  def test_static_tag
-    static = Webgen::Tag.static
-    assert_kind_of(Webgen::Tag, static)
-    assert(static.registered?('date'))
-  end
-
-  def test_clone
-    static = Webgen::Tag.static.clone
-    cloned = static.clone
-    cloned.register('MyTag')
-    refute(static.registered?('mytag'))
   end
 
 end

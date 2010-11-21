@@ -63,16 +63,8 @@ module Webgen
   #
   class ContentProcessor
 
-    # Create a new content processor object for managing content processors.
-    def initialize
-      @processors = {}
-    end
-
-    def initialize_copy(orig) #:nodoc:
-      super
-      @processors = {}
-      orig.instance_eval { @processors }.each {|k,v| @processors[k] = v.clone}
-    end
+    include Webgen::Common::ExtensionManager
+    extend ClassMethods
 
     # Register a content processor. The parameter +klass+ has to contain the name of the class which
     # has to respond to +call+ or which has an instance method +call+. If the class is located under
@@ -85,9 +77,8 @@ module Webgen
     #
     # === Options:
     #
-    # [:short_name] The short name for the content processor. If not set, it defaults to the
-    #               lowercase version of the class name (without the hierarchy part). It should only
-    #               contain letters.
+    # [:name] The name for the content processor. If not set, it defaults to the snake-case version
+    #         of the class name (without the hierarchy part). It should only contain letters.
     #
     # [:type] Defines which type of content the content processor can process. Can be set to either
     #         <tt>:text</tt> (the default) or <tt>:binary</tt>.
@@ -105,32 +96,22 @@ module Webgen
     def register(klass, options={}, &block)
       klass = (klass.include?('::') ? klass : "Webgen::ContentProcessor::#{klass}")
       klass_name = klass.split(/::/).last
-      short_name = options[:short_name] || klass_name.downcase
+      name = options[:name] || klass_name.downcase
       type = options[:type] || :text
-      @processors[short_name.to_sym] = [block_given? ? block : klass, type]
+      @extensions[name] = [block_given? ? block : klass, type]
       if !block_given? & klass =~ /^Webgen::ContentProcessor/
         autoload(klass_name.to_sym, "webgen/content_processor/#{klass_name.downcase}")
       end
     end
 
-    # Return +true+ if there is a content processor with the given short name.
-    def registered?(short_name)
-      @processors.has_key?(short_name.to_sym)
-    end
-
-    # Return the short names of all available content processors.
-    def short_names
-      @processors.keys.map {|k| k.to_s}.sort
-    end
-
-    # Call the content processor object identified by the given short name with the given context.
-    def call(short_name, context)
-      return nil unless registered?(short_name)
-      class_or_name = @processors[short_name.to_sym].first
+    # Call the content processor object identified by the given name with the given context.
+    def call(name, context)
+      return nil unless registered?(name)
+      class_or_name = @extensions[name].first
       if String === class_or_name
         class_or_name = Webgen::Common.const_for_name(class_or_name)
         class_or_name.extend(Webgen::Common::Callable)
-        @processors[short_name.to_sym][0] = class_or_name
+        @extensions[name] = [class_or_name, @extensions[name].last]
       end
       class_or_name.call(context)
     rescue Webgen::Error
@@ -141,24 +122,8 @@ module Webgen
     end
 
     # Return whether the content processor is processing binary data.
-    def is_binary?(short_name)
-      registered?(short_name) && @processors[short_name.to_sym].last == :binary
-    end
-
-
-    @@static = self.new
-
-    # Return the static content processor object that is used for managing the built-in content
-    # processors. This object should *not* be used by website extensions to define new content
-    # processors or to override mappings!
-    def self.static
-      yield(@@static) if block_given?
-      @@static
-    end
-
-    # See ContentProcessor#register.
-    def self.register(*args, &block)
-      @@static.register(*args, &block)
+    def is_binary?(name)
+      registered?(name) && @extensions[name].last == :binary
     end
 
 

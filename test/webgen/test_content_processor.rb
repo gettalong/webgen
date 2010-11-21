@@ -28,7 +28,7 @@ class TestContentProcessor < MiniTest::Unit::TestCase
     assert(@cp.registered?('myprocessor'))
     refute(@cp.is_binary?('myprocessor'))
 
-    @cp.register('MyProcessor', :type => :binary, :short_name => 'test')
+    @cp.register('MyProcessor', :type => :binary, :name => 'test')
     assert(@cp.registered?('test'))
     assert(@cp.is_binary?('test'))
 
@@ -37,19 +37,6 @@ class TestContentProcessor < MiniTest::Unit::TestCase
     end
     assert(@cp.registered?('doit'))
     refute(@cp.is_binary?('doit'))
-  end
-
-  def test_short_names
-    assert_kind_of(Array, @cp.short_names)
-    assert_empty(@cp.short_names.sort)
-    @cp.register('MyProcessor')
-    assert_equal(['myprocessor'], @cp.short_names)
-  end
-
-  def test_registered
-    refute(@cp.registered?('myprocessor'))
-    @cp.register('MyProcessor')
-    assert(@cp.registered?('myprocessor'))
   end
 
   def test_is_binary
@@ -62,7 +49,7 @@ class TestContentProcessor < MiniTest::Unit::TestCase
 
   def test_call
     @cp.register('MyProcessor')
-    @cp.register('Webgen::ContentProcessor::MyProcessor', :short_name => 'other')
+    @cp.register('Webgen::ContentProcessor::MyProcessor', :name => 'other')
     @cp.register('doit') do |context|
       raise 'msg' if context == 'error'
       context + 'value'
@@ -78,19 +65,6 @@ class TestContentProcessor < MiniTest::Unit::TestCase
     def s.ref_node; 'ref_node'; end
     assert_raises(Webgen::RenderError) { @cp.call('myprocessor', s) }
     assert_raises(Webgen::RenderError) { @cp.call('doit', s) }
-  end
-
-  def test_static_content_processor
-    static = Webgen::ContentProcessor.static
-    assert_kind_of(Webgen::ContentProcessor, static)
-    assert(static.registered?('kramdown'))
-  end
-
-  def test_clone
-    static = Webgen::ContentProcessor.static
-    cloned = static.clone
-    cloned.register('MyProcessor')
-    refute(static.registered?('myprocessor'))
   end
 
 end
