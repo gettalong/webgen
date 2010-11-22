@@ -101,16 +101,11 @@ module Webgen
     #   end
     #
     def register(klass, options={}, &block)
-      klass = (klass.include?('::') ? klass : "Webgen::Tag::#{klass}")
-      klass_name = klass.split(/::/).last
-
-      tag_names = [options[:names] || klass_name.downcase].flatten
+      klass, klass_name = get_defaults(klass, block_given?)
+      tag_names = [options[:names] || Webgen::Common.snake_case(klass_name)].flatten
       config_base = options[:config_base] || klass.gsub(/::/, '.').gsub(/^Webgen\./, '').downcase
       data = [block_given? ? block : klass, config_base, options[:mandatory] || [], false]
       tag_names.each {|tname| @extensions[tname] = data}
-
-      autoload_file = options[:autoload] || "webgen/tag/#{klass_name.downcase}"
-      autoload(klass_name.to_sym, autoload_file) if !block_given? && klass =~ /^Webgen::Tag/
     end
 
     # Process the +tag+ and return the result. The parameter +params+ (can be a Hash, a String or
@@ -209,10 +204,10 @@ module Webgen
     register 'Relocatable', :names => ['relocatable', 'r']
     register 'Metainfo', :names => :default
     register 'Menu'
-    register 'BreadcrumbTrail', :names => 'breadcrumb_trail',:autoload => 'webgen/tag/breadcrumb_trail'
+    register 'BreadcrumbTrail'
     register 'Langbar'
-    register 'IncludeFile', :names => 'include_file', :autoload => 'webgen/tag/include_file'
-    register 'ExecuteCommand', :names => 'execute_cmd', :autoload => 'webgen/tag/execute_command'
+    register 'IncludeFile'
+    register 'ExecuteCommand', :names => 'execute_cmd'
     register 'Coderay'
     register 'Date'
     register 'Sitemap'

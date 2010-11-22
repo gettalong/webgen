@@ -33,6 +33,21 @@ class TestExtensionManager < MiniTest::Unit::TestCase
     assert(@dummy.registered?('key'))
   end
 
+  def test_get_defaults
+    klass, name = @dummy.send(:get_defaults, "Klass", false)
+    assert_equal("DummyExtensionManager::Klass", klass)
+    assert_equal("Klass", name)
+    klass, name = @dummy.send(:get_defaults, "MyKlass", false)
+    assert_equal("DummyExtensionManager::MyKlass", klass)
+    assert_equal("MyKlass", name)
+    klass, name = @dummy.send(:get_defaults, "My::Klass", false)
+    assert_equal("My::Klass", klass)
+    assert_equal("Klass", name)
+    klass, name = @dummy.send(:get_defaults, "klass", false)
+    assert_equal("DummyExtensionManager::klass", klass)
+    assert_equal("klass", name)
+  end
+
   def test_static_extension_manager
     static = DummyExtensionManager.static
     assert_kind_of(Webgen::Common::ExtensionManager, static)

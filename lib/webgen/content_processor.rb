@@ -94,14 +94,10 @@ module Webgen
     #   end
     #
     def register(klass, options={}, &block)
-      klass = (klass.include?('::') ? klass : "Webgen::ContentProcessor::#{klass}")
-      klass_name = klass.split(/::/).last
-      name = options[:name] || klass_name.downcase
+      klass, klass_name = get_defaults(klass, block_given?)
+      name = options[:name] || Webgen::Common.snake_case(klass_name)
       type = options[:type] || :text
       @extensions[name] = [block_given? ? block : klass, type]
-      if !block_given? & klass =~ /^Webgen::ContentProcessor/
-        autoload(klass_name.to_sym, "webgen/content_processor/#{klass_name.downcase}")
-      end
     end
 
     # Call the content processor object identified by the given name with the given context.
