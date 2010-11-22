@@ -9,4 +9,8 @@ class TestCommon < MiniTest::Unit::TestCase
     assert_equal Webgen::Common, Webgen::Common.const_for_name('Webgen::Common')
   end
 
+  def test_class_snake_case
+    assert_equal('webgen/html_error_now', Webgen::Common.snake_case('Webgen::HTMLErrorNow'))
+  end
+
 end

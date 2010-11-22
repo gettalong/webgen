@@ -33,6 +33,7 @@ module Webgen
       str = str.dup
       str.gsub!(/::/, '/')
       str.gsub!(/([A-Z]+)([A-Z][a-z])/,'\1_\2')
+      str.gsub!(/([a-z])([A-Z])/,'\1_\2')
       str.downcase!
       str
     end
