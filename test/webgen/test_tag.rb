@@ -24,12 +24,12 @@ class TestTag < MiniTest::Unit::TestCase
 
   def test_register
     @tag.register('Webgen::Tag::MyTag')
-    assert_equal(['Webgen::Tag::MyTag', 'tag.mytag', [], false], @tag.instance_eval { @extensions['mytag'] })
-    assert(@tag.registered?('mytag'))
+    assert_equal(['Webgen::Tag::MyTag', 'tag.mytag', [], false], @tag.instance_eval { @extensions['my_tag'] })
+    assert(@tag.registered?('my_tag'))
 
     @tag.register('MyTag', :names => ['mytag', 'other'])
-    assert_equal(['Webgen::Tag::MyTag', 'tag.mytag', [], false], @tag.instance_eval { @extensions['mytag'] })
-    assert(@tag.registered?('mytag'))
+    assert_equal(['Webgen::Tag::MyTag', 'tag.mytag', [], false], @tag.instance_eval { @extensions['my_tag'] })
+    assert(@tag.registered?('my_tag'))
     assert(@tag.registered?('other'))
 
     @tag.register('doit') do |tag, body, context|
@@ -59,36 +59,36 @@ class TestTag < MiniTest::Unit::TestCase
     assert_raises(Webgen::RenderError) { @tag.call('unknown', {}, 'body', context) }
 
     @tag.register('MyTag')
-    assert_raises(Webgen::RenderError) { @tag.call('mytag', 5, 'body', context) }
-    assert_raises(Webgen::Configuration::Error) { @tag.call('mytag', {'opt' => :value}, 'body', context) }
+    assert_raises(Webgen::RenderError) { @tag.call('my_tag', 5, 'body', context) }
+    assert_raises(Webgen::Configuration::Error) { @tag.call('my_tag', {'opt' => :value}, 'body', context) }
 
 
     @tag.register('MyTag')
-    result = @tag.call('mytag', nil, 'body', context)
-    assert_equal('mytagbodyparam1', result)
+    result = @tag.call('my_tag', nil, 'body', context)
+    assert_equal('my_tagbodyparam1', result)
     assert_equal('', logger_output.string)
 
-    result = @tag.call('mytag', {'opt' => 'value'}, 'body', context)
-    assert_equal('mytagbodyvalue', result)
+    result = @tag.call('my_tag', {'opt' => 'value'}, 'body', context)
+    assert_equal('my_tagbodyvalue', result)
     assert_equal('', logger_output.string)
     assert_equal('value', context[:config]['tag.mytag.opt'])
 
-    result = @tag.call('mytag', {'tag.mytag.opt' => 'value', 'unknown' => 'unknown'}, 'body', context)
-    assert_equal('mytagbodyvalue', result)
+    result = @tag.call('my_tag', {'tag.mytag.opt' => 'value', 'unknown' => 'unknown'}, 'body', context)
+    assert_equal('my_tagbodyvalue', result)
     assert_match(/Invalid configuration option 'unknown'/, logger_output.string)
 
     logger_output.string = ''
-    result = @tag.call('mytag', 'unknown', 'body', context)
-    assert_equal('mytagbodyparam1', result)
+    result = @tag.call('my_tag', 'unknown', 'body', context)
+    assert_equal('my_tagbodyparam1', result)
     assert_match(/No default mandatory option/, logger_output.string)
 
 
     logger_output.string = ''
     @tag.register('MyTag', :mandatory => ['opt'])
-    assert_raises(Webgen::RenderError) { @tag.call('mytag', {}, 'body', context) }
+    assert_raises(Webgen::RenderError) { @tag.call('my_tag', {}, 'body', context) }
 
-    result = @tag.call('mytag', 'unknown', 'body', context)
-    assert_equal('mytagbodyunknown', result)
+    result = @tag.call('my_tag', 'unknown', 'body', context)
+    assert_equal('my_tagbodyunknown', result)
   end
 
 end
