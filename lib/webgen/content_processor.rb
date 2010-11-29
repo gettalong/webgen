@@ -94,10 +94,8 @@ module Webgen
     #   end
     #
     def register(klass, options={}, &block)
-      klass, klass_name = normalize_class_name(klass, !block_given?)
-      name = options[:name] || Webgen::Common.snake_case(klass_name)
-      type = options[:type] || :text
-      @extensions[name] = [block_given? ? block : klass, type]
+      options[:type] ||= :text
+      do_register(klass, options, [:type], &block)
     end
 
     # Call the content processor object identified by the given name with the given context.

@@ -104,11 +104,8 @@ module Webgen
     #
     #   destination.register('MyModule::Doit', name: 'doit_now')
     #
-    def register(klass, options={})
-      klass, klass_name = normalize_class_name(klass)
-      name = options[:name] || Webgen::Common.snake_case(klass_name)
-      raise ArgumentError, "The destination extension manager class does not support blocks on #register" if block_given?
-      @extensions[name] = klass
+    def register(klass, options={}, &block)
+      do_register(klass, options, [], false, &block)
     end
 
     # Return the instance of the configured destination class.
@@ -116,9 +113,9 @@ module Webgen
     # **Note** that this method won't work if no website object is set!
     def instance
       if !defined?(@instance)
-        klass, *args = website.config['destination']
-        raise Webgen::Error.new("Unknown destination '#{klass}'", self.class.name) unless @extensions.has_key?(klass)
-        @instance = Webgen::Common.const_for_name(@extensions[klass]).new(website, *args)
+        name, *args = website.config['destination']
+        raise Webgen::Error.new("Unknown destination '#{name}'", self.class.name) unless @extensions.has_key?(name)
+        @instance = extension(name).new(website, *args)
       end
       @instance
     end

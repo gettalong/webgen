@@ -39,10 +39,27 @@ module Webgen
       # **Note** that this method has to be implemented by classes that include this module. It
       # should register one or more names for an extension object by associating the names with the
       # extension object data (should be an array where the first element is the extension object)
-      # via the <tt>@extensions</tt> hash.
+      # via the <tt>@extensions</tt> hash. See also #do_register.
       def register(klass, options = {}, &block)
         raise NotImplementedError
       end
+
+      # Automatically perform the necessary steps to register the extension +klass+. This involves
+      # normalization of the class name, retrieving the name for the extension from the +options+
+      # hash and then associating the name with the extension.
+      #
+      # The parameter +fields+ can be used to add additional fields (in order of appearance; the
+      # values are taken from the options hash) to the associated data array. The parameter
+      # +allow_block+ specifies whether the extension manager allows blocks as extensions.
+      def do_register(klass, options, fields = [], allow_block = true, &block)
+        if !allow_block && block_given?
+          raise ArgumentError, "The extension manager class '#{self.class.name}' does not support blocks on #register"
+        end
+        klass, klass_name = normalize_class_name(klass)
+        name = options[:name] || Webgen::Common.snake_case(klass_name)
+        @extensions[name] = [(block_given? ? block : klass), *fields.map {|f| options[f]}]
+      end
+      private :do_register
 
       # Return a complete class name (including the hierarchy part) based on +klass+ and the class
       # name without the hierarchy part. If the parameter +do_autoload+ is +true+ and the +klass+ is

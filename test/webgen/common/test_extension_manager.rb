@@ -48,6 +48,11 @@ class TestExtensionManager < MiniTest::Unit::TestCase
     assert_equal("klass", name)
   end
 
+  def test_do_register
+    @dummy.send(:do_register, "Klass", {:type => 'test'}, [:type])
+    assert_equal(['DummyExtensionManager::Klass', 'test'],  @dummy.instance_eval { @extensions['klass'] })
+  end
+
   def test_extension
     @dummy.register('key', 'DummyExtensionManager')
     assert_equal(DummyExtensionManager, @dummy.send(:extension, "key"))
