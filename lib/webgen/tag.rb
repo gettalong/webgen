@@ -92,7 +92,9 @@ module Webgen
     #
     # === Examples:
     #
-    #   tag.register('Date')
+    #   tag.register('Date')    # registers Webgen::Tag::Date
+    #
+    #   tag.register('::Date')  # registers Date !!!
     #
     #   tag.register('MyModule::Date', names: ['mydate', 'date'])
     #

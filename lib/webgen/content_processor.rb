@@ -85,7 +85,9 @@ module Webgen
     #
     # === Examples:
     #
-    #   content_processor.register('Kramdown')
+    #   content_processor.register('Kramdown')     # registers Webgen::ContentProcessor::Kramdown
+    #
+    #   content_processor.register('::Kramdown')   # registers Kramdown !!!
     #
     #   content_processor.register('MyModule::Doit', type: :binary)
     #

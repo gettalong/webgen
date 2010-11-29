@@ -100,7 +100,9 @@ module Webgen
     #
     # === Examples:
     #
-    #   destination.register('FileSystem')
+    #   destination.register('FileSystem')   # registers Webgen::Destination::FileSystem
+    #
+    #   destination.register('::FileSystem') # registers FileSystem !!!
     #
     #   destination.register('MyModule::Doit', name: 'doit_now')
     #
