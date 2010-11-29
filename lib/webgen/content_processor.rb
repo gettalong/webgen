@@ -94,7 +94,7 @@ module Webgen
     #   end
     #
     def register(klass, options={}, &block)
-      klass, klass_name = get_defaults(klass, block_given?)
+      klass, klass_name = normalize_class_name(klass, !block_given?)
       name = options[:name] || Webgen::Common.snake_case(klass_name)
       type = options[:type] || :text
       @extensions[name] = [block_given? ? block : klass, type]
@@ -103,18 +103,12 @@ module Webgen
     # Call the content processor object identified by the given name with the given context.
     def call(name, context)
       return nil unless registered?(name)
-      class_or_name = @extensions[name].first
-      if String === class_or_name
-        class_or_name = Webgen::Common.const_for_name(class_or_name)
-        class_or_name.extend(Webgen::Common::Callable)
-        @extensions[name] = [class_or_name, @extensions[name].last]
-      end
-      class_or_name.call(context)
+      extension(name).call(context)
     rescue Webgen::Error
       raise
     rescue Exception => e
-      raise Webgen::RenderError.new(e, (class_or_name.respond_to?(:name) ? class_or_name.name : nil),
-                                    context.dest_node, context.ref_node)
+      ext = extension(name)
+      raise Webgen::RenderError.new(e, (ext.respond_to?(:name) ? ext.name : nil), context.dest_node, context.ref_node)
     end
 
     # Return whether the content processor is processing binary data.

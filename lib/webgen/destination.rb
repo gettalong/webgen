@@ -105,7 +105,7 @@ module Webgen
     #   destination.register('MyModule::Doit', name: 'doit_now')
     #
     def register(klass, options={})
-      klass, klass_name = get_defaults(klass, false)
+      klass, klass_name = normalize_class_name(klass)
       name = options[:name] || Webgen::Common.snake_case(klass_name)
       raise ArgumentError, "The destination extension manager class does not support blocks on #register" if block_given?
       @extensions[name] = klass

@@ -101,7 +101,7 @@ module Webgen
     #   end
     #
     def register(klass, options={}, &block)
-      klass, klass_name = get_defaults(klass, block_given?)
+      klass, klass_name = normalize_class_name(klass, !block_given?)
       tag_names = [options[:names] || Webgen::Common.snake_case(klass_name)].flatten
       config_base = options[:config_base] || klass.gsub(/::/, '.').gsub(/^Webgen\./, '').downcase
       data = [block_given? ? block : klass, config_base, options[:mandatory] || [], false]
@@ -183,11 +183,7 @@ module Webgen
     def tag_data(tag, context)
       tdata = @extensions[tag] || @extensions[:default]
       if tdata && !tdata.last
-        if String === tdata.first
-          klass = Webgen::Common.const_for_name(tdata.first)
-          klass.extend(Webgen::Common::Callable)
-          tdata[0] = klass
-        end
+        tdata[0] = resolve_class(tdata[0])
         tdata[2].each_with_index do |o, index|
           next if context.website.config.option?(o)
           if context.website.config.option?(tdata[1] + '.' + o)

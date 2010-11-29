@@ -9,7 +9,7 @@ class DummyExtensionManager
   extend ClassMethods
 
   def register(name, value)
-    @extensions[name] = value
+    @extensions[name] = [value]
   end
 
 end
@@ -33,19 +33,29 @@ class TestExtensionManager < MiniTest::Unit::TestCase
     assert(@dummy.registered?('key'))
   end
 
-  def test_get_defaults
-    klass, name = @dummy.send(:get_defaults, "Klass", false)
+  def test_normalize_class_name
+    klass, name = @dummy.send(:normalize_class_name, "Klass", false)
     assert_equal("DummyExtensionManager::Klass", klass)
     assert_equal("Klass", name)
-    klass, name = @dummy.send(:get_defaults, "MyKlass", false)
+    klass, name = @dummy.send(:normalize_class_name, "MyKlass", false)
     assert_equal("DummyExtensionManager::MyKlass", klass)
     assert_equal("MyKlass", name)
-    klass, name = @dummy.send(:get_defaults, "My::Klass", false)
+    klass, name = @dummy.send(:normalize_class_name, "My::Klass", false)
     assert_equal("My::Klass", klass)
     assert_equal("Klass", name)
-    klass, name = @dummy.send(:get_defaults, "klass", false)
+    klass, name = @dummy.send(:normalize_class_name, "klass", false)
     assert_equal("DummyExtensionManager::klass", klass)
     assert_equal("klass", name)
+  end
+
+  def test_extension
+    @dummy.register('key', 'DummyExtensionManager')
+    assert_equal(DummyExtensionManager, @dummy.send(:extension, "key"))
+  end
+
+  def test_resolve_class
+    assert_equal(DummyExtensionManager, @dummy.send(:resolve_class, DummyExtensionManager))
+    assert_equal(DummyExtensionManager, @dummy.send(:resolve_class, 'DummyExtensionManager'))
   end
 
   def test_static_extension_manager

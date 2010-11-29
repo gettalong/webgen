@@ -36,24 +36,48 @@ module Webgen
 
       # Register a new extension.
       #
-      # **Note** that this method has to be implemented by classes that include this module.
-      # Normally, it registers one or more names for an extension object by associating the names
-      # for the extension object data via the <tt>@extensions</tt> hash.
+      # **Note** that this method has to be implemented by classes that include this module. It
+      # should register one or more names for an extension object by associating the names with the
+      # extension object data (should be an array where the first element is the extension object)
+      # via the <tt>@extensions</tt> hash.
       def register(klass, options = {}, &block)
         raise NotImplementedError
       end
 
-      # Helper method for use in #register. Returns a complete class name (including the hierarchy
-      # part) based on +klass+ and the class name without the hierarchy part.
-      def get_defaults(klass, has_block)
+      # Return a complete class name (including the hierarchy part) based on +klass+ and the class
+      # name without the hierarchy part. If the parameter +do_autoload+ is +true+ and the +klass+ is
+      # defined under this class, it is autoloaded by turning the class name into a path name (See
+      # Webgen::Common.snake_case).
+      def normalize_class_name(klass, do_autoload = true)
         klass = (klass.include?('::') ? klass : "#{self.class.name}::#{klass}")
         klass_name = klass.split(/::/).last
-        if !has_block && klass.start_with?(self.class.name) && klass_name =~ /^[A-Z]/
+        if do_autoload && klass.start_with?(self.class.name) && klass_name =~ /^[A-Z]/
           autoload(klass_name.to_sym, Webgen::Common.snake_case(klass))
         end
         [klass, klass_name]
       end
-      private :get_defaults
+      private :normalize_class_name
+
+      # Return the registered object for the extension +name+. This method also works in the case
+      # that +name+ is a String referencing a class. The method assumes that
+      # <tt>@extensions[name]</tt> is an array where the registered object is the first element!
+      def extension(name)
+        ext = @extensions[name].first
+        ext.kind_of?(String) ? @extensions[name][0] = resolve_class(ext) : ext
+      end
+      private :extension
+
+      # If +class_or_name+ is a String, it is taken as the name of a class and is resolved. Else
+      # returns +class_or_name+.
+      def resolve_class(class_or_name)
+        if String === class_or_name
+          class_or_name = Webgen::Common.const_for_name(class_or_name)
+          class_or_name.extend(Webgen::Common::Callable)
+        else
+          class_or_name
+        end
+      end
+      private :resolve_class
 
       # Return +true+ if an extension with the given name has been registered with this manager
       # class.
@@ -65,6 +89,7 @@ module Webgen
       def registered_names
         @extensions.keys.sort
       end
+
 
       # This module can be used to extend an extension manager class. It provides access to a static
       # extension manager object on which extensions can be registered.
