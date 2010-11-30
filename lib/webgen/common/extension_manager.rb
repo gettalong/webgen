@@ -70,7 +70,7 @@ module Webgen
         klass = (klass.include?('::') ? klass : "#{self.class.name}::#{klass}")
         klass_name = klass.split(/::/).last
         if do_autoload && klass.start_with?(self.class.name) && klass_name =~ /^[A-Z]/
-          autoload(klass_name.to_sym, Webgen::Common.snake_case(klass))
+          self.class.autoload(klass_name.to_sym, Webgen::Common.snake_case(klass))
         end
         [klass, klass_name]
       end
