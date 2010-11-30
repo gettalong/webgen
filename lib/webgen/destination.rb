@@ -116,7 +116,6 @@ module Webgen
     def instance
       if !defined?(@instance)
         name, *args = website.config['destination']
-        raise Webgen::Error.new("Unknown destination '#{name}'", self.class.name) unless @extensions.has_key?(name)
         @instance = extension(name).new(website, *args)
       end
       @instance

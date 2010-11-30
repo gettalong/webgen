@@ -1,6 +1,7 @@
 # -*- encoding: utf-8 -*-
 
 require 'webgen/common'
+require 'webgen/error'
 
 module Webgen
 
@@ -53,7 +54,7 @@ module Webgen
       # +allow_block+ specifies whether the extension manager allows blocks as extensions.
       def do_register(klass, options, fields = [], allow_block = true, &block)
         if !allow_block && block_given?
-          raise ArgumentError, "The extension manager class '#{self.class.name}' does not support blocks on #register"
+          raise ArgumentError, "The extension manager '#{self.class.name}' does not support blocks on #register"
         end
         klass, klass_name = normalize_class_name(klass)
         name = options[:name] || Webgen::Common.snake_case(klass_name)
@@ -79,6 +80,7 @@ module Webgen
       # that +name+ is a String referencing a class. The method assumes that
       # <tt>@extensions[name]</tt> is an array where the registered object is the first element!
       def extension(name)
+        raise Webgen::Error.new("No extension called '#{name}' registered for the '#{self.class.name}' extension manager") unless registered?(name)
         ext = @extensions[name].first
         ext.kind_of?(String) ? @extensions[name][0] = resolve_class(ext) : ext
       end

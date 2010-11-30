@@ -102,7 +102,6 @@ module Webgen
 
     # Call the content processor object identified by the given name with the given context.
     def call(name, context)
-      return nil unless registered?(name)
       extension(name).call(context)
     rescue Webgen::Error
       raise

@@ -51,11 +51,14 @@ class TestExtensionManager < MiniTest::Unit::TestCase
   def test_do_register
     @dummy.send(:do_register, "Klass", {:type => 'test'}, [:type])
     assert_equal(['DummyExtensionManager::Klass', 'test'],  @dummy.instance_eval { @extensions['klass'] })
+    @dummy.send(:do_register, "Test::Klass", {:name => 'test'}, [:type])
+    assert_equal(['Test::Klass', nil],  @dummy.instance_eval { @extensions['test'] })
   end
 
   def test_extension
     @dummy.register('key', 'DummyExtensionManager')
     assert_equal(DummyExtensionManager, @dummy.send(:extension, "key"))
+    assert_raises(Webgen::Error) { @dummy.send(:extension, "unknown") }
   end
 
   def test_resolve_class
