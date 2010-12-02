@@ -80,6 +80,8 @@ module Webgen
   #     end
   #   end
   #
+  #   website.ext.destination.register 'MemoryDestination'
+  #
   class Destination
 
     include Webgen::Common::ExtensionManager
