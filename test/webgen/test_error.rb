@@ -36,6 +36,20 @@ class TestError < MiniTest::Unit::TestCase
     end
   end
 
+  def test_class_error_file
+    begin
+      eval("5 =")
+    rescue SyntaxError => e
+      assert_equal('(eval)', Webgen::Error.error_file(e))
+    end
+
+    begin
+      eval("raise 'hallo'", binding, 'myfile', 1)
+    rescue Exception => e
+      assert_equal('myfile', Webgen::Error.error_file(e))
+    end
+  end
+
 end
 
 class TestNodeCreationError < MiniTest::Unit::TestCase

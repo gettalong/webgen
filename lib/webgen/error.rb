@@ -42,6 +42,11 @@ module Webgen
       (error.is_a?(::SyntaxError) ? error.message : error.backtrace[0]).scan(/:(\d+)/).first.first.to_i rescue nil
     end
 
+    # Return the file name where the error occured.
+    def self.error_file(error)
+      (error.is_a?(::SyntaxError) ? error.message : error.backtrace[0]).scan(/(?:^|\s)(.*?):(\d+)/).first.first
+    end
+
   end
 
 
@@ -72,7 +77,7 @@ module Webgen
     # Create a new RenderError.
     def initialize(msg_or_error, location = nil, path = nil, error_path = nil, line = nil)
       super(msg_or_error, location, path)
-      @error_path = error_path.to_s
+      @error_path = error_path || (Exception === msg_or_error ? self.class.error_file(msg_or_error) : nil)
       @line = line || (Exception === msg_or_error ? self.class.error_line(msg_or_error) : nil)
     end
 

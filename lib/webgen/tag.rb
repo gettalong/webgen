@@ -140,7 +140,7 @@ module Webgen
                when NilClass then {}
                else
                  raise Webgen::RenderError.new("Invalid parameter type (#{params.class})",
-                                               self.class.name, nil, context.ref_node)
+                                               self.class.name, context.dest_node, context.ref_node)
                end
 
       if !tdata[2].all? {|k| values.has_key?(k)}

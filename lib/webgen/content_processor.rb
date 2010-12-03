@@ -107,7 +107,7 @@ module Webgen
       raise
     rescue Exception => e
       ext = extension(name)
-      raise Webgen::RenderError.new(e, (ext.respond_to?(:name) ? ext.name : nil), context.dest_node, context.ref_node)
+      raise Webgen::RenderError.new(e, (ext.respond_to?(:name) ? ext.name : nil), context.dest_node)
     end
 
     # Return whether the content processor is processing binary data.
