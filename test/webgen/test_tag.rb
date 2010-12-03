@@ -6,6 +6,7 @@ require 'webgen/configuration'
 require 'webgen/context'
 require 'stringio'
 require 'logger'
+require 'ostruct'
 
 class Webgen::Tag::MyTag
 
@@ -52,6 +53,7 @@ class TestTag < MiniTest::Unit::TestCase
     website = MiniTest::Mock.new
     website.expect(:logger, logger)
     website.expect(:config, config)
+    website.expect(:ext, OpenStruct.new)
 
     context = Webgen::Context.new(website)
 

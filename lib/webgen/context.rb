@@ -5,8 +5,11 @@ module Webgen
   # This class represents the context object that is passed, for example, to the +call+ method of a
   # content processor.
   #
-  # The needed context variables are stored in the +options+ hash. You can set any options you like,
-  # however, there are two noteworthy options:
+  # == About
+  #
+  # A context object provides information about the render context as well as access to the website
+  # that is rendered. The needed context variables are stored in the +options+ hash. You can set any
+  # options you like, however, there are two noteworthy options:
   #
   # [<tt>:content</tt>]
   #   The content string that should be processed. This option is always set.
@@ -16,6 +19,26 @@ module Webgen
   #   special nodes of the chain (see Nodes#ref_node, Nodes#content_node and Nodes#dest_node).
   #
   # The +persistent+ options hash is shared by all cloned Context objects.
+  #
+  # == Adding custom methods
+  #
+  # If you want to add custom methods to each context object of your website that is created, you
+  # just need to define one or more modules in which your custom methods are defined and then add
+  # the modules to the <tt>website.ext.context_modules</tt> array (or create it if it does not
+  # exist).
+  #
+  # Here is a simple (nonsensical) example:
+  #
+  #   module MyContextMethods
+  #
+  #     def my_method
+  #       # do something useful here
+  #     end
+  #
+  #   end
+  #
+  #   (website.ext.context_modules ||= []) << MyContextMethods
+  #
   class Context
 
     require 'webgen/context/nodes'
@@ -36,7 +59,9 @@ module Webgen
     # The website object to which the render context belongs.
     attr_reader :website
 
-    # Create a new Context object belonging to the website object +website+.
+    # Create a new Context object belonging to the website object +website+. All modules listed in
+    # the array <tt>website.ext.context_modules</tt> are automatically used to extend the Context
+    # object.
     #
     # The following options are set by default and can be overridden via the +options+ hash:
     #
@@ -44,6 +69,7 @@ module Webgen
     #   Is set to an empty string.
     def initialize(website, options = {}, persistent = {})
       @website = website
+      (website.ext.context_modules || []).each {|m| self.extend(m)}
       @options = {:content => ''}.merge(options)
       @persistent = persistent
     end

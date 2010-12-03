@@ -1,26 +1,37 @@
 # -*- encoding: utf-8 -*-
 
 require 'minitest/autorun'
+require 'ostruct'
 require 'webgen/context'
 
 class TestContext < MiniTest::Unit::TestCase
 
+  module TestModule
+    def hallo
+      "hallo"
+    end
+  end
+
   def setup
-    @context = Webgen::Context.new(:website, :content => 'test', :key => :value, :chain => [:first, :last])
+    @website = MiniTest::Mock.new
+    @website.expect(:ext, OpenStruct.new)
+    @context = Webgen::Context.new(@website, :content => 'test', :key => :value, :chain => [:first, :last])
   end
 
   def test_initialize
-    context = Webgen::Context.new(:website)
+    @website.ext.context_modules = [TestModule];
+    context = Webgen::Context.new(@website)
     assert_equal('', context.content)
     assert_equal({}, context.persistent)
-    assert_equal(:website, context.website)
+    assert_equal(@website, context.website)
+    assert_equal('hallo', context.hallo)
 
-    context = Webgen::Context.new(:website, :content => 'test', :key => :value)
+    context = Webgen::Context.new(@website, :content => 'test', :key => :value)
     assert_equal('test', context.content)
     assert_equal(:value, context[:key])
     assert_equal({}, context.persistent)
 
-    context = Webgen::Context.new(:website, {:content => 'test', :key => :value}, {:other => :val})
+    context = Webgen::Context.new(@website, {:content => 'test', :key => :value}, {:other => :val})
     assert_equal('test', context.content)
     assert_equal(:value, context[:key])
     assert_equal({:other => :val}, context.persistent)
@@ -50,13 +61,10 @@ class TestContext < MiniTest::Unit::TestCase
   end
 
   def test_tags_methods
+    context = Webgen::Context.new(@website)
     tag = MiniTest::Mock.new
-    ext = MiniTest::Mock.new
-    website = MiniTest::Mock.new
-    context = Webgen::Context.new(website)
-    website.expect(:ext, ext)
-    ext.expect(:tag, tag)
     tag.expect(:call, 'value', ['mytag', {'opt' => 'val'}, 'body', context])
+    @website.ext.tag = tag
 
     assert_equal('value', context.tag('mytag', {'opt' => 'val'}, 'body'))
     tag.verify
