@@ -41,9 +41,15 @@ class TestConfiguration < MiniTest::Unit::TestCase
   def test_get_option_value
     assert_equal('default', @config['namespace.option'])
     assert_raises(Webgen::Configuration::Error) { @config['unknown'] }
+
+    @config.define_option('other', :sym, 'desc')
+    assert_equal(:sym, @config['other'])
   end
 
-  def test_set_option_value
+  def test_set_and_modify_option_value
+    @config['namespace.option'].tr!('de', 'en')
+    assert_equal('enfault', @config['namespace.option'])
+    assert_equal('default', @config.options['namespace.option'].default)
     @config['namespace.option'] = 'other'
     assert_equal('other', @config['namespace.option'])
 
@@ -63,10 +69,11 @@ class TestConfiguration < MiniTest::Unit::TestCase
     assert_raises(Webgen::Configuration::Error) { @config.set_values('namespace.option' => :test) }
   end
 
-  def test_modifying_data
-    assert_raises(RuntimeError) { @config['namespace.option'].tr!('de', 'tu')}
-    @config['namespace.option'] = 'other'
-    assert_raises(RuntimeError) { @config['namespace.option'].tr!('de', 'tu')}
+  def test_frozen_config
+    @config.freeze
+    assert_raises(RuntimeError) { @config['namespace.option'].tr!('de', 'tu') }
+    assert_raises(Webgen::Configuration::Error) { @config['namespace.option'] = 'other' }
+    assert_raises(RuntimeError) { @config.define_option('nonsense', 'val', 'desc') }
   end
 
   def test_load_from_file_exceptions

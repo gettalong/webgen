@@ -44,6 +44,14 @@ module Webgen
       @options = orig.instance_eval { @options.clone }
     end
 
+    def freeze #:nodoc:
+      super
+      @options.freeze
+      @values.each_value {|v| v.freeze}
+      @values.freeze
+      self
+    end
+
     # Define a new option +name+ with a default value of +default+ and the description +desc+. If a
     # validation block is provided, it is called with the new value when one is set and should
     # return a (possibly altered) value to be set.
@@ -67,7 +75,11 @@ module Webgen
     # Return the value for the configuration option +name+.
     def [](name)
       if @options.has_key?(name)
-        @values.has_key?(name) ? @values[name] : @options[name].default
+        if @values.has_key?(name)
+          @values[name]
+        else
+          @values[name] = @options[name].default.dup rescue @options[name].default
+        end
       else
         raise Error, "Configuration option '#{name}' does not exist"
       end
@@ -77,7 +89,7 @@ module Webgen
     def []=(name, value)
       if @options.has_key?(name)
         begin
-          @values[name] = (@options[name].validator ? @options[name].validator.call(value) : value).freeze
+          @values[name] = (@options[name].validator ? @options[name].validator.call(value) : value)
         rescue
           raise Error, "Problem setting configuration option '#{name}': #{$!.message}", $!.backtrace
         end
@@ -98,7 +110,7 @@ module Webgen
     # The above hash will set the option <tt>my.option</tt> to +value+, <tt>website.lang</tt> to
     # +en+ and <tt>website.url</tt> to +my_url+.
     #
-    # Returns an array with the unknown configuration options.
+    # Returns an array with all unknown configuration options.
     def set_values(values)
       unknown_options = []
       process = proc do |name, value|
@@ -121,6 +133,8 @@ module Webgen
     #
     # The configuration needs to be in YAML format. More specifically, it needs to contain a YAML
     # hash which is further processed by #set_values.
+    #
+    # Returns an array with all unknown configuration options.
     def load_from_file(filename)
       data = if String === filename || filename.respond_to?(:read)
                begin
