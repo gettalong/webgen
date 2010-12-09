@@ -90,7 +90,7 @@ module Webgen
     #
     # The source paths are taken from the sources specified in the "sources" and the
     # "sources.passive" configuration options. All paths that additionally match one of the
-    # "sources.ignore" patterns are ignored.
+    # "sources.ignore_paths" patterns are ignored.
     #
     # **Note** that this method won't work if no website object is set!
     def paths
@@ -105,7 +105,7 @@ module Webgen
 
         @paths = {}
         source.paths.each do |path|
-          if !(website.config['sources.ignore'].any? {|pat| File.fnmatch(pat, path, File::FNM_CASEFOLD|File::FNM_DOTMATCH)})
+          if !(website.config['sources.ignore_paths'].any? {|pat| File.fnmatch(pat, path, File::FNM_CASEFOLD|File::FNM_DOTMATCH)})
             @paths[path.source_path] = path
           end
         end
