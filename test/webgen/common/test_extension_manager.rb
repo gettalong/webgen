@@ -9,7 +9,7 @@ class DummyExtensionManager
   extend ClassMethods
 
   def register(name, value)
-    @extensions[name] = [value]
+    @extensions[name.to_sym] = [value]
   end
 
 end
@@ -24,7 +24,7 @@ class TestExtensionManager < MiniTest::Unit::TestCase
     assert_kind_of(Array, @dummy.registered_names)
     assert_empty(@dummy.registered_names)
     @dummy.register('key', 'value')
-    assert_equal(['key'], @dummy.registered_names)
+    assert_equal([:key], @dummy.registered_names)
   end
 
   def test_registered
@@ -50,9 +50,9 @@ class TestExtensionManager < MiniTest::Unit::TestCase
 
   def test_do_register
     @dummy.send(:do_register, "Klass", {:type => 'test'}, [:type])
-    assert_equal(['DummyExtensionManager::Klass', 'test'],  @dummy.instance_eval { @extensions['klass'] })
+    assert_equal(['DummyExtensionManager::Klass', 'test'],  @dummy.instance_eval { @extensions[:klass] })
     @dummy.send(:do_register, "Test::Klass", {:name => 'test'}, [:type])
-    assert_equal(['Test::Klass', nil],  @dummy.instance_eval { @extensions['test'] })
+    assert_equal(['Test::Klass', nil],  @dummy.instance_eval { @extensions[:test] })
   end
 
   def test_extension
@@ -70,7 +70,7 @@ class TestExtensionManager < MiniTest::Unit::TestCase
     static = DummyExtensionManager.static
     assert_kind_of(Webgen::Common::ExtensionManager, static)
     DummyExtensionManager.register('key', 'value')
-    assert_equal(['key'], static.registered_names)
+    assert_equal([:key], static.registered_names)
   end
 
   def test_clone

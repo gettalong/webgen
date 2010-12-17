@@ -25,11 +25,11 @@ class TestTag < MiniTest::Unit::TestCase
 
   def test_register
     @tag.register('Webgen::Tag::MyTag')
-    assert_equal(['Webgen::Tag::MyTag', 'tag.mytag', [], false], @tag.instance_eval { @extensions['my_tag'] })
+    assert_equal(['Webgen::Tag::MyTag', 'tag.mytag', [], false], @tag.instance_eval { @extensions[:my_tag] })
     assert(@tag.registered?('my_tag'))
 
     @tag.register('MyTag', :names => ['mytag', 'other'])
-    assert_equal(['Webgen::Tag::MyTag', 'tag.mytag', [], false], @tag.instance_eval { @extensions['my_tag'] })
+    assert_equal(['Webgen::Tag::MyTag', 'tag.mytag', [], false], @tag.instance_eval { @extensions[:my_tag] })
     assert(@tag.registered?('my_tag'))
     assert(@tag.registered?('other'))
 
@@ -39,7 +39,7 @@ class TestTag < MiniTest::Unit::TestCase
     assert(@tag.registered?('doit'))
 
     @tag.register('MyTag', :names => ['other'], :config_base => 'other', :mandatory => ['mandatory'])
-    assert_equal(['Webgen::Tag::MyTag', 'other', ['mandatory'], false], @tag.instance_eval { @extensions['other'] })
+    assert_equal(['Webgen::Tag::MyTag', 'other', ['mandatory'], false], @tag.instance_eval { @extensions[:other] })
   end
 
   def test_call

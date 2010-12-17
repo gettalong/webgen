@@ -77,9 +77,9 @@ module Webgen
     # === Options:
     #
     # [:names] The tag name or an array of tag names. If not set, it defaults to the lowercase
-    #          version of the class name (without the hierarchy part). The special name
-    #          <tt>:default</tt> is used for specifying the default tag which is called if an
-    #          unknown tag name is encountered.
+    #          version of the class name (without the hierarchy part). The name <tt>:default</tt> is
+    #          used for specifying the default tag which is called if an unknown tag name is
+    #          encountered.
     #
     # [:config_base] The configuration base, i.e. the part of a configuration option name that does
     #                not need to be specified. Defaults to the full class name without the Webgen
@@ -104,7 +104,7 @@ module Webgen
     #
     def register(klass, options={}, &block)
       klass, klass_name = normalize_class_name(klass, !block_given?)
-      tag_names = [options[:names] || Webgen::Common.snake_case(klass_name)].flatten
+      tag_names = [options[:names] || Webgen::Common.snake_case(klass_name)].flatten.map {|n| n.to_sym}
       config_base = options[:config_base] || klass.gsub(/::/, '.').gsub(/^Webgen\./, '').downcase
       data = [block_given? ? block : klass, config_base, options[:mandatory] || [], false]
       tag_names.each {|tname| @extensions[tname] = data}
@@ -183,7 +183,7 @@ module Webgen
 
     # Return the tag data for +tag+ or +nil+ if +tag+ is unknown.
     def tag_data(tag, context)
-      tdata = @extensions[tag] || @extensions[:default]
+      tdata = @extensions[tag.to_sym] || @extensions[:default]
       if tdata && !tdata.last
         tdata[0] = resolve_class(tdata[0])
         tdata[2].each_with_index do |o, index|

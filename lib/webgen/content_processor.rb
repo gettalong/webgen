@@ -112,7 +112,7 @@ module Webgen
 
     # Return whether the content processor is processing binary data.
     def is_binary?(name)
-      registered?(name) && @extensions[name].last == :binary
+      registered?(name) && @extensions[name.to_sym].last == :binary
     end
 
 

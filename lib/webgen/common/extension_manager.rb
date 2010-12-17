@@ -57,7 +57,7 @@ module Webgen
           raise ArgumentError, "The extension manager '#{self.class.name}' does not support blocks on #register"
         end
         klass, klass_name = normalize_class_name(klass)
-        name = options[:name] || Webgen::Common.snake_case(klass_name)
+        name = (options[:name] || Webgen::Common.snake_case(klass_name)).to_sym
         @extensions[name] = [(block_given? ? block : klass), *fields.map {|f| options[f]}]
       end
       private :do_register
@@ -81,6 +81,7 @@ module Webgen
       # <tt>@extensions[name]</tt> is an array where the registered object is the first element!
       def extension(name)
         raise Webgen::Error.new("No extension called '#{name}' registered for the '#{self.class.name}' extension manager") unless registered?(name)
+        name = name.to_sym
         ext = @extensions[name].first
         ext.kind_of?(String) ? @extensions[name][0] = resolve_class(ext) : ext
       end
@@ -101,7 +102,7 @@ module Webgen
       # Return +true+ if an extension with the given name has been registered with this manager
       # class.
       def registered?(name)
-        @extensions.has_key?(name.to_s)
+        @extensions.has_key?(name.to_sym)
       end
 
       # Return the names of all available extension names registered with this manager class.
