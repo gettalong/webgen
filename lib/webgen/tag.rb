@@ -59,7 +59,7 @@ module Webgen
   #   end
   #
   #   website.config.define_option('reverser.do_reverse', nil, 'Actually reverse')
-  #   website.ext.tag.register 'Reverser', :names => 'reverse', :mandatory => ['reverse']
+  #   website.ext.tag.register '::Reverser', :names => 'reverse', :mandatory => ['reverse']
   #
   class Tag
 

@@ -55,7 +55,7 @@ module Webgen
   #
   #   end
   #
-  #   website.ext.source.register 'MemorySource'
+  #   website.ext.source.register '::MemorySource'
   #
   class Source
 

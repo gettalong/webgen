@@ -59,7 +59,7 @@ module Webgen
   #
   #   end
   #
-  #   website.ext.content_processor.register 'Replacer'
+  #   website.ext.content_processor.register '::Replacer'
   #
   class ContentProcessor
 
