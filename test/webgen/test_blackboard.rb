@@ -10,24 +10,21 @@ class TestBlackboard < MiniTest::Unit::TestCase
   end
 
   def test_add_listener
-    assert_raises(ArgumentError) { @blackboard.add_listener(:test, nil) }
-    assert_raises(ArgumentError) { @blackboard.add_listener(:test, 'not callable') }
-    @blackboard.add_listener([:test, :other], proc { throw :called })
+    assert_raises(ArgumentError) { @blackboard.add_listener(:test) }
+    @blackboard.add_listener([:test, :other]) { throw :called }
     assert_throws(:called) { @blackboard.dispatch_msg(:test) }
     assert_throws(:called) { @blackboard.dispatch_msg(:other) }
   end
 
   def test_remove_listener
-    listener = proc { throw :called }
-    @blackboard.add_listener(:test, listener)
+    @blackboard.add_listener(:test, 'id') { throw :called }
     assert_throws(:called) { @blackboard.dispatch_msg(:test) }
-    @blackboard.remove_listener(:test, listener)
+    @blackboard.remove_listener(:test, 'id')
     @blackboard.dispatch_msg(:test)
   end
 
   def test_dispatch_msg
-    listener = proc { throw :called }
-    @blackboard.add_listener(:test, listener)
+    @blackboard.add_listener(:test) { throw :called }
     assert_throws(:called) { @blackboard.dispatch_msg(:test) }
   end
 
