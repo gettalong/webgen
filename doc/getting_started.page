@@ -25,7 +25,7 @@ structure for you. By running the command `webgen create sample_site`, the websi
 available bundles by passing their names to the `-b` option of the `create` command.
 
 > A *website bundle* defines some starting content for a website. The `default` bundle defines just
-> a sample content file sothat some output can be viewed after webgen is run. All other bundles are
+> a sample content file so that some output can be viewed after webgen is run. All other bundles are
 > style bundles which define the look and feel of your website. webgen comes with many predefined
 > style bundles and nearly all of them are converted open source web design styles.
 {:.information}

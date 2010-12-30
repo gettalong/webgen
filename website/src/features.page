@@ -34,8 +34,8 @@ Below is a list of features that webgen supports or will shortly support.
 
 *   ## Supported file types
 
-    Anything can be put into webgen's source directory sothat it gets copied to the output directory
-    but some file types are handled specially:
+    Anything can be put into webgen's source directory so that it gets copied to the output
+    directory but some file types are handled specially:
 
     * Page files (primarily used to define the content of a web page but can really be used to
       create about any text-based file format)

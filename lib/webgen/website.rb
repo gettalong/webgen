@@ -308,7 +308,7 @@ module Webgen
       end
     end
 
-    # The provided block is executed within a proper environment sothat any object can access the
+    # The provided block is executed within a proper environment so that any object can access the
     # Website object.
     def execute_in_env
       set_back = Thread.current[:webgen_website]

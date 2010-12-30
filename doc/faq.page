@@ -96,8 +96,8 @@ If you just want to change the pipeline for one block, you can do it like this:
 
 ### ... set the default meta information for files created by a specific source handler?
 
-Use the configuration file! For example, to change the meta information `in-menu` sothat it defaults
-to `true` for all page files use the following in your configuration file:
+Use the configuration file! For example, to change the meta information `in-menu` so that it
+defaults to `true` for all page files use the following in your configuration file:
 
     default_meta_info:
       Page:

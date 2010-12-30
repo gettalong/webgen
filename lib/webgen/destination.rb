@@ -17,7 +17,7 @@ module Webgen
   #
   # Since there can only be one destination class per website instance, this manager class hides the
   # implementation details and uses the configuration option "destination" to create a new object
-  # from the correct destination class. Use the #write, #read, #exists? and #delete method on this
+  # from the correct destination class. Use the #write, #read, #exists? and #delete methods on this
   # manager class to perform the equivalent operations on the destination class.
   #
   # == Implementing a destination class

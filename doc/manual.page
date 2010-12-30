@@ -55,7 +55,7 @@ Following is a short overview of the available commands:
     name or a bundle URL.
 
     > If you don't specify the `-b` option, the default value is used which applies the `default`
-    > and the `style-andreas07` bundles. The former only creates a simple `src/index.page` sothat
+    > and the `style-andreas07` bundles. The former only creates a simple `src/index.page` so that
     > some output can be seen and the latter applies a nice layout.
     {:.information}
 
@@ -260,8 +260,8 @@ files are handled by webgen.
 
 ## Source Paths Naming Convention {#source-naming}
 
-webgen assumes that the paths provided by the sources follow a special naming convention sothat meta
-information can be extracted correctly from the path names. There are three different cases
+webgen assumes that the paths provided by the sources follow a special naming convention so that
+meta information can be extracted correctly from the path names. There are three different cases
 depending on the type of path (the individual parts of a path are explained below):
 
 *   The path specifies a directory. It must end with a slash character and must not contain any hash
@@ -356,7 +356,7 @@ webgen provides the functionality to define the same content in more than one la
 localize content. This is achieved with the _canonical name_ of a path, short CN.
 
 The canonical name as well as all the other variants (\[absolute] \[localized] canonical name, all
-described below) are created directly from the source paths sothat one can easily derive the
+described below) are created directly from the source paths so that one can easily derive the
 canonical name onself. Here are some examples:
 
 | Source path           | CN         | ACN                | LCN           | ALCN                  |
@@ -632,7 +632,7 @@ extensions.
 
 # Creating a Website Style Bundle   {#create-website-style}
 
-webgen ships some style bundles sothat one can create a basic website out of the box. However, if
+webgen ships some style bundles so that one can create a basic website out of the box. However, if
 you want to create a website style bundle yourself, it is easy.
 
 The following assumes that you already have a website template, i.e. an HTML file with your layout,

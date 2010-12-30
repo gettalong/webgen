@@ -37,7 +37,7 @@ module Webgen
         end
       end
 
-      # Return an array of lines which represents the text in +content+ formatted sothat no line is
+      # Return an array of lines which represents the text in +content+ formatted so that no line is
       # longer than +width+ characters. The +indent+ parameter specifies the amount of spaces
       # prepended to each line. If +first_line_indented+ is +true+, then the first line is indented.
       def self.format(content, indent = 0, first_line_indented = false, width = DEFAULT_WIDTH)

@@ -20,7 +20,7 @@ haml and thelike, the functionality of the `context` object has been expanded to
 programmatic inclusion of tags and the rendering of blocks.
 
 Another important change in this release is that the naming convention for paths has been made
-stricter sothat it is easier to derive the (a)(l)cn from a source path.
+stricter so that it is easier to derive the (a)(l)cn from a source path.
 
 Also note that there have been some incompatible API changes!
 

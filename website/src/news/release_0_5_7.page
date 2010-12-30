@@ -18,7 +18,7 @@ release and should be used instead of the old stable 0.4.x series! The one excep
 rely on features of the 0.4.x series that have not been ported to 0.5.x yet.
 
 Aside from this this release brings some new features, various issues were fixed and the homepage
-was updated sothat the current version and release date are visible from the start page.
+was updated so that the current version and release date are visible from the start page.
 
 --- name:changes pipeline:tags,kramdown
 

@@ -60,7 +60,7 @@ API got deprecated!
   - Added new option [`contentprocessor.redcloth.hard_breaks`][6] for specifying if single newlines
     should become HTML line break tags
   - The use of the environment variable `WEBGEN_WEBSITE` moved from the CLI to the main
-    Webgen::Website class sothat it is also available when programmatically using webgen.
+    Webgen::Website class so that it is also available when programmatically using webgen.
 
 
 * Bug fixes:
