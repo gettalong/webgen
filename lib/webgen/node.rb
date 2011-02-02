@@ -1,10 +1,9 @@
 # -*- encoding: utf-8 -*-
 
-require 'uri'
-require 'set'
 require 'pathname'
 require 'webgen/languages'
 require 'webgen/path'
+require 'webgen/common'
 
 module Webgen
 
@@ -140,19 +139,6 @@ module Webgen
       Webgen::Path.match(@alcn, pattern)
     end
 
-    # This pattern is the the same as URI::UNSAFE except that the hash character (#) is also
-    # not escaped. This is needed so that paths with fragments work correctly.
-    URL_UNSAFE_PATTERN = Regexp.new("[^#{URI::PATTERN::UNRESERVED}#{URI::PATTERN::RESERVED}#]") # :nodoc:
-
-    # Construct an internal URL for the given +name+ which can be an acn/alcn/path. If the parameter
-    # +make_absolute+ is +true+, then a relative URL will be made absolute by prepending the special
-    # URL <tt>webgen:://webgen.localhost/</tt>.
-    def self.url(name, make_absolute = true)
-      url = URI::parse(URI::escape(name, URL_UNSAFE_PATTERN))
-      url = URI::parse('webgen://webgen.localhost/') + url unless url.absolute? || !make_absolute
-      url
-    end
-
     # Return the node with the same canonical name but in language +lang+ or, if no such node
     # exists, an unlocalized version of the node. If no such node is found either, +nil+ is
     # returned.
@@ -177,11 +163,7 @@ module Webgen
     # correct localized node according to +lang+ is returned or if no such node exists but an
     # unlocalized version does, the unlocalized node is returned.
     def resolve(path, lang = nil)
-      orig_path = path
-      url = self.class.url(@alcn) + self.class.url(path, false)
-
-      path = url.path + (url.fragment.nil? ? '' : '#' + url.fragment)
-      return nil if path =~ /^\/\.\./
+      path = Webgen::Common.append_path(@alcn, path)
 
       node = @tree[path, :alcn]
       if !node || node.acn == path
@@ -194,9 +176,9 @@ module Webgen
     # Return the relative path to the given path +other+. The parameter +other+ can be a Node or an
     # object that responds to the :+to_str+ method.
     def route_to(other)
-      my_url = self.class.url(@dest_path)
+      my_url = Webgen::Common.url(@dest_path)
       other_url = if other.kind_of?(Webgen::Node)
-                    self.class.url(other.proxy_node(@lang).dest_path)
+                    Webgen::Common.url(other.proxy_node(@lang).dest_path)
                   elsif other.respond_to?(:to_str)
                     my_url + other.to_str
                   else

@@ -101,19 +101,6 @@ class TestNode < MiniTest::Unit::TestCase
     assert(node !~ '**/*.test')
   end
 
-  def test_class_url
-    assert_equal("webgen://webgen.localhost/hallo", Webgen::Node.url("hallo").to_s)
-    assert_equal("webgen://webgen.localhost/hallo%20du", Webgen::Node.url("hallo du").to_s)
-    assert_equal("webgen://webgen.localhost/hall%C3%B6chen", Webgen::Node.url("hallöchen").to_s)
-    assert_equal("webgen://webgen.localhost/hallo#du", Webgen::Node.url("hallo#du").to_s)
-
-    assert_equal("webgen://webgen.localhost/test", Webgen::Node.url("/test").to_s)
-    assert_equal("http://example.com/test", Webgen::Node.url("http://example.com/test").to_s)
-
-    assert_equal("test", Webgen::Node.url("test", false).to_s)
-    assert_equal("http://example.com/test", Webgen::Node.url("http://example.com/test", false).to_s)
-  end
-
   def test_in_lang
     nodes = create_default_nodes
 
