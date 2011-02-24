@@ -180,6 +180,7 @@ class TestNode < MiniTest::Unit::TestCase
 
   def test_route_to
     nodes = create_default_nodes
+    @website.expect(:blackboard, Webgen::Blackboard.new)
 
     #arg is Node
     assert_equal('somename.en.html', nodes[:somename_en].route_to(nodes[:somename_en]))
@@ -207,14 +208,19 @@ class TestNode < MiniTest::Unit::TestCase
 
     #arg is something else
     assert_raises(ArgumentError) { nodes[:root].route_to(5) }
+
+    @website.verify
   end
 
   def test_proxy_node
     nodes = create_default_nodes
+    @website.expect(:blackboard, Webgen::Blackboard.new)
 
     assert_equal(nodes[:somename_en], nodes[:somename_en].proxy_node('en'))
     assert_equal(nodes[:dir2_index_en], nodes[:dir2].proxy_node('en'))
     assert_equal(nodes[:dir2_index_en], nodes[:dir2].proxy_node('en'))
+
+    @website.verify
   end
 
   def test_level

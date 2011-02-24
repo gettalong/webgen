@@ -198,13 +198,13 @@ module Webgen
     # information is usually set on directories to specify the node that should be used for the
     # "directory index".
     def proxy_node(lang = @lang)
-      proxy_path = self.meta_info['proxy_path']
+      proxy_path = self['proxy_path']
       if proxy_path.nil?
         self
       else
         pnode = resolve(proxy_path, lang)
         if !pnode
-          tree.website.logger(:warn) { "Proxy node for <#{alcn}> not found" }
+          tree.website.logger(:warn) { "Proxy node specified by path '#{proxy_path}' for <#{alcn}> not found" }
         end
         pnode || self
       end
