@@ -3,7 +3,6 @@
 require 'pathname'
 require 'webgen/languages'
 require 'webgen/path'
-require 'webgen/common'
 
 module Webgen
 
@@ -134,9 +133,10 @@ module Webgen
       "<##{self.class.name}: alcn=#{@alcn}>"
     end
 
-    # Return +true+ if the #alcn matches the pattern. See Webgen::Path.match for more information.
+    # Return +true+ if the #alcn matches the pattern. See Webgen::Path.matches_pattern? for
+    # more information.
     def =~(pattern)
-      Webgen::Path.match(@alcn, pattern)
+      Webgen::Path.matches_pattern?(@alcn, pattern)
     end
 
     # Return the node with the same canonical name but in language +lang+ or, if no such node
@@ -163,7 +163,7 @@ module Webgen
     # correct localized node according to +lang+ is returned or if no such node exists but an
     # unlocalized version does, the unlocalized node is returned.
     def resolve(path, lang = nil)
-      path = Webgen::Common.append_path(@alcn, path)
+      path = Webgen::Path.append(@alcn, path)
 
       node = @tree[path, :alcn]
       if !node || node.acn == path
@@ -176,9 +176,9 @@ module Webgen
     # Return the relative path to the given path +other+. The parameter +other+ can be a Node or an
     # object that responds to the :+to_str+ method.
     def route_to(other)
-      my_url = Webgen::Common.url(@dest_path)
+      my_url = Webgen::Path.url(@dest_path)
       other_url = if other.kind_of?(Webgen::Node)
-                    Webgen::Common.url(other.proxy_node(@lang).dest_path)
+                    Webgen::Path.url(other.proxy_node(@lang).dest_path)
                   elsif other.respond_to?(:to_str)
                     my_url + other.to_str
                   else

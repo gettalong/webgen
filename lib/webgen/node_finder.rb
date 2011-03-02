@@ -1,8 +1,7 @@
 # -*- encoding: utf-8 -*-
 
 require 'set'
-require 'webgen/common'
-require 'webgen/node'
+require 'webgen/path'
 
 module Webgen
 
@@ -224,7 +223,7 @@ module Webgen
     end
 
     def filter_alcn(nodes, ref_node, alcn)
-      alcn = [alcn].flatten.map {|a| Webgen::Common.append_path(ref_node.alcn, a.to_s)}
+      alcn = [alcn].flatten.map {|a| Webgen::Path.append(ref_node.alcn, a.to_s)}
       nodes.keep_if {|n| alcn.any? {|a| n =~ a}}
     end
 
