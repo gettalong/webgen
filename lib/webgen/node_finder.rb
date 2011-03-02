@@ -136,7 +136,7 @@ module Webgen
         nodes = nodes[(offset.to_s.to_i)..(limit ? offset.to_s.to_i + limit.to_s.to_i - 1 : -1)] if limit || offset
       else
         result = {}
-        min_level = Float::INFINITY
+        min_level = 1_000_000
         nodes.each {|n| min_level = n.level if n.level < min_level}
 
         nodes.each do |n|
