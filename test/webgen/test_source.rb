@@ -43,7 +43,7 @@ class TestSource < MiniTest::Unit::TestCase
     path2 = MiniTest::Mock.new
     path2.expect(:mount_at, path2, ['/'])
     path2.expect(:to_str, 'path2.data')
-    path2.expect(:passive=, nil, [true])
+    path2.expect(:[]=, nil, ['no_output', true])
     path3 = MiniTest::Mock.new
     path3.expect(:mount_at, path3, ['/hallo/'])
     path3.expect(:to_str, 'path3.file')

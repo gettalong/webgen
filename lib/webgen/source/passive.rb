@@ -15,7 +15,7 @@ module Webgen
 
       # Return all paths as passive paths.
       def paths
-        @source.paths.each {|path| path.passive = true}
+        @source.paths.each {|path| path['no_output'] = true}
       end
 
     end

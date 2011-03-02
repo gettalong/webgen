@@ -8,7 +8,7 @@ class TestSourcePassive < MiniTest::Unit::TestCase
 
   def test_paths
     path = MiniTest::Mock.new
-    path.expect(:passive=, nil, [true])
+    path.expect(:[]=, nil, ['no_output', true])
     source = MiniTest::Mock.new
     source.expect(:paths, Set.new([path]))
     psource = Webgen::Source::Passive.new(source)
