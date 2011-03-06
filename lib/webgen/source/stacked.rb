@@ -24,18 +24,12 @@ module Webgen
       # Return the stack of [mount point, source object] entries.
       attr_reader :stack
 
-      # Create a new stack. The optional +map+ parameter can be used to provide initial mappings of
-      # mount points to source objects (see #add for details).
-      def initialize(map = {})
+      # Create a new stack. The optional +map+ parameter is used to provide mappings of mount points
+      # to source objects. It should be an array of two-element arrays which contain an absolute
+      # directory (ie. starting and ending with a slash) and a source object.
+      def initialize(website, map = {})
         @stack = []
-        add(map)
-      end
-
-      # Add all mappings found in +maps+ to the stack. The parameter +maps+ should be an array of
-      # two-element arrays which contain an absolute directory (ie. starting and ending with a slash)
-      # and a source object.
-      def add(maps)
-        maps.each do |mp, source|
+        map.each do |mp, source|
           raise "Invalid mount point specified: #{mp}" unless mp =~ /^\//
           @stack << [mp, source]
         end
@@ -45,13 +39,15 @@ module Webgen
       # returned by later source objects are not used if a prior source object has returned the same
       # path.
       def paths
-        paths = Set.new
-        @stack.each do |mp, source|
-          source.paths.each do |path|
-            paths.add?(path.mount_at(mp))
+        if !defined?(@paths)
+          @paths = Set.new
+          @stack.each do |mp, source|
+            source.paths.each do |path|
+              @paths.add?(path.mount_at(mp))
+            end
           end
         end
-        paths
+        @paths
       end
 
     end

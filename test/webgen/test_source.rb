@@ -6,7 +6,7 @@ require 'webgen/source'
 
 class Webgen::Source::MySource
 
-  def initialize(paths); @paths = paths; end
+  def initialize(website, paths); @paths = paths; end
   def paths; Set.new(@paths); end
 
 end
@@ -52,8 +52,7 @@ class TestSource < MiniTest::Unit::TestCase
     website.expect(:config, {'sources' => [['/', 'my_source', [path1, path2]], ['/hallo/', 'my_source', [path3]]],
                      'sources.passive' => [['/', 'my_source', [path2]]],
                      'sources.ignore_paths' => ['**.data']})
-    expected = {'path1' => path1, 'path3' => path3}
-    assert_equal(expected, @src.paths)
+    assert_equal({'path1' => path1, 'path3' => path3}, @src.paths)
     [website, path1, path2, path3].each {|m| m.verify}
   end
 

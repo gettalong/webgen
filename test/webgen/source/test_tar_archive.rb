@@ -1,10 +1,11 @@
 # -*- encoding: utf-8 -*-
 
-require 'test/unit'
-require 'helper'
-require 'webgen/source'
+require 'minitest/autorun'
+require 'fileutils'
+require 'rbconfig'
+require 'webgen/source/tar_archive'
 
-class TestSourceTarArchive < Test::Unit::TestCase
+class TestSourceTarArchive < MiniTest::Unit::TestCase
 
   class FakeStream
 
@@ -28,42 +29,26 @@ class TestSourceTarArchive < Test::Unit::TestCase
 
   end
 
-  include Test::WebsiteHelper
-
   def setup
-    super
-    @website = Webgen::Website.new(File.join(File.dirname(__FILE__), '..'), nil)
-    @website.init
-    Thread.current[:webgen_website] = @website
     @stream = FakeStream.new
   end
 
   def test_initialize
-    source = Webgen::Source::TarArchive.new(@stream)
-    assert_equal(@stream, source.uri)
+    source = Webgen::Source::TarArchive.new(nil, 'http://example.com/test.tar.gz')
+    assert_equal('http://example.com/test.tar.gz', source.uri)
   end
 
   def test_paths
-    source = Webgen::Source::TarArchive.new(@stream)
+    source = Webgen::Source::TarArchive.new(nil, @stream)
     assert_equal(4, source.paths.length)
     assert(source.paths.include?(Webgen::Path.new('/test/')))
     assert(source.paths.include?(Webgen::Path.new('/test/hallo.page')))
     assert(source.paths.include?(Webgen::Path.new('/hallo.page')))
-    assert_equal('This is the contents!', source.paths.find {|p| p.path == '/test/hallo.page'}.io.data)
+    assert_equal('This is the contents!', source.paths.find {|p| p.path == '/test/hallo.page'}.data)
 
-    source = Webgen::Source::TarArchive.new(@stream, '/test/*')
+    source = Webgen::Source::TarArchive.new(nil, @stream, '/test/*')
     assert_equal(1, source.paths.length)
     assert(source.paths.include?(Webgen::Path.new('/test/hallo.page')))
-  end
-
-  def test_path_changed?
-    stream = @stream
-    source = Webgen::Source::TarArchive.new(stream)
-    source.paths.each do |path|
-      assert(!path.changed?)
-      @website.cache.instance_eval { @old_data[[:tararchive_path, stream, path.path]] = Time.now - 60 }
-      assert(path.changed?)
-    end
   end
 
 end

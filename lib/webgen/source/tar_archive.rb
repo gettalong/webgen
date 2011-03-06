@@ -1,6 +1,5 @@
 # -*- encoding: utf-8 -*-
 
-require 'pathname'
 require 'open-uri'
 require 'zlib'
 
@@ -25,25 +24,6 @@ module Webgen
     #
     class TarArchive
 
-      # A special Webgen::Path class for handling paths from a tar archive.
-      class Path < Webgen::Path
-
-        # Create a new tar archive path object for the entry +entry+.
-        def initialize(path, data, mtime, uri)
-          super(path) {|mode| StringIO.new(data.to_s, mode) }
-          @uri = uri
-          @mtime = mtime
-          WebsiteAccess.website.cache[[:tararchive_path, @uri, path]] = @mtime if WebsiteAccess.website
-          @meta_info['modified_at'] = @mtime
-        end
-
-        # Return +true+ if the tar archive path used by the object has been modified.
-        def changed?
-          !WebsiteAccess.website || @mtime > WebsiteAccess.website.cache[[:tararchive_path, @uri, path]]
-        end
-
-      end
-
       # The URI of the tar archive.
       attr_reader :uri
 
@@ -52,7 +32,7 @@ module Webgen
       attr_reader :glob
 
       # Create a new tar archive source for the URI string +uri+.
-      def initialize(uri, glob = '**/*')
+      def initialize(website, uri, glob = '**/*')
         @uri = uri
         @glob = glob
       end
@@ -66,9 +46,10 @@ module Webgen
             @paths = input.collect do |entry|
               path = entry.full_name
               next unless File.fnmatch(@glob, path, File::FNM_DOTMATCH|File::FNM_CASEFOLD|File::FNM_PATHNAME)
-              path += '/' if entry.directory? && path[-1,1] != '/'
-              path = '/' + path unless path[0,1] == '/'
-              Path.new(path, entry.read, Time.at(entry.mtime), @uri)
+              path += '/' if entry.directory? && path[-1] != ?/
+              path = '/' + path unless path[0] == ?/
+              data = entry.read.to_s
+              Path.new(path, 'modified_at' => Time.at(entry.mtime)) {|mode| StringIO.new(data, mode) }
             end.compact.to_set
           end
         end

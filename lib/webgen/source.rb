@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*-
 
 require 'webgen/common'
-require 'webgen/error'
+require 'webgen/path'
 
 module Webgen
 
@@ -20,8 +20,9 @@ module Webgen
   # == Implementing a source class
   #
   # A source class only needs to respond to the method +paths+ which needs to return a set of Path
-  # objects for the source. The +initialize+ method of a source class may take an arbitrary number
-  # of arguments.
+  # objects for the source. It is expected that after a source object is initialized it always
+  # returns the same path objects. The +initialize+ method of a source class must take the website
+  # object as first argument and may take an arbitrary number of additional arguments.
   #
   # Note that the returned Path objects need to have the meta information <tt>modified_at</tt> set
   # to the correct last modification time of the path, i.e. the value has to be a Time object! This
@@ -43,7 +44,7 @@ module Webgen
   #       '/directory/file.page' => "This is the content of the file"
   #     }
   #
-  #     def initialize(data = {})
+  #     def initialize(website, data = {})
   #       @data = data
   #     end
   #
@@ -62,11 +63,10 @@ module Webgen
     include Webgen::Common::ExtensionManager
     extend ClassMethods
 
-    # Register a source class. The parameter +klass+ has to contain the name of the class which
-    # has to respond to +call+ or which has an instance method +call+. If the class is located under
-    # this namespace, only the class name without the hierarchy part is needed, otherwise the full
-    # class name including parent module/class names is needed. All other parameters can be set
-    # through the options hash if the default values aren't sufficient.
+    # Register a source class. The parameter +klass+ has to contain the name of the source class. If
+    # the class is located under this namespace, only the class name without the hierarchy part is
+    # needed, otherwise the full class name including parent module/class names is needed. All other
+    # parameters can be set through the options hash if the default values aren't sufficient.
     #
     # === Options:
     #
@@ -95,17 +95,18 @@ module Webgen
     # **Note** that this method won't work if no website object is set!
     def paths
       if !defined?(@paths)
-        active_source = extension('stacked').new(website.config['sources'].collect do |mp, name, *args|
-                                                   [mp, extension(name).new(*args)]
+        active_source = extension('stacked').new(website, website.config['sources'].collect do |mp, name, *args|
+                                                   [mp, extension(name).new(website, *args)]
                                                  end)
-        passive_source = extension('stacked').new(website.config['sources.passive'].collect do |mp, name, *args|
-                                                    [mp, extension('passive').new(extension(name).new(*args))]
+        passive_source = extension('stacked').new(website, website.config['sources.passive'].collect do |mp, name, *args|
+                                                    [mp, extension(name).new(website, *args)]
                                                   end)
-        source = extension('stacked').new([['/', active_source], ['/', passive_source]])
+        passive_source.paths.each {|path| path['no_output'] = true}
+        source = extension('stacked').new(website, [['/', active_source], ['/', passive_source]])
 
         @paths = {}
         source.paths.each do |path|
-          if !(website.config['sources.ignore_paths'].any? {|pat| File.fnmatch(pat, path, File::FNM_CASEFOLD|File::FNM_DOTMATCH)})
+          if !(website.config['sources.ignore_paths'].any? {|pat| Webgen::Path.matches_pattern?(path, pat)})
             @paths[path.source_path] = path
           end
         end

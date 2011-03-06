@@ -11,31 +11,19 @@ class TestSourceStacked < MiniTest::Unit::TestCase
   end
 
   def test_initialize
-    source = Webgen::Source::Stacked.new
+    source = Webgen::Source::Stacked.new(nil)
     assert_equal([], source.stack)
-    source = Webgen::Source::Stacked.new({'/dir' => 6})
+    source = Webgen::Source::Stacked.new(nil, {'/dir' => 6})
     assert_equal([['/dir', 6]], source.stack)
   end
 
-  def test_add
-    source = Webgen::Source::Stacked.new
-    assert_raises(RuntimeError) { source.add(['dir', 6]) }
-
-    source.add('/temp/' => :test)
-    assert_equal([['/temp/', :test]], source.stack)
-  end
-
   def test_paths
-    source = Webgen::Source::Stacked.new
     path1 = MiniTest::Mock.new
     path1.expect(:mount_at, 'path1', ['/'])
     path2 = MiniTest::Mock.new
     path2.expect(:mount_at, 'path2', ['/hallo/'])
 
-    source.add('/' => TestSource.new([path1]))
-    assert_equal(Set.new(['path1']), source.paths)
-
-    source.add('/hallo/' => TestSource.new([path2]))
+    source = Webgen::Source::Stacked.new(nil, '/' => TestSource.new([path1]), '/hallo/' => TestSource.new([path2]))
     assert_equal(Set.new(['path1', 'path2']), source.paths)
 
     path1.verify
