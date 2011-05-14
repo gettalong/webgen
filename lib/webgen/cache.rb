@@ -40,7 +40,7 @@ module Webgen
       @old_data = {}
       @new_data = {}
       @volatile = {}
-      @permanent = {:classes => []}
+      @permanent = {}
     end
 
     # Return the cached data (or, if it is not available, the new data) identified by +key+ from the
@@ -61,7 +61,6 @@ module Webgen
     # Restore the caches from +data+ and recreate all cached instances (see #instance).
     def restore(data)
       @old_data, @permanent = *data
-      @permanent[:classes].each {|klass| instance(klass)}
     end
 
     # Return all caches that should be available between webgen runs.
@@ -71,15 +70,7 @@ module Webgen
 
     # Reset the volatile cache.
     def reset_volatile_cache
-      @volatile = {:classes => @volatile[:classes]}
-    end
-
-    # Return the unique instance of the class +name+ (a String). This method should be used when it
-    # is essential that webgen uses only one object of a class or when an object should
-    # automatically be recreated upon cache restoration (see #restore).
-    def instance(name)
-      @permanent[:classes] << name unless @permanent[:classes].include?(name)
-      (@volatile[:classes] ||= {})[name] ||= Common.const_for_name(name).new
+      @volatile = {}
     end
 
   end

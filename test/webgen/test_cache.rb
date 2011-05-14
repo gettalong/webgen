@@ -1,9 +1,9 @@
 # -*- encoding: utf-8 -*-
-require 'rubygems'
-require 'test/unit'
+
+require 'minitest/autorun'
 require 'webgen/cache'
 
-class TestCache < Test::Unit::TestCase
+class TestCache < MiniTest::Unit::TestCase
 
   def setup
     @cache = Webgen::Cache.new
@@ -40,20 +40,8 @@ class TestCache < Test::Unit::TestCase
     assert_equal(nil, @cache.volatile[:key])
 
     @cache.volatile[:key] = :value
-    obj = @cache.instance('Hash')
     @cache.reset_volatile_cache
     assert_equal(nil, @cache.volatile[:key])
-    assert_equal(obj, @cache.instance('Hash'))
-  end
-
-  def test_instance
-    obj = @cache.instance('Hash')
-    assert_kind_of(Hash, obj)
-    assert_equal(obj, @cache.instance('Hash'))
-    @cache.instance('Array')
-    assert_equal(['Hash', 'Array'], @cache.permanent[:classes])
-    dump_and_restore
-    assert_not_nil(@cache.volatile[:classes]['Hash'])
   end
 
 end
