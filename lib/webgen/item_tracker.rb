@@ -74,10 +74,11 @@ module Webgen
   class ItemTracker
 
     include Webgen::Common::ExtensionManager
-    extend ClassMethods
 
-    def initialize # :nodoc:
-      super
+    # Create a new item tracker for the given website.
+    def initialize(website)
+      super()
+      self.website = website
       @instances = {}
       @node_dependencies = Hash.new {|h,k| h[k] = Set.new}
       @item_data = {}
@@ -85,16 +86,18 @@ module Webgen
     end
 
     def website=(ws) # :nodoc:
-      if !website.nil?
-        website.blackboard.remove_listener(:website_initialized, self)
-        website.blackboard.remove_listener(:website_generated, self)
+      if !@website.nil?
+        @website.blackboard.remove_listener(:website_initialized, self)
+        @website.blackboard.remove_listener(:website_generated, self)
       end
-      super
-      website.blackboard.add_listener(:website_initialized, self) do
-        @cached = website.cache[:item_tracker_data] || @cached
+
+      @website = ws
+
+      @website.blackboard.add_listener(:website_initialized, self) do
+        @cached = @website.cache[:item_tracker_data] || @cached
       end
-      website.blackboard.add_listener(:website_generated, self) do
-        website.cache[:item_tracker_data] = {
+      @website.blackboard.add_listener(:website_generated, self) do
+        @website.cache[:item_tracker_data] = {
           :node_dependencies => @cached[:node_dependencies].merge(@node_dependencies),
           :item_data => @cached[:item_data].merge(@item_data)
         }
@@ -163,11 +166,8 @@ module Webgen
 
     # Return the item tracker extension object called name.
     def item_tracker(name)
-      @instances[name] ||= extension(name).new(website)
+      @instances[name] ||= extension(name).new(@website)
     end
-
-    register 'NodeContent'
-    register 'NodeMetaInfo'
 
   end
 

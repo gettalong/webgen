@@ -26,11 +26,6 @@ end
 
 class TestItemTracker < MiniTest::Unit::TestCase
 
-  def setup
-    @tracker = Webgen::ItemTracker.new
-    @tracker.register('Sample')
-  end
-
   def test_functionality
     # Needed mock objects
     website = MiniTest::Mock.new
@@ -39,11 +34,12 @@ class TestItemTracker < MiniTest::Unit::TestCase
     node = MiniTest::Mock.new
     node.expect(:alcn, '/alcn')
 
-    @tracker.website = website
-    @tracker.add(node, :sample, 'mydata')
+    tracker = Webgen::ItemTracker.new(website)
+    tracker.register('Sample')
+    tracker.add(node, :sample, 'mydata')
 
     # Item should be changed because no cache data is available
-    assert(@tracker.send(:item_changed?, @tracker.send(:unique_id, :sample, 'mydata')))
+    assert(tracker.send(:item_changed?, tracker.send(:unique_id, :sample, 'mydata')))
 
     # Test the initial loading of the cache data
     cache[:item_tracker_data] = {
@@ -51,10 +47,10 @@ class TestItemTracker < MiniTest::Unit::TestCase
       :item_data => {[:sample, 'mydata'] => 'alcnmydata'}
     }
     blackboard.dispatch_msg(:website_initialized)
-    assert_equal(cache[:item_tracker_data], @tracker.instance_variable_get(:@cached))
+    assert_equal(cache[:item_tracker_data], tracker.instance_variable_get(:@cached))
 
     # Item should not be changed because of cache data
-    refute(@tracker.send(:item_changed?, @tracker.send(:unique_id, :sample, 'mydata')))
+    refute(tracker.send(:item_changed?, tracker.send(:unique_id, :sample, 'mydata')))
 
     # Test the final writing of the cache data
     blackboard.dispatch_msg(:website_generated)

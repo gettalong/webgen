@@ -64,7 +64,6 @@ module Webgen
   class Tag
 
     include Webgen::Common::ExtensionManager
-    extend ClassMethods
 
     # Register a tag. The parameter +klass+ has to contain the name of the class which has to
     # respond to +call+ or which has an instance method +call+. If the class is located under this
@@ -198,19 +197,6 @@ module Webgen
       end
       tdata
     end
-
-    register 'Relocatable', :names => ['relocatable', 'r']
-    register 'Metainfo', :names => :default
-    register 'Menu'
-    register 'BreadcrumbTrail'
-    register 'Langbar'
-    register 'IncludeFile'
-    register 'ExecuteCommand', :names => 'execute_cmd'
-    register 'Coderay'
-    register 'Date'
-    register 'Sitemap'
-    register 'TikZ'
-    register 'Link'
 
   end
 

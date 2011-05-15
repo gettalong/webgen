@@ -61,7 +61,12 @@ module Webgen
   class Source
 
     include Webgen::Common::ExtensionManager
-    extend ClassMethods
+
+    # Create a new source manager object for the given website.
+    def initialize(website)
+      super()
+      @website = website
+    end
 
     # Register a source class. The parameter +klass+ has to contain the name of the source class. If
     # the class is located under this namespace, only the class name without the hierarchy part is
@@ -91,34 +96,26 @@ module Webgen
     # The source paths are taken from the sources specified in the "sources" and the
     # "sources.passive" configuration options. All paths that additionally match one of the
     # "sources.ignore_paths" patterns are ignored.
-    #
-    # **Note** that this method won't work if no website object is set!
     def paths
       if !defined?(@paths)
-        active_source = extension('stacked').new(website, website.config['sources'].collect do |mp, name, *args|
-                                                   [mp, extension(name).new(website, *args)]
+        active_source = extension('stacked').new(@website, @website.config['sources'].collect do |mp, name, *args|
+                                                   [mp, extension(name).new(@website, *args)]
                                                  end)
-        passive_source = extension('stacked').new(website, website.config['sources.passive'].collect do |mp, name, *args|
-                                                    [mp, extension(name).new(website, *args)]
+        passive_source = extension('stacked').new(@website, @website.config['sources.passive'].collect do |mp, name, *args|
+                                                    [mp, extension(name).new(@website, *args)]
                                                   end)
         passive_source.paths.each {|path| path['no_output'] = true}
-        source = extension('stacked').new(website, [['/', active_source], ['/', passive_source]])
+        source = extension('stacked').new(@website, [['/', active_source], ['/', passive_source]])
 
         @paths = {}
         source.paths.each do |path|
-          if !(website.config['sources.ignore_paths'].any? {|pat| Webgen::Path.matches_pattern?(path, pat)})
+          if !(@website.config['sources.ignore_paths'].any? {|pat| Webgen::Path.matches_pattern?(path, pat)})
             @paths[path.source_path] = path
           end
         end
       end
       @paths
     end
-
-    register "Stacked"
-    register "Passive"
-    register "FileSystem"
-    register "Resource"
-    register "TarArchive"
 
   end
 

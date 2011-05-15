@@ -85,7 +85,12 @@ module Webgen
   class Destination
 
     include Webgen::Common::ExtensionManager
-    extend ClassMethods
+
+    # Create a new Destination object that is associated with the given website.
+    def initialize(website)
+      super()
+      @website = website
+    end
 
     # Register a destination class. The parameter +klass+ has to contain the name of the destination
     # class. If the class is located under this namespace, only the class name without the hierarchy
@@ -117,8 +122,8 @@ module Webgen
     # **Note** that this method won't work if no website object is set!
     def instance
       if !defined?(@instance)
-        name, *args = website.config['destination']
-        @instance = extension(name).new(website, *args)
+        name, *args = @website.config['destination']
+        @instance = extension(name).new(@website, *args)
       end
       @instance
     end
@@ -144,9 +149,6 @@ module Webgen
     def read(path, mode = 'rb')
       instance.read(path, mode)
     end
-
-
-    register "FileSystem"
 
   end
 

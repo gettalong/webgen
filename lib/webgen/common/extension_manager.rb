@@ -18,15 +18,9 @@ module Webgen
     # It is assumed that one wants to associate one or more names with an extension object.
     module ExtensionManager
 
-      # The website instance to which this extension manager object belongs. Maybe +nil+ if it does
-      # not belong to a website instance (for example, this is the case for the static extension
-      # manager objects used by the webgen distribution itself).
-      attr_accessor :website
-
       # Create a new extension manager.
       def initialize
         @extensions = {}
-        @website = nil
       end
 
       def initialize_copy(orig) #:nodoc:
@@ -108,25 +102,6 @@ module Webgen
       # Return the names of all available extension names registered with this manager class.
       def registered_names
         @extensions.keys.sort
-      end
-
-
-      # This module can be used to extend an extension manager class. It provides access to a static
-      # extension manager object on which extensions can be registered.
-      module ClassMethods
-
-        # Return the static extension manager object for the class.
-        def static
-          @static ||= self.new
-          yield(@static) if block_given?
-          @static
-        end
-
-        # See ExtensionManager#register.
-        def register(*args, &block)
-          static.register(*args, &block)
-        end
-
       end
 
     end

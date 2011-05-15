@@ -16,7 +16,8 @@ end
 class TestDestination < MiniTest::Unit::TestCase
 
   def setup
-    @dest = Webgen::Destination.new
+    @website = MiniTest::Mock.new
+    @dest = Webgen::Destination.new(@website)
   end
 
   def test_register
@@ -34,20 +35,18 @@ class TestDestination < MiniTest::Unit::TestCase
 
   def test_instance
     @dest.register('MyDestination')
-    website = MiniTest::Mock.new
-    @dest.website = website
 
-    website.expect(:config, {'destination' => 'unknown'})
+    @website.expect(:config, {'destination' => 'unknown'})
     assert_raises(Webgen::Error) { @dest.instance_eval { instance } }
-    website.verify
+    @website.verify
 
-    website.expect(:config, {'destination' => 'my_destination'})
+    @website.expect(:config, {'destination' => 'my_destination'})
     assert_kind_of(Webgen::Destination::MyDestination, @dest.instance_eval { instance })
-    website.verify
+    @website.verify
 
-    website.expect(:config, {'destination' => 'unknown'})
+    @website.expect(:config, {'destination' => 'unknown'})
     @dest.instance_eval { instance } # nothing should be raised
-    website.verify
+    @website.verify
   end
 
 end

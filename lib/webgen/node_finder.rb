@@ -90,11 +90,9 @@ module Webgen
   #
   class NodeFinder
 
-    # The website instance to which this object belongs.
-    attr_accessor :website
-
-    def initialize # :nodoc:
-      super
+    # Create a new NodeFinder object for the given website.
+    def initialize(website)
+      @website = website
       @mapping = {
         :alcn => :filter_alcn, :levels => :filter_levels, :lang => :filter_lang,
         :and => :filter_and, :or => :filter_or
@@ -162,8 +160,8 @@ module Webgen
     def prepare_options_hash(opts_or_name)
       if Hash === opts_or_name
         opts_or_name.dup
-      elsif website.config['node_finder.option_sets'].has_key?(opts_or_name)
-        website.config['node_finder.option_sets'][opts_or_name].dup
+      elsif @website.config['node_finder.option_sets'].has_key?(opts_or_name)
+        @website.config['node_finder.option_sets'][opts_or_name].dup
       else
         raise ArgumentError, "Invalid argument supplied, expected Hash or name of search definition, not #{opts_or_name}"
       end
@@ -175,14 +173,14 @@ module Webgen
     end
 
     def filter_nodes(opts, ref_node)
-      nodes = website.tree.node_access[:alcn].values
-      nodes.delete(website.tree.dummy_root)
+      nodes = @website.tree.node_access[:alcn].values
+      nodes.delete(@website.tree.dummy_root)
 
       opts.delete_if do |filter, value|
         if @mapping.has_key?(filter)
           nodes = send(@mapping[filter], nodes, ref_node, value)
         elsif filter.kind_of?(Symbol)
-          website.logger.warn { "Ignorning unknown node finder filter '#{filter}'" }
+          @website.logger.warn { "Ignorning unknown node finder filter '#{filter}'" }
         end
         !filter.kind_of?(String)
       end

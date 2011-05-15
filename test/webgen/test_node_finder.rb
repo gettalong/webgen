@@ -9,11 +9,10 @@ require 'webgen/tree'
 class TestNodeFinder < MiniTest::Unit::TestCase
 
   def setup
-    @nf = Webgen::NodeFinder.new
     @config = {}
-    website = MiniTest::Mock.new
-    website.expect(:config, @config)
-    @nf.website = website
+    @website = MiniTest::Mock.new
+    @website.expect(:config, @config)
+    @nf = Webgen::NodeFinder.new(@website)
   end
 
   def test_add_filter_module
@@ -28,12 +27,12 @@ class TestNodeFinder < MiniTest::Unit::TestCase
   end
 
   def test_find
-    tree = Webgen::Tree.new(@nf.website)
-    @nf.website.expect(:tree, tree)
-    @nf.website.expect(:logger, ::Logger.new(StringIO.new))
+    tree = Webgen::Tree.new(@website)
+    @website.expect(:tree, tree)
+    @website.expect(:logger, ::Logger.new(StringIO.new))
     blackboard = MiniTest::Mock.new
     blackboard.expect(:dispatch_msg, nil, [nil, nil, nil])
-    @nf.website.expect(:blackboard, blackboard)
+    @website.expect(:blackboard, blackboard)
 
     nodes = {
       :root => root = Webgen::Node.new(tree.dummy_root, '/', '/'),
@@ -130,7 +129,7 @@ class TestNodeFinder < MiniTest::Unit::TestCase
     check.call([:somename_en, :other_en, :dir2_index_en],
                @nf.find({:lang => :node, :name => 'test', :flatten => true}, nodes[:somename_en]))
 
-    @nf.website.verify
+    @website.verify
   end
 
 end

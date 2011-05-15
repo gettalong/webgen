@@ -6,7 +6,6 @@ require 'webgen/common/extension_manager'
 class DummyExtensionManager
 
   include Webgen::Common::ExtensionManager
-  extend ClassMethods
 
   def register(name, value)
     @extensions[name.to_sym] = [value]
@@ -64,23 +63,6 @@ class TestExtensionManager < MiniTest::Unit::TestCase
   def test_resolve_class
     assert_equal(DummyExtensionManager, @dummy.send(:resolve_class, DummyExtensionManager))
     assert_equal(DummyExtensionManager, @dummy.send(:resolve_class, 'DummyExtensionManager'))
-  end
-
-  def test_static_extension_manager
-    static = DummyExtensionManager.static
-    assert_kind_of(Webgen::Common::ExtensionManager, static)
-    DummyExtensionManager.register('key', 'value')
-    assert_equal([:key], static.registered_names)
-  end
-
-  def test_clone
-    static = DummyExtensionManager.static
-    static.register('key', 'value')
-    cloned = static.clone
-    cloned.register('key1', 'value1')
-    refute(static.registered?('key1'))
-    assert(cloned.registered?('key'))
-    assert(cloned.registered?('key1'))
   end
 
 end

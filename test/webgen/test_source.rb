@@ -14,7 +14,8 @@ end
 class TestSource < MiniTest::Unit::TestCase
 
   def setup
-    @src = Webgen::Source.new
+    @website = MiniTest::Mock.new
+    @src = Webgen::Source.new(@website)
   end
 
   def test_register
@@ -31,10 +32,8 @@ class TestSource < MiniTest::Unit::TestCase
   end
 
   def test_paths
-    @src = Webgen::Source.static.clone
+    @src.register('Stacked')
     @src.register('MySource')
-    website = MiniTest::Mock.new
-    @src.website = website
 
     path1 = MiniTest::Mock.new
     path1.expect(:mount_at, path1, ['/'])
@@ -49,11 +48,11 @@ class TestSource < MiniTest::Unit::TestCase
     path3.expect(:to_str, 'path3.file')
     path3.expect(:source_path, 'path3')
 
-    website.expect(:config, {'sources' => [['/', 'my_source', [path1, path2]], ['/hallo/', 'my_source', [path3]]],
-                     'sources.passive' => [['/', 'my_source', [path2]]],
-                     'sources.ignore_paths' => ['**.data']})
+    @website.expect(:config, {'sources' => [['/', 'my_source', [path1, path2]], ['/hallo/', 'my_source', [path3]]],
+                      'sources.passive' => [['/', 'my_source', [path2]]],
+                      'sources.ignore_paths' => ['**.data']})
     assert_equal({'path1' => path1, 'path3' => path3}, @src.paths)
-    [website, path1, path2, path3].each {|m| m.verify}
+    [@website, path1, path2, path3].each {|m| m.verify}
   end
 
 end

@@ -64,7 +64,6 @@ module Webgen
   class ContentProcessor
 
     include Webgen::Common::ExtensionManager
-    extend ClassMethods
 
     # Register a content processor. The parameter +klass+ has to contain the name of the class which
     # has to respond to +call+ or which has an instance method +call+. If the class is located under
@@ -114,26 +113,6 @@ module Webgen
     def is_binary?(name)
       registered?(name) && @extensions[name.to_sym].last == :binary
     end
-
-
-    register 'Tags'
-    register 'Blocks'
-    register 'Maruku'
-    register 'RedCloth'
-    register 'Erb'
-    register 'Haml'
-    register 'Sass'
-    register 'Scss'
-    register 'RDoc'
-    register 'Builder'
-    register 'Erubis'
-    register 'RDiscount'
-    register 'Fragments'
-    register 'Head'
-    register 'Tidy'
-    register 'Xmllint'
-    register 'Kramdown'
-    register 'Less'
 
   end
 
