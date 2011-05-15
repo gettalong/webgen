@@ -19,15 +19,16 @@ class TestSourceFileSystem < MiniTest::Unit::TestCase
     assert_equal('**/*.page', source.glob)
     assert_equal(File.join(@root, 'test'), source.root)
 
-    source = Webgen::Source::FileSystem.new(@website, '/tmp/hallo')
-    assert_equal('**/*', source.glob)
-    assert_equal('/tmp/hallo', source.root)
-
-    source = Webgen::Source::FileSystem.new(@website, 'c:/tmp/hallo')
-    assert_equal('c:/tmp/hallo', source.root)
-
+    if Config::CONFIG['host_os'] =~ /mswin|mingw/
+      source = Webgen::Source::FileSystem.new(@website, 'c:/tmp/hallo')
+      assert_equal('c:/tmp/hallo', source.root)
+    else
+      source = Webgen::Source::FileSystem.new(@website, '/tmp/hallo')
+      assert_equal('**/*', source.glob)
+      assert_equal('/tmp/hallo', source.root)
+    end
     source = Webgen::Source::FileSystem.new(@website, '../hallo')
-    assert_equal(File.join(@root, '../hallo'), source.root)
+    assert_equal(File.expand_path(File.join(@root, '../hallo')), source.root)
   end
 
   def test_paths

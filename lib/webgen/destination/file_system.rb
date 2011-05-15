@@ -16,12 +16,7 @@ module Webgen
       # Create a new object with the given +root+ path. If +root+ is not absolute, it is taken
       # relative to the website directory.
       def initialize(website, root)
-        #TODO: copied from source/filesystem.rb
-        if root =~ /^([a-zA-Z]:|\/)/
-          @root = root
-        else
-          @root = File.join(website.directory, root)
-        end
+        @root = File.absolute_path(root, website.directory)
       end
 
       # Return +true+ if the given path exists.

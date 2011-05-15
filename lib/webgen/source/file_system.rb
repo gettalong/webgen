@@ -20,11 +20,7 @@ module Webgen
       # Create a new file system source for the root path +root+ using the provided +glob+. If
       # +root+ is not an absolute path, the website directory will be prepended.
       def initialize(website, root, glob = '**/*')
-        if root =~ /^([a-zA-Z]:|\/)/
-          @root = root
-        else
-          @root = File.join(website.directory, root)
-        end
+        @root = File.absolute_path(root, website.directory)
         @glob = glob
       end
 
