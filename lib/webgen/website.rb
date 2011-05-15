@@ -3,33 +3,22 @@
 ##
 # Welcome to the API documentation of wegen!
 #
-# Have a look at the base <a href=Webgen.html>webgen module</a> which provides a good starting point!
+# Have a look at the Webgen module which provides a good starting point!
 
 
 # Standard lib requires
 require 'logger'
-require 'set'
+require 'stringio'
 require 'fileutils'
+require 'thread'
+require 'ostruct'
 
 # Requirements for Website
 require 'webgen/coreext'
-require 'webgen/loggable'
-require 'webgen/logger'
 require 'webgen/configuration'
-require 'webgen/websiteaccess'
 require 'webgen/blackboard'
 require 'webgen/cache'
-require 'webgen/tree'
 require 'webgen/error'
-
-# Files for autoloading
-require 'webgen/common'
-require 'webgen/context'
-require 'webgen/source'
-require 'webgen/output'
-require 'webgen/sourcehandler'
-require 'webgen/contentprocessor'
-require 'webgen/tag'
 
 # Load other needed files
 require 'webgen/path'
@@ -38,6 +27,8 @@ require 'webgen/page'
 require 'webgen/version'
 
 
+# TODO: adapt this documentation
+#
 # The Webgen namespace houses all classes/modules used by webgen.
 #
 # = webgen
@@ -110,27 +101,8 @@ require 'webgen/version'
 #
 # == Blackboard services
 #
-# The Blackboard class provides an easy communication facility between objects. It implements the
-# Observer pattern on the one side and allows the definition of services on the other side. One
-# advantage of a service over the direct use of an object instance method is that the caller does
-# not need to how to find the object that provides the service. It justs uses the Website#blackboard
-# instance. An other advantage is that one can easily exchange the place where the service was
-# defined without breaking extensions that rely on it.
-#
-# Following is a list of all services available in the stock webgen distribution by the name and the
-# method that implements it (which is useful for looking up the parameters of service).
-#
-# <tt>:create_fragment_nodes</tt>:: SourceHandler::Fragment#create_fragment_nodes
-# <tt>:templates_for_node</tt>:: SourceHandler::Template#templates_for_node
-# <tt>:parse_html_headers</tt>:: SourceHandler::Fragment#parse_html_headers
-# <tt>:output_instance</tt>:: Output.instance
-# <tt>:content_processor_names</tt>:: ContentProcessor.list
-# <tt>:content_processor</tt>:: ContentProcessor.for_name
-# <tt>:create_sitemap</tt>:: Common::Sitemap#create_sitemap
-# <tt>:create_directories</tt>:: SourceHandler::Directory#create_directories
-# <tt>:create_nodes</tt>:: SourceHandler::Main#create_nodes
-# <tt>:create_nodes_from_paths</tt>:: SourceHandler::Main#create_nodes_from_paths
-# <tt>:source_paths</tt>:: SourceHandler::Main#find_all_source_paths
+# The Blackboard class provides an easy communication facility between objects by implementing the
+# Observer pattern.
 #
 # Following is the list of all messages that can be listened to:
 #
@@ -199,10 +171,8 @@ module Webgen
   #
   class Website
 
-    # Raised when the configuration file of the website is invalid.
-    class ConfigFileInvalid < RuntimeError; end
-
-    include Loggable
+    # Used for making sure only one website loads extension files.
+    LOAD_SEMAPHORE = Mutex.new
 
     # The website configuration. Can only be used after #init has been called (which is
     # automatically done in #render).
@@ -216,72 +186,85 @@ module Webgen
     # #init has been called.
     attr_reader :cache
 
+    # Access to all extension objects.
+    attr_reader :ext
+
     # The internal data structure used to store information about individual nodes.
     attr_reader :tree
 
-    # The logger used for logging. If set to +nil+, logging is disabled.
-    attr_accessor :logger
+    # The logger used for logging.
+    attr_reader :logger
 
     # The website directory.
     attr_reader :directory
 
-    # Create a new webgen website for the website in the directory +dir+. If +dir+ is +nil+, the
-    # environment variable +WEBGEN_WEBSITE+ or, if it is not set either, the current working
-    # directory is used. You can provide a block (has to take the configuration object as parameter)
-    # for adjusting the configuration values during the initialization.
-    def initialize(dir = nil, logger=Webgen::Logger.new($stdout, false), &block)
-      @blackboard = nil
-      @cache = nil
-      @config = nil
-      @logger = logger
+    # Create a new webgen website for the website in the directory +dir+. If no logger is specified,
+    # a dummy logger that logs to a StringIO is created. You can provide a block (has to take the
+    # configuration object as parameter) for adjusting the configuration values during the
+    # initialization.
+    def initialize(dir, logger = nil, &block)
+      @directory = dir
+      @logger = logger || Logger.new(StringIO.new)
       @config_block = block
-      @directory = (dir.nil? ? (ENV['WEBGEN_WEBSITE'].to_s.empty? ? Dir.pwd : ENV['WEBGEN_WEBSITE']) : dir)
-    end
-
-    # Define a service +service_name+ provided by the instance of +klass+. The parameter +method+
-    # needs to define the method which should be invoked when the service is invoked. Can only be
-    # used after #init has been called.
-    def autoload_service(service_name, klass, method = service_name)
-      blackboard.add_service(service_name) {|*args| cache.instance(klass).send(method, *args)}
+      init
     end
 
     # Initialize the configuration, blackboard and cache objects and load the default configuration
-    # as well as website specific extension files. An already existing configuration/blackboard is
-    # deleted!
+    # as well as website specific extensions.
     def init
-      execute_in_env do
-        @blackboard = Blackboard.new
-        @config = Configuration.new
+      @blackboard = Blackboard.new
+      @config = Configuration.static.dup
+      @cache = nil
+      @ext = OpenStruct.new
 
-        load 'webgen/default_config.rb'
-        Dir.glob(File.join(@directory, 'ext', '**/init.rb')) {|f| load(f)}
-        read_config_file
-
-        @config_block.call(@config) if @config_block
-        restore_tree_and_cache
-      end
-      self
+      init_extensions
+      load_configuration
+      restore_cache
     end
+    private :init
+
+    def init_extensions
+      LOAD_SEMAPHORE.synchronize do
+        $website = self
+        load('webgen/extensions.rb', true)
+        Dir.glob(File.join(@directory, 'ext', '**/init.rb')) {|f| load(f, true)}
+        $website = nil
+      end
+    end
+    private :init_extensions
+
+    def load_configuration
+      config_file = File.join(@directory, 'config.yaml')
+      if File.exist?(config_file)
+        @config.load_from_file(config_file)
+        @logger.debug { "Configuration data from <#{config_file}> loaded" }
+      end
+      @config_block.call(@config) if @config_block
+    end
+    private :load_configuration
+
+    def restore_cache
+      @cache = Cache.new
+      data = if config['website.cache'].first == :file
+               cache_file = File.absolute_path(config['website.cache'].last, @directory)
+               File.open(cache_file, 'rb') {|f| f.read} if File.exists?(cache_file)
+             else
+               config['website.cache'].last
+             end
+      cache_data, version = Marshal.load(data) rescue nil
+      @cache.restore(cache_data) if cache_data && version == Webgen::VERSION
+    end
+    private :restore_cache
 
     # Render the website (after calling #init if the website is not already initialized) and return
     # a status code not equal to +nil+ if rendering was successful.
     def render
-      result = nil
-      execute_in_env do
-        init
-
-        puts "Starting webgen..."
-        shm = SourceHandler::Main.new
-        result = shm.render
-        save_tree_and_cache if result
-        puts "Finished"
-
-        if @logger && @logger.log_output.length > 0
-          puts "\nLog messages:"
-          puts @logger.log_output
-        end
-      end
-      result
+      @logger.info { "Starting webgen..." }
+      #TODO: create loop around rendering routine to loop as often as needed
+      #shm = SourceHandler::Main.new
+      #result = shm.render
+      #save_tree_and_cache if result
+      @logger.info { "webgen has finished" }
     end
 
     # Clean the website directory from all generated output files (including the cache file). If
@@ -290,84 +273,34 @@ module Webgen
     #
     # Note: Uses the configured output instance for the operations!
     def clean(del_outdir = false)
-      init
-      execute_in_env do
-        output = @blackboard.invoke(:output_instance)
-        @tree.node_access[:alcn].each do |name, node|
-          next if node.is_fragment? || node['no_output'] || node.path == '/' || node == @tree.dummy_root
-          output.delete(node.path) rescue nil
-        end
-
-        if @config['website.cache'].first == :file
-          FileUtils.rm(File.join(@directory, @config['website.cache'].last)) rescue nil
-        end
-
-        if del_outdir
-          output.delete('/') rescue nil
-        end
+      @tree.node_access[:alcn].each do |name, node|
+        next if node.is_fragment? || node['no_output'] || node.path == '/' || node == @tree.dummy_root
+        output.delete(node.path) rescue nil
       end
-    end
 
-    # The provided block is executed within a proper environment so that any object can access the
-    # Website object.
-    def execute_in_env
-      set_back = Thread.current[:webgen_website]
-      Thread.current[:webgen_website] = self
-      yield
-    ensure
-      Thread.current[:webgen_website] = set_back
+      if @config['website.cache'].first == :file
+        FileUtils.rm(File.join(@directory, @config['website.cache'].last)) rescue nil
+      end
+
+      if del_outdir
+        output.delete('/') rescue nil
+      end
     end
 
     #######
     private
     #######
 
-    # Restore the tree and the cache from +website.cache+ and returns the Tree object.
-    def restore_tree_and_cache
-      @cache = Cache.new
-      @tree = Tree.new
-      data = if config['website.cache'].first == :file
-               cache_file = File.join(@directory, config['website.cache'].last)
-               File.open(cache_file, 'rb') {|f| f.read} if File.exists?(cache_file)
-             else
-               config['website.cache'].last
-             end
-      cache_data, tree, version = Marshal.load(data) rescue nil
-      if cache_data && version == Webgen::VERSION
-        @cache.restore(cache_data)
-        @tree = tree
-      end
-    end
 
     # Save the +tree+ and the +cache+ to +website.cache+.
     def save_tree_and_cache
-      cache_data = [@cache.dump, @tree, Webgen::VERSION]
+      #TODO: adapt code!!!
+      cache_data = [@cache.dump, Webgen::VERSION]
       if config['website.cache'].first == :file
         cache_file = File.join(@directory, config['website.cache'].last)
         File.open(cache_file, 'wb') {|f| Marshal.dump(cache_data, f)}
       else
         config['website.cache'][1] = Marshal.dump(cache_data)
-      end
-    end
-
-    # Update the configuration object for the website with infos found in the configuration file.
-    def read_config_file
-      file = File.join(@directory, 'config.yaml')
-      if File.exists?(file)
-        begin
-          config = YAML::load(File.read(file)) || {}
-          raise 'Structure of config file is not valid, has to be a Hash' if !config.kind_of?(Hash)
-          config.each do |key, value|
-            case key
-            when *Webgen::Configuration::Helpers.public_instance_methods(false).map {|c| c.to_s} then @config.send(key, value)
-            else @config[key] = value
-            end
-          end
-        rescue RuntimeError, ArgumentError => e
-          raise ConfigFileInvalid, "Configuration invalid: " + e.message
-        end
-      elsif File.exists?(File.join(@directory, 'config.yml'))
-        log(:warn) { "No configuration file called config.yaml found (there is a config.yml - spelling error?)" }
       end
     end
 
