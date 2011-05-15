@@ -128,8 +128,7 @@ module Webgen
 
     # Load the configuration values. If +filename+ is a String, it is treated as the name of the
     # configuration file from which the values should be loaded. If +filename+ responds to \#read,
-    # it is treated as an IO object from which the values should be loaded. The IO object is
-    # automatically closed afterwards.
+    # it is treated as an IO object from which the values should be loaded.
     #
     # The configuration needs to be in YAML format. More specifically, it needs to contain a YAML
     # hash which is further processed by #set_values.
