@@ -81,12 +81,10 @@ module Webgen
       # The log level. Default: <tt>Logger::WARN</tt>
       attr_reader :log_level
 
-      # Create a new CommandParser class. The default webgen website (if not specified via the
-      # <tt>-d</tt> option) is taken from the environment variable +WEBGEN_WEBSITE+ or, if it is not
-      # set or empty, the current working directory.
+      # Create a new CommandParser class.
       def initialize # :nodoc:
         super(true)
-        @directory = nil
+        @directory = (ENV['WEBGEN_WEBSITE'].to_s.empty? ? Dir.pwd : ENV['WEBGEN_WEBSITE'])
         @verbosity = :normal
         @log_level = ::Logger::WARN
         @log_filter = nil
@@ -105,7 +103,9 @@ module Webgen
         self.add_command(CmdParse::VersionCommand.new)
       end
 
-      # Utility method for sub-commands to create the correct Webgen::Website object.
+      # Utility method for sub-commands to create the correct Webgen::Website object. The website
+      # directory (if not specified via the <tt>-d</tt> option) is taken from the environment
+      # variable +WEBGEN_WEBSITE+ or, if it is not set or empty, the current working directory.
       def create_website
         if !defined?(@website)
           @website = Webgen::Website.new(@directory) do |config|
