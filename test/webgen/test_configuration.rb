@@ -27,7 +27,7 @@ class TestConfiguration < MiniTest::Unit::TestCase
   def test_defining_options
     assert @config.options['namespace.option']
     assert_equal('default', @config.options['namespace.option'].default)
-    assert_equal('desc', @config.options['namespace.option'].desc)
+    assert_equal('desc', @config.options['namespace.option'].description)
     assert_kind_of(Proc, @config.options['namespace.option'].validator)
 
     assert_raises(ArgumentError) { add_default_option }

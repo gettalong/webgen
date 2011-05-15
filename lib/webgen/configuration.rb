@@ -9,13 +9,13 @@ module Webgen
   #
   # Configuration options can be created by using the define_option method:
   #
-  #   config.define_option "my.new.option", 'default value', 'desc'
+  #   config.define_option "my.new.option", 'default value', 'description'
   #
   # and later accessed or set using the accessor methods #[] and #[]=. A validation block can also
   # be specified when defining an option. This validation block is called when a new value should be
   # set and it should return the (possibly changed) value to be set:
   #
-  #   config.define_option "my.new.option", 'default value', 'desc' do |val|
+  #   config.define_option "my.new.option", 'default value', 'description' do |val|
   #     raise "Option must be a string" unless val.kind_of?(String)
   #     val.upcase
   #   end
@@ -26,7 +26,7 @@ module Webgen
     class Error < Webgen::Error; end
 
     # Struct class for storing a configuration option.
-    Option = Struct.new(:default, :desc, :validator)
+    Option = Struct.new(:default, :description, :validator)
 
 
     # Contains all the defined configuration options.
@@ -52,16 +52,16 @@ module Webgen
       self
     end
 
-    # Define a new option +name+ with a default value of +default+ and the description +desc+. If a
+    # Define a new option +name+ with a default value of +default+ and the description. If a
     # validation block is provided, it is called with the new value when one is set and should
     # return a (possibly altered) value to be set.
-    def define_option(name, default, desc, &validator)
+    def define_option(name, default, description, &validator)
       if @options.has_key?(name)
         raise ArgumentError, "Configuration option '#{name}' has already be defined"
       else
         @options[name] = Option.new
         @options[name].default = default.freeze
-        @options[name].desc = desc.freeze
+        @options[name].description = description.freeze
         @options[name].validator = validator.freeze
         @options[name].freeze
       end
