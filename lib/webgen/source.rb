@@ -70,8 +70,7 @@ module Webgen
 
     # Register a source class. The parameter +klass+ has to contain the name of the source class. If
     # the class is located under this namespace, only the class name without the hierarchy part is
-    # needed, otherwise the full class name including parent module/class names is needed. All other
-    # parameters can be set through the options hash if the default values aren't sufficient.
+    # needed, otherwise the full class name including parent module/class names is needed.
     #
     # === Options:
     #

@@ -68,8 +68,7 @@ module Webgen
     # Register a tag. The parameter +klass+ has to contain the name of the class which has to
     # respond to +call+ or which has an instance method +call+. If the class is located under this
     # namespace, only the class name without the hierarchy part is needed, otherwise the full class
-    # name including parent module/class names is needed. All other parameters can be set through
-    # the options hash if the default values aren't sufficient.
+    # name including parent module/class names is needed.
     #
     # Instead of registering a class, you can also provide a block that processes a tag.
     #
