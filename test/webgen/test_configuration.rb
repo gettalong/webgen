@@ -18,12 +18,6 @@ class TestConfiguration < MiniTest::Unit::TestCase
     @config.define_option('namespace.option', 'default', 'desc') {|v| raise "Error with option" unless v.kind_of?(String); v}
   end
 
-  def test_static_configuration
-    Webgen::Configuration.define_option('namespace.option', 'default', 'desc')
-    assert_kind_of(Webgen::Configuration::Option, Webgen::Configuration.static.options['namespace.option'])
-    Webgen::Configuration.static {|s| assert_kind_of(Webgen::Configuration, s) }
-  end
-
   def test_defining_options
     assert @config.options['namespace.option']
     assert_equal('default', @config.options['namespace.option'].default)
@@ -97,16 +91,6 @@ class TestConfiguration < MiniTest::Unit::TestCase
     result = @config.load_from_file(StringIO.new("namespace.option: test"))
     assert_empty(result)
     assert_equal('test', @config['namespace.option'])
-  end
-
-  def test_clone
-    static = Webgen::Configuration.static
-    static.define_option('not_cloned.option', :default, 'desc')
-    cloned = static.clone
-    cloned.define_option('cloned.option', :default, 'desc')
-    assert_equal(:default, cloned['not_cloned.option'])
-    assert_equal(:default, cloned['cloned.option'])
-    assert_raises(Webgen::Configuration::Error) { static['cloned.option'] }
   end
 
 end

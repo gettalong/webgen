@@ -38,12 +38,6 @@ module Webgen
       @values = {}
     end
 
-    def initialize_copy(orig) #:nodoc:
-      super
-      @values = orig.instance_eval { @values.clone }
-      @options = orig.instance_eval { @options.clone }
-    end
-
     def freeze #:nodoc:
       super
       @options.freeze
@@ -146,24 +140,6 @@ module Webgen
              end
       raise Error, 'Structure of configuration file is invalid, it has to be a Hash' unless data.kind_of?(Hash)
       set_values(data)
-    end
-
-
-    @@static = self.new
-
-    # Return the static configuration object that is used to define the options that are needed by
-    # webgen itself. This object should *not* be used by website extensions to define configuration
-    # options!
-    #
-    # If a block is provided, the static configuration object is yielded.
-    def self.static
-      yield(@@static) if block_given?
-      @@static
-    end
-
-    # See Configuration#define_option.
-    def self.define_option(*args, &block)
-      @@static.define_option(*args, &block)
     end
 
   end
