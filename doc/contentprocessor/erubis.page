@@ -36,13 +36,3 @@ configuration options:
 
 For more information on the additional options or on how to use the processing instructions mode of
 Erubis, have a look at the [Erubis User Guide](http://www.kuwata-lab.com/erubis/users-guide.html)!
-
-You can also use block options to modify the behavior of Erubis. The block option `erubis_use_pi` is
-used instead of the configuration option `contentprocessor.erubis.use_pi` and all other block
-options starting with `erubis_` are added the options hash that is passed to the Erubis
-interpreter. For example, the following page tells the Erubis interpreter to use the processing
-instructions mode and to trim spaces:
-
-    --- erubis_use_pi:true erubis_trim:true
-    Here are the numbers from 1 to 5:
-    <?rb for i in [1,2,3,4,5] ?>@{i}@<?rb end ?>

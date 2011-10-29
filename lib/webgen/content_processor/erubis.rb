@@ -7,20 +7,15 @@ module Webgen
   class ContentProcessor
 
     # Processes embedded Ruby statements with the +erubis+ library.
-    class Erubis
+    module Erubis
 
       # Including Erubis because of problem with resolving Erubis::XmlHelper et al
       include ::Erubis
 
       # Process the Ruby statements embedded in the content of +context+.
-      def call(context)
+      def self.call(context)
         options = context.website.config['contentprocessor.erubis.options']
-        if context[:block]
-          use_pi = context[:block].options['erubis_use_pi']
-          context[:block].options.select {|k,v| k =~ /^erubis_/}.
-            each {|k,v| options[k.sub(/^erubis_/, '').to_sym] = v }
-        end
-        erubis = if (!use_pi.nil? && use_pi) || (use_pi.nil? && context.website.config['contentprocessor.erubis.use_pi'])
+        erubis = if context.website.config['contentprocessor.erubis.use_pi']
                    ::Erubis::PI::Eruby.new(context.content, options)
                  else
                    ::Erubis::Eruby.new(context.content, options)
