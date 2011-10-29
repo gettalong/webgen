@@ -1,7 +1,6 @@
 # -*- encoding: utf-8 -*-
 
-require 'webgen/blackboard'
-require 'webgen/website'
+require 'webgen/error'
 
 module Test
 
@@ -11,13 +10,17 @@ module Test
       begin
         yield
       rescue error_class => e
-        assert_equal(line, e.line)
+        assert_equal(line, Webgen::Error.error_line(e))
       else
         fail "No exception raised though #{error_class} expected"
       end
     end
 
   end
+
+=begin
+require 'webgen/blackboard'
+require 'webgen/website'
 
   module WebsiteHelper
 
@@ -57,5 +60,6 @@ module Test
     end
 
   end
+=end
 
 end
