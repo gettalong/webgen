@@ -84,12 +84,7 @@ module Webgen
       # If +class_or_name+ is a String, it is taken as the name of a class and is resolved. Else
       # returns +class_or_name+.
       def resolve_class(class_or_name)
-        if String === class_or_name
-          class_or_name = Webgen::Common.const_for_name(class_or_name)
-          class_or_name.extend(Webgen::Common::Callable)
-        else
-          class_or_name
-        end
+        String === class_or_name ? Webgen::Common.const_for_name(class_or_name) : class_or_name
       end
       private :resolve_class
 

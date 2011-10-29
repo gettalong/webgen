@@ -41,7 +41,7 @@ module Webgen
   #
   #   class Replacer
   #
-  #     def call(context)
+  #     def self.call(context)
   #       if !context.content_node['replace_key'].to_s.empty?
   #         context.content.gsub!(/#{context.content_node['replace_key']}:([\w\/.]+)/ ) do |match|
   #           link_node = context.ref_node.resolve($1, context.content_node.lang)

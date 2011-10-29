@@ -5,16 +5,6 @@ module Webgen
   # Namespace for classes and methods that provide common functionality.
   module Common
 
-    # :stopdoc:
-    module Callable
-
-      def call(*args, &block)
-        new.call(*args, &block)
-      end
-
-    end
-    # :startdoc:
-
     autoload :ExtensionManager, 'webgen/common/extension_manager'
     autoload :Sitemap, 'webgen/common/sitemap'
 
