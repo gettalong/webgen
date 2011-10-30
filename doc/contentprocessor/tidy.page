@@ -7,9 +7,9 @@ summary: Uses the `tidy` program to convert the content into valid (X)HTML
 This content processor uses the [`tidy`][1] program to convert the input into valid (X)HTML. It
 supports a vast amount of options for specifying how the input should be processed. These options
 can be set throught the configuration option
-[`contentprocessor.tidy.options`](../references/configuration.html#contentprocessortidyoptions).
+[`content_processor.tidy.options`](../references/configuration.html#contentprocessortidyoptions).
 
 The options `-q` and `-f FILE` are always set because they are needed internally and should
-therefore not be set through `contentprocessor.tidy.options`!
+therefore not be set through `content_processor.tidy.options`!
 
 [1]: http://tidy.sf.net
