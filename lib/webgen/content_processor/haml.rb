@@ -7,10 +7,10 @@ module Webgen
   class ContentProcessor
 
     # Processes content in Haml markup using the +haml+ library.
-    class Haml
+    module Haml
 
       # Convert the content in +haml+ markup to HTML.
-      def call(context)
+      def self.call(context)
         context.content = ::Haml::Engine.new(context.content, :filename => context.ref_node.alcn).
           render(Object.new, :context => context)
         context
