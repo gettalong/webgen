@@ -212,8 +212,9 @@ module Webgen
     # Initialize the configuration, blackboard and cache objects and load the default configuration
     # as well as website specific extensions.
     def init
+      @tree = Tree.new
       @blackboard = Blackboard.new
-      @config = Configuration.static.dup
+      @config = Configuration.new
       @cache = nil
       @ext = OpenStruct.new
 
@@ -237,9 +238,10 @@ module Webgen
       config_file = File.join(@directory, 'config.yaml')
       if File.exist?(config_file)
         @config.load_from_file(config_file)
-        @logger.debug { "Configuration data from <#{config_file}> loaded" }
+        @logger.debug { "Configuration data loaded from <#{config_file}>" }
       end
       @config_block.call(@config) if @config_block
+      @config.freeze
     end
     private :load_configuration
 
