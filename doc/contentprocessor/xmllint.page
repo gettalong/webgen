@@ -9,7 +9,7 @@ for well-formedness and/or validness. `xmllint` can validate an XML (and therefo
 against a DTD, a RelaxNG schema or a WXS schema. For more information about where to put the DTD or
 schema files, have a look at the `libxml2` documentation.
 
-The configuration option `contentprocessor.xmllint.options` can be used to change the default
+The configuration option `content_processor.xmllint.options` can be used to change the default
 command line options that are used for the `xmllint` program.
 
 [1]: http://www.xmlsoft.org
