@@ -41,7 +41,8 @@ module Webgen
 
       # Automatically perform the necessary steps to register the extension +klass+. This involves
       # normalization of the class name, retrieving the name for the extension from the +options+
-      # hash and then associating the name with the extension.
+      # hash and then associating the name with the extension. Also returns the (possibly
+      # automatically generated) name for the extension.
       #
       # The parameter +fields+ can be used to add additional fields (in order of appearance; the
       # values are taken from the options hash) to the associated data array. The parameter
@@ -53,6 +54,7 @@ module Webgen
         klass, klass_name = normalize_class_name(klass)
         name = (options[:name] || Webgen::Common.snake_case(klass_name)).to_sym
         @extensions[name] = [(block_given? ? block : klass), *fields.map {|f| options[f]}]
+        name
       end
       private :do_register
 
