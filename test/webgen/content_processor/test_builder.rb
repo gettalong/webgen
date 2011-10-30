@@ -1,22 +1,14 @@
 # -*- encoding: utf-8 -*-
 
-require 'minitest/autorun'
 require 'helper'
-require 'ostruct'
 require 'webgen/content_processor/builder'
-require 'webgen/context'
 
 class TestBuilder < MiniTest::Unit::TestCase
 
   include Test::WebgenAssertions
 
   def test_static_call
-    website = MiniTest::Mock.new
-    website.expect(:ext, OpenStruct.new)
-    node = MiniTest::Mock.new
-    node.expect(:alcn, '/test')
-
-    context = Webgen::Context.new(website, :chain => [node])
+    website, node, context = Test.setup_content_processor_test
     cp = Webgen::ContentProcessor::Builder
 
     context.content = "xml.div(:path => context.node.alcn) { xml.strong('test'); " +
@@ -28,7 +20,6 @@ class TestBuilder < MiniTest::Unit::TestCase
 
     context.content = "xml.div do \n5+5\nunknown\n++6\nend"
     assert_error_on_line(NameError, 3) { cp.call(context) }
-
   end
 
 end

@@ -1,22 +1,14 @@
 # -*- encoding: utf-8 -*-
 
-require 'minitest/autorun'
 require 'helper'
-require 'ostruct'
 require 'webgen/content_processor/erb'
-require 'webgen/context'
 
-class TestBuilder < MiniTest::Unit::TestCase
+class TestErb < MiniTest::Unit::TestCase
 
   include Test::WebgenAssertions
 
   def test_static_call
-    website = MiniTest::Mock.new
-    website.expect(:ext, OpenStruct.new)
-    node = MiniTest::Mock.new
-    node.expect(:alcn, '/test')
-
-    context = Webgen::Context.new(website, :chain => [node], :doit => 'hallo')
+    website, node, context = Test.setup_content_processor_test
     cp = Webgen::ContentProcessor::Erb
 
     context.content = "<%= context[:doit] %>6\n<%= context.ref_node.alcn %>\n<%= context.node.alcn %>\n<%= context.dest_node.alcn %><% context.website %>"

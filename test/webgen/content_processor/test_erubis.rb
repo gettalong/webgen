@@ -1,23 +1,15 @@
 # -*- encoding: utf-8 -*-
 
-require 'minitest/autorun'
 require 'helper'
-require 'ostruct'
 require 'webgen/content_processor/erubis'
-require 'webgen/context'
 
 class TestErubis < MiniTest::Unit::TestCase
 
   include Test::WebgenAssertions
 
   def test_static_call
-    website = MiniTest::Mock.new
-    website.expect(:ext, OpenStruct.new)
+    website, node, context = Test.setup_content_processor_test
     website.expect(:config, {'contentprocessor.erubis.options' => {}, 'contentprocessor.erubis.use_pi' => false})
-    node = MiniTest::Mock.new
-    node.expect(:alcn, '/test')
-
-    context = Webgen::Context.new(website, :chain => [node], :doit => 'hallo')
     cp = Webgen::ContentProcessor::Erubis
 
     context.content = "<%= context[:doit] %>6\n<%= context.ref_node.alcn %>\n<%= context.node.alcn %>\n<%= context.dest_node.alcn %><% context.website %>"

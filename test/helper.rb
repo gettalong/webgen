@@ -1,6 +1,9 @@
 # -*- encoding: utf-8 -*-
 
+require 'minitest/autorun'
+require 'ostruct'
 require 'webgen/error'
+require 'webgen/context'
 
 module Test
 
@@ -16,6 +19,15 @@ module Test
       end
     end
 
+  end
+
+  def self.setup_content_processor_test
+    website = MiniTest::Mock.new
+    website.expect(:ext, OpenStruct.new)
+    node = MiniTest::Mock.new
+    node.expect(:alcn, '/test')
+    context = Webgen::Context.new(website, :chain => [node], :doit => 'hallo')
+    [website, node, context]
   end
 
 =begin
