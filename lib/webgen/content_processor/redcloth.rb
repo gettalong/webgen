@@ -7,12 +7,12 @@ module Webgen
   class ContentProcessor
 
     # Processes content in Textile format using the +redcloth+ library.
-    class RedCloth
+    module RedCloth
 
       # Convert the content in +context+ to HTML.
-      def call(context)
+      def self.call(context)
         doc = ::RedCloth.new(context.content)
-        doc.hard_breaks = context.website.config['contentprocessor.redcloth.hard_breaks']
+        doc.hard_breaks = context.website.config['content_processor.redcloth.hard_breaks']
         context.content = doc.to_html
         context
       end
