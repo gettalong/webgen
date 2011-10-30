@@ -49,7 +49,7 @@ module Webgen
   #
   #   class Reverser
   #
-  #     def call(tag, body, context)
+  #     def self.call(tag, body, context)
   #       result = context[:config]['do_reverse'] ? body.reverse : body
   #       result << "Node: " << context.content_node.alcn << " (" << context.content_node['title'] << ")"
   #       result << "Reference node: " << context.ref_node.alcn
