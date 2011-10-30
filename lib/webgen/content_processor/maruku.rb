@@ -6,6 +6,7 @@ webgen_require 'maruku'
 
 
 # :stopdoc:
+# Fixes a problem when parsing Markdown with <webgen>-tags in Maruku.
 class REXML::Parsers::BaseParser
 
   alias_method :"old_stream=", :"stream="
@@ -23,10 +24,10 @@ module Webgen
   class ContentProcessor
 
     # Processes content in Markdown format using the +maruku+ library.
-    class Maruku
+    module Maruku
 
       # Convert the content in +context+ to HTML.
-      def call(context)
+      def self.call(context)
         $uid = 0 # fix for invalid fragment IDs on second run
         context.content = ::Maruku.new(context.content, :on_error => :raise).to_html
         context
