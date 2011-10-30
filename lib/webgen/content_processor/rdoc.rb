@@ -7,11 +7,11 @@ module Webgen
   class ContentProcessor
 
     # Converts content in RDoc markup (the native Ruby documentation format) to HTML. Needs the newer
-    # RDoc implementation provided as +rdoc+ gem!
-    class RDoc
+    # RDoc implementation (version >= 2.4.x).
+    module RDoc
 
       # Convert the content in RDoc markup to HTML.
-      def call(context)
+      def self.call(context)
         context.content = ::RDoc::Markup::ToHtml.new.convert(context.content)
         context
       end
