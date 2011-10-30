@@ -1,16 +1,16 @@
 # -*- encoding: utf-8 -*-
 
 require 'webgen/content_processor'
-webgen_require 'sass', 'haml'
+webgen_require 'sass'
 
 module Webgen
   class ContentProcessor
 
-    # Processes content in sassy CSS markup (used for writing CSS files) using the +haml+ library.
-    class Scss
+    # Processes content in sassy CSS markup (used for writing CSS files) using the +sass+ library.
+    module Scss
 
       # Convert the content in +scss+ markup to CSS.
-      def call(context)
+      def self.call(context)
         context.content = ::Sass::Engine.new(context.content, :filename => context.ref_node.alcn, :syntax => :scss).render
         context
       rescue ::Sass::SyntaxError => e
