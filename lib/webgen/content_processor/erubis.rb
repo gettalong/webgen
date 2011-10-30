@@ -14,8 +14,8 @@ module Webgen
 
       # Process the Ruby statements embedded in the content of +context+.
       def self.call(context)
-        options = context.website.config['contentprocessor.erubis.options']
-        erubis = if context.website.config['contentprocessor.erubis.use_pi']
+        options = context.website.config['content_processor.erubis.options']
+        erubis = if context.website.config['content_processor.erubis.use_pi']
                    ::Erubis::PI::Eruby.new(context.content, options)
                  else
                    ::Erubis::Eruby.new(context.content, options)

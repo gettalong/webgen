@@ -9,7 +9,7 @@ class TestErubis < MiniTest::Unit::TestCase
 
   def test_static_call
     website, node, context = Test.setup_content_processor_test
-    website.expect(:config, {'contentprocessor.erubis.options' => {}, 'contentprocessor.erubis.use_pi' => false})
+    website.expect(:config, {'content_processor.erubis.options' => {}, 'content_processor.erubis.use_pi' => false})
     cp = Webgen::ContentProcessor::Erubis
 
     context.content = "<%= context[:doit] %>6\n<%= context.ref_node.alcn %>\n<%= context.node.alcn %>\n<%= context.dest_node.alcn %><% context.website %>"
@@ -21,11 +21,11 @@ class TestErubis < MiniTest::Unit::TestCase
     context.content = "\n\n<% unknown %>"
     assert_error_on_line(NameError, 3) { cp.call(context) }
 
-    website.config['contentprocessor.erubis.options'][:trim] = true
+    website.config['content_processor.erubis.options'][:trim] = true
     context.content = "<% for i in [1] %>\n<%= i %>\n<% end %>"
     assert_equal("1\n", cp.call(context).content)
 
-    website.config['contentprocessor.erubis.use_pi'] = true
+    website.config['content_processor.erubis.use_pi'] = true
     context.content = "<?rb for i in [1] ?>\n@{i}@\n<?rb end ?>"
     assert_equal("1\n", cp.call(context).content)
   end
