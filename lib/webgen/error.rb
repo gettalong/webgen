@@ -8,10 +8,10 @@ module Webgen
   class Error < StandardError
 
     # The location where the error happened (this can be set to a file name, a class name, ...).
-    attr_reader :location
+    attr_accessor :location
 
     # Contains the path name if the error is related to a specific source or destination path,
-    attr_reader :path
+    attr_accessor :path
 
     # Create a new Error object.
     #
