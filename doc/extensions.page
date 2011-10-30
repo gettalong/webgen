@@ -73,7 +73,6 @@ CSS preprocessors
 : These processors allow you to write CSS files in an easier way, for example,
   they allow the usage of variables to avoid spreading the same data over the whole file.
 
-  <%= describe['contentprocessor/less.en.html'] %>
   <%= describe['contentprocessor/sass.en.html'] %>
   <%= describe['contentprocessor/scss.en.html'] %>
 
