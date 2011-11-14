@@ -93,4 +93,23 @@ class TestConfiguration < MiniTest::Unit::TestCase
     assert_equal('test', @config['namespace.option'])
   end
 
+  def test_initialize_copy
+    @config.set_values({'namespace.option' => 'value'})
+    @config.freeze
+
+    cloned = @config.clone
+    assert(@config.frozen?)
+
+    dupped = @config.dup
+    refute(dupped.frozen?)
+
+    dupped.define_option('test', '', '')
+    assert(dupped.option?('test'))
+    refute(@config.option?('test'))
+
+    dupped.set_values({'namespace.option' => 'other'})
+    assert_equal('other', dupped['namespace.option'])
+    assert_equal('value', @config['namespace.option'])
+  end
+
 end

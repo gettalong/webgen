@@ -38,6 +38,13 @@ module Webgen
       @values = {}
     end
 
+    def initialize_copy(orig) #:nodoc:
+      super
+      @options = orig.options.dup
+      @values = {}
+      orig.instance_eval { @values }.each {|k,v| @values[k] = v.dup}
+    end
+
     def freeze #:nodoc:
       super
       @options.freeze
