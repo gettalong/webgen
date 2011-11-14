@@ -42,7 +42,7 @@ class TestConfiguration < MiniTest::Unit::TestCase
 
   def test_set_and_modify_option_value
     @config['namespace.option'].tr!('de', 'en')
-    assert_equal('enfault', @config['namespace.option'])
+    assert_equal('default', @config['namespace.option'])
     assert_equal('default', @config.options['namespace.option'].default)
     @config['namespace.option'] = 'other'
     assert_equal('other', @config['namespace.option'])
@@ -65,7 +65,7 @@ class TestConfiguration < MiniTest::Unit::TestCase
 
   def test_frozen_config
     @config.freeze
-    assert_raises(RuntimeError) { @config['namespace.option'].tr!('de', 'tu') }
+    assert_equal('default', @config['namespace.option'])
     assert_raises(Webgen::Configuration::Error) { @config['namespace.option'] = 'other' }
     assert_raises(RuntimeError) { @config.define_option('nonsense', 'val', 'desc') }
   end

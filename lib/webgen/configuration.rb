@@ -72,7 +72,7 @@ module Webgen
         if @values.has_key?(name)
           @values[name]
         else
-          @values[name] = @options[name].default.dup rescue @options[name].default
+          @options[name].default.dup rescue @options[name].default
         end
       else
         raise Error, "Configuration option '#{name}' does not exist"
