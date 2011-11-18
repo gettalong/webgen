@@ -99,6 +99,8 @@ class TestConfiguration < MiniTest::Unit::TestCase
 
     cloned = @config.clone
     assert(@config.frozen?)
+    assert_raises(Webgen::Configuration::Error) { cloned['namespace.option'] = 'other' }
+    assert_raises(RuntimeError) { cloned.define_option('nonsense', 'val', 'desc') }
 
     dupped = @config.dup
     refute(dupped.frozen?)

@@ -45,6 +45,11 @@ module Webgen
       orig.instance_eval { @values }.each {|k,v| @values[k] = v.dup}
     end
 
+    def clone #:nodoc:
+      super
+      freeze if frozen?
+    end
+
     def freeze #:nodoc:
       super
       @options.freeze
