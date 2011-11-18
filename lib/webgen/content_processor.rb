@@ -21,9 +21,7 @@ module Webgen
   # normally changes the content of the context but it does not need to.
   #
   # This allows one to implement a content processor as a class with a class method called +call+.
-  # Or as a class with an instance method +call+ because then webgen automatically extends the class
-  # so that it has a suitable class method +call+ (note that the +initialize+ method must not take
-  # any parameters). Or as a Proc object.
+  # Or as a Proc object.
   #
   # The content processor has to be registered so that webgen knows about it, see ::register for
   # more information.
