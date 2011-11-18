@@ -155,7 +155,7 @@ module Webgen
       if !tdata[2].all? {|k| values.has_key?(k)}
         raise Webgen::RenderError.new("Not all mandatory parameters set", self.class.name, context.dest_node, context.ref_node)
       end
-      config = context.website.config.clone
+      config = context.website.config.dup
       config.set_values(values)
       config.freeze
       config
