@@ -2,6 +2,7 @@
 
 require 'webgen/common'
 require 'webgen/error'
+require 'webgen/utils/tag_parser'
 
 module Webgen
 
@@ -28,9 +29,7 @@ module Webgen
   # specifying if the result should further be processed (ie. webgen tags replaced).
   #
   # This allows one to implement a tag object as a class with a class method called +call+. Or as a
-  # class with an instance method +call+ because then webgen automatically extends the class so that
-  # it has a suitable class method +call+ (note that the +initialize+ method must not take any
-  # parameters). Or as a Proc object.
+  # Proc object.
   #
   # The tag object has to be registered so that webgen knows about it, see ::register for more
   # information.
@@ -64,6 +63,13 @@ module Webgen
   class Tag
 
     include Webgen::Common::ExtensionManager
+
+    def initialize(website) # :nodoc:
+      super()
+      website.blackboard.add_listener(:configuration_loaded, self) do
+        @parser = Webgen::Utils::TagParser.new(website.config['tag.prefix'])
+      end
+    end
 
     # Register a tag. The parameter +klass+ has to contain the name of the class which has to
     # respond to +call+ or which has an instance method +call+. If the class is located under this
@@ -125,6 +131,11 @@ module Webgen
       result
     end
 
+    # See Webgen::Utils::TagParser#replace_tags.
+    def replace_tags(str, &block)  #:yields: tag_name, params, body
+      @parser.replace_tags(str, &block)
+    end
+
     #######
     private
     #######
@@ -146,6 +157,7 @@ module Webgen
       end
       config = context.website.config.clone
       config.set_values(values)
+      config.freeze
       config
     end
 

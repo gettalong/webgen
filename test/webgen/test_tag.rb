@@ -3,6 +3,7 @@
 require 'minitest/autorun'
 require 'webgen/tag'
 require 'webgen/configuration'
+require 'webgen/blackboard'
 require 'webgen/context'
 require 'stringio'
 require 'logger'
@@ -10,7 +11,7 @@ require 'ostruct'
 
 class Webgen::Tag::MyTag
 
-  def call(tag, body, context)
+  def self.call(tag, body, context)
     "#{tag}#{body}#{context[:config]['tag.mytag.opt']}"
   end
 
@@ -20,7 +21,13 @@ end
 class TestTag < MiniTest::Unit::TestCase
 
   def setup
-    @tag = Webgen::Tag.new
+    @website = MiniTest::Mock.new
+    @config = Webgen::Configuration.new
+    @blackboard = Webgen::Blackboard.new
+    @website.expect(:config, @config)
+    @website.expect(:blackboard, @blackboard)
+
+    @tag = Webgen::Tag.new(@website)
   end
 
   def test_register
@@ -47,16 +54,12 @@ class TestTag < MiniTest::Unit::TestCase
     logger = ::Logger.new(logger_output)
     logger.level = Logger::WARN
 
-    config = Webgen::Configuration.new
-    config.define_option('tag.mytag.opt', 'param1', 'desc') {|v| raise "Error" unless v.kind_of?(String); v}
+    @config.define_option('tag.mytag.opt', 'param1', 'desc') {|v| raise "Error" unless v.kind_of?(String); v}
+    @config.freeze
+    @website.expect(:logger, logger)
+    @website.expect(:ext, OpenStruct.new)
 
-    website = MiniTest::Mock.new
-    website.expect(:logger, logger)
-    website.expect(:config, config)
-    website.expect(:ext, OpenStruct.new)
-
-    context = Webgen::Context.new(website)
-
+    context = Webgen::Context.new(@website)
 
     assert_raises(Webgen::RenderError) { @tag.call('unknown', {}, 'body', context) }
 
@@ -75,8 +78,8 @@ class TestTag < MiniTest::Unit::TestCase
     assert_equal('', logger_output.string)
     assert_equal('value', context[:config]['tag.mytag.opt'])
 
-    result = @tag.call('my_tag', {'tag.mytag.opt' => 'value', 'unknown' => 'unknown'}, 'body', context)
-    assert_equal('my_tagbodyvalue', result)
+    result = @tag.call('my_tag', {'tag.mytag.opt' => 'value1', 'unknown' => 'unknown'}, 'body', context)
+    assert_equal('my_tagbodyvalue1', result)
     assert_match(/Invalid configuration option 'unknown'/, logger_output.string)
 
     logger_output.string = ''
@@ -91,6 +94,20 @@ class TestTag < MiniTest::Unit::TestCase
 
     result = @tag.call('my_tag', 'unknown', 'body', context)
     assert_equal('my_tagbodyunknown', result)
+  end
+
+  def test_replace_tags
+    @config.define_option('tag.prefix', '', 'desc')
+    @config.freeze
+
+    assert_raises(NoMethodError) { @tag.replace_tags("{test:}") }
+    @blackboard.dispatch_msg(:configuration_loaded)
+
+    @tag.replace_tags("{test: {param: value}}") do |tag, params, body|
+      assert_equal('test', tag)
+      assert_equal({'param' => 'value'}, params)
+      assert_equal('', body)
+    end
   end
 
 end
