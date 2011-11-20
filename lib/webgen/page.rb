@@ -1,6 +1,7 @@
 # -*- encoding: utf-8 -*-
 
 require 'yaml'
+require 'webgen/error'
 
 module Webgen
 
@@ -25,71 +26,41 @@ module Webgen
         @name, @content, @options = name, content, options
       end
 
-      # Render the block using the provided context object.
-      #
-      # The context object needs to respond to <tt>#[]</tt> and <tt>#[]=</tt> (e.g. a Hash is a valid
-      # context object) and the key <tt>:processors</tt> needs to contain a Hash which maps processor
-      # names to processor objects that respond to <tt>#call</tt>.
-      #
-      # Uses the content processors specified in the +pipeline+ key of the +options+ attribute to do
-      # the actual rendering.
-      #
-      # Returns the given context with the rendered content.
-      def render(context)
-        context[:content] = @content.dup
-        context[:block] = self
-        @options['pipeline'].to_s.split(/,/).each do |processor|
-          raise "No such content processor available: #{processor}" unless context[:processors].has_key?(processor)
-          context[:processors][processor].call(context)
-        end
-        context
-      end
-
     end
 
 
     # Raised during parsing of data in Webgen Page Format if the data is invalid.
-    class FormatError < StandardError; end
+    class FormatError < Error; end
 
 
     # :stopdoc:
-    RE_META_INFO_START = /\A---\s*(?:\n|\r|\r\n)/m
-    RE_META_INFO = /\A---\s*(?:\n|\r|\r\n).*?(?:\n|\r|\r\n)(?=---.*?(?:\n|\r|\r\n)|\Z)/m
+    RE_NEWLINE = /\r?\n/
+    RE_META_INFO_START = /\A---\s*#{RE_NEWLINE}/
+    RE_META_INFO = /#{RE_META_INFO_START}.*?#{RE_NEWLINE}(?=---.*?#{RE_NEWLINE}|\Z)/m
     RE_BLOCKS_OPTIONS = /^--- *?(?: *((?:\w+:[^\s]* *)*))?$|^$/
-    RE_BLOCKS_START = /^--- .*?$|^--- *$/
-    RE_BLOCKS = /(?:(#{RE_BLOCKS_START})|\A)\n?(.*?)(?:(?=#{RE_BLOCKS_START})|\z)/m
+    RE_BLOCKS_START = /^---(?: .*?|)(?=#{RE_NEWLINE})/
+    RE_BLOCKS = /(?:(#{RE_BLOCKS_START})|\A)#{RE_NEWLINE}?(.*?)(?:(?=#{RE_BLOCKS_START})|\z)/m
+    RE_PAGE = /(#{RE_META_INFO})?(.*)/m
     # :startdoc:
 
     class << self
 
-      # Parse the given string +data+ in Webgen Page Format and initialize a new Page object with
-      # the information. The +meta_info+ parameter can be used to provide default meta information.
+      # Parse the given string +data+ in Webgen Page Format. The +meta_info+ parameter can be used
+      # to provide the default meta information hash.
+      #
+      # This method returns a Page object containing the (probably updated) meta information hash
+      # and the parsed blocks.
       def from_data(data, meta_info = {})
-        md = /(#{RE_META_INFO})?(.*)/m.match(normalize_eol(data))
-        meta_info = meta_info.merge(parse_meta_info(md[1], data))
+        md = RE_PAGE.match(data)
+        meta_info = meta_info.merge(parse_meta_info(md[1], data =~ RE_META_INFO_START))
         blocks = parse_blocks(md[2] || '', meta_info)
         new(meta_info, blocks)
       end
 
-      # Parse the given string +data+ in Webgen Page Format and return the found meta information.
-      def meta_info_from_data(data)
-        md = /(#{RE_META_INFO})?/m.match(normalize_eol(data))
-        parse_meta_info(md[1], data)
-      end
-
-      #######
-      private
-      #######
-
-      # Normalize the end-of-line encodings to Unix style.
-      def normalize_eol(data)
-        data.gsub(/\r\n?/, "\n")
-      end
-
       # Parse the meta info string in +mi_data+ and return the hash with the meta information. The
       # original +data+ is used for checking the validness of the meta information block.
-      def parse_meta_info(mi_data, data)
-        if mi_data.nil? && data =~ RE_META_INFO_START
+      def parse_meta_info(mi_data, has_mi_start)
+        if mi_data.nil? && has_mi_start
           raise FormatError, 'Found start line for meta information block but no valid meta information block'
         elsif mi_data.nil?
           {}
@@ -114,20 +85,21 @@ module Webgen
 
         blocks = {}
         scanned.each_with_index do |block_data, index|
+          index += 1
           options, content = *block_data
           md = RE_BLOCKS_OPTIONS.match(options.to_s)
-          raise(FormatError, "Found invalid blocks starting line for block #{index+1}: #{options}") if content =~ /\A---/ || md.nil?
+          raise(FormatError, "Found invalid blocks starting line for block #{index}: #{options}") if content =~ /\A---/ || md.nil?
           options = Hash[*md[1].to_s.scan(/(\w+):([^\s]*)/).map {|k,v| [k, (v == '' ? nil : YAML::load(v))]}.flatten]
           options = (meta_info['blocks']['default'] || {} rescue {}).
-            merge((meta_info['blocks'][index+1] || {} rescue {})).
+            merge((meta_info['blocks'][index] || {} rescue {})).
             merge(options)
 
-          name = options.delete('name') || (index == 0 ? 'content' : 'block' + (index + 1).to_s)
-          raise(FormatError, "Previously used name '#{name}' also used for block #{index+1}") if blocks.has_key?(name)
+          name = options.delete('name') || (index == 1 ? 'content' : 'block' + (index).to_s)
+          raise(FormatError, "Previously used name '#{name}' also used for block #{index}") if blocks.has_key?(name)
           content ||= ''
           content.gsub!(/^(\\+)(---.*?)$/) {|m| "\\" * ($1.length / 2) + $2}
-          content.chomp!("\n") unless index + 1 == scanned.length
-          blocks[name] = blocks[index+1] = Block.new(name, content, options)
+          content.chomp! unless index == scanned.length
+          blocks[name] = blocks[index] = Block.new(name, content, options)
         end
         meta_info.delete('blocks')
         blocks

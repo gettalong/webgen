@@ -1,21 +1,9 @@
 # -*- encoding: utf-8 -*-
 
-require 'test/unit'
+require 'minitest/autorun'
 require 'webgen/page'
 
-class TestBlock < Test::Unit::TestCase
-
-  def test_render
-    block = Webgen::Page::Block.new('content', 'some content', {'pipeline' => 'test'})
-    context = {:processors => {}}
-    assert_raise(RuntimeError) { block.render(context) }
-    context[:processors]['test'] = lambda {|context| context[:content] = context[:content].reverse + context[:block].name }
-    assert_equal('some content'.reverse + 'content', block.render(context)[:content])
-  end
-
-end
-
-class TestPage < Test::Unit::TestCase
+class TestPage < MiniTest::Unit::TestCase
 
   VALID = <<EOF
 # with more blocks
@@ -179,19 +167,16 @@ EOF
   def test_invalid_pagefiles
     testdata = YAML::load(INVALID_MI)
     testdata.each_with_index do |data, index|
-      assert_raise(Webgen::Page::FormatError, "test mi item #{index}") { Webgen::Page.from_data(data) }
-      assert_raise(Webgen::Page::FormatError, "test mi item #{index}") { Webgen::Page.meta_info_from_data(data) }
+      assert_raises(Webgen::Page::FormatError, "test mi item #{index}") { Webgen::Page.from_data(data) }
     end
     testdata = YAML::load(INVALID_BLOCKS)
     testdata.each_with_index do |data, index|
-      assert_raise(Webgen::Page::FormatError, "test blocks item #{index}") { Webgen::Page.from_data(data) }
+      assert_raises(Webgen::Page::FormatError, "test blocks item #{index}") { Webgen::Page.from_data(data) }
     end
   end
 
   def test_valid_pagefiles
     YAML::load(VALID).each_with_index do |data, oindex|
-      mi = Webgen::Page.meta_info_from_data(data['in'])
-      assert_equal(data['meta_info'], mi, "test item #{oindex} - meta info directly")
       d = Webgen::Page.from_data(data['in'])
       assert_equal(data['meta_info'], d.meta_info, "test item #{oindex} - meta info all")
       assert_equal(data['blocks'].length*2, d.blocks.length)
@@ -214,7 +199,7 @@ EOF
   end
 
   def test_eol_encodings
-    d = Webgen::Page.from_data("---\ntitle: test\r---\r\ncontent")
+    d = Webgen::Page.from_data("---\ntitle: test\r\n---\r\ncontent")
     assert_equal({'title' => 'test'}, d.meta_info)
     assert_equal('content', d.blocks['content'].content)
   end
@@ -223,10 +208,10 @@ EOF
     mi = {'key' => 'value'}
     d = Webgen::Page.from_data("---\ntitle: test\n---\ncontent", mi)
     assert_equal({'title' => 'test', 'key' => 'value'}, d.meta_info)
-    assert_not_same(mi, d.meta_info)
+    refute_same(mi, d.meta_info)
     d = Webgen::Page.from_data("content", mi)
     assert_equal({'key' => 'value'}, d.meta_info)
-    assert_not_same(mi, d.meta_info)
+    refute_same(mi, d.meta_info)
   end
 
 end
