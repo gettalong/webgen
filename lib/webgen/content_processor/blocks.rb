@@ -6,16 +6,18 @@ require 'webgen/error'
 module Webgen
   class ContentProcessor
 
-    # Replaces special xml tags with the rendered content of a node.
-    class Blocks
-
-      include Webgen::Loggable
+    # Replaces special XML tags with the rendered content of a node block.
+    #
+    # The module provides a .call method so that it can be used by the content processor extension.
+    # However, it also provides the .render_block method that contains the actual logic for
+    # rendering a block of a node given a render context.
+    module Blocks
 
       BLOCK_RE = /<webgen:block\s*?((?:\s\w+=('|")[^'"]+\2)+)\s*\/>/
       BLOCK_ATTR_RE = /(\w+)=('|")([^'"]+)\2/
 
       # Replace the webgen:block xml tags with the rendered content of the specified node.
-      def call(context)
+      def self.call(context)
         context.content.gsub!(BLOCK_RE) do |match|
           attr = {}
           match_object = $~
@@ -44,9 +46,10 @@ module Webgen
       # [<tt>:notfound</tt>]
       #   If this property is set to +ignore+, a missing block will not raise an error. It is unset by
       #   default, so missing blocks will raise errors.
-      def render_block(context, options)
+      #
+      def self.render_block(context, options)
         if options[:chain].nil?
-          used_chain = (context[:chain].length > 1 ? context[:chain][1..-1] : context[:chain]).dup
+          used_chain = (context[:chain].length > 1 ? context[:chain][1..-1] : context[:chain].dup)
         elsif options[:chain].kind_of?(Array)
           used_chain = options[:chain]
           dest_node = context.content_node
@@ -66,13 +69,13 @@ module Webgen
         end
 
         if options[:node] == 'first'
-          used_chain.shift while used_chain.length > 0 && !used_chain.first.node_info[:page].blocks.has_key?(options[:name])
+          used_chain.shift while used_chain.length > 0 && !used_chain.first.blocks.has_key?(options[:name])
         elsif options[:node] == 'current'
           used_chain = context[:chain].dup
         end
         block_node = used_chain.first
 
-        if !block_node || !block_node.node_info[:page].blocks.has_key?(options[:name])
+        if !block_node || !block_node.blocks.has_key?(options[:name])
           if options[:notfound] == 'ignore'
             return ''
           elsif block_node
@@ -86,8 +89,8 @@ module Webgen
           end
         end
 
-        context.dest_node.node_info[:used_nodes] << block_node.alcn
-        tmp_context = block_node.node_info[:page].blocks[options[:name]].render(context.clone(:chain => used_chain, :dest_node => dest_node))
+        context.website.ext.item_tracker.add(dest_node, :node_content, block_node)
+        tmp_context = block_node.render_block(options[:name], context.clone(:chain => used_chain, :dest_node => dest_node))
         tmp_context.content
       end
 
