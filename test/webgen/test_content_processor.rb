@@ -5,7 +5,7 @@ require 'webgen/content_processor'
 
 class Webgen::ContentProcessor::MyProcessor
 
-  def call(context)
+  def self.call(context)
     raise Webgen::Error.new('msg') if context == 'webgen'
     raise 'msg' if context == 'error'
     context + 'value'
