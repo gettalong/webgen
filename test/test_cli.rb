@@ -17,7 +17,7 @@ class TestCLICommandParser < Test::Unit::TestCase
 
 end
 
-if Config::CONFIG['host_os'] !~ /mswin|mingw/
+if RbConfig::CONFIG['host_os'] !~ /mswin|mingw/
 
   class TestCLICommands < Test::Unit::TestCase
 

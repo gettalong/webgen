@@ -19,7 +19,7 @@ class TestSourceFileSystem < MiniTest::Unit::TestCase
     assert_equal('**/*.page', source.glob)
     assert_equal(File.join(@root, 'test'), source.root)
 
-    if Config::CONFIG['host_os'] =~ /mswin|mingw/
+    if RbConfig::CONFIG['host_os'] =~ /mswin|mingw/
       source = Webgen::Source::FileSystem.new(@website, 'c:/tmp/hallo')
       assert_equal('c:/tmp/hallo', source.root)
     else
@@ -39,7 +39,7 @@ class TestSourceFileSystem < MiniTest::Unit::TestCase
   end
 
   def test_handling_of_invalid_link
-    return if Config::CONFIG['host_os'] =~ /mswin|mingw/
+    return if RbConfig::CONFIG['host_os'] =~ /mswin|mingw/
     dir = File.join(Dir.tmpdir, 'webgen-link-test')
     FileUtils.mkdir_p(dir)
     FileUtils.touch(File.join(dir, 'test'))

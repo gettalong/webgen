@@ -12,7 +12,7 @@ module Webgen::Tag
 
     include Webgen::Tag::Base
 
-    BIT_BUCKET = (Config::CONFIG['host_os'] =~ /mswin|mingw/ ?  "nul" : "/dev/null")
+    BIT_BUCKET = (RbConfig::CONFIG['host_os'] =~ /mswin|mingw/ ?  "nul" : "/dev/null")
 
     # Execute the command and return the standard output.
     def call(tag, body, context)

@@ -62,7 +62,7 @@ class TestTagTikZ < Test::Unit::TestCase
   end
 
   def echo_cmd(data)
-    (Config::CONFIG['host_os'] =~ /mswin|mingw/ ?  "echo #{data}" : "echo '#{data}'")
+    (RbConfig::CONFIG['host_os'] =~ /mswin|mingw/ ?  "echo #{data}" : "echo '#{data}'")
   end
 
 

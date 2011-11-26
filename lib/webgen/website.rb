@@ -12,6 +12,7 @@ require 'stringio'
 require 'fileutils'
 require 'thread'
 require 'ostruct'
+require 'rbconfig'
 
 # Requirements for Website
 require 'webgen/coreext'
@@ -142,7 +143,7 @@ module Webgen
     unless defined?(@@data_dir)
       require 'rbconfig'
       @@data_dir = File.expand_path(File.join(File.dirname(__FILE__), '..', '..', 'data', 'webgen'))
-      @@data_dir = File.expand_path(File.join(Config::CONFIG["datadir"], "webgen")) if !File.exists?(@@data_dir)
+      @@data_dir = File.expand_path(File.join(RbConfig::CONFIG["datadir"], "webgen")) if !File.exists?(@@data_dir)
       raise "Could not find webgen data directory! This is a bug, report it please!" unless File.directory?(@@data_dir)
     end
     @@data_dir

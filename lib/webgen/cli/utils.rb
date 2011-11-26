@@ -9,8 +9,8 @@ module Webgen
     # Provides methods for other CLI classes for formatting text in a consistent manner.
     class Utils
 
-      USE_ANSI_COLORS = $stdout.tty? && Config::CONFIG['host_os'] !~ /mswin|mingw/
-      DEFAULT_WIDTH = if Config::CONFIG['host_os'] =~ /mswin|mingw/
+      USE_ANSI_COLORS = $stdout.tty? && RbConfig::CONFIG['host_os'] !~ /mswin|mingw/
+      DEFAULT_WIDTH = if RbConfig::CONFIG['host_os'] =~ /mswin|mingw/
                         72
                       else
                         ((size = %x{stty size 2>/dev/null}).length > 0 && (size = size.split.last.to_i) > 0 ? size : 72) rescue 72
