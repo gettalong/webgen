@@ -2,6 +2,7 @@
 
 require 'open-uri'
 require 'zlib'
+require 'set'
 
 require 'webgen/source'
 require 'webgen/path'

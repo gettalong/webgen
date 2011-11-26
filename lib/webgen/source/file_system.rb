@@ -1,6 +1,7 @@
 # -*- encoding: utf-8 -*-
 
 require 'pathname'
+require 'set'
 require 'webgen/source'
 require 'webgen/path'
 
