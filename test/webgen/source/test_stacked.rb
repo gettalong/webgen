@@ -20,8 +20,10 @@ class TestSourceStacked < MiniTest::Unit::TestCase
   def test_paths
     path1 = MiniTest::Mock.new
     path1.expect(:mount_at, 'path1', ['/'])
+    path1.expect(:hash, 'path1'.hash)
     path2 = MiniTest::Mock.new
     path2.expect(:mount_at, 'path2', ['/hallo/'])
+    path2.expect(:hash, 'path2'.hash)
 
     source = Webgen::Source::Stacked.new(nil, '/' => TestSource.new([path1]), '/hallo/' => TestSource.new([path2]))
     assert_equal(Set.new(['path1', 'path2']), source.paths)

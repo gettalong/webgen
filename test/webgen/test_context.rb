@@ -23,7 +23,7 @@ class TestContext < MiniTest::Unit::TestCase
     context = Webgen::Context.new(@website)
     assert_equal('', context.content)
     assert_equal({}, context.persistent)
-    assert_equal(@website, context.website)
+    assert_same(@website.object_id, context.website.object_id)
     assert_equal('hallo', context.hallo)
 
     context = Webgen::Context.new(@website, :content => 'test', :key => :value)

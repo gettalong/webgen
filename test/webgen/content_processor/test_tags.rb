@@ -28,9 +28,7 @@ class TestContentProcessorTags < MiniTest::Unit::TestCase
     website, node, context = Test.setup_content_processor_test
     context.content = '{test: }'
     stag = SimpleTag.new
-    ext = MiniTest::Mock.new
-    ext.expect(:tag, stag)
-    website.expect(:ext, ext)
+    website.ext.tag = stag
     website.expect(:logger, Logger.new(StringIO.new))
     cp = Webgen::ContentProcessor::Tags
 
@@ -42,7 +40,6 @@ class TestContentProcessorTags < MiniTest::Unit::TestCase
     end
     cp.call(context)
 
-    ext.verify
     website.verify
   end
 

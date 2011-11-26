@@ -166,7 +166,7 @@ class TestNode < MiniTest::Unit::TestCase
     assert_raises(NoMethodError) { node.unknown }
 
     obj = MiniTest::Mock.new
-    obj.expect(:unknown, :value, [node])
+    obj.expect(:send, :value, [:unknown, node])
     path_handler = MiniTest::Mock.new
     path_handler.expect(:instance, obj, ['object'])
     ext = MiniTest::Mock.new

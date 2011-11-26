@@ -9,7 +9,7 @@ class TestRDoc < MiniTest::Unit::TestCase
     website, node, context = Test.setup_content_processor_test
     cp = Webgen::ContentProcessor::RDoc
     context.content = "* hello"
-    assert_equal("<ul>\n<li><p>\nhello\n</p>\n</li>\n</ul>\n", cp.call(context).content)
+    assert_equal("<ul><li><p>hello</p></li></ul>", cp.call(context).content.tr("\n", ''))
   end
 
 end

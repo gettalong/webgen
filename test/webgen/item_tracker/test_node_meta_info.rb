@@ -26,6 +26,7 @@ class TestNodeMetaInfo < MiniTest::Unit::TestCase
   end
 
   def test_changed?
+    @node.expect(:nil?, false)
     assert(@obj.changed?(['unknown', nil], 'old'))
     assert(@obj.changed?(['alcn', nil], {"key" => 'value', 'other' => 'new'}))
     assert(@obj.changed?(['alcn', 'key'], 'new'))
