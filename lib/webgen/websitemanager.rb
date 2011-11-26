@@ -80,7 +80,7 @@ module Webgen
       paths = source.paths.dup
       readme = paths.select {|path| path == '/README' }.first
       paths.delete(readme) if readme
-      infos = OpenStruct.new(readme.nil? ? {} : YAML::load(readme.io.data))
+      infos = OpenStruct.new(readme.nil? ? {} : YAML::load(readme.io.data)) #TODO: catch psych SyntaxError
       infos.paths = paths
       @bundles[name] = infos
     end

@@ -113,7 +113,7 @@ module Webgen
       # Parse the parameter string.
       def parse_params(param_string, tag)
         YAML::load("--- #{param_string}")
-      rescue ArgumentError => e
+      rescue ArgumentError, SyntaxError => e
         raise Error.new("Could not parse parameter string '#{param_string}' for tag '#{tag}': #{e.message}")
       end
 

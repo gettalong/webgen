@@ -28,7 +28,7 @@ module Webgen::SourceHandler
       super(path) do |node|
         [[:mi_paths, 'paths'], [:mi_alcn, 'alcn']].each do |mi_key, block_name|
           node.node_info[mi_key] = {}
-          if page.blocks.has_key?(block_name) && (data = YAML::load(page.blocks[block_name].content))
+          if page.blocks.has_key?(block_name) && (data = YAML::load(page.blocks[block_name].content))  #TODO: catch YAML errors (syck and psych)
             data.each do |key, value|
               key = Webgen::Path.make_absolute(path.parent_path, key)
               node.node_info[mi_key][key] = value

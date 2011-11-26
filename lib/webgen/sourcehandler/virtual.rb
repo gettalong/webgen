@@ -56,7 +56,7 @@ module Webgen::SourceHandler
     def read_data(path)
       if !@path_data.has_key?(path) || path.changed?
         page = page_from_path(path)
-        @path_data[path] = YAML::load(page.blocks['content'].content).collect do |key, meta_info|
+        @path_data[path] = YAML::load(page.blocks['content'].content).collect do |key, meta_info| #TODO: catch YAML errors (syck and psych)
           meta_info ||= {}
           meta_info['modified_at'] = path.meta_info['modified_at']
           meta_info['no_output'] = true

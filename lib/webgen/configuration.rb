@@ -144,7 +144,7 @@ module Webgen
       data = if String === filename || filename.respond_to?(:read)
                begin
                  YAML::load(String === filename ? File.read(filename) : filename.read) || {}
-               rescue RuntimeError, ArgumentError => e
+               rescue RuntimeError, ArgumentError, SyntaxError => e
                  raise Error, "Problem parsing configuration data (it needs to contain a YAML hash): #{e.message}", e.backtrace
                end
              else
