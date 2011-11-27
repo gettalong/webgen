@@ -10,7 +10,7 @@ class TestSourceFileSystem < MiniTest::Unit::TestCase
 
   def setup
     @website = MiniTest::Mock.new
-    @root = File.dirname(__FILE__)
+    @root = File.expand_path(File.dirname(__FILE__))
     @website.expect(:directory, @root)
   end
 
