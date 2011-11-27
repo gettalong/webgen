@@ -54,9 +54,9 @@ module Webgen
 
     # Return +true+ if the given path string matches the given path pattern. For information on
     # which patterns are supported, have a look at the API documentation of File.fnmatch.
-    def self.matches_pattern?(path, pattern)
+    def self.matches_pattern?(path, pattern, options = File::FNM_DOTMATCH|File::FNM_CASEFOLD|File::FNM_PATHNAME)
       pattern += '/' if path.to_s =~ /\/$/ && pattern !~ /\/$|^$/
-      File.fnmatch(pattern, path, File::FNM_DOTMATCH|File::FNM_CASEFOLD|File::FNM_PATHNAME)
+      File.fnmatch(pattern, path, options)
     end
 
     # Construct a localized canonical name from a given canonical name and a language.
@@ -83,6 +83,11 @@ module Webgen
       @meta_info = meta_info
       @ioblock = block_given? ? ioblock : nil
       @source_path = @meta_info.delete(:src)
+    end
+
+    def initialize_copy(orig) #:nodoc:
+      super
+      @meta_info = orig.instance_variable_get(:@meta_info).dup
     end
 
     # The original path string from which this Path object was created.
@@ -195,13 +200,6 @@ module Webgen
     # An error is raised, if no IO object is associated with the Path instance.
     def data(mode = 'r')
       io(mode) {|io| io.read}
-    end
-
-    # Duplicate the path object.
-    def dup
-      temp = super
-      temp.instance_variable_set(:@meta_info, @meta_info.dup)
-      temp
     end
 
     # Equality -- Return +true+ if +other+ is a Path object with the same #path or if +other+ is a
