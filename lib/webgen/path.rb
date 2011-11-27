@@ -38,7 +38,7 @@ module Webgen
     # parameter +make_absolute+ is +true+, then a relative URL will be made absolute by prepending
     # the special URL <tt>webgen:://webgen.localhost/</tt>.
     def self.url(path, make_absolute = true)
-      url = URI.parse(URI::escape(path, URL_UNSAFE_PATTERN))
+      url = URI.parse(URI::DEFAULT_PARSER.escape(path, URL_UNSAFE_PATTERN))
       url = URI.parse('webgen://webgen.localhost/') + url unless url.absolute? || !make_absolute
       url
     end
@@ -95,7 +95,7 @@ module Webgen
 
     # Meta information about the path.
     def meta_info
-      @basename ? @meta_info : (analyse; @meta_info)
+      defined?(@basename) ? @meta_info : (analyse; @meta_info)
     end
 
     # Set the meta information +key+ to +value+.
@@ -108,17 +108,17 @@ module Webgen
 
     # The string specifying the parent path
     def parent_path
-      @parent_path || (analyse; @parent_path)
+      defined?(@parent_path) ? @parent_path : (analyse; @parent_path)
     end
 
     # The canonical name of the path without the extension.
     def basename
-      @basename || (analyse; @basename)
+      defined?(@basename) ? @basename : (analyse; @basename)
     end
 
     # The extension of the path.
     def ext
-      @ext || (analyse; @ext)
+      defined?(@ext) ? @ext : (analyse; @ext)
     end
 
     # Set the extension of the path.
@@ -165,7 +165,7 @@ module Webgen
     # Also note that mounting a path is not possible once it is fully initialized, i.e. once some
     # information extracted from the path string is accessed.
     def mount_at(mp, prefix = nil)
-      raise(ArgumentError, "Can't mount a fully initialized path") unless @basename.nil?
+      raise(ArgumentError, "Can't mount a fully initialized path") if defined?(@basename)
       raise(ArgumentError, "The mount point (#{mp}) must be a valid directory path") if mp =~ /^[^\/]|#|[^\/]$/
       raise(ArgumentError, "The strip prefix (#{prefix}) must be a valid directory path") if !prefix.nil? && prefix =~ /^[^\/]|#|[^\/]$/
 

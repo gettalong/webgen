@@ -20,11 +20,7 @@ module Webgen
         end
 
         cmd = "xmllint #{context.website.config['content_processor.xmllint.options']} - 2>'#{error_file.path}'"
-        result = IO.popen(cmd, 'r+') do |io|
-          io.write(context.content)
-          io.close_write
-          io.read
-        end
+        IO.popen(cmd, 'r+') {|io| io.write(context.content) }
         if $?.exitstatus != 0
           File.read(error_file.path).scan(/^-:(\d+):(.*?\n)(.*?\n)/).each do |line, error_msg, line_context|
             context.website.logger.warn do
