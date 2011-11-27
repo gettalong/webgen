@@ -78,21 +78,12 @@ module Webgen
     # Create a new item tracker for the given website.
     def initialize(website)
       super()
-      self.website = website
       @instances = {}
       @node_dependencies = Hash.new {|h,k| h[k] = Set.new}
       @item_data = {}
       @cached = {:node_dependencies => {}, :item_data => {}}
-    end
 
-    def website=(ws) # :nodoc:
-      if !@website.nil?
-        @website.blackboard.remove_listener(:website_initialized, self)
-        @website.blackboard.remove_listener(:website_generated, self)
-      end
-
-      @website = ws
-
+      @website = website
       @website.blackboard.add_listener(:website_initialized, self) do
         @cached = @website.cache[:item_tracker_data] || @cached
       end
