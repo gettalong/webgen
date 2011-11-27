@@ -82,6 +82,30 @@ class TestPage < MiniTest::Unit::TestCase
     - name: block1
       content: ''
 
+# named blocks using simple scheme
+- in: |
+    --- block1
+    content1
+    --- block2
+    content2
+    --- block3
+    content3
+    --- block4 -
+    content4
+    --- block5 -----------------------------------
+    content5
+  meta_info: {}
+  blocks:
+    - name: block1
+      content: content1
+    - name: block2
+      content: content2
+    - name: block3
+      content: content3
+    - name: block4
+      content: content4
+    - name: block5
+      content: "content5\\n"
 # named block and block with other options
 - in: |
     --- name:block
@@ -89,13 +113,13 @@ class TestPage < MiniTest::Unit::TestCase
     with?: with some things
 
     --- other:options test1:true test2:false test3:542 pipeline:
-  meta_info: {}
+  meta_info:
+    blocks: {block2: {other: options, test1: true, test2: false, test3: 542, pipeline: ~}}
   blocks:
     - name: block
       content: "content doing -\\nwith?: with some things\\n"
     - name: block2
       content: ''
-      options: {other: options, test1: true, test2: false, test3: 542, pipeline: ~}
 
 # block with seemingly block start line it
 - in: |
@@ -179,13 +203,11 @@ EOF
     YAML::load(VALID).each_with_index do |data, oindex|
       d = Webgen::Page.from_data(data['in'])
       assert_equal(data['meta_info'], d.meta_info, "test item #{oindex} - meta info all")
-      assert_equal(data['blocks'].length*2, d.blocks.length)
+      assert_equal(data['blocks'].length, d.blocks.length)
       data['blocks'].each_with_index do |b, index|
         index += 1
-        assert_equal(b['name'], d.blocks[index].name, "test item #{oindex} - name")
-        assert_equal(b['content'], d.blocks[index].content, "test item #{oindex} - content")
-        assert_equal(b['options'] || {}, d.blocks[index].options, "test item #{oindex} - options")
-        assert_same(d.blocks[index], d.blocks[b['name']])
+        assert_equal(b['name'], d.blocks[b['name']].name, "test item #{oindex} - name")
+        assert_equal(b['content'], d.blocks[b['name']].content, "test item #{oindex} - content")
       end
     end
   end
@@ -194,8 +216,8 @@ EOF
     valid = YAML::load(VALID)
     d = Webgen::Page.from_data(valid[0]['in'], 'blocks' => {1 => { 'name' => 'other1'}, 2 => { 'name' => 'block7'}})
     assert_equal({'key' => 'value'}, d.meta_info)
-    assert_equal('other1', d.blocks[1].name)
-    assert_equal('block7', d.blocks[2].name)
+    assert_equal('other1', d.blocks['other1'].name)
+    assert_equal('block7', d.blocks['block7'].name)
   end
 
   def test_eol_encodings

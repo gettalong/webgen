@@ -18,12 +18,9 @@ module Webgen
       # The content of the block.
       attr_reader :content
 
-      # The options set specifically for this block.
-      attr_reader :options
-
-      # Create a new block with the name +name+ and the given +content+ and +options+.
-      def initialize(name, content, options)
-        @name, @content, @options = name, content, options
+      # Create a new block with the given +name+ and the +content+.
+      def initialize(name, content)
+        @name, @content = name, content
       end
 
     end
@@ -37,7 +34,8 @@ module Webgen
     RE_NEWLINE = /\r?\n/
     RE_META_INFO_START = /\A---\s*#{RE_NEWLINE}/
     RE_META_INFO = /#{RE_META_INFO_START}.*?#{RE_NEWLINE}(?=---.*?#{RE_NEWLINE}|\Z)/m
-    RE_BLOCKS_OPTIONS = /^--- *?(?: *((?:\w+:[^\s]* *)*))?$|^$/
+    RE_BLOCKS_START_SIMPLE = /^--- (\w+)(?:\s*| -+\s*)$|^$/
+    RE_BLOCKS_START_COMPLEX = /^--- *?(?: *((?:\w+:[^\s]* *)*))?$|^$/
     RE_BLOCKS_START = /^---(?: .*?|)(?=#{RE_NEWLINE})/
     RE_BLOCKS = /(?:(#{RE_BLOCKS_START})|\A)#{RE_NEWLINE}?(.*?)(?:(?=#{RE_BLOCKS_START})|\z)/m
     RE_PAGE = /(#{RE_META_INFO})?(.*)/m
@@ -76,9 +74,10 @@ module Webgen
           meta_info
         end
       end
+      private :parse_meta_info
 
-      # Parse all blocks in +data+ and return them. Meta information can be provided in +meta_info+
-      # which is used for setting the block names and options.
+      # Parse all blocks in +data+ and return them. The key 'blocks' of the meta information hash is
+      # used and probably updated with information found on block starting lines.
       def parse_blocks(data, meta_info)
         scanned = data.scan(RE_BLOCKS)
         raise(FormatError, 'No content blocks specified') if scanned.length == 0
@@ -87,11 +86,16 @@ module Webgen
         scanned.each_with_index do |block_data, index|
           index += 1
           options, content = *block_data
-          md = RE_BLOCKS_OPTIONS.match(options.to_s)
-          raise(FormatError, "Found invalid blocks starting line for block #{index}: #{options}") if content =~ /\A---/ || md.nil?
-          options = Hash[*md[1].to_s.scan(/(\w+):([^\s]*)/).map {|k,v| [k, (v == '' ? nil : YAML::load(v))]}.flatten]
-          options = (meta_info['blocks']['default'] || {} rescue {}).
-            merge((meta_info['blocks'][index] || {} rescue {})).
+          if md = RE_BLOCKS_START_SIMPLE.match(options.to_s)
+            options = {'name' => md[1]}
+          else
+            md = RE_BLOCKS_START_COMPLEX.match(options.to_s)
+            raise(FormatError, "Found invalid blocks starting line for block #{index}: #{options}") if content =~ /\A---/ || md.nil?
+            options = Hash[*md[1].to_s.scan(/(\w+):([^\s]*)/).map {|k,v| [k, (v == '' ? nil : YAML::load(v))]}.flatten]
+          end
+
+          options = (meta_info['blocks'][:default] || {} rescue {}).
+            merge((meta_info['blocks'].delete(index) || {} rescue {})).
             merge(options)
 
           name = options.delete('name') || (index == 1 ? 'content' : 'block' + (index).to_s)
@@ -99,11 +103,15 @@ module Webgen
           content ||= ''
           content.gsub!(/^(\\+)(---.*?)$/) {|m| "\\" * ($1.length / 2) + $2}
           content.chomp! unless index == scanned.length
-          blocks[name] = blocks[index] = Block.new(name, content, options)
+
+          blocks[name] = Block.new(name, content)
+          (meta_info['blocks'] ||= {})[name] = options unless options.empty?
         end
-        meta_info.delete('blocks')
+        meta_info['blocks'].delete(:default) if meta_info['blocks']
+        meta_info.delete('blocks') if meta_info['blocks'] && meta_info['blocks'].empty?
         blocks
       end
+      private :parse_blocks
 
     end
 

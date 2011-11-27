@@ -25,7 +25,7 @@ class TestPageUtils < MiniTest::Unit::TestCase
 
   def test_render_block
     website, node, context = Test.setup_content_processor_test
-    node.expect(:blocks, {'content' => Webgen::Page::Block.new('content', 'mycontent', {})})
+    node.expect(:blocks, {'content' => Webgen::Page::Block.new('content', 'mycontent')})
     node.expect(:meta_info, {})
     website.ext.content_processor = Webgen::ContentProcessor.new
 
