@@ -115,8 +115,6 @@ module Webgen
     end
 
     # Return the instance of the configured destination class.
-    #
-    # **Note** that this method won't work if no website object is set!
     def instance
       if !defined?(@instance)
         name, *args = @website.config['destination']
