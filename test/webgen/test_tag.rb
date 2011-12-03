@@ -31,12 +31,21 @@ class TestTag < MiniTest::Unit::TestCase
   end
 
   def test_register
+    check_tdata = lambda do |tdata, callable,  config_base, mandatory_options, initialized|
+      assert_equal(callable, tdata.callable)
+      assert_equal(config_base, tdata.config_base)
+      assert_equal(mandatory_options, tdata.mandatory_options)
+      assert_equal(initialized, tdata.initialized)
+    end
+
     @tag.register('Webgen::Tag::MyTag')
-    assert_equal(['Webgen::Tag::MyTag', 'tag.mytag', [], false], @tag.instance_eval { @extensions[:my_tag] })
+    check_tdata.call(@tag.instance_eval { @extensions[:my_tag] },
+                     'Webgen::Tag::MyTag', 'tag.mytag', [], false)
     assert(@tag.registered?('my_tag'))
 
     @tag.register('MyTag', :names => ['mytag', 'other'])
-    assert_equal(['Webgen::Tag::MyTag', 'tag.mytag', [], false], @tag.instance_eval { @extensions[:my_tag] })
+    check_tdata.call(@tag.instance_eval { @extensions[:my_tag] },
+                     'Webgen::Tag::MyTag', 'tag.mytag', [], false)
     assert(@tag.registered?('my_tag'))
     assert(@tag.registered?('other'))
 
@@ -46,7 +55,8 @@ class TestTag < MiniTest::Unit::TestCase
     assert(@tag.registered?('doit'))
 
     @tag.register('MyTag', :names => ['other'], :config_base => 'other', :mandatory => ['mandatory'])
-    assert_equal(['Webgen::Tag::MyTag', 'other', ['mandatory'], false], @tag.instance_eval { @extensions[:other] })
+    check_tdata.call(@tag.instance_eval { @extensions[:other] },
+                     'Webgen::Tag::MyTag', 'other', ['mandatory'], false)
   end
 
   def test_call
@@ -62,6 +72,9 @@ class TestTag < MiniTest::Unit::TestCase
     context = Webgen::Context.new(@website)
 
     assert_raises(Webgen::RenderError) { @tag.call('unknown', {}, 'body', context) }
+
+    @tag.register('MyTag', :mandatory => ['mandatory'])
+    assert_raises(ArgumentError) { @tag.call('my_tag', {}, 'body', context) }
 
     @tag.register('MyTag')
     assert_raises(Webgen::RenderError) { @tag.call('my_tag', 5, 'body', context) }

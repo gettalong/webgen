@@ -64,6 +64,8 @@ module Webgen
 
     include Webgen::Common::ExtensionManager
 
+    TagData = Struct.new(:callable, :config_base, :mandatory_options, :initialized)
+
     def initialize(website) # :nodoc:
       super()
       website.blackboard.add_listener(:configuration_loaded, self) do
@@ -110,7 +112,7 @@ module Webgen
       klass, klass_name = normalize_class_name(klass, !block_given?)
       tag_names = [options[:names] || Webgen::Common.snake_case(klass_name)].flatten.map {|n| n.to_sym}
       config_base = options[:config_base] || klass.gsub(/::/, '.').gsub(/^Webgen\./, '').downcase
-      data = [block_given? ? block : klass, config_base, options[:mandatory] || [], false]
+      data = TagData.new(block_given? ? block : klass, config_base, options[:mandatory] || [], false)
       tag_names.each {|tname| @extensions[tname] = data}
     end
 
@@ -122,7 +124,7 @@ module Webgen
       tdata = tag_data(tag, context)
       if !tdata.nil?
         context[:config] = create_config(tag, params, tdata, context)
-        result, process_output = tdata.first.call(tag, body, context)
+        result, process_output = tdata.callable.call(tag, body, context)
         result = context.website.ext.content_processor.call('tags', context.clone(:content => result)).content if process_output
       else
         raise Webgen::RenderError.new("No tag processor for '#{tag}' found", self.class.name,
@@ -152,7 +154,7 @@ module Webgen
                                                self.class.name, context.dest_node, context.ref_node)
                end
 
-      if !tdata[2].all? {|k| values.has_key?(k)}
+      if !tdata.mandatory_options.all? {|k| values.has_key?(k)}
         raise Webgen::RenderError.new("Not all mandatory parameters set", self.class.name, context.dest_node, context.ref_node)
       end
       config = context.website.config.dup
@@ -167,8 +169,8 @@ module Webgen
       params.each do |key, value|
         if context.website.config.option?(key)
           result[key] = value
-        elsif context.website.config.option?(tdata[1] + '.' + key)
-          result[tdata[1] + '.' + key] = value
+        elsif context.website.config.option?(tdata.config_base + '.' + key)
+          result[tdata.config_base + '.' + key] = value
         else
           context.website.logger.warn do
             "Invalid configuration option '#{key}' for tag '#{tag}' found in <#{context.ref_node}>"
@@ -181,30 +183,31 @@ module Webgen
     # Return a hash containing valid configuration options by setting the default mandatory
     # parameter for +tag+ to +str+.
     def values_from_string(tag, str, tdata, context)
-      if tdata[2].first.nil?
+      if tdata.mandatory_options.first.nil?
         context.website.logger.error do
           "No default mandatory option specified for tag '#{tag}' but set in <#{context.ref_node}>"
         end
         {}
       else
-        {tdata[2].first => str}
+        {tdata.mandatory_options.first => str}
       end
     end
 
     # Return the tag data for +tag+ or +nil+ if +tag+ is unknown.
     def tag_data(tag, context)
       tdata = @extensions[tag.to_sym] || @extensions[:default]
-      if tdata && !tdata.last
-        tdata[0] = resolve_class(tdata[0])
-        tdata[2].each_with_index do |o, index|
+      if tdata && !tdata.initialized
+        tdata.callable = resolve_class(tdata.callable)
+        tdata.mandatory_options.each_with_index do |o, index|
           next if context.website.config.option?(o)
-          if context.website.config.option?(tdata[1] + '.' + o)
-            tdata[2][index] = tdata[1] + '.' + o
+          o = tdata.config_base + '.' + o
+          if context.website.config.option?(o)
+            tdata.mandatory_options[index] = o
           else
             raise ArgumentError, "Invalid configuration option name '#{o}' specified as mandatory option for tag '#{tag}'"
           end
         end
-        tdata[3] = true
+        tdata.initialized = true
       end
       tdata
     end
