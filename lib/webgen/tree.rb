@@ -22,7 +22,7 @@ module Webgen
     # Create a new Tree object for the website.
     def initialize(website)
       @website = website
-      @node_access = {:alcn => {}, :acn => {}, :dest_path => {}}
+      @node_access = {:alcn => {}, :acn => {}, :dest_path => {}, :translation_key => {}}
       @dummy_root = Node.new(self, '', '')
     end
 
@@ -31,15 +31,58 @@ module Webgen
       @dummy_root.children.first
     end
 
-    # Access a node via a +path+ of a specific +type+. If type is +alcn+ then +path+ has to be an
+    # Access a node via a +path+ of a specific +type+. If type is +:alcn+ then +path+ has to be an
     # absolute localized canonical name, if type is +acn+ then +path+ has to be an absolute
-    # canonical name and if type is +path+ then +path+ needs to be a destination path.
+    # canonical name and if type is +:dest_path+ then +path+ needs to be a destination path.
     #
     # Returns the requested Node or +nil+ if such a node does not exist.
     def node(path, type = :alcn)
-      (type == :acn ? @node_access[type][path] && @node_access[type][path].first : @node_access[type][path])
+      case type
+      when :alcn then @node_access[type][path]
+      when :acn then @node_access[type][path] && @node_access[type][path].first
+      when :dest_path then @node_access[type][path]
+      else
+        raise ArgumentError, "Unknown type '#{type}' for resolving path <#{path}>"
+      end
     end
     alias_method :[], :node
+
+    # Return the node representing the given +path+ which can be an alcn/acn/destination path (name
+    # resolution is done in the specified order). The path has to be absolute, i.e. starting with a
+    # slash.
+    #
+    # If the +path+ is an alcn and a node is found, it is returned. If the +path+ is an acn, the
+    # correct localized node according to +lang+ is returned or if no such node exists but an
+    # unlocalized version does, the unlocalized node is returned. If the +path+ is a destination
+    # path, the node with this destination path is returned.
+    #
+    # If no node is found for the given path or if the path is invalid, +nil+ is returned.
+    def resolve_node(path, lang)
+      node = self.node(path, :alcn)
+      if !node || node.acn == path
+        (node = (self.node(path, :acn) || self.node(path + '/', :acn))) && (node = translate_node(node, lang))
+      end
+      node = self.node(path, :dest_path) if !node
+      node
+    end
+
+    # Return the translation of the node to the language +lang+ or, if no such node exists, an
+    # unlocalized version of the node. If no such node is found either, +nil+ is returned.
+    def translate_node(node, lang)
+      avail = @node_access[:translation_key][translation_key(node)]
+      avail.find do |n|
+        n = n.parent while n.is_fragment?
+        n.lang == lang
+      end || avail.find do |n|
+        n = n.parent while n.is_fragment?
+        n.lang.nil?
+      end
+    end
+
+    # Return all translations of the node.
+    def translations(node)
+      @node_access[:translation_key][translation_key(node)].dup
+    end
 
     # Utility method called by Node#initialize. This method should not be used directly!
     def register_node(node)
@@ -49,12 +92,19 @@ module Webgen
         @node_access[:alcn][node.alcn] = node
       end
       (@node_access[:acn][node.acn] ||= []) << node
+      (@node_access[:translation_key][translation_key(node)] ||= []) << node
       if @node_access[:dest_path].has_key?(node.dest_path)
         raise "Can't have two nodes with same destination path: #{node.dest_path}"
       else
         @node_access[:dest_path][node.dest_path] = node
       end
     end
+
+    # Return the translation key for the node.
+    def translation_key(node)
+      node.meta_info['translation_key'] || node.acn
+    end
+    private :translation_key
 
   end
 

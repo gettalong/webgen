@@ -1,6 +1,6 @@
 # -*- encoding: utf-8 -*-
 
-require 'minitest/autorun'
+require 'helper'
 require 'webgen/node'
 require 'webgen/tree'
 
@@ -20,6 +20,73 @@ class TestTree < MiniTest::Unit::TestCase
     root = Webgen::Node.new(@tree.dummy_root, '/', '/')
     assert_equal(root, @tree.root)
     assert_equal('/', root.alcn)
+  end
+
+  def test_translate_node
+    nodes = Test.create_default_nodes(@tree)
+
+    assert_equal(nodes[:somename_de], @tree.translate_node(nodes[:somename_en], 'de'))
+    assert_equal(nodes[:somename_en], @tree.translate_node(nodes[:somename_en], 'en'))
+    assert_equal(nodes[:somename_en], @tree.translate_node(nodes[:somename_de], 'en'))
+    assert_equal(nil, @tree.translate_node(nodes[:somename_de], 'fr'))
+    assert_equal(nil, @tree.translate_node(nodes[:somename_en], nil))
+
+    assert_equal(nodes[:other_en], @tree.translate_node(nodes[:other], 'en'))
+    assert_equal(nodes[:other], @tree.translate_node(nodes[:other], 'de'))
+    assert_equal(nodes[:other], @tree.translate_node(nodes[:other], nil))
+    assert_equal(nodes[:other], @tree.translate_node(nodes[:other_en], nil))
+    assert_equal(nodes[:other], @tree.translate_node(nodes[:other_en], 'de'))
+
+    assert_equal(nil, @tree.translate_node(nodes[:somename_en_frag], nil))
+    assert_equal(nodes[:somename_en_frag], @tree.translate_node(nodes[:somename_en_frag], 'en'))
+    assert_equal(nodes[:somename_de_frag], @tree.translate_node(nodes[:somename_en_frag], 'de'))
+  end
+
+  def test_translations
+    nodes = Test.create_default_nodes(@tree)
+
+    assert_equal([nodes[:somename_en], nodes[:somename_de]], @tree.translations(nodes[:somename_en]))
+    assert_equal([nodes[:other], nodes[:other_en]], @tree.translations(nodes[:other]))
+  end
+
+  def test_resolve_node
+    nodes = Test.create_default_nodes(@tree)
+
+    [nodes[:root], nodes[:somename_de], nodes[:somename_en], nodes[:other]].each do |n|
+      assert_equal(nil, n.resolve('somename.html', nil))
+      assert_equal(nodes[:somename_en], n.resolve('somename.html', 'en'))
+      assert_equal(nodes[:somename_de], n.resolve('somename.html', 'de'))
+      assert_equal(nil, n.resolve('somename.html', 'fr'))
+      assert_equal(nodes[:somename_en], n.resolve('somename.en.html', nil))
+      assert_equal(nodes[:somename_en], n.resolve('somename.en.html', 'en'))
+      assert_equal(nodes[:somename_en], n.resolve('somename.en.html', 'de'))
+      assert_equal(nil, n.resolve('somename.fr.html', 'de'))
+
+      assert_equal(nodes[:other], n.resolve('other.html', nil))
+      assert_equal(nodes[:other], n.resolve('other.html', 'fr'))
+      assert_equal(nodes[:other_en], n.resolve('other.html', 'en'))
+      assert_equal(nodes[:other_en], n.resolve('other.en.html', nil))
+      assert_equal(nodes[:other_en], n.resolve('other.en.html', 'de'))
+      assert_equal(nil, n.resolve('other.fr.html', nil))
+      assert_equal(nil, n.resolve('other.fr.html', 'en'))
+    end
+
+    assert_equal(nodes[:somename_en_frag], nodes[:somename_en].resolve('#othertest', 'de'))
+    assert_equal(nodes[:somename_en_frag], nodes[:somename_en].resolve('#othertest', nil))
+    assert_equal(nodes[:somename_en_fragnest], nodes[:somename_en].resolve('#nestedpath', nil))
+
+    assert_equal(nil, @tree.resolve_node('/somename.html#othertest', nil))
+    assert_equal(nodes[:somename_en_frag], @tree.resolve_node('/somename.html#othertest', 'en'))
+    assert_equal(nodes[:somename_de_frag], @tree.resolve_node('/somename.html#othertest', 'de'))
+    assert_equal(nodes[:somename_en_frag], @tree.resolve_node('/somename.en.html#othertest', nil))
+    assert_equal(nodes[:somename_de_frag], @tree.resolve_node('/somename.de.html#othertest', nil))
+
+    assert_equal(nodes[:dir2_index_en], nodes[:dir2].resolve('index.html'))
+    assert_equal(nodes[:other_en], nodes[:root].resolve('other1.html'))
+
+    assert_equal(nodes[:dir], nodes[:somename_en].resolve('/dir/'))
+    assert_equal(nodes[:dir], nodes[:somename_en].resolve('/dir'))
+    assert_equal(nodes[:root], nodes[:somename_en].resolve('/'))
   end
 
   def test_register_node

@@ -139,38 +139,14 @@ module Webgen
       Webgen::Path.matches_pattern?(@alcn, pattern)
     end
 
-    # Return the node with the same canonical name but in language +lang+ or, if no such node
-    # exists, an unlocalized version of the node. If no such node is found either, +nil+ is
-    # returned.
-    def in_lang(lang)
-      avail = @tree.node_access[:acn][@acn]
-      avail.find do |n|
-        n = n.parent while n.is_fragment?
-        n.lang == lang
-      end || avail.find do |n|
-        n = n.parent while n.is_fragment?
-        n.lang.nil?
-      end
-    end
-
-    # Return the node representing the given +path+ which can be an alcn/acn/destination path (name
-    # resolution is done in the specified order). The path can be absolute (i.e. starting with a
-    # slash) or relative to the current node. Relative paths are made absolute by using the #alcn of
-    # the current node. If no node is found for the given path or if the path is invalid, +nil+ is
-    # returned.
+    # Return the node representing the given +path+ in the given language. The path can be absolute
+    # (i.e. starting with a slash) or relative to the current node. Relative paths are made absolute
+    # by using the #alcn of the current node. If the +lang+ parameter is not used, it defaults to
+    # the language of the current node.
     #
-    # If the +path+ is an alcn and a node is found, it is returned. If the +path+ is an acn, the
-    # correct localized node according to +lang+ is returned or if no such node exists but an
-    # unlocalized version does, the unlocalized node is returned.
-    def resolve(path, lang = nil)
-      path = Webgen::Path.append(@alcn, path)
-
-      node = @tree[path, :alcn]
-      if !node || node.acn == path
-        (node = (@tree[path, :acn] || @tree[path + '/', :acn])) && (node = node.in_lang(lang))
-      end
-      node = @tree[path, :dest_path] if !node
-      node
+    # Seee Tree#resolve_node for detailed information on how the correct node for the path is found.
+    def resolve(path, lang = @lang)
+      @tree.resolve_node(Webgen::Path.append(@alcn, path), lang)
     end
 
     # Return the relative path to the given path +other+. The parameter +other+ can be a Node or an

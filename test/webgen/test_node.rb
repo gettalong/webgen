@@ -1,6 +1,6 @@
 # -*- encoding: utf-8 -*-
 
-require 'minitest/autorun'
+require 'helper'
 require 'webgen/node'
 require 'webgen/tree'
 require 'webgen/blackboard'
@@ -10,28 +10,6 @@ class TestNode < MiniTest::Unit::TestCase
   def setup
     @website = MiniTest::Mock.new
     @tree = Webgen::Tree.new(@website)
-  end
-
-  def create_default_nodes
-    {
-      :root => root = Webgen::Node.new(@tree.dummy_root, '/', '/'),
-      :somename_en => child_en = Webgen::Node.new(root, 'somename.html', '/somename.en.html', {'lang' => 'en', 'title' => 'somename en'}),
-      :somename_de => child_de = Webgen::Node.new(root, 'somename.html', '/somename.de.html', {'lang' => 'de', 'title' => 'somename de'}),
-      :other => Webgen::Node.new(root, 'other.html', '/other.html', {'title' => 'other'}),
-      :other_en => Webgen::Node.new(root, 'other.html', '/other1.html', {'lang' => 'en', 'title' => 'other en'}),
-      :somename_en_frag => frag_en = Webgen::Node.new(child_en, '#othertest', '/somename.en.html#frag', {'title' => 'frag'}),
-      :somename_de_frag => Webgen::Node.new(child_de, '#othertest', '/somename.de.html#frag', {'title' => 'frag'}),
-      :somename_en_fragnest => Webgen::Node.new(frag_en, '#nestedpath', '/somename.en.html#fragnest/', {'title' => 'fragnest'}),
-      :dir => dir = Webgen::Node.new(root, 'dir/', '/dir/', {'title' => 'dir'}),
-      :dir_file => dir_file = Webgen::Node.new(dir, 'file.html', '/dir/file.html', {'title' => 'file'}),
-      :dir_file_frag => Webgen::Node.new(dir_file, '#frag', '/dir/file.html#frag', {'title' => 'frag'}),
-      :dir2 => dir2 = Webgen::Node.new(root, 'dir2/', '/dir2/', {'proxy_path' => 'index.html', 'title' => 'dir2'}),
-      :dir2_index_en => Webgen::Node.new(dir2, 'index.html', '/dir2/index.html',
-                                         {'lang' => 'en', 'routed_title' => 'routed', 'title' => 'index en',
-                                           'link_attrs' => {'class'=>'help'}}),
-      :dir2_index_de => Webgen::Node.new(dir2, 'index.html', '/dir2/index.de.html',
-                                         {'lang' => 'de', 'routed_title' => 'routed_de', 'title' => 'index de'}),
-    }
   end
 
   def test_initialize
@@ -76,7 +54,7 @@ class TestNode < MiniTest::Unit::TestCase
   end
 
   def test_type_checkers
-    nodes = create_default_nodes
+    nodes = Test.create_default_nodes(@tree)
     assert(nodes[:root].is_directory?)
     assert(nodes[:somename_en].is_file?)
     assert(nodes[:somename_en_frag].is_fragment?)
@@ -101,66 +79,6 @@ class TestNode < MiniTest::Unit::TestCase
     assert(node !~ '**/*.test')
   end
 
-  def test_in_lang
-    nodes = create_default_nodes
-
-    assert_equal(nodes[:somename_de], nodes[:somename_en].in_lang('de'))
-    assert_equal(nodes[:somename_en], nodes[:somename_en].in_lang('en'))
-    assert_equal(nodes[:somename_en], nodes[:somename_de].in_lang('en'))
-    assert_equal(nil, nodes[:somename_de].in_lang('fr'))
-    assert_equal(nil, nodes[:somename_en].in_lang(nil))
-
-    assert_equal(nodes[:other_en], nodes[:other].in_lang('en'))
-    assert_equal(nodes[:other], nodes[:other].in_lang('de'))
-    assert_equal(nodes[:other], nodes[:other].in_lang(nil))
-    assert_equal(nodes[:other], nodes[:other_en].in_lang(nil))
-    assert_equal(nodes[:other], nodes[:other_en].in_lang('de'))
-
-    assert_equal(nil, nodes[:somename_en_frag].in_lang(nil))
-    assert_equal(nodes[:somename_en_frag], nodes[:somename_en_frag].in_lang('en'))
-    assert_equal(nodes[:somename_de_frag], nodes[:somename_en_frag].in_lang('de'))
-  end
-
-  def test_resolve
-    nodes = create_default_nodes
-
-    [nodes[:root], nodes[:somename_de], nodes[:somename_en], nodes[:other]].each do |n|
-      assert_equal(nil, n.resolve('somename.html', nil))
-      assert_equal(nodes[:somename_en], n.resolve('somename.html', 'en'))
-      assert_equal(nodes[:somename_de], n.resolve('somename.html', 'de'))
-      assert_equal(nil, n.resolve('somename.html', 'fr'))
-      assert_equal(nodes[:somename_en], n.resolve('somename.en.html', nil))
-      assert_equal(nodes[:somename_en], n.resolve('somename.en.html', 'en'))
-      assert_equal(nodes[:somename_en], n.resolve('somename.en.html', 'de'))
-      assert_equal(nil, n.resolve('somename.fr.html', 'de'))
-
-      assert_equal(nodes[:other], n.resolve('other.html', nil))
-      assert_equal(nodes[:other], n.resolve('other.html', 'fr'))
-      assert_equal(nodes[:other_en], n.resolve('other.html', 'en'))
-      assert_equal(nodes[:other_en], n.resolve('other.en.html', nil))
-      assert_equal(nodes[:other_en], n.resolve('other.en.html', 'de'))
-      assert_equal(nil, n.resolve('other.fr.html', nil))
-      assert_equal(nil, n.resolve('other.fr.html', 'en'))
-    end
-
-    assert_equal(nodes[:somename_en_frag], nodes[:somename_en].resolve('#othertest', 'de'))
-    assert_equal(nodes[:somename_en_frag], nodes[:somename_en].resolve('#othertest', nil))
-    assert_equal(nodes[:somename_en_fragnest], nodes[:somename_en].resolve('#nestedpath', nil))
-
-    assert_equal(nil, nodes[:root].resolve('/somename.html#othertest', nil))
-    assert_equal(nodes[:somename_en_frag], nodes[:root].resolve('/somename.html#othertest', 'en'))
-    assert_equal(nodes[:somename_de_frag], nodes[:root].resolve('/somename.html#othertest', 'de'))
-    assert_equal(nodes[:somename_en_frag], nodes[:root].resolve('/somename.en.html#othertest'))
-    assert_equal(nodes[:somename_de_frag], nodes[:root].resolve('/somename.de.html#othertest'))
-
-    assert_equal(nodes[:dir2_index_en], nodes[:dir2].resolve('index.html'))
-    assert_equal(nodes[:other_en], nodes[:root].resolve('other1.html'))
-
-    assert_equal(nodes[:dir], nodes[:somename_en].resolve('/dir/'))
-    assert_equal(nodes[:dir], nodes[:somename_en].resolve('/dir'))
-    assert_equal(nodes[:root], nodes[:somename_en].resolve('/'))
-  end
-
   def test_method_missing
     node = Webgen::Node.new(@tree.dummy_root, '/', '/')
     assert_raises(NoMethodError) { node.unknown }
@@ -179,7 +97,7 @@ class TestNode < MiniTest::Unit::TestCase
   end
 
   def test_route_to
-    nodes = create_default_nodes
+    nodes = Test.create_default_nodes(@tree)
     @website.expect(:blackboard, Webgen::Blackboard.new)
 
     #arg is Node
@@ -213,7 +131,7 @@ class TestNode < MiniTest::Unit::TestCase
   end
 
   def test_proxy_node
-    nodes = create_default_nodes
+    nodes = Test.create_default_nodes(@tree)
     @website.expect(:blackboard, Webgen::Blackboard.new)
 
     assert_equal(nodes[:somename_en], nodes[:somename_en].proxy_node('en'))
@@ -224,7 +142,7 @@ class TestNode < MiniTest::Unit::TestCase
   end
 
   def test_level
-    nodes = create_default_nodes
+    nodes = Test.create_default_nodes(@tree)
     assert_equal(0, nodes[:root].level)
     assert_equal(1, nodes[:dir].level)
     assert_equal(2, nodes[:dir_file].level)
@@ -232,7 +150,7 @@ class TestNode < MiniTest::Unit::TestCase
   end
 
   def test_link_to
-    nodes = create_default_nodes
+    nodes = Test.create_default_nodes(@tree)
 
     @website.expect(:blackboard, Webgen::Blackboard.new)
 
