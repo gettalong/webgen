@@ -57,11 +57,12 @@ class TestNodeFinder < MiniTest::Unit::TestCase
     check = lambda do |correct, result|
       assert_equal(correct.collect {|n| nodes[n] }, result, "Failure at #{caller[0]}")
     end
+    @config['node_finder.option_sets'] = {'simple' => {:alcn => '', :unknown => '', :name => 'simple'}}
 
     assert_raises(ArgumentError) { @nf.find({:alcn => '/'}, nodes[:root]) }
+    assert_raises(ArgumentError) { @nf.find(['hallo'], nodes[:root]) }
 
     # test using configured search options
-    @config['node_finder.option_sets'] = {'simple' => {:alcn => '', :unknown => '', :name => 'simple'}}
     check.call([:root], @nf.find('simple', nodes[:root]))
     check.call([:somename_en], @nf.find('simple', nodes[:somename_en]))
 
