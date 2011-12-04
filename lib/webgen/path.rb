@@ -128,7 +128,7 @@ module Webgen
 
     # Set the extension of the path.
     def ext=(value)
-      @ext || analyse
+      defined?(@ext) || analyse
       @ext = value
     end
 

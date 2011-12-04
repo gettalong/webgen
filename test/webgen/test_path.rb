@@ -137,6 +137,20 @@ class TestPath < MiniTest::Unit::TestCase
     path = Webgen::Path.new('/test/')
     path['key'] = 'val'
     assert_equal('val', path.meta_info['key'])
+
+    # Check ext= setter
+    path = Webgen::Path.new('/test.file')
+    path.ext = 'dir'
+    assert_equal('/test.dir', path.alcn)
+
+    path = Webgen::Path.new('/test/')
+    path.ext = 'dir'
+    assert_equal('/test.dir/', path.alcn)
+
+    path = Webgen::Path.new('/test.dir/')
+    assert_equal('/test.dir/', path.alcn)
+    path.ext = 'other'
+    assert_equal('/test.dir.other/', path.alcn)
   end
 
   def test_mount_at
