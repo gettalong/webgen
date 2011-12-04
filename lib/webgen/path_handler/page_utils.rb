@@ -7,11 +7,11 @@ require 'webgen/error'
 module Webgen
   class PathHandler
 
+    # This module should be used by path handlers that need to work with paths in Webgen Page Format.
     module PageUtils
 
       # Assume that the content of the given +path+ is in Webgen Page Format and parse it. Updates
-      # <tt>path.meta_info</tt> with the meta info from the page and stores the content blocks in
-      # the @blocks variable.
+      # <tt>path.meta_info</tt> with the meta info from the page and returns the content blocks.
       def parse_as_page!(path)
         begin
           page = Webgen::Page.from_data(path.data, path.meta_info)
@@ -36,8 +36,8 @@ module Webgen
 
       # Render the block +name+ of +node+ using the provided Context object.
       #
-      # Uses the content processors specified in the +pipeline+ key of the block if the +pipeline+
-      # parameter is not set.
+      # Uses the content processors specified for the block via the +blocks+ meta information key if
+      # the +pipeline+ parameter is not set.
       #
       # Returns the given context with the rendered content.
       def render_block(node, name, context, pipeline = nil)
