@@ -127,11 +127,15 @@ class TestPath < MiniTest::Unit::TestCase
     assert_raises(RuntimeError) { Webgen::Path.new('relative.page').basename }
 
     # Check path with set meta infos
-    path = Webgen::Path.new('/test/', :src => '/other.path', 'title' => 'Hello')
+    mi = {:src => '/other.path', 'title' => 'Hello'}
+    path = Webgen::Path.new('/test.en.file', mi)
     assert_equal('/other.path', path.source_path)
-    assert_equal('/test/', path.path)
+    assert_equal('/test.en.file', path.path)
     assert_equal('Hello', path.meta_info['title'])
     refute(path.meta_info[:no_output])
+
+    path = Webgen::Path.new('/test.eo.file', mi)
+    assert_equal('eo', path.meta_info['lang'])
 
     # Check other accessors
     path = Webgen::Path.new('/test/')

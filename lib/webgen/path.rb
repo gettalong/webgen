@@ -80,7 +80,7 @@ module Webgen
     # The +path+ needs to be in a well defined format which can be looked up in the webgen manual.
     def initialize(path, meta_info = {}, &ioblock)
       @path = path.freeze
-      @meta_info = meta_info
+      @meta_info = meta_info.dup
       @ioblock = block_given? ? ioblock : nil
       @source_path = @meta_info.delete(:src)
     end
