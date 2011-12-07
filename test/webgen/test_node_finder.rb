@@ -50,8 +50,10 @@ class TestNodeFinder < MiniTest::Unit::TestCase
       :dir2 => dir2 = Webgen::Node.new(root, 'dir2/', '/dir2/', {'proxy_path' => 'index.html', 'title' => 'dir2'}),
       :dir2_index_en => Webgen::Node.new(dir2, 'index.html', '/dir2/index.html',
                                          {'lang' => 'en', 'routed_title' => 'routed', 'title' => 'index en'}),
-      :dir2_index_de => Webgen::Node.new(dir2, 'index.html', '/dir2/index.de.html',
-                                         {'lang' => 'de', 'routed_title' => 'routed_de', 'title' => 'index de'}),
+      :dir2_index_de => dir2_index_de = Webgen::Node.new(dir2, 'index.html', '/dir2/index.de.html',
+                                                         {'lang' => 'de', 'routed_title' => 'routed_de', 'title' => 'index de'}),
+      :dir2_index_de_fragb => Webgen::Node.new(dir2_index_de, '#fragb', '/dir2/index.de.html#fragb', {'title' => 'fragb'}),
+      :dir2_index_de_fraga => Webgen::Node.new(dir2_index_de, '#fraga', '/dir2/index.de.html#fraga', {'title' => 'fraga'}),
     }
 
     check = lambda do |correct, result|
@@ -86,12 +88,13 @@ class TestNodeFinder < MiniTest::Unit::TestCase
     check.call([:dir_file, :dir_dir_file, :dir2_index_de, :dir2_index_en, :other, :other_en,
                 :somename_de, :somename_en],
                @nf.find({:alcn => '/**/*.html', :name => 'test', :flatten => true, :sort => 'title'}, nodes[:root]))
-    assert_equal([[nodes[:somename_en], [nodes[:somename_en_frag]]], nodes[:somename_de],
-                  [nodes[:dir], [nodes[:dir_dir], nodes[:dir_file]]],
-                  [nodes[:dir2], [nodes[:dir2_index_de], nodes[:dir2_index_en]]],
+    assert_equal([[nodes[:somename_en], [[nodes[:somename_en_frag], [nodes[:somename_en_fragnest]]]]], nodes[:somename_de],
+                  [nodes[:dir], [[nodes[:dir_dir], [nodes[:dir_dir_file]]],
+                                 [nodes[:dir_file], [nodes[:dir_file_frag]]]]],
+                  [nodes[:dir2], [[nodes[:dir2_index_de], [nodes[:dir2_index_de_fraga], nodes[:dir2_index_de_fragb]]], nodes[:dir2_index_en]]],
                   nodes[:other], nodes[:other_en],
                  ],
-                 @nf.find({:levels => [1,2], :name => 'test', :sort => true}, nodes[:root]))
+                 @nf.find({:levels => [1,3], :name => 'test', :sort => true}, nodes[:root]))
 
     # test filter: meta info keys/values
     check.call([:somename_en_frag, :dir_file_frag],
@@ -117,7 +120,7 @@ class TestNodeFinder < MiniTest::Unit::TestCase
     # test filter: levels
     check.call([:root],
                @nf.find({:levels => [0, 0], :name => 'test', :flatten => true}, nodes[:dir]))
-    check.call([:somename_en_fragnest, :dir_file_frag, :dir_dir_file],
+    check.call([:somename_en_fragnest, :dir_file_frag, :dir_dir_file, :dir2_index_de_fragb, :dir2_index_de_fraga],
                @nf.find({:levels => [3,3], :name => 'test', :flatten => true}, nodes[:dir]))
     check.call([:root, :somename_en, :somename_de, :other, :other_en, :dir, :dir2],
                @nf.find({:levels => [0,1], :name => 'test', :flatten => true}, nodes[:dir]))

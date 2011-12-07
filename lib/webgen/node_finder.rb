@@ -201,7 +201,7 @@ module Webgen
       else
         nodes.sort! {|(a,_),(b,_)| a[sort] <=> b[sort]}
       end
-      nodes.each {|n, children| sort_nodes(children, sort) if children } unless flat_mode
+      nodes.each {|n, children| sort_nodes(children, sort, flat_mode) if children } unless flat_mode
     end
 
     # :section: Filter methods
