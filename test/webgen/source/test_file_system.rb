@@ -39,7 +39,7 @@ class TestSourceFileSystem < MiniTest::Unit::TestCase
   end
 
   def test_handling_of_invalid_link
-    return if RbConfig::CONFIG['host_os'] =~ /mswin|mingw/
+    skip if RbConfig::CONFIG['host_os'] =~ /mswin|mingw/
     dir = File.join(Dir.tmpdir, 'webgen-link-test')
     FileUtils.mkdir_p(dir)
     FileUtils.touch(File.join(dir, 'test'))
