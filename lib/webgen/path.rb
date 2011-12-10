@@ -184,8 +184,7 @@ module Webgen
     # the Path instance.
     #
     # The parameter +mode+ specifies the mode in which the IO object should be opened. This can be
-    # used, for example, to open a file in binary mode (or specify a certain input encoding under
-    # Ruby 1.9).
+    # used, for example, to specify a certain input encoding.
     def io(mode = 'r') # :yields: io
       raise "No IO object defined for the path #{self}" if @ioblock.nil?
       io = @ioblock.call(mode)

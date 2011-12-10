@@ -223,6 +223,8 @@ class TestPath < MiniTest::Unit::TestCase
         path = Webgen::Path.new('/test') {|mode| File.open(File.join(dir, 'src'), mode) }
         assert_equal(1, path.data('r:UTF-8').length)
         assert_equal(2, path.data('rb').length)
+        assert_equal(1, path.data.length)
+        assert_equal(1, path.io {|f| f.read}.length)
       ensure
         FileUtils.rm_rf(dir) if dir
       end
