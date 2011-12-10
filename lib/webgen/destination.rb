@@ -36,8 +36,9 @@ module Webgen
   #
   # [<tt>write(path, data, type)</tt>]
   #   Write the +data+ to the given +path+. The parameter +data+ is either a String with the content
-  #   or a Webgen::Path::SourceIO object. The parameter +type+ specifies the type of the to be
-  #   written path: <tt>:file</tt> or <tt>:directory</tt>.
+  #   or a Webgen::Path object. If it is the latter, use the Webgen::Path#io method for retrieving
+  #   the IO object. The parameter +type+ specifies the type of the to be written path:
+  #   <tt>:file</tt> or <tt>:directory</tt>.
   #
   # [<tt>read(path, mode = 'rb')</tt>]
   #   Return the content of the given path if it exists or raise an error otherwise. The parameter
@@ -69,8 +70,8 @@ module Webgen
   #       @data.delete(path)
   #     end
   #
-  #     def write(path, io, type = :file)
-  #       @data[path] = [(io.kind_of?(String) ? io : io.data), type]
+  #     def write(path, data, type = :file)
+  #       @data[path] = [(data.kind_of?(String) ? data : data.data), type]
   #     end
   #
   #     def read(path, mode = 'rb')
@@ -134,8 +135,9 @@ module Webgen
       instance.delete(path)
     end
 
-    # Write the +data+ to the given +path+. The +type+ parameter specifies the type of the path to
-    # be created which can either be <tt>:file</tt> or <tt>:directory</tt>.
+    # Write the +data+ (either a String or a Webgen::Path object) to the given +path+. The +type+
+    # parameter specifies the type of the path to be created which can either be <tt>:file</tt> or
+    # <tt>:directory</tt>.
     def write(path, data, type = :file)
       instance.write(path, data, type)
     end
