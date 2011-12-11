@@ -13,8 +13,8 @@ module Webgen
       # The root path, ie. the path to which the root node gets rendered.
       attr_reader :root
 
-      # Create a new object with the given +root+ path. If +root+ is not absolute, it is taken
-      # relative to the website directory.
+      # Create a new FileSystem object with the given +root+ path. If +root+ is not absolute, it is
+      # taken relative to the website directory.
       def initialize(website, root)
         @root = File.absolute_path(root, website.directory)
       end
@@ -45,12 +45,12 @@ module Webgen
           if data.kind_of?(String)
             File.open(dest, 'wb') {|f| f.write(data) }
           else
-            data.stream('rb') do |source|
+            data.io('rb') do |source|
               File.open(dest, 'wb') {|f| FileUtils.copy_stream(source, f) }
             end
           end
         else
-          raise "Unsupported path type '#{type}' for #{path}"
+          raise "Unsupported path type '#{type}' for <#{path}>"
         end
       end
 
