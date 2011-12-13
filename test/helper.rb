@@ -13,7 +13,7 @@ module Test
       begin
         yield
       rescue error_class => e
-        assert_equal(line, Webgen::Error.error_line(e))
+        assert_equal(line, (e.respond_to?(:line) ? e.line : Webgen::Error.error_line(e)))
       else
         fail "No exception raised though #{error_class} expected"
       end
@@ -29,6 +29,29 @@ module Test
     context = Webgen::Context.new(website, :chain => [node], :doit => 'hallo')
     [website, node, context]
   end
+
+  def self.create_default_nodes(tree)
+    {
+      :root => root = Webgen::Node.new(tree.dummy_root, '/', '/'),
+      :somename_en => child_en = Webgen::Node.new(root, 'somename.html', '/somename.en.html', {'lang' => 'en', 'title' => 'somename en'}),
+      :somename_de => child_de = Webgen::Node.new(root, 'somename.html', '/somename.de.html', {'lang' => 'de', 'title' => 'somename de'}),
+      :other => Webgen::Node.new(root, 'other.html', '/other.html', {'title' => 'other'}),
+      :other_en => Webgen::Node.new(root, 'other.html', '/other1.html', {'lang' => 'en', 'title' => 'other en'}),
+      :somename_en_frag => frag_en = Webgen::Node.new(child_en, '#othertest', '/somename.en.html#frag', {'title' => 'frag'}),
+      :somename_de_frag => Webgen::Node.new(child_de, '#othertest', '/somename.de.html#frag', {'title' => 'frag'}),
+      :somename_en_fragnest => Webgen::Node.new(frag_en, '#nestedpath', '/somename.en.html#fragnest/', {'title' => 'fragnest'}),
+      :dir => dir = Webgen::Node.new(root, 'dir/', '/dir/', {'title' => 'dir'}),
+      :dir_file => dir_file = Webgen::Node.new(dir, 'file.html', '/dir/file.html', {'title' => 'file'}),
+      :dir_file_frag => Webgen::Node.new(dir_file, '#frag', '/dir/file.html#frag', {'title' => 'frag'}),
+      :dir2 => dir2 = Webgen::Node.new(root, 'dir2/', '/dir2/', {'proxy_path' => 'index.html', 'title' => 'dir2'}),
+      :dir2_index_en => Webgen::Node.new(dir2, 'index.html', '/dir2/index.html',
+                                         {'lang' => 'en', 'routed_title' => 'routed', 'title' => 'index en',
+                                           'link_attrs' => {'class'=>'help'}}),
+      :dir2_index_de => Webgen::Node.new(dir2, 'index.html', '/dir2/index.de.html',
+                                         {'lang' => 'de', 'routed_title' => 'routed_de', 'title' => 'index de'}),
+    }
+  end
+
 
 =begin
 require 'webgen/blackboard'
