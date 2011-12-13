@@ -132,8 +132,6 @@ class TestNodeFinder < MiniTest::Unit::TestCase
                @nf.find({:lang => ['en', 'de'], :name => 'test', :flatten => true}, nodes[:dir]))
     check.call([:somename_en, :other_en, :dir2_index_en],
                @nf.find({:lang => :node, :name => 'test', :flatten => true}, nodes[:somename_en]))
-
-    @website.verify
   end
 
 end
