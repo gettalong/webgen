@@ -83,17 +83,12 @@ class TestNode < MiniTest::Unit::TestCase
     node = Webgen::Node.new(@tree.dummy_root, '/', '/')
     assert_raises(NoMethodError) { node.unknown }
 
-    obj = MiniTest::Mock.new
-    obj.expect(:send, :value, [:unknown, node])
     path_handler = MiniTest::Mock.new
-    path_handler.expect(:instance, obj, ['object'])
-    ext = MiniTest::Mock.new
-    ext.expect(:path_handler, path_handler)
-    @website.expect(:ext, ext)
-    node.node_info[:path_handler] = 'object'
+    path_handler.expect(:send, :value, [:unknown, node])
+    node.node_info[:path_handler] = path_handler
 
     assert_equal(:value, node.unknown)
-    [obj, path_handler, ext, @website].each {|o| o.verify}
+    [path_handler, @website].each {|o| o.verify}
   end
 
   def test_route_to

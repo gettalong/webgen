@@ -106,7 +106,7 @@ module Webgen
 
     # Check if the node is a directory.
     def is_directory?
-      @dest_path[-1] == ?/ && !is_fragment?
+      @cn[-1] == ?/ && !is_fragment?
     end
 
     # Check if the node is a file.
@@ -226,7 +226,7 @@ module Webgen
     # argument array as the first argument before the method +name+ is invoked on the path handler.
     def method_missing(name, *args, &block)
       if node_info[:path_handler]
-        tree.website.ext.path_handler.instance(node_info[:path_handler]).send(name, *([self] + args), &block)
+        node_info[:path_handler].send(name, *([self] + args), &block)
       else
         super
       end
