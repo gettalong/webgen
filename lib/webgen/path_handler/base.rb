@@ -24,7 +24,16 @@ module Webgen
       #
       # This default +content+ method just returns +nil+.
       def content(node)
-        nil
+      end
+
+      # Update +path.meta_info+ with meta information found in the content of the path.
+      #
+      # This default +parse_meta_info!+ method does nothing and should be overridden in path
+      # handlers that know that additional meta information can be found in the content of the path
+      # itself. Note that the return values of this method are given as extra parameters to the
+      # #create_nodes method. If you don't handle extra parameters, return an empty array.
+      def parse_meta_info!(path)
+        []
       end
 
       # Create a node from +path+ if it does not already exists or re-initalize an already existing

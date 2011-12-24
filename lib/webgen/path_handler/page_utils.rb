@@ -8,7 +8,16 @@ module Webgen
   class PathHandler
 
     # This module should be used by path handlers that need to work with paths in Webgen Page Format.
+    #
+    # Note that this modules provides an implementation for the +parse_meta_info!+ method. So make
+    # sure to override this method if you need custom behaviour!
     module PageUtils
+
+      # Calls #parse_as_page! to update the meta information hash of +path+. Returns the found
+      # blocks which will be passed as second parameter to the #create_nodes method.
+      def parse_meta_info!(path)
+        parse_as_page!(path)
+      end
 
       # Assume that the content of the given +path+ is in Webgen Page Format and parse it. Updates
       # <tt>path.meta_info</tt> with the meta info from the page and returns the content blocks.
