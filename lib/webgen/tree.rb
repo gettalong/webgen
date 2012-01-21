@@ -106,6 +106,23 @@ module Webgen
     end
     private :translation_key
 
+    # Delete the node and all of its children from the tree.
+    #
+    # The message <tt>:before_node_deleted</tt> is sent with the to-be-deleted node before the node
+    # is actually deleted from the tree.
+    def delete_node(node)
+      return if node.nil? || !node.kind_of?(Node) || node == @dummy_root
+
+      node.children.dup.each {|child| delete_node(child)}
+
+      @website.blackboard.dispatch_msg(:before_node_deleted, node)
+      node.parent.children.delete(node)
+      @node_access[:alcn].delete(node.alcn)
+      @node_access[:acn][node.acn].delete(node)
+      @node_access[:translation_key][translation_key(node)].delete(node)
+      @node_access[:dest_path].delete(node.dest_path)
+    end
+
   end
 
 end
