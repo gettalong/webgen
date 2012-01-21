@@ -229,6 +229,13 @@ class TestPath < MiniTest::Unit::TestCase
         FileUtils.rm_rf(dir) if dir
       end
     end
+
+    p = Webgen::Path.new('/test.page')
+    p.set_io(proc { StringIO.new('hallo') })
+    assert_equal('hallo', p.data)
+
+    p.set_io { StringIO.new('hallo2') }
+    assert_equal('hallo2', p.data)
   end
 
   def test_equality
