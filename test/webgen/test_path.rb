@@ -62,7 +62,6 @@ class TestPath < MiniTest::Unit::TestCase
   def test_initialize_and_accessors
     check_proc = proc do |o, ppath, bn, lang, ext, cn, lcn, acn, alcn, oi, title|
       assert_kind_of(String, o.path)
-      assert_equal(o.path, o.source_path)
       assert_equal(ppath, o.parent_path)
       assert_equal(bn, o.basename)
       assert_equal(lang, o.meta_info['lang'])
@@ -127,9 +126,8 @@ class TestPath < MiniTest::Unit::TestCase
     assert_raises(RuntimeError) { Webgen::Path.new('relative.page').basename }
 
     # Check path with set meta infos
-    mi = {:src => '/other.path', 'title' => 'Hello'}
+    mi = {'title' => 'Hello'}
     path = Webgen::Path.new('/test.en.file', mi)
-    assert_equal('/other.path', path.source_path)
     assert_equal('/test.en.file', path.path)
     assert_equal('Hello', path.meta_info['title'])
     refute(path.meta_info[:no_output])
@@ -169,36 +167,28 @@ class TestPath < MiniTest::Unit::TestCase
 
     path = Webgen::Path.new('/test.de.page').mount_at('/somedir/')
     assert_equal('/somedir/test.de.page', path.path)
-    assert_equal('/somedir/test.de.page', path.source_path)
     assert_equal('/somedir/', path.parent_path)
 
     path = Webgen::Path.new('/').mount_at('/somedir/')
     assert_equal('/somedir/', path.path)
-    assert_equal('/somedir/', path.source_path)
     assert_equal('/', path.parent_path)
     assert_equal('somedir/', path.cn)
     assert_equal('Somedir', path.meta_info['title'])
 
     path = Webgen::Path.new('/source/test.rb').mount_at('/', '/source/')
     assert_equal('/test.rb', path.path)
-    assert_equal('/test.rb', path.source_path)
     assert_equal('/', path.parent_path)
     assert_equal('test.rb', path.cn)
     assert_equal('Test', path.meta_info['title'])
 
     path = Webgen::Path.new('/source/').mount_at('/', '/source/')
     assert_equal('/', path.path)
-    assert_equal('/', path.source_path)
     assert_equal('', path.parent_path)
     assert_equal('/', path.cn)
     assert_equal('/', path.meta_info['title'])
 
-    path = Webgen::Path.new('/test.rb', :src => '/other.rb').mount_at('/source/')
-    assert_equal('/source/test.rb', path.path)
-    assert_equal('/other.rb', path.source_path)
-    assert_equal('/source/', path.parent_path)
-    assert_equal('test.rb', path.cn)
-    assert_equal('Test', path.meta_info['title'])
+    path = Webgen::Path.new('/') { StringIO.new('test') }.mount_at('/somedir/')
+    assert_equal('test', path.data)
   end
 
   def test_dup

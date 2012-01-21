@@ -36,16 +36,15 @@ module Webgen
         []
       end
 
-      # Create a node from +path+ if it does not already exists or re-initalize an already existing
-      # node. The found node or the newly created node is returned afterwards. +nil+ is returned if no
-      # node can be created (e.g. when <tt>path.meta_info['draft']</tt> is set).
+      # Create a node from +path+, if possible, yield the full initialized node if a block is given
+      # and return it. If no node can be created (e.g. when <tt>path.meta_info['draft']</tt> is
+      # set), +nil+ is returned.
       #
       # The parent node under which the new node should be created can be set via the +parent+
       # parameter. If this is not specified (the usual case), the parent node is determined by the
       # #parent_node method.
       #
-      # Some additional node information like <tt>:src</tt> and <tt>:processor</tt> are set and the
-      # meta information is checked for validness. The created node is yielded if a block is given.
+      # The node information <tt>:path</tt> is set to the given path.
       def create_node(path, parent = nil)
         return nil if path.meta_info['draft']
         parent ||= parent_node(path)
@@ -63,8 +62,7 @@ module Webgen
         end
 
         node = Webgen::Node.new(parent, path.cn, dest_path, path.meta_info)
-        node.node_info[:src] = path.source_path
-        node.node_info[:creation_path] = path.path
+        node.node_info[:path] = path
 
         yield(node) if block_given?
         node

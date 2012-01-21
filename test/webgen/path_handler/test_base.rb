@@ -36,7 +36,7 @@ class TestPathHandlerBase < MiniTest::Unit::TestCase
     path = Webgen::Path.new('/path.html', :src => '/path', 'dest_path' => ':parent:basename(.:lang):ext',
                             'modified_at' => 'unknown')
     node = @obj.create_node(path, @website.tree.dummy_root) {|n| assert_kind_of(Webgen::Node, n)}
-    assert_equal('/path', node.node_info[:src])
+    assert_equal(path, node.node_info[:path])
     assert_kind_of(Time, node.meta_info['modified_at'])
 
     assert_raises(Webgen::NodeCreationError) { @obj.create_node(path, @website.tree.dummy_root) }

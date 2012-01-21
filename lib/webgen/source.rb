@@ -109,7 +109,7 @@ module Webgen
         @paths = {}
         source.paths.each do |path|
           if !(@website.config['sources.ignore_paths'].any? {|pat| Webgen::Path.matches_pattern?(path, pat)})
-            @paths[path.source_path] = path
+            @paths[path.path] = path
           end
         end
       end

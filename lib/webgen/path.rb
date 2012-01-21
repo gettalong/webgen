@@ -12,15 +12,8 @@ module Webgen
   # from which nodes are created! In contrast, destination paths are just strings and specify the
   # location where a specific node should be written to.
   #
-  # Note the +path+ and +source_path+ attributes of a Path object:
-  #
-  # * The +source_path+ specifies a path string that was directly created by a Source object. Each
-  #   Path object must have such a valid source path so that webgen can infer the Path the lead to
-  #   the creation of a Node object later.
-  #
-  # * In contrast, the +path+ attribute specifies the path that is used to create the canonical name
-  #   (and by default the destination path) of a Node object. Normally it is the same as the
-  #   +source_path+ but can differ (e.g. when fragment nodes are created for page file nodes).
+  # The +path+ attribute specifies the path that is used to create the canonical name (and by
+  # default the destination path) of a Node object.
   #
   # A Path object can represent one of three different things: a directory, a file or a fragment. If
   # the +path+ ends with a slash character, then the path object represents a directory, if the path
@@ -73,16 +66,15 @@ module Webgen
 
     # Create a new Path object for +path+.
     #
-    # The +source_path+ information can be provided by setting the meta information key :+src+ if
-    # +source_path+ is different from +path+. The optional block needs to return an IO object for
-    # getting the content of the path (see #io and #data).
+    # The optional block needs to return an IO object for getting the content of the path (see #io
+    # and #data).
     #
-    # The +path+ needs to be in a well defined format which can be looked up in the webgen manual.
+    # The +path+ String needs to be in a well defined format which can be looked up in the webgen
+    # manual.
     def initialize(path, meta_info = {}, &ioblock)
       @path = path.freeze
       @meta_info = meta_info.dup
       @ioblock = block_given? ? ioblock : nil
-      @source_path = @meta_info.delete(:src)
     end
 
     def initialize_copy(orig) #:nodoc:
@@ -92,11 +84,6 @@ module Webgen
 
     # The original path string from which this Path object was created.
     attr_reader :path
-
-    # A string specifying the path that lead to the creation of this path.
-    def source_path
-      @source_path || path
-    end
 
     # Meta information about the path.
     def meta_info
@@ -174,8 +161,7 @@ module Webgen
       raise(ArgumentError, "The mount point (#{mp}) must be a valid directory path") if mp =~ /^[^\/]|#|[^\/]$/
       raise(ArgumentError, "The strip prefix (#{prefix}) must be a valid directory path") if !prefix.nil? && prefix =~ /^[^\/]|#|[^\/]$/
 
-      temp = self.class.new(File.join(mp, @path.sub(/^#{Regexp.escape(prefix.to_s)}/, '')),
-                            @meta_info.merge(:src => @source_path))
+      temp = self.class.new(File.join(mp, @path.sub(/^#{Regexp.escape(prefix.to_s)}/, '')), @meta_info, &@ioblock)
       temp
     end
 
