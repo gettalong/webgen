@@ -26,6 +26,10 @@ module Webgen
         @website.tree[alcn].nil? || @website.tree[alcn]['modified_at'] != old_data
       end
 
+      def node_referenced?(alcn, node_alcn) #:nodoc:
+        alcn == node_alcn
+      end
+
     end
 
   end

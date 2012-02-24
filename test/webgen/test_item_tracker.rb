@@ -22,6 +22,10 @@ class Webgen::ItemTracker::Sample
     'alcn' + iid != old_data
   end
 
+  def node_referenced?(iid, node_alcn)
+    iid == 'data'
+  end
+
 end
 
 class TestItemTracker < MiniTest::Unit::TestCase
@@ -33,6 +37,8 @@ class TestItemTracker < MiniTest::Unit::TestCase
     website.expect(:cache, cache = {})
     node = MiniTest::Mock.new
     node.expect(:alcn, '/alcn')
+    node.expect(:!, false)
+    website.expect(:tree, {'/alcn' => node})
 
     tracker = Webgen::ItemTracker.new(website)
     tracker.register('Sample')
@@ -41,10 +47,14 @@ class TestItemTracker < MiniTest::Unit::TestCase
     # Item should be changed because no cache data is available
     assert(tracker.send(:item_changed?, tracker.send(:unique_id, :sample, 'mydata')))
 
+    # Item should not be changed after it gets written
+    blackboard.dispatch_msg(:after_node_written, node)
+    refute(tracker.send(:item_changed?, tracker.send(:unique_id, :sample, 'mydata')))
+
     # Test the initial loading of the cache data
     cache[:item_tracker_data] = {
-      :node_dependencies => {'alcn' => ['data']},
-      :item_data => {[:sample, 'mydata'] => 'alcnmydata'}
+      :node_dependencies => {'/alcn' => ['data'], 'alcn' => ['data']},
+      :item_data => {[:sample, 'mydata'] => 'alcnmydata', [:sample, 'other'] => 'alcnother'}
     }
     blackboard.dispatch_msg(:website_initialized)
     assert_equal(cache[:item_tracker_data], tracker.instance_variable_get(:@cached))
@@ -53,12 +63,15 @@ class TestItemTracker < MiniTest::Unit::TestCase
     refute(tracker.send(:item_changed?, tracker.send(:unique_id, :sample, 'mydata')))
 
     # Test the final writing of the cache data
+    blackboard.dispatch_msg(:after_node_written, node) # needs to be done again because of :website_initialized above
     blackboard.dispatch_msg(:website_generated)
     expected = {
-      :node_dependencies => {'alcn' => ['data'], '/alcn' => Set.new([[:sample, 'mydata']])},
+      :node_dependencies => {'/alcn' => Set.new([[:sample, 'mydata']])},
       :item_data => {[:sample, 'mydata'] => 'alcnmydata'}
     }
     assert_equal(expected, cache[:item_tracker_data])
+
+    refute(tracker.node_referenced?(node))
 
     website.verify
     node.verify

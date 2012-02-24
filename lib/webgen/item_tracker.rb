@@ -36,6 +36,10 @@ module Webgen
   #   Return +true+ if the item identified by its unique ID has changed. The parameter +old_data+
   #   contains the last known data of the item.
   #
+  # [<tt>node_referenced?(item_id, node_alcn)</tt>]
+  #   Return +true+ if the node identified by +node_alcn+ is referenced in the item identified by
+  #   its unique ID.
+  #
   # The parameter +item+ for the methods +item_id+ and +item_data+ contains the information needed
   # to identify the item and is depdendent on the specific item tracker extension class. Therefore
   # you need to look at the documentation for an item tracker extension to see what it expects as
@@ -60,16 +64,20 @@ module Webgen
   #     end
   #
   #     def item_data(config_key)
-  #       @website.configuration[config_key]
+  #       @website.config[config_key]
   #     end
   #
   #     def changed?(config_key, old_val)
-  #       @website.configuration[config_key] != old_val
+  #       @website.config[config_key] != old_val
+  #     end
+  #
+  #     def node_referenced?(config_key, node_alcn)
+  #       false
   #     end
   #
   #   end
   #
-  #   website.ext.item_tracker.register '::ConfigTracker', name: :config
+  #   $website.ext.item_tracker.register '::ConfigTracker', name: :config
   #
   class ItemTracker
 
@@ -84,14 +92,23 @@ module Webgen
       @cached = {:node_dependencies => {}, :item_data => {}}
 
       @website = website
+
       @website.blackboard.add_listener(:website_initialized, self) do
         @cached = @website.cache[:item_tracker_data] || @cached
       end
+
+      @website.blackboard.add_listener(:after_node_written, self) do |node|
+        @cached[:node_dependencies][node.alcn] = @node_dependencies[node.alcn]
+        @node_dependencies[node.alcn].each {|uid| @cached[:item_data][uid] = @item_data[uid]}
+      end
+
       @website.blackboard.add_listener(:website_generated, self) do
-        @website.cache[:item_tracker_data] = {
-          :node_dependencies => @cached[:node_dependencies].merge(@node_dependencies),
-          :item_data => @cached[:item_data].merge(@item_data)
-        }
+        @cached[:node_dependencies].reject! {|alcn, data| !@website.tree[alcn]}
+        @cached[:item_data].merge!(@item_data)
+        @cached[:item_data].reject! do |uid, data|
+          !@cached[:node_dependencies].find {|alcn, data| data.include?(uid)}
+        end
+        @website.cache[:item_tracker_data] = @cached
       end
     end
 
@@ -130,6 +147,15 @@ module Webgen
       item_changed?(unique_id(:node_content, node.alcn)) ||
         item_changed?(unique_id(:node_meta_info, node.alcn)) ||
         (@cached[:node_dependencies][node.alcn] || []).any? {|uid| item_changed?(uid)}
+    end
+
+    # Return +true+ if the given node has been referenced by any item tracker extension.
+    def node_referenced?(node)
+      alcn = node.alcn
+      @cached[:item_data].any? do |uid, data|
+        next if @cached[:node_dependencies][alcn].include?(uid)
+        item_tracker(uid.first).node_referenced?(uid.last, alcn)
+      end
     end
 
     #######

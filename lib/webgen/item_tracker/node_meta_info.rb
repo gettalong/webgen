@@ -36,6 +36,10 @@ module Webgen
           (key.nil? ? @website.tree[alcn].meta_info : @website.tree[alcn].meta_info[key]) != old_data
       end
 
+      def node_referenced?(iid, node_alcn) #:nodoc
+        iid.first == node_alcn
+      end
+
     end
 
   end

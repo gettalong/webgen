@@ -34,4 +34,9 @@ class TestNodeMetaInfo < MiniTest::Unit::TestCase
     @node.verify
   end
 
+  def test_node_referenced?
+    assert(@obj.node_referenced?(['alcn', nil], 'alcn'))
+    refute(@obj.node_referenced?(['other', nil], 'alcn'))
+  end
+
 end

@@ -27,4 +27,9 @@ class TestNodeContent < MiniTest::Unit::TestCase
     @website.verify
   end
 
+  def test_node_referenced?
+    assert(@obj.node_referenced?('alcn', 'alcn'))
+    refute(@obj.node_referenced?('other', 'alcn'))
+  end
+
 end
