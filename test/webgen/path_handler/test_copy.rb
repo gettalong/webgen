@@ -11,10 +11,6 @@ require 'webgen/path'
 
 class TestPathHandlerCopy < MiniTest::Unit::TestCase
 
-  class TestCP
-    def call(context); context.content = context.content.reverse; end
-  end
-
   def setup
     @website = MiniTest::Mock.new
     @website.expect(:tree, Webgen::Tree.new(@website))
@@ -26,9 +22,6 @@ class TestPathHandlerCopy < MiniTest::Unit::TestCase
 
     @copy = Webgen::PathHandler::Copy.new(@website)
     @root = Webgen::Node.new(@website.tree.dummy_root, '/', '/')
-
-    # @without = @obj.create_node(path_with_meta_info('/default.css') {StringIO.new('# header')})
-    # @with = @obj.create_node(path_with_meta_info('/other.test.css') {StringIO.new('# header')})
   end
 
   def test_create_node
