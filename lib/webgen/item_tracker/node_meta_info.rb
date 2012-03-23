@@ -15,6 +15,7 @@ module Webgen
     #
     # [node_alcn, key]
     #   Tracks changes to a specific meta information key of the node.
+    #
     class NodeMetaInfo
 
       def initialize(website) #:nodoc:
