@@ -44,23 +44,23 @@ class TestItemTracker < MiniTest::Unit::TestCase
     tracker.register('Sample')
     tracker.add(node, :sample, 'mydata')
 
-    # Item should be changed because no cache data is available
-    assert(tracker.send(:item_changed?, tracker.send(:unique_id, :sample, 'mydata')))
+    # Node should be changed because no cache data is available
+    assert(tracker.node_changed?(node))
 
-    # Item should not be changed after it gets written
+    # Node should not be changed after it gets written
     blackboard.dispatch_msg(:after_node_written, node)
-    refute(tracker.send(:item_changed?, tracker.send(:unique_id, :sample, 'mydata')))
+    refute(tracker.node_changed?(node))
 
     # Test the initial loading of the cache data
     cache[:item_tracker_data] = {
-      :node_dependencies => {'/alcn' => ['data'], 'alcn' => ['data']},
+      :node_dependencies => {'/alcn' => [[:sample, 'mydata']], 'alcn' => ['data']},
       :item_data => {[:sample, 'mydata'] => 'alcnmydata', [:sample, 'other'] => 'alcnother'}
     }
     blackboard.dispatch_msg(:website_initialized)
     assert_equal(cache[:item_tracker_data], tracker.instance_variable_get(:@cached))
 
-    # Item should not be changed because of cache data
-    refute(tracker.send(:item_changed?, tracker.send(:unique_id, :sample, 'mydata')))
+    # Node should not be changed because of cache data
+    refute(tracker.node_changed?(node))
 
     # Test the final writing of the cache data
     blackboard.dispatch_msg(:after_node_written, node) # needs to be done again because of :website_initialized above

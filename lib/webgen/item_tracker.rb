@@ -139,14 +139,13 @@ module Webgen
     def add(node, name, *item)
       uid = unique_id(name, item)
       @node_dependencies[node.alcn] << uid
-      @item_data[uid] ||= item_tracker(name).item_data(*item)
+      @item_data[uid] = item_tracker(name).item_data(*item)
     end
 
     # Return +true+ if the given node has changed.
     def node_changed?(node)
-      item_changed?(unique_id(:node_content, node.alcn)) ||
-        item_changed?(unique_id(:node_meta_info, node.alcn)) ||
-        (@cached[:node_dependencies][node.alcn] || []).any? {|uid| item_changed?(uid)}
+      !@cached[:node_dependencies].has_key?(node.alcn) ||
+        @cached[:node_dependencies][node.alcn].any? {|uid| item_changed?(uid)}
     end
 
     # Return +true+ if the given node has been referenced by any item tracker extension.
