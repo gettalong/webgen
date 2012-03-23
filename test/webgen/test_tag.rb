@@ -32,7 +32,7 @@ class TestTag < MiniTest::Unit::TestCase
 
   def test_register
     check_tdata = lambda do |tdata, callable,  config_base, mandatory_options, initialized|
-      assert_equal(callable, tdata.callable)
+      assert_equal(callable, tdata.object)
       assert_equal(config_base, tdata.config_base)
       assert_equal(mandatory_options, tdata.mandatory_options)
       assert_equal(initialized, tdata.initialized)

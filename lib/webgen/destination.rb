@@ -103,6 +103,10 @@ module Webgen
     #         (i.e. FileSystem → file_system) of the class name (without the hierarchy part). It
     #         should only contain letters.
     #
+    # [:author] The author of the destination class.
+    #
+    # [:summary] A short description of the destination class.
+    #
     # === Examples:
     #
     #   destination.register('FileSystem')   # registers Webgen::Destination::FileSystem
@@ -112,7 +116,7 @@ module Webgen
     #   destination.register('MyModule::Doit', name: 'doit_now')
     #
     def register(klass, options={}, &block)
-      do_register(klass, options, [], false, &block)
+      do_register(klass, options, false, &block)
     end
 
     # Return the instance of the configured destination class.

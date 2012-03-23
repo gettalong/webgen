@@ -8,7 +8,7 @@ class DummyExtensionManager
   include Webgen::Common::ExtensionManager
 
   def register(name, value)
-    @extensions[name.to_sym] = [value]
+    @extensions[name.to_sym] = OpenStruct.new(:object => value)
   end
 
 end
@@ -19,11 +19,11 @@ class TestExtensionManager < MiniTest::Unit::TestCase
     @dummy = DummyExtensionManager.new
   end
 
-  def test_registered_names
-    assert_kind_of(Array, @dummy.registered_names)
-    assert_empty(@dummy.registered_names)
+  def test_registered_extensions
+    assert_kind_of(Hash, @dummy.registered_extensions)
+    assert_empty(@dummy.registered_extensions)
     @dummy.register('key', 'value')
-    assert_equal([:key], @dummy.registered_names)
+    assert(@dummy.registered_extensions.has_key?(:key))
   end
 
   def test_registered
@@ -48,10 +48,10 @@ class TestExtensionManager < MiniTest::Unit::TestCase
   end
 
   def test_do_register
-    @dummy.send(:do_register, "Klass", {:type => 'test'}, [:type])
-    assert_equal(['DummyExtensionManager::Klass', 'test'],  @dummy.instance_eval { @extensions[:klass] })
-    @dummy.send(:do_register, "Test::Klass", {:name => 'test'}, [:type])
-    assert_equal(['Test::Klass', nil],  @dummy.instance_eval { @extensions[:test] })
+    @dummy.send(:do_register, "Klass")
+    assert_equal('DummyExtensionManager::Klass', @dummy.send(:ext_data, 'klass').object)
+    @dummy.send(:do_register, "Test::Klass", :name => 'test')
+    assert_equal('Test::Klass',  @dummy.send(:ext_data, :test).object)
   end
 
   def test_extension

@@ -122,6 +122,10 @@ module Webgen
     #         (i.e. FileSystem → file_system) of the class name (without the hierarchy part). It
     #         should only contain letters.
     #
+    # [:author] The author of the item tracker class.
+    #
+    # [:summary] A short description of the item tracker class.
+    #
     # === Examples:
     #
     #   item_tracker.register('Node')   # registers Webgen::ItemTracker::Node
@@ -131,7 +135,7 @@ module Webgen
     #   item_tracker.register('MyModule::Doit', name: 'infos')
     #
     def register(klass, options={}, &block)
-      do_register(klass, options, [], false, &block)
+      do_register(klass, options, false, &block)
     end
 
     # Add the given item that is handled by the item tracker extension +name+ as a dependency to the

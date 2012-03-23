@@ -1,5 +1,6 @@
 # -*- encoding: utf-8 -*-
 
+require 'ostruct'
 require 'webgen/common'
 require 'webgen/error'
 
@@ -33,27 +34,33 @@ module Webgen
       #
       # **Note** that this method has to be implemented by classes that include this module. It
       # should register one or more names for an extension object by associating the names with the
-      # extension object data (should be an array where the first element is the extension object)
-      # via the <tt>@extensions</tt> hash. See also #do_register.
+      # extension object data (should be an object that responds at least to :object, :author and
+      # :summary) via the <tt>@extensions</tt> hash. See also #do_register.
       def register(klass, options = {}, &block)
         raise NotImplementedError
       end
 
       # Automatically perform the necessary steps to register the extension +klass+. This involves
-      # normalization of the class name, retrieving the name for the extension from the +options+
-      # hash and then associating the name with the extension. Also returns the (possibly
-      # automatically generated) name for the extension.
+      # normalization of the class name and associating the extension name (derived from the class
+      # name if not set via the key :name in the options hash) with the extension.
       #
-      # The parameter +fields+ can be used to add additional fields (in order of appearance; the
-      # values are taken from the options hash) to the associated data array. The parameter
-      # +allow_block+ specifies whether the extension manager allows blocks as extensions.
-      def do_register(klass, options, fields = [], allow_block = true, &block)
+      # The parameter +options+ allows to associate additional information with an extension. The
+      # recognized keys are :name (for the extension name), :author (for author information) and
+      # :summary (for a summary of the function of the extension).
+      #
+      # The parameter +allow_block+ specifies whether the extension manager allows blocks
+      # as extensions. If a block is provided, the +klass+ parameter is not used.
+      #
+      # Returns the (possibly automatically generated) name for the extension.
+      def do_register(klass, options = {}, allow_block = true, &block)
         if !allow_block && block_given?
           raise ArgumentError, "The extension manager '#{self.class.name}' does not support blocks on #register"
         end
-        klass, klass_name = normalize_class_name(klass)
+        klass, klass_name = normalize_class_name(klass, !block_given?)
         name = (options[:name] || Webgen::Common.snake_case(klass_name)).to_sym
-        @extensions[name] = [(block_given? ? block : klass), *fields.map {|f| options[f]}]
+        @extensions[name] = OpenStruct.new(:object => (block_given? ? block : klass),
+                                           :author => options[:author].to_s,
+                                           :summary => options[:summary].to_s)
         name
       end
       private :do_register
@@ -78,10 +85,16 @@ module Webgen
       def extension(name)
         raise Webgen::Error.new("No extension called '#{name}' registered for the '#{self.class.name}' extension manager") unless registered?(name)
         name = name.to_sym
-        ext = @extensions[name].first
-        ext.kind_of?(String) ? @extensions[name][0] = resolve_class(ext) : ext
+        ext = @extensions[name].object
+        ext.kind_of?(String) ? @extensions[name].object = resolve_class(ext) : ext
       end
       private :extension
+
+      # Return the extension data for the extension +name+.
+      def ext_data(name)
+        @extensions[name.to_sym]
+      end
+      private :ext_data
 
       # If +class_or_name+ is a String, it is taken as the name of a class and is resolved. Else
       # returns +class_or_name+.
@@ -96,9 +109,9 @@ module Webgen
         @extensions.has_key?(name.to_sym)
       end
 
-      # Return the names of all available extension names registered with this manager class.
-      def registered_names
-        @extensions.keys.sort
+      # Return the meta data of all extensions registered with this manager class.
+      def registered_extensions
+        @extensions.dup
       end
 
     end

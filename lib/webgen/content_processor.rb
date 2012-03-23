@@ -79,6 +79,10 @@ module Webgen
     # [:type] Defines which type of content the content processor can process. Can be set to either
     #         <tt>:text</tt> (the default) or <tt>:binary</tt>.
     #
+    # [:author] The author of the content processor.
+    #
+    # [:summary] A short description of the content processor.
+    #
     # === Examples:
     #
     #   content_processor.register('Kramdown')     # registers Webgen::ContentProcessor::Kramdown
@@ -92,8 +96,8 @@ module Webgen
     #   end
     #
     def register(klass, options={}, &block)
-      options[:type] ||= :text
-      do_register(klass, options, [:type], &block)
+      name = do_register(klass, options, true, &block)
+      ext_data(name).type = options[:type] || :text
     end
 
     # Call the content processor object identified by the given name with the given context.
@@ -108,7 +112,7 @@ module Webgen
 
     # Return whether the content processor is processing binary data.
     def is_binary?(name)
-      registered?(name) && @extensions[name.to_sym].last == :binary
+      registered?(name) && ext_data(name).type == :binary
     end
 
   end

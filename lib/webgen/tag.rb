@@ -64,7 +64,7 @@ module Webgen
 
     include Webgen::Common::ExtensionManager
 
-    TagData = Struct.new(:callable, :config_base, :mandatory_options, :initialized)
+    TagData = Struct.new(:object, :config_base, :mandatory_options, :initialized)
 
     def initialize(website) # :nodoc:
       super()
@@ -96,6 +96,10 @@ module Webgen
     #              first configuration option name is used as the default mandatory option (used
     #              when only a string is provided in the tag definition).
     #
+    # [:author] The author of the tag.
+    #
+    # [:summary] A short description of the tag.
+    #
     # === Examples:
     #
     #   tag.register('Date')    # registers Webgen::Tag::Date
@@ -108,7 +112,7 @@ module Webgen
     #     Time.now.strftime(param('tag.date.format'))
     #   end
     #
-    def register(klass, options={}, &block)
+    def register(klass, options = {}, &block)
       klass, klass_name = normalize_class_name(klass, !block_given?)
       tag_names = [options[:names] || Webgen::Common.snake_case(klass_name)].flatten.map {|n| n.to_sym}
       config_base = options[:config_base] || klass.gsub(/::/, '.').gsub(/^Webgen\./, '').downcase
@@ -124,7 +128,7 @@ module Webgen
       tdata = tag_data(tag, context)
       if !tdata.nil?
         context[:config] = create_config(tag, params, tdata, context)
-        result, process_output = tdata.callable.call(tag, body, context)
+        result, process_output = tdata.object.call(tag, body, context)
         result = context.website.ext.content_processor.call('tags', context.clone(:content => result)).content if process_output
       else
         raise Webgen::RenderError.new("No tag processor for '#{tag}' found", self.class.name,
@@ -197,7 +201,7 @@ module Webgen
     def tag_data(tag, context)
       tdata = @extensions[tag.to_sym] || @extensions[:default]
       if tdata && !tdata.initialized
-        tdata.callable = resolve_class(tdata.callable)
+        tdata.object = resolve_class(tdata.object)
         tdata.mandatory_options.each_with_index do |o, index|
           next if context.website.config.option?(o)
           o = tdata.config_base + '.' + o

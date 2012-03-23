@@ -78,6 +78,10 @@ module Webgen
     #         FileSystem → file_system) of the class name (without the hierarchy part). It should
     #         only contain letters.
     #
+    # [:author] The author of the source class.
+    #
+    # [:summary] A short description of the source class.
+    #
     # === Examples:
     #
     #   source.register('FileSystem')   # registers Webgen::Source::FileSystem
@@ -87,7 +91,7 @@ module Webgen
     #   source.register('MyModule::Doit', name: 'my_doit')
     #
     def register(klass, options={}, &block)
-      do_register(klass, options, [], false, &block)
+      do_register(klass, options, false, &block)
     end
 
     # Return all configured source paths.
