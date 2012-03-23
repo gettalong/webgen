@@ -5,7 +5,8 @@ require 'webgen/item_tracker'
 module Webgen
   class ItemTracker
 
-    # This class is used to track changed node content via the +modified_at+ meta information.
+    # This class is used to track changes to the content of a node. The content of a node is changed
+    # if any of its dependencies are changed.
     #
     # The item for this tracker is the alcn of the node.
     class NodeContent
@@ -19,11 +20,11 @@ module Webgen
       end
 
       def item_data(alcn) #:nodoc:
-        @website.tree[alcn]['modified_at']
+        nil
       end
 
       def changed?(alcn, old_data) #:nodoc:
-        @website.tree[alcn].nil? || @website.tree[alcn]['modified_at'] != old_data
+        @website.tree[alcn].nil? || @website.ext.item_tracker.node_changed?(@website.tree[alcn])
       end
 
       def node_referenced?(alcn, node_alcn) #:nodoc:
