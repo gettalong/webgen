@@ -70,10 +70,10 @@ module Webgen
       # defined under this class, it is autoloaded by turning the class name into a path name (See
       # Webgen::Common.snake_case).
       def normalize_class_name(klass, do_autoload = true)
-        klass = (klass.include?('::') ? klass : "#{self.class.name}::#{klass}")
-        klass_name = klass.split(/::/).last
-        if do_autoload && klass.start_with?(self.class.name) && klass_name =~ /^[A-Z]/
-          self.class.autoload(klass_name.to_sym, Webgen::Common.snake_case(klass))
+        klass = (klass.kind_of?(Class) || klass.include?('::') ? klass : "#{self.class.name}::#{klass}")
+        klass_name = klass.to_s.split(/::/).last
+        if do_autoload && klass.to_s.start_with?(self.class.name) && klass_name =~ /^[A-Z]/
+          self.class.autoload(klass_name.to_sym, Webgen::Common.snake_case(klass.to_s))
         end
         [klass, klass_name]
       end
