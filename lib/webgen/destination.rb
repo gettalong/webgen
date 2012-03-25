@@ -81,7 +81,7 @@ module Webgen
   #     end
   #   end
   #
-  #   website.ext.destination.register '::MemoryDestination'
+  #   website.ext.destination.register MemoryDestination, :name => 'memory'
   #
   class Destination
 

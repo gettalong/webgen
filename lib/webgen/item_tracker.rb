@@ -77,7 +77,7 @@ module Webgen
   #
   #   end
   #
-  #   $website.ext.item_tracker.register '::ConfigTracker', name: :config
+  #   website.ext.item_tracker.register ConfigTracker, name: :config
   #
   class ItemTracker
 
