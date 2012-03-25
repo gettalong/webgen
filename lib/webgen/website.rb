@@ -20,6 +20,8 @@ require 'webgen/configuration'
 require 'webgen/blackboard'
 require 'webgen/cache'
 require 'webgen/error'
+require 'webgen/tree'
+require 'webgen/extension_loader'
 
 # Load other needed files
 require 'webgen/path'
@@ -172,9 +174,6 @@ module Webgen
   #
   class Website
 
-    # Used for making sure only one website loads extension files.
-    LOAD_SEMAPHORE = Mutex.new
-
     # The website configuration. Can only be used after #init has been called (which is
     # automatically done in #render).
     attr_reader :config
@@ -219,21 +218,11 @@ module Webgen
       @cache = nil
       @ext = OpenStruct.new
 
-      init_extensions
+      ExtensionLoader.new(self).load_all
       load_configuration
       restore_cache
     end
     private :init
-
-    def init_extensions
-      LOAD_SEMAPHORE.synchronize do
-        $website = self
-        load('webgen/extensions.rb', true)
-        Dir.glob(File.join(@directory, 'ext', '**/init.rb')) {|f| load(f, true)}
-        $website = nil
-      end
-    end
-    private :init_extensions
 
     def load_configuration
       config_file = File.join(@directory, 'config.yaml')
