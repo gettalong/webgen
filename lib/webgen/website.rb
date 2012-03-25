@@ -152,6 +152,8 @@ module Webgen
   end
 
 
+  # TODO: update!!!
+  #
   # Represents a webgen website and is used to render it.
   #
   # Normally, webgen is used from the command line via the +webgen+ command or from Rakefiles via
@@ -198,40 +200,65 @@ module Webgen
     # The website directory.
     attr_reader :directory
 
-    # Create a new webgen website for the website in the directory +dir+. If no logger is specified,
-    # a dummy logger that logs to a StringIO is created. You can provide a block (has to take the
-    # configuration object as parameter) for adjusting the configuration values during the
-    # initialization.
+    # Create a new webgen Website object for the website in the directory +dir+ and initialize it
+    # (calls #init).
+    #
+    # If no logger is specified, a dummy logger that logs to a StringIO is created.
+    #
+    # You can provide a block for modifying the Website object in any way during the initialization.
+    # If the block only takes one parameter, it is called with the Website object after the
+    # initialization is done. If it takes two parameters, the first one is the Website object and
+    # the second one is a boolean specifying whether the block is currently called before the
+    # initialization (value is +true+) or after it (value is +false).
     def initialize(dir, logger = nil, &block)
       @directory = dir
       @logger = logger || Logger.new(StringIO.new)
-      @config_block = block
+      @init_block = block
       init
     end
 
     # Initialize the configuration, blackboard and cache objects and load the default configuration
     # as well as website specific extensions.
     def init
-      @tree = Tree.new
+      @tree = Tree.new(self)
       @blackboard = Blackboard.new
       @config = Configuration.new
       @cache = nil
       @ext = OpenStruct.new
 
-      ExtensionLoader.new(self).load_all
+      @init_block.call(self, true) if @init_block && @init_block.arity == 2
+      load_extensions
       load_configuration
+      if @init_block
+        @init_block.arity == 1 ? @init_block.call(self) : @init_block.call(self, false)
+      end
+      @config.freeze
+
       restore_cache
+      @blackboard.dispatch_msg(:website_initialized)
     end
     private :init
 
+    # Load all extension files.
+    #
+    # This loads the extension file for the shipped extensions as well as all website specific
+    # extensions.
+    def load_extensions
+      ext_dir = File.join(@directory, 'ext')
+      ext_loader = ExtensionLoader.new(self, ext_dir)
+      ext_loader.load('webgen/extensions')
+      Dir[File.join(ext_dir, '**/init.rb')].sort.each {|file| load(file[extdir.length..-1])}
+      ext_loader.load('init.rb') if File.file?(File.join(ext_dir, 'init.rb'))
+    end
+    private :load_extensions
+
+    # Load the configuration file into the Configuration object.
     def load_configuration
       config_file = File.join(@directory, 'config.yaml')
       if File.exist?(config_file)
         @config.load_from_file(config_file)
         @logger.debug { "Configuration data loaded from <#{config_file}>" }
       end
-      @config_block.call(@config) if @config_block
-      @config.freeze
     end
     private :load_configuration
 
@@ -259,6 +286,9 @@ module Webgen
       @logger.info { "webgen has finished" }
     end
 
+    # TODO: extract this method into a new Task extension. The website then just has an execute
+    # method that is given a task name and optional arguments.
+    #
     # Clean the website directory from all generated output files (including the cache file). If
     # +del_outdir+ is +true+, then the base output directory is also deleted. When a delete
     # operation fails, the error is silently ignored and the clean operation continues.
