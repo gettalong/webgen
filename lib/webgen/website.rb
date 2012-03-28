@@ -15,7 +15,7 @@ require 'ostruct'
 require 'rbconfig'
 
 # Requirements for Website
-require 'webgen/coreext'
+require 'webgen/core_ext'
 require 'webgen/configuration'
 require 'webgen/blackboard'
 require 'webgen/cache'

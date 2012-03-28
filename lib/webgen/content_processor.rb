@@ -1,6 +1,5 @@
 # -*- encoding: utf-8 -*-
 
-require 'webgen/coreext'
 require 'webgen/common'
 require 'webgen/error'
 

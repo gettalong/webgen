@@ -2,19 +2,6 @@
 
 require 'webgen/error'
 
-# :stopdoc:
-class Array
-
-  def to_hash
-    h = {}
-    self.each {|k,v| h[k] = v}
-    h
-  end
-
-end
-# :startdoc:
-
-
 # Require the given library but handle a possible loading error more gracefully.
 #
 # The parameter +gem+ (which defaults to +library+) should be set to the Rubygem that provides the

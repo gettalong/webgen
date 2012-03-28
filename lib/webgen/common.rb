@@ -1,5 +1,7 @@
 # -*- encoding: utf-8 -*-
 
+require 'webgen/core_ext'
+
 module Webgen
 
   # Namespace for classes and methods that provide common functionality.
