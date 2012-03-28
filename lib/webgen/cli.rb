@@ -3,6 +3,9 @@
 require 'cmdparse'
 require 'webgen/website'
 require 'webgen/version'
+require 'webgen/cli/logger'
+require 'webgen/cli/utils'
+require 'webgen/cli/run_command'
 
 module Webgen
 
@@ -10,19 +13,15 @@ module Webgen
   #
   # == Implementing a CLI command
   #
-  # Each CLI command class needs to be put into this module and has to end with +Command+, otherwise
-  # it is not used. A CLI command is an extension that can be invoked from the webgen command and
-  # thus needs to be derived from CmdParse::Command. For detailed information on this class and the
-  # whole cmdparse package have a look at http://cmdparse.rubyforge.org!
+  # A CLI command is an extension that can be invoked from the webgen CLI and thus needs to be
+  # derived from CmdParse::Command. For detailed information on this class and the whole cmdparse
+  # package have a look at http://cmdparse.rubyforge.org!
   #
-  # == Sample CLI command
+  # == Sample CLI command extension
   #
-  # Here is a sample CLI command extension which could be put, for example, into the
-  # <tt>ext/init.rb</tt> of a webgen website:
+  # Here is a sample CLI command extension:
   #
-  #   require 'webgen/cli'
-  #
-  #   class Webgen::CLI::SampleCommand < CmdParse::Command
+  #   class SampleCommand < CmdParse::Command
   #
   #     def initialize
   #       super('sample', false)
@@ -43,8 +42,8 @@ module Webgen
   #       else
   #         puts "Command line arguments:"
   #         args.each {|arg| puts arg}
-  #         if commandparser.verbosity == :verbose
-  #           puts "Yeah, some additional information is always cool!"
+  #         if commandparser.log_level <= 1
+  #           puts "Some debug information here"
   #         end
   #         puts "The entered username: #{@username}" if @username
   #       end
@@ -52,77 +51,62 @@ module Webgen
   #
   #   end
   #
+  #   website.ext.cli_commands << SampleCommand.new
+  #
   # Note the use of Webgen::CLI::Utils.format in the initialize method so that the long text gets
   # wrapped correctly! The Utils class provides some other useful methods, too!
   #
-  # For information about which attributes are available on the webgen command parser instance have
-  # a look at Webgen::CLI::CommandParser!
   module CLI
 
-    autoload :RunCommand, 'webgen/cli/run_command'
-    autoload :CreateCommand, 'webgen/cli/create_command'
-    autoload :WebguiCommand, 'webgen/cli/webgui_command'
-    autoload :ApplyCommand, 'webgen/cli/apply_command'
-
-    autoload :Utils, 'webgen/cli/utils'
-
-
-    # This is the command parser class used for handling the webgen command line interface. After
-    # creating an instance, the inherited #parse method can be used for parsing the command line
+    # This is the command parser class used for handling the webgen command line interface.
+    #
+    # After creating an instance, the #parse method can be used for parsing the command line
     # arguments and executing the requested command.
     class CommandParser < CmdParse::CommandParser
 
-      # The website directory. Default: the current working directory.
+      # The website directory. Default: the value of the WEBGEN_WEBSITE environment variable or the
+      # current working directory.
       attr_reader :directory
 
-      # The verbosity level. Default: <tt>:normal</tt>
-      attr_reader :verbosity
-
-      # The log level. Default: <tt>Logger::WARN</tt>
+      # The log level. Default: <tt>Logger::INFO</tt>
       attr_reader :log_level
 
       # Create a new CommandParser class.
-      def initialize # :nodoc:
+      def initialize
         super(true)
         @directory = (ENV['WEBGEN_WEBSITE'].to_s.empty? ? Dir.pwd : ENV['WEBGEN_WEBSITE'])
-        @verbosity = :normal
-        @log_level = ::Logger::WARN
-        @log_filter = nil
+        @log_level = ::Logger::INFO
 
         self.program_name = "webgen"
         self.program_version = Webgen::VERSION
         self.options = CmdParse::OptionParserWrapper.new do |opts|
           opts.separator "Global options:"
           opts.on("--directory DIR", "-d", String, "The website directory (default: the current directory)") {|p| @directory = p}
-          opts.on("--verbose", "-v", "Print more output") { @verbosity = :verbose }
-          opts.on("--quiet", "-q", "No output") { @verbosity = :quiet }
-          opts.on("--log-level LEVEL", "-l", Integer, "The logging level (0..debug, 3..error)") {|p| @log_level = p}
-          opts.on("--log-filter", "-f", Regexp, 'Filter for logging events') {|p| @log_filter = p}
+          opts.on("--log-level LEVEL", "-l", Integer, "The logging level (default=1; 0=debug, 1=info, 2=warning, 3=error)") {|p| @log_level = p}
         end
         self.add_command(CmdParse::HelpCommand.new)
         self.add_command(CmdParse::VersionCommand.new)
+        self.add_command(Webgen::CLI::RunCommand.new, true)
       end
 
-      # Utility method for sub-commands to create the correct Webgen::Website object. The website
-      # directory (if not specified via the <tt>-d</tt> option) is taken from the environment
-      # variable +WEBGEN_WEBSITE+ or, if it is not set or empty, the current working directory.
-      def create_website
-        if !defined?(@website)
-          @website = Webgen::Website.new(@directory) do |config|
-            config['logger.mask'] = @log_filter
+      # Utility method for getting the Webgen::Website object.
+      def website
+        @website ||= Webgen::Website.new(@directory, Webgen::CLI::Logger.new) do |site, before_init|
+          if before_init
+            site.ext.cli_commands = []
+            site.logger.level = @log_level
           end
-          @website.logger.level = @log_level
-          @website.logger.verbosity = @verbosity
         end
-        @website
       end
 
-      # :nodoc:
+      # Parse the command line arguments.
+      #
+      # Once the website directory information is gathered, the Webgen::Website is initialized to
+      # add additional CLI commands specified by extensions.
       def parse(argv = ARGV)
-        Webgen::CLI.constants.select {|c| c =~ /.+Command$/ }.each do |c|
-          self.add_command(Webgen::CLI.const_get(c).new, (c.to_s == 'RunCommand' ? true : false))
+        super do |level, name|
+          website.ext.cli_commands.each {|cmd| self.add_command(cmd)} if level == 0
         end
-        super
       end
 
     end
