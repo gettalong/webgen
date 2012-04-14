@@ -19,10 +19,7 @@ module Webgen
         @website = website
       end
 
-      # Return the content of the given +node+. If the return value is not +nil+ then the node gets
-      # written, otherwise it is ignored.
-      #
-      # This default +content+ method just returns +nil+.
+      # Return the content of the given +node+.
       def content(node)
       end
 
