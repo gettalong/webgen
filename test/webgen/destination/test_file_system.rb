@@ -29,7 +29,7 @@ class TestDestinationFileSystem < MiniTest::Unit::TestCase
     dest = Webgen::Destination::FileSystem.new(@website, 'test')
     assert(!dest.exists?('/dir/hallo'))
 
-    dest.write('/dir/hallo', 'content', :file)
+    dest.write('/dir/hallo', 'content')
     assert(File.file?(File.join(dest.root, 'dir/hallo')))
     assert(dest.exists?('/dir/hallo'))
     assert_equal('content', File.read(File.join(dest.root, 'dir/hallo')))
@@ -38,7 +38,7 @@ class TestDestinationFileSystem < MiniTest::Unit::TestCase
     dest.delete('/dir/hallo')
     refute(dest.exists?('/dir/hallo'))
 
-    dest.write('/dir/hallo', Webgen::Path.new('fu') { StringIO.new("contentö")}, :file)
+    dest.write('/dir/hallo', Webgen::Path.new('fu') { StringIO.new("contentö")})
     assert(dest.exists?('/dir/hallo'))
     assert_equal('contentö', dest.read('/dir/hallo', 'r'))
     assert_equal('contentö', File.read(File.join(dest.root, 'dir/hallo')))
@@ -46,10 +46,8 @@ class TestDestinationFileSystem < MiniTest::Unit::TestCase
     dest.delete('/dir')
     refute(dest.exists?('/dir'))
 
-    dest.write('/dir', '', :directory)
+    dest.write('/dir/', '')
     assert(File.directory?(File.join(dest.root, 'dir')))
-
-    assert_raises(RuntimeError) { dest.write('other', '', :unknown) }
   ensure
     FileUtils.rm_rf(@dir)
   end

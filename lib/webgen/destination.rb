@@ -34,11 +34,10 @@ module Webgen
   # [<tt>delete(path)</tt>]
   #   Delete the given path.
   #
-  # [<tt>write(path, data, type)</tt>]
-  #   Write the +data+ to the given +path+. The parameter +data+ is either a String with the content
-  #   or a Webgen::Path object. If it is the latter, use the Webgen::Path#io method for retrieving
-  #   the IO object. The parameter +type+ specifies the type of the to be written path:
-  #   <tt>:file</tt> or <tt>:directory</tt>.
+  # [<tt>write(path, data)</tt>]
+  #   Write the +data+ to the given +path+. If +path+ ends with a slash, a directory should be
+  #   created. The parameter +data+ is either a String with the content or a Webgen::Path object. If
+  #   it is the latter, use the Webgen::Path#io method for retrieving the IO object.
   #
   # [<tt>read(path, mode = 'rb')</tt>]
   #   Return the content of the given path if it exists or raise an error otherwise. The parameter
@@ -70,14 +69,13 @@ module Webgen
   #       @data.delete(path)
   #     end
   #
-  #     def write(path, data, type = :file)
-  #       @data[path] = [(data.kind_of?(String) ? data : data.data), type]
+  #     def write(path, data)
+  #       @data[path] = (data.kind_of?(String) ? data : data.data)
   #     end
   #
   #     def read(path, mode = 'rb')
-  #       path = File.join('/', path)
-  #       raise "No such file #{path}" unless @data[path] && @data[path].last == :file
-  #       @data[path].first
+  #       raise "No such path #{path}" unless @data[path] && path[-1] != ?/
+  #       @data[path]
   #     end
   #   end
   #
@@ -139,11 +137,9 @@ module Webgen
       instance.delete(path)
     end
 
-    # Write the +data+ (either a String or a Webgen::Path object) to the given +path+. The +type+
-    # parameter specifies the type of the path to be created which can either be <tt>:file</tt> or
-    # <tt>:directory</tt>.
-    def write(path, data, type = :file)
-      instance.write(path, data, type)
+    # Write the +data+ (either a String or a Webgen::Path object) to the given +path+.
+    def write(path, data)
+      instance.write(path, data)
     end
 
     # Return the content of the given +path+ which is opened in +mode+.

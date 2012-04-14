@@ -34,14 +34,13 @@ module Webgen
         end
       end
 
-      # Write the +data+ to the given +path+. The +type+ parameter specifies the type of the path to
-      # be created which can either be <tt>:file</tt> or <tt>:directory</tt>.
-      def write(path, data, type = :file)
+      # Write the +data+ to the given +path+.
+      def write(path, data)
         dest = File.join(@root, path)
         FileUtils.makedirs(File.dirname(dest))
-        if type == :directory
+        if path[-1] == ?/
           FileUtils.makedirs(dest)
-        elsif type == :file
+        else
           if data.kind_of?(String)
             File.open(dest, 'wb') {|f| f.write(data) }
           else
@@ -49,8 +48,6 @@ module Webgen
               File.open(dest, 'wb') {|f| FileUtils.copy_stream(source, f) }
             end
           end
-        else
-          raise "Unsupported path type '#{type}' for <#{path}>"
         end
       end
 

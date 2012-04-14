@@ -7,12 +7,6 @@ class Webgen::Destination::MyDestination
 
   def initialize(website); end
 
-  def call(context)
-    raise Webgen::Error.new('msg') if context == 'webgen'
-    raise 'msg' if context == 'error'
-    context + 'value'
-  end
-
 end
 
 class TestDestination < MiniTest::Unit::TestCase
