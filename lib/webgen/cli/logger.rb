@@ -19,20 +19,14 @@ module Webgen
           msg.gsub!(/<.*?>/) {|m| Utils.bold(m)}
           case severity
           when 'INFO'
-            if msg =~ /^\[.*?\] /
-              msg.insert(0, '  ')
-            else
-              msg.chomp!
-              msg << "\n"
-            end
             msg.sub!(/^\s*\[(?:create|update)\]/) {|m| Utils.bold(Utils.green(m))}
-            msg
+            "%-5s %s\n" % [severity, msg]
           when 'WARN'
-            "%s%9s%s %s\n" % [Utils.bold + Utils.yellow, severity, Utils.reset, msg]
+            "%s%-5s%s %s\n" % [Utils.bold + Utils.yellow, severity, Utils.reset, msg]
           when 'ERROR', 'FATAL'
-            "%s%9s%s %s\n" % [Utils.bold + Utils.red, severity, Utils.reset, msg]
+            "%s%-5s%s %s\n" % [Utils.bold + Utils.red, severity, Utils.reset, msg]
           when 'DEBUG'
-            "%9s%s %s\n" % [severity, progname ? " (#{progname})" : '', msg]
+            "%-5s%s %s\n" % [severity, progname ? " (#{progname})" : '', msg]
           else
             raise ArgumentError, 'Unsupported logger severity level'
           end

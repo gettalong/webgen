@@ -25,10 +25,13 @@ class TestLogger < MiniTest::Unit::TestCase
       l.debug('program') { "debug" }
     end
     expected = <<EOF
-information
-  [create] information  [update] information  [delete] information     WARN warning
-    ERROR error
-    DEBUG (program) debug
+INFO  information
+INFO  [create] information
+INFO  [update] information
+INFO  [delete] information
+WARN  warning
+ERROR error
+DEBUG (program) debug
 EOF
     assert_equal(expected, out)
   ensure
