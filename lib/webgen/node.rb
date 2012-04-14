@@ -65,9 +65,8 @@ module Webgen
     #    include a language part!
     # [+dest_path+ (immutable)]
     #    The full output path for this node. If this node is a directory, the path must have a
-    #    trailing slash (<tt>dir/</tt>). If it is a fragment, the hash sign must be the first
-    #    character of the path (<tt>#fragment</tt>). This can also be an absolute path like
-    #    <tt>http://myhost.com/</tt>.
+    #    trailing slash (<tt>dir/</tt>). If it is a fragment, it has to include a hash sign. This
+    #    can also be an absolute path like <tt>http://myhost.com/</tt>.
     # [+meta_info+]
     #    A hash with meta information for the new node.
     #
