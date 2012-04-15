@@ -129,8 +129,12 @@ require 'webgen/item_tracker'
 website.ext.item_tracker = item_tracker = Webgen::ItemTracker.new(website)
 item_tracker.register('NodeContent', :author => author,
                       :summary => 'Tracks changes to the content of a node')
+
 item_tracker.register('NodeMetaInfo', :author => author,
                       :summary => 'Tracks changes to the meta information of a node')
+website.blackboard.add_listener(:after_node_created) do |node|
+  item_tracker.add(node, :node_meta_info, node.alcn)
+end
 
 
 ########################################################################
@@ -149,8 +153,38 @@ option('path_handler.patterns.case_sensitive', false,
 option('path_handler.patterns.match_leading_dot', false,
        'Specifies whether paths parts starting with a dot are matched', &true_or_false)
 
+option('path_handler.default_meta_info',
+       {
+         :all => {
+           'dest_path' => ':parent:basename(.:lang):ext',
+         },
+         'directory' => {
+           'index_path' => 'index.html',
+         },
+       },
+       'Default meta information for all nodes (key :all) and for nodes belonging to a specific path handler') do |val|
+  raise "The value has to be a hash" unless val.kind_of?(Hash)
+  cur_val = website.config['path_handler.default_meta_info']
+  val.each do |handler, mi|
+    raise "The value for each key has to be a hash" unless mi.kind_of?(Hash)
+    action = ((mi.delete(:action) || 'modify') == 'modify' ? :update : :replace)
+    (cur_val[handler] ||= {}).send(action, mi)
+  end
+  cur_val
+end
 
 website.ext.path_handler = path_handler = Webgen::PathHandler.new(website)
+
+# handlers are registered in invocation order
+
+path_handler.register('Directory', :patterns => ['**/'], :author => author,
+                      :summary => 'Creates the needed output directories from the source directories')
+path_handler.register('Metainfo', :patterns => ['**/metainfo', '**/*.metainfo'], :author => author,
+                      :summary => 'Provides the ability to set meta information for any path')
+path_handler.register('Template', :patterns => ['**/*.template'], :author => author,
+                      :summary => 'Handles template files for layouting page and other template files')
+path_handler.register('Page', :patterns => ['**/*.page'], :author => author,
+                      :summary => 'Generates HTML files from page files')
 
 path_handler.register('Copy', :author => author,
                       :summary => 'Copies files from the source to the destination directory, optionally processing them with one or more content processors')
@@ -161,18 +195,10 @@ option('path_handler.copy.patterns',
   val
 end
 
-path_handler.register('Directory', :patterns => ['**/'], :author => author,
-                      :summary => 'Creates the needed output directories from the source directories')
 path_handler.register('Feed', :patterns => ['**/*.feed'], :author => author,
                       :summary => 'Automatically generates atom or RSS feeds for a set of files')
-path_handler.register('Metainfo', :patterns => ['**/metainfo', '**/*.metainfo'], :author => author,
-                      :summary => 'Provides the ability to set meta information for any path')
-path_handler.register('Page', :patterns => ['**/*.page'], :author => author,
-                      :summary => 'Generates HTML files from page files')
 path_handler.register('Sitemap', :patterns => ['**/*.sitemap'], :author => author,
                       :summary => 'Generates a sitemap file')
-path_handler.register('Template', :patterns => ['**/*.template'], :author => author,
-                      :summary => 'Handles template files for layouting page and other template files')
 path_handler.register('Virtual', :patterns => ['**/virtual', '**/*.virtual'], :author => author,
                       :summary => 'Creates nodes from virtual paths')
 
@@ -189,7 +215,7 @@ end
 
 option('sources', [['/', :file_system, 'src']],
        'One or more sources from which paths are read', &sources_validator)
-option('passive_sources', [['/', :resource, "webgen-passive-sources"]],
+option('sources.passive', [], # [['/', :resource, "webgen-passive-sources"]],
        'One or more sources from which paths are read that are only used when referenced ', &sources_validator)
 option('sources.ignore_paths', ['**/*~', '**/.svn/**'],
        'Patterns for paths that should be ignored') do |val|
