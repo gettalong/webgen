@@ -10,7 +10,6 @@
 require 'logger'
 require 'stringio'
 require 'fileutils'
-require 'thread'
 require 'ostruct'
 require 'rbconfig'
 
@@ -247,7 +246,7 @@ module Webgen
       ext_dir = File.join(@directory, 'ext')
       ext_loader = ExtensionLoader.new(self, ext_dir)
       ext_loader.load('webgen/extensions')
-      Dir[File.join(ext_dir, '**/init.rb')].sort.each {|file| load(file[extdir.length..-1])}
+      Dir[File.join(ext_dir, '**/init.rb')].sort.each {|file| ext_loader.load(file[ext_dir.length..-1])}
       ext_loader.load('init.rb') if File.file?(File.join(ext_dir, 'init.rb'))
     end
     private :load_extensions
@@ -275,16 +274,33 @@ module Webgen
     end
     private :restore_cache
 
-    # Render the website (after calling #init if the website is not already initialized) and return
-    # a status code not equal to +nil+ if rendering was successful.
+    # Render the website.
     def render
-      @logger.info { "Starting webgen..." }
-      #TODO: create loop around rendering routine to loop as often as needed
-      #shm = SourceHandler::Main.new
-      #result = shm.render
-      #save_tree_and_cache if result
-      @logger.info { "webgen has finished" }
+      @logger.info { "Rendering website..." }
+      time = Benchmark.measure do
+        @ext.path_handler.populate_tree
+        if @tree.root
+          @ext.path_handler.write_tree
+          @blackboard.dispatch_msg(:website_generated)
+          save_cache
+        else
+          @logger.info { 'No source files found - maybe not a webgen website?' }
+        end
+      end
+      @logger.info { "...rendering done in " << ('%2.2f' % time.real) << ' seconds' }
     end
+
+    # Save the +cache+ to +website.cache+.
+    def save_cache
+      cache_data = [@cache.dump, Webgen::VERSION]
+      if config['website.cache'].first == :file
+        cache_file = File.join(@directory, config['website.cache'].last)
+        File.open(cache_file, 'wb') {|f| Marshal.dump(cache_data, f)}
+      else
+        config['website.cache'][1] = Marshal.dump(cache_data)
+      end
+    end
+    private :save_cache
 
     # TODO: extract this method into a new Task extension. The website then just has an execute
     # method that is given a task name and optional arguments.
@@ -306,23 +322,6 @@ module Webgen
 
       if del_outdir
         output.delete('/') rescue nil
-      end
-    end
-
-    #######
-    private
-    #######
-
-
-    # Save the +tree+ and the +cache+ to +website.cache+.
-    def save_tree_and_cache
-      #TODO: adapt code!!!
-      cache_data = [@cache.dump, Webgen::VERSION]
-      if config['website.cache'].first == :file
-        cache_file = File.join(@directory, config['website.cache'].last)
-        File.open(cache_file, 'wb') {|f| Marshal.dump(cache_data, f)}
-      else
-        config['website.cache'][1] = Marshal.dump(cache_data)
       end
     end
 
