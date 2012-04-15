@@ -265,7 +265,7 @@ module Webgen
       @cache = Cache.new
       data = if config['website.cache'].first == :file
                cache_file = File.absolute_path(config['website.cache'].last, @directory)
-               File.open(cache_file, 'rb') {|f| f.read} if File.exists?(cache_file)
+               File.binread(cache_file) if File.exists?(cache_file)
              else
                config['website.cache'].last
              end
@@ -294,7 +294,7 @@ module Webgen
     def save_cache
       cache_data = [@cache.dump, Webgen::VERSION]
       if config['website.cache'].first == :file
-        cache_file = File.join(@directory, config['website.cache'].last)
+        cache_file = File.absolute_path(config['website.cache'].last, @directory)
         File.open(cache_file, 'wb') {|f| Marshal.dump(cache_data, f)}
       else
         config['website.cache'][1] = Marshal.dump(cache_data)
