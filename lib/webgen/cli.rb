@@ -5,7 +5,7 @@ require 'webgen/website'
 require 'webgen/version'
 require 'webgen/cli/logger'
 require 'webgen/cli/utils'
-require 'webgen/cli/run_command'
+require 'webgen/cli/render_command'
 
 module Webgen
 
@@ -86,7 +86,7 @@ module Webgen
         end
         self.add_command(CmdParse::HelpCommand.new)
         self.add_command(CmdParse::VersionCommand.new)
-        self.add_command(Webgen::CLI::RunCommand.new, true)
+        self.add_command(Webgen::CLI::RenderCommand.new, true)
       end
 
       # Utility method for getting the Webgen::Website object.
