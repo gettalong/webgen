@@ -107,7 +107,7 @@ module Webgen
         passive_source = extension('stacked').new(@website, @website.config['sources.passive'].collect do |mp, name, *args|
                                                     [mp, extension(name).new(@website, *args)]
                                                   end)
-        passive_source.paths.each {|path| path['no_output'] = true}
+        passive_source.paths.each {|path| path['passive'] = true}
         source = extension('stacked').new(@website, [['/', active_source], ['/', passive_source]])
 
         @paths = {}
