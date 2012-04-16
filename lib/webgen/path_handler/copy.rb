@@ -1,6 +1,7 @@
 # -*- encoding: utf-8 -*-
 
 require 'webgen/path_handler/base'
+require 'webgen/context'
 
 module Webgen
   class PathHandler
