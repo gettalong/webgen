@@ -188,6 +188,11 @@ module Webgen
       @invocation_order.insert(pos, name)
     end
 
+    # Return the instance of the path handler class with the given name.
+    def instance(handler)
+      @instances[handler] ||= extension(handler).new(@website)
+    end
+
     # Populate the website tree with nodes. Can only be called once because the tree can only be
     # populated once!
     def populate_tree
@@ -211,27 +216,18 @@ module Webgen
     def write_tree
       begin
         at_least_one_node_written = false
+        @website.cache.reset_volatile_cache
         @website.tree.node_access[:alcn].sort.each do |name, node|
           begin
-            dest_exists = @website.ext.destination.exists?(node.dest_path)
             next if node == @website.tree.dummy_root ||
-              (node['no_output'] && !@website.ext.item_tracker.node_referenced?(node)) ||
-              (dest_exists && !@website.ext.item_tracker.node_changed?(node))
+              (node['passive'] && !@website.ext.item_tracker.node_referenced?(node)) ||
+              (@website.ext.destination.exists?(node.dest_path) && !@website.ext.item_tracker.node_changed?(node))
 
-            delete_secondary_nodes(node.alcn)
-
-            @website.logger.info do
-              "[#{(dest_exists ? 'update' : 'create')}] <#{node.dest_path}>"
+            if !node['no_output']
+              write_node(node)
+              at_least_one_node_written = true
             end
-            time = Benchmark.measure do
-              @website.ext.destination.write(node.dest_path, node.content)
-            end
-            @website.logger.debug do
-              "[timing] <#{node.dest_path}> rendered in " << ('%2.2f' % time.real) << ' seconds'
-            end
-
             @website.blackboard.dispatch_msg(:after_node_written, node)
-            at_least_one_node_written = true
           rescue Webgen::Error => e
             e.path = node.alcn if e.path.empty?
             raise
@@ -239,8 +235,24 @@ module Webgen
             raise Webgen::RenderError.new(e, nil, node)
           end
         end
+        @website.blackboard.dispatch_msg(:after_all_nodes_written)
       end while at_least_one_node_written
     end
+
+    # Write the given node to the destination.
+    def write_node(node)
+      @website.logger.info do
+        "[#{(@website.ext.destination.exists?(node.dest_path) ? 'update' : 'create')}] <#{node.dest_path}>"
+      end
+      time = Benchmark.measure do
+        delete_secondary_nodes(node.alcn)
+        @website.ext.destination.write(node.dest_path, node.content)
+      end
+      @website.logger.debug do
+        "[timing] <#{node.dest_path}> rendered in " << ('%2.2f' % time.real) << ' seconds'
+      end
+    end
+    private :write_node
 
     # Use the registered path handlers to create nodes which are all returned. If +paths+ is nil,
     # all source paths are used. Otherwise +paths+ needs to be an array of path names.
@@ -288,6 +300,7 @@ module Webgen
         end
       end
     end
+    private :delete_secondary_nodes
 
     # Return the paths which are handled by the path handler +name+. If the parameter +paths+ is not
     # nil, only handled paths that also appear in this array are returned.
@@ -346,17 +359,12 @@ module Webgen
 
     # Apply the default meta info (general and handler specific) to the path.
     def apply_default_meta_info(path, handler)
-      mi = @website.config['path_handler.default_meta_info'][:all]
-      mi.merge!(@website.config['path_handler.default_meta_info'][handler] || {})
+      mi = @website.config['path_handler.default_meta_info'][:all].dup
+      mi.merge!(@website.config['path_handler.default_meta_info'][handler.to_s] || {})
       mi.merge!(path.meta_info)
       path.meta_info.update(mi)
     end
-
-    # Return the instance of the path handler class with the given name.
-    def instance(handler_name)
-      @instances[handler_name] ||= extension(handler_name).new(@website)
-    end
-    private :instance
+    private :apply_default_meta_info
 
   end
 

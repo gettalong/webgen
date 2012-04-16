@@ -90,6 +90,7 @@ module Webgen
       @node_dependencies = Hash.new {|h,k| h[k] = Set.new}
       @item_data = {}
       @cached = {:node_dependencies => {}, :item_data => {}}
+      @written_nodes = []
 
       @website = website
 
@@ -98,8 +99,15 @@ module Webgen
       end
 
       @website.blackboard.add_listener(:after_node_written, self) do |node|
-        @cached[:node_dependencies][node.alcn] = @node_dependencies[node.alcn]
-        @node_dependencies[node.alcn].each {|uid| @cached[:item_data][uid] = @item_data[uid]}
+        @written_nodes << node
+      end
+
+      @website.blackboard.add_listener(:after_all_nodes_written, self) do
+        @written_nodes.each do |node|
+          @cached[:node_dependencies][node.alcn] = @node_dependencies[node.alcn]
+          @node_dependencies[node.alcn].each {|uid| @cached[:item_data][uid] = @item_data[uid]}
+        end
+        @written_nodes = []
       end
 
       @website.blackboard.add_listener(:website_generated, self) do
@@ -156,7 +164,7 @@ module Webgen
     def node_referenced?(node)
       alcn = node.alcn
       @cached[:item_data].any? do |uid, data|
-        next if @cached[:node_dependencies][alcn].include?(uid)
+        next if @cached[:node_dependencies][alcn] && @cached[:node_dependencies][alcn].include?(uid)
         item_tracker(uid.first).node_referenced?(uid.last, alcn)
       end
     end

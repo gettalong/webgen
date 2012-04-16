@@ -47,8 +47,12 @@ class TestItemTracker < MiniTest::Unit::TestCase
     # Node should be changed because no cache data is available
     assert(tracker.node_changed?(node))
 
-    # Node should not be changed after it gets written
+    # Node should still be changed after it gets written
     blackboard.dispatch_msg(:after_node_written, node)
+    assert(tracker.node_changed?(node))
+
+    # Node should not be changed after all nodes are written
+    blackboard.dispatch_msg(:after_all_nodes_written, node)
     refute(tracker.node_changed?(node))
 
     # Test the initial loading of the cache data
@@ -63,7 +67,8 @@ class TestItemTracker < MiniTest::Unit::TestCase
     refute(tracker.node_changed?(node))
 
     # Test the final writing of the cache data
-    blackboard.dispatch_msg(:after_node_written, node) # needs to be done again because of :website_initialized above
+    blackboard.dispatch_msg(:after_node_written, node)      # needs to be done again because
+    blackboard.dispatch_msg(:after_all_nodes_written, node) # of :website_initialized above
     blackboard.dispatch_msg(:website_generated)
     expected = {
       :node_dependencies => {'/alcn' => Set.new([[:sample, 'mydata']])},
