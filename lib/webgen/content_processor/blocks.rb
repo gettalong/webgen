@@ -59,7 +59,7 @@ module Webgen
             temp_node = context.ref_node.resolve(path.strip, context.dest_node.lang)
             if temp_node.nil?
               raise Webgen::RenderError.new("Could not resolve <#{path.strip}>",
-                                            self.class.name, context.dest_node,
+                                            self.name, context.dest_node,
                                             context.ref_node, (options[:line_nr_proc].call if options[:line_nr_proc]))
             end
             temp_node
@@ -80,11 +80,11 @@ module Webgen
             return ''
           elsif block_node
             raise Webgen::RenderError.new("No block named '#{options[:name]}' found in <#{block_node}>",
-                                          self.class.name, context.dest_node,
+                                          self.name, context.dest_node,
                                           context.ref_node, (options[:line_nr_proc].call if options[:line_nr_proc]))
           else
             raise Webgen::RenderError.new("No node in the render chain has a block named '#{options[:name]}'",
-                                          self.class.name, context.dest_node,
+                                          self.name, context.dest_node,
                                           context.ref_node, (options[:line_nr_proc].call if options[:line_nr_proc]))
           end
         end
