@@ -161,6 +161,10 @@ option('path_handler.default_meta_info',
          'directory' => {
            'index_path' => 'index.html',
          },
+         'template' => {
+           'no_output' => true,
+           'blocks' => {'default' => {'pipeline' => 'erb,tags,blocks,head'}}
+         },
        },
        'Default meta information for all nodes (key :all) and for nodes belonging to a specific path handler') do |val|
   raise "The value has to be a hash" unless val.kind_of?(Hash)
@@ -181,8 +185,12 @@ path_handler.register('Directory', :patterns => ['**/'], :author => author,
                       :summary => 'Creates the needed output directories from the source directories')
 path_handler.register('Metainfo', :patterns => ['**/metainfo', '**/*.metainfo'], :author => author,
                       :summary => 'Provides the ability to set meta information for any path')
+
 path_handler.register('Template', :patterns => ['**/*.template'], :author => author,
                       :summary => 'Handles template files for layouting page and other template files')
+option('path_handler.template.default_template', 'default.template',
+       'The name of the default template file')
+
 path_handler.register('Page', :patterns => ['**/*.page'], :author => author,
                       :summary => 'Generates HTML files from page files')
 
