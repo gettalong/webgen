@@ -28,7 +28,7 @@ module Webgen
 
       def item_data(alcn, key = nil) #:nodoc:
         mi = @website.tree[alcn].meta_info
-        key.nil? ? mi : mi[key]
+        key.nil? ? mi.dup : mi[key].dup
       end
 
       def changed?(iid, old_data) #:nodoc:

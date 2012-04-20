@@ -20,7 +20,9 @@ class TestNodeMetaInfo < MiniTest::Unit::TestCase
 
   def test_item_data
     assert_equal({'key' => 'value'}, @obj.item_data('alcn'))
+    refute_same(@node.meta_info, @obj.item_data('alcn'))
     assert_equal('value', @obj.item_data('alcn', 'key'))
+    refute_same(@node.meta_info['key'], @obj.item_data('alcn', 'key'))
     @website.verify
     @node.verify
   end

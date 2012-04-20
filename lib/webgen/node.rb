@@ -86,7 +86,7 @@ module Webgen
       @acn = (@parent.kind_of?(Webgen::Node) ? @parent.acn.sub(/#.*$/, '') + @cn : '').freeze
       @alcn = (@parent.kind_of?(Webgen::Node) ? @parent.alcn.sub(/#.*$/, '') + @lcn : '').freeze
 
-      @meta_info = meta_info.freeze
+      @meta_info = meta_info
       @node_info = {}
 
       @level = -1
