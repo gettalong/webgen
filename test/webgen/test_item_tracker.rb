@@ -15,11 +15,11 @@ class Webgen::ItemTracker::Sample
   end
 
   def item_data(data) #:nodoc:
-    'alcn' + data
+    'alcn' + TestItemTracker::Data[data]
   end
 
   def changed?(iid, old_data) #:nodoc:
-    'alcn' + iid != old_data
+    'alcn' + TestItemTracker::Data[iid] != old_data
   end
 
   def node_referenced?(iid, node_alcn)
@@ -29,6 +29,8 @@ class Webgen::ItemTracker::Sample
 end
 
 class TestItemTracker < MiniTest::Unit::TestCase
+
+  Data = {'mydata' => 'mydata'}
 
   def test_functionality
     # Needed mock objects
@@ -51,14 +53,21 @@ class TestItemTracker < MiniTest::Unit::TestCase
     blackboard.dispatch_msg(:after_node_written, node)
     assert(tracker.node_changed?(node))
 
-    # Node should not be changed after all nodes are written
+    Data['mydata'] = 'other'
+
+    # Node should still be changed after all nodes are written because Data changed
+    blackboard.dispatch_msg(:after_all_nodes_written, node)
+    assert(tracker.node_changed?(node))
+
+    # Node should not be changed anymore
+    blackboard.dispatch_msg(:after_node_written, node)
     blackboard.dispatch_msg(:after_all_nodes_written, node)
     refute(tracker.node_changed?(node))
 
     # Test the initial loading of the cache data
     cache[:item_tracker_data] = {
       :node_dependencies => {'/alcn' => [[:sample, 'mydata']], 'alcn' => ['data']},
-      :item_data => {[:sample, 'mydata'] => 'alcnmydata', [:sample, 'other'] => 'alcnother'}
+      :item_data => {[:sample, 'mydata'] => 'alcnother', [:sample, 'other'] => 'alcnother'}
     }
     blackboard.dispatch_msg(:website_initialized)
     assert_equal(cache[:item_tracker_data], tracker.instance_variable_get(:@cached))
@@ -72,7 +81,7 @@ class TestItemTracker < MiniTest::Unit::TestCase
     blackboard.dispatch_msg(:website_generated)
     expected = {
       :node_dependencies => {'/alcn' => Set.new([[:sample, 'mydata']])},
-      :item_data => {[:sample, 'mydata'] => 'alcnmydata'}
+      :item_data => {[:sample, 'mydata'] => 'alcnother'}
     }
     assert_equal(expected, cache[:item_tracker_data])
 

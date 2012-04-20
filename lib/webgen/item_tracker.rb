@@ -103,9 +103,16 @@ module Webgen
       end
 
       @website.blackboard.add_listener(:after_all_nodes_written, self) do
+        # update cached data with data from the run
         @written_nodes.each do |node|
           @cached[:node_dependencies][node.alcn] = @node_dependencies[node.alcn]
           @node_dependencies[node.alcn].each {|uid| @cached[:item_data][uid] = @item_data[uid]}
+        end
+        # make all used item data current again
+        @written_nodes.each do |node|
+          @node_dependencies[node.alcn].each do |uid|
+            @item_data[uid] = item_tracker(uid.first).item_data(*uid.last)
+          end
         end
         @written_nodes = []
       end
