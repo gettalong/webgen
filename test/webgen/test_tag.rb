@@ -114,7 +114,7 @@ class TestTag < MiniTest::Unit::TestCase
     @config.freeze
 
     assert_raises(NoMethodError) { @tag.replace_tags("{test:}") }
-    @blackboard.dispatch_msg(:configuration_loaded)
+    @blackboard.dispatch_msg(:website_initialized)
 
     @tag.replace_tags("{test: {param: value}}") do |tag, params, body|
       assert_equal('test', tag)

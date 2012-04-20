@@ -68,7 +68,7 @@ module Webgen
 
     def initialize(website) # :nodoc:
       super()
-      website.blackboard.add_listener(:configuration_loaded, self) do
+      website.blackboard.add_listener(:website_initialized, self) do
         @parser = Webgen::Utils::TagParser.new(website.config['tag.prefix'])
       end
     end
