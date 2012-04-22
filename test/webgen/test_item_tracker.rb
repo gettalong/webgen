@@ -40,6 +40,7 @@ class TestItemTracker < MiniTest::Unit::TestCase
     node = MiniTest::Mock.new
     node.expect(:alcn, '/alcn')
     node.expect(:!, false)
+    node.expect(:hash, 12345)
     website.expect(:tree, {'/alcn' => node})
 
     tracker = Webgen::ItemTracker.new(website)

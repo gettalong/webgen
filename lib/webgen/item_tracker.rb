@@ -91,6 +91,7 @@ module Webgen
       @item_data = {}
       @cached = {:node_dependencies => {}, :item_data => {}}
       @written_nodes = []
+      @checked_nodes = Set.new
 
       @website = website
 
@@ -163,8 +164,12 @@ module Webgen
 
     # Return +true+ if the given node has changed.
     def node_changed?(node)
+      return false if @checked_nodes.include?(node)
+      @checked_nodes << node
       !@cached[:node_dependencies].has_key?(node.alcn) ||
         @cached[:node_dependencies][node.alcn].any? {|uid| item_changed?(uid)}
+    ensure
+      @checked_nodes.delete(node)
     end
 
     # Return +true+ if the given node has been referenced by any item tracker extension.
