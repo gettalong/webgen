@@ -89,7 +89,6 @@ module Webgen
           end
         end
 
-        context.website.ext.item_tracker.add(dest_node, :node_content, block_node.alcn)
         tmp_context = block_node.render_block(options[:name], context.clone(:chain => used_chain, :dest_node => dest_node))
         tmp_context.content
       end

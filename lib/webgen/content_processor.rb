@@ -109,6 +109,22 @@ module Webgen
       raise Webgen::RenderError.new(e, (ext.respond_to?(:name) ? ext.name : nil), context.dest_node)
     end
 
+    # Normalize the content processor pipeline.
+    #
+    # The pipeline parameter can be a String in the format 'a,b,c' or 'a, b, c' or an array '[a, b,
+    # c]' with content processors a, b and c.
+    #
+    # Raises an error if an unknown content processor is found.
+    #
+    # Returns an array with valid content processors.
+    def normalize_pipeline(pipeline)
+      pipeline = (pipeline.kind_of?(String) ? pipeline.split(/,\s*/) : pipeline)
+      pipeline.each do |processor|
+        raise Webgen::Error.new("Unknown content processor '#{processor}'") if !registered?(processor)
+      end
+      pipeline
+    end
+
     # Return whether the content processor is processing binary data.
     def is_binary?(name)
       registered?(name) && ext_data(name).type == :binary

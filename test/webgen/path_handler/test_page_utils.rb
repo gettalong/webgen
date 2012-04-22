@@ -28,6 +28,8 @@ class TestPageUtils < MiniTest::Unit::TestCase
     node.expect(:blocks, {'content' => Webgen::Page::Block.new('content', 'mycontent')})
     node.expect(:meta_info, {})
     website.ext.content_processor = Webgen::ContentProcessor.new
+    website.ext.item_tracker = MiniTest::Mock.new
+    website.ext.item_tracker.expect(:add, nil, [node, :node_content, node.alcn])
 
     # invalid block name
     assert_raises(Webgen::RenderError) { @handler.render_block(node, 'unknown', context) }
@@ -37,10 +39,10 @@ class TestPageUtils < MiniTest::Unit::TestCase
     assert_equal('mycontent', context.content)
 
     # invalid content processor
-    assert_raises(Webgen::RenderError) { @handler.render_block(node, 'content', context, ['test']) }
+    assert_raises(Webgen::Error) { @handler.render_block(node, 'content', context, ['test']) }
 
     node.meta_info['blocks'] = {'content' => {'pipeline' => ['test']}}
-    assert_raises(Webgen::RenderError) { @handler.render_block(node, 'content', context) }
+    assert_raises(Webgen::Error) { @handler.render_block(node, 'content', context) }
 
     # with content processor
     website.ext.content_processor.register('test') {|ctx| ctx.content = 'test' + ctx.content; ctx}

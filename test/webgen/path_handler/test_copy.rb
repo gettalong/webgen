@@ -42,7 +42,7 @@ class TestPathHandlerCopy < MiniTest::Unit::TestCase
     assert_nil(node.meta_info['pipeline'])
 
     assert_raises(Webgen::NodeCreationError) do
-      @copy.create_nodes(Webgen::Path.new('/other.test.css', 'dest_path' => ':parent:basename:ext', 'pipeline' => ['unke']))
+      @copy.create_nodes(Webgen::Path.new('/other.test.css', 'dest_path' => ':parent:basename:ext'))
     end
   end
 

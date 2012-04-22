@@ -54,13 +54,13 @@ module Webgen
           raise Webgen::RenderError.new("No block named '#{name}' found", self.class.name,
                                         context.dest_node.alcn, node.alcn)
         end
+
+        content_processor = context.website.ext.content_processor
+        context.website.ext.item_tracker.add(context.dest_node, :node_content, node.alcn)
+
         context.content = node.blocks[name].content.dup
         pipeline ||= ((node.meta_info['blocks'] || {})[name] || {})['pipeline'] || []
-        content_processor = context.website.ext.content_processor
-        pipeline.each do |processor|
-          unless content_processor.registered?(processor)
-            raise Webgen::RenderError.new("No such content processor available: #{processor}", self.class.name, node.alcn)
-          end
+        content_processor.normalize_pipeline(pipeline).each do |processor|
           content_processor.call(processor, context)
         end
         context

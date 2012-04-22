@@ -24,11 +24,6 @@ module Webgen
           end
         end
 
-        (path.meta_info['pipeline'] || []).each do |processor|
-          if !@website.ext.content_processor.registered?(processor)
-            raise Webgen::NodeCreationError.new("Unknown content processor '#{processor}'")
-          end
-        end
         create_node(path)
       end
 
@@ -37,6 +32,7 @@ module Webgen
       def content(node)
         path = @website.ext.source.paths[node.node_info[:path]]
         if pipeline = node.meta_info['pipeline']
+          pipeline = @website.ext.content_processor.normalize_pipeline(pipeline)
           is_binary = @website.ext.content_processor.is_binary?(pipeline.first)
           context = Webgen::Context.new(@website, :chain => [node], :content => path.data(is_binary ? 'rb' : 'r'))
           pipeline.each {|processor| @website.ext.content_processor.call(processor, context)}

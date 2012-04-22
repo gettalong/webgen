@@ -67,4 +67,14 @@ class TestContentProcessor < MiniTest::Unit::TestCase
     assert_raises(Webgen::RenderError) { @cp.call('doit', s) }
   end
 
+  def test_normalize_pipeline
+    @cp.register('MyProcessor')
+    @cp.register('MyProcessor', :name => 'other')
+    assert_equal(['my_processor', 'other', 'other'], @cp.normalize_pipeline('my_processor,other,other'))
+    assert_equal(['my_processor', 'other', 'other'], @cp.normalize_pipeline('my_processor, other, other'))
+    assert_equal(['my_processor', 'other', 'other'], @cp.normalize_pipeline(['my_processor','other','other']))
+
+    assert_raises(Webgen::Error) { @cp.normalize_pipeline('unknown') }
+  end
+
 end
