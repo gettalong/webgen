@@ -107,6 +107,10 @@ module Webgen
         super do |level, name|
           website.ext.cli_commands.each {|cmd| self.add_command(cmd)} if level == 0
         end
+      rescue
+        puts "webgen encountered a problem:\n  " + $!.message
+        puts $!.backtrace if @log_level == ::Logger::DEBUG
+        exit(1)
       end
 
     end

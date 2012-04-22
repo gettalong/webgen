@@ -2,10 +2,4 @@
 # -*- encoding: utf-8 -*-
 
 require 'webgen/cli'
-begin
-  Webgen::CLI::CommandParser.new.parse
-rescue
-  puts "webgen encountered a problem:\n  " + $!.message
-  puts $!.backtrace if $DEBUG
-  exit(-1)
-end
+Webgen::CLI::CommandParser.new.parse
