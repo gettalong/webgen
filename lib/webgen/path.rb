@@ -119,9 +119,11 @@ module Webgen
       @ext = value
     end
 
-    # The canonical name created from the +path+ (namely from the parts +basename+ and +extension+).
+    # The canonical name created from the +path+ (namely from the parts +basename+ and +extension+
+    # as well as the meta information +version+).
     def cn
-      basename + (ext.length > 0 ? '.' + ext : '') + (basename != '/' && @path =~ /.\/$/ ? '/' : '')
+      basename + (!meta_info['version'] || meta_info['version'] == 'default' ? "" : "-#{meta_info['version']}") +
+        (ext.length > 0 ? '.' + ext : '') + (basename != '/' && @path =~ /.\/$/ ? '/' : '')
     end
 
     # The localized canonical name created from the +path+.

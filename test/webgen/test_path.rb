@@ -130,7 +130,10 @@ class TestPath < MiniTest::Unit::TestCase
     path = Webgen::Path.new('/test.en.file', mi)
     assert_equal('/test.en.file', path.path)
     assert_equal('Hello', path.meta_info['title'])
-    refute(path.meta_info[:no_output])
+    path = Webgen::Path.new('/test.en.file', 'version' => 'default')
+    assert_equal('/test.en.file', path.alcn)
+    path = Webgen::Path.new('/test.en.file', 'version' => 'other')
+    assert_equal('/test-other.en.file', path.alcn)
 
     path = Webgen::Path.new('/test.eo.file', mi)
     assert_equal('eo', path.meta_info['lang'])

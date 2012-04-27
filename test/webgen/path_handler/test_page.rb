@@ -19,7 +19,7 @@ class TestPathHandlerPage < MiniTest::Unit::TestCase
   end
 
   def test_create_node
-    path = Webgen::Path.new('/default.page', 'dest_path' => ':parent:basename:ext') { StringIO.new('test') }
+    path = Webgen::Path.new('/default.page', 'dest_path' => '<parent><basename><ext>') { StringIO.new('test') }
     node = @page.create_nodes(path, ['content'])
     refute_nil(node)
     assert_equal(['content'], @page.blocks(node))

@@ -15,6 +15,8 @@ class TestPathHandlerCopy < MiniTest::Unit::TestCase
     @website = MiniTest::Mock.new
     @website.expect(:tree, Webgen::Tree.new(@website))
     @website.expect(:ext, OpenStruct.new)
+    @website.expect(:config, {})
+
     @website.ext.content_processor = Webgen::ContentProcessor.new
     @website.ext.content_processor.register('test') do |context|
       context.content = context.content.reverse
@@ -25,24 +27,24 @@ class TestPathHandlerCopy < MiniTest::Unit::TestCase
   end
 
   def test_create_node
-    node = @copy.create_nodes(Webgen::Path.new('/default.css', 'dest_path' => ':parent:basename:ext'))
+    node = @copy.create_nodes(Webgen::Path.new('/default.css', 'dest_path' => '<parent><basename><ext>'))
     refute_nil(node)
     assert_nil(node.meta_info['pipeline'])
     assert_equal('/default.css', node.dest_path)
 
-    node = @copy.create_nodes(Webgen::Path.new('/other.test.css', 'dest_path' => ':parent:basename:ext'))
+    node = @copy.create_nodes(Webgen::Path.new('/other.test.css', 'dest_path' => '<parent><basename><ext>'))
     refute_nil(node)
     assert_equal(['test'], node.meta_info['pipeline'])
     assert_equal('/other.css', node.dest_path)
 
-    node = @copy.create_nodes(Webgen::Path.new('/other.unke.css', 'dest_path' => ':parent:basename:ext', 'pipeline' => ['test']))
+    node = @copy.create_nodes(Webgen::Path.new('/other.unke.css', 'dest_path' => '<parent><basename><ext>', 'pipeline' => ['test']))
     assert_equal(['test'], node.meta_info['pipeline'])
 
-    node = @copy.create_nodes(Webgen::Path.new('/other.unknown.css', 'dest_path' => ':parent:basename:ext'))
+    node = @copy.create_nodes(Webgen::Path.new('/other.unknown.css', 'dest_path' => '<parent><basename><ext>'))
     assert_nil(node.meta_info['pipeline'])
 
     assert_raises(Webgen::NodeCreationError) do
-      @copy.create_nodes(Webgen::Path.new('/other.test.css', 'dest_path' => ':parent:basename:ext'))
+      @copy.create_nodes(Webgen::Path.new('/other.test.css', 'dest_path' => '<parent><basename><ext>'))
     end
   end
 
@@ -51,11 +53,11 @@ class TestPathHandlerCopy < MiniTest::Unit::TestCase
     @website.ext.source.expect(:paths, {'/default.css' => Webgen::Path.new('/default.css') {StringIO.new('# header')},
                                  '/other.test.css' => Webgen::Path.new('/other.test.css') {StringIO.new('# other')}})
 
-    node = @copy.create_nodes(Webgen::Path.new('/default.css', 'dest_path' => ':parent:basename:ext'))
+    node = @copy.create_nodes(Webgen::Path.new('/default.css', 'dest_path' => '<parent><basename><ext>'))
     assert_kind_of(Webgen::Path, @copy.content(node))
     assert_equal('# header', @copy.content(node).data)
 
-    node = @copy.create_nodes(Webgen::Path.new('/other.test.css', 'dest_path' => ':parent:basename:ext'))
+    node = @copy.create_nodes(Webgen::Path.new('/other.test.css', 'dest_path' => '<parent><basename><ext>'))
     assert_equal('# other'.reverse, @copy.content(node))
   end
 

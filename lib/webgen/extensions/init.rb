@@ -152,11 +152,27 @@ option('path_handler.patterns.case_sensitive', false,
        'Specifies whether patterns are considered to be case sensitive', &true_or_false)
 option('path_handler.patterns.match_leading_dot', false,
        'Specifies whether paths parts starting with a dot are matched', &true_or_false)
+option('path_handler.lang_code_in_dest_path', 'except_default',
+       'Specifies whether destination paths should use the language part in their name') do |val|
+  if val == true || val == false || val == 'except_default'
+    val
+  else
+    raise "The value has to be 'true', 'false' or 'except_default'"
+  end
+end
+option('path_handler.version_in_dest_path', 'except_default',
+       'Specifies whether destination paths should use the version name in their name') do |val|
+  if val == true || val == false || val == 'except_default'
+    val
+  else
+    raise "The value has to be 'true', 'false' or 'except_default'"
+  end
+end
 
 option('path_handler.default_meta_info',
        {
          :all => {
-           'dest_path' => ':parent:basename(.:lang):ext',
+           'dest_path' => '<parent><basename>(-<version>)(.<lang>)<ext>',
          },
          'directory' => {
            'index_path' => 'index.html',

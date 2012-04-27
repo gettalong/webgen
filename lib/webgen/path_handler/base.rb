@@ -90,7 +90,8 @@ module Webgen
       end
       protected :dest_path
 
-      PARENT_SEGMENTS = /:parent\[(-?\d+)(?:..(-?\d+))?\]/ # :nodoc:
+      DEST_PATH_SEGMENTS = /<.*?>|\(.*?\)/ # :nodoc:
+      DEST_PATH_PARENT_SEGMENTS = /<parent(-?\d+)(?:..(-?\d+))?>/
 
       # Construct the destination path from the parent node and the path.
       def construct_dest_path(parent, path, force_lang_part)
@@ -108,37 +109,49 @@ module Webgen
                             false
                           elsif force_lang_part
                             true
-                          elsif @website.config['path_handler.lang_code_in_dest_path'] == 'except_default_lang'
+                          elsif @website.config['path_handler.lang_code_in_dest_path'] == 'except_default'
                             @website.config['website.lang'] != path.meta_info['lang']
                           else
                             @website.config['path_handler.lang_code_in_dest_path']
                           end
+          use_version_part = if @website.config['path_handler.version_in_dest_path'] == 'except_default'
+                               path.meta_info['version'] != 'default'
+                             else
+                               @website.config['path_handler.version_in_dest_path']
+                             end
 
-          dest_path.gsub!((use_lang_part ? /[()]/ : /\(.*?\)/), '')
-          dest_path.gsub!(/#{PARENT_SEGMENTS}|:[a-zA-Z]+@?/) do |match|
+          replace_segment = lambda do |match|
             case match
-            when PARENT_SEGMENTS
+            when DEST_PATH_PARENT_SEGMENTS
               nr1 = adjust_index($1.to_i)
               (nr2 = adjust_index($2.to_i)) if $2
               [parent_segments[nr2 ? nr1..nr2 : nr1]].flatten.compact.join('/')
-            when /:parent@?/
+            when "<parent>"
               parent.dest_path
-            when /:basename@?/
+            when "<basename>"
               path.basename
-            when /:ext@?/
+            when "<ext>"
               path.ext.empty? ? '' : '.' << path.ext
-            when /lang@?/
+            when "<lang>"
               use_lang_part ? path.meta_info['lang'] : ''
-            when /:(year|month|day)@?/
+            when "<version>"
+              use_version_part ? path.meta_info['version'] : ''
+            when /<(year|month|day)>/
               ctime = path.meta_info['created_at']
               if !ctime.kind_of?(Time)
                 raise Webgen::NodeCreationError.new("Invalid meta info 'created_at', needed for destination path creation")
               end
               ctime.send($1).to_s.rjust(2, '0')
+            when /\((.*)\)/
+              inner = $1
+              replaced = inner.gsub(DEST_PATH_SEGMENTS, &replace_segment)
+              removed = inner.gsub(DEST_PATH_SEGMENTS, "")
+              replaced == removed ? '' : replaced
             else
-              match
+              raise Webgen::NodeCreationError.new("Unknown destination path segment name: #{match}")
             end
           end
+          dest_path.gsub!(DEST_PATH_SEGMENTS, &replace_segment)
           dest_path += '/' if path.path =~ /\/$/
           dest_path.gsub!(/\/\/+/, '/')
         end

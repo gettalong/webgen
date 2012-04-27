@@ -30,10 +30,11 @@ class TestPathHandlerBase < MiniTest::Unit::TestCase
 
   def test_create_node
     @website.expect(:logger, Logger.new(StringIO.new))
+    @website.expect(:config, {})
 
     assert_nil(@obj.create_node(Webgen::Path.new('/test.html', 'draft' => true)))
 
-    path = Webgen::Path.new('/path.html', :src => '/path', 'dest_path' => ':parent:basename(.:lang):ext',
+    path = Webgen::Path.new('/path.html', 'dest_path' => '<parent><basename>(.<lang>)<ext>',
                             'modified_at' => 'unknown')
     node = @obj.create_node(path, @website.tree.dummy_root) {|n| assert_kind_of(Webgen::Node, n)}
     assert_equal(path, node.node_info[:path])
@@ -60,7 +61,7 @@ class TestPathHandlerBase < MiniTest::Unit::TestCase
       assert_equal(expected, @obj.dest_path(parent, Webgen::Path.new(path, mi)))
     end
 
-    mi = {'dest_path' => ':parent:basename(.:lang):ext'}
+    mi = {'dest_path' => '<parent><basename>(-<version>)(.<lang>)<ext>'}
 
     config['path_handler.lang_code_in_dest_path'] = true
     check_dest_path.call('/path.html', mi, '/path.html')
@@ -72,12 +73,23 @@ class TestPathHandlerBase < MiniTest::Unit::TestCase
     check_dest_path.call('/path.en.html', mi, '/path.html')
     check_dest_path.call('/path.eo.html', mi, '/path.html')
 
-    config['path_handler.lang_code_in_dest_path'] = 'except_default_lang'
-
+    config['path_handler.lang_code_in_dest_path'] = 'except_default'
     check_dest_path.call('/path.html', mi, '/path.html')
     check_dest_path.call('/path.en.html', mi, '/path.html')
     check_dest_path.call('/path.eo.html', mi, '/path.eo.html')
     check_dest_path.call('/dir/', mi, '/dir/')
+
+    config['path_handler.version_in_dest_path'] = true
+    check_dest_path.call('/path.html', mi.merge('version' => 'default'), '/path-default.html')
+    check_dest_path.call('/path.html', mi.merge('version' => 'other'), '/path-other.html')
+
+    config['path_handler.version_in_dest_path'] = false
+    check_dest_path.call('/path.html', mi.merge('version' => 'default'), '/path.html')
+    check_dest_path.call('/path.html', mi.merge('version' => 'other'), '/path.html')
+
+    config['path_handler.version_in_dest_path'] = 'except_default'
+    check_dest_path.call('/path.html', mi.merge('version' => 'default'), '/path.html')
+    check_dest_path.call('/path.html', mi.merge('version' => 'other'), '/path-other.html')
 
     other = Webgen::Node.new(node, 'other.page', '/path.html')
     check_dest_path.call('/path.html', mi, '/path.html')
@@ -88,35 +100,39 @@ class TestPathHandlerBase < MiniTest::Unit::TestCase
     check_dest_path.call('/path.html#frag1', mi, '/path.html#frag1', frag)
 
     check_dest_path.call('/', mi, '/', @website.tree.dummy_root)
-    check_dest_path.call('/test/', {'dest_path' => "/:parent@hallo:hallo"}, '/hallo:hallo/')
 
     index_en = Webgen::Node.new(node, 'index.page', '/index.html', {'lang' => 'en'})
     check_dest_path.call('/index.en.html', mi, '/index.html')
-    check_dest_path.call('/index.en.html', {'dest_path' => ":parent@hallo.html"}, '/hallo.html')
-    check_dest_path.call('/other.de.html', {'dest_path' => ":parent@index(.:lang):ext"}, '/index.de.html')
+    check_dest_path.call('/index.en.html', {'dest_path' => "<parent>hallo.html"}, '/hallo.html')
+    check_dest_path.call('/other.de.html', {'dest_path' => "<parent>index(.<lang>)<ext>"}, '/index.de.html')
 
     assert_raises(Webgen::NodeCreationError) do
-      check_dest_path.call('/path.html', {'dest_path' => ":parent@:year/:month/:basename:ext"}, 'unused')
+      check_dest_path.call('/path.html', {'dest_path' => "<parent><year>/<month>/<basename><ext>"}, 'unused')
     end
     time = Time.parse('2008-09-04 08:15')
     check_dest_path.call('/path.html',
-                         {'dest_path' => ":parent@:year/:month/:day-:basename:ext", 'created_at' => time},
+                         {'dest_path' => "<parent><year>/<month>/<day>-<basename><ext>", 'created_at' => time},
                          '/2008/09/04-path.html')
 
 
     dir = Webgen::Node.new(node, 'nested.path', '/dir1/dir2/dir3/')
-    check_dest_path.call('/path.html', {'dest_path' => ":parent[1]:parent[2]:parent[3]:parent[4]"},
+    check_dest_path.call('/path.html', {'dest_path' => "<parent1><parent2><parent3><parent4>"},
                          'dir1dir2dir3', dir)
-    check_dest_path.call('/path.html', {'dest_path' => ":parent[-4]:parent[-3]:parent[-2]:parent[-1]"},
+    check_dest_path.call('/path.html', {'dest_path' => "<parent-4><parent-3><parent-2><parent-1>"},
                          'dir1dir2dir3', dir)
-    check_dest_path.call('/path.html', {'dest_path' => ":parent[2..-1]"},
+    check_dest_path.call('/path.html', {'dest_path' => "<parent2..-1>"},
                          'dir2/dir3', dir)
     assert_raises(Webgen::NodeCreationError) do
-      check_dest_path.call('/path.html', {'dest_path' => ":parent[0]"}, 'unused')
+      check_dest_path.call('/path.html', {'dest_path' => "<parent0>"}, 'unused')
     end
 
     check_dest_path.call('/path.html', {'dest_path' => "webgen:this is not changed"},
                          'this is not changed')
+
+    assert_raises(Webgen::NodeCreationError) do
+      check_dest_path.call('/path.html', {'dest_path' => "<hallo>"}, 'unused')
+    end
+
   end
 
   def test_node_exists
