@@ -179,10 +179,11 @@ option('path_handler.default_meta_info',
          },
          'template' => {
            'no_output' => true,
-           'blocks' => {'default' => {'pipeline' => 'erb,tags,blocks,head'}}
+           'blocks' => {:default => {'pipeline' => 'erb,tags,blocks,head'}}
          },
          'page' => {
-           'blocks' => {'default' => {'pipeline' => 'erb,tags,kramdown,blocks,fragments'}}
+           'blocks' => {:default => {'pipeline' => 'erb,tags,kramdown,blocks,fragments'}}
+         },
          'meta_info' => {
            'no_output' => true,
            'blocks' => {1 => {'name' => 'paths'}, 2 => {'name' => 'alcn'}}
