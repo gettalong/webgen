@@ -337,6 +337,7 @@ module Webgen
         mi['version'] ||= name
         raise Webgen::NodeCreationError.new("Meta info 'version' must not be empty") if mi['version'].empty?
         vpath.meta_info.merge!(mi)
+        next if vpath.meta_info['handler'] && vpath.meta_info['handler'] != handler
         @website.logger.debug do
           "Creating node version '#{mi['version']}' from path <#{path}> with #{handler} handler"
         end
