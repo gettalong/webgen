@@ -183,6 +183,9 @@ option('path_handler.default_meta_info',
          },
          'page' => {
            'blocks' => {'default' => {'pipeline' => 'erb,tags,kramdown,blocks,fragments'}}
+         'meta_info' => {
+           'no_output' => true,
+           'blocks' => {1 => {'name' => 'paths'}, 2 => {'name' => 'alcn'}}
          },
        },
        'Default meta information for all nodes (key :all) and for nodes belonging to a specific path handler') do |val|
@@ -202,8 +205,8 @@ website.ext.path_handler = path_handler = Webgen::PathHandler.new(website)
 
 path_handler.register('Directory', :patterns => ['**/'], :author => author,
                       :summary => 'Creates the needed output directories from the source directories')
-path_handler.register('Metainfo', :patterns => ['**/metainfo', '**/*.metainfo'], :author => author,
-                      :summary => 'Provides the ability to set meta information for any path')
+path_handler.register('MetaInfo', :patterns => ['**/metainfo', '**/*.metainfo'], :author => author,
+                      :summary => 'Provides the ability to set meta information for any path or node')
 
 path_handler.register('Template', :patterns => ['**/*.template'], :author => author,
                       :summary => 'Handles template files for layouting page and other template files')
