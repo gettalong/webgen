@@ -74,10 +74,7 @@ module Webgen
       def after_node_created(node)
         @nodes.each do |mi_node|
           mi_node.node_info[:mi_alcn].each do |pattern, mi|
-            if Webgen::Path.matches_pattern?(node.alcn, pattern)
-              node.meta_info.update(mi)
-              @website.ext.item_tracker.add(node, :node_meta_info, node.alcn)
-            end
+            node.meta_info.update(mi) if Webgen::Path.matches_pattern?(node.alcn, pattern)
           end
         end
       end

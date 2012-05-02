@@ -83,14 +83,9 @@ EOF
     path = Webgen::Path.new('/default.css', 'dest_path' => '<parent><basename><ext>')
     node = @mi.create_nodes(path, {})
 
-    @website.expect(:ext, OpenStruct.new)
-    @website.ext.item_tracker = MiniTest::Mock.new
-    @website.ext.item_tracker.expect(:add, nil, [node, :node_meta_info, node.alcn])
-
     refute_equal('valaft', node['after'])
     @website.blackboard.dispatch_msg(:after_node_created, node)
     assert_equal('valaft', node['after'])
-    @website.ext.item_tracker.verify
   end
 
 end

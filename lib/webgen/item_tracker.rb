@@ -99,6 +99,12 @@ module Webgen
         @cached = @website.cache[:item_tracker_data] || @cached
       end
 
+      @website.blackboard.add_listener(:after_tree_populated, self) do |node|
+        @item_data.keys.each do |uid|
+          @item_data[uid] = item_tracker(uid.first).item_data(*uid.last)
+        end
+      end
+
       @website.blackboard.add_listener(:after_node_written, self) do |node|
         @written_nodes << node
       end
