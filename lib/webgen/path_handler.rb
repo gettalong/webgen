@@ -341,6 +341,8 @@ module Webgen
 
     # Prepare everything to create nodes from the path using the given handler. After the nodes are
     # created, it is checked if they have all needed properties.
+    #
+    # Returns an array with all created nodes.
     def create_nodes_with_path_handler(path, handler) #:yields: path
       path = path.dup
       apply_default_meta_info(path, handler)
@@ -362,11 +364,10 @@ module Webgen
         nodes << instance(handler).create_nodes(vpath, *data)
       end
 
-      nodes.each do |node|
+      nodes.flatten.compact.each do |node|
         node.node_info[:path_handler] = instance(handler)
         @website.blackboard.dispatch_msg(:after_node_created, node)
       end
-      nodes
     rescue Webgen::Error => e
       e.path = path.to_s if e.path.empty?
       e.location = instance(handler).class.name unless e.location

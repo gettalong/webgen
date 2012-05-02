@@ -16,6 +16,7 @@ class TestPathHandlerCopy < MiniTest::Unit::TestCase
     @website.expect(:tree, Webgen::Tree.new(@website))
     @website.expect(:ext, OpenStruct.new)
     @website.expect(:config, {})
+    @website.expect(:logger, Logger.new(StringIO.new))
 
     @website.ext.content_processor = Webgen::ContentProcessor.new
     @website.ext.content_processor.register('test') do |context|

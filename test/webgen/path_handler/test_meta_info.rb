@@ -2,6 +2,7 @@
 
 require 'helper'
 require 'stringio'
+require 'logger'
 require 'webgen/path_handler/meta_info'
 require 'webgen/blackboard'
 require 'webgen/tree'
@@ -30,6 +31,7 @@ EOF
     @website = MiniTest::Mock.new
     @website.expect(:tree, Webgen::Tree.new(@website))
     @website.expect(:config, {})
+    @website.expect(:logger, Logger.new(StringIO.new))
     @website.expect(:blackboard, Webgen::Blackboard.new)
     @root = Webgen::Node.new(@website.tree.dummy_root, '/', '/')
     @mi = Webgen::PathHandler::MetaInfo.new(@website)

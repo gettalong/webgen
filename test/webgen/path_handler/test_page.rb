@@ -13,6 +13,7 @@ class TestPathHandlerPage < MiniTest::Unit::TestCase
   def setup
     @website = MiniTest::Mock.new
     @website.expect(:tree, Webgen::Tree.new(@website))
+    @website.expect(:logger, Logger.new(StringIO.new))
     @website.expect(:config, {'website.lang' => 'en'})
     @root = Webgen::Node.new(@website.tree.dummy_root, '/', '/')
     @page = Webgen::PathHandler::Page.new(@website)

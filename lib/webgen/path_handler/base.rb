@@ -52,9 +52,9 @@ module Webgen
         end
 
         if !path.meta_info['modified_at'].kind_of?(Time)
-          @website.logger.warn do
-            "Meta information 'modified_at' set to current time in <#{path}> since its value '#{path.meta_info['modified_at']}' was of type #{path.meta_info['modified_at'].class}"
-          end unless path.meta_info['modified_at'].nil?
+          @website.logger.debug do
+            "Meta information 'modified_at' set to current time in <#{path}> since its value #{path.meta_info['modified_at'].inspect} was of type #{path.meta_info['modified_at'].class}"
+          end
           path.meta_info['modified_at'] = Time.now
         end
 

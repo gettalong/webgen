@@ -21,6 +21,7 @@ class TestPathHandlerBase < MiniTest::Unit::TestCase
   def setup
     @website = MiniTest::Mock.new
     @website.expect(:tree, Webgen::Tree.new(@website))
+    @website.expect(:logger, Logger.new(StringIO.new))
     @obj = TestPathHandler.new(@website)
   end
 
@@ -29,7 +30,6 @@ class TestPathHandlerBase < MiniTest::Unit::TestCase
   end
 
   def test_create_node
-    @website.expect(:logger, Logger.new(StringIO.new))
     @website.expect(:config, {})
 
     assert_nil(@obj.create_node(Webgen::Path.new('/test.html', 'draft' => true)))
