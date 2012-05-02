@@ -222,9 +222,9 @@ module Webgen
         "The following source paths have not been used: #{unused_paths.join(', ')}"
       end
 
-      (@website.cache[:path_handler_secondary_nodes] || {}).each do |path, (source_alcn, content)|
+      (@website.cache[:path_handler_secondary_nodes] || {}).each do |path, (source_alcn, handler, content)|
         next if @secondary_nodes.has_key?(path) || !@website.tree[source_alcn]
-        create_secondary_nodes(path, content, source_alcn)
+        create_secondary_nodes(path, content, handler, source_alcn)
       end
     end
 
@@ -275,12 +275,7 @@ module Webgen
     def create_nodes(paths = nil)
       nodes = Set.new
       @invocation_order.each do |name|
-        handled_paths = paths_for_handler(name, paths)
-        handled_paths.sort {|a,b| a.path.length <=> b.path.length}.each do |path|
-          if !@website.tree[path.parent_path]
-            dir_path = @website.ext.source.paths[path.parent_path]
-            nodes += create_nodes([dir_path])
-          end
+        paths_for_handler(name, paths).sort {|a,b| a.path.length <=> b.path.length}.each do |path|
           nodes += create_nodes_with_path_handler(path, name)
         end
       end
@@ -290,18 +285,25 @@ module Webgen
 
     # Create nodes for the given +path+ (a Path object which must not be a source path). The content
     # of the path also needs to be specified. Note that if an IO block is associated with the path,
-    # it is discarded.
+    # it is discarded!
+    #
+    # If the parameter +handler+ is present, nodes from the given path are only created with the
+    # handler.
     #
     # If the secondary nodes are created during the rendering phase, the +source_alcn+ has to be set
     # to the node alcn from which these nodes are created!
-    def create_secondary_nodes(path, content, source_alcn = nil)
+    def create_secondary_nodes(path, content, handler = nil, source_alcn = nil)
       path.set_io { StringIO.new(content) }
       if @secondary_nodes.has_key?(path.path)
-        raise Webgen::NodeCreationError.new("Duplicate secondary path name", self.class.name, path)
+        raise Webgen::NodeCreationError.new("Duplicate secondary path name <#{path.path}>", self.class.name, path)
       end
-      @secondary_nodes[path.path] = [source_alcn, content] if source_alcn
+      @secondary_nodes[path.path] = [source_alcn, handler, content] if source_alcn
 
-      nodes = create_nodes([path])
+      nodes = if handler
+                create_nodes_with_path_handler(path, handler)
+              else
+                nodes = create_nodes([path])
+              end
       nodes.each {|n| n.node_info[:source_alcn] = source_alcn} if source_alcn
       nodes
     end
