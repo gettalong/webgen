@@ -274,20 +274,10 @@ module Webgen
     end
     private :restore_cache
 
-    # Render the website.
-    def render
-      @logger.info { "Rendering website..." }
-      time = Benchmark.measure do
-        @ext.path_handler.populate_tree
-        if @tree.root
-          @ext.path_handler.write_tree
-          @blackboard.dispatch_msg(:website_generated)
-          save_cache
-        else
-          @logger.info { 'No source files found - maybe not a webgen website?' }
-        end
-      end
-      @logger.info { "...rendering done in " << ('%2.2f' % time.real) << ' seconds' }
+    # Generate the website.
+    def generate
+      @ext.path_handler.generate_website
+      save_cache
     end
 
     # Save the +cache+ to +website.cache+.
