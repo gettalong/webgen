@@ -93,7 +93,9 @@ module Webgen
       end
       (@node_access[:acn][node.acn] ||= []) << node
       (@node_access[:translation_key][translation_key(node)] ||= []) << node
-      if @node_access[:dest_path].has_key?(node.dest_path)
+      if node.meta_info['no_output']
+        # ignore node dest path
+      elsif @node_access[:dest_path].has_key?(node.dest_path)
         raise "Can't have two nodes with same destination path: #{node.dest_path}"
       else
         @node_access[:dest_path][node.dest_path] = node
@@ -120,7 +122,7 @@ module Webgen
       @node_access[:alcn].delete(node.alcn)
       @node_access[:acn][node.acn].delete(node)
       @node_access[:translation_key][translation_key(node)].delete(node)
-      @node_access[:dest_path].delete(node.dest_path)
+      @node_access[:dest_path].delete(node.dest_path) unless node.meta_info['no_output']
     end
 
   end
