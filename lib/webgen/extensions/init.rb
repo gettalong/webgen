@@ -231,7 +231,7 @@ path_handler.register('Feed', :patterns => ['**/*.feed'], :author => author,
 path_handler.register('Sitemap', :patterns => ['**/*.sitemap'], :author => author,
                       :summary => 'Generates a sitemap file')
 path_handler.register('Virtual', :patterns => ['**/virtual', '**/*.virtual'], :author => author,
-                      :summary => 'Creates nodes from virtual paths')
+                      :summary => 'Creates nodes for additional, virtual paths')
 
 
 ########################################################################
