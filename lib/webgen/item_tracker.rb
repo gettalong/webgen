@@ -173,7 +173,7 @@ module Webgen
       return false if @checked_nodes.include?(node)
       @checked_nodes << node
       !@cached[:node_dependencies].has_key?(node.alcn) ||
-        @cached[:node_dependencies][node.alcn].any? {|uid| item_changed?(uid)}
+        @cached[:node_dependencies][node.alcn].any? {|uid| item_changed_by_uid?(uid)}
     ensure
       @checked_nodes.delete(node)
     end
@@ -187,13 +187,19 @@ module Webgen
       end
     end
 
+    # Return +true+ if the given item that is handled by the item tracker extension +name+ has
+    # changed.
+    def item_changed?(name, *item)
+      item_changed_by_uid?(unique_id(name, item))
+    end
+
     #######
     private
     #######
 
     # Return +true+ if the given item has changed. See #add for a description of the item
     # parameters.
-    def item_changed?(uid)
+    def item_changed_by_uid?(uid)
       if !@cached[:item_data].has_key?(uid)
         true
       else
