@@ -165,7 +165,7 @@ module Webgen
     def add(node, name, *item)
       uid = unique_id(name, item)
       @node_dependencies[node.alcn] << uid
-      @item_data[uid] = item_tracker(name).item_data(*item)
+      @item_data[uid] = item_tracker(name).item_data(*uid.last)
     end
 
     # Return +true+ if the given node has changed.
