@@ -136,6 +136,9 @@ website.blackboard.add_listener(:after_node_created) do |node|
   item_tracker.add(node, :node_meta_info, node.alcn)
 end
 
+item_tracker.register('NodeFinderOptionSet', :author => author,
+                      :summary => 'Tracks changes to a node finder option set')
+
 
 ########################################################################
 # Everything related to the node finder extension
