@@ -122,7 +122,6 @@ module Webgen
     # option <tt>node_finder.options_sets</tt>. The node +ref_node+ is used as reference node.
     def find(opts_or_name, ref_node)
       opts = prepare_options_hash(opts_or_name)
-      raise ArgumentError, "Each node finder option set needs a name" if opts[:name].to_s.empty?
 
       limit, offset, flatten, sort = remove_non_filter_options(opts)
       flatten = true if limit || offset
@@ -168,7 +167,6 @@ module Webgen
     end
 
     def remove_non_filter_options(opts)
-      opts.delete(:name)
       [opts.delete(:limit), opts.delete(:offset), opts.delete(:flatten), opts.delete(:sort)]
     end
 

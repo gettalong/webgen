@@ -59,9 +59,8 @@ class TestNodeFinder < MiniTest::Unit::TestCase
     check = lambda do |correct, result|
       assert_equal(correct.collect {|n| nodes[n] }, result, "Failure at #{caller[0]}")
     end
-    @config['node_finder.option_sets'] = {'simple' => {:alcn => '', :unknown => '', :name => 'simple'}}
+    @config['node_finder.option_sets'] = {'simple' => {:alcn => '', :unknown => ''}}
 
-    assert_raises(ArgumentError) { @nf.find({:alcn => '/'}, nodes[:root]) }
     assert_raises(ArgumentError) { @nf.find(['hallo'], nodes[:root]) }
 
     # test using configured search options
@@ -70,21 +69,21 @@ class TestNodeFinder < MiniTest::Unit::TestCase
 
     # test limit, offset, flatten
     check.call([:somename_en, :other_en],
-               @nf.find({:alcn => '/**/*.en.html', :limit => 2, :name => 'test'}, nodes[:root]))
+               @nf.find({:alcn => '/**/*.en.html', :limit => 2}, nodes[:root]))
     check.call([:dir2_index_en],
-               @nf.find({:alcn => '/**/*.en.html', :limit => 2, :offset => 2, :name => 'test'}, nodes[:root]))
+               @nf.find({:alcn => '/**/*.en.html', :limit => 2, :offset => 2}, nodes[:root]))
 
     assert_equal([[nodes[:somename_en], [nodes[:somename_en_frag]]], nodes[:somename_de],
                   nodes[:other], nodes[:other_en],
                   [nodes[:dir], [nodes[:dir_file], nodes[:dir_dir]]],
                   [nodes[:dir2], [nodes[:dir2_index_en], nodes[:dir2_index_de]]]
                  ],
-                 @nf.find({:levels => [1,2], :name => 'test'}, nodes[:root]))
+                 @nf.find({:levels => [1,2]}, nodes[:root]))
 
     # test sort methods
     check.call([:somename_en, :somename_de, :dir_file, :dir_dir_file, :dir2_index_de,
                 :dir2_index_en, :other, :other_en],
-               @nf.find({:alcn => '/**/*.html', :name => 'test', :flatten => true, :sort => true}, nodes[:root]))
+               @nf.find({:alcn => '/**/*.html', :flatten => true, :sort => true}, nodes[:root]))
     check.call([:dir_file, :dir_dir_file, :dir2_index_de, :dir2_index_en, :other, :other_en,
                 :somename_de, :somename_en],
                @nf.find({:alcn => '/**/*.html', :name => 'test', :flatten => true, :sort => 'title'}, nodes[:root]))
@@ -94,44 +93,44 @@ class TestNodeFinder < MiniTest::Unit::TestCase
                   [nodes[:dir2], [[nodes[:dir2_index_de], [nodes[:dir2_index_de_fraga], nodes[:dir2_index_de_fragb]]], nodes[:dir2_index_en]]],
                   nodes[:other], nodes[:other_en],
                  ],
-                 @nf.find({:levels => [1,3], :name => 'test', :sort => true}, nodes[:root]))
+                 @nf.find({:levels => [1,3], :sort => true}, nodes[:root]))
 
     # test filter: meta info keys/values
     check.call([:somename_en_frag, :dir_file_frag],
-               @nf.find({'title' => 'frag', :name => 'test', :flatten => true}, nodes[:root]))
+               @nf.find({'title' => 'frag', :flatten => true}, nodes[:root]))
 
     # test filter: alcn
     check.call([:root],
-               @nf.find({:alcn => '/', :name => 'test'}, nodes[:root]))
+               @nf.find({:alcn => '/'}, nodes[:root]))
     check.call([:somename_en, :somename_de, :other, :other_en, :dir_file, :dir_dir_file,
                 :dir2_index_en, :dir2_index_de],
-               @nf.find({:alcn => '/**/*.html', :name => 'test', :flatten => true}, nodes[:root]))
+               @nf.find({:alcn => '/**/*.html', :flatten => true}, nodes[:root]))
     check.call([:root, :dir_file, :dir_file_frag, :dir_dir],
-               @nf.find({:alcn => ['/', '*'], :name => 'test', :flatten => true}, nodes[:dir]))
+               @nf.find({:alcn => ['/', '*'], :flatten => true}, nodes[:dir]))
 
     # test filter: and/or
     check.call([:somename_en, :somename_de, :other, :other_en],
                @nf.find({:alcn => '/**/*.html', :and => {:alcn => '*.html'},
-                        :name => 'test', :flatten => true}, nodes[:root]))
+                          :flatten => true}, nodes[:root]))
     check.call([:somename_en, :somename_de, :other, :other_en, :dir_file, :dir_dir_file,
                 :dir2_index_en, :dir2_index_de, :root],
-               @nf.find({:alcn => '/**/*.html', :or => 'simple', :name => 'test', :flatten => true}, nodes[:root]))
+               @nf.find({:alcn => '/**/*.html', :or => 'simple', :flatten => true}, nodes[:root]))
 
     # test filter: levels
     check.call([:root],
-               @nf.find({:levels => [0, 0], :name => 'test', :flatten => true}, nodes[:dir]))
+               @nf.find({:levels => [0, 0], :flatten => true}, nodes[:dir]))
     check.call([:somename_en_fragnest, :dir_file_frag, :dir_dir_file, :dir2_index_de_fragb, :dir2_index_de_fraga],
-               @nf.find({:levels => [3,3], :name => 'test', :flatten => true}, nodes[:dir]))
+               @nf.find({:levels => [3,3], :flatten => true}, nodes[:dir]))
     check.call([:root, :somename_en, :somename_de, :other, :other_en, :dir, :dir2],
-               @nf.find({:levels => [0,1], :name => 'test', :flatten => true}, nodes[:dir]))
+               @nf.find({:levels => [0,1], :flatten => true}, nodes[:dir]))
 
     # test filter: langs
     check.call([:somename_en, :other_en, :dir2_index_en],
-               @nf.find({:lang => 'en', :name => 'test', :flatten => true}, nodes[:dir]))
+               @nf.find({:lang => 'en', :flatten => true}, nodes[:dir]))
     check.call([:somename_en, :somename_de, :other_en, :dir2_index_en, :dir2_index_de],
-               @nf.find({:lang => ['en', 'de'], :name => 'test', :flatten => true}, nodes[:dir]))
+               @nf.find({:lang => ['en', 'de'], :flatten => true}, nodes[:dir]))
     check.call([:somename_en, :other_en, :dir2_index_en],
-               @nf.find({:lang => :node, :name => 'test', :flatten => true}, nodes[:somename_en]))
+               @nf.find({:lang => :node, :flatten => true}, nodes[:somename_en]))
   end
 
 end
