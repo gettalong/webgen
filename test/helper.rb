@@ -30,6 +30,13 @@ module Test
     [website, node, context]
   end
 
+  def self.setup_tag_test
+    website = MiniTest::Mock.new
+    website.expect(:ext, OpenStruct.new)
+    context = Webgen::Context.new(website)
+    [website, context]
+  end
+
   def self.create_default_nodes(tree)
     {
       :root => root = Webgen::Node.new(tree.dummy_root, '/', '/'),
