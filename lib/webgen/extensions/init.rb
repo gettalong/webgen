@@ -285,10 +285,12 @@ tag.register('Date', :author => author,
 option('tag.date.format', '%Y-%m-%d %H:%M:%S',
        'The format of the date (same options as Ruby\'s Time#strftime)', &is_string)
 
+tag.register('MetaInfo', :names => :default, :author => author,
+             :summary => 'Outputs the value of a given meta information key of the generated page')
+option('tag.meta_info.escape_html', true,
+       'Special HTML characters in the output will be escaped if true', &true_or_false)
 
 tag.register('Relocatable', :names => ['relocatable', 'r'], :author => author,
-             :summary => '')
-tag.register('Metainfo', :names => :default, :author => author,
              :summary => '')
 tag.register('Menu', :author => author,
              :summary => '')
