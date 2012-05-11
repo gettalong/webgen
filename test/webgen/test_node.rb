@@ -1,6 +1,8 @@
 # -*- encoding: utf-8 -*-
 
 require 'helper'
+require 'logger'
+require 'stringio'
 require 'webgen/node'
 require 'webgen/tree'
 
@@ -115,6 +117,10 @@ class TestNode < MiniTest::Unit::TestCase
     assert_equal(nodes[:somename_en], nodes[:somename_en].proxy_node('en'))
     assert_equal(nodes[:dir2_index_en], nodes[:dir2].proxy_node('en'))
     assert_equal(nodes[:dir2_index_en], nodes[:dir2].proxy_node('en'))
+
+    @website.expect(:logger, Logger.new(StringIO.new))
+    nodes[:dir_file].meta_info['proxy_path'] = 'holla'
+    assert_equal(nodes[:dir_file], nodes[:dir_file].proxy_node('pt'))
 
     @website.verify
   end

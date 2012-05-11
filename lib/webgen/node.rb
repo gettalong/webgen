@@ -178,7 +178,7 @@ module Webgen
       else
         pnode = resolve(proxy_path, lang)
         if !pnode
-          tree.website.logger(:warn) { "Proxy node specified by path '#{proxy_path}' for <#{alcn}> not found" }
+          tree.website.logger.warn { "Proxy node specified by path '#{proxy_path}' for <#{alcn}> not found" }
         end
         pnode || self
       end
