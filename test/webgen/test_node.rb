@@ -3,7 +3,6 @@
 require 'helper'
 require 'webgen/node'
 require 'webgen/tree'
-require 'webgen/blackboard'
 
 class TestNode < MiniTest::Unit::TestCase
 
@@ -37,20 +36,6 @@ class TestNode < MiniTest::Unit::TestCase
       c = Webgen::Node.new(node, cn, abspath)
       check_proc.call(c, node, abspath, cn, cn, '/' + cn, nil, {})
     end
-  end
-
-  def test_meta_info_accessor
-    node = Webgen::Node.new(@tree.dummy_root, '/', '/', {:test => :value})
-    count = 0
-    blackboard = Webgen::Blackboard.new
-    blackboard.add_listener(:node_meta_info_accessed) do |alcn, key|
-      assert_equal('/', alcn)
-      assert_equal(:test, key)
-      count += 1
-    end
-    @website.expect(:blackboard, blackboard)
-    node[:test]
-    assert_equal(1, count)
   end
 
   def test_type_checkers
@@ -93,7 +78,6 @@ class TestNode < MiniTest::Unit::TestCase
 
   def test_route_to
     nodes = Test.create_default_nodes(@tree)
-    @website.expect(:blackboard, Webgen::Blackboard.new)
 
     #arg is Node
     assert_equal('somename.en.html', nodes[:somename_en].route_to(nodes[:somename_en]))
@@ -127,7 +111,6 @@ class TestNode < MiniTest::Unit::TestCase
 
   def test_proxy_node
     nodes = Test.create_default_nodes(@tree)
-    @website.expect(:blackboard, Webgen::Blackboard.new)
 
     assert_equal(nodes[:somename_en], nodes[:somename_en].proxy_node('en'))
     assert_equal(nodes[:dir2_index_en], nodes[:dir2].proxy_node('en'))
@@ -146,8 +129,6 @@ class TestNode < MiniTest::Unit::TestCase
 
   def test_link_to
     nodes = Test.create_default_nodes(@tree)
-
-    @website.expect(:blackboard, Webgen::Blackboard.new)
 
     # general tests
     assert_equal('<a href="#frag">frag</a>',

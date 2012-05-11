@@ -99,7 +99,6 @@ module Webgen
 
     # Return the meta information item for +key+.
     def [](key)
-      tree.website.blackboard.dispatch_msg(:node_meta_info_accessed, @alcn, key)
       @meta_info[key]
     end
 
