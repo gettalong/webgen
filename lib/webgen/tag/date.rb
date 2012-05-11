@@ -1,18 +1,18 @@
 # -*- encoding: utf-8 -*-
 
-module Webgen::Tag
+module Webgen
+  class Tag
 
-  # Prints out the date using a format string which will be passed to Time#strftime. Therefore you
-  # can use everything Time#strftime offers.
-  class Date
+    # Prints out the date using a format string which will be passed to Time#strftime. Therefore you
+    # can use everything Time#strftime offers.
+    module Date
 
-    include Base
+      # Return the current date formatted as specified.
+      def self.call(tag, body, context)
+        Time.now.strftime(context[:config]['tag.date.format'])
+      end
 
-    # Return the current date formatted as specified.
-    def call(tag, body, context)
-      Time.now.strftime(param('tag.date.format'))
     end
 
   end
-
 end

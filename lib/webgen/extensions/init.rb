@@ -280,6 +280,12 @@ option('tag.prefix', '',
 
 #TODO: add options and summary information for all tags
 
+tag.register('Date', :author => author,
+             :summary => 'Displays the current date/time in a customizable format')
+option('tag.date.format', '%Y-%m-%d %H:%M:%S',
+       'The format of the date (same options as Ruby\'s Time#strftime)', &is_string)
+
+
 tag.register('Relocatable', :names => ['relocatable', 'r'], :author => author,
              :summary => '')
 tag.register('Metainfo', :names => :default, :author => author,
@@ -295,8 +301,6 @@ tag.register('IncludeFile', :author => author,
 tag.register('ExecuteCommand', :names => 'execute_cmd', :author => author,
              :summary => '')
 tag.register('Coderay', :author => author,
-             :summary => '')
-tag.register('Date', :author => author,
              :summary => '')
 tag.register('Sitemap', :author => author,
              :summary => '')
