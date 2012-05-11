@@ -194,19 +194,24 @@ module Webgen
     end
 
     # Main webgen task: generate the website.
+    #
+    # Returns +true+ if the website has been generated.
     def generate_website
+      successful = true
       @website.logger.info { "Generating website..." }
       time = Benchmark.measure do
         populate_tree
         @website.blackboard.dispatch_msg(:after_tree_populated)
-        if @website.tree.root
+        if @website.tree.root && !@website.tree.root['passive']
           write_tree
           @website.blackboard.dispatch_msg(:website_generated)
         else
+          successful = false
           @website.logger.info { 'No source paths found - maybe not a webgen website?' }
         end
       end
       @website.logger.info { "... done in " << ('%2.2f' % time.real) << ' seconds' }
+      successful
     end
 
     # Populate the website tree with nodes. Can only be called once because the tree can only be

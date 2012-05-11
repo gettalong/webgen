@@ -276,8 +276,9 @@ module Webgen
 
     # Generate the website.
     def generate
-      @ext.path_handler.generate_website
-      save_cache
+      successful = @ext.path_handler.generate_website
+      save_cache if successful
+      successful
     end
 
     # Save the +cache+ to +website.cache+.
