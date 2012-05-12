@@ -290,8 +290,12 @@ tag.register('MetaInfo', :names => :default, :author => author,
 option('tag.meta_info.escape_html', true,
        'Special HTML characters in the output will be escaped if true', &true_or_false)
 
-tag.register('Relocatable', :names => ['relocatable', 'r'], :author => author,
-             :summary => '')
+tag.register('Relocatable', :names => ['relocatable', 'r'], :mandatory => ['path'], :author => author,
+             :summary => 'Makes the given path relative to the generated page')
+option('tag.relocatable.path', nil,
+       'The path which should be made relocatable', &is_string)
+
+
 tag.register('Menu', :author => author,
              :summary => '')
 tag.register('BreadcrumbTrail', :author => author,
