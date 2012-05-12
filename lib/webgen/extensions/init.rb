@@ -144,6 +144,9 @@ end
 item_tracker.register('NodeFinderOptionSet', :author => author,
                       :summary => 'Tracks changes to a node finder option set')
 
+item_tracker.register('File', :author => author,
+                      :summary => 'Tracks changes to a file')
+
 
 ########################################################################
 # Everything related to the node finder extension
