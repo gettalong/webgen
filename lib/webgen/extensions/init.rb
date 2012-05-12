@@ -15,6 +15,11 @@ is_string = lambda do |val|
   val
 end
 
+is_hash = lambda do |val|
+  raise "The value has to be a hash" unless val.kind_of?(Hash)
+  val
+end
+
 author = 'Thomas Leitner <t_leitner@gmx.at>'
 
 ########################################################################
@@ -295,6 +300,12 @@ tag.register('Relocatable', :names => ['relocatable', 'r'], :mandatory => ['path
 option('tag.relocatable.path', nil,
        'The path which should be made relocatable', &is_string)
 
+tag.register('Link', :author => author, :mandatory => ['path'],
+             :summary => 'Creates a link to a given path')
+option('tag.link.path', nil,
+       'The (A)LCN path to which a link should be generated', &is_string)
+option('tag.link.attr', {},
+       'A hash of additional HTML attributes that should be set on the link', &is_hash)
 
 tag.register('Menu', :author => author,
              :summary => '')
@@ -311,6 +322,4 @@ tag.register('Coderay', :author => author,
 tag.register('Sitemap', :author => author,
              :summary => '')
 tag.register('TikZ', :author => author,
-             :summary => '')
-tag.register('Link', :author => author,
              :summary => '')
