@@ -319,13 +319,20 @@ option('tag.execute_command.process_output', true,
 option('tag.execute_command.escape_html', true,
        'Special HTML characters in the output will be escaped if true', &true_or_false)
 
+tag.register('IncludeFile', :mandatory => ['filename'], :author => author,
+             :summary => 'Includes the content of a file')
+option('tag.include_file.filename', nil,
+       'The name of the file which should be included (relative to the website).', &is_string)
+option('tag.include_file.process_output', true,
+       'The file content will be scanned for tags if true.', &true_or_false)
+option('tag.include_file.escape_html', true,
+       'Special HTML characters in the file content will be escaped if true.', &true_or_false)
+
 tag.register('Menu', :author => author,
              :summary => '')
 tag.register('BreadcrumbTrail', :author => author,
              :summary => '')
 tag.register('Langbar', :author => author,
-             :summary => '')
-tag.register('IncludeFile', :author => author,
              :summary => '')
 tag.register('Coderay', :author => author,
              :summary => '')
