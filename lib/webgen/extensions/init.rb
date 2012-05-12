@@ -307,6 +307,15 @@ option('tag.link.path', nil,
 option('tag.link.attr', {},
        'A hash of additional HTML attributes that should be set on the link', &is_hash)
 
+tag.register('ExecuteCommand', :names => 'execute_cmd', :mandatory => ['command'], :author => author,
+             :summary => 'Includes the output of a command')
+option('tag.execute_command.command', nil,
+       'The command which should be executed', &is_string)
+option('tag.execute_command.process_output', true,
+       'The output of the command will be scanned for tags if true', &true_or_false)
+option('tag.execute_command.escape_html', true,
+       'Special HTML characters in the output will be escaped if true', &true_or_false)
+
 tag.register('Menu', :author => author,
              :summary => '')
 tag.register('BreadcrumbTrail', :author => author,
@@ -314,8 +323,6 @@ tag.register('BreadcrumbTrail', :author => author,
 tag.register('Langbar', :author => author,
              :summary => '')
 tag.register('IncludeFile', :author => author,
-             :summary => '')
-tag.register('ExecuteCommand', :names => 'execute_cmd', :author => author,
              :summary => '')
 tag.register('Coderay', :author => author,
              :summary => '')
