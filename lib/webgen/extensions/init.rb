@@ -64,7 +64,7 @@ content_processor.register('Fragments', :author => author,
                             :summary => 'Generates fragment nodes from all HTML headers which have an id attribute set')
 content_processor.register('Haml', :author => author,
                            :summary => 'Allows one to write HTML with the Haml markup language')
-content_processor.register('Head', :author => author,
+content_processor.register('HtmlHead', :author => author,
                            :summary => 'Inserts various HTML tags like links to CSS/Javascript files into the HTML head tag')
 
 content_processor.register('Kramdown', :author => author,

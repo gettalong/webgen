@@ -44,10 +44,12 @@ module Webgen
     require 'webgen/context/nodes'
     require 'webgen/context/webgen_tags'
     require 'webgen/context/rendering'
+    require 'webgen/context/html_head'
 
     include Nodes
     include WebgenTags
     include Rendering
+    include HtmlHead
 
 
     # The persistent options. Once initialized, all cloned objects refer to the same hash.
