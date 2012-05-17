@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*-
 
-require 'tempfile'
 require 'webgen/content_processor'
+require 'webgen/utils/external_command'
 
 module Webgen
   class ContentProcessor
@@ -11,28 +11,18 @@ module Webgen
 
       # Process the content of +context+ with the +tidy+ program.
       def self.call(context)
-        error_file = Tempfile.new('webgen-tidy')
-        error_file.close
+        Webgen::Utils::ExternalCommand.ensure_available!('tidy', '-v')
 
-        `tidy -v 2>&1`
-        if $?.exitstatus != 0
-          raise Webgen::CommandNotFoundError.new('tidy', self.class.name, context.dest_node)
-        end
-
-        cmd = "tidy -q -f #{error_file.path} #{context.website.config['content_processor.tidy.options']}"
-        result = IO.popen(cmd, 'r+') do |io|
-          io.write(context.content)
-          io.close_write
-          io.read
-        end
-        if $?.exitstatus != 0
-          File.readlines(error_file.path).each do |line|
-            context.website.logger.send($?.exitstatus == 1 ? :warn : :error) do
+        cmd = "tidy -q #{context.website.config['content_processor.tidy.options']}"
+        status, stdout, stderr = systemu(cmd, 'stdin' => context.content)
+        if status.exitstatus != 0
+          stderr.split(/\n/).each do |line|
+            context.website.logger.send(status.exitstatus == 1 ? :warn : :error) do
               "Tidy reported problems for <#{context.dest_node.alcn}>: #{line}"
             end
           end
         end
-        context.content = result
+        context.content = stdout
         context
       end
 
