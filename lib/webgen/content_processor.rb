@@ -102,7 +102,8 @@ module Webgen
     # Call the content processor object identified by the given name with the given context.
     def call(name, context)
       extension(name).call(context)
-    rescue Webgen::Error
+    rescue Webgen::Error => e
+      e.path = context.dest_node.alcn if e.path.empty?
       raise
     rescue Exception => e
       ext = extension(name)
