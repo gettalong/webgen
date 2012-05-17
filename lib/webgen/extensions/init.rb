@@ -20,6 +20,11 @@ is_hash = lambda do |val|
   val
 end
 
+is_integer = lambda do |val|
+  raise "The value has to be an integer" unless val.kind_of?(Integer)
+  val
+end
+
 author = 'Thomas Leitner <t_leitner@gmx.at>'
 
 ########################################################################
@@ -328,13 +333,39 @@ option('tag.include_file.process_output', true,
 option('tag.include_file.escape_html', true,
        'Special HTML characters in the file content will be escaped if true.', &true_or_false)
 
+tag.register('Coderay', :mandatory => ['lang'], :author => author,
+             :summary => 'Applies syntax highlighting to the tag body')
+option('tag.coderay.lang', 'ruby',
+       'The language used for highlighting',)
+option('tag.coderay.process_body', true,
+       'The tag body will be scanned for tags before highlighting if true', &true_or_false)
+option('tag.coderay.wrap', :div,
+       'Specifies how the code should be wrapped, either "div" or "span"') do |val|
+  val = val.to_s.intern
+  raise "The value has to be either div or span" unless val == :div || val == :span
+  val
+end
+option('tag.coderay.css', 'style',
+       'Specifies how the highlighted code should be styled')  do |val|
+  val = val.to_s
+  raise "The value has to be class, style or other" unless %w[class style other].include?(val)
+  val
+end
+option('tag.coderay.line_numbers', true,
+       'Show line numbers', &true_or_false)
+option('tag.coderay.line_number_start', 1,
+       'Line number of first line', &is_integer)
+option('tag.coderay.bold_every', 10,
+       'The interval at which the line number appears bold', &is_integer)
+option('tag.coderay.tab_width', 8,
+       'Number of spaces used for a tabulator', &is_integer)
+
+
 tag.register('Menu', :author => author,
              :summary => '')
 tag.register('BreadcrumbTrail', :author => author,
              :summary => '')
 tag.register('Langbar', :author => author,
-             :summary => '')
-tag.register('Coderay', :author => author,
              :summary => '')
 tag.register('Sitemap', :author => author,
              :summary => '')
