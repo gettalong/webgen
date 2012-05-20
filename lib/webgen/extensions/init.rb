@@ -15,6 +15,11 @@ is_string = lambda do |val|
   val
 end
 
+is_array = lambda do |val|
+  raise "The value has to be an array" unless val.kind_of?(Array)
+  val
+end
+
 is_hash = lambda do |val|
   raise "The value has to be a hash" unless val.kind_of?(Hash)
   val
@@ -102,6 +107,21 @@ content_processor.register('Tidy', :author => author,
                            :summary => 'Uses the tidy program to convert the content into valid (X)HTML')
 option('content_processor.tidy.options', "-raw",
        "Additional options passed to the tidy command (-q and -f are always used)", &is_string)
+
+content_processor.register('Tikz', :author => author,
+                           :summary => 'Converts the content (LaTeX TikZ picture commands) into an image')
+option('content_processor.tikz.libraries', [],
+       'An array of additional TikZ library names', &is_array)
+option('content_processor.tikz.opts', '',
+       'A string with global options for the tikzpicture environment', &is_string)
+option('content_processor.tikz.resolution', '72 72',
+       'A string specifying the render and output resolutions, separated by whitespace') do |val|
+  raise "The value has to be a string in the format 'RENDER_RES OUTPUT_RES'" unless val.kind_of?(String) && val =~ /^\d+\s+\d+$/
+  val
+end
+option('content_processor.tikz.transparent', false,
+       'Specifies whether the generated image should be transparent (only if the extension is png)', &true_or_false)
+
 
 content_processor.register('Xmllint', :author => author,
                            :summary => 'Uses the xmllint program to check the content for well-formedness and/or validness')
