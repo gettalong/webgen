@@ -1,0 +1,82 @@
+webgen - static website generation made easy
+
+Copyright (C) 2012 Thomas Leitner
+
+= IMPORTANT NOTE
+
+This branch will become the *next major version* of webgen. The latest
+commit should always be in a good state but you cannot depend on this!
+
+This branch features a completely rewritten webgen core (as have all
+past major releases) which will simplify writing extensions for webgen
+(and therefore webgen itself since most functionality is implemented via
+extensions).
+
+Nearly all of the functionality of the 0.5.x series is already available
+in this branch, so compiling a basic website already works. The missing
+features from the 0.5.x series will be ported in the coming
+weeks/months. After that some features of the 0.4.x series will be
+ported to this new version.
+
+Have a look at the code (or the rdoc of it) to get familiar with the API
+if you have written extensions for previous webgen versions - it is not
+that different from the 0.5.x API. You can also ask questions or request
+features on the <webgen-users@rubyforge.org> mailing list.
+
+Also note that the branch history may be rewritten from time to time!
+
+
+= Description
+
+webgen is a free (GPL-licensed) command line application for generating
+static websites. It combines content with template files to generate
+HTML files. This allows one to separate the content from the layout and
+reuse the layout for many content files.
+
+Apart from this basic functionality, webgen offers many features that
+makes authoring websites easier:
+
+* Multiple markup languages to choose from (Markdown, Textile, Haml,
+  Asciidoc, ...)
+
+* Automatic generation of menus, breadcrumb trails, ... and more!
+
+* Partial website generation (only modified items get re-generated)
+
+* Self-contained website (all generated links are relative, so one can
+  view the website without a web server)
+
+* Easily extendable (all major components can be extended with new
+  functionality)
+
+
+= Documentation
+
+The documentation can be found in the doc/ directory. Furthermore, the
+webgen CLI command provides options for viewing the documentation for all
+available extensions.
+
+An HTML rendering of the documentation is available at
+http://webgen.rubyforge.org/documentation/.
+
+
+= Installation
+
+webgen is written in Ruby, so you need the Ruby interpreter on your
+system. You can get it from http://ruby-lang.org/.
+
+Once Ruby is installed, you just need to enter the following commands on
+the command line:
+
+    $ ruby setup.rb config
+    $ ruby setup.rb setup
+    $ ruby setup.rb install
+
+Or you could install webgen via Rubygems:
+
+    $ gem install webgen
+
+
+= Contact
+
+Author: Thomas Leitner <t_leitner@gmx.at>
