@@ -380,6 +380,13 @@ option('tag.coderay.bold_every', 10,
 option('tag.coderay.tab_width', 8,
        'Number of spaces used for a tabulator', &is_integer)
 
+tag.register('TikZ', :mandatory => ['path'], :author => author,
+             :summary => 'Generates an output image from the specified TikZ commands')
+option('tag.tikz.path', nil,
+       'The path for the created image', &is_string)
+option('tag.tikz.img_attr', {},
+       'A hash of additional HTML attributes for the created img tag', &is_hash)
+
 
 tag.register('Menu', :author => author,
              :summary => '')
@@ -388,6 +395,4 @@ tag.register('BreadcrumbTrail', :author => author,
 tag.register('Langbar', :author => author,
              :summary => '')
 tag.register('Sitemap', :author => author,
-             :summary => '')
-tag.register('TikZ', :author => author,
              :summary => '')
