@@ -78,6 +78,10 @@ class TestBlocks < MiniTest::Unit::TestCase
     context.content = '<webgen:block name="content" chain="dtest" />'
     assert_equal('/test', obj.render_block(context, :chain => [dnode], :name => 'content'))
 
+    context.content = '<webgen:block name="content" chain="dtest" />'
+    context[:dest_node] = dnode
+    assert_equal('/dtest', obj.render_block(context, :chain => [dnode], :name => 'content'))
+    context[:dest_node] = nil
 
     # Test options "node" and "notfound"
     context[:chain] = [node, template, node]

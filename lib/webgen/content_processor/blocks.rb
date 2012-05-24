@@ -52,7 +52,7 @@ module Webgen
           used_chain = (context[:chain].length > 1 ? context[:chain][1..-1] : context[:chain].dup)
         elsif options[:chain].kind_of?(Array)
           used_chain = options[:chain]
-          dest_node = context.content_node
+          dest_node = context.dest_node
         else
           paths = options[:chain].split(';')
           used_chain = paths.collect do |path|
@@ -65,7 +65,7 @@ module Webgen
             temp_node
           end.compact
           return '' if used_chain.length != paths.length
-          dest_node = context.content_node
+          dest_node = context.dest_node
         end
 
         if options[:node] == 'first'
