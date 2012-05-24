@@ -35,7 +35,7 @@ module Webgen
     RE_META_INFO_START = /\A---\s*#{RE_NEWLINE}/
     RE_META_INFO = /#{RE_META_INFO_START}.*?#{RE_NEWLINE}(?=---.*?#{RE_NEWLINE}|\Z)/m
     RE_BLOCKS_START_SIMPLE = /^--- (\w+)(?:\s*| -+\s*)$|^$/
-    RE_BLOCKS_START_COMPLEX = /^--- *?(?: *((?:\w+:[^\s]* *)*))?$|^$/
+    RE_BLOCKS_START_COMPLEX = /^--- *?(?: *((?:\w+:[^\s]* *)*))?-*\s*$|^$/
     RE_BLOCKS_START = /^---(?: .*?|)(?=#{RE_NEWLINE})/
     RE_BLOCKS = /(?:(#{RE_BLOCKS_START})|\A)#{RE_NEWLINE}?(.*?)(?:(?=#{RE_BLOCKS_START})|\z)/m
     RE_PAGE = /(#{RE_META_INFO})?(.*)/m

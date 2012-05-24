@@ -106,13 +106,14 @@ class TestPage < MiniTest::Unit::TestCase
       content: content4
     - name: block5
       content: "content5\\n"
+
 # named block and block with other options
 - in: |
-    --- name:block
+    --- name:block -------------------------------
     content doing -
     with?: with some things
 
-    --- other:options test1:true test2:false test3:542 pipeline:
+    --- other:options test1:true test2:false test3:542 pipeline: ----------------
   meta_info:
     blocks: {block2: {other: options, test1: true, test2: false, test3: 542, pipeline: ~}}
   blocks:
@@ -185,6 +186,13 @@ EOF
   asdfasd
   dfdf
   --- name, incorrect_format
+  lsldf
+
+# invalid ending of block options
+- |
+  asdfasd
+  dfdf
+  --- name:block -- ---
   lsldf
 EOF
 
