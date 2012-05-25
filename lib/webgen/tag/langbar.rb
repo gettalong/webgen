@@ -1,55 +1,48 @@
 # -*- encoding: utf-8 -*-
 
-module Webgen::Tag
+module Webgen
+  class Tag
 
-  # Generates a list with all the languages of the page.
-  class Langbar
+    # Generates a list with all the languages of the page.
+    module Langbar
 
-    include Webgen::Tag::Base
-    include Webgen::WebsiteAccess
+      # Return a rendering of the list of all translations of the content node.
+      def self.call(tag, body, context)
+        context.website.ext.item_tracker.add(context.dest_node, :nodes,
+                                             ['Webgen::Tag::Langbar', 'node_translations'],
+                                             context.content_node.alcn, :meta_info)
+        nodes = node_translations(context.website, context.content_node.alcn)
 
-    def initialize #:nodoc:
-      website.blackboard.add_listener(:node_changed?, method(:node_changed?))
-    end
-
-    # Return a list of all translations of the content page.
-    def call(tag, body, context)
-      lang_nodes = all_lang_nodes(context.content_node)
-      (context.dest_node.node_info[:tag_langbar_data] ||= {})[context.content_node.acn] = lang_nodes.map {|n| n.alcn}
-      result = lang_nodes.
-        reject {|n| (context.content_node.lang == n.lang && !param('tag.langbar.show_own_lang'))}.
-        sort {|a, b| a.lang <=> b.lang}.
-        collect do |n|
-        attrs = {:link_text => (param('tag.langbar.lang_names')[n.lang] || n.lang), :lang => n.lang}
-        attrs['class'] = 'webgen-langbar-current-lang' if context.content_node.lang == n.lang
-        context.dest_node.link_to(n, attrs)
-      end.join(param('tag.langbar.separator'))
-
-      [(param('tag.langbar.show_single_lang') || lang_nodes.length > 1 ? result : ""), param('tag.langbar.process_output')]
-    end
-
-    #######
-    private
-    #######
-
-    # Return all nodes with the same absolute cn as +node+.
-    def all_lang_nodes(node)
-      node.tree.node_access[:acn][node.acn]
-    end
-
-    # Check if the langbar tag for +node+ changed.
-    def node_changed?(node)
-      return unless (cdata = node.node_info[:tag_langbar_data])
-      cdata.each do |acn, clang_nodes|
-        lang_nodes = all_lang_nodes(node.tree[acn, :acn]) rescue nil
-        if !lang_nodes || lang_nodes.length != clang_nodes.length ||
-            lang_nodes.any? {|n| n.meta_info_changed?}
-          node.flag(:dirty)
-          break
+        if (context[:config]['tag.langbar.show_single_lang'] || nodes.length > 1) &&
+            (template_node = resolve_template_node(context))
+          context[:langnodes] = nodes.
+            reject {|n| (context.content_node.lang == n.lang && !context[:config]['tag.langbar.show_own_lang'])}.
+            sort {|a, b| a.lang <=> b.lang}
+          context.render_block(:name => 'tag.langbar', :chain => [template_node, context.content_node])
+        else
+          ''
         end
       end
+
+      # Return the template node for the langbar tag or +nil+ if it cannot be found.
+      def self.resolve_template_node(context)
+        path = context[:config]['tag.langbar.template']
+        template_node = context.ref_node.resolve(path, context.dest_node.lang)
+        if !template_node
+          context.website.logger.error { "Could not resolve template path '#{path}' for tag 'langbar' in <#{context.ref_node}>" }
+        end
+        template_node
+      end
+
+      # Generate the list of node translations given the options.
+      #
+      # This method is invoked by Webgen::ItemTracker::NodeList to retrieve the translations nodes
+      # when necessary.
+      def self.node_translations(website, node_alcn)
+        website.tree.translations(website.tree[node_alcn])
+      end
+
     end
 
   end
-
 end

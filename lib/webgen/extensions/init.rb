@@ -389,12 +389,19 @@ option('tag.tikz.path', nil,
 option('tag.tikz.img_attr', {},
        'A hash of additional HTML attributes for the created img tag', &is_hash)
 
+tag.register('Langbar', :author => author,
+             :summary => 'Displays a list of links to translations of the content page')
+option('tag.langbar.show_single_lang', true,
+       'Should the link be shown although the page is only available in one language?', &true_or_false)
+option('tag.langbar.show_own_lang', true,
+       'Should the link to the currently displayed language page be shown?', &true_or_false)
+option('tag.langbar.template', '/templates/tag.template',
+       'The block \'tag.langbar\' in this template file is used for rendering')
 
 tag.register('Menu', :author => author,
              :summary => '')
 tag.register('BreadcrumbTrail', :author => author,
              :summary => '')
-tag.register('Langbar', :author => author,
-             :summary => '')
+
 tag.register('Sitemap', :author => author,
              :summary => '')
