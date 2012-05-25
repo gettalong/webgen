@@ -295,8 +295,6 @@ end
 website.ext.source = source = Webgen::Source.new(website)
 source.register("FileSystem", :author => author,
                 :summary => 'Provides paths under a specified directory that match a certain pattern')
-source.register("Resource", :author => author,
-                :summary => 'Provides paths from the specified resource')
 source.register("Stacked", :author => author,
                 :summary => 'Allows combining multiple sources into one')
 source.register("TarArchive", :author => author,
