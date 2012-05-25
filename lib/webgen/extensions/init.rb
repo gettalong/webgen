@@ -96,6 +96,8 @@ content_processor.register('RedCloth', :author => author,
 option('content_processor.redcloth.hard_breaks', false,
        'Specifies whether new lines are turned into hard breaks', &true_or_false)
 
+content_processor.register('Ruby', :author => author,
+                           :summary => 'Generate arbitrary output using plain Ruby')
 content_processor.register('Sass', :author => author,
                            :summary => 'Converts content written in the Sass meta language to valid CSS')
 content_processor.register('Scss', :author => author,
