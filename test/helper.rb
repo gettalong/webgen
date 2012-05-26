@@ -51,6 +51,10 @@ module Test
       super(self, name, context)
     end
 
+    def template_chain
+      [self]
+    end
+
   end
 
   def self.setup_tag_template(root)

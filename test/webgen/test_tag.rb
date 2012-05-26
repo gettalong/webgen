@@ -123,4 +123,42 @@ class TestTag < MiniTest::Unit::TestCase
     end
   end
 
+  class StubContext
+
+    def [](key)
+      {:config => {'tag.tag.template' => '/tag.template'}}[key]
+    end
+
+    def ref_node
+      template_node = MiniTest::Mock.new
+      template_node.expect(:template_chain, [:hallo])
+      node = MiniTest::Mock.new
+      node.expect(:resolve!)
+    end
+
+  end
+
+  def test_class_render_tag_template
+    dest_node = MiniTest::Mock.new
+    dest_node.expect(:lang, 'en')
+    template_node = MiniTest::Mock.new
+    template_node.expect(:template_chain, [:hallo])
+    ref_node = MiniTest::Mock.new
+    ref_node.expect(:resolve!, template_node, ['/tag.template', 'en', dest_node])
+    context = MiniTest::Mock.new
+    context.expect(:[], {'tag.tag.template' => '/tag.template'}, [:config])
+    context.expect(:ref_node, ref_node)
+    context.expect(:content_node, ref_node)
+    context.expect(:dest_node, dest_node)
+    context.expect(:render_block, 'ahoi', [{:name => "tag.tag", :node => 'first',
+                                             :chain => [:hallo, template_node, context.content_node]}])
+
+    Webgen::Tag.render_tag_template(context, 'tag')
+
+    context.verify
+    dest_node.verify
+    ref_node.verify
+    template_node.verify
+  end
+
 end

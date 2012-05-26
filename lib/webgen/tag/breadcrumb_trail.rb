@@ -20,12 +20,8 @@ module Webgen
         context.website.ext.item_tracker.add(context.dest_node, :nodes,
                                              ['Webgen::Tag::BreadcrumbTrail', 'nodes'], options, :meta_info)
 
-        if (template_node = Webgen::Tag.resolve_tag_template(context, 'breadcrumb_trail'))
-          context[:nodes] = nodes(context.website, options)
-          context.render_block(:name => 'tag.breadcrumb_trail', :chain => [template_node, context.content_node])
-        else
-          ''
-        end
+        context[:nodes] = nodes(context.website, options)
+        Webgen::Tag.render_tag_template(context, 'breadcrumb_trail')
       end
 
       # Return the list of nodes that make up the breadcrumb trail of a node while respecting the

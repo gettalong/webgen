@@ -15,12 +15,11 @@ module Webgen
                                              context.content_node.alcn, :meta_info)
         nodes = node_translations(context.website, context.content_node.alcn)
 
-        if (context[:config]['tag.langbar.show_single_lang'] || nodes.length > 1) &&
-            (template_node = Webgen::Tag.resolve_tag_template(context, 'langbar'))
-          context[:langnodes] = nodes.
+        if context[:config]['tag.langbar.show_single_lang'] || nodes.length > 1
+          context[:nodes] = nodes.
             reject {|n| (context.content_node.lang == n.lang && !context[:config]['tag.langbar.show_own_lang'])}.
             sort {|a, b| a.lang <=> b.lang}
-          context.render_block(:name => 'tag.langbar', :chain => [template_node, context.content_node])
+          Webgen::Tag.render_tag_template(context, 'langbar')
         else
           ''
         end
