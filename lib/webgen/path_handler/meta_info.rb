@@ -28,8 +28,8 @@ module Webgen
         create_node(path) do |node|
           node.node_info[:mi_paths] = {}
           node.node_info[:mi_alcn] = {}
-          add_data(blocks['paths'], node)
-          add_data(blocks['alcn'], node)
+          add_data(blocks['paths'], 'paths', node)
+          add_data(blocks['alcn'], 'alcn', node)
           update_existing_nodes(node)
           @nodes << node
         end
@@ -40,16 +40,16 @@ module Webgen
       #######
 
       # Add the data from the given page block to the hash.
-      def add_data(block, node)
-        if block && (data = YAML::load(block.content))
-          mi_key = (block.name == 'paths' ? :mi_paths : :mi_alcn)
+      def add_data(content, block_name, node)
+        if content && (data = YAML::load(content))
+          mi_key = (block_name == 'paths' ? :mi_paths : :mi_alcn)
           data.each do |key, value|
             key = Webgen::Path.append(node.parent.alcn, key)
             node.node_info[mi_key][key] = value
           end
         end
       rescue Exception => e
-        raise Webgen::NodeCreationError.new("Could not parse block '#{block.name}': #{e.message}", self.class.name)
+        raise Webgen::NodeCreationError.new("Could not parse block '#{block_name}': #{e.message}", self.class.name)
       end
 
       # Update already existing nodes with meta information from the given meta info node.

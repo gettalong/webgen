@@ -214,8 +214,7 @@ EOF
       assert_equal(data['blocks'].length, d.blocks.length)
       data['blocks'].each_with_index do |b, index|
         index += 1
-        assert_equal(b['name'], d.blocks[b['name']].name, "test item #{oindex} - name")
-        assert_equal(b['content'], d.blocks[b['name']].content, "test item #{oindex} - content")
+        assert_equal(b['content'], d.blocks[b['name']], "test item #{oindex} - content")
       end
     end
   end
@@ -224,14 +223,14 @@ EOF
     valid = YAML::load(VALID)
     d = Webgen::Page.from_data(valid[0]['in'], 'blocks' => {1 => { 'name' => 'other1'}, 2 => { 'name' => 'block7'}})
     assert_equal({'key' => 'value'}, d.meta_info)
-    assert_equal('other1', d.blocks['other1'].name)
-    assert_equal('block7', d.blocks['block7'].name)
+    assert(d.blocks.has_key?('other1'))
+    assert(d.blocks.has_key?('block7'))
   end
 
   def test_eol_encodings
     d = Webgen::Page.from_data("---\ntitle: test\r\n---\r\ncontent")
     assert_equal({'title' => 'test'}, d.meta_info)
-    assert_equal('content', d.blocks['content'].content)
+    assert_equal('content', d.blocks['content'])
   end
 
   def test_meta_info_dupped

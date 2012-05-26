@@ -5,26 +5,12 @@ require 'webgen/error'
 
 module Webgen
 
-  # A Page object wraps a meta information hash and an array of Block objects. It is normally
-  # generated from a file or string in Webgen Page Format using the provided class methods.
+  # A Page object wraps a meta information hash and a hash of block name to block content
+  # associations.
+  #
+  # It is normally generated from a file or string in Webgen Page Format using the provided class
+  # methods.
   class Page
-
-    # A single block within a Page object. The content of the block can be rendered using the #render method.
-    class Block
-
-      # The name of the block.
-      attr_reader :name
-
-      # The content of the block.
-      attr_reader :content
-
-      # Create a new block with the given +name+ and the +content+.
-      def initialize(name, content)
-        @name, @content = name, content
-      end
-
-    end
-
 
     # Raised during parsing of data in Webgen Page Format if the data is invalid.
     class FormatError < Error; end
@@ -104,7 +90,7 @@ module Webgen
           content.gsub!(/^(\\+)(---.*?)$/) {|m| "\\" * ($1.length / 2) + $2}
           content.chomp! unless index == scanned.length
 
-          blocks[name] = Block.new(name, content)
+          blocks[name] = content
           (meta_info['blocks'] ||= {})[name] = options unless options.empty?
         end
         meta_info['blocks'].delete(:default) if meta_info['blocks']

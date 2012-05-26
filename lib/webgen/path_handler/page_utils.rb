@@ -59,7 +59,7 @@ module Webgen
         content_processor = context.website.ext.content_processor
         context.website.ext.item_tracker.add(context.dest_node, :node_content, node.alcn)
 
-        context.content = node.blocks[name].content.dup
+        context.content = node.blocks[name].dup
         pipeline ||= ((node.meta_info['blocks'] || {})[name] || {})['pipeline'] || []
         content_processor.normalize_pipeline(pipeline).each do |processor|
           content_processor.call(processor, context)

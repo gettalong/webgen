@@ -19,13 +19,13 @@ class TestPageUtils < MiniTest::Unit::TestCase
     path = Webgen::Path.new('/test.html') { StringIO.new("---\nkey: value\n---\ncontent") }
     blocks = @handler.send(:parse_as_page!, path)
     assert_kind_of(Hash, blocks)
-    assert_equal('content', blocks['content'].content)
+    assert_equal('content', blocks['content'])
     assert_equal('value', path.meta_info['key'])
   end
 
   def test_render_block
     website, node, context = Test.setup_content_processor_test
-    node.expect(:blocks, {'content' => Webgen::Page::Block.new('content', 'mycontent')})
+    node.expect(:blocks, {'content' => 'mycontent'})
     node.expect(:meta_info, {})
     website.ext.content_processor = Webgen::ContentProcessor.new
     website.ext.item_tracker = MiniTest::Mock.new

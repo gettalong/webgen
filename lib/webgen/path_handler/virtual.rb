@@ -57,8 +57,8 @@ module Webgen
       # Read all entries from all blocks and yield the found path as well as the meta info hash for
       # each entry.
       def read_entries(blocks)
-        blocks.each do |name, block|
-          YAML::load(block.content).each do |key, meta_info|
+        blocks.each do |name, content|
+          YAML::load(content).each do |key, meta_info|
             yield(key, meta_info || {})
           end
         end
