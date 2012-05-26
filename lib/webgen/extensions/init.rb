@@ -396,9 +396,18 @@ option('tag.langbar.show_own_lang', true,
 option('tag.langbar.template', '/templates/tag.template',
        'The block \'tag.langbar\' in this template file is used for rendering')
 
-tag.register('Menu', :author => author,
-             :summary => '')
 tag.register('BreadcrumbTrail', :author => author,
+             :summary => 'Creates a breadcrumb trail (i.e. shows the directory hierarchy) for the content page')
+option('tag.breadcrumb_trail.omit_dir_index', false,
+       'Omit the last path component if it is an index path', &true_or_false)
+option('tag.breadcrumb_trail.start_level', 0,
+       'The level at which the breadcrumb trail starts (starting at 0)', &is_integer)
+option('tag.breadcrumb_trail.end_level', -1,
+       'The level at which the breadcrumb trail ends (starting at 0).', &is_integer)
+option('tag.breadcrumb_trail.template', '/templates/tag.template',
+       'The block \'tag.breadcrumb_trail\' in this template file is used for rendering')
+
+tag.register('Menu', :author => author,
              :summary => '')
 
 tag.register('Sitemap', :author => author,

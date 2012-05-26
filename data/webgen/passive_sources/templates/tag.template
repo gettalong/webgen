@@ -4,3 +4,9 @@ context.content = context[:langnodes].map do |node|
   attrs['class'] = 'webgen-langbar-current-lang' if context.content_node.lang == node.lang
   context.dest_node.link_to(node, attrs)
 end.join(" | ")
+
+
+--- name:tag.breadcrumb_trail pipeline:ruby --------------------------------------------------------
+context.content = context[:nodes].map do |node|
+  context.dest_node.link_to(node, :lang => context.dest_node.lang)
+end.join(" / ")
