@@ -8,20 +8,6 @@ require 'webgen/tag/langbar'
 
 class TestTagLangbar < MiniTest::Unit::TestCase
 
-  class TestNode < Webgen::Node
-
-    include Webgen::PathHandler::PageUtils
-
-    def blocks
-      node_info[:blocks]
-    end
-
-    def render_block(name, context)
-      super(self, name, context)
-    end
-
-  end
-
   def test_call
     @obj = Webgen::Tag::Langbar
     @website, context = Test.setup_tag_test
@@ -39,11 +25,7 @@ class TestTagLangbar < MiniTest::Unit::TestCase
     de_node = Webgen::Node.new(root, 'file.html', '/file.de.html', {'lang' => 'de'})
     other = Webgen::Node.new(root, 'other.html', '/other.html', {'lang' => 'en'})
 
-    template = TestNode.new(root, 'tag.template', '/tag.template')
-    template_data = File.read(File.join(Webgen.data_dir, 'passive_sources', 'templates', 'tag.template'))
-    page = Webgen::Page.from_data(template_data)
-    template.node_info[:blocks] = page.blocks
-    template.meta_info.update(page.meta_info)
+    template = Test.setup_tag_template(root)
 
     de_link = '<a href="file.de.html">de</a>'
     en_link = '<span class="webgen-langbar-current-lang">en</span>'

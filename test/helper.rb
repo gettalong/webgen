@@ -4,6 +4,8 @@ require 'minitest/autorun'
 require 'ostruct'
 require 'webgen/error'
 require 'webgen/context'
+require 'webgen/node'
+require 'webgen/path_handler/page_utils'
 
 module Test
 
@@ -35,6 +37,29 @@ module Test
     website.expect(:ext, OpenStruct.new)
     context = Webgen::Context.new(website)
     [website, context]
+  end
+
+  class RenderNode < Webgen::Node
+
+    include Webgen::PathHandler::PageUtils
+
+    def blocks
+      node_info[:blocks]
+    end
+
+    def render_block(name, context)
+      super(self, name, context)
+    end
+
+  end
+
+  def self.setup_tag_template(root)
+    template = RenderNode.new(root, 'tag.template', '/tag.template')
+    template_data = File.read(File.join(Webgen.data_dir, 'passive_sources', 'templates', 'tag.template'))
+    page = Webgen::Page.from_data(template_data)
+    template.node_info[:blocks] = page.blocks
+    template.meta_info.update(page.meta_info)
+    template
   end
 
   def self.create_default_nodes(tree)
