@@ -1,5 +1,7 @@
 # -*- encoding: utf-8 -*-
 
+require 'webgen/tag'
+
 module Webgen
   class Tag
 
@@ -14,7 +16,7 @@ module Webgen
         nodes = node_translations(context.website, context.content_node.alcn)
 
         if (context[:config]['tag.langbar.show_single_lang'] || nodes.length > 1) &&
-            (template_node = resolve_template_node(context))
+            (template_node = Webgen::Tag.resolve_tag_template(context, 'langbar'))
           context[:langnodes] = nodes.
             reject {|n| (context.content_node.lang == n.lang && !context[:config]['tag.langbar.show_own_lang'])}.
             sort {|a, b| a.lang <=> b.lang}
@@ -22,16 +24,6 @@ module Webgen
         else
           ''
         end
-      end
-
-      # Return the template node for the langbar tag or +nil+ if it cannot be found.
-      def self.resolve_template_node(context)
-        path = context[:config]['tag.langbar.template']
-        template_node = context.ref_node.resolve(path, context.dest_node.lang)
-        if !template_node
-          context.website.logger.error { "Could not resolve template path '#{path}' for tag 'langbar' in <#{context.ref_node}>" }
-        end
-        template_node
       end
 
       # Generate the list of node translations given the options.

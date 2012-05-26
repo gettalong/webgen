@@ -66,6 +66,17 @@ module Webgen
 
     TagData = Struct.new(:object, :config_base, :mandatory_options, :initialized)
 
+    # Return the template node specified by the given configuration option for the tag or +nil+ if
+    # it cannot be found.
+    def self.resolve_tag_template(context, tag)
+      path = context[:config]["tag.#{tag}.template"]
+      template_node = context.ref_node.resolve(path, context.dest_node.lang)
+      if !template_node
+        context.website.logger.error { "Could not resolve template path '#{path}' for tag '#{tag}' in <#{context.ref_node}>" }
+      end
+      template_node
+    end
+
     def initialize(website) # :nodoc:
       super()
       website.blackboard.add_listener(:website_initialized, self) do
