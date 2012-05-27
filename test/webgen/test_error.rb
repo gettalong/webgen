@@ -17,6 +17,8 @@ class TestError < MiniTest::Unit::TestCase
     assert_equal('location', e.location)
     assert_equal('/path', e.path)
     assert_match(/Error at location while working on <\/path>:/, e.message)
+    e.path = 5
+    assert_match(/Error at location while working on <5>:/, e.message)
 
     e = Webgen::Error.new(Exception.new("test"))
     assert_match(/Error:.*test/m, e.message)
@@ -57,6 +59,8 @@ class TestNodeCreationError < MiniTest::Unit::TestCase
   def test_all
     e = Webgen::NodeCreationError.new("test")
     assert_match(/Error while creating a node:/, e.message)
+    e.path = 5
+    assert_match(/Error while creating a node from <5>:/, e.message)
   end
 
 end
@@ -67,6 +71,8 @@ class TestRenderError < MiniTest::Unit::TestCase
     e = Webgen::RenderError.new("test", 'location', '/path', '/error')
     assert_equal("/error", e.error_path)
     assert_match(/Error at location in <\/error> while rendering <\/path>/, e.message)
+    e.path = 5
+    assert_match(/Error at location in <\/error> while rendering <5>:/, e.message)
 
     e = Webgen::RenderError.new('test', 'location', '/path', '/error', 5)
     assert_equal("/error", e.error_path)

@@ -33,7 +33,7 @@ module Webgen
       return super() if wrapped_msg_only
       msg = 'Error'
       msg << " at #{@location}" if @location
-      msg << (!@path.empty? ? " while working on <#{@path}>" : '')
+      msg << (!@path.to_s.empty? ? " while working on <#{@path}>" : '')
       msg << ":\n    " << super()
     end
 
@@ -57,7 +57,7 @@ module Webgen
       msg = 'Error'
       msg << " at #{@location}" if @location
       msg << ' while creating a node'
-      msg << (!@path.empty? ? " from <#{@path}>" : '')
+      msg << (!@path.to_s.empty? ? " from <#{@path}>" : '')
       msg << ":\n    " << super(true)
     end
 
@@ -90,7 +90,7 @@ module Webgen
         msg += ">"
       end
       msg << ' while rendering'
-      msg << (!@path.empty? ? " <#{@path}>" : ' the website')
+      msg << (!@path.to_s.empty? ? " <#{@path}>" : ' the website')
       msg << ":\n    " << super(true)
     end
 

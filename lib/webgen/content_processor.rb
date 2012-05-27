@@ -103,7 +103,7 @@ module Webgen
     def call(name, context)
       extension(name).call(context)
     rescue Webgen::Error => e
-      e.path = context.dest_node.alcn if e.path.empty?
+      e.path = context.dest_node if e.path.to_s.empty?
       raise
     rescue Exception => e
       ext = extension(name)

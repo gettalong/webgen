@@ -250,7 +250,7 @@ module Webgen
             end
             @website.blackboard.dispatch_msg(:after_node_written, node)
           rescue Webgen::Error => e
-            e.path = node.alcn if e.path.empty?
+            e.path = node.alcn if e.path.to_s.empty?
             raise
           rescue Exception => e
             raise Webgen::RenderError.new(e, nil, node)
@@ -374,7 +374,7 @@ module Webgen
         @website.blackboard.dispatch_msg(:after_node_created, node)
       end
     rescue Webgen::Error => e
-      e.path = path.to_s if e.path.empty?
+      e.path = path.to_s if e.path.to_s.empty?
       e.location = instance(handler).class.name unless e.location
       raise
     rescue Exception => e

@@ -154,6 +154,12 @@ module Webgen
                                       context.dest_node, context.ref_node)
       end
       result
+    rescue Webgen::Error => e
+      e.path = context.dest_node if e.path.to_s.empty?
+      raise
+    rescue Exception => e
+      raise Webgen::RenderError.new(e, (tdata && tdata.object.respond_to?(:name) ? tdata.object.name : "tag '#{tag}'"),
+                                    context.dest_node, context.ref_node)
     end
 
     # See Webgen::Utils::TagParser#replace_tags.

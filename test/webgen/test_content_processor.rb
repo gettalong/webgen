@@ -60,11 +60,11 @@ class TestContentProcessor < MiniTest::Unit::TestCase
     assert_equal('valuevalue', @cp.call('doit', 'value'))
 
     s = 'webgen'
-    def s.dest_node; MiniTest::Mock.new.expect(:alcn, 'dest_node'); end
+    def s.dest_node; "dest_node"; end
     assert_raises(Webgen::Error) { @cp.call('my_processor', s) }
 
     s = 'error'
-    def s.dest_node; MiniTest::Mock.new.expect(:alcn, 'dest_node'); end
+    def s.dest_node; "dest_node"; end
     assert_raises(Webgen::RenderError) { @cp.call('my_processor', s) }
     assert_raises(Webgen::RenderError) { @cp.call('doit', s) }
   end

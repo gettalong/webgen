@@ -74,7 +74,7 @@ class TestTag < MiniTest::Unit::TestCase
     assert_raises(Webgen::RenderError) { @tag.call('unknown', {}, 'body', context) }
 
     @tag.register('MyTag', :mandatory => ['mandatory'])
-    assert_raises(ArgumentError) { @tag.call('my_tag', {}, 'body', context) }
+    assert_raises(Webgen::RenderError) { @tag.call('my_tag', {}, 'body', context) }
 
     @tag.register('MyTag')
     assert_raises(Webgen::RenderError) { @tag.call('my_tag', 5, 'body', context) }
