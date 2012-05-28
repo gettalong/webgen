@@ -217,7 +217,7 @@ option('path_handler.default_meta_info',
          },
          'template' => {
            'no_output' => true,
-           'blocks' => {:default => {'pipeline' => 'erb,tags,blocks,head'}}
+           'blocks' => {:default => {'pipeline' => 'erb,tags,blocks,html_head'}}
          },
          'page' => {
            'blocks' => {:default => {'pipeline' => 'erb,tags,kramdown,blocks,fragments'}}
@@ -284,7 +284,7 @@ end
 
 option('sources', [['/', :file_system, 'src']],
        'One or more sources from which paths are read', &sources_validator)
-option('sources.passive', [], # [['/', :resource, "webgen-passive-sources"]],
+option('sources.passive', [['/', :file_system, File.join(Webgen.data_dir, 'passive_sources')]],
        'One or more sources from which paths are read that are only used when referenced ', &sources_validator)
 option('sources.ignore_paths', ['**/*~', '**/.svn/**'],
        'Patterns for paths that should be ignored') do |val|
