@@ -160,24 +160,6 @@ class TestNode < MiniTest::Unit::TestCase
                  nodes[:somename_en].link_to(nodes[:dir2]))
     assert_equal('<a href="dir2/index.de.html">routed_de</a>',
                  nodes[:somename_en].link_to(nodes[:dir2], :lang => 'de'))
-
-    # varying the website.link_to_current_page option
-    config = MiniTest::Mock.new
-    config.expect(:[], false, ['website.link_to_current_page'])
-    @website.expect(:config, config)
-
-    assert_equal('<span>routed</span>',
-                 nodes[:dir2_index_en].link_to(nodes[:dir2]))
-    assert_equal('<span>frag</span>',
-                 nodes[:somename_en_frag].link_to(nodes[:somename_en_frag]))
-
-    @website.verify
-    config.verify
-
-    config.expect(:[], true, ['website.link_to_current_page'])
-    assert_equal('<a href="#frag">frag</a>',
-                 nodes[:somename_en_frag].link_to(nodes[:somename_en_frag]))
-    config.verify
   end
 
 end

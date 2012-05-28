@@ -12,7 +12,6 @@ class TestTagLink < MiniTest::Unit::TestCase
   def test_call
     @obj = Webgen::Tag::Link
     website, @context = Test.setup_tag_test
-    website.expect(:config, {'website.link_to_current_page' => false})
     website.expect(:tree, Webgen::Tree.new(website))
     website.expect(:logger, Logger.new(StringIO.new))
     website.ext.item_tracker = MiniTest::Mock.new
@@ -29,9 +28,6 @@ class TestTagLink < MiniTest::Unit::TestCase
 
     @context[:chain] = [node]
     @context[:config] = {'tag.link.attr' => {}}
-
-    # no path set
-    assert_tag_result('<span></span>', '')
 
     # invalid paths
     @context[:config]['tag.link.path'] = ':/asdf=-)'

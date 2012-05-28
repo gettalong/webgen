@@ -199,9 +199,7 @@ module Webgen
     # should be in separate module and depend on a mime-type because they should return something
     # different for a different mime-type (e.g. PDF)
 
-    # Return a HTML link from this node to the +node+ or, if this node and +node+ are the same and
-    # the parameter <tt>website.link_to_current_page</tt> is +false+, a +span+ element with the link
-    # text.
+    # Return a HTML link from this node to the given node.
     #
     # You can optionally specify additional attributes for the HTML element in the +attr+ Hash.
     # Also, the meta information +link_attrs+ of the given +node+ is used, if available, to set
@@ -221,10 +219,9 @@ module Webgen
       link_text = attr[:link_text] || (rnode != node && rnode['routed_title']) || node['title']
       attr.delete_if {|k,v| k.kind_of?(Symbol)}
 
-      use_link = (rnode != self || tree.website.config['website.link_to_current_page'])
-      attr['href'] = self.route_to(rnode) if use_link
+      attr['href'] = self.route_to(rnode)
       attrs = attr.collect {|name,value| "#{name.to_s}=\"#{value}\"" }.sort.unshift('').join(' ')
-      (use_link ? "<a#{attrs}>#{link_text}</a>" : "<span#{attrs}>#{link_text}</span>")
+      "<a#{attrs}>#{link_text}</a>"
     end
 
     #######

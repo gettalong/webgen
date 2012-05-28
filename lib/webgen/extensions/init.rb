@@ -47,9 +47,6 @@ option('website.lang', 'en', 'The default language used for the website') do |va
   lang
 end
 
-#TODO
-#config.website.link_to_current_page(false, :doc => 'Specifies whether links to the current page should be used')
-
 
 ########################################################################
 # Everything related to the content processor extension

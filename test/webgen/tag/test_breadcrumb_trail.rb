@@ -10,7 +10,6 @@ class TestTagBreadcrumbTrail < MiniTest::Unit::TestCase
   def test_call
     @obj = Webgen::Tag::BreadcrumbTrail
     website, context = Test.setup_tag_test
-    website.expect(:config, {'website.link_to_current_page' => false})
     website.expect(:tree, Webgen::Tree.new(website))
     website.expect(:logger, Logger.new(StringIO.new))
     website.ext.item_tracker = MiniTest::Mock.new
@@ -30,9 +29,9 @@ class TestTagBreadcrumbTrail < MiniTest::Unit::TestCase
     template = Test.setup_tag_template(root)
 
     context[:chain] = [file11_en]
-    assert_tag_result(context, '<a href="../../index.html"></a> / <a href="../">Dir1</a> / <a href="index.html">Dir11</a> / <span>File111</span>',
+    assert_tag_result(context, '<a href="../../index.html"></a> / <a href="../">Dir1</a> / <a href="index.html">Dir11</a> / <a href="file111.html">File111</a>',
                       false, 0, -1)
-    assert_tag_result(context, '<a href="../../index.html"></a> / <a href="../">Dir1</a> / <a href="index.html">Dir11</a> / <span>File111</span>',
+    assert_tag_result(context, '<a href="../../index.html"></a> / <a href="../">Dir1</a> / <a href="index.html">Dir11</a> / <a href="file111.html">File111</a>',
                       true, 0, -1)
     assert_tag_result(context, '<a href="../">Dir1</a> / <a href="index.html">Dir11</a>',
                       true, 1, -2)
@@ -41,20 +40,20 @@ class TestTagBreadcrumbTrail < MiniTest::Unit::TestCase
 
 
     context[:chain] = [index11_en]
-    assert_tag_result(context, '<a href="../../index.html"></a> / <a href="../">Dir1</a> / <span>Dir11</span> / <span>Index</span>',
+    assert_tag_result(context, '<a href="../../index.html"></a> / <a href="../">Dir1</a> / <a href="index.html">Dir11</a> / <a href="index.html">Index</a>',
                       false, 0, -1)
-    assert_tag_result(context, '<a href="../../index.html"></a> / <a href="../">Dir1</a> / <span>Dir11</span>',
+    assert_tag_result(context, '<a href="../../index.html"></a> / <a href="../">Dir1</a> / <a href="index.html">Dir11</a>',
                       true, 0, -1)
-    assert_tag_result(context, '<a href="../../index.html"></a> / <a href="../">Dir1</a> / <span>Dir11</span>',
+    assert_tag_result(context, '<a href="../../index.html"></a> / <a href="../">Dir1</a> / <a href="index.html">Dir11</a>',
                       false, 0, -2)
     assert_tag_result(context, '<a href="../../index.html"></a> / <a href="../">Dir1</a>',
                       true, 0, -2)
 
     index11_en.meta_info['omit_dir_index'] = false
-    assert_tag_result(context, '<a href="../../index.html"></a> / <a href="../">Dir1</a> / <span>Dir11</span> / <span>Index</span>',
+    assert_tag_result(context, '<a href="../../index.html"></a> / <a href="../">Dir1</a> / <a href="index.html">Dir11</a> / <a href="index.html">Index</a>',
                       true, 0, -1)
     index11_en.meta_info['omit_dir_index'] = true
-    assert_tag_result(context, '<a href="../../index.html"></a> / <a href="../">Dir1</a> / <span>Dir11</span>',
+    assert_tag_result(context, '<a href="../../index.html"></a> / <a href="../">Dir1</a> / <a href="index.html">Dir11</a>',
                       false, 0, -1)
   end
 

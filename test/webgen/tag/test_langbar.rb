@@ -11,7 +11,6 @@ class TestTagLangbar < MiniTest::Unit::TestCase
   def test_call
     @obj = Webgen::Tag::Langbar
     @website, context = Test.setup_tag_test
-    @website.expect(:config, {'website.link_to_current_page' => false})
     @website.expect(:tree, Webgen::Tree.new(@website))
     @website.expect(:logger, Logger.new(StringIO.new))
     @website.ext.item_tracker = MiniTest::Mock.new
@@ -28,8 +27,10 @@ class TestTagLangbar < MiniTest::Unit::TestCase
     template = Test.setup_tag_template(root)
 
     de_link = '<a href="file.de.html">de</a>'
-    en_link = '<span class="webgen-langbar-current-lang">en</span>'
+    en_link = '<a class="webgen-langbar-current-lang" href="file.html">en</a>'
     check_results(node, "#{de_link} | #{en_link}", de_link, "#{de_link} | #{en_link}", de_link)
+
+    en_link = '<a class="webgen-langbar-current-lang" href="other.html">en</a>'
     check_results(other, en_link, '', '', '')
   end
 
