@@ -174,6 +174,9 @@ item_tracker.register('Nodes', :author => author,
 item_tracker.register('File', :author => author,
                       :summary => 'Tracks changes to a file')
 
+item_tracker.register('MissingNode', :author => author,
+                      :summary => 'Tracks missing nodes via their expected alcn/acn/dest_path')
+
 
 ########################################################################
 # Everything related to the node finder extension

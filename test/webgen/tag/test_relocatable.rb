@@ -15,7 +15,7 @@ class TestTagRelocatable < MiniTest::Unit::TestCase
     website.expect(:tree, Webgen::Tree.new(website))
     website.expect(:logger, Logger.new(StringIO.new))
     website.ext.item_tracker = MiniTest::Mock.new
-    website.ext.item_tracker.expect(:add, nil, [:a, :b, :c])
+    def (website.ext.item_tracker).add(*args); end
 
     root = Webgen::Node.new(website.tree.dummy_root, '/', '/')
     node = Webgen::Node.new(root, 'file.html', '/file.html', {'lang' => 'en'})

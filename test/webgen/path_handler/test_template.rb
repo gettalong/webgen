@@ -20,6 +20,9 @@ class TestPathHandlerTemplate < MiniTest::Unit::TestCase
     @website.expect(:logger, Logger.new(StringIO.new))
     @website.expect(:blackboard, Webgen::Blackboard.new)
     @website.expect(:cache, Webgen::Cache.new)
+    @website.expect(:ext, OpenStruct.new)
+    @website.ext.item_tracker = MiniTest::Mock.new
+    def (@website.ext.item_tracker).add(*args); end
 
     @template = Webgen::PathHandler::Template.new(@website)
     @root = Webgen::Node.new(@website.tree.dummy_root, '/', '/')

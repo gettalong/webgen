@@ -7,6 +7,8 @@ require 'webgen/node'
 require 'webgen/tree'
 require 'webgen/page'
 require 'ostruct'
+require 'logger'
+require 'stringio'
 
 class TestBlocks < MiniTest::Unit::TestCase
 
@@ -31,9 +33,10 @@ class TestBlocks < MiniTest::Unit::TestCase
 
   def test_static_call_and_render_block
     website = MiniTest::Mock.new
+    website.expect(:logger, Logger.new(StringIO.new))
     website.expect(:ext, OpenStruct.new)
     website.ext.item_tracker = MiniTest::Mock.new
-    website.ext.item_tracker.expect(:add, nil, [:one, :two, :three])
+    def (website.ext.item_tracker).add(*args); end
     website.ext.content_processor = Webgen::ContentProcessor.new
     website.ext.content_processor.register('Blocks')
     website.ext.content_processor.register('Erb')
@@ -60,9 +63,6 @@ class TestBlocks < MiniTest::Unit::TestCase
 
     context.content = "\nsadfasdf<webgen:block name='nothing'/>"
     assert_error_on_line(Webgen::RenderError, 2) { obj.call(context) }
-
-    context.content = '<webgen:block name="content" chain="invalid" />'
-    assert_error_on_line(Webgen::RenderError, 1) { obj.call(context) }
 
     context.content = '<webgen:block name="content" />'
     context[:chain] = [node, template, node]

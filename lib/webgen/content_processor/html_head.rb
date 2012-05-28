@@ -102,14 +102,11 @@ module Webgen
       def self.resolve_paths(context, paths)
         [paths].flatten.compact.collect do |path|
           next path if Webgen::Path.url(path, false).absolute?
-          node = context.content_node.resolve(path, context.dest_node.lang)
+          node = context.content_node.resolve!(path, context.dest_node.lang, context.dest_node)
           if node
             context.website.ext.item_tracker.add(context.dest_node, :node_meta_info, node.alcn)
             context.dest_node.route_to(node)
           else
-            context.website.logger.error do
-              "Could not resolve path '#{path}' used in 'link' meta information in <#{context.content_node}>"
-            end
             nil
           end
         end.compact

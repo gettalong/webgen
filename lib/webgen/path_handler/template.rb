@@ -43,7 +43,7 @@ module Webgen
         if cached_template.has_key?(lang)
           template_node = cached_template[lang]
         elsif node['template'].kind_of?(String)
-          template_node = node.resolve(node['template'], lang)
+          template_node = node.resolve!(node['template'], lang)
           if template_node.nil?
             @website.logger.warn { "Specified template '#{node['template']}' for <#{node}> not found, using default template!" }
             template_node = default_template(node.parent, lang)

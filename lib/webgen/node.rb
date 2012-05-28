@@ -147,6 +147,21 @@ module Webgen
       @tree.resolve_node(Webgen::Path.append(@alcn, path), lang)
     end
 
+    # Node resolution combined with missing node tracking.
+    #
+    # Works exactly like #resolve but uses Webgen::ItemTracker::MissingNode to track missing nodes
+    # for the given dest_node.
+    def resolve!(path, lang = @lang, dest_node = self)
+      node = resolve(path, lang)
+      if !node
+        tree.website.ext.item_tracker.add(dest_node, :missing_node,
+                                          Webgen::Path.append(@alcn, path), lang)
+        tree.website.logger.error { "Could not resolve path '#{path}' in language '#{lang}' in <#{self}>" }
+      end
+      node
+    end
+
+
     # Return the relative path to the given path +other+. The parameter +other+ can be a Node or an
     # object that responds to the :+to_str+ method.
     def route_to(other)
@@ -176,11 +191,7 @@ module Webgen
       if proxy_path.nil?
         self
       else
-        pnode = resolve(proxy_path, lang)
-        if !pnode
-          tree.website.logger.warn { "Proxy node specified by path '#{proxy_path}' for <#{alcn}> not found" }
-        end
-        pnode || self
+        resolve!(proxy_path, lang) || self
       end
     end
 

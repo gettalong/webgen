@@ -16,7 +16,7 @@ class TestHtmlHead < MiniTest::Unit::TestCase
     @website = MiniTest::Mock.new
     @website.expect(:ext, OpenStruct.new)
     @website.ext.item_tracker = MiniTest::Mock.new
-    @website.ext.item_tracker.expect(:add, nil, [:one, :two, :three])
+    def (@website.ext.item_tracker).add(*args); end
     @website.expect(:tree, Webgen::Tree.new(@website))
 
     @root = Webgen::Node.new(@website.tree.dummy_root, '/', '/')
