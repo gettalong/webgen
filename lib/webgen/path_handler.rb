@@ -387,7 +387,7 @@ module Webgen
       mi = @website.config['path_handler.default_meta_info'][:all].dup
       mi.merge!(@website.config['path_handler.default_meta_info'][handler.to_s] || {})
       mi.merge!(path.meta_info)
-      path.meta_info.update(mi)
+      path.meta_info.update(Marshal.load(Marshal.dump(mi)))
     end
     private :apply_default_meta_info
 
