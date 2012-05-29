@@ -1,6 +1,8 @@
 # -*- encoding: utf-8 -*-
 
 require 'helper'
+require 'tmpdir'
+require 'ostruct'
 require 'webgen/content_processor/scss'
 
 class TestScss < MiniTest::Unit::TestCase
@@ -9,6 +11,10 @@ class TestScss < MiniTest::Unit::TestCase
 
   def test_static_call
     website, node, context = Test.setup_content_processor_test
+    website.expect(:config, {'content_processor.sass.options' => {}})
+    website.expect(:ext, OpenStruct.new)
+    website.expect(:tmpdir, Dir.tmpdir, ['sass'])
+    website.ext.sass_load_paths = []
     cp = Webgen::ContentProcessor::Scss
 
     context.content = "#main {background-color: #000}"

@@ -103,6 +103,10 @@ content_processor.register('Sass', :author => author, :ext_map => {'sass' => 'cs
                            :summary => 'Converts content written in the Sass meta language to valid CSS')
 content_processor.register('Scss', :author => author, :ext_map => {'scss' => 'css'},
                            :summary => 'Converts content written in the Sassy CSS language to valid CSS')
+option('content_processor.sass.options', {},
+       'Additional Sass options (also used by the scss processor)', &is_hash)
+website.ext.sass_load_paths = []
+
 content_processor.register('Tags', :author => author,
                            :summary => 'Provides a very easy way for adding dynamic content')
 
