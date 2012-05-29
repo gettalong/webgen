@@ -12,16 +12,46 @@ module Webgen
 
       include Base
 
-      # Create the node for +path+. If the +path+ has the name of a content processor as the first
-      # part in the file extension or if the pipeline meta info key is specified, it is run through
-      # the specified content processor(s).
+      # Create the node for +path+.
+      #
+      # The following order is used for finding the (optional) content processor pipeline:
+      #
+      # * If the pipeline meta info key is specified, it is used.
+      #
+      # * If the +path+ has the names of content processors as parts in the file extension, all
+      #   extension parts until the first non-content processor part will be used for the pipeline
+      #   and removed from the extension.
+      #
+      #   If the last extension part is a file extension registered with a content processor (using
+      #   the :ext_map facility), the corresponding content processor is appended to the pipeline
+      #   and the post-process file extension name is used.
+      #
+      # Here are some examples:
+      #
+      # * pipeline = ['erb'] → only erb is used, extension is not modified
+      #
+      # * path = 'test.erb.kramdown.html', no pipeline → pipeline is set to ['erb', 'kramdown'] and
+      #   path extension is changed to '.html', ie. path = 'test.html'
+      #
+      # * path = 'test.erb.kramdown.unknown.html', no pipeline → pipeline is set ['erb', 'kramdown']
+      #   and path extension is changed to 'unknown.html', ie. path = 'test.unknown.html'
+      #
+      # * path = 'test.erb.sass', no pipeline → pipeline is set to ['erb', 'sass'] and path
+      #   extension is changed to '.css', ie. path = 'test.css'
+      #
+      # * path = 'test.sass', no pipeline → pipeline is set to ['sass'] and path extension is
+      #   changed to '.css', ie. path = 'test.css'
       def create_nodes(path)
-        if path.ext.index('.')
-          processor, *rest = path.ext.split('.')
-          if @website.ext.content_processor.registered?(processor)
-            path.meta_info['pipeline'] ||= [processor]
-            path.ext = rest.join('.')
+        if !path.meta_info.has_key?('pipeline')
+          pipeline = []
+          exts = path.ext.split('.')
+          pipeline << exts.shift while exts.length > 1 && @website.ext.content_processor.registered?(exts.first)
+          if (data = @website.ext.content_processor.map_extension(exts.last))
+            pipeline << data.first
+            exts[-1] = data.last
           end
+          path.meta_info['pipeline'] = pipeline unless pipeline.empty?
+          path.ext = exts.join('.')
         end
 
         create_node(path)
