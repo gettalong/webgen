@@ -78,6 +78,9 @@ module Webgen
     # [:type] Defines which type of content the content processor can process. Can be set to either
     #         <tt>:text</tt> (the default) or <tt>:binary</tt>.
     #
+    # [:ext_map] Defines a mapping of pre-processed file extension names to post-processed
+    #            file extension names (e.g. {'sass' => 'css'}).
+    #
     # [:author] The author of the content processor.
     #
     # [:summary] A short description of the content processor.
@@ -97,6 +100,7 @@ module Webgen
     def register(klass, options={}, &block)
       name = do_register(klass, options, true, &block)
       ext_data(name).type = options[:type] || :text
+      ext_data(name).extension_map = options[:ext_map] || {}
     end
 
     # Call the content processor object identified by the given name with the given context.
@@ -129,6 +133,30 @@ module Webgen
     # Return whether the content processor is processing binary data.
     def is_binary?(name)
       registered?(name) && ext_data(name).type == :binary
+    end
+
+    # Return the mapping of pre-processed file extension names to post-processed file extension
+    # names for the given content processor or a combination of all mappings if +name+ is +nil+.
+    #
+    # An empty map is returned if the content processor is not registered.
+    def extension_map(name = nil)
+      if name.nil?
+        @extension_map ||= registered_extensions.inject({}) {|hash, (name,data)| hash.update(data.extension_map)}
+      elsif registered?(name)
+        ext_data(name).extension_map
+      else
+        {}
+      end
+    end
+
+    # Return the content processor name and the mapped extension of a pre-processed file extension
+    # or +nil+ if the extension cannot be mapped.
+    def map_extension(ext)
+      registered_extensions.each do |name, data|
+        mapped_ext = data.extension_map[ext]
+        return [name, mapped_ext] if mapped_ext
+      end
+      nil
     end
 
   end

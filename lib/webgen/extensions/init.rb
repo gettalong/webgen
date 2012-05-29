@@ -69,7 +69,7 @@ option('content_processor.erubis.options', {},
 
 content_processor.register('Fragments', :author => author,
                             :summary => 'Generates fragment nodes from all HTML headers which have an id attribute set')
-content_processor.register('Haml', :author => author,
+content_processor.register('Haml', :author => author, :ext_map => {'haml' => 'html'},
                            :summary => 'Allows one to write HTML with the Haml markup language')
 content_processor.register('HtmlHead', :author => author,
                            :summary => 'Inserts various HTML tags like links to CSS/Javascript files into the HTML head tag')
@@ -85,19 +85,20 @@ content_processor.register('Maruku', :author => author,
                            :summary => 'Converts content written in a superset of Markdown to HTML')
 content_processor.register('RDiscount', :author => author,
                            :summary => 'Converts content written in Markdown to HTML')
-content_processor.register('RDoc', :author => author,
+content_processor.register('RDoc', :author => author, :ext_map => {'rdoc' => 'html'},
                            :summary => 'Converts content written in RDoc markup to HTML')
 
-content_processor.register('RedCloth', :author => author,
+content_processor.register('RedCloth', :author => author, :ext_map => {'textile' => 'html'},
                            :summary => 'Converts content written in Textile markup to HTML')
 option('content_processor.redcloth.hard_breaks', false,
        'Specifies whether new lines are turned into hard breaks', &true_or_false)
 
 content_processor.register('Ruby', :author => author,
                            :summary => 'Generate arbitrary output using plain Ruby')
-content_processor.register('Sass', :author => author,
+
+content_processor.register('Sass', :author => author, :ext_map => {'sass' => 'css'},
                            :summary => 'Converts content written in the Sass meta language to valid CSS')
-content_processor.register('Scss', :author => author,
+content_processor.register('Scss', :author => author, :ext_map => {'scss' => 'css'},
                            :summary => 'Converts content written in the Sassy CSS language to valid CSS')
 content_processor.register('Tags', :author => author,
                            :summary => 'Provides a very easy way for adding dynamic content')
@@ -107,7 +108,7 @@ content_processor.register('Tidy', :author => author,
 option('content_processor.tidy.options', "-raw",
        "Additional options passed to the tidy command (-q and -f are always used)", &is_string)
 
-content_processor.register('Tikz', :author => author,
+content_processor.register('Tikz', :author => author, :ext_map => {'tikz' => 'png'},
                            :summary => 'Converts the content (LaTeX TikZ picture commands) into an image')
 option('content_processor.tikz.libraries', [],
        'An array of additional TikZ library names', &is_array)
@@ -262,6 +263,10 @@ option('path_handler.copy.patterns',
        'The path patterns for the paths that should just be copied to the destination') do |val|
   raise "The value has to be an array of path patterns (strings)" unless val.kind_of?(Array) && val.all? {|i| i.kind_of?(String)}
   val
+end
+website.blackboard.add_listener(:website_initialized) do
+  patterns = content_processor.extension_map.keys.map {|pattern| "**/*.#{pattern}"}
+  path_handler.registered_extensions[:copy].patterns += patterns
 end
 
 path_handler.register('Feed', :patterns => ['**/*.feed'], :author => author,

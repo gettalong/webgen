@@ -28,9 +28,13 @@ class TestContentProcessor < MiniTest::Unit::TestCase
     assert(@cp.registered?('my_processor'))
     refute(@cp.is_binary?('my_processor'))
 
-    @cp.register('MyProcessor', :type => :binary, :name => 'test')
+    @cp.register('MyProcessor', :type => :binary, :name => 'test', :ext_map => {:a => :b})
     assert(@cp.registered?('test'))
     assert(@cp.is_binary?('test'))
+    assert_equal({:a => :b}, @cp.extension_map('test'))
+    assert_equal({:a => :b}, @cp.extension_map)
+    assert_equal([:test, :b], @cp.map_extension(:a))
+    assert_nil(@cp.map_extension(:b))
 
     @cp.register('doit') do |context|
       context.content = 'Nothing left.'
