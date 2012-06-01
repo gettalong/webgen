@@ -36,14 +36,27 @@ module Webgen
     # Search through the extension directory and then the load path to find the extension loader
     # file.
     def resolve_ext_file(ext_name)
+      file_found_check = proc {|path| return path if File.file?(path)}
+
       ext_name.sub!(/(\/|^)init\.rb$/, '')
-      ([@ext_dir] + $LOAD_PATH).each do |path|
-        path = File.join(path, ext_name, 'init.rb')
-        return path if File.file?(path)
+      possible_file_names(ext_name).each(&file_found_check)
+
+      begin
+        Gem::Specification.new("webgen-#{ext_name}-extension").activate if defined?(Gem)
+      rescue Gem::LoadError
       end
+      ext_name = "webgen/extension/#{ext_name}" unless ext_name.start_with?("webgen/extension")
+      possible_file_names(ext_name).each(&file_found_check)
+
       nil
     end
     private :resolve_ext_file
+
+    # Create all possible extension loader file names for the given directory name.
+    def possible_file_names(ext_dir_name)
+      ([@ext_dir] + $LOAD_PATH).map {|path| File.join(path, ext_dir_name, 'init.rb')}
+    end
+    private :possible_file_names
 
     # :section: DSL methods
     #
