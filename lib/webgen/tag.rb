@@ -91,12 +91,13 @@ module Webgen
       end
     end
 
-    # Register a tag. The parameter +klass+ has to contain the name of the class which has to
-    # respond to +call+ or which has an instance method +call+. If the class is located under this
-    # namespace, only the class name without the hierarchy part is needed, otherwise the full class
-    # name including parent module/class names is needed.
+    # Register a tag. The parameter +klass+ can either be a String containing the name of a
+    # class/module (which has to respond to :call) or an object that responds to :call. If the class
+    # is located under this namespace, only the class name without the hierarchy part is needed,
+    # otherwise the full class/module name including parent module/class names is needed.
     #
-    # Instead of registering a class, you can also provide a block that processes a tag.
+    # Instead of registering an object that responds to :call, you can also provide a block that
+    # processes a tag.
     #
     # === Options:
     #

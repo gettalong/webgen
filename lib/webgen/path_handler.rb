@@ -145,8 +145,9 @@ module Webgen
     end
 
     # Register a path handler. The parameter +klass+ has to contain the name of the path handler
-    # class. If the class is located under this namespace, only the class name without the hierarchy
-    # part is needed, otherwise the full class name including parent module/class names is needed.
+    # class or the class object itself. If the class is located under this namespace, only the class
+    # name without the hierarchy part is needed, otherwise the full class name including parent
+    # module/class names is needed.
     #
     # === Options:
     #

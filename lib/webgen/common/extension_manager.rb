@@ -44,12 +44,16 @@ module Webgen
       # normalization of the class name and associating the extension name (derived from the class
       # name if not set via the key :name in the options hash) with the extension.
       #
+      # The parameter +klass+ can either be a String or a Class specifying the class that should be
+      # registered.
+      #
       # The parameter +options+ allows to associate additional information with an extension. The
       # recognized keys are :name (for the extension name), :author (for author information) and
       # :summary (for a summary of the function of the extension).
       #
-      # The parameter +allow_block+ specifies whether the extension manager allows blocks
-      # as extensions. If a block is provided, the +klass+ parameter is not used.
+      # The parameter +allow_block+ specifies whether the extension manager allows blocks as
+      # extensions. If this parameter is +true+ and a block is provided, the +klass+ parameter is
+      # not used!
       #
       # Returns the (possibly automatically generated) name for the extension.
       def do_register(klass, options = {}, allow_block = true, &block)
