@@ -205,12 +205,20 @@ module Webgen
     # :section: Filter methods
 
     def filter_and(nodes, ref_node, opts)
-      [opts].flatten.each {|cur_opts| nodes &= filter_nodes(prepare_options_hash(cur_opts), ref_node)}
+      [opts].flatten.each do |cur_opts|
+        cur_opts = prepare_options_hash(cur_opts)
+        remove_non_filter_options(cur_opts)
+        nodes &= filter_nodes(cur_opts, ref_node)
+      end
       nodes
     end
 
     def filter_or(nodes, ref_node, opts)
-      [opts].flatten.each {|cur_opts| nodes |= filter_nodes(prepare_options_hash(cur_opts), ref_node)}
+      [opts].flatten.each do |cur_opts|
+        cur_opts = prepare_options_hash(cur_opts)
+        remove_non_filter_options(cur_opts)
+        nodes |= filter_nodes(cur_opts, ref_node)
+      end
       nodes
     end
 
