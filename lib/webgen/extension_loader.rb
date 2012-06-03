@@ -79,6 +79,21 @@ module Webgen
     end
     private :website
 
+    # Mount the directory relative to the currently loaded file on the given mount point as passive
+    # source.
+    def mount_passive(dir, mount_point = '/')
+      @website.config['sources.passive'] = [[mount_point, :file_system, absolute_path(dir)]] +
+        @website.config['sources.passive']
+    end
+    private :mount_passive
+
+    # Return the absolute path of the given path which is assumed to be relative to the currently
+    # loaded file.
+    def absolute_path(path)
+      File.expand_path(File.join(File.dirname(@stack.last), path))
+    end
+    private :absolute_path
+
   end
 
 end

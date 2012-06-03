@@ -9,6 +9,7 @@ class TestExtensionLoader < MiniTest::Unit::TestCase
 
   def setup
     @website = MiniTest::Mock.new
+    @website.expect(:config, {'sources.passive' => [['/', :file, 'other']]})
     @dir = File.join(Dir.tmpdir, 'test-webgen')
     @website.expect(:directory, @dir)
 
@@ -38,8 +39,13 @@ class TestExtensionLoader < MiniTest::Unit::TestCase
     File.open(File.join(@extdir, 'init.rb'), 'w+') do |f|
       f.puts("load('my_ext'); require_relative('webgen/init.rb')")
     end
+    File.open(@ext_file, 'w+') do |f|
+      f.puts("mount_passive('data', '/test')")
+    end
     @loader.load('init.rb')
     assert($LOADED_FEATURES.include?(@webgen_file))
+    assert_equal([['/test', :file_system, File.expand_path(File.dirname(@ext_file) + '/data')],
+                  ['/', :file, 'other']], @website.config['sources.passive'])
   end
 
 end
