@@ -134,7 +134,7 @@ module Webgen
     def register(klass, options = {}, &block)
       klass, klass_name = normalize_class_name(klass, !block_given?)
       tag_names = [options[:names] || Webgen::Common.snake_case(klass_name)].flatten.map {|n| n.to_sym}
-      config_base = options[:config_base] || klass.gsub(/::/, '.').gsub(/^Webgen\./, '').downcase
+      config_base = options[:config_base] || Webgen::Common.snake_case(klass.to_s.gsub(/::/, '.').gsub(/^Webgen\./, ''))
       data = TagData.new(block_given? ? block : klass, config_base, options[:mandatory] || [], false)
       tag_names.each {|tname| @extensions[tname] = data}
     end

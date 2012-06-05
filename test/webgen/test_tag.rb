@@ -12,7 +12,7 @@ require 'ostruct'
 class Webgen::Tag::MyTag
 
   def self.call(tag, body, context)
-    "#{tag}#{body}#{context[:config]['tag.mytag.opt']}"
+    "#{tag}#{body}#{context[:config]['tag.my_tag.opt']}"
   end
 
 end
@@ -40,12 +40,12 @@ class TestTag < MiniTest::Unit::TestCase
 
     @tag.register('Webgen::Tag::MyTag')
     check_tdata.call(@tag.instance_eval { @extensions[:my_tag] },
-                     'Webgen::Tag::MyTag', 'tag.mytag', [], false)
+                     'Webgen::Tag::MyTag', 'tag.my_tag', [], false)
     assert(@tag.registered?('my_tag'))
 
     @tag.register('MyTag', :names => ['mytag', 'other'])
     check_tdata.call(@tag.instance_eval { @extensions[:my_tag] },
-                     'Webgen::Tag::MyTag', 'tag.mytag', [], false)
+                     'Webgen::Tag::MyTag', 'tag.my_tag', [], false)
     assert(@tag.registered?('my_tag'))
     assert(@tag.registered?('other'))
 
@@ -64,7 +64,7 @@ class TestTag < MiniTest::Unit::TestCase
     logger = ::Logger.new(logger_output)
     logger.level = Logger::WARN
 
-    @config.define_option('tag.mytag.opt', 'param1', 'desc') {|v| raise "Error" unless v.kind_of?(String); v}
+    @config.define_option('tag.my_tag.opt', 'param1', 'desc') {|v| raise "Error" unless v.kind_of?(String); v}
     @config.freeze
     @website.expect(:logger, logger)
     @website.expect(:ext, OpenStruct.new)
@@ -89,9 +89,9 @@ class TestTag < MiniTest::Unit::TestCase
     result = @tag.call('my_tag', {'opt' => 'value'}, 'body', context)
     assert_equal('my_tagbodyvalue', result)
     assert_equal('', logger_output.string)
-    assert_equal('value', context[:config]['tag.mytag.opt'])
+    assert_equal('value', context[:config]['tag.my_tag.opt'])
 
-    result = @tag.call('my_tag', {'tag.mytag.opt' => 'value1', 'unknown' => 'unknown'}, 'body', context)
+    result = @tag.call('my_tag', {'tag.my_tag.opt' => 'value1', 'unknown' => 'unknown'}, 'body', context)
     assert_equal('my_tagbodyvalue1', result)
     assert_match(/Invalid configuration option 'unknown'/, logger_output.string)
 
