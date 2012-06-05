@@ -60,15 +60,15 @@ module Webgen
       # Return the processed content of the +node+ if the pipeline meta info key is specified or the
       # IO object for the node's source path.
       def content(node)
-        path = @website.ext.source.paths[node.node_info[:path]]
         if pipeline = node.meta_info['pipeline']
           pipeline = @website.ext.content_processor.normalize_pipeline(pipeline)
           is_binary = @website.ext.content_processor.is_binary?(pipeline.first)
-          context = Webgen::Context.new(@website, :chain => [node], :content => path.data(is_binary ? 'rb' : 'r'))
+          context = Webgen::Context.new(@website, :chain => [node],
+                                        :content => node.node_info[:path].data(is_binary ? 'rb' : 'r'))
           pipeline.each {|processor| @website.ext.content_processor.call(processor, context)}
           context.content
         else
-          path
+          node.node_info[:path]
         end
       end
 
