@@ -274,13 +274,6 @@ module Webgen
     end
     private :restore_cache
 
-    # Generate the website.
-    def generate
-      successful = @ext.path_handler.generate_website
-      save_cache if successful
-      successful
-    end
-
     # Save the +cache+ to +website.cache+.
     def save_cache
       cache_data = [@cache.dump, Webgen::VERSION]
@@ -292,6 +285,18 @@ module Webgen
       end
     end
     private :save_cache
+
+    # Append the path to the website's temporary directory and return the full path to it.
+    def tmpdir(path = '')
+      File.join(File.absolute_path(config['website.tmpdir'], @directory), path)
+    end
+
+    # Generate the website.
+    def generate
+      successful = @ext.path_handler.generate_website
+      save_cache if successful
+      successful
+    end
 
     # TODO: extract this method into a new Task extension. The website then just has an execute
     # method that is given a task name and optional arguments.
