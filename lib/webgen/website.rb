@@ -261,11 +261,11 @@ module Webgen
     end
     private :load_configuration
 
+    # Restore the cache using the +website.cache+ configuration option.
     def restore_cache
       @cache = Cache.new
       data = if config['website.cache'].first == :file
-               cache_file = File.absolute_path(config['website.cache'].last, @directory)
-               File.binread(cache_file) if File.exists?(cache_file)
+               File.binread(cache_file) if File.file?(cache_file)
              else
                config['website.cache'].last
              end
@@ -278,13 +278,19 @@ module Webgen
     def save_cache
       cache_data = [@cache.dump, Webgen::VERSION]
       if config['website.cache'].first == :file
-        cache_file = File.absolute_path(config['website.cache'].last, @directory)
+        FileUtils.mkdir_p(File.dirname(cache_file))
         File.open(cache_file, 'wb') {|f| Marshal.dump(cache_data, f)}
       else
         config['website.cache'][1] = Marshal.dump(cache_data)
       end
     end
     private :save_cache
+
+    # The full path of the cache filename.
+    def cache_file
+      File.absolute_path(config['website.cache'].last, tmpdir)
+    end
+    private :cache_file
 
     # Append the path to the website's temporary directory and return the full path to it.
     def tmpdir(path = '')
