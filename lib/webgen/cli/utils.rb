@@ -9,12 +9,10 @@ module Webgen
     # Provides methods for other CLI classes for formatting text in a consistent manner.
     class Utils
 
-      USE_ANSI_COLORS = $stdout.tty? && RbConfig::CONFIG['host_os'] !~ /mswin|mingw/
-      DEFAULT_WIDTH = if RbConfig::CONFIG['host_os'] =~ /mswin|mingw/
-                        72
-                      else
-                        ((size = %x{stty size 2>/dev/null}).length > 0 && (size = size.split.last.to_i) > 0 ? size : 72) rescue 72
-                      end
+      class << self; attr_accessor :use_colors; end
+      @use_colors = $stdout.tty? && RbConfig::CONFIG['host_os'] !~ /mswin|mingw/
+
+      DEFAULT_WIDTH = 80
 
       module Color
 
@@ -30,17 +28,35 @@ module Webgen
 
       # Used for dynamically formatting the text (setting color, bold face, ...).
       def self.method_missing(id, text = nil)
-        if USE_ANSI_COLORS && Color.respond_to?(id)
+        if self.use_colors && Color.respond_to?(id)
           Color.send(id, text)
         else
           text.to_s
         end
       end
 
+      # Format the command description.
+      #
+      # Returns an array of Strings.
+      #
+      # See Utils.format for more information.
+      def self.format_command_desc(desc)
+        format(desc, 76)
+      end
+
+      # Format the option description.
+      #
+      # Returns an array of Strings.
+      #
+      # See Utils.format for more information.
+      def self.format_option_desc(desc)
+        format(desc, 48)
+      end
+
       # Return an array of lines which represents the text in +content+ formatted so that no line is
       # longer than +width+ characters. The +indent+ parameter specifies the amount of spaces
       # prepended to each line. If +first_line_indented+ is +true+, then the first line is indented.
-      def self.format(content, indent = 0, first_line_indented = false, width = DEFAULT_WIDTH)
+      def self.format(content, width = DEFAULT_WIDTH, indent = 0, first_line_indented = false)
         content = (content || '').dup
         length = width - indent
 

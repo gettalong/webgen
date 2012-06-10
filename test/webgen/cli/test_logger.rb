@@ -11,8 +11,8 @@ class TestLogger < MiniTest::Unit::TestCase
   end
 
   def test_log_output
-    original = Webgen::CLI::Utils.send(:remove_const, :USE_ANSI_COLORS)
-    Webgen::CLI::Utils.const_set(:USE_ANSI_COLORS, false)
+    original = Webgen::CLI::Utils.use_colors
+    Webgen::CLI::Utils.use_colors = false
     out, err = capture_io do
       l = Webgen::CLI::Logger.new
       l.level = ::Logger::DEBUG
@@ -35,8 +35,7 @@ DEBUG (program) debug
 EOF
     assert_equal(expected, out)
   ensure
-    Webgen::CLI::Utils.send(:remove_const, :USE_ANSI_COLORS)
-    Webgen::CLI::Utils.const_set(:USE_ANSI_COLORS, original)
+    Webgen::CLI::Utils.use_colors = original
   end
 
 end

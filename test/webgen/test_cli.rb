@@ -25,11 +25,11 @@ class TestCLICommandParser < MiniTest::Unit::TestCase
 
   def test_website
     assert_equal(Dir.pwd, @cli.website.directory)
-    assert_equal([], @cli.website.ext.cli_commands)
+    assert_equal(@cli, @cli.website.ext.cli)
   end
 
   def test_parse
-    @cli.website.ext.cli_commands << SampleCommand.new
+    @cli.website.ext.cli.add_command(SampleCommand.new)
     out, err = capture_io do
       begin
         @cli.parse(['help'])
