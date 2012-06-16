@@ -34,7 +34,7 @@ class TestTag < MiniTest::Unit::TestCase
     check_tdata = lambda do |tdata, callable,  config_base, mandatory_options, initialized|
       assert_equal(callable, tdata.object)
       assert_equal(config_base, tdata.config_base)
-      assert_equal(mandatory_options, tdata.mandatory_options)
+      assert_equal(mandatory_options, tdata.mandatory)
       assert_equal(initialized, tdata.initialized)
     end
 
@@ -49,7 +49,8 @@ class TestTag < MiniTest::Unit::TestCase
     assert(@tag.registered?('my_tag'))
     assert(@tag.registered?('other'))
 
-    @tag.register('doit') do |tag, body, context|
+    assert_raises(ArgumentError) { @tag.register('doit') {} }
+    @tag.register('doit', :config_base => 'other') do |tag, body, context|
       'doit: now'
     end
     assert(@tag.registered?('doit'))

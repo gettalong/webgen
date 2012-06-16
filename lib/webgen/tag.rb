@@ -64,8 +64,6 @@ module Webgen
 
     include Webgen::Common::ExtensionManager
 
-    TagData = Struct.new(:object, :config_base, :mandatory_options, :initialized)
-
     # Render the tag template for the given tag and return the result.
     #
     # The value of the configuration option 'tag.<TAG>.template' (where '<TAG>' is replaced with
@@ -109,7 +107,7 @@ module Webgen
     # [:config_base] The configuration base, i.e. the part of a configuration option name that does
     #                not need to be specified. Defaults to the full class name without the Webgen
     #                module downcased and all "::" substituted with "." (e.g. Webgen::Tag::Menu →
-    #                tag.menu).
+    #                tag.menu). Needs to be specified when a block is used!
     #
     # [:mandatory] A list of configuration option names whose values always need to be provided. The
     #              first configuration option name is used as the default mandatory option (used
@@ -132,11 +130,18 @@ module Webgen
     #   end
     #
     def register(klass, options = {}, &block)
-      klass, klass_name = normalize_class_name(klass, !block_given?)
-      tag_names = [options[:names] || Webgen::Common.snake_case(klass_name)].flatten.map {|n| n.to_sym}
-      config_base = options[:config_base] || Webgen::Common.snake_case(klass.to_s.gsub(/::/, '.').gsub(/^Webgen\./, ''))
-      data = TagData.new(block_given? ? block : klass, config_base, options[:mandatory] || [], false)
-      tag_names.each {|tname| @extensions[tname] = data}
+      if block_given? && !options[:config_base]
+        raise ArgumentError, "The option :config_base needs to be specified when using a block"
+      end
+
+      names = [options.delete(:names)].flatten.compact
+      options[:name] = names.shift
+      name = do_register(klass, options, true, &block)
+      ext_data(name).mandatory = options[:mandatory] || []
+      ext_data(name).config_base = options[:config_base] ||
+        Webgen::Common.snake_case(ext_data(name).object.to_s.gsub(/::/, '.').gsub(/^Webgen\./, ''))
+      ext_data(name).initialized = false
+      names.each {|n| @extensions[n.to_sym] = @extensions[name]}
     end
 
     # Process the +tag+ and return the result. The parameter +params+ (can be a Hash, a String or
@@ -183,7 +188,7 @@ module Webgen
                                                self.class.name, context.dest_node, context.ref_node)
                end
 
-      if !tdata.mandatory_options.all? {|k| values.has_key?(k)}
+      if !tdata.mandatory.all? {|k| values.has_key?(k)}
         raise Webgen::RenderError.new("Not all mandatory parameters set", self.class.name, context.dest_node, context.ref_node)
       end
       config = context.website.config.dup
@@ -212,13 +217,13 @@ module Webgen
     # Return a hash containing valid configuration options by setting the default mandatory
     # parameter for +tag+ to +str+.
     def values_from_string(tag, str, tdata, context)
-      if tdata.mandatory_options.first.nil?
+      if tdata.mandatory.first.nil?
         context.website.logger.error do
           "No default mandatory option specified for tag '#{tag}' but set in <#{context.ref_node}>"
         end
         {}
       else
-        {tdata.mandatory_options.first => str}
+        {tdata.mandatory.first => str}
       end
     end
 
@@ -227,11 +232,11 @@ module Webgen
       tdata = @extensions[tag.to_sym] || @extensions[:default]
       if tdata && !tdata.initialized
         tdata.object = resolve_class(tdata.object)
-        tdata.mandatory_options.each_with_index do |o, index|
+        tdata.mandatory.each_with_index do |o, index|
           next if context.website.config.option?(o)
           o = tdata.config_base + '.' + o
           if context.website.config.option?(o)
-            tdata.mandatory_options[index] = o
+            tdata.mandatory[index] = o
           else
             raise ArgumentError, "Invalid configuration option name '#{o}' specified as mandatory option for tag '#{tag}'"
           end
