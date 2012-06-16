@@ -141,7 +141,7 @@ module Webgen
     # An empty map is returned if the content processor is not registered.
     def extension_map(name = nil)
       if name.nil?
-        @extension_map ||= registered_extensions.inject({}) {|hash, (name,data)| hash.update(data.extension_map)}
+        @extension_map ||= registered_extensions.inject({}) {|hash, data| hash.update(data.last.extension_map)}
       elsif registered?(name)
         ext_data(name).extension_map
       else

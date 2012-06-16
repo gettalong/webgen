@@ -316,7 +316,7 @@ module Webgen
 
     # Recursively delete all secondary nodes created from the given alcn.
     def delete_secondary_nodes(alcn)
-      @secondary_nodes.delete_if {|path, (source_alcn, content)| source_alcn == alcn}
+      @secondary_nodes.delete_if {|path, data| data.first == alcn}
       @website.tree.node_access[:alcn].each do |_, node|
         if node.node_info[:source_alcn] == alcn
           delete_secondary_nodes(node.alcn)
