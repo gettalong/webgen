@@ -30,8 +30,6 @@ is_integer = lambda do |val|
   val
 end
 
-author = 'Thomas Leitner <t_leitner@gmx.at>'
-
 ########################################################################
 # General configuration parameters
 
@@ -56,67 +54,49 @@ end
 require 'webgen/content_processor'
 
 website.ext.content_processor = content_processor = Webgen::ContentProcessor.new
-content_processor.register('Blocks', :author => author,
-                           :summary => 'Replaces a special xml tag with the rendered block of a path in Webgen Page Format')
-content_processor.register('Builder', :author => author,
-                           :summary => 'Allows one to programatically create valid XHTML/XML documents')
-content_processor.register('Erb', :author => author,
-                           :summary => 'Allows one to use ERB (embedded Ruby) in the content')
+content_processor.register('Blocks')
+content_processor.register('Builder')
+content_processor.register('Erb')
 
-content_processor.register('Erubis', :author => author,
-                           :summary => 'Allows one to use ERB (embedded Ruby) in the content (faster than the erb processor')
+content_processor.register('Erubis')
 option('content_processor.erubis.use_pi', false,
        'Specifies whether processing instructions should be used', &true_or_false)
 option('content_processor.erubis.options', {},
        'A hash of additional, erubis specific options')
 
-content_processor.register('Fragments', :author => author,
-                            :summary => 'Generates fragment nodes from all HTML headers which have an id attribute set')
-content_processor.register('Haml', :author => author, :ext_map => {'haml' => 'html'},
-                           :summary => 'Allows one to write HTML with the Haml markup language')
-content_processor.register('HtmlHead', :author => author,
-                           :summary => 'Inserts various HTML tags like links to CSS/Javascript files into the HTML head tag')
+content_processor.register('Fragments')
+content_processor.register('Haml', :ext_map => {'haml' => 'html'})
+content_processor.register('HtmlHead')
 
-content_processor.register('Kramdown', :author => author,
-                           :summary => 'Fast superset of Markdown to HTML converter')
+content_processor.register('Kramdown')
 option('content_processor.kramdown.options', {:auto_ids => true},
        'The options hash for the kramdown processor')
 option('content_processor.kramdown.handle_links', true,
        'Whether all links in a kramdown document should be processed by webgen', &true_or_false)
 
-content_processor.register('Maruku', :author => author,
-                           :summary => 'Converts content written in a superset of Markdown to HTML')
-content_processor.register('RDiscount', :author => author,
-                           :summary => 'Converts content written in Markdown to HTML')
-content_processor.register('RDoc', :author => author, :ext_map => {'rdoc' => 'html'},
-                           :summary => 'Converts content written in RDoc markup to HTML')
+content_processor.register('Maruku')
+content_processor.register('RDiscount', :name => 'rdiscount')
+content_processor.register('RDoc', :name => 'rdoc', :ext_map => {'rdoc' => 'html'})
 
-content_processor.register('RedCloth', :author => author, :ext_map => {'textile' => 'html'},
-                           :summary => 'Converts content written in Textile markup to HTML')
+content_processor.register('RedCloth', :name => 'redcloth', :ext_map => {'textile' => 'html'})
 option('content_processor.redcloth.hard_breaks', false,
        'Specifies whether new lines are turned into hard breaks', &true_or_false)
 
-content_processor.register('Ruby', :author => author,
-                           :summary => 'Generate arbitrary output using plain Ruby')
+content_processor.register('Ruby')
 
-content_processor.register('Sass', :author => author, :ext_map => {'sass' => 'css'},
-                           :summary => 'Converts content written in the Sass meta language to valid CSS')
-content_processor.register('Scss', :author => author, :ext_map => {'scss' => 'css'},
-                           :summary => 'Converts content written in the Sassy CSS language to valid CSS')
+content_processor.register('Sass', :ext_map => {'sass' => 'css'})
+content_processor.register('Scss', :ext_map => {'scss' => 'css'})
 option('content_processor.sass.options', {},
        'Additional Sass options (also used by the scss processor)', &is_hash)
 website.ext.sass_load_paths = []
 
-content_processor.register('Tags', :author => author,
-                           :summary => 'Provides a very easy way for adding dynamic content')
+content_processor.register('Tags')
 
-content_processor.register('Tidy', :author => author,
-                           :summary => 'Uses the tidy program to convert the content into valid (X)HTML')
+content_processor.register('Tidy')
 option('content_processor.tidy.options', "-raw",
        "Additional options passed to the tidy command (-q and -f are always used)", &is_string)
 
-content_processor.register('Tikz', :author => author, :ext_map => {'tikz' => 'png'},
-                           :summary => 'Converts the content (LaTeX TikZ picture commands) into an image')
+content_processor.register('Tikz', :ext_map => {'tikz' => 'png'})
 option('content_processor.tikz.libraries', [],
        'An array of additional TikZ library names', &is_array)
 option('content_processor.tikz.opts', '',
@@ -129,9 +109,7 @@ end
 option('content_processor.tikz.transparent', false,
        'Specifies whether the generated image should be transparent (only if the extension is png)', &true_or_false)
 
-
-content_processor.register('Xmllint', :author => author,
-                           :summary => 'Uses the xmllint program to check the content for well-formedness and/or validness')
+content_processor.register('Xmllint')
 option('content_processor.xmllint.options', "--catalogs --noout --valid",
        'Options passed to the xmllint command', &is_string)
 
@@ -152,8 +130,7 @@ option('destination', [:file_system, 'out'],
 end
 
 website.ext.destination = destination = Webgen::Destination.new(website)
-destination.register("FileSystem", :author => author,
-                     :summary => 'Writes the generated content to a specified directory')
+destination.register("FileSystem")
 
 # TODO: Do we really need this option?
 #config.output.do_deletion(false, :doc => 'Specifies whether the generated output paths should be deleted once the sources are deleted')
@@ -164,23 +141,16 @@ destination.register("FileSystem", :author => author,
 require 'webgen/item_tracker'
 
 website.ext.item_tracker = item_tracker = Webgen::ItemTracker.new(website)
-item_tracker.register('NodeContent', :author => author,
-                      :summary => 'Tracks changes to the content of a node')
+item_tracker.register('NodeContent')
 
-item_tracker.register('NodeMetaInfo', :author => author,
-                      :summary => 'Tracks changes to the meta information of a node')
+item_tracker.register('NodeMetaInfo')
 website.blackboard.add_listener(:after_node_created) do |node|
   item_tracker.add(node, :node_meta_info, node.alcn)
 end
 
-item_tracker.register('Nodes', :author => author,
-                      :summary => 'Tracks changes to a (nested) list of nodes')
-
-item_tracker.register('File', :author => author,
-                      :summary => 'Tracks changes to a file')
-
-item_tracker.register('MissingNode', :author => author,
-                      :summary => 'Tracks missing nodes via their expected alcn/acn/dest_path')
+item_tracker.register('Nodes')
+item_tracker.register('File')
+item_tracker.register('MissingNode')
 
 
 ########################################################################
@@ -250,21 +220,16 @@ website.ext.path_handler = path_handler = Webgen::PathHandler.new(website)
 
 # handlers are registered in invocation order
 
-path_handler.register('Directory', :patterns => ['**/'], :author => author,
-                      :summary => 'Creates the needed output directories from the source directories')
-path_handler.register('MetaInfo', :patterns => ['**/metainfo', '**/*.metainfo'], :author => author,
-                      :summary => 'Provides the ability to set meta information for any path or node')
+path_handler.register('Directory', :patterns => ['**/'])
+path_handler.register('MetaInfo', :patterns => ['**/metainfo', '**/*.metainfo'])
 
-path_handler.register('Template', :patterns => ['**/*.template'], :author => author,
-                      :summary => 'Handles template files for layouting page and other template files')
+path_handler.register('Template', :patterns => ['**/*.template'])
 option('path_handler.template.default_template', 'default.template',
        'The name of the default template file')
 
-path_handler.register('Page', :patterns => ['**/*.page'], :author => author,
-                      :summary => 'Generates HTML files from page files')
+path_handler.register('Page', :patterns => ['**/*.page'])
 
-path_handler.register('Copy', :author => author,
-                      :summary => 'Copies files from the source to the destination directory, optionally processing them with one or more content processors')
+path_handler.register('Copy')
 option('path_handler.copy.patterns',
        ['**/*.css', '**/*.js', '**/*.html', '**/*.gif', '**/*.jpg', '**/*.png', '**/*.ico'],
        'The path patterns for the paths that should just be copied to the destination') do |val|
@@ -276,12 +241,9 @@ website.blackboard.add_listener(:website_initialized) do
   path_handler.registered_extensions[:copy].patterns += patterns
 end
 
-path_handler.register('Feed', :patterns => ['**/*.feed'], :author => author,
-                      :summary => 'Automatically generates atom or RSS feeds for a set of files')
-path_handler.register('Sitemap', :patterns => ['**/*.sitemap'], :author => author,
-                      :summary => 'Generates a sitemap file')
-path_handler.register('Virtual', :patterns => ['**/virtual', '**/*.virtual'], :author => author,
-                      :summary => 'Creates nodes for additional, virtual paths')
+path_handler.register('Feed', :patterns => ['**/*.feed'])
+path_handler.register('Sitemap', :patterns => ['**/*.sitemap'])
+path_handler.register('Virtual', :patterns => ['**/virtual', '**/*.virtual'])
 
 
 ########################################################################
@@ -305,12 +267,9 @@ option('sources.ignore_paths', ['**/*~', '**/.svn/**'],
 end
 
 website.ext.source = source = Webgen::Source.new(website)
-source.register("FileSystem", :author => author,
-                :summary => 'Provides paths under a specified directory that match a certain pattern')
-source.register("Stacked", :author => author,
-                :summary => 'Allows combining multiple sources into one')
-source.register("TarArchive", :author => author,
-                :summary => 'Provides paths from a specified (gzipped) tar archive that match a certain pattern')
+source.register("FileSystem")
+source.register("Stacked")
+source.register("TarArchive")
 
 
 ########################################################################
@@ -323,32 +282,25 @@ option('tag.prefix', '',
        'The prefix used for tag names to avoid name clashes when another content processor uses similar markup.',
        &is_string)
 
-#TODO: add options and summary information for all tags
-
-tag.register('Date', :author => author,
-             :summary => 'Displays the current date/time in a customizable format')
+tag.register('Date')
 option('tag.date.format', '%Y-%m-%d %H:%M:%S',
        'The format of the date (same options as Ruby\'s Time#strftime)', &is_string)
 
-tag.register('MetaInfo', :names => :default, :author => author,
-             :summary => 'Outputs the value of a given meta information key of the generated page')
+tag.register('MetaInfo', :names => :default)
 option('tag.meta_info.escape_html', true,
        'Special HTML characters in the output will be escaped if true', &true_or_false)
 
-tag.register('Relocatable', :names => ['relocatable', 'r'], :mandatory => ['path'], :author => author,
-             :summary => 'Makes the given path relative to the generated page')
+tag.register('Relocatable', :names => ['relocatable', 'r'], :mandatory => ['path'])
 option('tag.relocatable.path', nil,
        'The path which should be made relocatable', &is_string)
 
-tag.register('Link', :author => author, :mandatory => ['path'],
-             :summary => 'Creates a link to a given path')
+tag.register('Link', :mandatory => ['path'])
 option('tag.link.path', nil,
        'The (A)LCN path to which a link should be generated', &is_string)
 option('tag.link.attr', {},
        'A hash of additional HTML attributes that should be set on the link', &is_hash)
 
-tag.register('ExecuteCommand', :names => 'execute_cmd', :mandatory => ['command'], :author => author,
-             :summary => 'Includes the output of a command')
+tag.register('ExecuteCommand', :names => 'execute_cmd', :mandatory => ['command'])
 option('tag.execute_command.command', nil,
        'The command which should be executed', &is_string)
 option('tag.execute_command.process_output', true,
@@ -356,8 +308,7 @@ option('tag.execute_command.process_output', true,
 option('tag.execute_command.escape_html', true,
        'Special HTML characters in the output will be escaped if true', &true_or_false)
 
-tag.register('IncludeFile', :mandatory => ['filename'], :author => author,
-             :summary => 'Includes the content of a file')
+tag.register('IncludeFile', :mandatory => ['filename'])
 option('tag.include_file.filename', nil,
        'The name of the file which should be included (relative to the website).', &is_string)
 option('tag.include_file.process_output', true,
@@ -365,10 +316,9 @@ option('tag.include_file.process_output', true,
 option('tag.include_file.escape_html', true,
        'Special HTML characters in the file content will be escaped if true.', &true_or_false)
 
-tag.register('Coderay', :mandatory => ['lang'], :author => author,
-             :summary => 'Applies syntax highlighting to the tag body')
+tag.register('Coderay', :mandatory => ['lang'])
 option('tag.coderay.lang', 'ruby',
-       'The language used for highlighting',)
+       'The language used for highlighting')
 option('tag.coderay.process_body', true,
        'The tag body will be scanned for tags before highlighting if true', &true_or_false)
 option('tag.coderay.wrap', :div,
@@ -392,15 +342,13 @@ option('tag.coderay.bold_every', 10,
 option('tag.coderay.tab_width', 8,
        'Number of spaces used for a tabulator', &is_integer)
 
-tag.register('Tikz', :mandatory => ['path'], :author => author,
-             :summary => 'Generates an output image from the specified TikZ commands')
+tag.register('Tikz', :mandatory => ['path'])
 option('tag.tikz.path', nil,
        'The path for the created image', &is_string)
 option('tag.tikz.img_attr', {},
        'A hash of additional HTML attributes for the created img tag', &is_hash)
 
-tag.register('Langbar', :author => author,
-             :summary => 'Displays a list of links to translations of the content page')
+tag.register('Langbar')
 option('tag.langbar.show_single_lang', true,
        'Should the link be shown although the page is only available in one language?', &true_or_false)
 option('tag.langbar.show_own_lang', true,
@@ -408,8 +356,7 @@ option('tag.langbar.show_own_lang', true,
 option('tag.langbar.template', '/templates/tag.template',
        'The block \'tag.langbar\' in this template file is used for rendering')
 
-tag.register('BreadcrumbTrail', :author => author,
-             :summary => 'Creates a breadcrumb trail (i.e. shows the directory hierarchy) for the content page')
+tag.register('BreadcrumbTrail')
 option('tag.breadcrumb_trail.omit_dir_index', false,
        'Omit the last path component if it is an index path', &true_or_false)
 option('tag.breadcrumb_trail.start_level', 0,
@@ -419,8 +366,5 @@ option('tag.breadcrumb_trail.end_level', -1,
 option('tag.breadcrumb_trail.template', '/templates/tag.template',
        'The block \'tag.breadcrumb_trail\' in this template file is used for rendering')
 
-tag.register('Menu', :author => author,
-             :summary => '')
-
-tag.register('Sitemap', :author => author,
-             :summary => '')
+#TODO: tag.register('Menu')
+#TODO: tag.register('Sitemap')

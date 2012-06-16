@@ -1,0 +1,194 @@
+author: &author Thomas Leitner <t_leitner@gmx.at>
+summary: Built-in webgen extensions
+description: |
+  This is the extension bundle that comes with webgen. It provides the
+  core extensions and a handful of generally useful extensions.
+
+extensions:
+  bundles:
+    author: *author
+    summary: Contains a hash associating bundle names with their documentation files
+
+  cli:
+    author: *author
+    summary: Provides access to the command parser instance for adding CLI commands
+
+  content_processor:
+    author: *author
+    summary: Provides a generic framework for processing content
+  content_processor.blocks:
+    author: *author
+    summary: Replaces a special xml tag with the rendered block of a path in Webgen Page Format
+  content_processor.builder:
+    author: *author
+    summary: Allows one to programatically create valid XHTML/XML documents
+  content_processor.erb:
+    author: *author
+    summary: Allows one to use ERB (embedded Ruby) in the content
+  content_processor.erubis:
+    author: *author
+    summary: Allows one to use ERB (embedded Ruby) in the content (faster than the erb processor)
+  content_processor.fragments:
+    author: *author
+    summary: Generates fragment nodes from all HTML headers which have an id attribute set
+  content_processor.haml:
+    author: *author
+    summary: Allows one to write HTML with the Haml markup language
+  content_processor.html_head:
+    author: *author
+    summary: Inserts various HTML tags like links to CSS/Javascript files into the HTML head tag
+  content_processor.kramdown:
+    author: *author
+    summary: Fast superset-of-Markdown to HTML converter
+  content_processor.maruku:
+    author: *author
+    summary: Converts content written in a superset of Markdown to HTML
+  content_processor.rdiscount:
+    author: *author
+    summary: Converts content written in Markdown to HTML
+  content_processor.rdoc:
+    author: *author
+    summary: Converts content written in RDoc markup to HTML
+  content_processor.redcloth:
+    author: *author
+    summary: Converts content written in Textile markup to HTML
+  content_processor.ruby:
+    author: *author
+    summary: Generate arbitrary output using plain Ruby
+  content_processor.sass:
+    author: *author
+    summary: Converts content written in the Sass meta language to valid CSS
+  content_processor.scss:
+    author: *author
+    summary: Converts content written in the Sassy CSS language to valid CSS
+  content_processor.tags:
+    author: *author
+    summary: Provides a very easy way for adding dynamic content
+  content_processor.tidy:
+    author: *author
+    summary: Uses the tidy program to convert the content into valid (X)HTML
+  content_processor.tikz:
+    author: *author
+    summary: Converts the content (LaTeX TikZ picture commands) into an image
+  content_processor.xmllint:
+    author: *author
+    summary: Uses the xmllint program to check the content for well-formedness and/or validness
+
+  context_modules:
+    author: *author
+    summary: Allows adding helper methods (defined in modules) to the Context object
+
+  destination:
+    author: *author
+    summary: Provides an extendable way for writing the generated files
+  destination.file_system:
+    author: *author
+    summary: Writes the generated content to a specified directory
+
+  item_tracker:
+    author: *author
+    summary: Tracks items for nodes which allows webgen to check if a node has changed
+  item_tracker.node_content:
+    author: *author
+    summary: Tracks changes to the content of a node
+  item_tracker.node_meta_info:
+    author: *author
+    summary: Tracks changes to the meta information of a node
+  item_tracker.nodes:
+    author: *author
+    summary: Tracks changes to a (nested) list of nodes
+  item_tracker.file:
+    author: *author
+    summary: Tracks changes to a file
+  item_tracker.missing_node:
+    author: *author
+    summary: Tracks missing nodes via their expected alcn/acn/dest_path
+
+  node_finder:
+    author: *author
+    summary: Generic node finding extension, allows adding of custom filters
+
+  path_handler:
+    author: *author
+    summary: Generic node finding extension, allows adding of custom filters
+
+  path_handler.directory:
+    author: *author
+    summary: Creates the needed output directories from the source directories
+  path_handler.meta_info:
+    author: *author
+    summary: Provides the ability to set meta information for any path or node
+  path_handler.template:
+    author: *author
+    summary: Handles template files for layouting page and other template files
+  path_handler.page:
+    author: *author
+    summary: Generates HTML files from page files
+  path_handler.copy:
+    author: *author
+    summary: |
+      Copies files from the source to the destination directory, optionally processing
+      them with one or more content processors
+  path_handler.feed:
+    author: *author
+    summary: Automatically generates atom or RSS feeds for a set of files
+  path_handler.sitemap:
+    author: *author
+    summary: Generates a sitemap file
+  path_handler.virtual:
+    author: *author
+    summary: Creates nodes for additional, virtual paths
+
+  sass_load_paths:
+    author: *author
+    summary: Allows adding custom Sass load paths
+
+  source:
+    author: *author
+    summary: Provides an extendable way for finding source paths
+  source.file_system:
+    author: *author
+    summary: Provides paths under a specified directory that match a certain pattern
+  source.stacked:
+    author: *author
+    summary: Allows combining multiple sources into one
+  source.tar_archive:
+    author: *author
+    summary: Provides paths from a specified (gzipped) tar archive that match a certain pattern
+
+  tag:
+    author: *author
+    summary: Handles webgen tags (an easy way for adding dynamic content)
+  tag.date:
+    author: *author
+    summary: Displays the current date/time in a customizable format
+  tag.meta_info:
+    author: *author
+    summary: Outputs the value of a given meta information key of the generated page
+  tag.relocatable:
+    author: *author
+    summary: Makes the given path relative to the generated page
+  tag.link:
+    author: *author
+    summary: Creates a link to a given path
+  tag.execute_cmd:
+    author: *author
+    summary: Includes the output of a command
+  tag.include_file:
+    author: *author
+    summary: Includes the content of a file
+  tag.coderay:
+    author: *author
+    summary: Applies syntax highlighting to the tag body
+  tag.tikz:
+    author: *author
+    summary: Generates an output image from the specified TikZ commands
+  tag.langbar:
+    author: *author
+    summary: Displays a list of links to translations of the content page
+  tag.breadcrumb_trail:
+    author: *author
+    summary: Creates a breadcrumb trail (i.e. shows the directory hierarchy) for the content page
+#  tag.menu:
+#    author: *author
+#    summary: Creates a customizable menu
