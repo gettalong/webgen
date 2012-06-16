@@ -2,16 +2,18 @@
 
 require 'minitest/autorun'
 require 'tmpdir'
+require 'ostruct'
 require 'fileutils'
-require 'webgen/extension_loader'
+require 'webgen/bundle_loader'
 
-class TestExtensionLoader < MiniTest::Unit::TestCase
+class TestBundleLoader < MiniTest::Unit::TestCase
 
   def setup
     @website = MiniTest::Mock.new
     @website.expect(:config, {'sources.passive' => [['/', :file, 'other']]})
     @dir = File.join(Dir.tmpdir, 'test-webgen')
     @website.expect(:directory, @dir)
+    @website.expect(:ext, OpenStruct.new)
 
     @extdir = File.join(@dir, 'ext')
     FileUtils.mkdir_p(File.join(@extdir, 'my_ext'))
@@ -20,8 +22,10 @@ class TestExtensionLoader < MiniTest::Unit::TestCase
     FileUtils.touch(@webgen_file)
     @ext_file = File.join(@extdir, 'my_ext', 'init.rb')
     FileUtils.touch(@ext_file)
+    @ext_info_file = File.join(@extdir, 'my_ext', 'info.yaml')
+    FileUtils.touch(@ext_info_file)
 
-    @loader = Webgen::ExtensionLoader.new(@website, @extdir)
+    @loader = Webgen::BundleLoader.new(@website, @extdir)
   end
 
   def teardown
@@ -33,6 +37,7 @@ class TestExtensionLoader < MiniTest::Unit::TestCase
     @loader.load('my_ext')
     @loader.load('my_ext')
     assert_equal([File.expand_path(@webgen_file), File.expand_path(@ext_file)], @loader.instance_variable_get(:@loaded))
+    assert_equal({'webgen' => nil, 'my_ext' => @ext_info_file}, @website.ext.bundles)
   end
 
   def test_dsl

@@ -20,7 +20,7 @@ require 'webgen/blackboard'
 require 'webgen/cache'
 require 'webgen/error'
 require 'webgen/tree'
-require 'webgen/extension_loader'
+require 'webgen/bundle_loader'
 
 # Load other needed files
 require 'webgen/path'
@@ -226,7 +226,7 @@ module Webgen
       @ext = OpenStruct.new
 
       @init_block.call(self, true) if @init_block && @init_block.arity == 2
-      load_extensions
+      load_bundles
       load_configuration
       if @init_block
         @init_block.arity == 1 ? @init_block.call(self) : @init_block.call(self, false)
@@ -238,18 +238,18 @@ module Webgen
     end
     private :init
 
-    # Load all extension files.
+    # Load all extension bundles.
     #
-    # This loads the extension file for the shipped extensions as well as all website specific
-    # extensions.
-    def load_extensions
+    # This loads the extension bundle for the built-in extensions as well as all website specific
+    # extension bundles.
+    def load_bundles
       ext_dir = File.join(@directory, 'ext')
-      ext_loader = ExtensionLoader.new(self, ext_dir)
-      ext_loader.load('webgen/extensions')
+      ext_loader = BundleLoader.new(self, ext_dir)
+      ext_loader.load('built-in')
       Dir[File.join(ext_dir, '**/init.rb')].sort.each {|file| ext_loader.load(file[ext_dir.length..-1])}
       ext_loader.load('init.rb') if File.file?(File.join(ext_dir, 'init.rb'))
     end
-    private :load_extensions
+    private :load_bundles
 
     # Load the configuration file into the Configuration object.
     def load_configuration
