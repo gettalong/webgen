@@ -6,6 +6,8 @@ require 'webgen/version'
 require 'webgen/cli/logger'
 require 'webgen/cli/utils'
 require 'webgen/cli/generate_command'
+require 'webgen/cli/show_command'
+require 'webgen/cli/bundle_command'
 
 module Webgen
 
@@ -92,13 +94,15 @@ module Webgen
             @log_level = l
           end
           opts.on("-c", "--[no-]color",
-                  *Utils.format_option_desc("Colorize output")) do |a|
+                  *Utils.format_option_desc("Colorize output (default: #{Webgen::CLI::Utils.use_colors ? "yes" : "no"})")) do |a|
             Webgen::CLI::Utils.use_colors = a
           end
         end
         self.add_command(CmdParse::VersionCommand.new)
         self.add_command(CmdParse::HelpCommand.new)
         self.add_command(Webgen::CLI::GenerateCommand.new, true)
+        self.add_command(Webgen::CLI::ShowCommand.new)
+        self.add_command(Webgen::CLI::BundleCommand.new)
       end
 
       # Utility method for getting the Webgen::Website object.
