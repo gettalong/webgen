@@ -3,6 +3,7 @@
 require 'webgen/cli/utils'
 require 'webgen/cli/install_bundle_command'
 require 'webgen/cli/list_bundle_command'
+require 'webgen/cli/create_bundle_command'
 
 module Webgen
   module CLI
@@ -20,6 +21,7 @@ website is also included.
 DESC
         add_command(ListBundleCommand.new, true)
         add_command(InstallBundleCommand.new)
+        add_command(CreateBundleCommand.new)
       end
 
     end

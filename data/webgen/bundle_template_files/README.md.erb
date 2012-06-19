@@ -1,0 +1,24 @@
+# webgen extension bundle <%= bundle_name %>
+
+TODO: describe the bundle here
+
+
+# Installation
+
+The easiest way to install this extension bundle is by installing the
+corresponding Rubygem:
+
+    gem install webgen-<%= bundle_name %>-bundle
+
+If you don't use Rubygems, copy the folder
+`lib/webgen/bundle/<%= bundle_name %>` into your `ext` directory.
+
+After that you just need to tell webgen to use this extension bundle by
+adding the following line to your `ext/init.rb` file:
+
+    load("<%= bundle_name %>")
+
+
+# Copyright and license
+
+TODO: state copyright and used license here
