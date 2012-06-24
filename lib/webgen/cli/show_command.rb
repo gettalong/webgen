@@ -3,6 +3,7 @@
 require 'webgen/cli/utils'
 require 'webgen/cli/show_extensions_command'
 require 'webgen/cli/show_config_command'
+require 'webgen/cli/show_dependencies_command'
 
 module Webgen
   module CLI
@@ -20,6 +21,7 @@ context of a webgen website, information about the website is also included.
 DESC
         add_command(ShowConfigCommand.new)
         add_command(ShowExtensionsCommand.new)
+        add_command(ShowDependenciesCommand.new)
       end
 
     end
