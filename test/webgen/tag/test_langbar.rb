@@ -26,11 +26,11 @@ class TestTagLangbar < MiniTest::Unit::TestCase
 
     template = Test.setup_tag_template(root)
 
-    de_link = '<a href="file.de.html">de</a>'
-    en_link = '<a class="webgen-langbar-current-lang" href="file.html">en</a>'
+    de_link = '<a href="file.de.html" hreflang="de">de</a>'
+    en_link = '<a class="webgen-langbar-current-lang" href="file.html" hreflang="en">en</a>'
     check_results(node, "#{de_link} | #{en_link}", de_link, "#{de_link} | #{en_link}", de_link)
 
-    en_link = '<a class="webgen-langbar-current-lang" href="other.html">en</a>'
+    en_link = '<a class="webgen-langbar-current-lang" href="other.html" hreflang="en">en</a>'
     check_results(other, en_link, '', '', '')
   end
 

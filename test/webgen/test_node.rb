@@ -150,15 +150,15 @@ class TestNode < MiniTest::Unit::TestCase
                  nodes[:somename_en].link_to(nodes[:somename_en_frag], 'attr1' => 'val1'))
     assert_equal('<a href="#frag">frag</a>',
                  nodes[:somename_en].link_to(nodes[:somename_en_frag], :attr1 => 'val1'))
-    assert_equal('<a class="help" href="dir2/index.html">index en</a>',
+    assert_equal('<a class="help" href="dir2/index.html" hreflang="en">index en</a>',
                  nodes[:somename_en].link_to(nodes[:dir2_index_en]))
 
     # links to directories
-    assert_equal('<a href="dir2/index.de.html">routed_de</a>',
+    assert_equal('<a href="dir2/index.de.html" hreflang="de">routed_de</a>',
                  nodes[:somename_de].link_to(nodes[:dir2]))
-    assert_equal('<a href="dir2/index.html">routed</a>',
+    assert_equal('<a href="dir2/index.html" hreflang="en">routed</a>',
                  nodes[:somename_en].link_to(nodes[:dir2]))
-    assert_equal('<a href="dir2/index.de.html">routed_de</a>',
+    assert_equal('<a href="dir2/index.de.html" hreflang="de">routed_de</a>',
                  nodes[:somename_en].link_to(nodes[:dir2], :lang => 'de'))
   end
 

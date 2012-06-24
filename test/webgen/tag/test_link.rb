@@ -34,9 +34,9 @@ class TestTagLink < MiniTest::Unit::TestCase
     assert_raises(Webgen::RenderError) { @obj.call('link', '', @context) }
 
     # basic node resolving
-    assert_tag_result('<a href="dir/file.html">file</a>', 'dir/file.html')
+    assert_tag_result('<a href="dir/file.html" hreflang="en">file</a>', 'dir/file.html')
     @context[:config]['tag.link.attr'] = {'title' => 'other'}
-    assert_tag_result('<a href="dir/file.html" title="other">file</a>', 'dir/file.html')
+    assert_tag_result('<a href="dir/file.html" hreflang="en" title="other">file</a>', 'dir/file.html')
     @context[:config]['tag.link.attr'] = {}
     assert_tag_result('', 'dir/other.html')
 

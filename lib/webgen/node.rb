@@ -220,6 +220,7 @@ module Webgen
       attr.delete_if {|k,v| k.kind_of?(Symbol)}
 
       attr['href'] = self.route_to(rnode)
+      attr['hreflang'] = rnode.lang.to_s if rnode.lang
       attrs = attr.collect {|name,value| "#{name.to_s}=\"#{value}\"" }.sort.unshift('').join(' ')
       "<a#{attrs}>#{link_text}</a>"
     end
