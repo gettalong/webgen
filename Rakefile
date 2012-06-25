@@ -79,6 +79,7 @@ end
 
 tt = Rake::TestTask.new do |test|
   test.libs << 'test'
+  test.test_files = FileList['test/webgen/**/test_*.rb']
 end
 
 # Release tasks and development tasks ############################################
