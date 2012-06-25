@@ -1,0 +1,62 @@
+--- name:atom_template pipeline:erb --------------------------------------------
+<?xml version="1.0" encoding="utf-8" ?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title type="html"><%= h(context.node['title']) %></title>
+  <subtitle type="html"><%= h(context.node['description']) %></subtitle>
+  <author>
+    <name><%= h(context.node['author']) %></name>
+    <uri><%= h(context.node['author_url']) %></uri>
+  </author>
+
+  <link href="<%= context.node.feed_link %>" rel="alternate" />
+  <link href="<%= Webgen::Path.url(File.join(context.node['site_url'], context.node.dest_path), false) %>" rel="self" />
+  <generator uri="http://webgen.rubyforge.org/" version="<%= Webgen::VERSION %>">
+    webgen - Webgen::PathHandler::Feed
+  </generator>
+  <updated><%= Time.now.xmlschema %></updated>
+  <id><%= context.node.feed_link %></id>
+
+  <% context.node.feed_entries.each do |entry| %>
+  <entry>
+    <title type="html"><%= h(entry['title']) %></title>
+    <% if entry['author'] %>
+    <author>
+      <name><%= h(entry['author']) %></name>
+      <uri><%= h(entry['author_url']) %></uri>
+    </author>
+    <% end %>
+    <link href="<%= Webgen::Path.url(File.join(context.node['site_url'], entry.dest_path), false) %>" rel="alternate" />
+    <id><%= Webgen::Path.url(File.join(context.node['site_url'], entry.dest_path), false) %></id>
+    <updated><%= entry['modified_at'].xmlschema %></updated>
+    <% if entry['created_at'].kind_of?(Time) %>
+    <published><%= entry['created_at'].xmlschema %></published>
+    <% end %>
+    <content type="html"><%= h(context.node.entry_content(entry)) %></content>
+  </entry>
+  <% end %>
+</feed>
+
+
+--- name:rss_template pipeline:erb ---------------------------------------------
+<?xml version="1.0" encoding="utf-8" ?>
+<rss version="2.0">
+  <channel>
+    <title><%= h(context.node['title']) %></title>
+    <link><%= context.node.feed_link %>"</link>
+    <description><%= h(context.node['description']) %></description>
+    <pubDate><%= Time.now.rfc822 %></pubDate>
+    <lastBuildDate><%= Time.now.rfc822 %></lastBuildDate>
+    <generator>webgen - Webgen::PathHandler::Feed</generator>
+
+    <% context.node.feed_entries.each do |entry| %>
+    <item>
+      <title><%= h(entry['title']) %></title>
+      <link><%= Webgen::Path.url(File.join(context.node['site_url'], entry.dest_path), false) %></link>
+      <description><%= h(context.node.entry_content(entry)) %></description>
+      <pubDate><%= entry['modified_at'].rfc822 %></pubDate>
+      <guid isPermaLink="true"><%= Webgen::Path.url(File.join(context.node['site_url'], entry.dest_path), false) %></guid>
+    </item>
+    <% end %>
+
+  </channel>
+</rss>

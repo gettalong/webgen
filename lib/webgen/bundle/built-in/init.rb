@@ -204,6 +204,11 @@ option('path_handler.default_meta_info',
            'no_output' => true,
            'blocks' => {1 => {'name' => 'paths'}, 2 => {'name' => 'alcn'}}
          },
+         'feed' => {
+           'rss' => true,
+           'atom' => true,
+           'blocks' => {:default => {'pipeline' => 'erb'}}
+         },
        },
        'Default meta information for all nodes (key :all) and for nodes belonging to a specific path handler') do |val|
   raise "The value has to be a hash" unless val.kind_of?(Hash)
