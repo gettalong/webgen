@@ -371,7 +371,6 @@ module Webgen
       end
 
       nodes.flatten.compact.each do |node|
-        node.node_info[:path_handler] = instance(handler)
         @website.blackboard.dispatch_msg(:after_node_created, node)
       end
     rescue Webgen::Error => e

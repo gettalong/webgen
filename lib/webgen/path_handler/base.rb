@@ -60,6 +60,7 @@ module Webgen
 
         node = Webgen::Node.new(parent, path.cn, dest_path, path.meta_info)
         node.node_info[:path] = path
+        node.node_info[:path_handler] = self
 
         yield(node) if block_given?
         node
