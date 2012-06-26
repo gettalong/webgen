@@ -209,6 +209,11 @@ option('path_handler.default_meta_info',
            'atom' => true,
            'blocks' => {:default => {'pipeline' => 'erb'}}
          },
+         'sitemap' => {
+           'default_priority' => 0.5,
+           'default_change_freq' => 'weekly',
+           'blocks' => {1 => {'name' => 'sitemap', 'pipeline' => 'erb'}}
+         },
        },
        'Default meta information for all nodes (key :all) and for nodes belonging to a specific path handler') do |val|
   raise "The value has to be a hash" unless val.kind_of?(Hash)
