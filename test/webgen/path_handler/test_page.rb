@@ -1,20 +1,15 @@
 # -*- encoding: utf-8 -*-
 
-require 'helper'
-require 'ostruct'
-require 'stringio'
+require 'webgen/test_helper'
 require 'webgen/path_handler/page'
-require 'webgen/tree'
-require 'webgen/node'
 require 'webgen/path'
 
 class TestPathHandlerPage < MiniTest::Unit::TestCase
 
+  include Webgen::TestHelper
+
   def setup
-    @website = MiniTest::Mock.new
-    @website.expect(:tree, Webgen::Tree.new(@website))
-    @website.expect(:logger, Logger.new(StringIO.new))
-    @website.expect(:config, {'website.lang' => 'en'})
+    setup_website('website.lang' => 'en')
     @root = Webgen::Node.new(@website.tree.dummy_root, '/', '/')
     @page = Webgen::PathHandler::Page.new(@website)
   end

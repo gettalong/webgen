@@ -1,13 +1,15 @@
 # -*- encoding: utf-8 -*-
 
-require 'helper'
+require 'webgen/test_helper'
 require 'webgen/tag/execute_command'
 require 'time'
 
 class TestTagExecuteCommand < MiniTest::Unit::TestCase
 
+  include Webgen::TestHelper
+
   def test_call
-    website, @context = Test.setup_tag_test
+    setup_context
 
     test_text = "a\"b\""
     assert_tag_result([test_text, false], echo_cmd(test_text), false, false)

@@ -1,19 +1,17 @@
 # -*- encoding: utf-8 -*-
 
-require 'helper'
-require 'webgen/context'
+require 'webgen/test_helper'
 require 'webgen/tag/coderay'
-require 'webgen/node'
-require 'webgen/tree'
 
 class TestTagCoderay < MiniTest::Unit::TestCase
 
+  include Webgen::TestHelper
+
   def test_call
-    website, @context = Test.setup_tag_test
-    website.ext.content_processor = MiniTest::Mock.new
-    website.ext.content_processor.expect(:call, @context, ['tags', @context])
-    website.expect(:tree, Webgen::Tree.new(website))
-    root = Webgen::Node.new(website.tree.dummy_root, '/', '/', {'title' => 'Hallo'})
+    setup_context
+    @website.ext.content_processor = MiniTest::Mock.new
+    @website.ext.content_processor.expect(:call, @context, ['tags', @context])
+    root = Webgen::Node.new(@website.tree.dummy_root, '/', '/', {'title' => 'Hallo'})
     @context[:chain] = [root]
 
     assert_result_includes('TestData', @context, 'TestData', 'html', false, 'style')

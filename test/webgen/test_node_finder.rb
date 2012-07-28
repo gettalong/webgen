@@ -1,17 +1,15 @@
 # -*- encoding: utf-8 -*-
 
-require 'minitest/autorun'
-require 'logger'
-require 'stringio'
+require 'webgen/test_helper'
 require 'webgen/node_finder'
-require 'webgen/tree'
 
 class TestNodeFinder < MiniTest::Unit::TestCase
 
+  include Webgen::TestHelper
+
   def setup
     @config = {}
-    @website = MiniTest::Mock.new
-    @website.expect(:config, @config)
+    setup_website(@config)
     @nf = Webgen::NodeFinder.new(@website)
   end
 
@@ -27,110 +25,84 @@ class TestNodeFinder < MiniTest::Unit::TestCase
   end
 
   def test_find
-    tree = Webgen::Tree.new(@website)
-    @website.expect(:tree, tree)
-    @website.expect(:logger, ::Logger.new(StringIO.new))
-    blackboard = MiniTest::Mock.new
-    blackboard.expect(:dispatch_msg, nil, [nil, nil, nil])
-    @website.expect(:blackboard, blackboard)
-
-    nodes = {
-      :root => root = Webgen::Node.new(tree.dummy_root, '/', '/'),
-      :somename_en => child_en = Webgen::Node.new(root, 'somename.html', '/somename.en.html', {'lang' => 'en', 'title' => 'somename en', 'sort_info' => 3}),
-      :somename_de => child_de = Webgen::Node.new(root, 'somename.html', '/somename.de.html', {'lang' => 'de', 'title' => 'somename de', 'sort_info' => 5}),
-      :other => Webgen::Node.new(root, 'other.html', '/other.html', {'title' => 'other'}),
-      :other_en => Webgen::Node.new(root, 'other.html', '/other1.html', {'lang' => 'en', 'title' => 'other en'}),
-      :somename_en_frag => frag_en = Webgen::Node.new(child_en, '#othertest', '/somename.en.html#frag', {'title' => 'frag'}),
-      :somename_en_fragnest => Webgen::Node.new(frag_en, '#nestedpath', '/somename.en.html#fragnest/', {'title' => 'fragnest'}),
-      :dir => dir = Webgen::Node.new(root, 'dir/', '/dir/', {'title' => 'dir'}),
-      :dir_file => dir_file = Webgen::Node.new(dir, 'file.html', '/dir/file.html', {'title' => 'file'}),
-      :dir_file_frag => Webgen::Node.new(dir_file, '#frag', '/dir/file.html#frag', {'title' => 'frag'}),
-      :dir_dir => dir_dir = Webgen::Node.new(dir, 'subdir/' , '/dir/subdir/', {'title' => 'dir'}),
-      :dir_dir_file => Webgen::Node.new(dir_dir, 'file.html', '/dir/subdir/file.html', {'title' => 'file1'}),
-      :dir2 => dir2 = Webgen::Node.new(root, 'dir2/', '/dir2/', {'proxy_path' => 'index.html', 'title' => 'dir2'}),
-      :dir2_index_en => Webgen::Node.new(dir2, 'index.html', '/dir2/index.html',
-                                         {'lang' => 'en', 'routed_title' => 'routed', 'title' => 'index en'}),
-      :dir2_index_de => dir2_index_de = Webgen::Node.new(dir2, 'index.html', '/dir2/index.de.html',
-                                                         {'lang' => 'de', 'routed_title' => 'routed_de', 'title' => 'index de'}),
-      :dir2_index_de_fragb => Webgen::Node.new(dir2_index_de, '#fragb', '/dir2/index.de.html#fragb', {'title' => 'fragb'}),
-      :dir2_index_de_fraga => Webgen::Node.new(dir2_index_de, '#fraga', '/dir2/index.de.html#fraga', {'title' => 'fraga'}),
-    }
+    setup_default_nodes(@website.tree)
+    tree = @website.tree
 
     check = lambda do |correct, result|
-      assert_equal(correct.collect {|n| nodes[n] }, result, "Failure at #{caller[0]}")
+      assert_equal(correct.collect {|n| tree[n]}, result, "Failure at #{caller[0]}")
     end
     @config['node_finder.option_sets'] = {'simple' => {:alcn => '', :unknown => ''}}
 
-    assert_raises(ArgumentError) { @nf.find(['hallo'], nodes[:root]) }
+    assert_raises(ArgumentError) { @nf.find(['hallo'], tree['/']) }
 
     # test using configured search options
-    check.call([:root], @nf.find('simple', nodes[:root]))
-    check.call([:somename_en], @nf.find('simple', nodes[:somename_en]))
+    check.call(%w[/], @nf.find('simple', tree['/']))
+    check.call(%w[/file.en.html], @nf.find('simple', tree['/file.en.html']))
 
-    # test limit, offset, flatten
-    check.call([:somename_en, :other_en],
-               @nf.find({:alcn => '/**/*.en.html', :limit => 2}, nodes[:root]))
-    check.call([:dir2_index_en],
-               @nf.find({:alcn => '/**/*.en.html', :limit => 2, :offset => 2}, nodes[:root]))
+    # test limit, offset, flatten, levels
+    check.call(%w[/file.en.html /other.en.html],
+               @nf.find({:alcn => '/**/*.en.html', :limit => 2}, tree['/']))
+    check.call(%w[/dir2/index.en.html],
+               @nf.find({:alcn => '/**/*.en.html', :limit => 2, :offset => 2}, tree['/']))
 
-    assert_equal([[nodes[:somename_en], [nodes[:somename_en_frag]]], nodes[:somename_de],
-                  nodes[:other], nodes[:other_en],
-                  [nodes[:dir], [nodes[:dir_file], nodes[:dir_dir]]],
-                  [nodes[:dir2], [nodes[:dir2_index_en], nodes[:dir2_index_de]]]
+    assert_equal([[tree['/file.en.html'], [tree['/file.en.html#frag']]],
+                  [tree['/file.de.html'], [tree['/file.de.html#frag']]],
+                  tree['/other.html'],
+                  tree['/other.en.html'],
+                  tree['/german.de.html'],
+                  [tree['/dir/'], [tree['/dir/subfile.html'], tree['/dir/dir/']]],
+                  [tree['/dir2/'], [tree['/dir2/index.en.html'], tree['/dir2/index.de.html']]]
                  ],
-                 @nf.find({:levels => [1,2]}, nodes[:root]))
+                 @nf.find({:levels => [1,2]}, tree['/']))
 
     # test sort methods
-    check.call([:somename_en, :somename_de, :dir_file, :dir_dir_file, :dir2_index_de,
-                :dir2_index_en, :other, :other_en],
-               @nf.find({:alcn => '/**/*.html', :flatten => true, :sort => true}, nodes[:root]))
-    check.call([:dir_file, :dir_dir_file, :dir2_index_de, :dir2_index_en, :other, :other_en,
-                :somename_de, :somename_en],
-               @nf.find({:alcn => '/**/*.html', :name => 'test', :flatten => true, :sort => 'title'}, nodes[:root]))
-    assert_equal([[nodes[:somename_en], [[nodes[:somename_en_frag], [nodes[:somename_en_fragnest]]]]], nodes[:somename_de],
-                  [nodes[:dir], [[nodes[:dir_dir], [nodes[:dir_dir_file]]],
-                                 [nodes[:dir_file], [nodes[:dir_file_frag]]]]],
-                  [nodes[:dir2], [[nodes[:dir2_index_de], [nodes[:dir2_index_de_fraga], nodes[:dir2_index_de_fragb]]], nodes[:dir2_index_en]]],
-                  nodes[:other], nodes[:other_en],
+    check.call(%w[/file.en.html /file.de.html /dir/dir/file.html /german.de.html /dir2/index.de.html
+                  /dir2/index.en.html /other.html /other.en.html /dir/subfile.html],
+               @nf.find({:alcn => '/**/*.html', :flatten => true, :sort => true}, tree['/']))
+    check.call(%w[/dir/dir/file.html /file.de.html /file.en.html /german.de.html /dir2/index.de.html /dir2/index.en.html
+                  /other.html /other.en.html /dir/subfile.html],
+               @nf.find({:alcn => '/**/*.html', :name => 'test', :flatten => true, :sort => 'title'}, tree['/']))
+    assert_equal([[tree['/file.en.html'], [[tree['/file.en.html#frag'], [tree['/file.en.html#nested']]]]],
+                  [tree['/file.de.html'], [tree['/file.de.html#frag']]],
+                  [tree['/dir/'], [[tree['/dir/dir/'], [tree['/dir/dir/file.html']]],
+                                   [tree['/dir/subfile.html'], [tree['/dir/subfile.html#frag']]]]],
+                  [tree['/dir2/'], [tree['/dir2/index.de.html'], tree['/dir2/index.en.html']]],
+                  tree['/german.de.html'], tree['/other.html'], tree['/other.en.html'],
                  ],
-                 @nf.find({:levels => [1,3], :sort => true}, nodes[:root]))
+                 @nf.find({:levels => [1,3], :sort => true}, tree['/']))
 
     # test filter: meta info keys/values
-    check.call([:somename_en_frag, :dir_file_frag],
-               @nf.find({'title' => 'frag', :flatten => true}, nodes[:root]))
+    check.call(['/file.en.html#frag', '/file.de.html#frag', '/dir/subfile.html#frag'],
+               @nf.find({'title' => 'frag', :flatten => true}, tree['/']))
 
     # test filter: alcn
-    check.call([:root],
-               @nf.find({:alcn => '/'}, nodes[:root]))
-    check.call([:somename_en, :somename_de, :other, :other_en, :dir_file, :dir_dir_file,
-                :dir2_index_en, :dir2_index_de],
-               @nf.find({:alcn => '/**/*.html', :flatten => true}, nodes[:root]))
-    check.call([:root, :dir_file, :dir_file_frag, :dir_dir],
-               @nf.find({:alcn => ['/', '*'], :flatten => true}, nodes[:dir]))
+    check.call(%w[/],
+               @nf.find({:alcn => '/'}, tree['/']))
+    check.call(%w[/ /dir/subfile.html /dir/subfile.html#frag /dir/dir/],
+               @nf.find({:alcn => ['/', '*'], :flatten => true}, tree['/dir/']))
 
     # test filter: and/or
-    check.call([:somename_en, :somename_de, :other, :other_en],
-               @nf.find({:alcn => '/**/*.html', :and => {:alcn => '*.html'},
-                          :flatten => true}, nodes[:root]))
-    check.call([:somename_en, :somename_de, :other, :other_en, :dir_file, :dir_dir_file,
-                :dir2_index_en, :dir2_index_de, :root],
-               @nf.find({:alcn => '/**/*.html', :or => 'simple', :flatten => true}, nodes[:root]))
+    check.call(%w[/file.en.html /file.de.html /other.html /other.en.html /german.de.html ],
+               @nf.find({:alcn => '/**/*.html', :and => {:alcn => '*.html'}, :flatten => true}, tree['/']))
+    check.call(%w[/file.en.html /file.de.html /other.html /other.en.html /german.de.html /dir/subfile.html /dir/dir/file.html
+                  /dir2/index.en.html /dir2/index.de.html /],
+               @nf.find({:alcn => '/**/*.html', :or => 'simple', :flatten => true}, tree['/']))
 
     # test filter: levels
-    check.call([:root],
-               @nf.find({:levels => [0, 0], :flatten => true}, nodes[:dir]))
-    check.call([:somename_en_fragnest, :dir_file_frag, :dir_dir_file, :dir2_index_de_fragb, :dir2_index_de_fraga],
-               @nf.find({:levels => [3,3], :flatten => true}, nodes[:dir]))
-    check.call([:root, :somename_en, :somename_de, :other, :other_en, :dir, :dir2],
-               @nf.find({:levels => [0,1], :flatten => true}, nodes[:dir]))
+    check.call(%w[/],
+               @nf.find({:levels => [0, 0], :flatten => true}, tree['/dir/']))
+    check.call(%w[/file.en.html#nested /dir/subfile.html#frag /dir/dir/file.html],
+               @nf.find({:levels => [3,3], :flatten => true}, tree['/dir/']))
+    check.call(%w[/ /file.en.html /file.de.html /other.html /other.en.html /german.de.html /dir/ /dir2/],
+               @nf.find({:levels => [0,1], :flatten => true}, tree['/dir/']))
 
     # test filter: langs
-    check.call([:somename_en, :other_en, :dir2_index_en],
-               @nf.find({:lang => 'en', :flatten => true}, nodes[:dir]))
-    check.call([:somename_en, :somename_de, :other_en, :dir2_index_en, :dir2_index_de],
-               @nf.find({:lang => ['en', 'de'], :flatten => true}, nodes[:dir]))
-    check.call([:somename_en, :other_en, :dir2_index_en],
-               @nf.find({:lang => :node, :flatten => true}, nodes[:somename_en]))
+    check.call(%w[/file.en.html /other.en.html /dir2/index.en.html],
+               @nf.find({:lang => 'en', :flatten => true}, tree['/dir/']))
+    check.call(%w[/file.en.html /file.de.html /other.en.html /german.de.html /dir2/index.en.html /dir2/index.de.html],
+               @nf.find({:lang => ['en', 'de'], :flatten => true}, tree['/dir/']))
+    check.call(%w[/file.en.html /other.en.html /dir2/index.en.html],
+               @nf.find({:lang => :node, :flatten => true}, tree['/file.en.html']))
   end
 
 end

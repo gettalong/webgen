@@ -1,24 +1,16 @@
 # -*- encoding: utf-8 -*-
 
-require 'helper'
-require 'ostruct'
-require 'stringio'
-require 'logger'
+require 'webgen/test_helper'
 require 'webgen/path_handler/copy'
 require 'webgen/content_processor'
-require 'webgen/tree'
-require 'webgen/node'
 require 'webgen/path'
 
 class TestPathHandlerCopy < MiniTest::Unit::TestCase
 
-  def setup
-    @website = MiniTest::Mock.new
-    @website.expect(:tree, Webgen::Tree.new(@website))
-    @website.expect(:ext, OpenStruct.new)
-    @website.expect(:config, {})
-    @website.expect(:logger, Logger.new(StringIO.new))
+  include Webgen::TestHelper
 
+  def setup
+    setup_website
     @website.ext.content_processor = Webgen::ContentProcessor.new
     @website.ext.content_processor.register('test') do |context|
       context.content = context.content.reverse
@@ -32,42 +24,22 @@ class TestPathHandlerCopy < MiniTest::Unit::TestCase
   end
 
   def test_create_node
-    node = @copy.create_nodes(Webgen::Path.new('/default.css', 'dest_path' => '<parent><basename><ext>'))
-    refute_nil(node)
-    assert_nil(node.meta_info['pipeline'])
-    assert_equal('/default.css', node.dest_path)
+    check_node = lambda do |src_path, mi, dest_path, pipeline|
+      node = @copy.create_nodes(Webgen::Path.new(src_path, {'dest_path' => '<parent><basename><ext>'}.merge(mi)))
+      refute_nil(node)
+      assert_equal(pipeline, node.meta_info['pipeline'])
+      assert_equal(dest_path, node.dest_path)
+    end
 
-    node = @copy.create_nodes(Webgen::Path.new('/other.test.css', 'dest_path' => '<parent><basename><ext>'))
-    refute_nil(node)
-    assert_equal(['test'], node.meta_info['pipeline'])
-    assert_equal('/other.css', node.dest_path)
-
-    node = @copy.create_nodes(Webgen::Path.new('/other.unknown.css', 'dest_path' => '<parent><basename><ext>'))
-    assert_nil(node.meta_info['pipeline'])
-    assert_equal('/other.unknown.css', node.dest_path)
-
-    node = @copy.create_nodes(Webgen::Path.new('/first.test.test.unknown.css', 'dest_path' => '<parent><basename><ext>'))
-    assert_equal(['test', 'test'], node.meta_info['pipeline'])
-    assert_equal('/first.unknown.css', node.dest_path)
-
-    node = @copy.create_nodes(Webgen::Path.new('/first.test.test.unknown.ha', 'dest_path' => '<parent><basename><ext>'))
-    assert_equal(['test', 'test', :ha], node.meta_info['pipeline'])
-    assert_equal('/first.unknown.llo', node.dest_path)
-
-    node = @copy.create_nodes(Webgen::Path.new('/first.ha', 'dest_path' => '<parent><basename><ext>'))
-    assert_equal([:ha], node.meta_info['pipeline'])
-    assert_equal('/first.llo', node.dest_path)
-
-    node = @copy.create_nodes(Webgen::Path.new('/other.test.css', 'dest_path' => '<parent><basename><ext>', 'pipeline' => ['testing']))
-    assert_equal(['testing'], node.meta_info['pipeline'])
-    assert_equal('/other.test.css', node.dest_path)
-
-    node = @copy.create_nodes(Webgen::Path.new('/other.unke.css', 'dest_path' => '<parent><basename><ext>', 'pipeline' => ['test']))
-    assert_equal(['test'], node.meta_info['pipeline'])
-
-    node = @copy.create_nodes(Webgen::Path.new('/other', 'dest_path' => '<parent><basename><ext>'))
-    assert_nil(node.meta_info['pipeline'])
-    assert_equal('/other', node.dest_path)
+    check_node.call('/default.css', {}, '/default.css', nil)
+    check_node.call('/other.test.css', {}, '/other.css', ['test'])
+    check_node.call('/other.unknown.css', {}, '/other.unknown.css', nil)
+    check_node.call('/first.test.test.unknown.css', {}, '/first.unknown.css', ['test', 'test'])
+    check_node.call('/first.test.test.unknown.ha', {}, '/first.unknown.llo', ['test', 'test', :ha])
+    check_node.call('/first.ha', {}, '/first.llo', [:ha])
+    check_node.call('/other.test.css', {'pipeline' => ['testing']}, '/other.test.css', ['testing'])
+    check_node.call('/other.unke.css', {'pipeline' => ['test']}, '/other.unke.css', ['test'])
+    check_node.call('/other', {}, '/other', nil)
 
     assert_raises(Webgen::NodeCreationError) do
       @copy.create_nodes(Webgen::Path.new('/other.test.css', 'dest_path' => '<parent><basename><ext>'))

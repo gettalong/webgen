@@ -1,16 +1,14 @@
 # -*- encoding: utf-8 -*-
 
-require 'helper'
-require 'logger'
-require 'stringio'
+require 'webgen/test_helper'
 require 'webgen/node'
-require 'webgen/tree'
 
 class TestNode < MiniTest::Unit::TestCase
 
+  include Webgen::TestHelper
+
   def setup
-    @website = MiniTest::Mock.new
-    @tree = Webgen::Tree.new(@website)
+    setup_website
   end
 
   def test_initialize
@@ -26,8 +24,8 @@ class TestNode < MiniTest::Unit::TestCase
       assert_equal({}, node.node_info)
     end
 
-    node = Webgen::Node.new(@tree.dummy_root, '/', '/', {'lang' => 'de', :test => :value})
-    check_proc.call(node, @tree.dummy_root, '/', '/', '/', '/', nil, {:test => :value})
+    node = Webgen::Node.new(@website.tree.dummy_root, '/', '/', {'lang' => 'de', :test => :value})
+    check_proc.call(node, @website.tree.dummy_root, '/', '/', '/', '/', nil, {:test => :value})
 
     child = Webgen::Node.new(node, 'somename.html', '/somename.html',  {'lang' => 'de'})
     check_proc.call(child, node, '/somename.html', 'somename.html', 'somename.de.html',
@@ -41,23 +39,23 @@ class TestNode < MiniTest::Unit::TestCase
   end
 
   def test_type_checkers
-    nodes = Test.create_default_nodes(@tree)
-    assert(nodes[:root].is_directory?)
-    assert(nodes[:somename_en].is_file?)
-    assert(nodes[:somename_en_frag].is_fragment?)
-    assert(nodes[:root].is_root?)
-    assert(!nodes[:somename_en].is_root?)
-    assert(nodes[:somename_en_fragnest].is_fragment?)
-    assert(!nodes[:somename_en_fragnest].is_directory?)
+    setup_default_nodes(@website.tree)
+    assert(@website.tree['/'].is_directory?)
+    assert(@website.tree['/file.en.html'].is_file?)
+    assert(@website.tree['/file.en.html#frag'].is_fragment?)
+    assert(@website.tree['/'].is_root?)
+    assert(!@website.tree['/file.en.html'].is_root?)
+    assert(@website.tree['/file.en.html#nested'].is_fragment?)
+    assert(!@website.tree['/file.en.html#nested'].is_directory?)
   end
 
   def test_to_s
-    node = Webgen::Node.new(@tree.dummy_root, '/', '/', {'lang' => 'de', :test => :value})
+    node = Webgen::Node.new(@website.tree.dummy_root, '/', '/', {'lang' => 'de', :test => :value})
     assert_equal(node.alcn, node.to_s)
   end
 
   def test_matching
-    root = Webgen::Node.new(@tree.dummy_root, '/', '/')
+    root = Webgen::Node.new(@website.tree.dummy_root, '/', '/')
     node = Webgen::Node.new(root, 'somefile.html', 'somefile.de.html', {'lang' => 'de'})
     assert(node =~ '**/*')
     assert(node =~ '**/somefile.de.HTML')
@@ -67,7 +65,7 @@ class TestNode < MiniTest::Unit::TestCase
   end
 
   def test_method_missing
-    node = Webgen::Node.new(@tree.dummy_root, '/', '/')
+    node = Webgen::Node.new(@website.tree.dummy_root, '/', '/')
     assert_raises(NoMethodError) { node.unknown }
 
     path_handler = MiniTest::Mock.new
@@ -75,91 +73,86 @@ class TestNode < MiniTest::Unit::TestCase
     node.node_info[:path_handler] = path_handler
 
     assert_equal(:value, node.unknown)
-    [path_handler, @website].each {|o| o.verify}
+    path_handler.verify
   end
 
   def test_route_to
-    nodes = Test.create_default_nodes(@tree)
+    tree = @website.tree
+    setup_default_nodes(tree)
 
     #arg is Node
-    assert_equal('somename.en.html', nodes[:somename_en].route_to(nodes[:somename_en]))
-    assert_equal('somename.de.html', nodes[:somename_en_frag].route_to(nodes[:somename_de]))
-    assert_equal('file.html#frag', nodes[:dir].route_to(nodes[:dir_file_frag]))
-    assert_equal('#frag', nodes[:dir_file].route_to(nodes[:dir_file_frag]))
-    assert_equal('../dir2/index.html', nodes[:dir_file_frag].route_to(nodes[:dir2_index_en]))
-    assert_equal('../dir2/index.html', nodes[:dir_file].route_to(nodes[:dir2_index_en]))
+    assert_equal('file.en.html', tree['/file.en.html'].route_to(tree['/file.en.html']))
+    assert_equal('file.de.html', tree['/file.en.html#frag'].route_to(tree['/file.de.html']))
+    assert_equal('subfile.html#frag', tree['/dir/'].route_to(tree['/dir/subfile.html#frag']))
+    assert_equal('#frag', tree['/dir/subfile.html'].route_to(tree['/dir/subfile.html#frag']))
+    assert_equal('../dir2/index.en.html', tree['/dir/subfile.html#frag'].route_to(tree['/dir2/index.en.html']))
+    assert_equal('../dir2/index.en.html', tree['/dir/subfile.html'].route_to(tree['/dir2/index.en.html']))
 
-    assert_equal('./', nodes[:somename_en].route_to(nodes[:root]))
-    assert_equal('../', nodes[:dir].route_to(nodes[:root]))
-    assert_equal('dir/', nodes[:somename_en].route_to(nodes[:dir]))
+    assert_equal('./', tree['/file.en.html'].route_to(tree['/']))
+    assert_equal('../', tree['/dir/'].route_to(tree['/']))
+    assert_equal('dir/', tree['/file.en.html'].route_to(tree['/dir/']))
 
     #arg is String
-    assert_equal('somename.en.html', nodes[:somename_en].route_to('somename.en.html'))
-    assert_equal('../other.html', nodes[:dir_file].route_to('/other.html'))
-    assert_equal('../other', nodes[:dir_file].route_to('../other'))
-    assert_equal('document/file2', nodes[:dir_file_frag].route_to('document/file2'))
-    assert_equal('ftp://test/', nodes[:dir].route_to('ftp://test/'))
+    assert_equal('somename.en.html', tree['/file.en.html'].route_to('somename.en.html'))
+    assert_equal('../other.html', tree['/dir/subfile.html'].route_to('/other.html'))
+    assert_equal('../other', tree['/dir/subfile.html'].route_to('../other'))
+    assert_equal('document/file2', tree['/dir/subfile.html#frag'].route_to('document/file2'))
+    assert_equal('ftp://test/', tree['/dir/'].route_to('ftp://test/'))
 
     #test args with '..' and '.': either too many of them or absolute path given
-    assert_equal('../dir2', nodes[:dir_file].route_to('../../.././dir2'))
-    assert_equal('../file', nodes[:dir_file].route_to('/dir/../file'))
-    assert_equal('file', nodes[:dir_file].route_to('dir/../file'))
+    assert_equal('../dir2', tree['/dir/subfile.html'].route_to('../../.././dir2'))
+    assert_equal('../file', tree['/dir/subfile.html'].route_to('/dir/../file'))
+    assert_equal('file', tree['/dir/subfile.html'].route_to('dir/../file'))
 
     #arg is something else
-    assert_raises(ArgumentError) { nodes[:root].route_to(5) }
-
-    @website.verify
+    assert_raises(ArgumentError) { tree['/'].route_to(5) }
   end
 
   def test_proxy_node
-    nodes = Test.create_default_nodes(@tree)
+    tree = @website.tree
+    setup_default_nodes(tree)
 
-    assert_equal(nodes[:somename_en], nodes[:somename_en].proxy_node('en'))
-    assert_equal(nodes[:dir2_index_en], nodes[:dir2].proxy_node('en'))
-    assert_equal(nodes[:dir2_index_en], nodes[:dir2].proxy_node('en'))
+    assert_equal(tree['/file.en.html'], tree['/file.en.html'].proxy_node('en'))
+    assert_equal(tree['/dir2/index.en.html'], tree['/dir2/'].proxy_node('en'))
+    assert_equal(tree['/dir2/index.en.html'], tree['/dir2/'].proxy_node('en'))
 
-    @website.expect(:logger, Logger.new(StringIO.new))
-    item_tracker = MiniTest::Mock.new
-    item_tracker.expect(:add, nil, [:a, :b, :c, :d])
-    ext = MiniTest::Mock.new
-    ext.expect(:item_tracker, item_tracker)
-    @website.expect(:ext, ext)
-    nodes[:dir_file].meta_info['proxy_path'] = 'holla'
-    assert_equal(nodes[:dir_file], nodes[:dir_file].proxy_node('pt'))
-
-    @website.verify
+    @website.ext.item_tracker = MiniTest::Mock.new
+    @website.ext.item_tracker.expect(:add, nil, [:a, :b, :c, :d])
+    tree['/dir/subfile.html'].meta_info['proxy_path'] = 'holla'
+    assert_equal(tree['/dir/subfile.html'], tree['/dir/subfile.html'].proxy_node('pt'))
   end
 
   def test_level
-    nodes = Test.create_default_nodes(@tree)
-    assert_equal(0, nodes[:root].level)
-    assert_equal(1, nodes[:dir].level)
-    assert_equal(2, nodes[:dir_file].level)
-    assert_equal(3, nodes[:dir_file_frag].level)
+    setup_default_nodes(@website.tree)
+    assert_equal(0, @website.tree['/'].level)
+    assert_equal(1, @website.tree['/dir/'].level)
+    assert_equal(2, @website.tree['/dir/subfile.html'].level)
+    assert_equal(3, @website.tree['/dir/dir/file.html'].level)
   end
 
   def test_link_to
-    nodes = Test.create_default_nodes(@tree)
+    tree = @website.tree
+    setup_default_nodes(tree)
 
     # general tests
     assert_equal('<a href="#frag">frag</a>',
-                 nodes[:somename_en].link_to(nodes[:somename_en_frag]))
+                 tree['/file.en.html'].link_to(tree['/file.en.html#frag']))
     assert_equal('<a href="#frag">link_text</a>',
-                 nodes[:somename_en].link_to(nodes[:somename_en_frag], :link_text => 'link_text'))
+                 tree['/file.en.html'].link_to(tree['/file.en.html#frag'], :link_text => 'link_text'))
     assert_equal('<a attr1="val1" href="#frag">frag</a>',
-                 nodes[:somename_en].link_to(nodes[:somename_en_frag], 'attr1' => 'val1'))
+                 tree['/file.en.html'].link_to(tree['/file.en.html#frag'], 'attr1' => 'val1'))
     assert_equal('<a href="#frag">frag</a>',
-                 nodes[:somename_en].link_to(nodes[:somename_en_frag], :attr1 => 'val1'))
-    assert_equal('<a class="help" href="dir2/index.html" hreflang="en">index en</a>',
-                 nodes[:somename_en].link_to(nodes[:dir2_index_en]))
+                 tree['/file.en.html'].link_to(tree['/file.en.html#frag'], :attr1 => 'val1'))
+    assert_equal('<a class="help" href="dir2/index.en.html" hreflang="en">index en</a>',
+                 tree['/file.en.html'].link_to(tree['/dir2/index.en.html']))
 
     # links to directories
-    assert_equal('<a href="dir2/index.de.html" hreflang="de">routed_de</a>',
-                 nodes[:somename_de].link_to(nodes[:dir2]))
-    assert_equal('<a href="dir2/index.html" hreflang="en">routed</a>',
-                 nodes[:somename_en].link_to(nodes[:dir2]))
-    assert_equal('<a href="dir2/index.de.html" hreflang="de">routed_de</a>',
-                 nodes[:somename_en].link_to(nodes[:dir2], :lang => 'de'))
+    assert_equal('<a href="dir2/index.de.html" hreflang="de">routed de</a>',
+                 tree['/file.de.html'].link_to(tree['/dir2/']))
+    assert_equal('<a href="dir2/index.en.html" hreflang="en">routed</a>',
+                 tree['/file.en.html'].link_to(tree['/dir2/']))
+    assert_equal('<a href="dir2/index.de.html" hreflang="de">routed de</a>',
+                 tree['/file.en.html'].link_to(tree['/dir2/'], :lang => 'de'))
   end
 
 end

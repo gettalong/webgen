@@ -1,11 +1,13 @@
 # -*- encoding: utf-8 -*-
 
-require 'helper'
+require 'webgen/test_helper'
 require 'webgen/path_handler/page_utils'
 require 'webgen/content_processor'
 require 'webgen/path'
 
 class TestPageUtils < MiniTest::Unit::TestCase
+
+  include Webgen::TestHelper
 
   class MyHandler
     include Webgen::PathHandler::PageUtils
@@ -24,33 +26,34 @@ class TestPageUtils < MiniTest::Unit::TestCase
   end
 
   def test_render_block
-    website, node, context = Test.setup_content_processor_test
+    setup_context
+    node = @context.node
     node.expect(:blocks, {'content' => 'mycontent'})
-    node.expect(:meta_info, {})
-    website.ext.content_processor = Webgen::ContentProcessor.new
-    website.ext.item_tracker = MiniTest::Mock.new
-    website.ext.item_tracker.expect(:add, nil, [node, :node_content, node.alcn])
+    @context.node.expect(:meta_info, {})
+    @website.ext.content_processor = Webgen::ContentProcessor.new
+    @website.ext.item_tracker = MiniTest::Mock.new
+    @website.ext.item_tracker.expect(:add, nil, [node, :node_content, node.alcn])
 
     # invalid block name
-    assert_raises(Webgen::RenderError) { @handler.render_block(node, 'unknown', context) }
+    assert_raises(Webgen::RenderError) { @handler.render_block(node, 'unknown', @context) }
 
     # nothing to render because pipeline is empty
-    @handler.render_block(node, 'content', context)
-    assert_equal('mycontent', context.content)
+    @handler.render_block(node, 'content', @context)
+    assert_equal('mycontent', @context.content)
 
     # invalid content processor
-    assert_raises(Webgen::Error) { @handler.render_block(node, 'content', context, ['test']) }
+    assert_raises(Webgen::Error) { @handler.render_block(node, 'content', @context, ['test']) }
 
     node.meta_info['blocks'] = {'content' => {'pipeline' => ['test']}}
-    assert_raises(Webgen::Error) { @handler.render_block(node, 'content', context) }
+    assert_raises(Webgen::Error) { @handler.render_block(node, 'content', @context) }
 
     # with content processor
-    website.ext.content_processor.register('test') {|ctx| ctx.content = 'test' + ctx.content; ctx}
-    @handler.render_block(node, 'content', context)
-    assert_equal('testmycontent', context.content)
+    @website.ext.content_processor.register('test') {|ctx| ctx.content = 'test' + ctx.content; ctx}
+    @handler.render_block(node, 'content', @context)
+    assert_equal('testmycontent', @context.content)
 
-    @handler.render_block(node, 'content', context, ['test', 'test'])
-    assert_equal('testtestmycontent', context.content)
+    @handler.render_block(node, 'content', @context, ['test', 'test'])
+    assert_equal('testtestmycontent', @context.content)
   end
 
 end

@@ -1,24 +1,21 @@
 # -*- encoding: utf-8 -*-
 
-require 'helper'
-require 'webgen/website'
+require 'webgen/test_helper'
 require 'webgen/content_processor'
 require 'webgen/tag/breadcrumb_trail'
 
 class TestTagBreadcrumbTrail < MiniTest::Unit::TestCase
 
-  def test_call
-    @obj = Webgen::Tag::BreadcrumbTrail
-    website, context = Test.setup_tag_test
-    website.expect(:tree, Webgen::Tree.new(website))
-    website.expect(:logger, Logger.new(StringIO.new))
-    website.ext.item_tracker = MiniTest::Mock.new
-    def (website.ext.item_tracker).add(*args); end
-    website.ext.content_processor = Webgen::ContentProcessor.new
-    website.ext.content_processor.register('Blocks')
-    website.ext.content_processor.register('Ruby')
+  include Webgen::TestHelper
 
-    root = Webgen::Node.new(website.tree.dummy_root, '/', '/', {'proxy_path' => 'index.html'})
+  def test_call
+    context = setup_context
+    @website.ext.content_processor = Webgen::ContentProcessor.new
+    @website.ext.content_processor.register('Blocks')
+    @website.ext.content_processor.register('Ruby')
+    @obj = Webgen::Tag::BreadcrumbTrail
+
+    root = Webgen::Node.new(@website.tree.dummy_root, '/', '/', {'proxy_path' => 'index.html'})
     dir1 = Webgen::Node.new(root, 'dir1/', '/dir1/', {'title' => 'Dir1'})
     dir11 = Webgen::Node.new(dir1, 'dir11/', '/dir1/dir11/', {'proxy_path' => 'index.html'})
     index11_en = Webgen::Node.new(dir11, 'index.html', '/dir1/dir11/index.html',
@@ -26,7 +23,7 @@ class TestTagBreadcrumbTrail < MiniTest::Unit::TestCase
     file11_en = Webgen::Node.new(dir11, 'file111.html', '/dir1/dir11/file111.html',
                                  {'lang' => 'en', 'title' => 'File111'})
     index_en = Webgen::Node.new(root, 'index.html', '/index.html', {'lang' => 'en'})
-    template = Test.setup_tag_template(root)
+    setup_tag_template(root)
 
     context[:chain] = [file11_en]
     assert_tag_result(context, '<a href="../../index.html" hreflang="en"></a> / <a href="../">Dir1</a> / <a href="index.html" hreflang="en">Dir11</a> / <a href="file111.html" hreflang="en">File111</a>',

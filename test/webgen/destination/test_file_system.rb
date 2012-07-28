@@ -1,18 +1,19 @@
 # -*- encoding: utf-8 -*-
 
-require 'helper'
+require 'webgen/test_helper'
 require 'webgen/destination/file_system'
 require 'webgen/path'
-require 'tmpdir'
-require 'fileutils'
-require 'stringio'
 
 class TestDestinationFileSystem < MiniTest::Unit::TestCase
 
   def setup
     @website = MiniTest::Mock.new
-    @dir = File.join(Dir.tmpdir, 'test-webgen')
+    @dir = Dir.mktmpdir('test-webgen')
     @website.expect(:directory, @dir)
+  end
+
+  def teardown
+    FileUtils.remove_entry_secure(@dir)
   end
 
   def test_initialize
@@ -48,8 +49,6 @@ class TestDestinationFileSystem < MiniTest::Unit::TestCase
 
     dest.write('/dir/', '')
     assert(File.directory?(File.join(dest.root, 'dir')))
-  ensure
-    FileUtils.rm_rf(@dir)
   end
 
 end

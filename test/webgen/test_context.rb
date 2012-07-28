@@ -1,10 +1,11 @@
 # -*- encoding: utf-8 -*-
 
-require 'minitest/autorun'
-require 'ostruct'
+require 'webgen/test_helper'
 require 'webgen/context'
 
 class TestContext < MiniTest::Unit::TestCase
+
+  include Webgen::TestHelper
 
   module TestModule
     def hallo
@@ -13,8 +14,7 @@ class TestContext < MiniTest::Unit::TestCase
   end
 
   def setup
-    @website = MiniTest::Mock.new
-    @website.expect(:ext, OpenStruct.new)
+    setup_website
     @context = Webgen::Context.new(@website, :content => 'test', :key => :value, :chain => [:first, :last])
   end
 

@@ -1,15 +1,15 @@
 # -*- encoding: utf-8 -*-
 
-require 'helper'
-require 'webgen/node'
+require 'webgen/test_helper'
 require 'webgen/tree'
-require 'webgen/blackboard'
 
 class TestTree < MiniTest::Unit::TestCase
 
+  include Webgen::TestHelper
+
   def setup
-    @website = MiniTest::Mock.new
-    @tree = Webgen::Tree.new(@website)
+    setup_website
+    @tree = @website.tree
   end
 
   def test_initialize
@@ -24,70 +24,70 @@ class TestTree < MiniTest::Unit::TestCase
   end
 
   def test_translate_node
-    nodes = Test.create_default_nodes(@tree)
+    setup_default_nodes(@tree)
 
-    assert_equal(nodes[:somename_de], @tree.translate_node(nodes[:somename_en], 'de'))
-    assert_equal(nodes[:somename_en], @tree.translate_node(nodes[:somename_en], 'en'))
-    assert_equal(nodes[:somename_en], @tree.translate_node(nodes[:somename_de], 'en'))
-    assert_equal(nil, @tree.translate_node(nodes[:somename_de], 'fr'))
-    assert_equal(nil, @tree.translate_node(nodes[:somename_en], nil))
+    assert_equal(@tree['/file.de.html'], @tree.translate_node(@tree['/file.en.html'], 'de'))
+    assert_equal(@tree['/file.en.html'], @tree.translate_node(@tree['/file.en.html'], 'en'))
+    assert_equal(@tree['/file.en.html'], @tree.translate_node(@tree['/file.de.html'], 'en'))
+    assert_equal(nil, @tree.translate_node(@tree['/file.de.html'], 'fr'))
+    assert_equal(nil, @tree.translate_node(@tree['/file.en.html'], nil))
 
-    assert_equal(nodes[:other_en], @tree.translate_node(nodes[:other], 'en'))
-    assert_equal(nodes[:other], @tree.translate_node(nodes[:other], 'de'))
-    assert_equal(nodes[:other], @tree.translate_node(nodes[:other], nil))
-    assert_equal(nodes[:other], @tree.translate_node(nodes[:other_en], nil))
-    assert_equal(nodes[:other], @tree.translate_node(nodes[:other_en], 'de'))
+    assert_equal(@tree['/other.en.html'], @tree.translate_node(@tree['/other.html'], 'en'))
+    assert_equal(@tree['/other.html'], @tree.translate_node(@tree['/other.html'], 'de'))
+    assert_equal(@tree['/other.html'], @tree.translate_node(@tree['/other.html'], nil))
+    assert_equal(@tree['/other.html'], @tree.translate_node(@tree['/other.en.html'], nil))
+    assert_equal(@tree['/other.html'], @tree.translate_node(@tree['/other.en.html'], 'de'))
 
-    assert_equal(nil, @tree.translate_node(nodes[:somename_en_frag], nil))
-    assert_equal(nodes[:somename_en_frag], @tree.translate_node(nodes[:somename_en_frag], 'en'))
-    assert_equal(nodes[:somename_de_frag], @tree.translate_node(nodes[:somename_en_frag], 'de'))
+    assert_equal(nil, @tree.translate_node(@tree['/file.en.html#frag'], nil))
+    assert_equal(@tree['/file.en.html#frag'], @tree.translate_node(@tree['/file.en.html#frag'], 'en'))
+    assert_equal(@tree['/file.de.html#frag'], @tree.translate_node(@tree['/file.en.html#frag'], 'de'))
   end
 
   def test_translations
-    nodes = Test.create_default_nodes(@tree)
+    setup_default_nodes(@tree)
 
-    assert_equal([nodes[:somename_en], nodes[:somename_de]], @tree.translations(nodes[:somename_en]))
-    assert_equal([nodes[:other], nodes[:other_en]], @tree.translations(nodes[:other]))
+    assert_equal([@tree['/file.en.html'], @tree['/file.de.html']], @tree.translations(@tree['/file.en.html']))
+    assert_equal([@tree['/other.html'], @tree['/other.en.html']], @tree.translations(@tree['/other.html']))
   end
 
   def test_resolve_node
-    nodes = Test.create_default_nodes(@tree)
+    setup_default_nodes(@tree)
 
-    [nodes[:root], nodes[:somename_de], nodes[:somename_en], nodes[:other]].each do |n|
-      assert_equal(nil, n.resolve('somename.html', nil))
-      assert_equal(nodes[:somename_en], n.resolve('somename.html', 'en'))
-      assert_equal(nodes[:somename_de], n.resolve('somename.html', 'de'))
-      assert_equal(nil, n.resolve('somename.html', 'fr'))
-      assert_equal(nodes[:somename_en], n.resolve('somename.en.html', nil))
-      assert_equal(nodes[:somename_en], n.resolve('somename.en.html', 'en'))
-      assert_equal(nodes[:somename_en], n.resolve('somename.en.html', 'de'))
+    [@tree['/'], @tree['/file.de.html'], @tree['/file.en.html'], @tree['/other.html']].each do |n|
+      assert_equal(nil, n.resolve('file.html', nil))
+      assert_equal(@tree['/file.en.html'], n.resolve('file.html', 'en'))
+      assert_equal(@tree['/file.de.html'], n.resolve('file.html', 'de'))
+      assert_equal(nil, n.resolve('file.html', 'fr'))
+      assert_equal(@tree['/file.en.html'], n.resolve('file.en.html', nil))
+      assert_equal(@tree['/file.en.html'], n.resolve('file.en.html', 'en'))
+      assert_equal(@tree['/file.en.html'], n.resolve('file.en.html', 'de'))
       assert_equal(nil, n.resolve('somename.fr.html', 'de'))
 
-      assert_equal(nodes[:other], n.resolve('other.html', nil))
-      assert_equal(nodes[:other], n.resolve('other.html', 'fr'))
-      assert_equal(nodes[:other_en], n.resolve('other.html', 'en'))
-      assert_equal(nodes[:other_en], n.resolve('other.en.html', nil))
-      assert_equal(nodes[:other_en], n.resolve('other.en.html', 'de'))
+      assert_equal(@tree['/other.html'], n.resolve('other.html', nil))
+      assert_equal(@tree['/other.html'], n.resolve('other.html', 'fr'))
+      assert_equal(@tree['/other.en.html'], n.resolve('other.html', 'en'))
+      assert_equal(@tree['/other.en.html'], n.resolve('other.en.html', nil))
+      assert_equal(@tree['/other.en.html'], n.resolve('other.en.html', 'de'))
       assert_equal(nil, n.resolve('other.fr.html', nil))
       assert_equal(nil, n.resolve('other.fr.html', 'en'))
     end
 
-    assert_equal(nodes[:somename_en_frag], nodes[:somename_en].resolve('#othertest', 'de'))
-    assert_equal(nodes[:somename_en_frag], nodes[:somename_en].resolve('#othertest', nil))
-    assert_equal(nodes[:somename_en_fragnest], nodes[:somename_en].resolve('#nestedpath', nil))
+    assert_equal(@tree['/file.en.html#frag'], @tree['/file.en.html'].resolve('#frag', 'de'))
+    assert_equal(@tree['/file.en.html#frag'], @tree['/file.en.html'].resolve('#frag', nil))
+    assert_equal(@tree['/file.en.html#nested'], @tree['/file.en.html'].resolve('#nested', nil))
 
-    assert_equal(nil, @tree.resolve_node('/somename.html#othertest', nil))
-    assert_equal(nodes[:somename_en_frag], @tree.resolve_node('/somename.html#othertest', 'en'))
-    assert_equal(nodes[:somename_de_frag], @tree.resolve_node('/somename.html#othertest', 'de'))
-    assert_equal(nodes[:somename_en_frag], @tree.resolve_node('/somename.en.html#othertest', nil))
-    assert_equal(nodes[:somename_de_frag], @tree.resolve_node('/somename.de.html#othertest', nil))
+    assert_equal(nil, @tree.resolve_node('/file.html#frag', nil))
+    assert_equal(@tree['/file.en.html#frag'], @tree.resolve_node('/file.html#frag', 'en'))
+    assert_equal(@tree['/file.de.html#frag'], @tree.resolve_node('/file.html#frag', 'de'))
+    assert_equal(@tree['/file.en.html#frag'], @tree.resolve_node('/file.en.html#frag', nil))
+    assert_equal(@tree['/file.de.html#frag'], @tree.resolve_node('/file.de.html#frag', nil))
 
-    assert_equal(nodes[:dir2_index_en], nodes[:dir2].resolve('index.html'))
-    assert_equal(nodes[:other_en], nodes[:root].resolve('other1.html'))
+    assert_equal(@tree['/dir2/index.en.html'], @tree['/dir2/'].resolve('index.en.html'))
+    assert_equal(@tree['/other.html'], @tree['/'].resolve('other.html'))
 
-    assert_equal(nodes[:dir], nodes[:somename_en].resolve('/dir/'))
-    assert_equal(nodes[:dir], nodes[:somename_en].resolve('/dir'))
-    assert_equal(nodes[:root], nodes[:somename_en].resolve('/'))
+    assert_equal(@tree['/dir/'], @tree['/file.en.html'].resolve('/dir/'))
+    assert_equal(@tree['/dir/'], @tree['/file.en.html'].resolve('/dir'))
+    assert_equal(@tree['/'], @tree['/file.en.html'].resolve('/'))
   end
 
   def test_register_node
@@ -105,9 +105,7 @@ class TestTree < MiniTest::Unit::TestCase
 
   def test_delete_node
     nrcalls = 0
-    blackboard = Webgen::Blackboard.new
-    @website.expect(:blackboard, blackboard)
-    blackboard.add_listener(:before_node_deleted) { nrcalls += 1 }
+    @website.blackboard.add_listener(:before_node_deleted) { nrcalls += 1 }
 
     root = Webgen::Node.new(@tree.dummy_root, '/', '/')
     file = Webgen::Node.new(root, 'testfile', 'testfile')

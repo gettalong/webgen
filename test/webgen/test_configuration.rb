@@ -1,7 +1,6 @@
 # -*- encoding: utf-8 -*-
 
 require 'tmpdir'
-require 'fileutils'
 require 'stringio'
 
 require 'minitest/autorun'
@@ -19,7 +18,7 @@ class TestConfiguration < MiniTest::Unit::TestCase
   end
 
   def test_defining_options
-    assert @config.options['namespace.option']
+    assert(@config.options['namespace.option'])
     assert_equal('default', @config.options['namespace.option'].default)
     assert_equal('desc', @config.options['namespace.option'].description)
     assert_kind_of(Proc, @config.options['namespace.option'].validator)
@@ -77,19 +76,17 @@ class TestConfiguration < MiniTest::Unit::TestCase
   end
 
   def test_load_value_from_file
-    dir = File.join(Dir.tmpdir, 'webgen-' + Process.pid.to_s)
-    file = File.join(dir, 'config.yaml')
-    FileUtils.mkdir_p(dir)
-    File.open(file, 'w+') {|f| f.write("namespace.option: test")}
+    Dir.mktmpdir('webgen-configuration') do |dir|
+      file = File.join(dir, 'config.yaml')
+      File.open(file, 'w+') {|f| f.write("namespace.option: test")}
 
-    result = @config.load_from_file(file)
-    assert_empty(result)
-    assert_equal('test', @config['namespace.option'])
+      assert_empty(@config.load_from_file(file))
+      assert_equal('test', @config['namespace.option'])
+    end
   end
 
   def test_load_value_from_io
-    result = @config.load_from_file(StringIO.new("namespace.option: test"))
-    assert_empty(result)
+    assert_empty(@config.load_from_file(StringIO.new("namespace.option: test")))
     assert_equal('test', @config['namespace.option'])
   end
 

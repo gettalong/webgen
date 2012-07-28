@@ -1,56 +1,29 @@
 # -*- encoding: utf-8 -*-
 
-require 'helper'
+require 'webgen/test_helper'
 require 'webgen/content_processor/blocks'
-require 'webgen/path_handler/page_utils'
-require 'webgen/node'
-require 'webgen/tree'
-require 'webgen/page'
-require 'ostruct'
-require 'logger'
-require 'stringio'
+require 'webgen/context'
 
 class TestBlocks < MiniTest::Unit::TestCase
 
-  include Test::WebgenAssertions
-
-  class TestHandler
-    include Webgen::PathHandler::PageUtils
-  end
-
-  class TestNode < Webgen::Node
-
-    def blocks
-      node_info[:blocks]
-    end
-
-    def render_block(name, context)
-      TestHandler.new.render_block(self, name, context)
-    end
-
-  end
-
+  include Webgen::TestHelper
 
   def test_static_call_and_render_block
-    website = MiniTest::Mock.new
-    website.expect(:logger, Logger.new(StringIO.new))
-    website.expect(:ext, OpenStruct.new)
-    website.ext.item_tracker = MiniTest::Mock.new
-    def (website.ext.item_tracker).add(*args); end
-    website.ext.content_processor = Webgen::ContentProcessor.new
-    website.ext.content_processor.register('Blocks')
-    website.ext.content_processor.register('Erb')
+    setup_website
+    @website.ext.content_processor = Webgen::ContentProcessor.new
+    @website.ext.content_processor.register('Blocks')
+    @website.ext.content_processor.register('Erb')
     obj = Webgen::ContentProcessor::Blocks
 
-    root = TestNode.new(Webgen::Tree.new(website).dummy_root, '/', '/')
-    node = TestNode.new(root, 'test', 'test')
-    node.node_info[:blocks] = Webgen::Page.from_data("--- name:content\ndata\n--- name:other\nother").blocks
-    dnode = TestNode.new(root, 'dtest', 'dtest', {'blocks' => {'content' => {'pipeline' => ['erb']}}})
-    dnode.node_info[:blocks] = Webgen::Page.from_data("<%= context.dest_node.alcn %>").blocks
-    template = TestNode.new(root, 'template', 'template', {'blocks' => {'content' => {'pipeline' => ['blocks']}}})
-    template.node_info[:blocks] = Webgen::Page.from_data("before<webgen:block name='content' />after").blocks
+    root = Webgen::Node.new(Webgen::Tree.new(@website).dummy_root, '/', '/')
+    node = RenderNode.new("--- name:content pipeline:erb\ndata\n--- name:other\nother",
+                          root, 'test', 'test')
+    dnode = RenderNode.new("--- name:content pipeline:erb\n<%= context.dest_node.alcn %>",
+                           root, 'dtest', 'dtest')
+    template = RenderNode.new("--- name:content pipeline:blocks\nbefore<webgen:block name='content' />after",
+                              root, 'template', 'template')
 
-    context = Webgen::Context.new(website)
+    context = Webgen::Context.new(@website)
 
     context[:chain] = [node]
     context.content = '<webgen:block name="content" /><webgen:block name="content" chain="template;test" />'

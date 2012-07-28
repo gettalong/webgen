@@ -1,16 +1,18 @@
 # -*- encoding: utf-8 -*-
 
-require 'helper'
+require 'webgen/test_helper'
 require 'webgen/content_processor/rdiscount'
 
 class TestRDiscount < MiniTest::Unit::TestCase
 
+  include Webgen::TestHelper
+
   def test_static_call
-    website, node, context = Test.setup_content_processor_test
+    setup_context
     cp = Webgen::ContentProcessor::RDiscount
 
-    context.content = '# header'
-    assert_equal("<h1>header</h1>\n", cp.call(context).content)
+    @context.content = '# header'
+    assert_equal("<h1>header</h1>\n", cp.call(@context).content)
   end
 
 end

@@ -1,13 +1,12 @@
 # -*- encoding: utf-8 -*-
 
-require 'helper'
+require 'webgen/test_helper'
 require 'webgen/path_handler/base'
-require 'webgen/tree'
 require 'time'
-require 'logger'
-require 'stringio'
 
 class TestPathHandlerBase < MiniTest::Unit::TestCase
+
+  include Webgen::TestHelper
 
   class TestPathHandler
     include Webgen::PathHandler::Base
@@ -19,9 +18,7 @@ class TestPathHandlerBase < MiniTest::Unit::TestCase
   end
 
   def setup
-    @website = MiniTest::Mock.new
-    @website.expect(:tree, Webgen::Tree.new(@website))
-    @website.expect(:logger, Logger.new(StringIO.new))
+    setup_website
     @obj = TestPathHandler.new(@website)
   end
 
@@ -30,8 +27,6 @@ class TestPathHandlerBase < MiniTest::Unit::TestCase
   end
 
   def test_create_node
-    @website.expect(:config, {})
-
     assert_nil(@obj.create_node(Webgen::Path.new('/test.html', 'draft' => true)))
 
     path = Webgen::Path.new('/path.html', 'dest_path' => '<parent><basename>(.<lang>)<ext>',

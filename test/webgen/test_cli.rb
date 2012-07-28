@@ -1,9 +1,6 @@
 # -*- encoding: utf-8 -*-
 
 require 'minitest/autorun'
-require 'helper'
-require 'tmpdir'
-require 'fileutils'
 require 'webgen/cli'
 
 class TestCLICommandParser < MiniTest::Unit::TestCase
@@ -37,7 +34,7 @@ class TestCLICommandParser < MiniTest::Unit::TestCase
       end
     end
     assert_match(/Global options:/, out)
-    assert_match(/generate.*help.*sample.*version/m, out)
+    assert_match(/bundle.*create.*install.*list.*generate.*help.*sample.*.*show.*config.*deps.*extensions.*version/m, out)
   end
 
 end

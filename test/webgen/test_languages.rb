@@ -1,9 +1,9 @@
 # -*- encoding: utf-8 -*-
 
-require 'test/unit'
+require 'minitest/autorun'
 require 'webgen/languages'
 
-class TestLanguages < Test::Unit::TestCase
+class TestLanguages < MiniTest::Unit::TestCase
 
   def test_get_language
     assert_nil(Webgen::LanguageManager.language_for_code(nil))
@@ -16,7 +16,7 @@ class TestLanguages < Test::Unit::TestCase
     [lang1, lang2, lang3, lang4].each {|lang| assert_kind_of(Webgen::Language, lang)}
     assert_equal(lang1, lang2)
     assert_equal(lang3, lang2)
-    assert_not_equal(lang4, lang2)
+    refute_equal(lang4, lang2)
   end
 
   def test_find_language
@@ -59,7 +59,7 @@ class TestLanguages < Test::Unit::TestCase
     assert_equal(de, h[de])
     assert_equal(de, h['de'])
     assert_equal(en, h[en])
-    assert_not_equal(en, h['en']) # bc 'en'.eql?(en) is false
+    refute_equal(en, h['en']) # bc 'en'.eql?(en) is false
     assert_equal(Webgen::LanguageManager.language_for_code('en'),
                  Webgen::LanguageManager.language_for_code(en))
   end

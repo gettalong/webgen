@@ -195,47 +195,41 @@ class TestPath < MiniTest::Unit::TestCase
   end
 
   def test_dup
-    p = Webgen::Path.new('/test.de.page')
-    dupped = p.dup
+    path = Webgen::Path.new('/test.de.page')
+    dupped = path.dup
     dupped.meta_info['title'] = 'changed'
-    assert_equal('Test', p.meta_info['title'])
+    assert_equal('Test', path.meta_info['title'])
   end
 
   def test_io
-    p = Webgen::Path.new('/test.de.page')
-    assert_raises(RuntimeError) { p.io }
-    p = Webgen::Path.new('/test.de.page') { StringIO.new('hallo') }
-    assert_equal('hallo', p.data)
-    assert_equal('hallo', p.io {|f| f.read })
+    path = Webgen::Path.new('/test.de.page')
+    assert_raises(RuntimeError) { path.io }
+    path = Webgen::Path.new('/test.de.page') { StringIO.new('hallo') }
+    assert_equal('hallo', path.data)
+    assert_equal('hallo', path.io {|f| f.read })
 
-    if RUBY_VERSION >= '1.9'
-      begin
-        dir = File.join(Dir.tmpdir, 'webgen-' + Process.pid.to_s)
-        FileUtils.mkdir_p(dir)
-        File.open(File.join(dir, 'src'), 'wb+') {|f| f.write("\303\274")}
-        path = Webgen::Path.new('/test') {|mode| File.open(File.join(dir, 'src'), mode) }
-        assert_equal(1, path.data('r:UTF-8').length)
-        assert_equal(2, path.data('rb').length)
-        assert_equal(1, path.data.length)
-        assert_equal(1, path.io {|f| f.read}.length)
-      ensure
-        FileUtils.rm_rf(dir) if dir
-      end
+    Dir.mktmpdir('webgen-path') do |dir|
+      File.open(File.join(dir, 'src'), 'wb+') {|f| f.write("\303\274")}
+      path = Webgen::Path.new('/test') {|mode| File.open(File.join(dir, 'src'), mode) }
+      assert_equal(1, path.data('r:UTF-8').length)
+      assert_equal(2, path.data('rb').length)
+      assert_equal(1, path.data.length)
+      assert_equal(1, path.io {|f| f.read}.length)
     end
 
-    p = Webgen::Path.new('/test.page')
-    p.set_io(proc { StringIO.new('hallo') })
-    assert_equal('hallo', p.data)
+    path = Webgen::Path.new('/test.page')
+    path.set_io(proc { StringIO.new('hallo') })
+    assert_equal('hallo', path.data)
 
-    p.set_io { StringIO.new('hallo2') }
-    assert_equal('hallo2', p.data)
+    path.set_io { StringIO.new('hallo2') }
+    assert_equal('hallo2', path.data)
   end
 
   def test_equality
-    p = Webgen::Path.new('/test.de.page')
-    assert_equal('/test.de.page', p)
-    assert_equal(Webgen::Path.new('/test.de.page'), p)
-    refute_equal(5, p)
+    path = Webgen::Path.new('/test.de.page')
+    assert_equal('/test.de.page', path)
+    assert_equal(Webgen::Path.new('/test.de.page'), path)
+    refute_equal(5, path)
   end
 
   def test_comparison
@@ -251,15 +245,15 @@ class TestPath < MiniTest::Unit::TestCase
     h = { 'test.de.page' => :value }
     assert_equal(:value, h['test.de.page'])
     assert_equal(:value, h[path])
-    assert(path <=> 'test.de.page')
-    h = { p => :newvalue}
+    assert_equal(0, (path <=> 'test.de.page'))
+    h = { path => :newvalue }
     assert_nil(h['test.de.page'])
   end
 
   def test_introspection
-    p = Webgen::Path.new('/test.de.page')
-    assert_equal('/test.de.page', p.to_s)
-    assert(p.inspect.include?('/test.de.page'))
+    path = Webgen::Path.new('/test.de.page')
+    assert_equal('/test.de.page', path.to_s)
+    assert(path.inspect.include?('/test.de.page'))
   end
 
 end

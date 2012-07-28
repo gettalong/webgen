@@ -1,24 +1,15 @@
 # -*- encoding: utf-8 -*-
 
-require 'helper'
-require 'ostruct'
-require 'stringio'
-require 'logger'
+require 'webgen/test_helper'
 require 'webgen/content_processor/html_head'
-require 'webgen/node'
-require 'webgen/tree'
 
 class TestHtmlHead < MiniTest::Unit::TestCase
 
+  include Webgen::TestHelper
+
   def setup
+    setup_website
     @obj = Webgen::ContentProcessor::HtmlHead
-
-    @website = MiniTest::Mock.new
-    @website.expect(:ext, OpenStruct.new)
-    @website.ext.item_tracker = MiniTest::Mock.new
-    def (@website.ext.item_tracker).add(*args); end
-    @website.expect(:tree, Webgen::Tree.new(@website))
-
     @root = Webgen::Node.new(@website.tree.dummy_root, '/', '/')
     @node = Webgen::Node.new(@root, 'test', 'test.en', {'lang' => 'en'})
   end

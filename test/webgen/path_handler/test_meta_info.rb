@@ -1,15 +1,12 @@
 # -*- encoding: utf-8 -*-
 
-require 'helper'
-require 'stringio'
-require 'logger'
+require 'webgen/test_helper'
 require 'webgen/path_handler/meta_info'
-require 'webgen/blackboard'
-require 'webgen/tree'
-require 'webgen/node'
 require 'webgen/path'
 
 class TestPathHandlerMetaInfo < MiniTest::Unit::TestCase
+
+  include Webgen::TestHelper
 
   CONTENT=<<EOF
 --- paths
@@ -28,11 +25,7 @@ class TestPathHandlerMetaInfo < MiniTest::Unit::TestCase
 EOF
 
   def setup
-    @website = MiniTest::Mock.new
-    @website.expect(:tree, Webgen::Tree.new(@website))
-    @website.expect(:config, {})
-    @website.expect(:logger, Logger.new(StringIO.new))
-    @website.expect(:blackboard, Webgen::Blackboard.new)
+    setup_website
     @root = Webgen::Node.new(@website.tree.dummy_root, '/', '/')
     @mi = Webgen::PathHandler::MetaInfo.new(@website)
   end

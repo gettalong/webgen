@@ -1,11 +1,11 @@
 # -*- encoding: utf-8 -*-
 
-require 'helper'
+require 'webgen/test_helper'
 require 'webgen/utils/tag_parser'
 
 class TestTagParser < MiniTest::Unit::TestCase
 
-  include Test::WebgenAssertions
+  include Webgen::TestHelper
 
   def test_replace_tags
     @parser = Webgen::Utils::TagParser.new

@@ -1,17 +1,16 @@
 # -*- encoding: utf-8 -*-
 
-require 'helper'
+require 'webgen/test_helper'
 require 'webgen/tag/include_file'
 require 'fileutils'
 require 'tempfile'
 
 class TestTagIncludeFile < MiniTest::Unit::TestCase
 
+  include Webgen::TestHelper
+
   def test_call
-    website, @context = Test.setup_tag_test
-    website.expect(:directory, '/tmp')
-    website.ext.item_tracker = MiniTest::Mock.new
-    website.ext.item_tracker.expect(:add, nil, [:a, :b, :c])
+    setup_context
 
     content = "<a>This is 'a' Test</a>"
     file = Tempfile.new('webgen-test-file')

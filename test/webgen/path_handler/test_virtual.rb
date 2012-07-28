@@ -1,16 +1,12 @@
 # -*- encoding: utf-8 -*-
 
-require 'helper'
-require 'ostruct'
-require 'stringio'
-require 'logger'
+require 'webgen/test_helper'
 require 'webgen/path_handler/virtual'
-require 'webgen/blackboard'
-require 'webgen/tree'
-require 'webgen/node'
 require 'webgen/path'
 
 class TestPathHandlerVirtual < MiniTest::Unit::TestCase
+
+  include Webgen::TestHelper
 
   class SimplePathHandler
 
@@ -54,12 +50,7 @@ EOF
 
 
   def setup
-    @website = MiniTest::Mock.new
-    @website.expect(:tree, Webgen::Tree.new(@website))
-    @website.expect(:blackboard, Webgen::Blackboard.new)
-    @website.expect(:config, {})
-    @website.expect(:logger, Logger.new(StringIO.new))
-    @website.expect(:ext, OpenStruct.new)
+    setup_website
     @root = Webgen::Node.new(@website.tree.dummy_root, '/', '/')
     @virtual = Webgen::PathHandler::Virtual.new(@website)
     @website.ext.path_handler = SimplePathHandler.new(@virtual)

@@ -1,28 +1,17 @@
 # -*- encoding: utf-8 -*-
 
-require 'helper'
-require 'ostruct'
-require 'stringio'
-require 'logger'
+require 'webgen/test_helper'
 require 'webgen/path_handler/template'
-require 'webgen/tree'
-require 'webgen/node'
 require 'webgen/path'
-require 'webgen/blackboard'
 require 'webgen/cache'
 
 class TestPathHandlerTemplate < MiniTest::Unit::TestCase
 
+  include Webgen::TestHelper
+
   def setup
-    @website = MiniTest::Mock.new
-    @website.expect(:config, {'path_handler.template.default_template' => 'default.template'})
-    @website.expect(:tree, Webgen::Tree.new(@website))
-    @website.expect(:logger, Logger.new(StringIO.new))
-    @website.expect(:blackboard, Webgen::Blackboard.new)
+    setup_website('path_handler.template.default_template' => 'default.template')
     @website.expect(:cache, Webgen::Cache.new)
-    @website.expect(:ext, OpenStruct.new)
-    @website.ext.item_tracker = MiniTest::Mock.new
-    def (@website.ext.item_tracker).add(*args); end
 
     @template = Webgen::PathHandler::Template.new(@website)
     @root = Webgen::Node.new(@website.tree.dummy_root, '/', '/')

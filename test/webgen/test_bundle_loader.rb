@@ -1,21 +1,17 @@
 # -*- encoding: utf-8 -*-
 
-require 'minitest/autorun'
-require 'tmpdir'
-require 'ostruct'
 require 'fileutils'
+require 'webgen/test_helper'
 require 'webgen/bundle_loader'
 
 class TestBundleLoader < MiniTest::Unit::TestCase
 
-  def setup
-    @website = MiniTest::Mock.new
-    @website.expect(:config, {'sources.passive' => [['/', :file, 'other']]})
-    @dir = File.join(Dir.tmpdir, 'test-webgen')
-    @website.expect(:directory, @dir)
-    @website.expect(:ext, OpenStruct.new)
+  include Webgen::TestHelper
 
-    @extdir = File.join(@dir, 'ext')
+  def setup
+    setup_website({'sources.passive' => [['/', :file, 'other']]})
+
+    @extdir = File.join(@website.directory, 'ext')
     FileUtils.mkdir_p(File.join(@extdir, 'my_ext'))
     FileUtils.mkdir_p(File.join(@extdir, 'webgen'))
     @webgen_file = File.join(@extdir, 'webgen', 'init.rb')
@@ -29,7 +25,7 @@ class TestBundleLoader < MiniTest::Unit::TestCase
   end
 
   def teardown
-    FileUtils.rm_rf(@dir)
+    FileUtils.rm_rf(@website.directory)
   end
 
   def test_load

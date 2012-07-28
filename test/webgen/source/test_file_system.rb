@@ -40,14 +40,12 @@ class TestSourceFileSystem < MiniTest::Unit::TestCase
 
   def test_handling_of_invalid_link
     skip if RbConfig::CONFIG['host_os'] =~ /mswin|mingw/
-    dir = File.join(Dir.tmpdir, 'webgen-link-test')
-    FileUtils.mkdir_p(dir)
-    FileUtils.touch(File.join(dir, 'test'))
-    File.symlink('non-existing-file', File.join(dir, 'invalid-link'))
-    source = Webgen::Source::FileSystem.new(@website, dir, '/t*')
-    assert(source.paths.length == 1)
-  ensure
-    FileUtils.rm_rf(dir) if dir
+    Dir.mktmpdir('webgen-link-test') do |dir|
+      FileUtils.touch(File.join(dir, 'test'))
+      File.symlink('non-existing-file', File.join(dir, 'invalid-link'))
+      source = Webgen::Source::FileSystem.new(@website, dir, '/t*')
+      assert(source.paths.length == 1)
+    end
   end
 
 end
