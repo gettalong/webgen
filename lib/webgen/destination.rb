@@ -1,6 +1,6 @@
 # -*- encoding: utf-8 -*-
 
-require 'webgen/common'
+require 'webgen/extension_manager'
 require 'webgen/error'
 
 module Webgen
@@ -83,7 +83,7 @@ module Webgen
   #
   class Destination
 
-    include Webgen::Common::ExtensionManager
+    include Webgen::ExtensionManager
 
     # Create a new Destination object that is associated with the given website.
     def initialize(website)

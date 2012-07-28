@@ -1,6 +1,6 @@
 # -*- encoding: utf-8 -*-
 
-require 'webgen/common'
+require 'webgen/extension_manager'
 require 'webgen/path'
 
 module Webgen
@@ -60,7 +60,7 @@ module Webgen
   #
   class Source
 
-    include Webgen::Common::ExtensionManager
+    include Webgen::ExtensionManager
 
     # Create a new source manager object for the given website.
     def initialize(website)

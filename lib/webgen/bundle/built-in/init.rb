@@ -268,7 +268,7 @@ end
 
 option('sources', [['/', :file_system, 'src']],
        'One or more sources from which paths are read', &sources_validator)
-option('sources.passive', [['/', :file_system, File.join(Webgen.data_dir, 'passive_sources')]],
+option('sources.passive', [['/', :file_system, File.join(Webgen::Utils.data_dir, 'passive_sources')]],
        'One or more sources from which paths are read that are only used when referenced ', &sources_validator)
 option('sources.ignore_paths', ['**/*~', '**/.svn/**'],
        'Patterns for paths that should be ignored') do |val|

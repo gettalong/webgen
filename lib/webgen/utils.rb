@@ -1,14 +1,23 @@
 # -*- encoding: utf-8 -*-
 
+require 'rbconfig'
 require 'webgen/core_ext'
 
 module Webgen
 
   # Namespace for classes and methods that provide common functionality.
-  module Common
+  module Utils
 
-    autoload :ExtensionManager, 'webgen/common/extension_manager'
-    autoload :Sitemap, 'webgen/common/sitemap'
+    # Returns the data directory for webgen.
+    def self.data_dir
+      unless defined?(@@data_dir)
+        require 'rbconfig'
+        @@data_dir = File.expand_path(File.join(File.dirname(__FILE__), '..', '..', 'data', 'webgen'))
+        @@data_dir = File.expand_path(File.join(RbConfig::CONFIG["datadir"], "webgen")) if !File.exists?(@@data_dir)
+        raise "Could not find webgen data directory! This is a bug, report it please!" unless File.directory?(@@data_dir)
+      end
+      @@data_dir
+    end
 
     # Return the constant object for the given absolute constant +name+.
     def self.const_for_name(name)

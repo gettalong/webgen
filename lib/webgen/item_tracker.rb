@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*-
 
 require 'set'
-require 'webgen/common'
+require 'webgen/extension_manager'
 
 module Webgen
 
@@ -81,7 +81,7 @@ module Webgen
   #
   class ItemTracker
 
-    include Webgen::Common::ExtensionManager
+    include Webgen::ExtensionManager
 
     # Create a new item tracker for the given website.
     def initialize(website)

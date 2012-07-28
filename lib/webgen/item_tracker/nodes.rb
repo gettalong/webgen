@@ -70,7 +70,7 @@ module Webgen
       # Return the list of nodes.
       def node_list(method_name, options)
         if method_name.kind_of?(Array)
-          Webgen::Common.const_for_name(method_name.first).send(method_name.last, @website, options)
+          Webgen::Utils.const_for_name(method_name.first).send(method_name.last, @website, options)
         else
           send(method_name, options)
         end

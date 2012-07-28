@@ -5,7 +5,6 @@ require 'webgen/path_handler/sitemap'
 require 'webgen/content_processor'
 require 'webgen/node_finder'
 require 'webgen/path'
-require 'webgen/website'
 
 class TestPathHandlerSitemap < MiniTest::Unit::TestCase
 
@@ -42,7 +41,7 @@ EOF
     @website.tree['/file.en.html'].meta_info['priority'] = 0.9
     @website.tree['/file.en.html'].meta_info['change_freq'] = 'hourly'
 
-    template_data = File.read(File.join(Webgen.data_dir, 'passive_sources', 'templates', 'sitemap.template'))
+    template_data = File.read(File.join(Webgen::Utils.data_dir, 'passive_sources', 'templates', 'sitemap.template'))
     RenderNode.new(template_data, @website.tree.root, 'sitemap.template', '/templates/sitemap.template')
 
     @path = Webgen::Path.new('/test.sitemap', 'dest_path' => '<parent><basename><ext>') { StringIO.new(SITEMAP_CONTENT) }

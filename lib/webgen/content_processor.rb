@@ -1,6 +1,6 @@
 # -*- encoding: utf-8 -*-
 
-require 'webgen/common'
+require 'webgen/extension_manager'
 require 'webgen/error'
 
 module Webgen
@@ -60,7 +60,7 @@ module Webgen
   #
   class ContentProcessor
 
-    include Webgen::Common::ExtensionManager
+    include Webgen::ExtensionManager
 
     # Register a content processor. The parameter +klass+ can either be a String containing the name
     # of a class/module (which has to respond to :call) or an object that responds to :call. If the

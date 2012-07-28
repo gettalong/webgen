@@ -1,6 +1,6 @@
 # -*- encoding: utf-8 -*-
 
-require 'webgen/common'
+require 'webgen/extension_manager'
 require 'webgen/error'
 require 'webgen/utils/tag_parser'
 
@@ -62,7 +62,7 @@ module Webgen
   #
   class Tag
 
-    include Webgen::Common::ExtensionManager
+    include Webgen::ExtensionManager
 
     # Render the tag template for the given tag and return the result.
     #
@@ -139,7 +139,7 @@ module Webgen
       name = do_register(klass, options, true, &block)
       ext_data(name).mandatory = options[:mandatory] || []
       ext_data(name).config_base = options[:config_base] ||
-        Webgen::Common.snake_case(ext_data(name).object.to_s.gsub(/::/, '.').gsub(/^Webgen\./, ''))
+        Webgen::Utils.snake_case(ext_data(name).object.to_s.gsub(/::/, '.').gsub(/^Webgen\./, ''))
       ext_data(name).initialized = false
       names.each {|n| @extensions[n.to_sym] = @extensions[name]}
     end

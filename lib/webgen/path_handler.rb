@@ -1,6 +1,6 @@
 # -*- encoding: utf-8 -*-
 
-require 'webgen/common'
+require 'webgen/extension_manager'
 require 'stringio'
 require 'set'
 require 'benchmark'
@@ -129,7 +129,7 @@ module Webgen
   #
   class PathHandler
 
-    include Webgen::Common::ExtensionManager
+    include Webgen::ExtensionManager
 
     # Create a new path handler object for the given website.
     def initialize(website)

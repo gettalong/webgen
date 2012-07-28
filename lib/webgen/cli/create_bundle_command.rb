@@ -76,7 +76,7 @@ DESC
 
       def create_file(dest, source, bundle_name)
         File.open(dest, 'w+') do |f|
-          erb = ERB.new(File.read(File.join(Webgen.data_dir, TEMPLATE_DIR, source)))
+          erb = ERB.new(File.read(File.join(Webgen::Utils.data_dir, TEMPLATE_DIR, source)))
           f.write(erb.result(binding))
         end
       end

@@ -1,11 +1,11 @@
 # -*- encoding: utf-8 -*-
 
 require 'minitest/autorun'
-require 'webgen/common/extension_manager'
+require 'webgen/extension_manager'
 
 class DummyExtensionManager
 
-  include Webgen::Common::ExtensionManager
+  include Webgen::ExtensionManager
 
   def register(name, value)
     @extensions[name.to_sym] = OpenStruct.new(:object => value)

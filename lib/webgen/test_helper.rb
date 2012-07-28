@@ -13,7 +13,7 @@ require 'webgen/error'
 require 'webgen/tree'
 require 'webgen/node'
 require 'webgen/path_handler/page_utils'
-require 'webgen/website'
+require 'webgen/utils'
 
 module Webgen
 
@@ -170,7 +170,7 @@ module Webgen
 
     # Creates and returns a RenderNode /tag.template using the default tag template.
     def setup_tag_template(root)
-      template_data = File.read(File.join(Webgen.data_dir, 'passive_sources', 'templates', 'tag.template'))
+      template_data = File.read(File.join(Webgen::Utils.data_dir, 'passive_sources', 'templates', 'tag.template'))
       RenderNode.new(template_data, root, 'tag.template', '/tag.template')
     end
 

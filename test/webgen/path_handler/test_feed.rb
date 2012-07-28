@@ -5,7 +5,7 @@ require 'webgen/path_handler/feed'
 require 'webgen/content_processor'
 require 'webgen/node_finder'
 require 'webgen/path'
-require 'webgen/website'
+require 'webgen/version'
 
 class TestPathHandlerFeed < MiniTest::Unit::TestCase
 
@@ -36,7 +36,7 @@ EOF
     @file_en = RenderNode.new("--- name:content\nCContent\n--- name:abstract\nAContent", root,
                               'file.html', '/file.en.html', {'lang' => 'en', 'modified_at' => Time.now - 2})
 
-    template_data = File.read(File.join(Webgen.data_dir, 'passive_sources', 'templates', 'feed.template'))
+    template_data = File.read(File.join(Webgen::Utils.data_dir, 'passive_sources', 'templates', 'feed.template'))
     RenderNode.new(template_data, root, 'feed.template', '/templates/feed.template')
 
     @path = Webgen::Path.new('/test_feed', 'dest_path' => '<parent><basename><ext>') { StringIO.new(FEED_CONTENT) }
