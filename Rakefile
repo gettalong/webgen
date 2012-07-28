@@ -1,22 +1,12 @@
-# -*- ruby -*-
+# -*- encoding: utf-8 -*- -*- ruby -*-
 
 # load all optional developer libraries
-begin
-  require 'rubygems'
-  require 'rake/gempackagetask'
-rescue LoadError
-end
-
+require 'rubygems/package_task'
 require 'rdoc/task'
 require 'rdoc/rdoc'
 
 begin
   require 'rubyforge'
-rescue LoadError
-end
-
-begin
-  require 'rcov/rcovtask'
 rescue LoadError
 end
 
@@ -77,8 +67,7 @@ rd = RDoc::Task.new do |rdoc|
   rdoc.rdoc_files.include('lib')
 end
 
-tt = Rake::TestTask.new do |test|
-  test.libs << 'test'
+Rake::TestTask.new do |test|
   test.test_files = FileList['test/webgen/**/test_*.rb']
 end
 
@@ -115,8 +104,7 @@ EOF
                             'lib/**/*.rb',
                             'man/man1/webgen.1',
                             'misc/**/*',
-                            'test/test_*.rb',
-                            'test/helper.rb',
+                            'test/**/*',
                            ]) do |fl|
     fl.exclude('data/**/.gitignore')
   end
@@ -139,19 +127,19 @@ EOF
     pkg.package_files = PKG_FILES
   end
 
-  if defined? Gem
-    spec = Gem::Specification.new do |s|
+  spec = Gem::Specification.new do |s|
 
-      #### Basic information
-      s.name = 'webgen'
-      s.version = Webgen::VERSION
-      s.summary = SUMMARY
-      s.description = DESCRIPTION
-      s.post_install_message = <<EOF
+    #### Basic information
+    s.name = 'webgen'
+    s.version = Webgen::VERSION
+    s.summary = SUMMARY
+    s.description = DESCRIPTION
+    s.post_install_message = <<EOF
 
 Thanks for choosing webgen! Here are some places to get you started:
 * The webgen User Documentation at <http://webgen.rubyforge.org/documentation/index.html>
 * The mailing list archive at <http://rubyforge.org/pipermail/webgen-users/>
+* The webgen Wiki at <http://github.com/gettalong/webgen/wiki>
 
 Have a look at <http://webgen.rubyforge.org/news/index.html> for a list of changes!
 
@@ -159,49 +147,47 @@ Have fun!
 
 EOF
 
-      #### Dependencies, requirements and files
+    #### Dependencies, requirements and files
 
-      s.files = PKG_FILES.to_a
-      s.add_dependency('cmdparse', '>= 2.0.5')
-      s.add_dependency('kramdown', '= 0.10.0')
-      s.add_development_dependency('maruku', '>= 0.6.0')
-      s.add_development_dependency('rake', '>= 0.8.3')
-      s.add_development_dependency('ramaze', '>= 2009.04')
-      s.add_development_dependency('launchy', '>= 0.3.2')
-      s.add_development_dependency('rcov', '>= 0.8.1.2.0')
-      s.add_development_dependency('rubyforge', '>= 2.0.2')
-      s.add_development_dependency('RedCloth', '>= 4.1.9')
-      s.add_development_dependency('haml', '>= 3.0.12')
-      s.add_development_dependency('builder', '>= 2.1.0')
-      s.add_development_dependency('rdoc', '>= 2.4.3')
-      s.add_development_dependency('coderay', '>= 0.8.312')
-      s.add_development_dependency('erubis', '>= 2.6.5')
-      s.add_development_dependency('rdiscount', '>= 1.3.5')
-      s.add_development_dependency('archive-tar-minitar', '>= 0.5.2')
+    s.required_ruby_version = '>= 1.9.2'
 
-      s.require_path = 'lib'
+    s.add_dependency('cmdparse', '>= 2.0.5')
+    s.add_dependency('systemu', '>= 2.5.0')
+    s.add_dependency('kramdown', '= 0.10.0')
+    s.add_development_dependency('rake', '>= 0.8.3')
+    s.add_development_dependency('rubyforge', '>= 2.0.2')
+    s.add_development_dependency('maruku', '>= 0.6.0')
+    s.add_development_dependency('RedCloth', '>= 4.1.9')
+    s.add_development_dependency('haml', '>= 3.1.0')
+    s.add_development_dependency('sass', '>= 3.1.0')
+    s.add_development_dependency('builder', '>= 2.1.0')
+    s.add_development_dependency('rdoc', '>= 3.0')
+    s.add_development_dependency('coderay', '>= 1.0.0')
+    s.add_development_dependency('erubis', '>= 2.6.5')
+    s.add_development_dependency('rdiscount', '>= 1.3.5')
+    s.add_development_dependency('archive-tar-minitar', '>= 0.5.2')
 
-      s.executables = ['webgen']
-      s.default_executable = 'webgen'
+    s.files = PKG_FILES.to_a
+    s.require_path = 'lib'
+    s.executables = ['webgen']
+    s.default_executable = 'webgen'
 
-      #### Documentation
+    #### Documentation
 
-      s.has_rdoc = true
-      s.rdoc_options = ['--line-numbers', '--main', 'lib/webgen/website.rb']
+    s.has_rdoc = true
+    s.rdoc_options = ['--line-numbers', '--main', 'lib/webgen/website.rb']
 
-      #### Author and project details
+    #### Author and project details
 
-      s.author = 'Thomas Leitner'
-      s.email = 't_leitner@gmx.at'
-      s.homepage = "http://webgen.rubyforge.org"
-      s.rubyforge_project = 'webgen'
-    end
+    s.author = 'Thomas Leitner'
+    s.email = 't_leitner@gmx.at'
+    s.homepage = "http://webgen.rubyforge.org"
+    s.rubyforge_project = 'webgen'
+  end
 
-    Rake::GemPackageTask.new(spec) do |pkg|
-      pkg.need_zip = true
-      pkg.need_tar = true
-    end
-
+  Gem::PackageTask.new(spec) do |pkg|
+    pkg.need_zip = true
+    pkg.need_tar = true
   end
 
   desc 'Release webgen version ' + Webgen::VERSION
@@ -277,31 +263,29 @@ EOF
 
   desc "Run the tests one by one to check for missing deps"
   task :test_isolated do
-    files = Dir['test/test_*']
+    files = Dir['test/webgen/**/test_*']
     puts "Checking #{files.length} tests"
     failed = files.select do |file|
-      okay = system("ruby -Ilib:test #{file} -vs &> /dev/null")
+      okay = system("ruby -Ilib #{file} 2>&1 >/dev/null")
       print(okay ? '.' : 'E')
       !okay
     end
     puts
-    failed.each {|file| puts "Problem with" + file.rjust(40) }
+    failed.each {|file| puts "Problem with" + file.rjust(60) }
   end
 
-  if defined? Rcov
-    Rcov::RcovTask.new do |rcov|
-      rcov.libs << 'test'
-    end
-  end
-
-  EXCLUDED_FOR_TESTS=FileList.new(['lib/webgen/cli{*,**/*}', 'lib/webgen/version.rb',
-                                   'lib/webgen/output.rb', 'lib/webgen/source.rb',
-                                   'lib/webgen/tag.rb', 'lib/webgen/default_config.rb',
-                                   'lib/webgen/common.rb'
+  EXCLUDED_FOR_TESTS=FileList.new(['lib/webgen/bundle/**',
+                                   'lib/webgen/context/*',
+                                   'lib/webgen/cli/*',
+                                   'lib/webgen/test_helper',
+                                   'lib/webgen/path_handler/directory.rb',
+                                   'lib/webgen/version.rb',
                                   ])
 
-  EXCLUDED_FOR_DOCU=FileList.new(['lib/webgen/cli{*,**/*}', 'lib/webgen/contentprocessor/context.rb',
-                                  'lib/webgen/*/base.rb', 'lib/webgen/sourcehandler/fragment.rb',
+  EXCLUDED_FOR_DOCU=FileList.new(['lib/webgen/cli{*,**/*}',
+                                  'lib/webgen/*/base.rb',
+                                  'lib/webgen/context/*',
+                                  'lib/webgen/context.rb'
                                  ])
 
   desc "Checks for missing test/docu"
@@ -309,10 +293,10 @@ EOF
     puts 'Files for which no test exists:'
     Dir['lib/webgen/**/*'].each do |path|
       next if File.directory?(path) || EXCLUDED_FOR_TESTS.include?(path)
-      test_path = 'test/test_' + path.gsub(/lib\/webgen\//, "").tr('/', '_')
+      test_path = 'test/' + path.gsub(/lib\/(.*)\/(.*).rb/, '\1/test_\2.rb')
       puts ' '*4 + path unless File.exists?(test_path)
     end
-
+=begin
     puts
     puts 'Files for which no docu exists:'
     Dir['lib/webgen/*/*'].each do |path|
@@ -320,6 +304,7 @@ EOF
       docu_path = 'doc/' + path.gsub(/lib\/webgen\//, "").gsub(/\.rb$/, '.page')
       puts ' '*4 + path unless File.exists?(docu_path)
     end
+=end
   end
 
 end
