@@ -151,7 +151,12 @@ end
 item_tracker.register('Nodes')
 item_tracker.register('File')
 item_tracker.register('MissingNode')
-
+website.blackboard.add_listener(:node_resolution_failed) do |path, lang|
+  website.ext.item_tracker.add(website.ext.path_handler.current_dest_node, :missing_node, path, lang)
+  website.logger.error do
+    "Could not resolve path '#{path}' in language '#{lang}' for <#{website.ext.path_handler.current_dest_node}>"
+  end
+end
 
 ########################################################################
 # Everything related to the node finder extension

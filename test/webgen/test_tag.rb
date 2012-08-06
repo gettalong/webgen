@@ -117,7 +117,7 @@ class TestTag < MiniTest::Unit::TestCase
     template_node = MiniTest::Mock.new
     template_node.expect(:template_chain, [:hallo])
     ref_node = MiniTest::Mock.new
-    ref_node.expect(:resolve!, template_node, ['/tag.template', 'en', dest_node])
+    ref_node.expect(:resolve, template_node, ['/tag.template', 'en', true])
     context = MiniTest::Mock.new
     context.expect(:[], {'tag.tag.template' => '/tag.template'}, [:config])
     context.expect(:ref_node, ref_node)

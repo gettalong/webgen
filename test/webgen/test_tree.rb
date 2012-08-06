@@ -88,6 +88,13 @@ class TestTree < MiniTest::Unit::TestCase
     assert_equal(@tree['/dir/'], @tree['/file.en.html'].resolve('/dir/'))
     assert_equal(@tree['/dir/'], @tree['/file.en.html'].resolve('/dir'))
     assert_equal(@tree['/'], @tree['/file.en.html'].resolve('/'))
+
+    nrcalls = 0
+    @website.blackboard.add_listener(:node_resolution_failed) { nrcalls += 1 }
+    assert_equal(nil, @tree['/'].resolve('other.fr.html', nil, false))
+    assert_equal(0, nrcalls)
+    assert_equal(nil, @tree['/'].resolve('other.fr.html', nil, true))
+    assert_equal(1, nrcalls)
   end
 
   def test_register_node

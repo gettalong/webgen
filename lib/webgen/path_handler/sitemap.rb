@@ -38,7 +38,7 @@ module Webgen
       def content(node)
         context = Webgen::Context.new(@website)
         context.render_block(:name => "sitemap", :node => 'first',
-                             :chain => [node, node.resolve!("/templates/sitemap.template"), node].compact)
+                             :chain => [node, node.resolve("/templates/sitemap.template", node.lang, true), node].compact)
       end
 
       # Return the entries for the sitemap +node+.

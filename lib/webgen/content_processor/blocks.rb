@@ -56,7 +56,7 @@ module Webgen
         else
           paths = options[:chain].split(';')
           used_chain = paths.collect do |path|
-            context.ref_node.resolve!(path.strip, context.dest_node.lang, context.dest_node)
+            context.ref_node.resolve(path.strip, context.dest_node.lang, true)
           end.compact
           return '' if used_chain.length != paths.length
           dest_node = context.dest_node

@@ -45,7 +45,7 @@ module Webgen
       def content(node)
         context = Webgen::Context.new(@website)
         context.render_block(:name => "#{node.node_info[:feed_type]}_template", :node => 'first',
-                             :chain => [node, node.resolve!("/templates/feed.template"), node].compact)
+                             :chain => [node, node.resolve("/templates/feed.template", node.lang, true), node].compact)
       end
 
       # Return the entries for the feed +node+.

@@ -56,13 +56,16 @@ module Webgen
     # unlocalized version does, the unlocalized node is returned. If the +path+ is a destination
     # path, the node with this destination path is returned.
     #
-    # If no node is found for the given path or if the path is invalid, +nil+ is returned.
-    def resolve_node(path, lang)
+    # If no node is found for the given path or if the path is invalid, +nil+ is returned and, if
+    # +msg_on_failure+ is +true+, the message :node_resolution_failed (with parameters +path+ and
+    # +lang+) is dispatched.
+    def resolve_node(path, lang, msg_on_failure = false)
       node = self.node(path, :alcn)
       if !node || node.acn == path
         (node = (self.node(path, :acn) || self.node(path + '/', :acn))) && (node = translate_node(node, lang))
       end
       node = self.node(path, :dest_path) if !node
+      @website.blackboard.dispatch_msg(:node_resolution_failed, path, lang) if !node && msg_on_failure
       node
     end
 

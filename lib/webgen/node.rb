@@ -137,30 +137,18 @@ module Webgen
       Webgen::Path.matches_pattern?(@alcn, pattern)
     end
 
-    # Return the node representing the given +path+ in the given language. The path can be absolute
-    # (i.e. starting with a slash) or relative to the current node. Relative paths are made absolute
-    # by using the #alcn of the current node. If the +lang+ parameter is not used, it defaults to
-    # the language of the current node.
+    # Return the node representing the given +path+ in the given language.
     #
-    # Seee Tree#resolve_node for detailed information on how the correct node for the path is found.
-    def resolve(path, lang = @lang)
-      @tree.resolve_node(Webgen::Path.append(@alcn, path), lang)
-    end
-
-    # Node resolution combined with missing node tracking.
+    # The path can be absolute (i.e. starting with a slash) or relative to the current node.
+    # Relative paths are made absolute by using the #alcn of the current node.
     #
-    # Works exactly like #resolve but uses Webgen::ItemTracker::MissingNode to track missing nodes
-    # for the given dest_node.
-    def resolve!(path, lang = @lang, dest_node = self)
-      node = resolve(path, lang)
-      if !node
-        tree.website.ext.item_tracker.add(dest_node, :missing_node,
-                                          Webgen::Path.append(@alcn, path), lang)
-        tree.website.logger.error { "Could not resolve path '#{path}' in language '#{lang}' in <#{self}>" }
-      end
-      node
+    # If the +lang+ parameter is not used, it defaults to the language of the current node.
+    #
+    # See Tree#resolve_node for detailed information on how the correct node for the path is found
+    # and for the +msg_on_failure+ parameter.
+    def resolve(path, lang = @lang, msg_on_failure = false)
+      @tree.resolve_node(Webgen::Path.append(@alcn, path), lang, msg_on_failure)
     end
-
 
     # Return the relative path to the given path +other+. The parameter +other+ can be a Node or an
     # object that responds to the :+to_str+ method.
@@ -191,7 +179,7 @@ module Webgen
       if proxy_path.nil?
         self
       else
-        resolve!(proxy_path, lang) || self
+        resolve(proxy_path, lang, true) || self
       end
     end
 

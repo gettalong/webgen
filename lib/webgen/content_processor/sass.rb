@@ -110,7 +110,7 @@ module Webgen
                                           "Webgen::ContentProcessor::Sass", context.dest_node)
           end
 
-          dest_node = context.ref_node.resolve!(path, context.dest_node.lang, context.dest_node)
+          dest_node = context.ref_node.resolve(path, context.dest_node.lang, true)
           if dest_node
             context.website.ext.item_tracker.add(context.dest_node, :node_meta_info, dest_node.alcn)
             result = context.dest_node.route_to(dest_node)

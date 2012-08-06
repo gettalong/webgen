@@ -131,10 +131,14 @@ module Webgen
 
     include Webgen::ExtensionManager
 
+    # The destination node if one is currently written or +nil+ otherwise.
+    attr_reader :current_dest_node
+
     # Create a new path handler object for the given website.
     def initialize(website)
       super()
       @website = website
+      @current_dest_node = nil
       @invocation_order = []
       @instances = {}
       @secondary_nodes = {}
@@ -263,6 +267,7 @@ module Webgen
 
     # Write the given node to the destination.
     def write_node(node)
+      @current_dest_node = node
       @website.logger.info do
         "[#{(@website.ext.destination.exists?(node.dest_path) ? 'update' : 'create')}] <#{node.dest_path}>"
       end
@@ -273,6 +278,8 @@ module Webgen
       @website.logger.debug do
         "[timing] <#{node.dest_path}> rendered in " << ('%2.2f' % time.real) << ' seconds'
       end
+    ensure
+      @current_dest_node = nil
     end
     private :write_node
 

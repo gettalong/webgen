@@ -29,7 +29,7 @@ module Webgen
       # Resolve the path +path+ using the reference node and return the correct relative path from the
       # destination node.
       def self.resolve_path(path, context)
-        dest_node = context.ref_node.resolve!(path, context.dest_node.lang, context.dest_node)
+        dest_node = context.ref_node.resolve(path, context.dest_node.lang, true)
         if dest_node
           context.website.ext.item_tracker.add(context.dest_node, :node_meta_info, dest_node.alcn)
           context.dest_node.route_to(dest_node)

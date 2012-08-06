@@ -102,7 +102,7 @@ module Webgen
       def self.resolve_paths(context, paths)
         [paths].flatten.compact.collect do |path|
           next path if Webgen::Path.url(path, false).absolute?
-          node = context.content_node.resolve!(path, context.dest_node.lang, context.dest_node)
+          node = context.content_node.resolve(path, context.dest_node.lang, true)
           if node
             context.website.ext.item_tracker.add(context.dest_node, :node_meta_info, node.alcn)
             context.dest_node.route_to(node)
