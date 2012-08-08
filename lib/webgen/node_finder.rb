@@ -191,8 +191,8 @@ module Webgen
       return unless sort
       if sort == true
         nodes.sort! do |(a,_),(b,_)|
-          a = (a['sort_info'] && a['sort_info'].to_s) || a['title'] || ''
-          b = (b['sort_info'] && b['sort_info'].to_s) || b['title'] || ''
+          a = (a['sort_info'] && a['sort_info'].to_s) || a['title'].to_s || ''
+          b = (b['sort_info'] && b['sort_info'].to_s) || b['title'].to_s || ''
           (a = a.to_i; b = b.to_i) if a !~ /\D/ && b !~ /\D/
           a <=> b
         end
