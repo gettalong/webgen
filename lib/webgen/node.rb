@@ -150,17 +150,12 @@ module Webgen
       @tree.resolve_node(Webgen::Path.append(@alcn, path), lang, msg_on_failure)
     end
 
-    # Return the relative path to the given path +other+. The parameter +other+ can be a Node or an
-    # object that responds to the :+to_str+ method.
-    def route_to(other)
+    # Return the relative path to the given node.
+    #
+    # If the +lang+ parameter is not used, it defaults to the language of the current node.
+    def route_to(node, lang = @lang)
       my_url = Webgen::Path.url(@dest_path)
-      other_url = if other.kind_of?(Webgen::Node)
-                    Webgen::Path.url(other.proxy_node(@lang).dest_path)
-                  elsif other.respond_to?(:to_str)
-                    my_url + other.to_str
-                  else
-                    raise ArgumentError, "improper class for argument"
-                  end
+      other_url = Webgen::Path.url(node.proxy_node(lang).dest_path)
 
       # resolve any '.' and '..' paths in the target url
       if other_url.path =~ /\/\.\.?\// && other_url.scheme == 'webgen'
@@ -170,10 +165,13 @@ module Webgen
       (route == '' ? File.basename(@dest_path) : route)
     end
 
-    # Return the proxy node in language +lang+. This node should be used, for example, when routing
-    # to this node. The proxy node is found by using the +proxy_path+ meta information. This meta
-    # information is usually set on directories to specify the node that should be used for the
-    # "directory index".
+    # Return the proxy node in language +lang+.
+    #
+    # This node should be used, for example, when routing to this node. The proxy node is found by
+    # using the +proxy_path+ meta information. This meta information is usually set on directories
+    # to specify the node that should be used for the "directory index".
+    #
+    # If the +lang+ parameter is not used, it defaults to the language of the current node.
     def proxy_node(lang = @lang)
       proxy_path = self['proxy_path']
       if proxy_path.nil?
@@ -189,25 +187,23 @@ module Webgen
 
     # Return a HTML link from this node to the given node.
     #
+    # If the +lang+ parameter is not used, it defaults to the language of the current node.
+    #
     # You can optionally specify additional attributes for the HTML element in the +attr+ Hash.
     # Also, the meta information +link_attrs+ of the given +node+ is used, if available, to set
     # attributes. However, the +attr+ parameter takes precedence over the +link_attrs+ meta
     # information. Be aware that all key-value pairs with Symbol keys are removed before the
-    # attributes are written. Therefore you always need to specify general attributes with Strings!
+    # attributes are written. Therefore you always need to specify general attributes with strings!
     #
     # If the special value <tt>:link_text</tt> is present in the attributes, it will be used as the
     # link text; otherwise the title of the +node+ will be used.
-    #
-    # If the special value <tt>:lang</tt> is present in the attributes, it will be used as parameter
-    # to the <tt>node.proxy_node</tt> call for getting the linked-to node instead of this node's
-    # +lang+ attribute. *Note*: this is only useful when linking to a directory.
-    def link_to(node, attr = {})
+    def link_to(node, lang = @lang, attr = {})
       attr = node['link_attrs'].merge(attr) if node['link_attrs'].kind_of?(Hash)
-      rnode = node.proxy_node(attr[:lang] || @lang)
+      rnode = node.proxy_node(lang)
       link_text = attr[:link_text] || (rnode != node && rnode['routed_title']) || node['title']
       attr.delete_if {|k,v| k.kind_of?(Symbol)}
 
-      attr['href'] = self.route_to(rnode)
+      attr['href'] = self.route_to(node, lang)
       attr['hreflang'] = rnode.lang.to_s if rnode.lang
       attrs = attr.collect {|name,value| "#{name.to_s}=\"#{value}\"" }.sort.unshift('').join(' ')
       "<a#{attrs}>#{link_text}</a>"

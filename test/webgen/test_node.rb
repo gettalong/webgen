@@ -80,7 +80,6 @@ class TestNode < MiniTest::Unit::TestCase
     tree = @website.tree
     setup_default_nodes(tree)
 
-    #arg is Node
     assert_equal('file.en.html', tree['/file.en.html'].route_to(tree['/file.en.html']))
     assert_equal('file.de.html', tree['/file.en.html#frag'].route_to(tree['/file.de.html']))
     assert_equal('subfile.html#frag', tree['/dir/'].route_to(tree['/dir/subfile.html#frag']))
@@ -92,20 +91,8 @@ class TestNode < MiniTest::Unit::TestCase
     assert_equal('../', tree['/dir/'].route_to(tree['/']))
     assert_equal('dir/', tree['/file.en.html'].route_to(tree['/dir/']))
 
-    #arg is String
-    assert_equal('somename.en.html', tree['/file.en.html'].route_to('somename.en.html'))
-    assert_equal('../other.html', tree['/dir/subfile.html'].route_to('/other.html'))
-    assert_equal('../other', tree['/dir/subfile.html'].route_to('../other'))
-    assert_equal('document/file2', tree['/dir/subfile.html#frag'].route_to('document/file2'))
-    assert_equal('ftp://test/', tree['/dir/'].route_to('ftp://test/'))
-
-    #test args with '..' and '.': either too many of them or absolute path given
-    assert_equal('../dir2', tree['/dir/subfile.html'].route_to('../../.././dir2'))
-    assert_equal('../file', tree['/dir/subfile.html'].route_to('/dir/../file'))
-    assert_equal('file', tree['/dir/subfile.html'].route_to('dir/../file'))
-
-    #arg is something else
-    assert_raises(ArgumentError) { tree['/'].route_to(5) }
+    n = Webgen::Node.new(tree['/'], 'testing', '../../.././dir2')
+    assert_equal('../dir2', tree['/dir/subfile.html'].route_to(n))
   end
 
   def test_proxy_node
@@ -138,11 +125,11 @@ class TestNode < MiniTest::Unit::TestCase
     assert_equal('<a href="#frag">frag</a>',
                  tree['/file.en.html'].link_to(tree['/file.en.html#frag']))
     assert_equal('<a href="#frag">link_text</a>',
-                 tree['/file.en.html'].link_to(tree['/file.en.html#frag'], :link_text => 'link_text'))
+                 tree['/file.en.html'].link_to(tree['/file.en.html#frag'], 'en', :link_text => 'link_text'))
     assert_equal('<a attr1="val1" href="#frag">frag</a>',
-                 tree['/file.en.html'].link_to(tree['/file.en.html#frag'], 'attr1' => 'val1'))
+                 tree['/file.en.html'].link_to(tree['/file.en.html#frag'], 'en', 'attr1' => 'val1'))
     assert_equal('<a href="#frag">frag</a>',
-                 tree['/file.en.html'].link_to(tree['/file.en.html#frag'], :attr1 => 'val1'))
+                 tree['/file.en.html'].link_to(tree['/file.en.html#frag'], 'en', :attr1 => 'val1'))
     assert_equal('<a class="help" href="dir2/index.en.html" hreflang="en">index en</a>',
                  tree['/file.en.html'].link_to(tree['/dir2/index.en.html']))
 
@@ -152,7 +139,7 @@ class TestNode < MiniTest::Unit::TestCase
     assert_equal('<a href="dir2/index.en.html" hreflang="en">routed</a>',
                  tree['/file.en.html'].link_to(tree['/dir2/']))
     assert_equal('<a href="dir2/index.de.html" hreflang="de">routed de</a>',
-                 tree['/file.en.html'].link_to(tree['/dir2/'], :lang => 'de'))
+                 tree['/file.en.html'].link_to(tree['/dir2/'], 'de'))
   end
 
 end

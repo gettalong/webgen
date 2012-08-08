@@ -11,7 +11,7 @@ module Webgen
         path = context[:config]['tag.link.path'].to_s
         if (dest_node = context.ref_node.resolve(path, context.dest_node.lang, true))
           context.website.ext.item_tracker.add(context.dest_node, :node_meta_info, dest_node.alcn)
-          context.dest_node.link_to(dest_node, context[:config]['tag.link.attr'].merge(:lang => context.content_node.lang))
+          context.dest_node.link_to(dest_node, context.content_node.lang, context[:config]['tag.link.attr'])
         else
           ''
         end
