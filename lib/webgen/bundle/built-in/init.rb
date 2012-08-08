@@ -222,7 +222,7 @@ option('path_handler.default_meta_info',
        },
        'Default meta information for all nodes (key :all) and for nodes belonging to a specific path handler') do |val|
   raise "The value has to be a hash" unless val.kind_of?(Hash)
-  cur_val = website.config['path_handler.default_meta_info']
+  cur_val = Marshal.load(Marshal.dump(website.config['path_handler.default_meta_info']))
   val.each do |handler, mi|
     raise "The value for each key has to be a hash" unless mi.kind_of?(Hash)
     action = ((mi.delete(:action) || 'modify') == 'modify' ? :update : :replace)
