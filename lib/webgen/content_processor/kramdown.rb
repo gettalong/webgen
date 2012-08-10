@@ -2,23 +2,40 @@
 
 require 'webgen/content_processor'
 webgen_require 'kramdown'
-require 'webgen/contentprocessor/kramdown/html'
 
 module Webgen
   class ContentProcessor
 
     # Processes content in kramdown format (based on Markdown) using the +kramdown+ library.
-    class Kramdown
+    module Kramdown
 
-      include Webgen::Loggable
+      class CustomHtmlConverter < ::Kramdown::Converter::Html #:nodoc:
+        public_class_method(:new)
+
+        def initialize(root, options, context)
+          super(root, options)
+          @context = context
+          @do_convert = context.website.config['content_processor.kramdown.handle_links']
+        end
+
+        def convert_a(el, indent)
+          el.attr['href'] = @context.tag('relocatable', {'path' => el.attr['href']}) if @do_convert
+          super
+        end
+
+        def convert_img(el, indent)
+          el.attr['src'] = @context.tag('relocatable', {'path' => el.attr['src']}) if @do_convert
+          super
+        end
+
+      end
 
       # Convert the content in +context+ to HTML.
-      def call(context)
-        doc = ::Kramdown::Document.new(context.content,
-                                       context.website.config['contentprocessor.kramdown.options'].merge(context.options['contentprocessor.kramdown.options'] || {}))
-        context.content = KramdownHtmlConverter.convert(doc.root, doc.options, context)
+      def self.call(context)
+        doc = ::Kramdown::Document.new(context.content, context.website.config['content_processor.kramdown.options'])
+        context.content = CustomHtmlConverter.new(doc.root, doc.options, context).convert(doc.root)
         doc.warnings.each do |warn|
-          log(:warn) { "Warning while parsing <#{context.ref_node}> with kramdown: #{warn}" }
+          context.website.logger.warn { "Warning while parsing <#{context.ref_node}> with kramdown: #{warn}" }
         end
         context
       end
