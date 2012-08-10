@@ -58,7 +58,6 @@ class TestHtmlHead < MiniTest::Unit::TestCase
 
   def test_links_from_link_meta_info
     context = Webgen::Context.new(@website, :chain => [@node])
-    @website.expect(:logger, Logger.new(StringIO.new))
 
     @node.meta_info['link'] = {'javascript' => 'http://example.org', 'css' => ['http://example.org', 'test', 'unknown']}
     assert_equal("\n<script type=\"text/javascript\" src=\"http://example.org\"></script>" +

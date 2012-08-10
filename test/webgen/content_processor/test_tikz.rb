@@ -9,7 +9,6 @@ class TestContentProcessorTikz < MiniTest::Unit::TestCase
 
   def test_static_call
     setup_context
-    @website.expect(:config, {})
     @context.node.expect(:[], nil, ['ignored'])
 
     call('\tikz \draw (0,0) -- (0,1);', 'test.png', [], '', '72 72', false)

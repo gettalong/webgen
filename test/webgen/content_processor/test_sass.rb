@@ -11,7 +11,7 @@ class TestSass < MiniTest::Unit::TestCase
   def test_static_call
     setup_context
     @website.ext.sass_load_paths = []
-    @website.expect(:config, {'content_processor.sass.options' => {}})
+    @website.config['content_processor.sass.options'] = {}
     cp = Webgen::ContentProcessor::Sass
 
     @context.content = "#main\n  :background-color #000"

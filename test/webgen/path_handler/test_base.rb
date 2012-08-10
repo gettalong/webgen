@@ -46,8 +46,8 @@ class TestPathHandlerBase < MiniTest::Unit::TestCase
   end
 
   def test_dest_path
-    config = {'website.lang' => 'en'}
-    @website.expect(:config, config)
+    config = @website.config
+    config['website.lang'] = 'en'
     node = Webgen::Node.new(@website.tree.dummy_root, '/', '/', {:test => :value})
 
     assert_raises(Webgen::NodeCreationError) { @obj.dest_path(node, Webgen::Path.new('/test')) }

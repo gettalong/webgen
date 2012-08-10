@@ -9,7 +9,7 @@ class TestRedCloth < MiniTest::Unit::TestCase
 
   def test_static_call
     setup_context
-    @website.expect(:config, {'content_processor.redcloth.hard_breaks' => false})
+    @website.config['content_processor.redcloth.hard_breaks'] = false
     cp = Webgen::ContentProcessor::RedCloth
 
     @context.content = "h1. header\n\nthis\nis\nsome\ntext"

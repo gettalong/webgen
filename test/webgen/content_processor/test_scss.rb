@@ -9,7 +9,7 @@ class TestScss < MiniTest::Unit::TestCase
 
   def test_static_call
     setup_context
-    @website.expect(:config, {'content_processor.sass.options' => {}})
+    @website.config['content_processor.sass.options'] = {}
     @website.ext.sass_load_paths = []
     cp = Webgen::ContentProcessor::Scss
 

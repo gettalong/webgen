@@ -9,6 +9,7 @@ class TestTidy < MiniTest::Unit::TestCase
 
   def test_static_call
     setup_context
+    @website.config['content_processor.tidy.options'] = ''
     cp = Webgen::ContentProcessor::Tidy
 
     begin
@@ -17,8 +18,6 @@ class TestTidy < MiniTest::Unit::TestCase
     ensure
       ENV['PATH'] = tmp
     end
-
-    @website.expect(:config, {'content_processor.tidy.options' => ''})
 
     @context.content = "testcontent"
     assert_match(/html.*testcontent/im, cp.call(@context).content)

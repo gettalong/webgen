@@ -9,6 +9,7 @@ class TestXmllint < MiniTest::Unit::TestCase
 
   def test_static_call
     setup_context
+    @website.config['content_processor.xmllint.options'] = ''
     cp = Webgen::ContentProcessor::Xmllint
 
     begin
@@ -17,8 +18,6 @@ class TestXmllint < MiniTest::Unit::TestCase
     ensure
       ENV['PATH'] = tmp
     end
-
-    @website.expect(:config, {'content_processor.xmllint.options' => ''})
 
     @context.content = data = 'test'
     assert_equal(data, cp.call(@context).content)

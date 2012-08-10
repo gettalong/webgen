@@ -9,7 +9,7 @@ class TestErubis < MiniTest::Unit::TestCase
 
   def test_static_call
     setup_context
-    @website.expect(:config, {'content_processor.erubis.options' => {}, 'content_processor.erubis.use_pi' => false})
+    @website.config.merge!('content_processor.erubis.options' => {}, 'content_processor.erubis.use_pi' => false)
     cp = Webgen::ContentProcessor::Erubis
 
     @context.content = "<%= context[:doit] %>6\n<%= context.ref_node.alcn %>\n<%= context.node.alcn %>\n<%= context.dest_node.alcn %><% context.website %>"
