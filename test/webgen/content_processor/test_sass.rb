@@ -22,13 +22,14 @@ class TestSass < MiniTest::Unit::TestCase
     assert_error_on_line(Webgen::RenderError, 2) { cp.call(@context) }
 
     # test @import-ing of sass files
-    content = "#main\n  background-image: relocatable('/dir2/file.test')"
-    result = "#main {\n  background-image: url(\"../dir2/file.test\"); }\n"
+    content = "#main\n  background-image: relocatable('../dir2/file.test')"
+    result = "#main {\n  background-image: url(\"../../dir2/file.test\"); }\n"
     root = Webgen::Node.new(@website.tree.dummy_root, '/', '/')
     dir = Webgen::Node.new(root, 'dir/', '/dir/')
     partial = Webgen::Node.new(dir, '_partial.sass', '/dir/_partial.sass')
     partial.node_info[:path] = Webgen::Path.new('test') { StringIO.new(content) }
-    sass = Webgen::Node.new(dir, 'file.sass', '/dir/file.sass')
+    dirdir = Webgen::Node.new(dir, 'dir/', '/dir/dir/')
+    sass = Webgen::Node.new(dirdir, 'file.sass', '/dir/dir/file.sass')
     dir2 = Webgen::Node.new(root, 'dir2/', '/dir2/')
     file = Webgen::Node.new(dir2, 'file.test', '/dir2/file.test')
 

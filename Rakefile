@@ -159,7 +159,7 @@ EOF
     s.add_development_dependency('maruku', '>= 0.6.0')
     s.add_development_dependency('RedCloth', '>= 4.1.9')
     s.add_development_dependency('haml', '>= 3.1.0')
-    s.add_development_dependency('sass', '>= 3.1.0')
+    s.add_development_dependency('sass', '>= 3.2.0')
     s.add_development_dependency('builder', '>= 2.1.0')
     s.add_development_dependency('rdoc', '>= 3.0')
     s.add_development_dependency('coderay', '>= 1.0.0')

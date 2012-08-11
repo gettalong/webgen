@@ -99,26 +99,20 @@ module Webgen
 
       module ::Sass::Script::Functions
 
-        # Return the correct relative path for the given path. Only accepts absolute path names!
+        # Return the correct relative path for the given path.
         def relocatable(path)
           assert_type(path, :String)
           context = options[:webgen_context]
           path = path.value
 
-          if !path.start_with?('/')
-            raise Webgen::RenderError.new("Argument for custom Sass function 'relocatable' does not start with a slash",
-                                          "Webgen::ContentProcessor::Sass", context.dest_node)
-          end
-
-          dest_node = context.ref_node.resolve(path, context.dest_node.lang, true)
+          dest_node = context.website.tree[options[:filename]].resolve(path, context.dest_node.lang, true)
           if dest_node
             context.website.ext.item_tracker.add(context.dest_node, :node_meta_info, dest_node.alcn)
             result = context.dest_node.route_to(dest_node)
           else
             result = path
           end
-          result = "url(\"#{result}\")"
-          ::Sass::Script::String.new(result)
+          ::Sass::Script::String.new("url(\"#{result}\")")
         end
         declare :relocatable, [:string]
 
