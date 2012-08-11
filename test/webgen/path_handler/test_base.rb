@@ -30,19 +30,22 @@ class TestPathHandlerBase < MiniTest::Unit::TestCase
     assert_nil(@obj.create_node(Webgen::Path.new('/test.html', 'draft' => true)))
 
     path = Webgen::Path.new('/path.html', 'dest_path' => '<parent><basename>(.<lang>)<ext>',
-                            'modified_at' => 'unknown')
-    node = @obj.create_node(path, @website.tree.dummy_root) {|n| assert_kind_of(Webgen::Node, n)}
+                            'modified_at' => 'unknown', 'parent_alcn' => '')
+    node = @obj.create_node(path) {|n| assert_kind_of(Webgen::Node, n)}
     assert_equal(path, node.node_info[:path])
     assert_kind_of(Time, node.meta_info['modified_at'])
 
-    assert_raises(Webgen::NodeCreationError) { @obj.create_node(path, @website.tree.dummy_root) }
+    assert_raises(Webgen::NodeCreationError) { @obj.create_node(path) }
   end
 
   def test_parent_node
     assert_equal(@website.tree.dummy_root, @obj.parent_node(Webgen::Path.new('/')))
     root = Webgen::Node.new(@website.tree.dummy_root, '/', '/')
+    dir = Webgen::Node.new(root, 'dir/', '/dir/')
     assert_equal(root, @obj.parent_node(Webgen::Path.new('/test/')))
     assert_raises(Webgen::NodeCreationError) { @obj.parent_node(Webgen::Path.new('/hallo/other.page')) }
+    assert_equal(dir, @obj.parent_node(Webgen::Path.new('/dir/test/')))
+    assert_equal(root, @obj.parent_node(Webgen::Path.new('/dir/test/', 'parent_alcn' => '/')))
   end
 
   def test_dest_path

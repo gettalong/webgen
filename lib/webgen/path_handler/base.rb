@@ -34,17 +34,20 @@ module Webgen
       end
 
       # Create a node from +path+, if possible, yield the full initialized node if a block is given
-      # and return it. If no node can be created (e.g. when <tt>path.meta_info['draft']</tt> is
-      # set), +nil+ is returned.
+      # and return it.
       #
-      # The parent node under which the new node should be created can be set via the +parent+
-      # parameter. If this is not specified (the usual case), the parent node is determined by the
-      # #parent_node method.
+      # If no node can be created (e.g. when <tt>path.meta_info['draft']</tt> is set), +nil+ is
+      # returned.
       #
-      # The node information <tt>:path</tt> is set to the given path.
-      def create_node(path, parent = nil)
+      # The parent node under which the new node should be created can optionally be specified via
+      # <tt>path.meta_info['parent_alcn']</tt>. This meta information has to be set to an alcn of an
+      # existing node.
+      #
+      # On the created node, the node information <tt>:path</tt> is set to the given path and
+      # <tt>:path_handler</tt> to the path handler instance.
+      def create_node(path)
         return nil if path.meta_info['draft']
-        parent ||= parent_node(path)
+        parent = parent_node(path)
         dest_path = self.dest_path(parent, path)
 
         if node = node_exists?(parent, path, dest_path)
@@ -69,9 +72,10 @@ module Webgen
 
       # Return the parent node for the given +path+.
       def parent_node(path)
-        parent_dir = (path.parent_path == '' ? '' : Webgen::Path.new(path.parent_path).alcn)
-        if !(parent = @website.tree[parent_dir])
-          raise Webgen::NodeCreationError.new("The needed parent node <#{parent_dir}> does not exist")
+        parent_alcn = path.meta_info['parent_alcn'] ||
+          (path.parent_path == '' ? '' : Webgen::Path.new(path.parent_path).alcn)
+        if !(parent = @website.tree[parent_alcn])
+          raise Webgen::NodeCreationError.new("The needed parent node <#{parent_alcn}> does not exist")
         end
         parent
       end
