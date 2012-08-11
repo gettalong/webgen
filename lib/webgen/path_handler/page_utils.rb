@@ -60,10 +60,12 @@ module Webgen
         context.website.ext.item_tracker.add(context.dest_node, :node_content, node.alcn)
 
         context.content = node.blocks[name].dup
+        context[:block_name] = name
         pipeline ||= ((node.meta_info['blocks'] || {})[name] || {})['pipeline'] || []
         content_processor.normalize_pipeline(pipeline).each do |processor|
           content_processor.call(processor, context)
         end
+        context[:block_name] = nil
         context
       end
 
