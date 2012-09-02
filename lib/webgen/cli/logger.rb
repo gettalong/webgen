@@ -1,6 +1,6 @@
 # -*- encoding: utf-8 -*-
 
-require 'logger'
+require 'webgen/logger'
 require 'webgen/cli/utils'
 
 module Webgen
@@ -8,7 +8,7 @@ module Webgen
   module CLI
 
     # The logger class used by the command line interface.
-    class Logger < ::Logger
+    class Logger < Webgen::Logger
 
       # Create a new Logger object for the command line interface.
       def initialize(outdev = $stdout)
@@ -17,6 +17,7 @@ module Webgen
         self.formatter = Proc.new do |severity, timestamp, progname, msg|
           msg = msg.dup
           msg.gsub!(/<.*?>/) {|m| Utils.bold(m)}
+          msg.gsub!(/\n/, "\n      ")
           case severity
           when 'INFO'
             msg.sub!(/^\s*\[(?:create|update)\]/) {|m| Utils.bold(Utils.green(m))}

@@ -4,7 +4,7 @@ require 'minitest/autorun'
 require 'ostruct'
 require 'tmpdir'
 require 'stringio'
-require 'logger'
+require 'webgen/logger'
 
 require 'webgen/blackboard'
 require 'webgen/context'
@@ -92,7 +92,8 @@ module Webgen
     #   A Webgen::Blackboard instance
     #
     # [@website.logger]
-    #   Logger instance with a StringIO as target. The StringIO target is also available via @logio.
+    #   Webgen::Logger instance with a StringIO as target. The StringIO target is also available
+    #   via @logio.
     #
     # [@website.tree]
     #   Webgen::Tree instance
@@ -105,7 +106,7 @@ module Webgen
       @website.expect(:ext, OpenStruct.new)
       @website.expect(:blackboard, Webgen::Blackboard.new)
       @logio = StringIO.new
-      @website.expect(:logger, ::Logger.new(@logio))
+      @website.expect(:logger, Webgen::Logger.new(@logio))
       @website.expect(:tree, Webgen::Tree.new(@website))
       @website.ext.item_tracker = Object.new
       def (@website.ext.item_tracker).add(*args); end

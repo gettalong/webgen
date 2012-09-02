@@ -7,7 +7,6 @@
 
 
 # Standard lib requires
-require 'logger'
 require 'stringio'
 require 'fileutils'
 require 'ostruct'
@@ -21,6 +20,7 @@ require 'webgen/cache'
 require 'webgen/error'
 require 'webgen/tree'
 require 'webgen/bundle_loader'
+require 'webgen/logger'
 
 # Load other needed files
 require 'webgen/path'
@@ -181,7 +181,7 @@ module Webgen
     # The internal data structure used to store information about individual nodes.
     attr_reader :tree
 
-    # The logger used for logging.
+    # The Webgen::Logger used for logging.
     attr_reader :logger
 
     # The website directory.
@@ -199,7 +199,7 @@ module Webgen
     # initialization (value is +true+) or after it (value is +false).
     def initialize(dir, logger = nil, &block)
       @directory = dir
-      @logger = logger || Logger.new(StringIO.new)
+      @logger = logger || Webgen::Logger.new(StringIO.new)
       @init_block = block
       init
     end
