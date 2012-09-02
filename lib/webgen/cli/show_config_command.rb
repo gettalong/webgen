@@ -15,6 +15,9 @@ module Webgen
 Shows all available configuration options. The option name and default value as
 well as the currently used value are displayed.
 
+If the global verbosity option is set, option descriptions are additionally
+displayed.
+
 If an argument is given, only those options that have the argument in their name
 are displayed.
 
@@ -28,14 +31,9 @@ DESC
                   *Utils.format_option_desc("Show modified configuration options only")) do |v|
             @modified = true
           end
-          opts.on("-v", "--[no-]verbose",
-                  *Utils.format_option_desc("Verbose output (e.g. option descriptions)")) do |v|
-            @verbose = v
-          end
         end
         @modified = false
         @unknown = true
-        @verbose = false
       end
 
       def execute(args)
@@ -55,7 +53,7 @@ DESC
         else
           puts(cur_val.inspect)
         end
-        puts(Utils.format(data.description, 78, 2, true).join("\n") + "\n\n") if @verbose
+        puts(Utils.format(data.description, 78, 2, true).join("\n") + "\n\n") if commandparser.verbose
       end
       private :format_config_option
 

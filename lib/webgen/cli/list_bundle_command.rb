@@ -16,6 +16,8 @@ Lists all loaded, installed and available extension bundles.
 
 Loaded bundles are already used by the website, installed ones are installed but
 not used and available bundles can be installed if needed.
+
+Hint: The global verbosity option enables additional output.
 DESC
         self.options = CmdParse::OptionParserWrapper.new do |opts|
           opts.separator "Options:"
@@ -23,12 +25,7 @@ DESC
                   *Utils.format_option_desc("Use remote server for listing available bundles")) do |remote|
             @remote = remote
           end
-          opts.on("-v", "--[no-]verbose",
-                  *Utils.format_option_desc("Verbose output")) do |v|
-            @verbose = v
-          end
         end
-        @verbose = false
         @remote = false
       end
 
@@ -95,7 +92,7 @@ DESC
         puts(Utils.light(Utils.blue(name)))
         puts("  State:    #{data[:state]}")
         puts("  Rubygem:  #{data[:gem]}") if data[:gem]
-        if @verbose && data['author']
+        if commandparser.verbose && data['author']
           puts("  Author:   #{data['author']}")
           print("  Summary:  ")
           puts(Utils.format(data['summary'], 78, 12, false))

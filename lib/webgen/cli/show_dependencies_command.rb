@@ -18,15 +18,9 @@ is available.
 
 If an argument is given, only those paths that have the argument in their name
 are displayed with their dependencies.
+
+Hint: The global verbosity option enables additional output.
 DESC
-        self.options = CmdParse::OptionParserWrapper.new do |opts|
-          opts.separator "Options:"
-          opts.on("-v", "--[no-]verbose",
-                  *Utils.format_option_desc("Verbose output")) do |v|
-            @verbose = v
-          end
-        end
-        @verbose = false
       end
 
       def execute(args)
@@ -46,7 +40,7 @@ DESC
             end
           end.compact
 
-          if deps.length > 0 || @verbose
+          if deps.length > 0 || commandparser.verbose
             puts("#{Utils.light(Utils.blue(alcn))}: ")
             deps.each {|d| puts("  #{[d].flatten.join("\n    ")}")}
           end
@@ -60,7 +54,7 @@ DESC
 
       def format_node_meta_info(alcn, uid, data)
         dep_alcn, key = *uid.last
-        return if alcn == dep_alcn && !@verbose
+        return if alcn == dep_alcn && !commandparser.verbose
 
         if key.nil?
           "Any meta info from <#{dep_alcn}>"
@@ -72,7 +66,7 @@ DESC
 
       def format_node_content(alcn, uid, data)
         dep_alcn = uid.last
-        return if alcn == dep_alcn && !@verbose
+        return if alcn == dep_alcn && !commandparser.verbose
 
         "Content from node <#{dep_alcn}>"
       end
@@ -94,7 +88,7 @@ DESC
         method, options, type = *uid.last
 
         res = [(type == :content ? "Content" : "Meta info") + " from these nodes"]
-        res.first << " (result of #{[method].flatten.join('.')})" if @verbose
+        res.first << " (result of #{[method].flatten.join('.')})" if commandparser.verbose
         res.first << ":"
         res += data.flatten
       end

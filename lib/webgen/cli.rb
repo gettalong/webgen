@@ -72,6 +72,9 @@ module Webgen
       # current working directory.
       attr_reader :directory
 
+      # Specifies whether verbose output should be used.
+      attr_reader :verbose
+
       # The log level. Default: <tt>Logger::INFO</tt>
       attr_reader :log_level
 
@@ -81,6 +84,9 @@ module Webgen
         @directory = (ENV['WEBGEN_WEBSITE'].to_s.empty? ? Dir.pwd : ENV['WEBGEN_WEBSITE'])
         @log_level = ::Logger::INFO
 
+        self.add_command(CmdParse::VersionCommand.new)
+        self.add_command(CmdParse::HelpCommand.new)
+
         self.program_name = "webgen"
         self.program_version = Webgen::VERSION
         self.options = CmdParse::OptionParserWrapper.new do |opts|
@@ -89,17 +95,26 @@ module Webgen
                   *Utils.format_option_desc("The website directory (default: the current directory)")) do |d|
             @directory = d
           end
-          opts.on("--log-level LEVEL", "-l", Integer,
-                  *Utils.format_option_desc("The logging level (default=1; 0=debug, 1=info, 2=warning, 3=error)")) do |l|
-            @log_level = l
-          end
           opts.on("-c", "--[no-]color",
                   *Utils.format_option_desc("Colorize output (default: #{Webgen::CLI::Utils.use_colors ? "yes" : "no"})")) do |a|
             Webgen::CLI::Utils.use_colors = a
           end
+          opts.on("-v", "--[no-]verbose",
+                  *Utils.format_option_desc("Verbose output (default: no)")) do |v|
+            @verbose = v
+          end
+          opts.on("-q", "--[no-]quiet",
+                  *Utils.format_option_desc("Quiet output (default: no)")) do |v|
+            @log_level = (v ? ::Logger::WARN : :Logger::INFO)
+          end
+          opts.on("--[no-]debug",
+                  *Utils.format_option_desc("Enable debugging")) do |v|
+            @log_level = (v ? ::Logger::DEBUG : :Logger::INFO)
+          end
+          opts.on_tail("--version", "-V", "Show webgen version information") do
+            main_command.commands['version'].execute([])
+          end
         end
-        self.add_command(CmdParse::VersionCommand.new)
-        self.add_command(CmdParse::HelpCommand.new)
         self.add_command(Webgen::CLI::GenerateCommand.new, true)
         self.add_command(Webgen::CLI::ShowCommand.new)
         self.add_command(Webgen::CLI::BundleCommand.new)
@@ -111,6 +126,7 @@ module Webgen
           if before_init
             site.ext.cli = self
             site.logger.level = @log_level
+            site.logger.verbose = @verbose
           end
         end
       end

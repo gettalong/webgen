@@ -17,6 +17,8 @@ short summary of the functionality or the extension bundle it is defined in.
 
 If an argument is given, only those extensions that have the argument in their
 name are displayed.
+
+Hint: The global verbosity option enables additional output.
 DESC
         self.options = CmdParse::OptionParserWrapper.new do |opts|
           opts.separator "Options:"
@@ -24,12 +26,7 @@ DESC
                   *Utils.format_option_desc("Only show extensions of this bundle")) do |bundle|
             @bundle = bundle
           end
-          opts.on("-v", "--[no-]verbose",
-                  *Utils.format_option_desc("Verbose output")) do |v|
-            @verbose = v
-          end
         end
-        @verbose = false
         @bundle = nil
       end
 
@@ -57,7 +54,7 @@ DESC
 
         indentation = (has_selector ? 0 : name.count('.')*2)
         puts(" "*indentation + Utils.light(Utils.blue(name)))
-        if @verbose
+        if commandparser.verbose
           print(" "*(indentation + 2) + "Bundle:  ")
           puts(Utils.format(data['bundle'], 78, indentation + 11, false))
           print(" "*(indentation + 2) + "Author:  ")
