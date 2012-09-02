@@ -212,7 +212,10 @@ module Webgen
           @website.blackboard.dispatch_msg(:website_generated)
         else
           successful = false
-          @website.logger.info { 'No source paths found - maybe not a webgen website?' }
+          @website.logger.info do
+            ['No active source paths found - maybe not a webgen website?',
+             'Change to a website directory and run the command again.']
+          end
         end
       end
       @website.logger.info { "... done in " << ('%2.2f' % time.real) << ' seconds' }
@@ -228,7 +231,7 @@ module Webgen
 
       used_paths = @website.tree.node_access[:alcn].values.map {|n| n.node_info[:path]}
       unused_paths = @website.ext.source.paths.values - used_paths
-      @website.logger.debug do
+      @website.logger.vinfo do
         "The following source paths have not been used: #{unused_paths.join(', ')}"
       end
 

@@ -207,7 +207,8 @@ module Webgen
           result[tdata.config_base + '.' + key] = value
         else
           context.website.logger.warn do
-            "Invalid configuration option '#{key}' for tag '#{tag}' found in <#{context.ref_node}>"
+            ["Invalid configuration option '#{key}' for tag '#{tag}' found in <#{context.ref_node}>",
+             "Remove the invalid key '#{key}' to fix the warning."]
           end
         end
       end
@@ -219,7 +220,8 @@ module Webgen
     def values_from_string(tag, str, tdata, context)
       if tdata.mandatory.first.nil?
         context.website.logger.error do
-          "No default mandatory option specified for tag '#{tag}' but set in <#{context.ref_node}>"
+          ["No default mandatory option specified for tag '#{tag}' but set in <#{context.ref_node}>",
+           "Use the {key: value} syntax for assigning the value '#{str}' to the intended tag option!"]
         end
         {}
       else

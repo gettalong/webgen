@@ -45,7 +45,10 @@ module Webgen
         elsif node['template'].kind_of?(String)
           template_node = node.resolve(node['template'], lang, true)
           if template_node.nil?
-            @website.logger.warn { "Specified template '#{node['template']}' for <#{node}> not found, using default template!" }
+            @website.logger.warn do
+              ["Template '#{node['template']}' for <#{node}> not found, using default template!",
+               'Fix the value of the meta information \'template\' for <#{node}>']
+            end
             template_node = default_template(node.parent, lang)
           end
           cached_template[lang] = template_node
@@ -70,10 +73,14 @@ module Webgen
       # Return the default template for the directory node +dir+ and language +lang+. If the
       # template node is not found, the parent directories are searched.
       def default_template(dir, lang)
-        template = dir.resolve(@website.config['path_handler.template.default_template'], lang)
+        default_template_name = @website.config['path_handler.template.default_template']
+        template = dir.resolve(default_template_name, lang)
         if template.nil?
           if dir.is_root?
-            @website.logger.warn { "No default template in root directory found!" }
+            @website.logger.warn do
+              ["Default template '#{default_template_name}' not found in root directory!",
+               'Provide a </#{default_template_name}> to fix this warning.']
+            end
           else
             template = default_template(dir.parent, lang)
           end

@@ -17,7 +17,9 @@ module Webgen
           output = CGI::escapeHTML(output) if context[:config]['tag.meta_info.escape_html']
         else
           context.website.logger.error do
-            "No meta info key '#{tag}' found in <#{context.content_node}> (referenced in <#{context.ref_node}>)"
+            ["No meta info key '#{tag}' found in <#{context.content_node}> (referenced in <#{context.ref_node}>)",
+             "Add the meta info key '#{tag}' to <#{context.content_node}> or remove the" +
+             " reference in <#{context.ref_node}> to fix this error."]
           end
         end
         output

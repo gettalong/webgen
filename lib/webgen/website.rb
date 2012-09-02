@@ -244,7 +244,7 @@ module Webgen
       config_file = File.join(@directory, 'config.yaml')
       if File.exist?(config_file)
         unknown_options = @config.load_from_file(config_file)
-        @logger.debug { "Configuration data loaded from <#{config_file}>" }
+        @logger.vinfo { "Configuration data loaded from <#{config_file}>" }
         if unknown_options.length > 0
           @logger.debug { "Ignored following unknown options in configuration file: #{unknown_options.join(', ')}" }
         end

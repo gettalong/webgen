@@ -178,7 +178,7 @@ module Webgen
         if @mapping.has_key?(filter)
           nodes = send(@mapping[filter], nodes, ref_node, value)
         elsif filter.kind_of?(Symbol)
-          @website.logger.warn { "Ignorning unknown node finder filter '#{filter}'" }
+          @website.logger.warn { "Ignoring unknown node finder filter '#{filter}'" }
         end
         !filter.kind_of?(String)
       end

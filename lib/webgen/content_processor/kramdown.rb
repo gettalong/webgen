@@ -35,7 +35,7 @@ module Webgen
         doc = ::Kramdown::Document.new(context.content, context.website.config['content_processor.kramdown.options'])
         context.content = CustomHtmlConverter.new(doc.root, doc.options, context).convert(doc.root)
         doc.warnings.each do |warn|
-          context.website.logger.warn { "Warning while parsing <#{context.ref_node}> with kramdown: #{warn}" }
+          context.website.logger.warn { "kramdown warning while parsing <#{context.ref_node}>: #{warn}" }
         end
         context
       end
