@@ -18,8 +18,9 @@ well as the currently used value are displayed.
 If an argument is given, only those options that have the argument in their name
 are displayed.
 
-Hint: A debug message will appear at the top of the output if there are unknown
-configuration options and the log level is set to debug.
+Hint: A debug message will appear at the top of the output if this command is run
+in the context of a website, there are unknown configuration options in the
+configuration file and the log level is set to debug.
 DESC
         self.options = CmdParse::OptionParserWrapper.new do |opts|
           opts.separator "Options:"
