@@ -239,10 +239,24 @@ module Webgen
     end
     private :load_bundles
 
+    CONFIG_FILENAME = 'webgen.config'
+
     # Load the configuration file into the Configuration object.
     def load_configuration
-      config_file = File.join(@directory, 'config.yaml')
-      if File.exist?(config_file)
+      config_file = File.join(@directory, CONFIG_FILENAME)
+      return unless File.exist?(config_file)
+
+      first_line = File.open(config_file, 'r') {|f| f.gets}
+      if first_line =~ /^\s*#\s*ruby/
+        o = Object.new
+        o.instance_variable_set(:@website, self)
+        def o.website; @website; end
+        begin
+          o.instance_eval(File.read(config_file), config_file)
+        rescue Exception => e
+          raise Webgen::Error.new("Couldn't load webgen configuration file (using Ruby syntax):\n#{e.message}")
+        end
+      else
         unknown_options = @config.load_from_file(config_file)
         @logger.vinfo { "Configuration data loaded from <#{config_file}>" }
         if unknown_options.length > 0
