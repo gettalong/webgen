@@ -30,11 +30,11 @@ module Webgen
     end
 
     def message(wrapped_msg_only = false) # :nodoc:
-      return super() if wrapped_msg_only
+      return super().gsub(/\n/, "\n    ") if wrapped_msg_only
       msg = 'Error'
       msg << " at #{@location}" if @location
       msg << (!@path.to_s.empty? ? " while working on <#{@path}>" : '')
-      msg << ":\n    " << super()
+      msg << ":\n    " << super().gsub(/\n/, "\n    ")
     end
 
     # Return the error line by inspecting the backtrace of the given +error+ instance.
