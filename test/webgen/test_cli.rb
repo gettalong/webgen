@@ -17,7 +17,7 @@ class TestCLICommandParser < MiniTest::Unit::TestCase
 
   def test_initialize
     assert_equal(Logger::INFO, @cli.log_level)
-    assert_equal(Dir.pwd, @cli.directory)
+    assert_equal(nil, @cli.directory)
   end
 
   def test_website
@@ -30,6 +30,7 @@ class TestCLICommandParser < MiniTest::Unit::TestCase
     out, err = capture_io do
       begin
         @cli.parse(['help'])
+        assert_equal(Dir.pwd, @cli.directory + '/')
       rescue SystemExit
       end
     end

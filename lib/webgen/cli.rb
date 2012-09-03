@@ -70,6 +70,9 @@ module Webgen
 
       # The website directory. Default: the value of the WEBGEN_WEBSITE environment variable or the
       # current working directory.
+      #
+      # *Note*: Only available after the #website method has been called (which is always the case
+      # when a command is executed).
       attr_reader :directory
 
       # Specifies whether verbose output should be used.
@@ -81,7 +84,9 @@ module Webgen
       # Create a new CommandParser class.
       def initialize
         super(true, true, false)
-        @directory = (ENV['WEBGEN_WEBSITE'].to_s.empty? ? Dir.pwd : ENV['WEBGEN_WEBSITE'])
+        @directory = nil
+        @verbose = false
+        @do_search = false
         @log_level = ::Logger::INFO
 
         self.add_command(CmdParse::VersionCommand.new)
@@ -92,8 +97,12 @@ module Webgen
         self.options = CmdParse::OptionParserWrapper.new do |opts|
           opts.separator "Global options:"
           opts.on("--directory DIR", "-d", String,
-                  *Utils.format_option_desc("The website directory (default: the current directory)")) do |d|
+                  *Utils.format_option_desc("The website directory to use")) do |d|
             @directory = d
+          end
+          opts.on("--search-dirs", "-s",
+                  *Utils.format_option_desc("Search parent directories for website directory")) do |s|
+            @do_search = s
           end
           opts.on("-c", "--[no-]color",
                   *Utils.format_option_desc("Colorize output (default: #{Webgen::CLI::Utils.use_colors ? "yes" : "no"})")) do |a|
@@ -122,6 +131,14 @@ module Webgen
 
       # Utility method for getting the Webgen::Website object.
       def website
+        @directory = ENV['WEBGEN_WEBSITE'] if @directory.nil? && !ENV['WEBGEN_WEBSITE'].to_s.empty?
+        if @directory.nil? && @do_search
+          dir = Dir.pwd
+          file_missing = nil
+          dir = File.dirname(dir) while dir != '/' && (file_missing = !File.exist?(File.join(dir, Webgen::Website::CONFIG_FILENAME)))
+          @directory = dir if !file_missing
+        end
+        @directory = Dir.pwd if @directory.nil?
         @website ||= Webgen::Website.new(@directory, Webgen::CLI::Logger.new) do |site, before_init|
           if before_init
             site.ext.cli = self
