@@ -17,6 +17,9 @@ module Webgen
   #
   # To get all configured source paths, use the #paths method of this class.
   #
+  # Extension writers may be interested in the #passive_sources accessor which allows one to
+  # register sources that provide paths that are only used when actually referenced.
+  #
   # == Implementing a source class
   #
   # A source class only needs to respond to the method +paths+ which needs to return a set of Path
@@ -62,10 +65,23 @@ module Webgen
 
     include Webgen::ExtensionManager
 
+
+    # An array with one or more passive source definitions (a source definition is an array
+    # containing a mount point, the short name for a Source class and its arguments).
+    #
+    # The paths read from these sources will automatically be tagged with the 'passive' meta
+    # information key so that they are only used when referenced.
+    #
+    # This is very useful for providing templates, images and other paths in webgen extensions that
+    # should only be rendered when actually being referenced.
+    attr_reader :passive_sources
+
+
     # Create a new source manager object for the given website.
     def initialize(website)
       super()
       @website = website
+      @passive_sources = []
     end
 
     # Register a source class. The parameter +klass+ has to contain the name of the source class or
@@ -105,7 +121,7 @@ module Webgen
         active_source = extension('stacked').new(@website, @website.config['sources'].collect do |mp, name, *args|
                                                    [mp, extension(name).new(@website, *args)]
                                                  end)
-        passive_source = extension('stacked').new(@website, @website.config['sources.passive'].collect do |mp, name, *args|
+        passive_source = extension('stacked').new(@website, @passive_sources.collect do |mp, name, *args|
                                                     [mp, extension(name).new(@website, *args)]
                                                   end)
         passive_source.paths.each {|path| path['passive'] = true}

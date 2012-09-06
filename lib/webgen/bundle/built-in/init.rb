@@ -275,8 +275,6 @@ end
 
 option('sources', [['/', :file_system, 'src']],
        'One or more sources from which paths are read', &sources_validator)
-option('sources.passive', [['/', :file_system, File.join(Webgen::Utils.data_dir, 'passive_sources')]],
-       'One or more sources from which paths are read that are only used when referenced ', &sources_validator)
 option('sources.ignore_paths', ['**/*~', '**/.svn/**'],
        'Patterns for paths that should be ignored') do |val|
   raise "The value has to be an array of patterns" unless val.kind_of?(Array) && val.all? {|item| item.kind_of?(String)}
@@ -287,6 +285,8 @@ website.ext.source = source = Webgen::Source.new(website)
 source.register("FileSystem")
 source.register("Stacked")
 source.register("TarArchive")
+
+source.passive_sources << ['/', :file_system, File.join(Webgen::Utils.data_dir, 'passive_sources')]
 
 
 ########################################################################

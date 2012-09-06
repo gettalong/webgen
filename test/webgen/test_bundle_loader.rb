@@ -9,7 +9,7 @@ class TestBundleLoader < MiniTest::Unit::TestCase
   include Webgen::TestHelper
 
   def setup
-    setup_website({'sources.passive' => [['/', :file, 'other']]})
+    setup_website
 
     @extdir = File.join(@website.directory, 'ext')
     FileUtils.mkdir_p(File.join(@extdir, 'my_ext'))
@@ -43,10 +43,13 @@ class TestBundleLoader < MiniTest::Unit::TestCase
     File.open(@ext_file, 'w+') do |f|
       f.puts("mount_passive('data', '/test')")
     end
+    @website.ext.source = OpenStruct.new
+    @website.ext.source.passive_sources = [['/', :file, 'other']]
+
     @loader.load('init.rb')
     assert($LOADED_FEATURES.include?(@webgen_file))
     assert_equal([['/test', :file_system, File.expand_path(File.dirname(@ext_file) + '/data')],
-                  ['/', :file, 'other']], @website.config['sources.passive'])
+                  ['/', :file, 'other']], @website.ext.source.passive_sources)
   end
 
 end

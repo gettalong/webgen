@@ -51,8 +51,8 @@ class TestSource < MiniTest::Unit::TestCase
     path3.expect(:path, 'path3')
     path3.expect(:hash, 'path3.file'.hash)
 
+    @src.passive_sources << ['/', 'my_source', [path2]]
     @website.expect(:config, {'sources' => [['/', 'my_source', [path1, path2]], ['/hallo/', 'my_source', [path3]]],
-                      'sources.passive' => [['/', 'my_source', [path2]]],
                       'sources.ignore_paths' => ['**.data']})
     assert_equal({'path1' => path1, 'path3' => path3}, @src.paths)
     [@website, path1, path2, path3].each {|m| m.verify}
