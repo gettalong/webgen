@@ -29,7 +29,7 @@ module Webgen
 
     # Construct an internal URL for the given +path+ which can be an acn/alcn/absolute path. If the
     # parameter +make_absolute+ is +true+, then a relative URL will be made absolute by prepending
-    # the special URL <tt>webgen:://webgen.localhost/</tt>.
+    # the special URL 'webgen:://webgen.localhost/'.
     def self.url(path, make_absolute = true)
       url = URI.parse(URI::DEFAULT_PARSER.escape(path, URL_UNSAFE_PATTERN))
       url = URI.parse('webgen://webgen.localhost/') + url unless url.absolute? || !make_absolute
@@ -207,7 +207,7 @@ module Webgen
     end
     alias_method(:eql?, :==)
 
-    # Compare the #path of this object to <tt>other.path</tt>
+    # Compare the #path of this object to 'other.path'.
     def <=>(other)
       @path <=> other.to_str
     end

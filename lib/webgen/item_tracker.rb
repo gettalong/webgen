@@ -21,22 +21,22 @@ module Webgen
   #
   # An item tracker extension class must respond to the following four methods:
   #
-  # [<tt>initialize(website)</tt>]
+  # [initialize(website)]
   #   Initializes the extension and provides the website object which can be used to resolve the
   #   item ID to the referenced item or item data itself.
   #
-  # [<tt>item_id(*item)</tt>]
+  # [item_id(*item)]
   #   Return the unique ID for the given item. The returned ID has to be unique for this item
   #   tracker extension
   #
-  # [<tt>item_data(*item)</tt>]
+  # [item_data(*item)]
   #   Return the data for the item so that it can be correctly checked later if it has changed.
   #
-  # [<tt>changed?(item_id, old_data)</tt>]
+  # [changed?(item_id, old_data)]
   #   Return +true+ if the item identified by its unique ID has changed. The parameter +old_data+
   #   contains the last known data of the item.
   #
-  # [<tt>node_referenced?(item_id, node_alcn)</tt>]
+  # [node_referenced?(item_id, node_alcn)]
   #   Return +true+ if the node identified by +node_alcn+ is referenced in the item identified by
   #   its unique ID.
   #

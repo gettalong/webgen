@@ -36,15 +36,14 @@ module Webgen
       # Create a node from +path+, if possible, yield the full initialized node if a block is given
       # and return it.
       #
-      # If no node can be created (e.g. when <tt>path.meta_info['draft']</tt> is set), +nil+ is
-      # returned.
+      # If no node can be created (e.g. when 'path.meta_info['draft']' is set), +nil+ is returned.
       #
       # The parent node under which the new node should be created can optionally be specified via
-      # <tt>path.meta_info['parent_alcn']</tt>. This meta information has to be set to an alcn of an
+      # 'path.meta_info['parent_alcn']'. This meta information has to be set to an alcn of an
       # existing node.
       #
-      # On the created node, the node information <tt>:path</tt> is set to the given path and
-      # <tt>:path_handler</tt> to the path handler instance.
+      # On the created node, the node information +:path+ is set to the given path and
+      # +:path_handler+ to the path handler instance.
       def create_node(path)
         return nil if path.meta_info['draft']
         parent = parent_node(path)

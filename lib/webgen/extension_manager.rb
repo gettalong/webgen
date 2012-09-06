@@ -29,10 +29,10 @@ module Webgen
 
     # Register a new extension.
     #
-    # **Note** that this method has to be implemented by classes that include this module. It
-    # should register one or more names for an extension object by associating the names with the
-    # extension object data (should be an object that responds at least to :object, :author and
-    # :summary) via the <tt>@extensions</tt> hash. See also #do_register.
+    # **Note** that this method has to be implemented by classes that include this module. It should
+    # register one or more names for an extension object by associating the names with the extension
+    # object data (should be an object that responds at least to :object, :author and :summary) via
+    # the @extensions hash. See also #do_register.
     def register(klass, options = {}, &block)
       raise NotImplementedError
     end
@@ -67,9 +67,10 @@ module Webgen
     private :do_register
 
     # Return a complete class name (including the hierarchy part) based on +klass+ and the class
-    # name without the hierarchy part. If the parameter +do_autoload+ is +true+ and the +klass+ is
-    # defined under this class, it is autoloaded by turning the class name into a path name (See
-    # Webgen::Utils.snake_case).
+    # name without the hierarchy part.
+    #
+    # If the parameter +do_autoload+ is +true+ and the +klass+ is defined under this class, it is
+    # autoloaded by turning the class name into a path name (See Webgen::Utils.snake_case).
     def normalize_class_name(klass, do_autoload = true)
       klass = (klass.kind_of?(Class) || klass.include?('::') ? klass : "#{self.class.name}::#{klass}")
       klass_name = klass.to_s.split(/::/).last
@@ -80,9 +81,10 @@ module Webgen
     end
     private :normalize_class_name
 
-    # Return the registered object for the extension +name+. This method also works in the case
-    # that +name+ is a String referencing a class. The method assumes that
-    # <tt>@extensions[name]</tt> is an array where the registered object is the first element!
+    # Return the registered object for the extension +name+.
+    #
+    # This method also works in the case that +name+ is a String referencing a class. The method
+    # assumes that @extensions[name] is an array where the registered object is the first element!
     def extension(name)
       raise Webgen::Error.new("No extension called '#{name}' registered for the '#{self.class.name}' extension manager") unless registered?(name)
       name = name.to_sym

@@ -26,8 +26,8 @@ module Webgen
       # sections.
       #
       # Only those headers are used which have an +id+ attribute set. The method returns a list of
-      # arrays with entries <tt>level, id, title, sub sections</tt> where <tt>sub sections</tt> is
-      # such a list again.
+      # arrays with entries 'level, id, title, sub sections' where 'sub sections' is such a list
+      # again.
       def self.parse_html_headers(content)
         sections = []
         stack = []

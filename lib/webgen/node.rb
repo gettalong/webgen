@@ -59,14 +59,17 @@ module Webgen
     #
     # [+parent+ (immutable)]
     #    The parent node under which this nodes should be created.
+    #
     # [+cn+ (immutable)]
-    #    The canonical name for this node. Needs to be of the form <tt>basename.ext</tt> or
-    #    <tt>basename</tt> where +basename+ does not contain any dots. Also, the +basename+ must not
-    #    include a language part!
+    #    The canonical name for this node. Needs to be of the form 'basename.ext' or 'basename'
+    #    where +basename+ does not contain any dots. Also, the +basename+ must not include a
+    #    language part!
+    #
     # [+dest_path+ (immutable)]
     #    The full output path for this node. If this node is a directory, the path must have a
-    #    trailing slash (<tt>dir/</tt>). If it is a fragment, it has to include a hash sign. This
-    #    can also be an absolute path like <tt>http://myhost.com/</tt>.
+    #    trailing slash ('dir/'). If it is a fragment, it has to include a hash sign. This can also
+    #    be an absolute path like http://myhost.com.
+    #
     # [+meta_info+]
     #    A hash with meta information for the new node.
     #
@@ -195,8 +198,8 @@ module Webgen
     # information. Be aware that all key-value pairs with Symbol keys are removed before the
     # attributes are written. Therefore you always need to specify general attributes with strings!
     #
-    # If the special value <tt>:link_text</tt> is present in the attributes, it will be used as the
-    # link text; otherwise the title of the +node+ will be used.
+    # If the special value :link_text is present in the attributes, it will be used as the link
+    # text; otherwise the title of the +node+ will be used.
     def link_to(node, lang = @lang, attr = {})
       attr = node['link_attrs'].merge(attr) if node['link_attrs'].kind_of?(Hash)
       rnode = node.proxy_node(lang)

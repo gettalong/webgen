@@ -21,7 +21,7 @@ module Webgen
       end
 
       # Assume that the content of the given +path+ is in Webgen Page Format and parse it. Updates
-      # <tt>path.meta_info</tt> with the meta info from the page and returns the content blocks.
+      # 'path.meta_info' with the meta info from the page and returns the content blocks.
       def parse_as_page!(path)
         begin
           page = Webgen::Page.from_data(path.data, path.meta_info)

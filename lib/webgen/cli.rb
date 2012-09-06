@@ -78,7 +78,7 @@ module Webgen
       # Specifies whether verbose output should be used.
       attr_reader :verbose
 
-      # The log level. Default: <tt>Logger::INFO</tt>
+      # The log level. Default: Logger::INFO
       attr_reader :log_level
 
       # Create a new CommandParser class.

@@ -24,22 +24,22 @@ module Webgen
   #
   # A destination class must respond to the following five methods:
   #
-  # [<tt>initialize(website, *args)</tt>]
+  # [initialize(website, *args)]
   #   The website instance is always provided as the first argument and the initialize method can
   #   have any number of other parameters.
   #
-  # [<tt>exists?(path)</tt>]
+  # [exists?(path)]
   #   Return +true+ if the given path exists.
   #
-  # [<tt>delete(path)</tt>]
+  # [delete(path)]
   #   Delete the given path.
   #
-  # [<tt>write(path, data)</tt>]
+  # [write(path, data)]
   #   Write the +data+ to the given +path+. If +path+ ends with a slash, a directory should be
   #   created. The parameter +data+ is either a String with the content or a Webgen::Path object. If
   #   it is the latter, use the Webgen::Path#io method for retrieving the IO object.
   #
-  # [<tt>read(path, mode = 'rb')</tt>]
+  # [read(path, mode = 'rb')]
   #   Return the content of the given path if it exists or raise an error otherwise. The parameter
   #   +mode+ specifies the mode in which the path should be opened and defaults to reading in binary
   #   mode.

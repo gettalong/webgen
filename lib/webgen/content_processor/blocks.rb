@@ -33,17 +33,20 @@ module Webgen
       # The Webgen::Context object +context+ is used as the render context and the +options+ hash
       # needs to hold all relevant information, that is:
       #
-      # [<tt>:name</tt> (mandatory)]
+      # [:name (mandatory)]
       #   The name of the block that should be used.
-      # [<tt>:chain</tt>]
-      #   The node chain used for rendering. If this is not specified, the node chain from the context
-      #   is used. It needs to be a String in the format <tt>(A)LCN;(A)LCN;...</tt> or an array of
+      #
+      # [:chain]
+      #   The node chain used for rendering. If this is not specified, the node chain from the
+      #   context is used. It needs to be a String in the format '(A)LCN;(A)LCN;...' or an array of
       #   nodes.
-      # [<tt>:node</tt>]
+      #
+      # [:node]
       #   Defines which node in the node chain should be used. Valid values are +next+ (= default
       #   value; the next node in the node chain), +first+ (the first node in the node chain with a
       #   block called +name+) or +current+ (the currently rendered node, ignores the +chain+ option).
-      # [<tt>:notfound</tt>]
+      #
+      # [:notfound]
       #   If this property is set to +ignore+, a missing block will not raise an error. It is unset by
       #   default, so missing blocks will raise errors.
       #

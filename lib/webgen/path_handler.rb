@@ -46,20 +46,20 @@ module Webgen
   # on a created node. If you use the +create_node+ method provided by this base class, you don't
   # need to set them explicitly because this is done by the method:
   #
-  # [<tt>node_info[:processor]</tt>] Has to be set to the class name of the source handler. This is
-  #                                  used by the Node class: all unknown method calls are forwarded
-  #                                  to the node processor.
-  # [<tt>node_info[:src]</tt>] Has to be set to the string version of the path that lead to the
-  #                            creation of the node.
-  # [<tt>node_info[:creation_path]</tt>] Has to be set to the string version of the path that is
-  #                                      used to create the path.
-  # [<tt>meta_info['no_output']</tt>] Has to be set to +true+ on nodes that are used during a
-  #                                   webgen run but do not produce an output file.
-  # [<tt>meta_info['modified_at']</tt>] Has to be set to the current time if not already set
-  #                                     correctly (ie. if not a Time object).
+  # [node_info[:processor]] Has to be set to the class name of the source handler. This is used by
+  #                         the Node class: all unknown method calls are forwarded to the node
+  #                         processor.
+  # [node_info[:src]] Has to be set to the string version of the path that lead to the creation of
+  #                   the node.
+  # [node_info[:creation_path]] Has to be set to the string version of the path that is used to
+  #                             create the path.
+  # [meta_info['no_output']] Has to be set to +true+ on nodes that are used during a webgen run but
+  #                          do not produce an output file.
+  # [meta_info['modified_at']] Has to be set to the current time if not already set correctly (ie.
+  #                            if not a Time object).
   #
-  # If <tt>meta_info['draft']</tt> is set on a path, then no node should be created in +create_node+
-  # and +nil+ has to be returned.
+  # If 'meta_info['draft']' is set on a path, then no node should be created in +create_node+ and
+  # +nil+ has to be returned.
   #
   # Note: The difference between +:src+ and +:creation_path+ is that a creation path
   # need not have an existing source path representation. For example, fragments created from a page
@@ -79,15 +79,15 @@ module Webgen
   # == Path Patterns and Invocation order
   #
   # Path patterns define which paths are handled by a specific source handler. These patterns are
-  # specified in the <tt>sourcehandler.patterns</tt> configuration hash as a mapping from the source
+  # specified in the 'sourcehandler.patterns' configuration hash as a mapping from the source
   # handler class name to an array of path patterns. The patterns need to have a format that
-  # <tt>Dir.glob</tt> can handle. You can use the configuration helper +patterns+ to set this (is
-  # shown in the example below).
+  # Dir.glob can handle. You can use the configuration helper +patterns+ to set this (is shown in
+  # the example below).
   #
   # Specifying a path pattern does not mean that webgen uses the source handler. One also needs to
-  # provide an entry in the configuration value <tt>sourcehandler.invoke</tt>. This is a hash that
-  # maps the invocation rank (a number) to an array of source handler class names. The lower the
-  # invocation rank the earlier the specified source handlers are used.
+  # provide an entry in the configuration value 'sourcehandler.invoke'. This is a hash that maps the
+  # invocation rank (a number) to an array of source handler class names. The lower the invocation
+  # rank the earlier the specified source handlers are used.
   #
   # The default invocation ranks are:
   # [1] Early. Normally there is no need to use this rank.
@@ -100,9 +100,8 @@ module Webgen
   # Each path handler can define default meta information that gets automatically set on the source
   # paths that are passed to the #create_node method.
   #
-  # The default meta information is specified in the <tt>sourcehandler.default_meta_info</tt>
-  # configuration hash as a mapping from the source handler class name to the meta information
-  # hash.
+  # The default meta information is specified in the 'sourcehandler.default_meta_info' configuration
+  # hash as a mapping from the source handler class name to the meta information hash.
   #
   # == Sample Path Handler
   #

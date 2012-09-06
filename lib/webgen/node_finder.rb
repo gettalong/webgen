@@ -22,12 +22,12 @@ module Webgen
   # === Non-filter options
   #
   # [:limit] Value: an integer. Specifies the maximum number of nodes that should be returned.
-  #          Implies <tt>flatten = true</tt>.
+  #          Implies 'flatten = true'.
   #
   #          Note that fewer nodes may be returned if fewer nodes match the filter criterias.
   #
   # [:offset] Value: an integer. Specifies how many nodes from the front of the list should not be
-  #           returned. Implies <tt>flatten = true</tt>.
+  #           returned. Implies 'flatten = true'.
   #
   # [:flatten] Value: anything except +nil+ or +false+. A flat list of nodes is returned if this
   #            option is set, otherwise the nodes are returned in their correct hierarchical order
@@ -36,8 +36,7 @@ module Webgen
   #
   #            Note that any missing nodes in the hierarchy are automatically added so that
   #            traversing the hierarchy is always possible. For example, if we have the tree
-  #            <tt>/a/b/c</tt> and only nodes +a+ and +c+ are found, node +b+ is automatically
-  #            added.
+  #            '/a/b/c' and only nodes +a+ and +c+ are found, node +b+ is automatically added.
   #
   # [:sort] Value: +nil+/+false+, +true+ or a meta information key. If +nil+ or +false+ is
   #         specified, no sorting is performed. If +true+ is specified, the meta information
@@ -119,7 +118,7 @@ module Webgen
 
     # Return all nodes that match certain criterias. The parameter +opts_or_name+ can either be a
     # hash with finder options or the name of a finder option set defined using the configuration
-    # option <tt>node_finder.options_sets</tt>. The node +ref_node+ is used as reference node.
+    # option 'node_finder.options_sets'. The node +ref_node+ is used as reference node.
     def find(opts_or_name, ref_node)
       opts = prepare_options_hash(opts_or_name)
 

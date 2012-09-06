@@ -113,8 +113,8 @@ module Webgen
 
     # Delete the node and all of its children from the tree.
     #
-    # The message <tt>:before_node_deleted</tt> is sent with the to-be-deleted node before the node
-    # is actually deleted from the tree.
+    # The message +:before_node_deleted+ is sent with the to-be-deleted node before the node is
+    # actually deleted from the tree.
     def delete_node(node)
       return if node.nil? || !node.kind_of?(Node) || node == @dummy_root
 

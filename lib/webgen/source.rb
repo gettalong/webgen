@@ -10,8 +10,8 @@ module Webgen
   # == About this class
   #
   # This class is used to manage source classes. A source class is a class that returns a set of
-  # Path objects when the <tt>\#paths</tt> method is called. For example, the FileSystem class uses
-  # the file system as the source for the source paths.
+  # Path objects when the \#paths method is called. For example, the FileSystem class uses the file
+  # system as the source for the source paths.
   #
   # The #register method is used for registering new source classes.
   #
@@ -27,10 +27,10 @@ module Webgen
   # returns the same path objects. The +initialize+ method of a source class must take the website
   # object as first argument and may take an arbitrary number of additional arguments.
   #
-  # Note that the returned Path objects need to have the meta information <tt>modified_at</tt> set
-  # to the correct last modification time of the path, i.e. the value has to be a Time object! This
-  # is needed to determine whether the content of the path has been changed since the last
-  # invocation of webgen.
+  # Note that the returned Path objects need to have the meta information 'modified_at' set to the
+  # correct last modification time of the path, i.e. the value has to be a Time object! This is
+  # needed to determine whether the content of the path has been changed since the last invocation
+  # of webgen.
   #
   # == Sample source class
   #

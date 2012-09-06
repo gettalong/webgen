@@ -18,18 +18,17 @@ module Webgen
     #
     # = Internal details
     #
-    # The key <tt>:cp_html_head</tt> of <tt>context.persistent</tt> is used (the normal
-    # <tt>context.options</tt> won't do because the data needs to be shared 'backwards' during the
-    # rendering) and it has to be a Hash with the following values:
+    # The key ':cp_html_head' of 'context.persistent' is used (the normal 'context.options' won't do
+    # because the data needs to be shared 'backwards' during the rendering) and it has to be a Hash
+    # with the following values:
     #
     # [:js_file] An array of already resolved relative or absolute paths to Javascript files.
     # [:js_inline] An array of Javascript fragments to be inserted directly into the head section.
     # [:css_file] An array of already resolved relative or absolute paths to CSS files.
     # [:css_inline] An array of CSS fragments to be inserted directly into the head section.
-    # [:meta] A hash with key-value pairs from which <tt>meta</tt> tags are generated. The keys and
-    #         the values will be properly escaped before insertion. The entries in the meta
-    #         information <tt>meta</tt> of the content node are also used and take precedence over
-    #         these entries.
+    # [:meta] A hash with key-value pairs from which 'meta' tags are generated. The keys and the
+    #         values will be properly escaped before insertion. The entries in the meta information
+    #         'meta' of the content node are also used and take precedence over these entries.
     #
     # Duplicate values will be removed from the above mentioned arrays before generating the output.
     #

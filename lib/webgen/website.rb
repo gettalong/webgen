@@ -164,7 +164,7 @@ module Webgen
   class Website
 
     # The website configuration. Can only be used after #init has been called (which is
-    # automatically done in #render).
+    # automatically done in #generate).
     attr_reader :config
 
     # The blackboard used for inter-object communication. Can only be used after #init has been

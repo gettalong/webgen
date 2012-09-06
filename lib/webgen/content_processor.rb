@@ -29,8 +29,7 @@ module Webgen
   # == Sample Content Processor
   #
   # The following sample content processor checks for a meta information +replace_key+ and replaces
-  # strings of the form <tt>replace_key:path/to/node</tt> with a link to the specified node if it is
-  # found.
+  # strings of the form 'replace_key:path/to/node' with a link to the specified node if it is found.
   #
   # Note how the content node, the reference node and the destination node are used so that the
   # correct meta information is used, the node is correctly resolved and the correct relative link
@@ -76,7 +75,7 @@ module Webgen
     #         of the class name (without the hierarchy part). It should only contain letters.
     #
     # [:type] Defines which type of content the content processor can process. Can be set to either
-    #         <tt>:text</tt> (the default) or <tt>:binary</tt>.
+    #         :text (the default) or :binary.
     #
     # [:ext_map] Defines a mapping of pre-processed file extension names to post-processed
     #            file extension names (e.g. {'sass' => 'css'}).

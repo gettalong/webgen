@@ -16,10 +16,10 @@ module Webgen
   #            the newly set data) if it is available. This is useful, for example, to store file
   #            modifcation times and check if a file has been changed between runs.
   #
-  # The standard cache should be accessed through the <tt>[]</tt> method which returns the correct
-  # value and the <tt>[]=</tt> method should be used for setting the new value. However, if you
-  # really need to access a particular value of the old or new standard cache, you can use the
-  # accessors +old_data+ and +new_data+.
+  # The standard cache should be accessed through the #[] method which returns the correct value and
+  # the #[]= method should be used for setting the new value. However, if you really need to access
+  # a particular value of the old or new standard cache, you can use the accessors +old_data+ and
+  # +new_data+.
   class Cache
 
     # The permanent cache hash.

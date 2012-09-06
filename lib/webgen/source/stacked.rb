@@ -13,8 +13,8 @@ module Webgen
     # * First, it can be used to access more than one source. This is useful when your website
     #   consists of more than one source directory and you want to use all of them.
     #
-    # * Second, sources can be mounted on specific directories. For example, a folder with images that
-    #   you don't want to copy to the website source directory can be mounted under <tt>/images</tt>
+    # * Second, sources can be mounted on specific directories. For example, a folder with images
+    #   that you don't want to copy to the website source directory can be mounted under '/images'
     #   so that they are available nonetheless.
     #
     # Also be aware that when a path is returned by a source that has already be returned by a prior

@@ -20,7 +20,7 @@ module Webgen
   # [body]: Holds the body value for the tag if any.
   #
   # [context]: Holds all relevant information for processing -- have a look at the Webgen::Context
-  #            class to see what is available. The special key <tt>:config</tt> is set to an
+  #            class to see what is available. The special key :config is set to an
   #            Webgen::Configuration object that should be used to retrieve configuration option
   #            values because the values might be changed due to options set directly via the tag
   #            syntax.
@@ -38,8 +38,8 @@ module Webgen
   #
   # webgen tags allow the specification of options in the tag definition. When registering a tag,
   # one can specify which options are mandatory, i.e. which options always have to be set directly
-  # for the tag. The value of the option <tt>:config_base</tt> for the ::register method is used to
-  # resolve partially stated configuration entries.
+  # for the tag. The value of the option :config_base for the ::register method is used to resolve
+  # partially stated configuration entries.
   #
   # == Sample Tag
   #
@@ -100,9 +100,8 @@ module Webgen
     # === Options:
     #
     # [:names] The tag name or an array of tag names. If not set, it defaults to the lowercase
-    #          version of the class name (without the hierarchy part). The name <tt>:default</tt> is
-    #          used for specifying the default tag which is called if an unknown tag name is
-    #          encountered.
+    #          version of the class name (without the hierarchy part). The name :default is used for
+    #          specifying the default tag which is called if an unknown tag name is encountered.
     #
     # [:config_base] The configuration base, i.e. the part of a configuration option name that does
     #                not need to be specified. Defaults to the full class name without the Webgen

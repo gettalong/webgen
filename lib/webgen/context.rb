@@ -11,10 +11,10 @@ module Webgen
   # that is rendered. The needed context variables are stored in the +options+ hash. You can set any
   # options you like, however, there are two noteworthy options:
   #
-  # [<tt>:content</tt>]
+  # [:content]
   #   The content string that should be processed. This option is always set.
   #
-  # [<tt>:chain</tt>]
+  # [:chain]
   #   The chain of nodes that is processed. There are some utiltity methods for getting
   #   special nodes of the chain (see Nodes#ref_node, Nodes#content_node and Nodes#dest_node).
   #
@@ -24,10 +24,9 @@ module Webgen
   #
   # If you want to add custom methods to each context object of your website that is created, you
   # just need to define one or more modules in which your custom methods are defined and then add
-  # the modules to the <tt>website.ext.context_modules</tt> array (or create it if it does not
-  # exist).
+  # the modules to the 'website.ext.context_modules' array (or create it if it does not exist).
   #
-  # Here is a simple (nonsensical) example:
+  # Here is a simple example:
   #
   #   module MyContextMethods
   #
@@ -62,12 +61,11 @@ module Webgen
     attr_reader :website
 
     # Create a new Context object belonging to the website object +website+. All modules listed in
-    # the array <tt>website.ext.context_modules</tt> are automatically used to extend the Context
-    # object.
+    # the array 'website.ext.context_modules' are automatically used to extend the Context object.
     #
     # The following options are set by default and can be overridden via the +options+ hash:
     #
-    # [<tt>:content</tt>]
+    # [:content]
     #   Is set to an empty string.
     def initialize(website, options = {}, persistent = {})
       @website = website
@@ -92,12 +90,12 @@ module Webgen
       @options[name] = value
     end
 
-    # Return the <tt>:content</tt> option.
+    # Return the :content option.
     def content
       @options[:content]
     end
 
-    # Set the <tt>:content</tt> option to the given +value+.
+    # Set the :content option to the given +value+.
     def content=(value)
       @options[:content] = value
     end

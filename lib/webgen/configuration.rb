@@ -113,8 +113,8 @@ module Webgen
     #     lang: en
     #     url: my_url
     #
-    # The above hash will set the option <tt>my.option</tt> to +value+, <tt>website.lang</tt> to
-    # +en+ and <tt>website.url</tt> to +my_url+.
+    # The above hash will set the option 'my.option' to +value+, 'website.lang' to +en+ and
+    # 'website.url' to +my_url+.
     #
     # Returns an array with all unknown configuration options.
     def set_values(values)
