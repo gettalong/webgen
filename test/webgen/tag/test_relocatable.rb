@@ -29,7 +29,8 @@ class TestTagRelocatable < MiniTest::Unit::TestCase
 
     # invalid paths
     @context[:config] = {'tag.relocatable.path' => ':/asdf=-)'}
-    assert_raises(Webgen::RenderError) { Webgen::Tag::Relocatable.call('relocatable', '', @context) }
+    Webgen::Tag::Relocatable.call('relocatable', '', @context)
+    assert_log_match(/Could not parse path/)
   end
 
   def assert_tag_result(result, path)

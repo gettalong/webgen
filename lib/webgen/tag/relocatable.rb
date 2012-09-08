@@ -20,8 +20,10 @@ module Webgen
         begin
           result = (Webgen::Path.url(path, false).absolute? ? path : resolve_path(path, context))
         rescue URI::InvalidURIError => e
-          raise Webgen::RenderError.new("Error while parsing path '#{path}': #{e.message}",
-                                        self.name, context.dest_node, context.ref_node)
+          context.website.logger.warn do
+            ["Could not parse path '#{path}' for tag.relocatable in <#{context.ref_node}>",
+             e.message]
+          end
         end
         result
       end
