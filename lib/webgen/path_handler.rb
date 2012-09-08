@@ -308,12 +308,13 @@ module Webgen
     # If the secondary nodes are created during the rendering phase, the +source_alcn+ has to be set
     # to the node alcn from which these nodes are created!
     def create_secondary_nodes(path, content, handler = nil, source_alcn = nil)
-      path.set_io { StringIO.new(content) }
-      if @secondary_nodes.has_key?(path.path)
-        raise Webgen::NodeCreationError.new("Duplicate secondary path name <#{path.path}>", self.class.name, path)
+      if @secondary_nodes.has_key?(path)
+        raise Webgen::NodeCreationError.new("Duplicate secondary path name <#{path}>", self.class.name, path)
       end
-      @secondary_nodes[path.path] = [source_alcn, handler, content] if source_alcn
+      path.set_io(&nil)
+      @secondary_nodes[path.dup] = [source_alcn, handler, content] if source_alcn
 
+      path.set_io { StringIO.new(content) }
       nodes = if handler
                 create_nodes_with_path_handler(path, handler)
               else
