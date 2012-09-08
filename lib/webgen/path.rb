@@ -189,9 +189,9 @@ module Webgen
       io(mode) {|io| io.read}
     end
 
-    # Set the IO block through the given proc object or by providing a block.
-    def set_io(block = nil)
-      @ioblock = (block.nil? ? Proc.new : block)
+    # Set the IO block to the provided block.
+    def set_io(&block)
+      @ioblock = block
     end
 
     # Equality -- Return +true+ if +other+ is a Path object with the same #path or if +other+ is a

@@ -218,11 +218,14 @@ class TestPath < MiniTest::Unit::TestCase
     end
 
     path = Webgen::Path.new('/test.page')
-    path.set_io(proc { StringIO.new('hallo') })
+    path.set_io(&proc { StringIO.new('hallo') })
     assert_equal('hallo', path.data)
 
     path.set_io { StringIO.new('hallo2') }
     assert_equal('hallo2', path.data)
+
+    path.set_io
+    assert_raises(RuntimeError) { path.data }
   end
 
   def test_equality
