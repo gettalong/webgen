@@ -251,6 +251,7 @@ class TestPath < MiniTest::Unit::TestCase
     assert_equal(0, (path <=> 'test.de.page'))
     h = { path => :newvalue }
     assert_nil(h['test.de.page'])
+    assert_equal(:newvalue, h[Webgen::Path.new('test.de.page')])
   end
 
   def test_introspection
