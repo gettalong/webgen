@@ -232,7 +232,7 @@ module Webgen
       unused_paths = @website.ext.source.paths.values - used_paths
       @website.logger.vinfo do
         "The following source paths have not been used: #{unused_paths.join(', ')}"
-      end
+      end if unused_paths.length > 0
 
       (@website.cache[:path_handler_secondary_nodes] || {}).each do |path, (source_alcn, handler, content)|
         next if @secondary_nodes.has_key?(path) || !@website.tree[source_alcn]
