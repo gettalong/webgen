@@ -1,6 +1,5 @@
 # -*- encoding: utf-8 -*-
 
-require 'set'
 require 'webgen/path'
 
 module Webgen
@@ -21,49 +20,66 @@ module Webgen
   #
   # === Non-filter options
   #
-  # [:limit] Value: an integer. Specifies the maximum number of nodes that should be returned.
-  #          Implies 'flatten = true'.
+  # [:limit]
+  #   Value: an integer. Specifies the maximum number of nodes that should be returned. Implies
+  #   'flatten = true'.
   #
-  #          Note that fewer nodes may be returned if fewer nodes match the filter criterias.
+  #   Note that fewer nodes may be returned if fewer nodes match the filter criterias.
   #
-  # [:offset] Value: an integer. Specifies how many nodes from the front of the list should not be
-  #           returned. Implies 'flatten = true'.
+  # [:offset]
+  #   Value: an integer. Specifies how many nodes from the front of the list should not be returned.
+  #   Implies 'flatten = true'.
   #
-  # [:flatten] Value: anything except +nil+ or +false+. A flat list of nodes is returned if this
-  #            option is set, otherwise the nodes are returned in their correct hierarchical order
-  #            using nested lists: If a node has no sub nodes, only the node itself is used;
-  #            otherwise a two element array containing the node and child nodes is used.
+  # [:flatten]
+  #   Value: anything except +nil+ or +false+. A flat list of nodes is returned if this option is
+  #   set, otherwise the nodes are returned in their correct hierarchical order using nested lists:
+  #   If a node has no sub nodes, only the node itself is used; otherwise a two element array
+  #   containing the node and child nodes is used.
   #
-  #            Note that any missing nodes in the hierarchy are automatically added so that
-  #            traversing the hierarchy is always possible. For example, if we have the tree
-  #            '/a/b/c' and only nodes +a+ and +c+ are found, node +b+ is automatically added.
+  #   Note that any missing nodes in the hierarchy are automatically added so that traversing the
+  #   hierarchy is always possible. For example, if we have the tree '/a/b/c' and only nodes +a+ and
+  #   +c+ are found, node +b+ is automatically added.
   #
-  # [:sort] Value: +nil+/+false+, +true+ or a meta information key. If +nil+ or +false+ is
-  #         specified, no sorting is performed. If +true+ is specified, the meta information
-  #         +sort_info+ (or if absent, the meta information +title+) is used for sorting. If the
-  #         compared values are both integers, a numeric comparison is done, else a string
-  #         comparison. If a meta information key is specified, the value of this meta information
-  #         is used for comparison of nodes.
+  # [:sort]
+  #   Value: +nil+/+false+, +true+ or a meta information key. If +nil+ or +false+ is specified, no
+  #   sorting is performed. If +true+ is specified, the meta information +sort_info+ (or if absent,
+  #   the meta information +title+) is used for sorting. If the compared values are both integers, a
+  #   numeric comparison is done, else a string comparison. If a meta information key is specified,
+  #   the value of this meta information is used for comparison of nodes.
   #
   # === Filter options
   #
-  # [:alcn] Value: an alcn pattern or an array of alcn patterns. Nodes that match any of the patterns
-  #         are used.
+  # [:alcn]
+  #   Value: an alcn pattern or an array of alcn patterns. Nodes that match any of the patterns are
+  #   used.
   #
-  # [:and] Value: a finder option set or an array of finder options sets (specifying option set
-  #        names is also possible). Only nodes that appear in all specified option sets are used.
+  # [:and]
+  #   Value: a finder option set or an array of finder options sets (specifying option set names is
+  #   also possible). Only nodes that appear in all specified option sets are used.
   #
-  # [:lang] Value: a language code/+nil+/the special value :+node+ or an array of these values.
-  #         Nodes that have one of the specified language codes, are language independent (in case
-  #         of the value +nil+) or have the same language as the reference node (in case of the
-  #         value :+node+) are used.
+  # [:lang]
+  #   Value: a language code/+nil+/the special value :+node+ or an array of these values. Nodes that
+  #   have one of the specified language codes, are language independent (in case of the value
+  #   +nil+) or have the same language as the reference node (in case of the value :+node+) are
+  #   used.
   #
-  # [:levels] Value: one integer (is used as start and end level) or an array with two integers (the
-  #           start and end levels). All nodes whose hierarchy levels are greater than or equal to
-  #           the start level and lower than or equal to the end level are used.
+  # [:levels]
+  #   Value: one integer (is used as start and end level) or an array with two integers (the start
+  #   and end levels). All nodes whose hierarchy levels are greater than or equal to the start level
+  #   and lower than or equal to the end level are used.
   #
-  # [:or] Value: a finder option set or an array of finder options sets (specifying option set names
-  #       is also possible). Nodes that appear in any specified option set are additionally used.
+  # [:or]
+  #   Value: a finder option set or an array of finder options sets (specifying option set names is
+  #   also possible). Nodes that appear in any specified option set are additionally used.
+  #
+  # [:ancestors]
+  #   Value: +true+ or +false+/+nil+. If this filter option is set to +true+, only nodes that are
+  #   ancestors of the reference node are used. The reference node itself is used as well.
+  #
+  # [:descendants]
+  #   Value: +true+ or +false+/+nil+. If this filter option is set to +true+, only nodes that are
+  #   descendants of the reference are used. The reference node itself is used as well.
+  #
   #
   # == Implementing a filter module
   #
@@ -94,7 +110,8 @@ module Webgen
       @website = website
       @mapping = {
         :alcn => :filter_alcn, :levels => :filter_levels, :lang => :filter_lang,
-        :and => :filter_and, :or => :filter_or
+        :and => :filter_and, :or => :filter_or,
+        :ancestors => :filter_ancestors, :descendants => :filter_descendants,
       }
     end
 
@@ -238,6 +255,25 @@ module Webgen
     def filter_lang(nodes, ref_node, langs)
       langs = [langs].flatten.map {|l| l == :node ? ref_node.lang : l}.uniq
       nodes.keep_if {|n| langs.any? {|l| n.lang == l}}
+    end
+
+    def filter_ancestors(nodes, ref_node, enabled)
+      return nodes unless enabled
+      nodes = []
+      node = ref_node
+      until node == node.tree.dummy_root
+        nodes.unshift(node)
+        node = node.parent
+      end
+      nodes
+    end
+
+    def filter_descendants(nodes, ref_node, enabled)
+      return nodes unless enabled
+      nodes.keep_if do |n|
+        n = n.parent while n != n.tree.dummy_root && n != ref_node
+        n == ref_node
+      end
     end
 
   end
