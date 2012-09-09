@@ -16,15 +16,18 @@ module Webgen
           super(root, options)
           @context = context
           @do_convert = context.website.config['content_processor.kramdown.handle_links']
+          @ignore_fragments = context.website.config['content_processor.kramdown.ignore_unknown_fragments']
         end
 
         def convert_a(el, indent)
-          el.attr['href'] = @context.tag('relocatable', {'path' => el.attr['href']}) if @do_convert
+          el.attr['href'] = @context.tag('relocatable', {'path' => el.attr['href'],
+                                           'ignore_unknown_fragment' => @ignore_fragments}) if @do_convert
           super
         end
 
         def convert_img(el, indent)
-          el.attr['src'] = @context.tag('relocatable', {'path' => el.attr['src']}) if @do_convert
+          el.attr['src'] = @context.tag('relocatable', {'path' => el.attr['src'],
+                                          'ignore_unknown_fragment' => @ignore_fragments}) if @do_convert
           super
         end
 

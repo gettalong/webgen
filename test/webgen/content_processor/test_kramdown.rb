@@ -14,8 +14,11 @@ class TestContentProcessorKramdown < MiniTest::Unit::TestCase
     hello = Webgen::Node.new(root, 'hello.html', '/hello.en.html')
     @website.config['content_processor.kramdown.options'] = {:auto_ids => true}
     @website.config['content_processor.kramdown.handle_links'] = true
+    @website.config['content_processor.kramdown.ignore_unknown_fragments'] = false
+
     @website.ext.tag = MiniTest::Mock.new
-    @website.ext.tag.expect(:call, 'hello.en.html', ['relocatable', {'path' => 'hello.html'}, '', @context])
+    @website.ext.tag.expect(:call, 'hello.en.html', ['relocatable', {'path' => 'hello.html',
+                                                       'ignore_unknown_fragment' => false}, '', @context])
 
     # test normal invocation
     @context.content = '# header'

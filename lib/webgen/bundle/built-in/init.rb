@@ -73,6 +73,8 @@ option('content_processor.kramdown.options', {:auto_ids => true},
        'The options hash for the kramdown processor')
 option('content_processor.kramdown.handle_links', true,
        'Whether all links in a kramdown document should be processed by webgen', &true_or_false)
+option('content_processor.kramdown.ignore_unknown_fragments', false,
+       'Specifies whether unknown, non-resolvable fragment parts should be ignored when handling links', &true_or_false)
 
 content_processor.register('Maruku')
 content_processor.register('RDiscount', :name => 'rdiscount')
