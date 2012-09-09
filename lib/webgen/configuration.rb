@@ -26,7 +26,11 @@ module Webgen
     class Error < Webgen::Error; end
 
     # Struct class for storing a configuration option.
-    Option = Struct.new(:default, :description, :validator)
+    Option = Struct.new(:default, :description, :validator) do
+      def dupped_default
+        default.dup rescue default
+      end
+    end
 
 
     # Contains all the defined configuration options.
@@ -81,10 +85,11 @@ module Webgen
     # Return the value for the configuration option +name+.
     def [](name)
       if @options.has_key?(name)
-        if @values.has_key?(name)
-          @values[name]
+        if frozen?
+          @values.has_key?(name) ? @values[name] : @options[name].dupped_default
         else
-          @options[name].default.dup rescue @options[name].default
+          @values[name] = @options[name].dupped_default unless @values.has_key?(name)
+          @values[name]
         end
       else
         raise Error, "Configuration option '#{name}' does not exist"
