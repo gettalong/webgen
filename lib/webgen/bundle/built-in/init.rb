@@ -310,6 +310,8 @@ option('tag.meta_info.escape_html', true,
 tag.register('Relocatable', :names => ['relocatable', 'r'], :mandatory => ['path'])
 option('tag.relocatable.path', nil,
        'The path which should be made relocatable', &is_string)
+option('tag.relocatable.ignore_unknown_fragment', false,
+       'Specifies whether an unknown, non-resolvable fragment part should be ignored', &true_or_false)
 
 tag.register('Link', :mandatory => ['path'])
 option('tag.link.path', nil,

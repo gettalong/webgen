@@ -31,10 +31,22 @@ module Webgen
       # Resolve the path +path+ using the reference node and return the correct relative path from the
       # destination node.
       def self.resolve_path(path, context)
-        dest_node = context.ref_node.resolve(path, context.dest_node.lang, true)
+        fragment = ''
+
+        if context[:config]['tag.relocatable.ignore_unknown_fragment']
+          file, *fragments = path.split('#')
+          fragment = '#' << fragments.join('#') unless fragments.empty?
+          dest_node = context.ref_node.resolve(file, context.dest_node.lang, true)
+          context.website.logger.vinfo do
+            "Ignoring unknown fragment part of path '#{path}' for tag.relocatable in <#{context.ref_node}>"
+          end if dest_node && fragment.length > 0
+        else
+          dest_node = context.ref_node.resolve(path, context.dest_node.lang, true)
+        end
+
         if dest_node
           context.website.ext.item_tracker.add(context.dest_node, :node_meta_info, dest_node.alcn)
-          context.dest_node.route_to(dest_node)
+          context.dest_node.route_to(dest_node) + fragment
         else
           ''
         end
