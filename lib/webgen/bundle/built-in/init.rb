@@ -397,3 +397,4 @@ require 'webgen/task'
 
 website.ext.task = task = Webgen::Task.new(website)
 task.register('GenerateWebsite')
+task.register('CreateWebsite', :data => {:templates => {}})
