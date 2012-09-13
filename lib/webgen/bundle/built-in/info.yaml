@@ -192,3 +192,9 @@ extensions:
 #  tag.menu:
 #    author: *author
 #    summary: Creates a customizable menu
+
+  task:
+    author: *author
+    summary: |
+      Provides a standard interface for working with tasks that perform actions like creating a
+      website or generating it.

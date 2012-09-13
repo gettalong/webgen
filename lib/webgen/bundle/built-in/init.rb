@@ -389,3 +389,10 @@ option('tag.breadcrumb_trail.template', '/templates/tag.template',
 
 #TODO: tag.register('Menu')
 #TODO: tag.register('Sitemap')
+
+
+########################################################################
+# Everything related to the task extension
+require 'webgen/task'
+
+website.ext.task = task = Webgen::Task.new(website)

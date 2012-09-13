@@ -302,11 +302,9 @@ module Webgen
       File.join(File.absolute_path(config['website.tmpdir'], @directory), path)
     end
 
-    # Generate the website.
-    def generate
-      successful = @ext.path_handler.generate_website
-      save_cache if successful
-      successful
+    # Execute the given task.
+    def execute_task(task, *options)
+      @ext.task.execute(task, *options)
     end
 
     # TODO: extract this method into a new Task extension. The website then just has an execute
