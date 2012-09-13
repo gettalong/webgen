@@ -8,6 +8,7 @@ require 'webgen/cli/utils'
 require 'webgen/cli/generate_command'
 require 'webgen/cli/show_command'
 require 'webgen/cli/bundle_command'
+require 'webgen/cli/create_command'
 
 module Webgen
 
@@ -127,6 +128,7 @@ module Webgen
         self.add_command(Webgen::CLI::GenerateCommand.new, true)
         self.add_command(Webgen::CLI::ShowCommand.new)
         self.add_command(Webgen::CLI::BundleCommand.new)
+        self.add_command(Webgen::CLI::CreateCommand.new)
       end
 
       # Utility method for getting the Webgen::Website object.
