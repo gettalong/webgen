@@ -17,7 +17,7 @@ module Webgen
 
       # Render the website.
       def execute(args)
-        commandparser.website.generate
+        commandparser.website.execute_task(:generate_website)
       end
 
     end

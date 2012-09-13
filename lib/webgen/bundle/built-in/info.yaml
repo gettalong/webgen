@@ -198,3 +198,6 @@ extensions:
     summary: |
       Provides a standard interface for working with tasks that perform actions like creating a
       website or generating it.
+  task.generate_website:
+    author: *author
+    summary: Generates the website

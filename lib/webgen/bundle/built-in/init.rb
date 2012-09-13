@@ -396,3 +396,4 @@ option('tag.breadcrumb_trail.template', '/templates/tag.template',
 require 'webgen/task'
 
 website.ext.task = task = Webgen::Task.new(website)
+task.register('GenerateWebsite')

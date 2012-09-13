@@ -197,29 +197,6 @@ module Webgen
       @instances[handler] ||= extension(handler).new(@website)
     end
 
-    # Main webgen task: generate the website.
-    #
-    # Returns +true+ if the website has been generated.
-    def generate_website
-      successful = true
-      @website.logger.info { "Generating website..." }
-      time = Benchmark.measure do
-        populate_tree
-        @website.blackboard.dispatch_msg(:after_tree_populated)
-        if @website.tree.root && !@website.tree.root['passive']
-          write_tree
-          @website.blackboard.dispatch_msg(:website_generated)
-        else
-          successful = false
-          @website.logger.info do
-            ['No active source paths found - maybe not a webgen website?',
-             'Change to a website directory and run the command again.']
-          end
-        end
-      end
-      @website.logger.info { "... done in " << ('%2.2f' % time.real) << ' seconds' }
-      successful
-    end
 
     # Populate the website tree with nodes. Can only be called once because the tree can only be
     # populated once!
@@ -238,10 +215,15 @@ module Webgen
         next if @secondary_nodes.has_key?(path) || !@website.tree[source_alcn]
         create_secondary_nodes(path, content, handler, source_alcn)
       end
+      @website.blackboard.dispatch_msg(:after_tree_populated)
     end
 
     # Write all changed nodes of the website tree to the respective destination.
+    #
+    # Returns the number of passes needed for correctly writing out all paths.
     def write_tree
+      passes = 0
+
       begin
         at_least_one_node_written = false
         @website.cache.reset_volatile_cache
@@ -264,7 +246,11 @@ module Webgen
           end
         end
         @website.blackboard.dispatch_msg(:after_all_nodes_written)
+        passes += 1 if at_least_one_node_written
       end while at_least_one_node_written
+
+      @website.blackboard.dispatch_msg(:website_generated)
+      passes
     end
 
     # Write the given node to the destination.

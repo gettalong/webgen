@@ -289,7 +289,6 @@ module Webgen
         config['website.cache'][1] = Marshal.dump(cache_data)
       end
     end
-    private :save_cache
 
     # The full path of the cache filename.
     def cache_file
