@@ -198,6 +198,9 @@ extensions:
     summary: |
       Provides a standard interface for working with tasks that perform actions like creating a
       website or generating it.
+  task.create_bundle:
+    author: *author
+    summary: Creates an extension bundle, either for local use or for distribution via Rubygems
   task.create_website:
     author: *author
     summary: Creates a webgen website, optionally using a template
