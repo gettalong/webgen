@@ -1,14 +1,14 @@
 # -*- encoding: utf-8 -*-
 
-require 'test/unit'
-require 'webgen/webgentask'
+require 'minitest/autorun'
+require 'webgen/rake_task'
 
-class TestWebgenTask < Test::Unit::TestCase
+class TestRakeTask < MiniTest::Unit::TestCase
 
   include Rake
 
   def test_create
-    site = Webgen::WebgenTask.new('doit') do |s|
+    site = Webgen::RakeTask.new('doit') do |s|
       s.clobber_outdir = true
       s.config_block = lambda {|c| c}
       s.directory = 'website'

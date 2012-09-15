@@ -1,16 +1,15 @@
 # -*- encoding: utf-8 -*-
 
-# -*- ruby -*-
 #
 #--
-# webgentask.rb:
+# rake_task.rb:
 #
 #   Define a task library for running webgen
 #
 # Copyright (C) 2007 Jeremy Hinegardner
 #
 # Tasks restructuration by Massimiliano Filacchioni
-# Modifications for 0.5.0 by Thomas Leitner
+# Modifications for 0.5.0- by Thomas Leitner
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -43,9 +42,9 @@ module Webgen
   #
   # == Basics
   #
-  #   require 'webgen/webgentask'
+  #   require 'webgen/rake_task'
   #
-  #   Webgen::WebgenTask.new
+  #   Webgen::RakeTask.new
   #
   # == Attributes
   #
@@ -63,24 +62,24 @@ module Webgen
   # The tasks provided are :
   #
   # [webgen]
-  #   render the webgen website
+  #   generate the webgen website
   # [clobber_webgen]
-  #   remove all the files created during generation
+  #   remove all files created during generation
   #
   # == Integrate webgen in other project
   #
   # To integrate webgen tasks in another project you can use rake namespaces.  For example assuming
-  # webgen's site directory is +webgen+ under the main project directory use the following code
+  # webgen's website directory is +webgen+ under the main project directory use the following code
   # fragment in project Rakefile:
   #
-  #   require 'webgen/webgentask'
+  #   require 'webgen/rake_task'
   #
   #   namespace :dev do
-  #     Webgen::WebgenTask.new do |site|
+  #     Webgen::RakeTask.new do |site|
   #       site.directory = File.join(Dir.pwd, "webgen")
   #       site.clobber_outdir = true
-  #       site.config_block = lambda |config|
-  #         config['website.lang'] = 'de'
+  #       site.config_block = lambda |website|
+  #         website.config['website.lang'] = 'de'
   #       end
   #     end
   #   end
@@ -94,20 +93,21 @@ module Webgen
   #
   # and add dev:clobber_webgen to the main clobber task.
   #
-  class WebgenTask < ::Rake::TaskLib
+  class RakeTask < ::Rake::TaskLib
 
-    # The directory of the webgen website. This would be the directory of your <tt>config.yaml</tt>
-    # file. Or the parent directory of the <tt>src/</tt> directory for webgen.
+    # The directory of the webgen website. This would be the directory of your
+    # <tt>webgen.config</tt> file. Or the parent directory of the <tt>src/</tt> directory for
+    # webgen.
     #
     # The default for this is assumed to be <tt>Dir.pwd</tt>
     attr_accessor :directory
 
     # The configuration block that is invoked when the Webgen::Website object is initialized. This
-    # can be used to set configuration parameters and to avoid having a <tt>config.yaml</tt> file
+    # can be used to set configuration parameters and to avoid having a <tt>webgen.config</tt> file
     # lying around.
     attr_accessor :config_block
 
-    # During the clobber, should webgen's output directory be clobbered. The default is false.
+    # During the clobber, should webgen's output directory be clobbered? The default is false.
     attr_accessor :clobber_outdir
 
     # Create webgen tasks. You can override the task name with the parameter +name+.
@@ -127,13 +127,14 @@ module Webgen
     #######
 
     def define # :nodoc:
-      desc "Render the webgen website"
-      task @name, :verbosity, :log_level do |t, args|
+      desc "Generate the webgen website"
+      task @name, :verbose, :debug do |t, args|
         require 'webgen/website'
-        website = Webgen::Website.new(@directory, Webgen::Logger.new($stdout), &@config_block)
-        website.logger.verbosity = args[:verbosity].to_s.intern unless args[:verbosity].to_s.empty?
-        website.logger.level = args[:log_level].to_i if args[:log_level]
-        website.render
+        require 'webgen/cli'
+        website = Webgen::Website.new(@directory, Webgen::CLI::Logger.new($stdout), &@config_block)
+        website.logger.verbose = args[:verbose] && args[:verbose].to_s == 'true'
+        website.logger.level = (args[:debug] && args[:debug].to_s == 'true' ? ::Logger::DEBUG : ::Logger::INFO)
+        website.execute_task(:generate_website)
       end
 
       task :clobber => paste('clobber_', @name)
@@ -141,8 +142,9 @@ module Webgen
       desc "Remove webgen products"
       task paste('clobber_', @name) do
         require 'webgen/website'
-        website = Webgen::Website.new(@directory, Webgen::Logger.new($stdout), &@config_block)
-        website.clean(@clobber_outdir)
+        require 'webgen/cli'
+        website = Webgen::Website.new(@directory, Webgen::CLI::Logger.new($stdout), &@config_block)
+        website.ext.destination.delete('/')
       end
     end
 

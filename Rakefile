@@ -16,7 +16,7 @@ require 'rake/testtask'
 require 'rake/packagetask'
 
 $:.unshift('lib')
-require 'webgen/webgentask'
+require 'webgen/rake_task'
 require 'webgen/version'
 require 'webgen/page'
 
@@ -39,7 +39,7 @@ desc "Build the whole user documentation"
 task :doc => [:rdoc, :htmldoc]
 
 desc "Generate the HTML documentation"
-Webgen::WebgenTask.new('htmldoc') do |site|
+Webgen::RakeTask.new('htmldoc') do |site|
   site.clobber_outdir = true
   site.config_block = lambda do |config|
     config['sources'] = [['/', "Webgen::Source::FileSystem", 'doc'],
@@ -235,7 +235,7 @@ EOF
   end
 
   desc 'Generates the webgen website'
-  Webgen::WebgenTask.new(:website) do |site|
+  Webgen::RakeTask.new(:website) do |site|
     site.directory = 'website'
     site.clobber_outdir = true
     site.config_block = lambda do |config|
