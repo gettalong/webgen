@@ -107,8 +107,8 @@ module Webgen
 
     # Mount the directory relative to the currently loaded file on the given mount point as passive
     # source.
-    def mount_passive(dir, mount_point = '/')
-      @website.ext.source.passive_sources.unshift([mount_point, :file_system, absolute_path(dir)])
+    def mount_passive(dir, mount_point = '/', glob = '**/*')
+      @website.ext.source.passive_sources.unshift([mount_point, :file_system, absolute_path(dir), glob])
     end
     private :mount_passive
 

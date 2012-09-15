@@ -41,14 +41,14 @@ class TestBundleLoader < MiniTest::Unit::TestCase
       f.puts("load('my_ext'); require_relative('webgen/init.rb')")
     end
     File.open(@ext_file, 'w+') do |f|
-      f.puts("mount_passive('data', '/test')")
+      f.puts("mount_passive('data', '/test', '*.hallo')")
     end
     @website.ext.source = OpenStruct.new
     @website.ext.source.passive_sources = [['/', :file, 'other']]
 
     @loader.load('init.rb')
     assert($LOADED_FEATURES.include?(@webgen_file))
-    assert_equal([['/test', :file_system, File.expand_path(File.dirname(@ext_file) + '/data')],
+    assert_equal([['/test', :file_system, File.expand_path(File.dirname(@ext_file) + '/data'), '*.hallo'],
                   ['/', :file, 'other']], @website.ext.source.passive_sources)
   end
 
