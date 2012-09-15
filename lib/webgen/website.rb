@@ -306,29 +306,6 @@ module Webgen
       @ext.task.execute(task, *options)
     end
 
-    # TODO: extract this method into a new Task extension. The website then just has an execute
-    # method that is given a task name and optional arguments.
-    #
-    # Clean the website directory from all generated output files (including the cache file). If
-    # +del_outdir+ is +true+, then the base output directory is also deleted. When a delete
-    # operation fails, the error is silently ignored and the clean operation continues.
-    #
-    # Note: Uses the configured output instance for the operations!
-    def clean(del_outdir = false)
-      @tree.node_access[:alcn].each do |name, node|
-        next if node.is_fragment? || node['no_output'] || node.path == '/' || node == @tree.dummy_root
-        output.delete(node.path) rescue nil
-      end
-
-      if @config['website.cache'].first == :file
-        FileUtils.rm(File.join(@directory, @config['website.cache'].last)) rescue nil
-      end
-
-      if del_outdir
-        output.delete('/') rescue nil
-      end
-    end
-
   end
 
 end
