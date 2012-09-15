@@ -234,6 +234,7 @@ module Webgen
       ext_dir = File.join(@directory, 'ext')
       ext_loader = BundleLoader.new(self, ext_dir)
       ext_loader.load('built-in')
+      ext_loader.load_autoload_bundles
       Dir[File.join(ext_dir, '**/init.rb')].sort.each {|file| ext_loader.load(file[ext_dir.length..-1])}
       ext_loader.load('init.rb') if File.file?(File.join(ext_dir, 'init.rb'))
     end

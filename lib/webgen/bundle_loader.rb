@@ -1,6 +1,7 @@
 # -*- encoding: utf-8 -*-
 
 require 'rbconfig'
+require 'yaml'
 
 module Webgen
 
@@ -37,6 +38,24 @@ module Webgen
         name = File.basename(File.dirname(file))
         info_file = File.join(File.dirname(file), 'info.yaml')
         @website.ext.bundles[name] = (File.file?(info_file) ? info_file : nil)
+      end
+    end
+
+    # Loads all bundles that are marked for auto-loading.
+    def load_autoload_bundles
+      Gem::Specification.map {|s| s.name }.uniq.each do |gem_name|
+        md = /^webgen-(.*)-bundle$/.match(gem_name)
+        next unless md
+
+        bundle_name = md[1]
+        file = resolve_init_file(bundle_name)
+        next unless file
+
+        info_file = File.join(File.dirname(file), 'info.yaml')
+        next unless File.file?(info_file)
+        next unless YAML.load(File.read(info_file))['autoload']
+
+        load(bundle_name)
       end
     end
 
