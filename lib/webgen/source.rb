@@ -7,7 +7,7 @@ module Webgen
 
   # Namespace for all classes that provide source paths.
   #
-  # == About this class
+  # == About
   #
   # This class is used to manage source classes. A source class is a class that returns a set of
   # Path objects when the \#paths method is called. For example, the FileSystem class uses the file
@@ -53,7 +53,7 @@ module Webgen
   #
   #     def paths
   #       CONTENT.merge(@data).collect do |path, content|
-  #         Webgen::Path.new(path, path, 'modified_at' => Time.now) { StringIO.new(content.to_s) }
+  #         Webgen::Path.new(path, 'modified_at' => Time.now) { StringIO.new(content.to_s) }
   #       end.to_set
   #     end
   #
@@ -84,20 +84,17 @@ module Webgen
       @passive_sources = []
     end
 
-    # Register a source class. The parameter +klass+ has to contain the name of the source class or
-    # the class object itself. If the class is located under this namespace, only the class name
-    # without the hierarchy part is needed, otherwise the full class name including parent
-    # module/class names is needed.
+    # Register a source class.
+    #
+    # The parameter +klass+ has to contain the name of the source class or the class object itself.
+    # If the class is located under this namespace, only the class name without the hierarchy part
+    # is needed, otherwise the full class name including parent module/class names is needed.
     #
     # === Options:
     #
     # [:name] The name for the source. If not set, it defaults to the snake-case version (i.e.
     #         FileSystem → file_system) of the class name (without the hierarchy part). It should
     #         only contain letters.
-    #
-    # [:author] The author of the source class.
-    #
-    # [:summary] A short description of the source class.
     #
     # === Examples:
     #
@@ -113,9 +110,9 @@ module Webgen
 
     # Return all configured source paths.
     #
-    # The source paths are taken from the sources specified in the "sources" and the
-    # "sources.passive" configuration options. All paths that additionally match one of the
-    # "sources.ignore_paths" patterns are ignored.
+    # The source paths are taken from the sources specified in the "sources" configuration option
+    # and from passive sources array (see #passive_sources). All paths that additionally match one
+    # of the "sources.ignore_paths" patterns are ignored.
     def paths
       if !defined?(@paths)
         active_source = extension('stacked').new(@website, @website.config['sources'].collect do |mp, name, *args|

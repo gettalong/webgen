@@ -8,10 +8,10 @@ module Webgen
 
   # Provides common functionality for extension manager classes.
   #
-  # This module is intended for mixing into an extension manager class. For example, the
-  # Webgen::ContentProcessor class manages all content processors. Extension manager classes
-  # provide methods for registering a certain type of extension and invoking methods on them via a
-  # common interface.
+  # This module is intended for mixing into an extension manager class. An example for an extension
+  # manage class is the Webgen::ContentProcessor class which manages all content processors.
+  # Extension manager classes provide methods for registering a certain type of extension and
+  # invoking methods on them via a common interface.
   #
   # It is assumed that one wants to associate one or more names with an extension object.
   module ExtensionManager
@@ -31,8 +31,9 @@ module Webgen
     #
     # **Note** that this method has to be implemented by classes that include this module. It should
     # register one or more names for an extension object by associating the names with the extension
-    # object data (should be an object that responds at least to :object, :author and :summary) via
-    # the @extensions hash. See also #do_register.
+    # object data (should be an object that responds at least to :object) via the @extensions hash.
+    #
+    # The simplest way to achieve this is to use the #do_register method.
     def register(klass, options = {}, &block)
       raise NotImplementedError
     end
@@ -44,9 +45,9 @@ module Webgen
     # The parameter +klass+ can either be a String or a Class specifying the class that should be
     # registered.
     #
-    # The parameter +options+ allows to associate additional information with an extension. The
-    # recognized keys are :name (for the extension name), :author (for author information) and
-    # :summary (for a summary of the function of the extension).
+    # The parameter +options+ allows to associate additional information with an extension. The only
+    # recognized key is :name (for the extension name). All other keys are ignored and can/should be
+    # used by the extension manager class itself.
     #
     # The parameter +allow_block+ specifies whether the extension manager allows blocks as
     # extensions. If this parameter is +true+ and a block is provided, the +klass+ parameter is
@@ -59,9 +60,7 @@ module Webgen
       end
       klass, klass_name = normalize_class_name(klass, !block_given?)
       name = (options[:name] || Webgen::Utils.snake_case(klass_name)).to_sym
-      @extensions[name] = OpenStruct.new(:object => (block_given? ? block : klass),
-                                         :author => options[:author].to_s,
-                                         :summary => options[:summary].to_s)
+      @extensions[name] = OpenStruct.new(:object => (block_given? ? block : klass))
       name
     end
     private :do_register

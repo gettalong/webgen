@@ -9,6 +9,8 @@ module Webgen
     #
     # webgen tags are an easy way to add dynamically generated content to websites, for example menus
     # or breadcrumb trails.
+    #
+    # See Webgen::Tag and all the classes in its namespace for further information.
     module Tags
 
       # Replace all webgen tags in the content of +context+ with the rendered content.

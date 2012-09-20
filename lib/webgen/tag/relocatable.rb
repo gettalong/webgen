@@ -5,12 +5,13 @@ require 'uri'
 module Webgen
   class Tag
 
-    # Makes a path relative. This is very useful for templates. For example, you normally include a
-    # stylesheet in a template. If you specify the filename of the stylesheet directly, the reference
-    # to the stylesheet in the output file of a page file that is not in the same directory as the
-    # template would be invalid.
+    # Makes a path relative.
     #
-    # By using the +relocatable+ tag you ensure that the path stays valid.
+    # For example, you normally include a stylesheet in a template. If you specify the path name of
+    # the stylesheet directly, the reference to the stylesheet in the output file of a page file
+    # that is not in the same directory as the template would be invalid.
+    #
+    # By using the relocatable tag you ensure that the path stays valid.
     module Relocatable
 
       # Return the relativized path for the path provided in the tag definition.
@@ -28,7 +29,7 @@ module Webgen
         result
       end
 
-      # Resolve the path +path+ using the reference node and return the correct relative path from the
+      # Resolve the path using the reference node and return the correct relative path from the
       # destination node.
       def self.resolve_path(path, context)
         fragment = ''

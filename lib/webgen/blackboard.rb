@@ -5,7 +5,7 @@ module Webgen
   # A blackboard object provides methods for inter-object communication. Objects may register
   # themselves for specific messsage names and get notified when such a message gets dispatched.
   #
-  # For a list of all available messages have a look at the main Webgen documentation page.
+  # For a list of all available messages have a look at the Webgen documentation page.
   class Blackboard
 
     # Create a new Blackboard object.

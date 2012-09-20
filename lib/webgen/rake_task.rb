@@ -95,15 +95,17 @@ module Webgen
   #
   class RakeTask < ::Rake::TaskLib
 
-    # The directory of the webgen website. This would be the directory of your
-    # <tt>webgen.config</tt> file. Or the parent directory of the <tt>src/</tt> directory for
-    # webgen.
+    # The directory of the webgen website.
     #
-    # The default for this is assumed to be <tt>Dir.pwd</tt>
+    # This would be the directory of your 'webgen.config' file. Or the parent directory of the 'src'
+    # directory.
+    #
+    # The default value is +Dir.pwd+.
     attr_accessor :directory
 
-    # The configuration block that is invoked when the Webgen::Website object is initialized. This
-    # can be used to set configuration parameters and to avoid having a <tt>webgen.config</tt> file
+    # The configuration block that is invoked when the Webgen::Website object is initialized.
+    #
+    # This can be used to set configuration parameters and to avoid having a 'webgen.config' file
     # lying around.
     attr_accessor :config_block
 

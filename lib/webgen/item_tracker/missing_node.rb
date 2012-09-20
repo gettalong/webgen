@@ -8,6 +8,12 @@ module Webgen
     # This class is used to track unresolved absolute node paths.
     #
     # The item for this tracker is the unresolved absolute node path and, optionally, a language.
+    #
+    # For example:
+    #
+    #   website.ext.item_tracker.add(some_node, :missing_node, '/dir/missing.html')
+    #   website.ext.item_tracker.add(some_node, :missing_node, '/dir/missing.html', 'de')
+    #
     class MissingNode
 
       def initialize(website) #:nodoc:

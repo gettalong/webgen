@@ -24,11 +24,12 @@ module Webgen
     #   method is invoked with the current Webgen::Website object as first and the options hash as
     #   second parameter.
     #
-    # For example, consider the following item:
+    # For example, consider the following statement:
     #
-    #   [["MyModule::MyClass", "my_method"], {:some => 'options'}, :content]
+    #   website.ext.item_tracker.add(some_node, :nodes,
+    #     ["MyModule::MyClass", "my_method"], {:some => 'options'}, :content)
     #
-    # It will be invoked like this:
+    # The method will be invoked like this for retrieving the nodes:
     #
     #   MyModule::MyClass.my_method(website, {:some => 'options'})
     #
@@ -53,7 +54,7 @@ module Webgen
           nodes.flatten.any? {|n| type == :content ? @website.ext.item_tracker.node_changed?(n) : @website.ext.item_tracker.item_changed?(:node_meta_info, n.alcn)}
       end
 
-      def node_referenced?(iid, node_alcn) #:nodoc
+      def node_referenced?(iid, node_alcn) #:nodoc:
         node_list(iid[0], iid[1]).flatten.any? {|n| n.alcn == node_alcn}
       end
 

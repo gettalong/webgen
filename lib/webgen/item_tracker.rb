@@ -7,7 +7,7 @@ module Webgen
 
   # Namespace for all item trackers.
   #
-  # == About this class
+  # == About
   #
   # This extension manager class is used to track various "items". Such items can be added as a
   # dependency to a node and later be checked if they have changed. This allows webgen to
@@ -19,7 +19,7 @@ module Webgen
   #
   # == Implementing an item tracker.
   #
-  # An item tracker extension class must respond to the following four methods:
+  # An item tracker extension class must respond to the following methods:
   #
   # [initialize(website)]
   #   Initializes the extension and provides the website object which can be used to resolve the
@@ -134,20 +134,18 @@ module Webgen
       end
     end
 
-    # Register an item tracker. The parameter +klass+ has to contain the name of the item tracker
-    # class or the class object itself. If the class is located under this namespace, only the class
-    # name without the hierarchy part is needed, otherwise the full class name including parent
-    # module/class names is needed.
+    # Register an item tracker.
+    #
+    # The parameter +klass+ has to contain the name of the item tracker class or the class object
+    # itself. If the class is located under this namespace, only the class name without the
+    # hierarchy part is needed, otherwise the full class name including parent module/class names is
+    # needed.
     #
     # === Options:
     #
     # [:name] The name for the item tracker class. If not set, it defaults to the snake-case version
     #         (i.e. FileSystem → file_system) of the class name (without the hierarchy part). It
     #         should only contain letters.
-    #
-    # [:author] The author of the item tracker class.
-    #
-    # [:summary] A short description of the item tracker class.
     #
     # === Examples:
     #

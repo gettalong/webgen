@@ -21,8 +21,10 @@ module Webgen
         end
       end
 
-      # Render the block +block_name+ of the given +node+. If the parameter +chain+ (an array of
-      # template nodes) is not set, the default template chain for the given +node+ is used.
+      # Render the block +block_name+ of the given +node+.
+      #
+      # If the parameter +chain+ (an array of template nodes) is not set, the default template chain
+      # for the given +node+ is used.
       def content(node, block_name = 'content', chain = nil)
         chain ||= @website.ext.path_handler.instance(:template).template_chain(node)
         chain << node

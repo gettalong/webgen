@@ -14,8 +14,8 @@ module Webgen
     #   consists of more than one source directory and you want to use all of them.
     #
     # * Second, sources can be mounted on specific directories. For example, a folder with images
-    #   that you don't want to copy to the website source directory can be mounted under '/images'
-    #   so that they are available nonetheless.
+    #   that you don't want to copy to the main website source directory can be mounted under
+    #   '/images' so that they are available nonetheless.
     #
     # Also be aware that when a path is returned by a source that has already be returned by a prior
     # source, it is discarded and not used.
@@ -24,9 +24,11 @@ module Webgen
       # Return the stack of [mount point, source object] entries.
       attr_reader :stack
 
-      # Create a new stack. The optional +map+ parameter is used to provide mappings of mount points
-      # to source objects. It should be an array of two-element arrays which contain an absolute
-      # directory (ie. starting and ending with a slash) and a source object.
+      # Create a new stack.
+      #
+      # The optional +map+ parameter is used to provide mappings of mount points to source objects.
+      # It should be an array of two-element arrays which contain an absolute directory (ie.
+      # starting and ending with a slash) and a source object.
       def initialize(website, map = {})
         @stack = []
         map.each do |mp, source|
@@ -35,9 +37,10 @@ module Webgen
         end
       end
 
-      # Return all paths returned by the sources in the stack. Since the stack is ordered, paths
-      # returned by later source objects are not used if a prior source object has returned the same
-      # path.
+      # Return all paths returned by the sources in the stack.
+      #
+      # Since the stack is ordered, paths returned by later source objects are not used if a prior
+      # source object has returned the same path.
       def paths
         if !defined?(@paths)
           @paths = Set.new

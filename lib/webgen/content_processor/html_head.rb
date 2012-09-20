@@ -5,7 +5,7 @@ require 'erb'
 module Webgen
   class ContentProcessor
 
-    # = General information
+    # == General information
     #
     # Inserts additional links to CSS/JS files and other HTML head meta info directly before the
     # HTML head end tag.
@@ -16,7 +16,7 @@ module Webgen
     #
     # Use the methods defined on the special Context#html_head object to provide values.
     #
-    # = Internal details
+    # == Internal details
     #
     # The key ':cp_html_head' of 'context.persistent' is used (the normal 'context.options' won't do
     # because the data needs to be shared 'backwards' during the rendering) and it has to be a Hash

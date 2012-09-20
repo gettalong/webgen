@@ -5,8 +5,8 @@ require 'webgen/tag'
 module Webgen
   class Tag
 
-    # Generates a breadcrumb trail for the page. This is especially useful when pages are in deep
-    # hierarchies of directories.
+    # Generates a breadcrumb trail for the page. Such a breadcrumb trail is especially useful when
+    # pages are in deep hierarchies of directories.
     module BreadcrumbTrail
 
       # Create the breadcrumb trail.

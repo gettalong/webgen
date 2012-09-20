@@ -10,8 +10,21 @@ module Webgen
 
     # This module provides the helper methods needed by most, if not all, path handlers.
     #
-    # The most important method when implementing a path handler is #create_node which is used to
-    # create the actual Webgen::Node object from a Webgen::Path object.
+    # == About
+    #
+    # It provides default implementations of all methods expected by Webgen::PathHandler except
+    # #create_nodes, namely #initialize, #parse_meta_info! and #content.
+    #
+    # The most important method used when implementing a path handler is probably #create_node which
+    # should be used in #create_nodes to create an actual Webgen::Node object from a Webgen::Path
+    # object.
+    #
+    # The following utility methods are also provided:
+    #
+    # * #parent_node
+    # * #dest_path
+    # * #node_exists?
+    #
     module Base
 
       # Initialize the path handler with the given Website object.
@@ -19,7 +32,9 @@ module Webgen
         @website = website
       end
 
-      # Return the content of the given +node+.
+      # Return +nil+ as content of the given +node+.
+      #
+      # Should probably be over-written by path handler classes using this module!
       def content(node)
       end
 
@@ -27,7 +42,9 @@ module Webgen
       #
       # This default +parse_meta_info!+ method does nothing and should be overridden in path
       # handlers that know that additional meta information can be found in the content of the path
-      # itself. Note that the return values of this method are given as extra parameters to the
+      # itself.
+      #
+      # Note that the return values of this method are given as extra parameters to the
       # #create_nodes method. If you don't handle extra parameters, return an empty array.
       def parse_meta_info!(path)
         []
@@ -81,6 +98,9 @@ module Webgen
       protected :parent_node
 
       # Construct the destination path for the given +path+ and +parent+ node.
+      #
+      # See the user documentation for how a destination path is constructed and which configuration
+      # options are used!
       #
       # First it is checked if a node with the constructed destination path already exists. If it
       # exists, the language part is forced to be in the destination path and the resulting

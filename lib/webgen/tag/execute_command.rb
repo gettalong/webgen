@@ -8,7 +8,7 @@ module Webgen
   class Tag
 
     # Executes the given command and returns the standard output. All special HTML characters are
-    # escaped.
+    # optionally escaped.
     module ExecuteCommand
 
       BIT_BUCKET = (RbConfig::CONFIG['host_os'] =~ /mswin|mingw/ ?  "nul" : "/dev/null")

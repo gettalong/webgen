@@ -9,11 +9,9 @@ module Webgen
   # Represents a file, a directory or a fragment. A node always belongs to a Tree.
   #
   # All needed meta and processing information is associated with the node itself. The meta
-  # information is available throught the #[] and #meta_info accessors, the processing information
-  # through the #node_info accessor.
+  # information is available through the #[] and #meta_info accessors, the internal processing
+  # information through the #node_info accessor.
   #
-  # Although node information should be changed by code, meta information must not be changed once
-  # the node has been created!
   class Node
 
     # The parent node. This is in all but one case a Node object. The one exception is that the
@@ -68,7 +66,7 @@ module Webgen
     # [+dest_path+ (immutable)]
     #    The full output path for this node. If this node is a directory, the path must have a
     #    trailing slash ('dir/'). If it is a fragment, it has to include a hash sign. This can also
-    #    be an absolute path like http://myhost.com.
+    #    be an absolute path like http://example.com.
     #
     # [+meta_info+]
     #    A hash with meta information for the new node.
@@ -134,8 +132,9 @@ module Webgen
       "<##{self.class.name}: alcn=#{@alcn}>"
     end
 
-    # Return +true+ if the #alcn matches the pattern. See Webgen::Path.matches_pattern? for
-    # more information.
+    # Return +true+ if the #alcn matches the pattern.
+    #
+    # See Webgen::Path.matches_pattern? for more information.
     def =~(pattern)
       Webgen::Path.matches_pattern?(@alcn, pattern)
     end
@@ -183,10 +182,6 @@ module Webgen
         resolve(proxy_path, lang, true) || self
       end
     end
-
-    # TODO: the link_to method should be removed from the class. All methods for outputting HTML
-    # should be in separate module and depend on a mime-type because they should return something
-    # different for a different mime-type (e.g. PDF)
 
     # Return a HTML link from this node to the given node.
     #

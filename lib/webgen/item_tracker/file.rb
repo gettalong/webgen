@@ -7,7 +7,10 @@ module Webgen
 
     # This class is used to track changes to a file.
     #
-    # The item for this tracker is the name of the file.
+    # The item for this tracker is the name of the file, i.e. add an item like this:
+    #
+    #   website.ext.item_tracker.add(some_node, :file, '/home/me/file.jpg')
+    #
     class File
 
       def initialize(website) #:nodoc:
@@ -26,7 +29,7 @@ module Webgen
         ::File.mtime(filename) > old_mtime
       end
 
-      def node_referenced?(filename, node_alcn) #:nodoc
+      def node_referenced?(filename, node_alcn) #:nodoc:
         false
       end
 

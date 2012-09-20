@@ -16,6 +16,11 @@ module Webgen
     # [node_alcn, key]
     #   Tracks changes to a specific meta information key of the node.
     #
+    # Here are some examples:
+    #
+    #   website.ext.item_tracker.add(some_node, :node_meta_info, my_node.alcn) # first case
+    #   website.ext.item_tracker.add(some_node, :node_meta_info, my_node.alcn, 'title') # second case
+    #
     class NodeMetaInfo
 
       def initialize(website) #:nodoc:
@@ -37,7 +42,7 @@ module Webgen
           (key.nil? ? @website.tree[alcn].meta_info : @website.tree[alcn].meta_info[key]) != old_data
       end
 
-      def node_referenced?(iid, node_alcn) #:nodoc
+      def node_referenced?(iid, node_alcn) #:nodoc:
         iid.first == node_alcn
       end
 

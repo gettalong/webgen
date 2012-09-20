@@ -18,7 +18,7 @@ of a webgen extension bundle, the name of a Rubygem or a local file name.
 DESC
       end
 
-      def execute(args)
+      def execute(args) # :nodoc:
         raise CmdParse::InvalidArgumentError.new("Bundle name needed but none given") if args.length == 0
         name = args.first
         name = "webgen-#{name}-bundle" unless name =~ /\.gem$/ || name =~ /webgen-.*-bundle/

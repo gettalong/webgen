@@ -6,9 +6,13 @@ require 'webgen/utils/tag_parser'
 
 module Webgen
 
-  # Namespace for all webgen tags. A tag object is a webgen extension that handles specific webgen
-  # tags. webgen tags are used to add dynamic content to page and template files and are made for
-  # ease of use.
+  # Namespace for all webgen tags.
+  #
+  # == About
+  #
+  # A tag object is a webgen extension that handles specific webgen tags. webgen tags are used to
+  # add dynamic content to page and template files (or any other file for that matter) and are made
+  # for ease of use.
   #
   # == Implementing a tag
   #
@@ -31,14 +35,14 @@ module Webgen
   # This allows one to implement a tag object as a class with a class method called +call+. Or as a
   # Proc object.
   #
-  # The tag object has to be registered so that webgen knows about it, see ::register for more
+  # The tag object has to be registered so that webgen knows about it, see #register for more
   # information.
   #
   # == Tag options
   #
   # webgen tags allow the specification of options in the tag definition. When registering a tag,
   # one can specify which options are mandatory, i.e. which options always have to be set directly
-  # for the tag. The value of the option :config_base for the ::register method is used to resolve
+  # for the tag. The value of the option :config_base for the #register method is used to resolve
   # partially stated configuration entries.
   #
   # == Sample Tag
@@ -57,8 +61,8 @@ module Webgen
   #
   #   end
   #
-  #   website.config.define_option('reverser.do_reverse', nil, 'Actually reverse')
-  #   website.ext.tag.register Reverser, :names => 'reverse', :mandatory => ['reverse']
+  #   website.config.define_option('reverser.do_reverse', nil, 'Actually do reverse the text')
+  #   website.ext.tag.register Reverser, :names => 'reverse', :mandatory => ['do_reverse']
   #
   class Tag
 
@@ -89,10 +93,12 @@ module Webgen
       end
     end
 
-    # Register a tag. The parameter +klass+ can either be a String containing the name of a
-    # class/module (which has to respond to :call) or an object that responds to :call. If the class
-    # is located under this namespace, only the class name without the hierarchy part is needed,
-    # otherwise the full class/module name including parent module/class names is needed.
+    # Register a tag.
+    #
+    # The parameter +klass+ can either be a String containing the name of a class/module (which has
+    # to respond to :call) or an object that responds to :call. If the class is located under this
+    # namespace, only the class name without the hierarchy part is needed, otherwise the full
+    # class/module name including parent module/class names is needed.
     #
     # Instead of registering an object that responds to :call, you can also provide a block that
     # processes a tag.
@@ -100,8 +106,10 @@ module Webgen
     # === Options:
     #
     # [:names] The tag name or an array of tag names. If not set, it defaults to the lowercase
-    #          version of the class name (without the hierarchy part). The name :default is used for
-    #          specifying the default tag which is called if an unknown tag name is encountered.
+    #          version of the class name (without the hierarchy part).
+    #
+    #          The name :default is used for specifying the default tag which is called if an
+    #          unknown tag name is encountered.
     #
     # [:config_base] The configuration base, i.e. the part of a configuration option name that does
     #                not need to be specified. Defaults to the full class name without the Webgen
@@ -112,10 +120,6 @@ module Webgen
     #              first configuration option name is used as the default mandatory option (used
     #              when only a string is provided in the tag definition).
     #
-    # [:author] The author of the tag.
-    #
-    # [:summary] A short description of the tag.
-    #
     # === Examples:
     #
     #   tag.register('Date')    # registers Webgen::Tag::Date
@@ -124,7 +128,7 @@ module Webgen
     #
     #   tag.register('MyModule::Date', names: ['mydate', 'date'])
     #
-    #   tag.register('date') do |tag, body, context|
+    #   tag.register('date', config_base: 'tag.date') do |tag, body, context|
     #     Time.now.strftime(param('tag.date.format'))
     #   end
     #
@@ -143,9 +147,11 @@ module Webgen
       names.each {|n| @extensions[n.to_sym] = @extensions[name]}
     end
 
-    # Process the +tag+ and return the result. The parameter +params+ (can be a Hash, a String or
-    # nil) needs to contain the parameters for the tag and +body+ is the optional body for the tag.
-    # +context+ needs to be a valid Webgen::Context object.
+    # Process the +tag+ and return the result.
+    #
+    # The parameter +params+ (can be a Hash, a String or nil) needs to contain the parameters for
+    # the tag and +body+ is the optional body for the tag. +context+ needs to be a valid
+    # Webgen::Context object.
     def call(tag, params, body, context)
       result = ''
       tdata = tag_data(tag, context)

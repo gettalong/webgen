@@ -7,7 +7,7 @@ module Webgen
     # Provides easy access to the meta information of a node.
     module MetaInfo
 
-      # Return the meta information key specified in +tag+ of the content node.
+      # Treat +tag+ as a meta information key and return its value from the content node.
       def self.call(tag, body, context)
         output = ''
         if tag == 'lang'

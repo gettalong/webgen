@@ -8,18 +8,29 @@ module Webgen
   # == About
   #
   # A Path object provides information about a path that is used to create one or more nodes as well
-  # as methods for accessing/modifying the path's content. So a Path object always refers to a path
-  # from which nodes are created! In contrast, destination paths are just strings and specify the
-  # location where a specific node should be written to.
+  # as methods for accessing/modifying the path's content. Path objects are created by Source
+  # classes but can also be created during the rendering phase (see
+  # PathHandler#create_secondary_nodes).
   #
-  # The +path+ attribute specifies the path that is used to create the canonical name (and by
-  # default the destination path) of a Node object.
+  # So a Path object always refers to a path from which nodes are created! In contrast, destination
+  # paths are just strings and specify the location where a specific node should be written to (see
+  # Node#destination_path).
   #
   # A Path object can represent one of three different things: a directory, a file or a fragment. If
   # the +path+ ends with a slash character, then the path object represents a directory, if the path
   # contains a hash character anywhere, then the path object represents a fragment and else it
-  # represents a file. Have a look at the webgen manual to see the exact format that can be used for
-  # a path string!
+  # represents a file. Have a look at the user documentation to see the exact format that can be
+  # used for a path string!
+  #
+  # == Utility methods
+  #
+  # The Path class also provides some general methods for working with path strings which are also
+  # used, for example, by the Node class:
+  #
+  # * Path.url
+  # * Path.append
+  # * Path.matches_pattern
+  # * Path.lcn
   #
   class Path
 
@@ -27,26 +38,31 @@ module Webgen
     # not escaped. This is needed so that paths with fragments work correctly.
     URL_UNSAFE_PATTERN = Regexp.new("[^#{URI::PATTERN::UNRESERVED}#{URI::PATTERN::RESERVED}#]") # :nodoc:
 
-    # Construct an internal URL for the given +path+ which can be an acn/alcn/absolute path. If the
-    # parameter +make_absolute+ is +true+, then a relative URL will be made absolute by prepending
-    # the special URL 'webgen:://webgen.localhost/'.
+    # Construct an internal URL for the given +path+ which can be an acn/alcn/absolute path.
+    #
+    # If the parameter +make_absolute+ is +true+, then a relative URL will be made absolute by
+    # prepending the special URL 'webgen:://webgen.localhost/'.
     def self.url(path, make_absolute = true)
       url = URI.parse(URI::DEFAULT_PARSER.escape(path, URL_UNSAFE_PATTERN))
       url = URI.parse('webgen://webgen.localhost/') + url unless url.absolute? || !make_absolute
       url
     end
 
-    # Append the +path+ to the +base+ path. The +base+ parameter has to be an acn/alcn/absolute
-    # path. If it represents a directory, it needs to have a trailing slash! The +path+ parameter
-    # doesn't need to be absolute and may contain path patterns.
+    # Append the +path+ to the +base+ path.
+    #
+    # The +base+ parameter has to be an acn/alcn/absolute path. If it represents a directory, it
+    # needs to have a trailing slash! The +path+ parameter doesn't need to be absolute and may
+    # contain path patterns.
     def self.append(base, path)
       raise(ArgumentError, 'base needs to start with a slash (i.e. be an absolute path)') unless base =~ /^\//
       url = url(base) + url(path, false)
       url.path + (url.fragment.nil? ? '' : '#' + url.fragment)
     end
 
-    # Return +true+ if the given path string matches the given path pattern. For information on
-    # which patterns are supported, have a look at the API documentation of File.fnmatch.
+    # Return +true+ if the given path string matches the given path pattern.
+    #
+    # For information on which patterns are supported, have a look at the API documentation of
+    # File.fnmatch.
     def self.matches_pattern?(path, pattern, options = File::FNM_DOTMATCH|File::FNM_CASEFOLD|File::FNM_PATHNAME)
       pattern += '/' if path.to_s =~ /\/$/ && pattern !~ /\/$|^$/
       File.fnmatch(pattern, path, options)
@@ -64,13 +80,13 @@ module Webgen
 
     include Comparable
 
-    # Create a new Path object for +path+.
+    # Create a new Path object for +path+ (a string).
     #
     # The optional block needs to return an IO object for getting the content of the path (see #io
     # and #data).
     #
-    # The +path+ String needs to be in a well defined format which can be looked up in the webgen
-    # manual.
+    # The +path+ string needs to be in a well defined format which can be looked up in the webgen
+    # user documentation.
     def initialize(path, meta_info = {}, &ioblock)
       @path = path.freeze
       @meta_info = meta_info.dup
@@ -86,34 +102,45 @@ module Webgen
     attr_reader :path
 
     # Meta information about the path.
+    #
+    # Triggers analyzation of the path if invoked. See #[]= to setting meta information without
+    # triggering analyzation.
     def meta_info
       defined?(@basename) ? @meta_info : (analyse; @meta_info)
     end
 
     # Set the meta information +key+ to +value+.
     #
-    # This method has to be used to set meta information without triggering analysation of the path
+    # This method has to be used to set meta information without triggering analyzation of the path
     # string!
     def []=(key, value)
       @meta_info[key] = value
     end
 
-    # The string specifying the parent path
+    # The string specifying the parent path.
+    #
+    # Triggers analyzation of the path if invoked.
     def parent_path
       defined?(@parent_path) ? @parent_path : (analyse; @parent_path)
     end
 
     # The canonical name of the path without the extension.
+    #
+    # Triggers analyzation of the path if invoked.
     def basename
       defined?(@basename) ? @basename : (analyse; @basename)
     end
 
     # The extension of the path.
+    #
+    # Triggers analyzation of the path if invoked.
     def ext
       defined?(@ext) ? @ext : (analyse; @ext)
     end
 
     # Set the extension of the path.
+    #
+    # Triggers analyzation of the path if invoked.
     def ext=(value)
       defined?(@ext) || analyse
       @ext = value
@@ -121,17 +148,23 @@ module Webgen
 
     # The canonical name created from the +path+ (namely from the parts +basename+ and +extension+
     # as well as the meta information +version+).
+    #
+    # Triggers analyzation of the path if invoked.
     def cn
       basename + (!meta_info['version'] || meta_info['version'] == 'default' ? "" : "-#{meta_info['version']}") +
         (ext.length > 0 ? '.' + ext : '') + (basename != '/' && @path =~ /.\/$/ ? '/' : '')
     end
 
     # The localized canonical name created from the +path+.
+    #
+    # Triggers analyzation of the path if invoked.
     def lcn
       self.class.lcn(cn, meta_info['lang'])
     end
 
     # The absolute canonical name of this path.
+    #
+    # Triggers analyzation of the path if invoked.
     def acn
       if @path =~ /#/
         self.class.new(parent_path).acn + cn
@@ -141,6 +174,8 @@ module Webgen
     end
 
     # The absolute localized canonical name of this path.
+    #
+    # Triggers analyzation of the path if invoked.
     def alcn
       if @path =~ /#/
         self.class.new(parent_path).alcn + lcn
@@ -167,12 +202,13 @@ module Webgen
       temp
     end
 
-    # Provide access to the IO object of the path by yielding it. After the method block returns,
-    # the IO object is automatically closed. An error is raised, if no IO object is associated with
-    # the Path instance.
+    # Provide access to the IO object of the path by yielding it.
+    #
+    # After the method block returns, the IO object is automatically closed. An error is raised, if
+    # no IO object is associated with the Path instance.
     #
     # The parameter +mode+ specifies the mode in which the IO object should be opened. This can be
-    # used, for example, to specify a certain input encoding.
+    # used, for example, to specify a certain input encoding or to use binary mode.
     def io(mode = 'r') # :yields: io
       raise "No IO object defined for the path #{self}" if @ioblock.nil?
       io = @ioblock.call(mode)
@@ -181,8 +217,9 @@ module Webgen
       io.close if io
     end
 
-    # Return the content of the IO object of the path as string. For a description of the
-    # parameter +mode+ see #stream.
+    # Return the content of the IO object of the path as string.
+    #
+    # For a description of the parameter +mode+ see #io.
     #
     # An error is raised, if no IO object is associated with the Path instance.
     def data(mode = 'r')

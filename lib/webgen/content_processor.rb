@@ -7,12 +7,12 @@ module Webgen
 
   # Namespace for all content processors.
   #
-  # == Implementing a content processor
+  # == About
   #
-  # Content processors are used to process the content of files, normally of files in Webgen Page
+  # Content processors are used to process the content of paths, normally of paths in Webgen Page
   # Format. However, they can potentially process any type of content, even binary content.
   #
-  # There are basically three ways to implement a content processor.
+  # == Implementing a content processor
   #
   # A content processor only needs to respond to one method called +call+. This method is invoked
   # with a Webgen::Context object that provides the whole context (especially the content and the
@@ -22,9 +22,8 @@ module Webgen
   # This allows one to implement a content processor as a class with a class method called +call+.
   # Or as a Proc object.
   #
-  # The content processor has to be registered so that webgen knows about it, see ::register for
-  # more information.
-  #
+  # The content processor has to be registered so that webgen knows about it, see
+  # ContentProcessor.register for more information.
   #
   # == Sample Content Processor
   #
@@ -61,13 +60,15 @@ module Webgen
 
     include Webgen::ExtensionManager
 
-    # Register a content processor. The parameter +klass+ can either be a String containing the name
-    # of a class/module (which has to respond to :call) or an object that responds to :call. If the
-    # class is located under this namespace, only the class name without the hierarchy part is
-    # needed, otherwise the full class/module name including parent module/class names is needed.
+    # Register a content processor.
     #
-    # Instead of registering an object that responds to :call, you can also provide a block that has
-    # to take one parameter (the context object).
+    # The parameter +klass+ can either be a String containing the name of a class/module (which has
+    # to respond to :call) or an object that responds to :call. If the class is located under this
+    # namespace, only the class name without the hierarchy part is needed, otherwise the full
+    # class/module name including parent module/class names is needed.
+    #
+    # Instead of registering an object that responds to \#call, you can also provide a block that
+    # has to take one parameter (the context object).
     #
     # === Options:
     #
@@ -79,10 +80,6 @@ module Webgen
     #
     # [:ext_map] Defines a mapping of pre-processed file extension names to post-processed
     #            file extension names (e.g. {'sass' => 'css'}).
-    #
-    # [:author] The author of the content processor.
-    #
-    # [:summary] A short description of the content processor.
     #
     # === Examples:
     #

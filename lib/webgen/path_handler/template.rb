@@ -70,8 +70,9 @@ module Webgen
         end
       end
 
-      # Return the default template for the directory node +dir+ and language +lang+. If the
-      # template node is not found, the parent directories are searched.
+      # Return the default template for the directory node +dir+ and language +lang+.
+      #
+      # If the template node is not found, the parent directories are searched.
       def default_template(dir, lang)
         default_template_name = @website.config['path_handler.template.default_template']
         template = dir.resolve(default_template_name, lang)

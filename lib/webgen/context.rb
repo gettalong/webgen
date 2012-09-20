@@ -24,7 +24,7 @@ module Webgen
   #
   # If you want to add custom methods to each context object of your website that is created, you
   # just need to define one or more modules in which your custom methods are defined and then add
-  # the modules to the 'website.ext.context_modules' array (or create it if it does not exist).
+  # the modules to the 'website.ext.context_modules' array.
   #
   # Here is a simple example:
   #
@@ -36,7 +36,7 @@ module Webgen
   #
   #   end
   #
-  #   (website.ext.context_modules ||= []) << MyContextMethods
+  #   website.ext.context_modules << MyContextMethods
   #
   class Context
 
@@ -60,13 +60,16 @@ module Webgen
     # The website object to which the render context belongs.
     attr_reader :website
 
-    # Create a new Context object belonging to the website object +website+. All modules listed in
-    # the array 'website.ext.context_modules' are automatically used to extend the Context object.
+    # Create a new Context object belonging to the website object +website+.
+    #
+    # All modules listed in the array 'website.ext.context_modules' are automatically used to extend
+    # the Context object.
     #
     # The following options are set by default and can be overridden via the +options+ hash:
     #
     # [:content]
     #   Is set to an empty string.
+    #
     def initialize(website, options = {}, persistent = {})
       @website = website
       (website.ext.context_modules || []).each {|m| self.extend(m)}
@@ -74,8 +77,10 @@ module Webgen
       @persistent = persistent
     end
 
-    # Create a copy of the current object. You can use the +options+ parameter to override options
-    # of the current Context object in the newly created Context object.
+    # Create a copy of the current object.
+    #
+    # You can use the +options+ parameter to override options of the current Context object in the
+    # newly created Context object.
     def clone(options = {})
       self.class.new(@website, @options.merge(options), @persistent)
     end

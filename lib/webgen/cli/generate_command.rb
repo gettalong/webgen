@@ -15,8 +15,7 @@ module Webgen
                                                                   "no other command was specified.")
       end
 
-      # Render the website.
-      def execute(args)
+      def execute(args) # :nodoc:
         commandparser.website.execute_task(:generate_website)
       end
 

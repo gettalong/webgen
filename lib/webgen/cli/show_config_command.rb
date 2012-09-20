@@ -36,7 +36,7 @@ DESC
         @unknown = true
       end
 
-      def execute(args)
+      def execute(args) # :nodoc:
         config = commandparser.website.config
         selector = args.first.to_s
         config.options.select do |n, d|

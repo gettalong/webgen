@@ -9,10 +9,10 @@ module Webgen
   class PathHandler
 
     # Handles files which contain specifications for "virtual" nodes, ie. nodes that don't have real
-    # source path.
+    # source paths.
     #
     # This can be used, for example, to provide multiple links to the same node or links to external
-    # pages.
+    # URLs.
     class Virtual
 
       include Base

@@ -10,8 +10,8 @@ module Webgen
     # Creates an extension bundle.
     #
     # An extension bundle is a collection of webgen extensions. This task can either create a local
-    # bundle (in the +ext+ directory of the website) or a bundle which can be distributed via
-    # Rubygems.
+    # bundle (in the +ext+ directory of the current website) or a bundle which can be distributed
+    # via Rubygems.
     #
     module CreateBundle
 
@@ -34,7 +34,7 @@ module Webgen
         true
       end
 
-      def self.create_distribution_bundle(website, directory, bundle_name)
+      def self.create_distribution_bundle(website, directory, bundle_name) #:nodoc:
         bundle_dir = File.join(directory, 'lib', 'webgen', 'bundle', bundle_name)
 
         create_directory(directory)
@@ -46,7 +46,7 @@ module Webgen
         directory
       end
 
-      def self.create_local_bundle(website, bundle_name)
+      def self.create_local_bundle(website, bundle_name) #:nodoc:
         bundle_dir =  File.join(website.directory, 'ext', bundle_name)
 
         create_directory(bundle_dir)
@@ -55,12 +55,12 @@ module Webgen
         bundle_dir
       end
 
-      def self.create_directory(dir)
+      def self.create_directory(dir) #:nodoc:
         raise "The directory '#{dir}' does already exist" if File.exist?(dir)
         FileUtils.mkdir_p(dir)
       end
 
-      def self.create_file(dest, source, bundle_name)
+      def self.create_file(dest, source, bundle_name) #:nodoc:
         File.open(dest, 'w+') do |f|
           erb = ERB.new(File.read(File.join(Webgen::Utils.data_dir, TEMPLATE_DIR, source)))
           f.write(erb.result(binding))

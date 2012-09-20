@@ -25,7 +25,7 @@ module Webgen
         @glob = glob
       end
 
-      # Return all paths under the root which match the glob.
+      # Return all paths under the root path which match the glob.
       def paths
         @paths ||= Dir.glob(File.join(@root, @glob), File::FNM_DOTMATCH|File::FNM_CASEFOLD).to_set.collect do |f|
           next unless File.exists?(f) # handle invalid links

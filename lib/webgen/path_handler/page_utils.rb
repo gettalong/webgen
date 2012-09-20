@@ -9,9 +9,9 @@ module Webgen
 
     # This module should be used by path handlers that need to work with paths in Webgen Page Format.
     #
-    # Note that this modules provides an implementation for the +parse_meta_info!+ method. If you
-    # also include the Base module, make sure that you include before this module! Also make sure to
-    # override this method if you need custom behaviour!
+    # Note that this modules provides an implementation for the #parse_meta_info! method. If you
+    # also include the Base module, make sure that you include it before this module! Also make sure
+    # to override this method if you need custom behaviour!
     module PageUtils
 
       # Calls #parse_as_page! to update the meta information hash of +path+. Returns the found

@@ -29,7 +29,7 @@ DESC
         @remote = false
       end
 
-      def execute(args)
+      def execute(args) # :nodoc:
         bundles = {}
         commandparser.website.ext.bundles.each do |bundle, info_file|
           bundles.update(bundle => (info_file ? YAML.load(File.read(info_file)) : {}))

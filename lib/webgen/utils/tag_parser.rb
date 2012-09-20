@@ -30,9 +30,10 @@ module Webgen
       ProcessingStruct = Struct.new(:state, :tag, :simple_tag, :backslashes, :brackets, :start_pos, :end_pos,
                                     :params_start_pos, :params_end_pos, :body_end_pos) # :nodoc:
 
-      # Return the +content+ with all webgen tags replaced. When a webgen tag is encountered by the
-      # parser, the method yields all found information and substitutes the returned string for the
-      # tag.
+      # Return the +content+ with all webgen tags replaced.
+      #
+      # When a webgen tag is encountered by the parser, the method yields all found information and
+      # substitutes the returned string for the tag.
       def replace_tags(content) #:yields: tag_name, params, body
         scanner = StringScanner.new(content)
         data = ProcessingStruct.new(:before_tag)
@@ -110,7 +111,7 @@ module Webgen
         raise
       end
 
-      # Parse the parameter string.
+      # Parse the parameter string and return the result.
       def parse_params(param_string, tag)
         YAML::load("--- #{param_string}")
       rescue ArgumentError, SyntaxError => e

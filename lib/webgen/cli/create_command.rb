@@ -44,8 +44,7 @@ DESC
         puts Utils.format(output, Utils::DEFAULT_WIDTH - 4, 4, true).join("\n")
       end
 
-      # Create the website.
-      def execute(args)
+      def execute(args) # :nodoc:
         raise OptionParser::MissingArgument.new('DIR') if args.length == 0
         Webgen::Website.new(args[0], Webgen::CLI::Logger.new) do |website|
           website.logger.verbose = commandparser.verbose

@@ -30,7 +30,7 @@ DESC
         @bundle = nil
       end
 
-      def execute(args)
+      def execute(args) # :nodoc:
         exts = {}
         commandparser.website.ext.bundles.each do |bundle, info_file|
           next if info_file.nil? || (@bundle && @bundle != bundle)

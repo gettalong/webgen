@@ -15,7 +15,8 @@ module Webgen
       include Base
       include PageUtils
 
-      # Upon creation the object registers itself as listener for some node hooks.
+      # Upon creation the path handler registers itself as listener for the :before_node_created and
+      # :after_node_created hooks so that it can apply the meta information.
       def initialize(website)
         super
         @website.blackboard.add_listener(:before_node_created, &method(:before_node_created))

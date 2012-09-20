@@ -7,7 +7,7 @@ module Webgen
   # This custom logger class needs to be used (either directly or via a sub-class) for the
   # Webgen::Website logging object.
   #
-  # It provides the following, additional functionality over the stdlib ::Logger class:
+  # It provides the following, additional functionality over the stdlib Logger class:
   #
   # * If a logging message is an Array and #verbose is +false+, only the first item of the array is
   #   output. If #verbose is +true+, the the items of the array are joined using a line break and
@@ -17,7 +17,7 @@ module Webgen
   #
   class Logger < ::Logger
 
-    # Whether verbose log message should be output. Either +true+ or +false.
+    # Whether verbose log message should be output. Either +true+ or +false+ (default: +false+).
     attr_accessor :verbose
 
     def initialize(*args, &block) #:nodoc:

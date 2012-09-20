@@ -1,11 +1,5 @@
 # -*- encoding: utf-8 -*-
 
-##
-# Welcome to the API documentation of wegen!
-#
-# Have a look at the Webgen module which provides a good starting point!
-
-
 # Standard lib requires
 require 'stringio'
 require 'fileutils'
@@ -29,156 +23,54 @@ require 'webgen/page'
 require 'webgen/version'
 
 
-# TODO: adapt this documentation
-#
-# The Webgen namespace houses all classes/modules used by webgen.
-#
-# = webgen
-#
-# webgen is a command line application for generating a web site from templates and content
-# files. Despite this fact, the implementation also provides adequate support for using webgen as a
-# library and *full* *support* for extending it.
-#
-# == Extending webgen
-#
-# webgen can be extended very easily. Any file called <tt>init.rb</tt> put into the <tt>ext/</tt>
-# directory of the website or into one of its sub-directories is automatically loaded on
-# Website#init.
-#
-# You can extend webgen in several ways. However, no magic or special knowledge is needed since
-# webgen relies on the power of Ruby itself. So, for example, an extension is just a normal Ruby
-# class. Most extension types provide a Base module for mixing into an extension which provides
-# default implementations for needed methods.
-#
-# Following are links to detailed descriptions on how to develop specific types of extensions:
-#
-# [Webgen::Source] Information on how to implement a class that provides source paths for
-#                  webgen. For example, one could implement a source class that uses a database as
-#                  backend.
-#
-# [Webgen::Output] Information on how to implement a class that writes content to an output
-#                  location. The default output class just writes to the file system. One could, for
-#                  example, implement an output class that writes the generated files to multiple
-#                  locations or to a remote server.
-#
-# [Webgen::ContentProcessor] Information on how to develop an extension that processes the
-#                            content. For example, markup-to-HTML converters are implemented as
-#                            content processors in webgen.
-#
-# [Webgen::SourceHandler::Base] Information on how to implement a class that handles objects of type
-#                               source Path and creates Node instances. For example,
-#                               Webgen::SourceHandler::Page handles the conversion of <tt>.page</tt>
-#                               files to <tt>.html</tt> files.
-#
-# [Webgen::Tag::Base] Information on how to implement a webgen tag. webgen tags are used to provide
-#                     an easy way for users to include dynamic content such as automatically
-#                     generated menus.
-#
-#
-# == General information
-#
-# Here are some detail on the internals of webgen that will help you while developing for webgen:
-#
-# * webgen uses a not so complex system for determining whether a node needs to be recreated or
-#   re-rendered. However, for this to work correctly all extensions have to follow some rules:
-#
-#   * It is necessary that all node alcns from which the content is used are put into the
-#     destination node's <tt>node_info[:used_nodes]</tt> set.
-#
-#   * It is necessary that all other node alcns that are used for a node in any way, even if they
-#     are only referenced or the route to their output path used, have to be put into the node's
-#     <tt>node_info[:used_meta_info_nodes]</tt> set.
-#
-# * Any node that is created during the rendering phase, ie. via a content processor, a tag or in
-#   the #content method of a source handler needs to be put into the rendered node's
-#   <tt>node_info[:used_meta_info_nodes]</tt> or <tt>node_info[:used_nodes]</tt> set (see above for
-#   details)! This is especially necessary when using resolved nodes since resolved nodes can be
-#   created by passive sources!
-#
-# * webgen provides various Error classes. However, errors should only be raised if additional runs
-#   won't correct the problem. For example, if a path cannot be resolved, it is possible that in the
-#   next run a node will be created and that the path can be resolved then. This is always the case,
-#   for example, with fragment nodes! In such cases an error message should be written out to the
-#   log to inform the user that there is a potential problem.
-#
-# == Blackboard services
-#
-# The Blackboard class provides an easy communication facility between objects by implementing the
-# Observer pattern.
-#
-# Following is the list of all messages that can be listened to:
-#
-# <tt>:node_flagged</tt>::
-#   See Node#flag
-#
-# <tt>:node_unflagged</tt>::
-#   See Node#unflag
-#
-# <tt>:node_changed?</tt>::
-#   See Node#changed?
-# <tt>:node_meta_info_changed?</tt>::
-#   See Node#meta_info_changed?
-#
-# <tt>:before_node_created</tt>::
-#   Sent by the <tt>:create_nodes</tt> service before a node is created (handled by a source handler)
-#   with the +parent+ and the +path+ as arguments.
-#
-# <tt>:after_node_created</tt>::
-#   Sent by the <tt>:create_nodes</tt> service after a node has been created with the created node
-#   as argument.
-#
-# <tt>:before_node_deleted</tt>::
-#   See Tree#delete_node
-#
-# == Other places to look at
-#
-# Here is a list of modules/classes that are primarily used throughout webgen or provide useful
-# methods for developing extensions:
-#
-# Node, Tree, Path, Page, Cache, Utils
-
 module Webgen
 
-  # TODO: update!!!
   #
-  # Represents a webgen website and is used to render it.
+  # == About
+  #
+  # Represents a webgen website and provides the main interface for users.
   #
   # Normally, webgen is used from the command line via the +webgen+ command or from Rakefiles via
-  # Webgen::WebgenTask. However, you can also easily use webgen as a library and this class provides
+  # Webgen::RakeTask. However, you can also easily use webgen as a library and this class provides
   # the interface for this usage!
   #
+  # You may notice that this class doesn't have many methods. This is because webgen is designed
+  # from ground up to be extensible. Most of the 'magic' happens in extensions which are registered
+  # on the #ext OpenStruct object. The simple 'core' classes that are not extensions have separate
+  # accessor methods (#config for the Configuration object, #blackboard for the Blackboard and so
+  # on).
+  #
   # Since a webgen website is, basically, just a directory, the only parameter needed for creating a
-  # new Website object is the website directory. After that you can work with the website:
+  # new Website object is the website directory. Once created, the website is fully initialized and
+  # one can work with it:
   #
-  # * If you want to render the website, you just need to call Website#render which initializes the
-  #   website and does all the rendering. When the method call returns, everything has been rendered.
+  # * If you want to generate the website, you just need to call #execute_task with
+  #   :generate_website as parameter.
   #
-  # * If you want to remove the generated output, you just need to invoke Website#clean and it will
-  #   be done.
+  # * If you want to retrieve data from the website, you can use the various accessors on the
+  #   Website object itself or use #ext to access all available extensions.
   #
-  # * Finally, if you want to retrieve data from the website, you first have to call Website#init to
-  #   initialize the website. After that you can use the various accessors to retrieve the needed
-  #   data. *Note*: This is generally only useful if the website has been rendered because otherwise
-  #   there is no data to retrieve.
+  #   *Note*: This is generally only useful if the website has been generated before because
+  #   otherwise there probably is no data to retrieve.
   #
   class Website
 
-    # The website configuration. Can only be used after #init has been called (which is
-    # automatically done in #generate).
+    # The website configuration.
     attr_reader :config
 
-    # The blackboard used for inter-object communication. Can only be used after #init has been
-    # called.
+    # The blackboard used for inter-object communication.
     attr_reader :blackboard
 
-    # A cache to store information that should be available between runs. Can only be used after
-    # #init has been called.
+    # A cache to store information that should be available the next time the website gets
+    # generated.
     attr_reader :cache
 
-    # Access to all extension objects.
+    # Access to all extension objects. An OpenStruct object.
     attr_reader :ext
 
     # The internal data structure used to store information about individual nodes.
+    #
+    # See Tree for more information
     attr_reader :tree
 
     # The Webgen::Logger used for logging.
@@ -187,16 +79,19 @@ module Webgen
     # The website directory.
     attr_reader :directory
 
-    # Create a new webgen Website object for the website in the directory +dir+ and initialize it
-    # (calls #init).
+    # Create a new webgen Website object for the website in the directory +dir+.
     #
     # If no logger is specified, a dummy logger that logs to a StringIO is created.
     #
-    # You can provide a block for modifying the Website object in any way during the initialization.
-    # If the block only takes one parameter, it is called with the Website object after the
-    # initialization is done. If it takes two parameters, the first one is the Website object and
-    # the second one is a boolean specifying whether the block is currently called before the
-    # initialization (value is +true+) or after it (value is +false).
+    # You can provide a block for modifying the Website object in any way during the initialization:
+    #
+    # * If the block only takes one parameter, it is called with the Website object after the
+    #   initialization is done but before the cache is restored.
+    #
+    # * If it takes two parameters, the first one is the Website object and the second one is a
+    #   boolean specifying whether the block is currently called any initialization (value is
+    #   +true+) or after it (value is +false).
+    #
     def initialize(dir, logger = nil, &block)
       @directory = dir
       @logger = logger || Webgen::Logger.new(StringIO.new)
@@ -205,7 +100,7 @@ module Webgen
     end
 
     # Initialize the configuration, blackboard and cache objects and load the default configuration
-    # as well as website specific extensions.
+    # as well as all specified extensions.
     def init
       @tree = Tree.new(self)
       @blackboard = Blackboard.new
@@ -240,6 +135,7 @@ module Webgen
     end
     private :load_bundles
 
+    # The name of the configuration file webgen uses.
     CONFIG_FILENAME = 'webgen.config'
 
     # Load the configuration file into the Configuration object.
@@ -280,7 +176,7 @@ module Webgen
     end
     private :restore_cache
 
-    # Save the +cache+ to +website.cache+.
+    # Save the +cache+.
     def save_cache
       cache_data = [@cache.dump, Webgen::VERSION]
       if config['website.cache'].first == :file
@@ -303,6 +199,8 @@ module Webgen
     end
 
     # Execute the given task.
+    #
+    # See Webgen::Task and the classes in its namespace for available classes.
     def execute_task(task, *options)
       @ext.task.execute(task, *options)
     end

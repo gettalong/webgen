@@ -6,19 +6,23 @@ module Webgen
 
   # Used for finding nodes that match certain criterias.
   #
-  # == About this class
+  # == About
   #
-  # This extension class is used for finding nodes that match certain criterias when calling the
-  # #find method. There are some built-in filters but one can also provide custom filters via
-  # #add_filter_module. The found nodes are either returned in a flat list or hierarchical in nested
-  # lists. Sorting, limiting the number of returned nodes and using an offset is also possible.
+  # This extension class is used for finding nodes that match certain criterias (all nodes are used
+  # if no filter options are specified) when calling the #find method. There are some built-in
+  # filters but one can also provide custom filters via #add_filter_module.
+  #
+  # The found nodes are either returned in a flat list or hierarchical in nested lists. Sorting,
+  # limiting the number of returned nodes and using an offset are also possible.
   #
   # == Finder options
   #
   # Following is the list of all finder options. Note that there may also be other 3rd party node
-  # filters available!
+  # filters available if you are using extension bundles!
   #
   # === Non-filter options
+  #
+  # These options are not used for filtering out nodes but provide additional functionality.
   #
   # [:limit]
   #   Value: an integer. Specifies the maximum number of nodes that should be returned. Implies
@@ -27,8 +31,8 @@ module Webgen
   #   Note that fewer nodes may be returned if fewer nodes match the filter criterias.
   #
   # [:offset]
-  #   Value: an integer. Specifies how many nodes from the front of the list should not be returned.
-  #   Implies 'flatten = true'.
+  #   Value: an integer. Specifies how many nodes from the front of the list should *not* be
+  #   returned. Implies 'flatten = true'.
   #
   # [:flatten]
   #   Value: anything except +nil+ or +false+. A flat list of nodes is returned if this option is
@@ -48,6 +52,9 @@ module Webgen
   #   the value of this meta information is used for comparison of nodes.
   #
   # === Filter options
+  #
+  # These options are used for filtering the nodes. All nodes are used by default if no filter
+  # options are specified.
   #
   # [:alcn]
   #   Value: an alcn pattern or an array of alcn patterns. Nodes that match any of the patterns are
@@ -84,8 +91,9 @@ module Webgen
   # == Implementing a filter module
   #
   # Implementing a filter module is very easy. Just create a module that contains your filter
-  # methods and tell the NodeFinder object about it. A filter method needs to take three arguments:
-  # an array of nodes, the reference node and the filter value.
+  # methods and tell the NodeFinder object about it using the #add_filter_module method. A filter
+  # method needs to take three arguments: an array of nodes, the reference node and the filter
+  # value.
   #
   # Here is a sample filter module which provides the ability to filter nodes based on the meta
   # information key +category+. The +category+ key contains an array with one or more categories.
@@ -115,8 +123,10 @@ module Webgen
       }
     end
 
-    # Add a module with filter methods. The parameter +mapping+ needs to be a hash associating
-    # unique names with the methods of the given module that can be used as finder methods.
+    # Add a module with filter methods.
+    #
+    # The parameter +mapping+ needs to be a hash associating unique names with the methods of the
+    # given module that can be used as finder methods.
     #
     # === Examples:
     #
@@ -133,9 +143,11 @@ module Webgen
       extend(mod)
     end
 
-    # Return all nodes that match certain criterias. The parameter +opts_or_name+ can either be a
-    # hash with finder options or the name of a finder option set defined using the configuration
-    # option 'node_finder.options_sets'. The node +ref_node+ is used as reference node.
+    # Return all nodes that match certain criterias.
+    #
+    # The parameter +opts_or_name+ can either be a hash with finder options or the name of a finder
+    # option set defined using the configuration option 'node_finder.options_sets'. The node
+    # +ref_node+ is used as reference node.
     def find(opts_or_name, ref_node)
       opts = prepare_options_hash(opts_or_name)
 

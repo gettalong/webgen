@@ -126,7 +126,7 @@ module Webgen
         raise Webgen::RenderError.new(e, self.class.name, context.dest_node, nil, (e.sass_line if e.sass_line))
       end
 
-      def self.default_options(context)
+      def self.default_options(context) # :nodoc:
         opts = context.website.config['content_processor.sass.options']
         load_paths = context.website.ext.sass_load_paths + [NodeTreeImporter.new(context.website, '/')]
         opts.merge({

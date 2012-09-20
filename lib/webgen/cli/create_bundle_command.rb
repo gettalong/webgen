@@ -29,11 +29,11 @@ DESC
         @type = :local
       end
 
-      def usage
+      def usage # :nodoc:
         "Usage: webgen [global options] bundle create [options] BUNDLE_NAME [DIRECTORY]"
       end
 
-      def execute(args)
+      def execute(args) # :nodoc:
         bundle_name = args.shift
         raise "The argument NAME is mandatory" if bundle_name.to_s.empty?
         directory = args.shift || bundle_name

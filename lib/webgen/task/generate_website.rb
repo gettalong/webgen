@@ -8,10 +8,10 @@ module Webgen
 
     # Generates the website.
     #
-    # This is the main task of webgen.
+    # This can be called the main task of webgen.
     module GenerateWebsite
 
-      # Main webgen task: generate the website.
+      # Main webgen task: Generate the website.
       #
       # Returns +true+ if the website has been successfully generated.
       def self.call(website)

@@ -62,8 +62,9 @@ module Webgen
       self
     end
 
-    # Define a new option +name+ with a default value of +default+ and the description. If a
-    # validation block is provided, it is called with the new value when one is set and should
+    # Define a new option +name+ with a default value of +default+ and the description.
+    #
+    # If a validation block is provided, it is called with the new value when one is set and should
     # return a (possibly altered) value to be set.
     def define_option(name, default, description, &validator)
       if @options.has_key?(name)
@@ -109,8 +110,10 @@ module Webgen
       end
     end
 
-    # Set the configuration values from the Hash +values+. The hash can either contain full
-    # configuration option names or namespaced option names, ie. in YAML format:
+    # Set the configuration values from the Hash +values+.
+    #
+    # The hash can either contain full configuration option names or namespaced option names, ie. in
+    # YAML format:
     #
     #   my.option: value
     #
@@ -137,9 +140,11 @@ module Webgen
       unknown_options
     end
 
-    # Load the configuration values. If +filename+ is a String, it is treated as the name of the
-    # configuration file from which the values should be loaded. If +filename+ responds to \#read,
-    # it is treated as an IO object from which the values should be loaded.
+    # Load the configuration values.
+    #
+    # If +filename+ is a String, it is treated as the name of the configuration file from which the
+    # values should be loaded. If +filename+ responds to \#read, it is treated as an IO object from
+    # which the values should be loaded.
     #
     # The configuration needs to be in YAML format. More specifically, it needs to contain a YAML
     # hash which is further processed by #set_values.

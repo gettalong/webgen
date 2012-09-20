@@ -6,7 +6,8 @@ require 'webgen/path'
 module Webgen
   class ContentProcessor
 
-    # Uses the HTML headers h1, h2, ..., h6 to generate nested fragment nodes.
+    # Uses the HTML headers h1, h2, ..., h6 (only those with valid IDs) to generate nested fragment
+    # nodes.
     module Fragments
 
       # Create the nested fragment nodes from the content under the content node but only if there

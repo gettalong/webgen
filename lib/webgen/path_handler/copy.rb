@@ -7,7 +7,7 @@ module Webgen
   class PathHandler
 
     # Simple path handler for copying files from the source to the destination, either without
-    # changing anything or by applying content processors.
+    # changing anything or by applying one or more content processors.
     class Copy
 
       include Base

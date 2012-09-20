@@ -5,7 +5,7 @@ require 'webgen/error'
 
 module Webgen
 
-  # A Page object wraps a meta information hash and a hash of block name to block content
+  # A Page object wraps a meta information hash and a hash of {block name => block content}
   # associations.
   #
   # It is normally generated from a file or string in Webgen Page Format using the provided class
@@ -62,8 +62,10 @@ module Webgen
       end
       private :parse_meta_info
 
-      # Parse all blocks in +data+ and return them. The key 'blocks' of the meta information hash is
-      # used and probably updated with information found on block starting lines.
+      # Parse all blocks in +data+ and return them.
+      #
+      # The key 'blocks' of the meta information hash is used and probably updated with information
+      # found on block starting lines.
       def parse_blocks(data, meta_info)
         scanned = data.scan(RE_BLOCKS)
         raise(FormatError, 'No content blocks specified') if scanned.length == 0

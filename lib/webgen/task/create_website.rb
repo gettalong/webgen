@@ -8,6 +8,9 @@ require 'tmpdir'
 module Webgen
   class Task
 
+    #
+    # == About
+    #
     # Creates the website.
     #
     # This task assumes that the website directory does not exist and populates it from a specified
@@ -15,7 +18,7 @@ module Webgen
     #
     # For each created file a verbose log message is recorded in the format used when webgen
     # generates a website (because, actually, webgen's website generating facilities are used to
-    # create the website directory).
+    # create the website structure).
     #
     # == Creating a website template
     #
@@ -26,8 +29,9 @@ module Webgen
     # What this means is:
     #
     # * A Webgen::Website object is created for a temporary directory.
-    # * The 'destination' configuration option is set to the to-be-created website directory.
-    # * The 'sources' configuration option is set to the website template directory.
+    # * The 'destination' configuration option is set to the to-be-created website directory (ie. to
+    #   Website#directory of the current website).
+    # * The 'sources' configuration option is set to use the website template directory.
     # * All path handlers are deactivated except Webgen::PathHandler::Copy and the latter is used
     #   for processing all source paths.
     #

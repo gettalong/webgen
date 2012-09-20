@@ -8,13 +8,13 @@ module Webgen
 
     # Replaces special XML tags with the rendered content of a node block.
     #
-    # The module provides a .call method so that it can be used by the content processor extension.
-    # However, it also provides the .render_block method that contains the actual logic for
+    # The module provides a ::call method so that it can be used by the content processor extension.
+    # However, it also provides the ::render_block method that contains the actual logic for
     # rendering a block of a node given a render context.
     module Blocks
 
-      BLOCK_RE = /<webgen:block\s*?((?:\s\w+=('|")[^'"]+\2)+)\s*\/>/
-      BLOCK_ATTR_RE = /(\w+)=('|")([^'"]+)\2/
+      BLOCK_RE = /<webgen:block\s*?((?:\s\w+=('|")[^'"]+\2)+)\s*\/>/ # :nodoc:
+      BLOCK_ATTR_RE = /(\w+)=('|")([^'"]+)\2/ # :nodoc:
 
       # Replace the webgen:block xml tags with the rendered content of the specified node.
       def self.call(context)

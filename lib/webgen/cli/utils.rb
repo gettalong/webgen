@@ -6,15 +6,15 @@ module Webgen
 
   module CLI
 
-    # Provides methods for other CLI classes for formatting text in a consistent manner.
-    class Utils
+    # Provides methods for CLI classes for formatting text in a consistent manner.
+    module Utils
 
       class << self; attr_accessor :use_colors; end
       @use_colors = $stdout.tty? && RbConfig::CONFIG['host_os'] !~ /mswin|mingw/
 
       DEFAULT_WIDTH = 80
 
-      module Color
+      module Color # :nodoc:
 
         @@colors = {:bold => [1], :light => [1], :green => [32], :yellow => [33], :red => [31], :blue => [34], :reset => [0]}
 
@@ -27,6 +27,9 @@ module Webgen
 
 
       # Used for dynamically formatting the text (setting color, bold face, ...).
+      #
+      # The +id+ (method name) can be one of the following: bold, light, green, yellow, red, blue,
+      # reset.
       def self.method_missing(id, text = nil)
         if self.use_colors && Color.respond_to?(id)
           Color.send(id, text)
@@ -54,8 +57,10 @@ module Webgen
       end
 
       # Return an array of lines which represents the text in +content+ formatted so that no line is
-      # longer than +width+ characters. The +indent+ parameter specifies the amount of spaces
-      # prepended to each line. If +first_line_indented+ is +true+, then the first line is indented.
+      # longer than +width+ characters.
+      #
+      # The +indent+ parameter specifies the amount of spaces prepended to each line. If
+      # +first_line_indented+ is +true+, then the first line is indented.
       def self.format(content, width = DEFAULT_WIDTH, indent = 0, first_line_indented = false)
         content = (content || '').dup
         length = width - indent

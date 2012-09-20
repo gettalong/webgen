@@ -7,11 +7,11 @@ module Webgen
 
   # Namespace for all classes that are used to write content to a specific destination.
   #
-  # == About this class
+  # == About
   #
   # This class is used to manage destination classes. A destination class is a class that writes
   # content to a specific destination. For example, the FileSystem class uses the file system to
-  # write out the generated content.
+  # write out the generated content to the file system.
   #
   # The #register method is used for registering new destination classes.
   #
@@ -91,20 +91,18 @@ module Webgen
       @website = website
     end
 
-    # Register a destination class. The parameter +klass+ has to contain the name of the destination
-    # class or the class object itself. If the class is located under this namespace, only the class
-    # name without the hierarchy part is needed, otherwise the full class name including parent
-    # module/class names is needed.
+    # Register a destination class.
+    #
+    # The parameter +klass+ has to contain the name of the destination class or the class object
+    # itself. If the class is located under this namespace, only the class name without the
+    # hierarchy part is needed, otherwise the full class name including parent module/class names is
+    # needed.
     #
     # === Options:
     #
     # [:name] The name for the destination class. If not set, it defaults to the snake-case version
     #         (i.e. FileSystem → file_system) of the class name (without the hierarchy part). It
     #         should only contain letters.
-    #
-    # [:author] The author of the destination class.
-    #
-    # [:summary] A short description of the destination class.
     #
     # === Examples:
     #

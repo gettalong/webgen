@@ -23,7 +23,7 @@ Hint: The global verbosity option enables additional output.
 DESC
       end
 
-      def execute(args)
+      def execute(args) # :nodoc:
         cache = commandparser.website.cache[:item_tracker_data]
         if cache.nil?
           puts "No data available, you need to generate the website first!"

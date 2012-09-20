@@ -10,7 +10,8 @@ module Webgen
   #
   # When an extension bundle is provided by a Rubygem and the Rubygem is not already activated, the
   # Rubygem is automatically activated. This only works when one follows the standard naming
-  # conventions for webgen extension bundles.
+  # conventions for webgen extension bundles, i.e. the Rubygem has to be named
+  # 'webgen-BUNDLE_NAME-bundle'.
   class BundleLoader
 
     # Create a new BundleLoader object belonging to the website object +website+.
@@ -86,38 +87,39 @@ module Webgen
 
     # :section: DSL methods
     #
-    # All following method are DSL methods that are just provided for convenience.
+    # All following method are DSL methods that are provided for convenience and can be used by the
+    # initialization files.
 
     # Require the file relative to the currently loaded file.
     def require_relative(file)
       require(File.join(File.dirname(@stack.last), file))
     end
 
-    # Define a configuration option. See Webgen::Configuration#define_option for more information.
+    # Define a configuration option.
+    #
+    # See Webgen::Configuration#define_option for more information.
     def option(name, default, description, &validator)
       @website.config.define_option(name, default, description, &validator)
     end
-    private :option
 
     # Return the website object.
     def website
       @website
     end
-    private :website
 
     # Mount the directory relative to the currently loaded file on the given mount point as passive
     # source.
+    #
+    # See Webgen::Source for more information.
     def mount_passive(dir, mount_point = '/', glob = '**/*')
       @website.ext.source.passive_sources.unshift([mount_point, :file_system, absolute_path(dir), glob])
     end
-    private :mount_passive
 
     # Return the absolute path of the given path which is assumed to be relative to the currently
     # loaded file.
     def absolute_path(path)
       File.expand_path(File.join(File.dirname(@stack.last), path))
     end
-    private :absolute_path
 
   end
 

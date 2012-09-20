@@ -10,6 +10,14 @@ module Webgen
   class PathHandler
 
     # Path handler for creating atom and/or rss feeds.
+    #
+    # When customizing a feed template one can use the following utiltity methods:
+    #
+    # * #feed_entries
+    # * #feed_link
+    # * #entry_content
+    #
+    # Have a look at the default feed templates to see them in action.
     class Feed
 
       include Base
@@ -18,6 +26,7 @@ module Webgen
       # The mandatory keys that need to be set in a feed file.
       MANDATORY_INFOS = %W[site_url author entries]
 
+      # Create the feed nodes.
       def create_nodes(path, blocks)
         if MANDATORY_INFOS.any? {|t| path.meta_info[t].nil?}
           raise Webgen::NodeCreationError.new("At least one of #{MANDATORY_INFOS.join('/')} is missing",
@@ -48,12 +57,12 @@ module Webgen
                              :chain => [node, node.resolve("/templates/feed.template", node.lang, true), node].compact)
       end
 
-      # Return the entries for the feed +node+.
+      # Return the entries for the feed node.
       def feed_entries(node)
         @website.ext.node_finder.find(node['entries'], node)
       end
 
-      # Return the feed link URL for the feed +node+.
+      # Return the feed link URL for the feed node.
       def feed_link(node)
         Webgen::Path.url(File.join(node['site_url'], node.tree[node['link']].dest_path), false)
       end

@@ -62,9 +62,9 @@ end
 rd = RDoc::Task.new do |rdoc|
   rdoc.rdoc_dir = 'htmldoc/rdoc'
   rdoc.title = 'webgen'
-  rdoc.main = 'lib/webgen/website.rb'
+  rdoc.main = 'API.rdoc'
   rdoc.options << '--line-numbers'
-  rdoc.rdoc_files.include('lib')
+  rdoc.rdoc_files.include('lib', 'API.rdoc')
 end
 
 Rake::TestTask.new do |test|
@@ -98,6 +98,8 @@ EOF
                             'THANKS',
                             'COPYING',
                             'GPL',
+                            'API.rdoc',
+                            'README.md',
                             'bin/webgen',
                             'data/**/*',
                             'doc/**/*',
@@ -175,7 +177,8 @@ EOF
     #### Documentation
 
     s.has_rdoc = true
-    s.rdoc_options = ['--line-numbers', '--main', 'lib/webgen/website.rb']
+    s.rdoc_options = ['--line-numbers', '--main', 'API.rdoc']
+    s.extra_rdoc_files = ['API.rdoc']
 
     #### Author and project details
 

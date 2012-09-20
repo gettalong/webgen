@@ -57,7 +57,7 @@ module Webgen
       @new_data[key] = value
     end
 
-    # Restore the caches from +data+ and recreate all cached instances (see #instance).
+    # Restore the cache from +data+.
     def restore(data)
       @old_data, @permanent = *data
     end
