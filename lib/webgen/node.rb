@@ -123,6 +123,16 @@ module Webgen
       self == tree.root
     end
 
+    # Check if the this node is an ancestor of +node+.
+    #
+    # The check is performed using only the +parent+ information of the involved nodes, NOT the
+    # actual alcn values!
+    def is_ancestor_of?(node)
+      node = node.parent
+      node = node.parent while node != tree.dummy_root && node != self
+      node != tree.dummy_root
+    end
+
     # Return the string representation of the node which is just the #alcn.
     def to_s
       @alcn

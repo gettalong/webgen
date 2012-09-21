@@ -49,6 +49,24 @@ class TestNode < MiniTest::Unit::TestCase
     assert(!@website.tree['/file.en.html#nested'].is_directory?)
   end
 
+  def test_is_ancestor_of
+    setup_default_nodes(@website.tree)
+
+    assert(@website.tree['/'].is_ancestor_of?(@website.tree['/file.en.html']))
+    assert(@website.tree['/'].is_ancestor_of?(@website.tree['/dir/']))
+
+    assert(@website.tree['/dir/'].is_ancestor_of?(@website.tree['/dir/subfile.html']))
+
+    assert(@website.tree['/'].is_ancestor_of?(@website.tree['/dir/subfile.html#frag']))
+    assert(@website.tree['/dir/'].is_ancestor_of?(@website.tree['/dir/subfile.html#frag']))
+    assert(@website.tree['/dir/subfile.html'].is_ancestor_of?(@website.tree['/dir/subfile.html#frag']))
+
+    refute(@website.tree['/dir/'].is_ancestor_of?(@website.tree['/dir2/index.en.html']))
+    refute(@website.tree['/dir/'].is_ancestor_of?(@website.tree['/file.en.html']))
+    refute(@website.tree['/dir/subfile.html'].is_ancestor_of?(@website.tree['/file.en.html']))
+    refute(@website.tree['/dir2/index.en.html'].is_ancestor_of?(@website.tree['/dir/subfile.html']))
+  end
+
   def test_to_s
     node = Webgen::Node.new(@website.tree.dummy_root, '/', '/', {'lang' => 'de', :test => :value})
     assert_equal(node.alcn, node.to_s)
