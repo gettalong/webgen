@@ -387,8 +387,16 @@ option('tag.breadcrumb_trail.end_level', -1,
 option('tag.breadcrumb_trail.template', '/templates/tag.template',
        'The block \'tag.breadcrumb_trail\' in this template file is used for rendering')
 
-#TODO: tag.register('Menu')
-#TODO: tag.register('Sitemap')
+tag.register('Menu')
+option('tag.menu.style', 'nested',
+       'The menu rendering style to be used, either nested or flat') do |val|
+  raise "The value has to be 'nested' or 'flat'" unless %w[nested flat].include?(val.to_s)
+  val.to_s
+end
+option('tag.menu.options', {},
+       'Node finder options that specify which nodes the menu should use')
+option('tag.menu.template', '/templates/tag.template',
+       'The block \'tag.menu\' in this template file is used for rendering')
 
 
 ########################################################################

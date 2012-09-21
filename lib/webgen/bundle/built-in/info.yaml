@@ -189,9 +189,9 @@ extensions:
   tag.breadcrumb_trail:
     author: *author
     summary: Creates a breadcrumb trail (i.e. shows the directory hierarchy) for the content page
-#  tag.menu:
-#    author: *author
-#    summary: Creates a customizable menu
+  tag.menu:
+    author: *author
+    summary: Creates a customizable menu
 
   task:
     author: *author

@@ -11,3 +11,33 @@ end.join(" | ")
 context.content = context[:nodes].map do |node|
   context.dest_node.link_to(node, context.dest_node.lang)
 end.join(" / ")
+
+
+--- name:tag.menu pipeline:ruby --------------------------------------------------------------------
+nested_list = lambda do |nodes, level|
+  out = "<ul>"
+  nodes.each do |node, children|
+    menu = (children ? nested_list.call(children, level + 1) : '')
+    style, link = Webgen::Tag::Menu.menu_item_details(context.dest_node, node, context.content_node.lang, level, !children.nil?)
+    out << "<li #{style}>#{link}"
+    out << menu
+    out << "</li>"
+  end
+  out << "</ul>"
+  out
+end
+
+flat_list = lambda do |nodes, level|
+  submenu = ''
+  out = "<ul>"
+  nodes.each do |node, children|
+    submenu << (children ? flat_list.call(children, level + 1) : '')
+    style, link = Webgen::Tag::Menu.menu_item_details(context.dest_node, node, context.content_node.lang, level, !children.nil?)
+    out << "<li #{style}>#{link}</li>"
+  end
+  out << "</ul>" << submenu
+  out
+end
+
+generator = (context[:config]['tag.menu.style'] == 'nested' ? nested_list : flat_list)
+context.content = generator.call(context[:nodes], 1)
