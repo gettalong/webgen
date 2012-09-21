@@ -12,8 +12,10 @@ module Webgen
   # if no filter options are specified) when calling the #find method. There are some built-in
   # filters but one can also provide custom filters via #add_filter_module.
   #
-  # The found nodes are either returned in a flat list or hierarchical in nested lists. Sorting,
-  # limiting the number of returned nodes and using an offset are also possible.
+  # The found nodes are either returned in a flat list or hierarchical in nested lists (if a node
+  # has no child nodes, only the node itself is used; otherwise a two element array containing the
+  # node and child nodes is used). Sorting, limiting the number of returned nodes and using an
+  # offset are also possible.
   #
   # == Finder options
   #
@@ -36,9 +38,7 @@ module Webgen
   #
   # [:flatten]
   #   Value: anything except +nil+ or +false+. A flat list of nodes is returned if this option is
-  #   set, otherwise the nodes are returned in their correct hierarchical order using nested lists:
-  #   If a node has no sub nodes, only the node itself is used; otherwise a two element array
-  #   containing the node and child nodes is used.
+  #   set, otherwise the nodes are returned in their correct hierarchical order using nested lists.
   #
   #   Note that any missing nodes in the hierarchy are automatically added so that traversing the
   #   hierarchy is always possible. For example, if we have the tree '/a/b/c' and only nodes +a+ and
