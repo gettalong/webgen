@@ -300,6 +300,8 @@ module Webgen
       if @secondary_nodes.has_key?(path)
         raise Webgen::NodeCreationError.new("Duplicate secondary path name <#{path}>", self.class.name, path)
       end
+
+      path['modified_at'] ||= @website.tree[source_alcn]['modified_at'] if source_alcn
       path.set_io(&nil)
       @secondary_nodes[path.dup] = [source_alcn, handler, content] if source_alcn
 
