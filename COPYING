@@ -1,13 +1,22 @@
-webgen is copyrighted free software by Thomas Leitner <t_leitner@gmx.at>.
-You can redistribute it and/or modify it under the terms of the GPL
-version 2 (see the file GPL).
+webgen - static website generation made easy
+Copyright (C) 2003-2012 Thomas Leitner <t_leitner@gmx.at>
 
-However, the webgen distribution contains some data files that have a
-different license. These files/directories are listed here:
+webgen is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-data/webgen/website_style/*:
-  The copyright information for each included website styles can be
-  found in the README file of the website style.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+
+The webgen distribution contains some data files that have a different
+license. These files/directories are listed here:
 
 data/webgen/passive_sources/stylesheets/coderay-default.css:
   This file has been generated with the coderay_stylesheet binary and
