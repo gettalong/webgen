@@ -109,6 +109,14 @@ module Webgen
       defined?(@basename) ? @meta_info : (analyse; @meta_info)
     end
 
+    # Get the value of the meta information key.
+    #
+    # This method has to be used to get meta information without triggering analyzation of the path
+    # string!
+    def [](key)
+      @meta_info[key]
+    end
+
     # Set the meta information +key+ to +value+.
     #
     # This method has to be used to set meta information without triggering analyzation of the path

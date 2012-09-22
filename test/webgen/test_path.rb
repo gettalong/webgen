@@ -140,7 +140,9 @@ class TestPath < MiniTest::Unit::TestCase
 
     # Check other accessors
     path = Webgen::Path.new('/test/')
+    assert_nil(path['key'])
     path['key'] = 'val'
+    assert_equal('val', path['key'])
     assert_equal('val', path.meta_info['key'])
 
     # Check ext= setter
