@@ -8,7 +8,7 @@ extensions.
 
 ## Contact & Help
 
-The author of webgen is Thomas Leitner <t_leitner@gmx.at>.
+The author of webgen is Thomas Leitner -- he is reachable at <mailto:t_leitner@gmx.at>.
 
 You can discuss webgen or find help on the [webgen-users] mailing list
 which is mirrored to the [webgen-users Google group].
@@ -17,7 +17,7 @@ Or you can join the IRC channel [#webgen] on Freenode.
 
 [webgen-users]: http://rubyforge.org/pipermail/webgen-users/
 [webgen-users Google group]: https://groups.google.com/forum/?fromgroups#!forum/webgen-users
-[#webgen]: irc://chat.freenode.net/#nanoc
+[#webgen]: irc://chat.freenode.net/#webgen
 
 
 ## Description
@@ -46,7 +46,7 @@ makes authoring websites easier:
 
 * No need to know the Ruby language for basic websites
 
-The main documentation lives at <http://webgen.rubyforge.org/docs/>.
+The main documentation lives at <http://webgen.rubyforge.org/documentation/>.
 
 
 ## Installation
@@ -59,7 +59,7 @@ You can install webgen via Rubygems:
 
     $ gem install webgen
 
-Or via the `setup.rb` method:
+Or via the `setup.rb` method if you have downloaded a tarball or zip file:
 
     $ ruby setup.rb config
     $ ruby setup.rb setup

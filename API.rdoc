@@ -1,147 +1,143 @@
-# -*- encoding: utf-8 -*-
+= webgen API documentation
 
-##
-# = webgen API documentation
-#
-# == About webgen
-#
-# webgen is a command line application for generating a web site from templates and content
-# files. Despite this fact, the implementation also provides adequate support for using webgen as a
-# library and *full* *support* for extending it.
-#
-# == General information
-#
-# The Webgen namespace houses all classes/modules used by webgen. The class Webgen::Website is the
-# main class, you might want to have a look at its documentation.
-#
-# webgen can be extended very easily. Any file called +init.rb+ put into the +ext+ directory of the
-# website or into one of its sub-directories is automatically loaded when a Webgen::Website object
-# is created (by using a Webgen::BundleLoader).
-#
-# You can extend webgen in several ways. However, no magic or special knowledge is needed since
-# webgen relies on the power of Ruby itself. So, for example, an extension is just a normal Ruby
-# class.
-#
-# Following are links and descriptions on how to develop specific types of extensions:
-#
-# [Webgen::Task]
-#
-#   Information on how to implement functionality that operates on a website in a standard manner.
-#
-# [Webgen::Source]
-#
-#   Information on how to implement a class that provides source paths for webgen. For example, one
-#   could implement a source class that uses a database as backend.
-#
-# [Webgen::Destination]
-#
-#   Information on how to implement a class that writes content to a destination location. The
-#   default destination class just writes to the file system. One could, for example, implement a
-#   destination class that writes the generated files to multiple locations or to a remote server.
-#
-# [Webgen::ContentProcessor]
-#
-#   Information on how to develop an extension that processes the content. For example,
-#   markup-to-HTML converters are implemented as content processors in webgen.
-#
-# [Webgen::PathHandler]
-#
-#   Information on how to implement a class that handles objects of type Path and creates Node
-#   instances. For example, Webgen::PathHandler::Page handles the conversion of '*.page' files to
-#   '*.html' files.
-#
-# [Webgen::Tag]
-#
-#   Information on how to implement a webgen tag. webgen tags are used to provide an easy way for
-#   users to include dynamic content such as automatically generated menus.
-#
-# [Webgen::ItemTracker]
-#
-#   Information on how to implement a class that tracks certain items that can be used to determine
-#   wheter a given node object has changed.
-#
-# == Other places to look at
-#
-# Here is a list of modules/classes that are used throughout webgen and provide useful methods for
-# developing extensions:
-#
-# * Webgen::Node
-# * Webgen::Tree
-# * Webgen::Path
-# * Webgen::Page
-# * Webgen::Cache
-# * Webgen::Utils
-#
-# == List of all blackboard messages
-#
-# The Blackboard (accessible via Webgen::Website#blackboard) provides an easy-to-use facility to be
-# notified of certain messages. All registered listeners for a message are notified when the message
-# gets dispatched.
-#
-# Following is the list of all messages that are dispatched by the webgen core classes and built-in
-# extensions:
-#
-# [:website_initialized]
-#
-#     This message is dispatched once a Webgen::Website object is fully initialized, ie. after all
-#     extensions have been loaded, the configuration applied and frozen and the cache restored
-#     (which is also immediately before Webgen::Website.new returns).
-#
-#     No parameters are given.
-#
-# [:before_node_created]
-#
-#     This message is dispatched after the meta information from the configuration option
-#     'path_handler.default_meta_info' is applied to a path but before anything else happens to the
-#     path (like updating the meta information has with meta information found in the content of the
-#     path).
-#
-#     The path in question is given as parameter.
-#
-# [:after_node_created]
-#
-#     As the name says this message is dispatched after a node has been created.
-#
-#     The node is given as parameter.
-#
-# [:after_tree_populated]
-#
-#     This message is dispatched after all initial nodes have been created and the tree has been
-#     populated. Note that further :after_node_created messages may be dispatched because nodes can
-#     additionally be created during the rendering phase.
-#
-#     No parameters are given.
-#
-# [:after_node_written]
-#
-#     This message is dispatched after a node has been written to its destination. Note that if the
-#     node in question has the meta information 'no_output' set but the Webgen::ItemTracker has
-#     determined that it has changed nonetheless, this message is still dispatched because the node
-#     would have been written.
-#
-#     Also note that this message be may dispatched multiple times for the same node if, after all
-#     nodes have been written, it is determined that it has changed again.
-#
-#     The node is given as parameter.
-#
-# [:after_all_nodes_written]
-#
-#     This message is dispatched after all nodes have been written. Note that this message is
-#     dispatched multiple times if needed (if nodes have changed again).
-#
-#     No parameters are given.
-#
-# [:node_resolution_failed]
-#
-#     This message is dispatched when webgen tries to resolve a node by using an alcn/acn/absolute
-#     path, the node could not be found and it is deemed that this resolution failure is critical.
-#
-#     The path in question as well as the requested language are given as parameter.
-#
-# [:before_node_deleted]
-#
-#     This message is dispatched before a node is deleted from the Webgen::Tree. When this message
-#     is dispatched, all child nodes have already been deleted.
-#
-#     The node is given as parameter.
-#
+== About webgen
+
+webgen is a command line application for generating a web site from templates and content
+files. Despite this fact, the implementation also provides adequate support for using webgen as a
+library and *full* *support* for extending it.
+
+== General information
+
+The Webgen namespace houses all classes/modules used by webgen. The class Webgen::Website is the
+main class, you might want to have a look at its documentation.
+
+webgen can be extended very easily. Any file called +init.rb+ put into the +ext+ directory of the
+website or into one of its sub-directories is automatically loaded when a Webgen::Website object
+is created (by using a Webgen::BundleLoader).
+
+You can extend webgen in several ways. However, no magic or special knowledge is needed since
+webgen relies on the power of Ruby itself. So, for example, an extension is just a normal Ruby
+class.
+
+Following are links and descriptions on how to develop specific types of extensions:
+
+[Webgen::Task]
+
+  Information on how to implement functionality that operates on a website in a standard manner.
+
+[Webgen::Source]
+
+  Information on how to implement a class that provides source paths for webgen. For example, one
+  could implement a source class that uses a database as backend.
+
+[Webgen::Destination]
+
+  Information on how to implement a class that writes content to a destination location. The
+  default destination class just writes to the file system. One could, for example, implement a
+  destination class that writes the generated files to multiple locations or to a remote server.
+
+[Webgen::ContentProcessor]
+
+  Information on how to develop an extension that processes the content. For example,
+  markup-to-HTML converters are implemented as content processors in webgen.
+
+[Webgen::PathHandler]
+
+  Information on how to implement a class that handles objects of type Path and creates Node
+  instances. For example, Webgen::PathHandler::Page handles the conversion of '*.page' files to
+  '*.html' files.
+
+[Webgen::Tag]
+
+  Information on how to implement a webgen tag. webgen tags are used to provide an easy way for
+  users to include dynamic content such as automatically generated menus.
+
+[Webgen::ItemTracker]
+
+  Information on how to implement a class that tracks certain items that can be used to determine
+  wheter a given node object has changed.
+
+== Other places to look at
+
+Here is a list of modules/classes that are used throughout webgen and provide useful methods for
+developing extensions:
+
+* Webgen::Node
+* Webgen::Tree
+* Webgen::Path
+* Webgen::Page
+* Webgen::Cache
+* Webgen::Utils
+
+== List of all blackboard messages
+
+The Blackboard (accessible via Webgen::Website#blackboard) provides an easy-to-use facility to be
+notified of certain messages. All registered listeners for a message are notified when the message
+gets dispatched.
+
+Following is the list of all messages that are dispatched by the webgen core classes and built-in
+extensions:
+
+[:website_initialized]
+
+    This message is dispatched once a Webgen::Website object is fully initialized, ie. after all
+    extensions have been loaded, the configuration applied and frozen and the cache restored
+    (which is also immediately before Webgen::Website.new returns).
+
+    No parameters are given.
+
+[:before_node_created]
+
+    This message is dispatched after the meta information from the configuration option
+    'path_handler.default_meta_info' is applied to a path but before anything else happens to the
+    path (like updating the meta information has with meta information found in the content of the
+    path).
+
+    The path in question is given as parameter.
+
+[:after_node_created]
+
+    As the name says this message is dispatched after a node has been created.
+
+    The node is given as parameter.
+
+[:after_tree_populated]
+
+    This message is dispatched after all initial nodes have been created and the tree has been
+    populated. Note that further :after_node_created messages may be dispatched because nodes can
+    additionally be created during the rendering phase.
+
+    No parameters are given.
+
+[:after_node_written]
+
+    This message is dispatched after a node has been written to its destination. Note that if the
+    node in question has the meta information 'no_output' set but the Webgen::ItemTracker has
+    determined that it has changed nonetheless, this message is still dispatched because the node
+    would have been written.
+
+    Also note that this message be may dispatched multiple times for the same node if, after all
+    nodes have been written, it is determined that it has changed again.
+
+    The node is given as parameter.
+
+[:after_all_nodes_written]
+
+    This message is dispatched after all nodes have been written. Note that this message is
+    dispatched multiple times if needed (if nodes have changed again).
+
+    No parameters are given.
+
+[:node_resolution_failed]
+
+    This message is dispatched when webgen tries to resolve a node by using an alcn/acn/absolute
+    path, the node could not be found and it is deemed that this resolution failure is critical.
+
+    The path in question as well as the requested language are given as parameter.
+
+[:before_node_deleted]
+
+    This message is dispatched before a node is deleted from the Webgen::Tree. When this message
+    is dispatched, all child nodes have already been deleted.
+
+    The node is given as parameter.
