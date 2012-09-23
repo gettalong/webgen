@@ -11,3 +11,15 @@ def webgen_require(library, gem = library)
 rescue LoadError
   raise Webgen::LoadError.new(library, self.class.name, nil, gem)
 end
+
+
+class Hash
+
+  # Return a new hash where all String keys are converted to Symbol keys.
+  def symbolize_keys
+    hash = dup
+    hash.keys.each {|k| hash[(k.to_sym rescue k)] = hash.delete(k)}
+    hash
+  end
+
+end

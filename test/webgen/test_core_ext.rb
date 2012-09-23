@@ -10,4 +10,11 @@ class TestCoreExtensions < MiniTest::Unit::TestCase
     webgen_require('webgen/core_ext') rescue flunk
   end
 
+  def test_hash_symbolize_keys!
+    h = {'a' => 'a', :b => 'b', 5 => 5}.symbolize_keys
+    assert_equal('a', h[:a])
+    assert_equal('b', h[:b])
+    assert_equal(5, h[5])
+  end
+
 end
