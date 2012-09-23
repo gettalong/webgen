@@ -27,12 +27,12 @@ module Webgen
 
       # Return all paths under the root path which match the glob.
       def paths
-        @paths ||= Dir.glob(File.join(@root, @glob), File::FNM_DOTMATCH|File::FNM_CASEFOLD).to_set.collect do |f|
+        @paths ||= Dir.glob(File.join(@root, @glob), File::FNM_DOTMATCH|File::FNM_CASEFOLD).collect do |f|
           next unless File.exists?(f) # handle invalid links
           temp = Pathname.new(f.sub(/^#{Regexp.escape(@root)}\/?/, '/')).cleanpath.to_s
           temp += '/' if File.directory?(f) && temp[-1] != ?/
           Path.new(temp, 'modified_at' => File.mtime(f)) {|mode| File.open(f, mode)}
-        end.compact
+        end.compact.to_set
       end
 
     end
