@@ -31,10 +31,9 @@ title: FAQ
 
 *   **Is there any way to add comments to my webgen website?**
 
-    Surely! There are several comment engines out there, however, the following two look very
-    promising:
+    Surely! There are several comment engines out there, however, I come across the following one
+    very often:
 
-    * [JS-Kit](http://js-kit.com/comments/)
     * [DISQUS](http://disqus.com)
 
 # How to ...
