@@ -73,7 +73,7 @@ class TestNodeFinder < MiniTest::Unit::TestCase
 
     # test filter: meta info keys/values
     check.call(['/file.en.html#frag', '/file.de.html#frag', '/dir/subfile.html#frag'],
-               @nf.find({'title' => 'frag', :flatten => true}, tree['/']))
+               @nf.find({:mi => {'title' => 'frag'}, :flatten => true}, tree['/']))
 
     # test filter: alcn
     check.call(%w[/],

@@ -60,24 +60,28 @@ module Webgen
   #   Value: an alcn pattern or an array of alcn patterns. Nodes that match any of the patterns are
   #   used.
   #
-  # [:and]
-  #   Value: a finder option set or an array of finder options sets (specifying option set names is
-  #   also possible). Only nodes that appear in all specified option sets are used.
-  #
   # [:lang]
   #   Value: a language code/+nil+/the special value :+node+ or an array of these values. Nodes that
   #   have one of the specified language codes, are language independent (in case of the value
   #   +nil+) or have the same language as the reference node (in case of the value :+node+) are
   #   used.
   #
-  # [:levels]
-  #   Value: one integer (is used as start and end level) or an array with two integers (the start
-  #   and end levels). All nodes whose hierarchy levels are greater than or equal to the start level
-  #   and lower than or equal to the end level are used.
+  # [:mi]
+  #   Value: a hash with meta information key to value mappings. Only nodes that have the same
+  #   values for all meta information keys are used.
   #
   # [:or]
   #   Value: a finder option set or an array of finder options sets (specifying option set names is
   #   also possible). Nodes that appear in any specified option set are additionally used.
+  #
+  # [:and]
+  #   Value: a finder option set or an array of finder options sets (specifying option set names is
+  #   also possible). Only nodes that appear in all specified option sets are used.
+  #
+  # [:levels]
+  #   Value: one integer (is used as start and end level) or an array with two integers (the start
+  #   and end levels). All nodes whose hierarchy levels are greater than or equal to the start level
+  #   and lower than or equal to the end level are used.
   #
   # [:ancestors]
   #   Value: +true+ or +false+/+nil+. If this filter option is set to +true+, only nodes that are
@@ -120,6 +124,7 @@ module Webgen
         :alcn => :filter_alcn, :levels => :filter_levels, :lang => :filter_lang,
         :and => :filter_and, :or => :filter_or,
         :ancestors => :filter_ancestors, :descendants => :filter_descendants,
+        :mi => :filter_meta_info
       }
     end
 
@@ -202,16 +207,14 @@ module Webgen
       nodes = @website.tree.node_access[:alcn].values
       nodes.delete(@website.tree.dummy_root)
 
-      opts.delete_if do |filter, value|
+      opts.each do |filter, value|
         if @mapping.has_key?(filter)
           nodes = send(@mapping[filter], nodes, ref_node, value)
-        elsif filter.kind_of?(Symbol)
+        else
           @website.logger.warn { "Ignoring unknown node finder filter '#{filter}'" }
         end
-        !filter.kind_of?(String)
       end
 
-      nodes = filter_meta_info(nodes, ref_node, opts) unless opts.empty?
       nodes
     end
 
