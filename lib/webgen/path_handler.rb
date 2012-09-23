@@ -144,6 +144,19 @@ module Webgen
       @website.blackboard.add_listener(:website_generated, self) do
         @website.cache[:path_handler_secondary_nodes] = @secondary_nodes
       end
+
+      created_secondary_paths = {}
+      @website.blackboard.add_listener(:create_secondary_nodes, self) do |path, source_alcn|
+        (created_secondary_paths[source_alcn] ||= Set.new) << path if source_alcn
+      end
+      @website.blackboard.add_listener(:after_node_written, self) do |node|
+        @secondary_nodes.select do |path, data|
+          data.first == node.alcn && !created_secondary_paths[node.alcn].include?(path)
+        end.each do |path, data|
+          delete_secondary_nodes(path)
+        end
+        created_secondary_paths = {}
+      end
     end
 
     # Register a path handler.
@@ -209,7 +222,7 @@ module Webgen
         "The following source paths have not been used: #{unused_paths.join(', ')}"
       end if unused_paths.length > 0
 
-      (@website.cache[:path_handler_secondary_nodes] || {}).each do |path, (source_alcn, handler, content)|
+      (@website.cache[:path_handler_secondary_nodes] || {}).each do |path, (source_alcn, handler, content, node_alcns)|
         next if @secondary_nodes.has_key?(path) || !@website.tree[source_alcn]
         create_secondary_nodes(path, content, handler, source_alcn)
       end
@@ -258,10 +271,7 @@ module Webgen
       @website.logger.info do
         "[#{(@website.ext.destination.exists?(node.dest_path) ? 'update' : 'create')}] <#{node.dest_path}>"
       end
-      time = Benchmark.measure do
-        delete_secondary_nodes(node.alcn)
-        @website.ext.destination.write(node.dest_path, node.content)
-      end
+      time = Benchmark.measure { @website.ext.destination.write(node.dest_path, node.content) }
       @website.logger.debug do
         "[timing] <#{node.dest_path}> rendered in " << ('%2.2f' % time.real) << ' seconds'
       end
@@ -297,13 +307,25 @@ module Webgen
     # ie. in a #create_nodes method of a path handler), the +source_alcn+ has to be set to the node
     # alcn from which these nodes are created!
     def create_secondary_nodes(path, content, handler = nil, source_alcn = nil)
-      if @secondary_nodes.has_key?(path)
+      @website.blackboard.dispatch_msg(:create_secondary_nodes, path, source_alcn)
+
+      sn = @secondary_nodes[path]
+      if sn && sn[0] == source_alcn && sn[1] == handler && sn[2] == content
+        nodes = sn[3].map {|a| @website.tree[a]}.compact
+        if sn[3].length == nodes.length
+          return nodes
+        elsif nodes.length > 0
+          raise "webgen bug - please report!"
+        else
+          @secondary_nodes.delete(path)
+        end
+      elsif sn
         raise Webgen::NodeCreationError.new("Duplicate secondary path name <#{path}>", self.class.name, path)
       end
 
       path['modified_at'] ||= @website.tree[source_alcn]['modified_at'] if source_alcn
       path.set_io(&nil)
-      @secondary_nodes[path.dup] = [source_alcn, handler, content] if source_alcn
+      @secondary_nodes[path.dup] = data = [source_alcn, handler, content] if source_alcn
 
       path.set_io { StringIO.new(content) }
       nodes = if handler
@@ -311,19 +333,15 @@ module Webgen
               else
                 nodes = create_nodes([path])
               end
-      nodes.each {|n| n.node_info[:source_alcn] = source_alcn} if source_alcn
+      data << nodes.map {|n| n.alcn} if source_alcn
+
       nodes
     end
 
-    # Recursively delete all secondary nodes created from the given alcn.
-    def delete_secondary_nodes(alcn)
-      @secondary_nodes.delete_if {|path, data| data.first == alcn}
-      @website.tree.node_access[:alcn].each do |_, node|
-        if node.node_info[:source_alcn] == alcn
-          delete_secondary_nodes(node.alcn)
-          @website.tree.delete_node(node)
-        end
-      end
+    # Delete all secondary nodes created from the given path.
+    def delete_secondary_nodes(path)
+      data = @secondary_nodes.delete(path)
+      data[3].each {|alcn| @website.tree.delete_node(@website.tree[alcn])}
     end
     private :delete_secondary_nodes
 
