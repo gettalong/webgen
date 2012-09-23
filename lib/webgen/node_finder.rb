@@ -191,9 +191,9 @@ module Webgen
 
     def prepare_options_hash(opts_or_name)
       if Hash === opts_or_name
-        opts_or_name.dup
+        opts_or_name.symbolize_keys
       elsif @website.config['node_finder.option_sets'].has_key?(opts_or_name)
-        @website.config['node_finder.option_sets'][opts_or_name].dup
+        @website.config['node_finder.option_sets'][opts_or_name].symbolize_keys
       else
         raise ArgumentError, "Invalid argument supplied, expected Hash or name of search definition, not #{opts_or_name}"
       end
