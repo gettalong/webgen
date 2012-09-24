@@ -383,7 +383,9 @@ option('tag.breadcrumb_trail.omit_dir_index', false,
 option('tag.breadcrumb_trail.start_level', 0,
        'The level at which the breadcrumb trail starts (starting at 0)', &is_integer)
 option('tag.breadcrumb_trail.end_level', -1,
-       'The level at which the breadcrumb trail ends (starting at 0).', &is_integer)
+       'The level at which the breadcrumb trail ends (starting at 0)', &is_integer)
+option('tag.breadcrumb_trail.separator', ' / ',
+       'The separator string which appears between the breadcrumb links', &is_string)
 option('tag.breadcrumb_trail.template', '/templates/tag.template',
        'The block \'tag.breadcrumb_trail\' in this template file is used for rendering')
 

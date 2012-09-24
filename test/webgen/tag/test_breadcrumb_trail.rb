@@ -58,7 +58,8 @@ class TestTagBreadcrumbTrail < MiniTest::Unit::TestCase
     context[:config] = {'tag.breadcrumb_trail.omit_dir_index' => omit_dir_index,
       'tag.breadcrumb_trail.start_level' => start_level,
       'tag.breadcrumb_trail.end_level' => end_level,
-      'tag.breadcrumb_trail.template' => '/tag.template'}
+      'tag.breadcrumb_trail.template' => '/tag.template',
+      'tag.breadcrumb_trail.separator' => ' / '}
     assert_equal(result, Webgen::Tag::BreadcrumbTrail.call('breadcrumb_trail', '', context))
   end
 

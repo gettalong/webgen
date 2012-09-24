@@ -10,7 +10,7 @@ end.join(" | ")
 --- name:tag.breadcrumb_trail pipeline:ruby --------------------------------------------------------
 context.content = context[:nodes].map do |node|
   context.dest_node.link_to(node, context.dest_node.lang)
-end.join(" / ")
+end.join(context[:config]['tag.breadcrumb_trail.separator'])
 
 
 --- name:tag.menu pipeline:ruby --------------------------------------------------------------------
