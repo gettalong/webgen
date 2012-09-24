@@ -200,7 +200,7 @@ option('path_handler.default_meta_info',
            'dest_path' => '<parent><basename>(-<version>)(.<lang>)<ext>',
          },
          'directory' => {
-           'index_path' => 'index.html',
+           'proxy_path' => 'index.html',
          },
          'template' => {
            'no_output' => true,
