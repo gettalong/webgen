@@ -123,6 +123,7 @@ module Webgen
     #   /file.de.html#frag       'frag'
     #   /other.html              'other'
     #   /other.en.html           'other en'
+    #   /german.de.html          'german' dest_path='/german.other.html'
     #   /dir/                    'dir'
     #   /dir/subfile.html        'subfile'
     #   /dir/subfile.html#frag   'frag'
