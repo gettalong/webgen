@@ -89,8 +89,11 @@ module Webgen
   #
   # [:descendants]
   #   Value: +true+ or +false+/+nil+. If this filter option is set to +true+, only nodes that are
-  #   descendants of the reference are used. The reference node itself is used as well.
+  #   descendants of the reference node are used. The reference node itself is used as well.
   #
+  # [:siblings]
+  #   Value: +true+ or +false+/+nil+. If this filter option is set to +true+, only nodes that are
+  #   siblings of the reference are node used. The reference node itself is used as well.
   #
   # == Implementing a filter module
   #
@@ -124,6 +127,7 @@ module Webgen
         :alcn => :filter_alcn, :levels => :filter_levels, :lang => :filter_lang,
         :and => :filter_and, :or => :filter_or,
         :ancestors => :filter_ancestors, :descendants => :filter_descendants,
+        :siblings => :filter_siblings,
         :mi => :filter_meta_info
       }
     end
@@ -289,6 +293,11 @@ module Webgen
         n = n.parent while n != n.tree.dummy_root && n != ref_node
         n == ref_node
       end
+    end
+
+    def filter_siblings(nodes, ref_node, enabled)
+      return nodes unless enabled
+      nodes.keep_if { |n| n.parent == ref_node.parent}
     end
 
   end
