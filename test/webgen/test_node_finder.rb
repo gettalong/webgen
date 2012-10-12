@@ -81,12 +81,14 @@ class TestNodeFinder < MiniTest::Unit::TestCase
     check.call(%w[/ /dir/subfile.html /dir/subfile.html#frag /dir/dir/],
                @nf.find({:alcn => ['/', '*'], :flatten => true}, tree['/dir/']))
 
-    # test filter: and/or
+    # test filter: and/or/not
     check.call(%w[/file.en.html /file.de.html /other.html /other.en.html /german.de.html ],
                @nf.find({:alcn => '/**/*.html', :and => {:alcn => '*.html'}, :flatten => true}, tree['/']))
     check.call(%w[/file.en.html /file.de.html /other.html /other.en.html /german.de.html /dir/subfile.html /dir/dir/file.html
                   /dir2/index.en.html /dir2/index.de.html /],
                @nf.find({:alcn => '/**/*.html', :or => 'simple', :flatten => true}, tree['/']))
+    check.call(%w[/dir/subfile.html /dir/dir/file.html /dir2/index.en.html /dir2/index.de.html],
+               @nf.find({:alcn => '/**/*.html', :not => {:alcn => '*.html'}, :flatten => true}, tree['/']))
 
     # test filter: levels
     check.call(%w[/],

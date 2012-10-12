@@ -78,6 +78,10 @@ module Webgen
   #   Value: a finder option set or an array of finder options sets (specifying option set names is
   #   also possible). Only nodes that appear in all specified option sets are used.
   #
+  # [:not]
+  #   Value: a finder option set or an array of finder options sets (specifying option set names is
+  #   also possible). Only nodes that do not appear in any specified option set are used.
+  #
   # [:levels]
   #   Value: one integer (is used as start and end level) or an array with two integers (the start
   #   and end levels). All nodes whose hierarchy levels are greater than or equal to the start level
@@ -125,7 +129,7 @@ module Webgen
       @website = website
       @mapping = {
         :alcn => :filter_alcn, :levels => :filter_levels, :lang => :filter_lang,
-        :and => :filter_and, :or => :filter_or,
+        :and => :filter_and, :or => :filter_or, :not => :filter_not,
         :ancestors => :filter_ancestors, :descendants => :filter_descendants,
         :siblings => :filter_siblings,
         :mi => :filter_meta_info
@@ -253,6 +257,15 @@ module Webgen
         cur_opts = prepare_options_hash(cur_opts)
         remove_non_filter_options(cur_opts)
         nodes |= filter_nodes(cur_opts, ref_node)
+      end
+      nodes
+    end
+
+    def filter_not(nodes, ref_node, opts)
+      [opts].flatten.each do |cur_opts|
+        cur_opts = prepare_options_hash(cur_opts)
+        remove_non_filter_options(cur_opts)
+        nodes -= filter_nodes(cur_opts, ref_node)
       end
       nodes
     end
