@@ -29,8 +29,11 @@ DESC
           puts "No data available, you need to generate the website first!"
           return
         end
+        arg = args.shift
 
-        cache[:node_dependencies].sort.each do |alcn, deps|
+        data = cache[:node_dependencies]
+        data = data.select {|alcn, _| alcn.include?(arg) } if arg
+        data.sort.each do |alcn, deps|
           deps = deps.sort {|a,b| a.first <=> b.first }.map do |uid|
             method = "format_#{uid.first}"
             if respond_to?(method, true)
