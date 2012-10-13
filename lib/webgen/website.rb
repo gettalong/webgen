@@ -144,7 +144,7 @@ module Webgen
       return unless File.exist?(config_file)
 
       first_line = File.open(config_file, 'r') {|f| f.gets}
-      if first_line =~ /^\s*#\s*ruby/
+      if first_line =~ /^\s*#.*\bruby\b/
         o = Object.new
         o.instance_variable_set(:@website, self)
         def o.website; @website; end

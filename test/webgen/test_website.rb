@@ -36,7 +36,7 @@ class TestWebsite < MiniTest::Unit::TestCase
       ws = Webgen::Website.new(dir)
       assert_equal('de', ws.config['website.lang'])
 
-      File.open(File.join(dir, 'webgen.config'), 'w+') {|f| f.write("# ruby\nwebsite.config['website.lang'] = 'de'")}
+      File.open(File.join(dir, 'webgen.config'), 'w+') {|f| f.write("# -*- ruby -*-\nwebsite.config['website.lang'] = 'de'")}
       ws = Webgen::Website.new(dir)
       assert_equal('de', ws.config['website.lang'])
     end
