@@ -246,6 +246,7 @@ module Webgen
       begin
         at_least_one_node_written = false
         @website.cache.reset_volatile_cache
+        @website.blackboard.dispatch_msg(:before_all_nodes_written)
         @website.tree.node_access[:alcn].sort.each do |name, node|
           begin
             next if node == @website.tree.dummy_root ||
