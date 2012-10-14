@@ -95,6 +95,8 @@ module Webgen
 
       @website = website
 
+      @item_changed = {}
+
       @website.blackboard.add_listener(:website_initialized, self) do
         @cached = @website.cache[:item_tracker_data] || @cached
       end
@@ -124,6 +126,7 @@ module Webgen
           end
         end
         @written_nodes = []
+        @item_changed = {}
       end
 
       @website.blackboard.add_listener(:website_generated, self) do
@@ -207,11 +210,12 @@ module Webgen
     # Return +true+ if the given item has changed. See #add for a description of the item
     # parameters.
     def item_changed_by_uid?(uid)
-      if !@cached[:item_data].has_key?(uid)
-        true
-      else
-        item_tracker(uid.first).changed?(uid.last, @cached[:item_data][uid]) #TODO: probably cache this result
-      end
+      return @item_changed[uid] if @item_changed.has_key?(uid)
+      @item_changed[uid] = if !@cached[:item_data].has_key?(uid)
+                             true
+                           else
+                             item_tracker(uid.first).changed?(uid.last, @cached[:item_data][uid])
+                           end
     end
 
     # Return the unique ID for the given item handled by the item tracker extension object specified
