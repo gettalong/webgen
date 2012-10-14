@@ -17,6 +17,8 @@ module Webgen
   # node and child nodes is used). Sorting, limiting the number of returned nodes and using an
   # offset are also possible.
   #
+  # *Note* that results are cached in the volatile cache of the Cache instance!
+  #
   # == Finder options
   #
   # Following is the list of all finder options. Note that there may also be other 3rd party node
@@ -162,6 +164,9 @@ module Webgen
     # option set defined using the configuration option 'node_finder.options_sets'. The node
     # +ref_node+ is used as reference node.
     def find(opts_or_name, ref_node)
+      if result = cached_result(opts_or_name, ref_node)
+        return result
+      end
       opts = prepare_options_hash(opts_or_name)
 
       limit, offset, flatten, sort = remove_non_filter_options(opts)
@@ -190,12 +195,20 @@ module Webgen
         sort_nodes(nodes, sort, false)
       end
 
-      nodes
+      cache_result(opts_or_name, ref_node, nodes)
     end
 
     #######
     private
     #######
+
+    def cached_result(opts, ref_node)
+      (@website.cache.volatile[:node_finder] ||= {})[[opts, ref_node.alcn]]
+    end
+
+    def cache_result(opts, ref_node, result)
+      (@website.cache.volatile[:node_finder] ||= {})[[opts, ref_node.alcn]] = result
+    end
 
     def prepare_options_hash(opts_or_name)
       if Hash === opts_or_name
