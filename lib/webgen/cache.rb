@@ -10,7 +10,8 @@ module Webgen
   #             runs.
   #
   # [volatile] The volatile cache is used for data that can easily be regenerated but might be
-  #            expensive to do so. This cache is not stored between webgen runs.
+  #            expensive to do so. This cache is not stored between passes when writing nodes to
+  #            the destination.
   #
   # [standard] The standard cache saves data between webgen runs and returns the cached data (not
   #            the newly set data) if it is available. This is useful, for example, to store file
