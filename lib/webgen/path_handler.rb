@@ -249,7 +249,7 @@ module Webgen
         @website.tree.node_access[:alcn].sort.each do |name, node|
           begin
             next if node == @website.tree.dummy_root ||
-              (node['passive'] && !@website.ext.item_tracker.node_referenced?(node)) ||
+              (node['passive'] && !node['no_output'] && !@website.ext.item_tracker.node_referenced?(node)) ||
               (@website.ext.destination.exists?(node.dest_path) && !@website.ext.item_tracker.node_changed?(node))
 
             if !node['no_output']
