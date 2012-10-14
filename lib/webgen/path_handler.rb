@@ -151,7 +151,8 @@ module Webgen
       end
       @website.blackboard.add_listener(:after_node_written, self) do |node|
         @secondary_nodes.select do |path, data|
-          data.first == node.alcn && !created_secondary_paths[node.alcn].include?(path)
+          data.first == node.alcn && created_secondary_paths[node.alcn] &&
+            !created_secondary_paths[node.alcn].include?(path)
         end.each do |path, data|
           delete_secondary_nodes(path)
         end
