@@ -215,18 +215,24 @@ module Webgen
     def populate_tree
       raise Webgen::NodeCreationError.new("Can't populate tree twice", self.class.name) if @website.tree.root
 
-      create_nodes
+      time = Benchmark.measure do
+        create_nodes
 
-      used_paths = @website.tree.node_access[:alcn].values.map {|n| n.node_info[:path]}
-      unused_paths = @website.ext.source.paths.values - used_paths
-      @website.logger.vinfo do
-        "The following source paths have not been used: #{unused_paths.join(', ')}"
-      end if unused_paths.length > 0
+        used_paths = @website.tree.node_access[:alcn].values.map {|n| n.node_info[:path]}
+        unused_paths = @website.ext.source.paths.values - used_paths
+        @website.logger.vinfo do
+          "The following source paths have not been used: #{unused_paths.join(', ')}"
+        end if unused_paths.length > 0
 
-      (@website.cache[:path_handler_secondary_nodes] || {}).each do |path, (source_alcn, handler, content, node_alcns)|
-        next if @secondary_nodes.has_key?(path) || !@website.tree[source_alcn]
-        create_secondary_nodes(path, content, handler, source_alcn)
+        (@website.cache[:path_handler_secondary_nodes] || {}).each do |path, (source_alcn, handler, content, node_alcns)|
+          next if @secondary_nodes.has_key?(path) || !@website.tree[source_alcn]
+          create_secondary_nodes(path, content, handler, source_alcn)
+        end
       end
+      @website.logger.vinfo do
+        "Populating node tree took " << ('%2.2f' % time.real) << ' seconds'
+      end
+
       @website.blackboard.dispatch_msg(:after_tree_populated)
     end
 
