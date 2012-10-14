@@ -23,6 +23,8 @@ module Webgen
     #
     class NodeMetaInfo
 
+      CONTENT_MODIFICATION_KEY = 'modified_at'
+
       def initialize(website) #:nodoc:
         @website = website
       end
@@ -33,13 +35,12 @@ module Webgen
 
       def item_data(alcn, key = nil) #:nodoc:
         mi = @website.tree[alcn].meta_info
-        key.nil? ? mi.dup : mi[key].dup
+        key.nil? ? (mi = mi.dup; mi.delete(CONTENT_MODIFICATION_KEY); mi) : mi[key].dup
       end
 
       def changed?(iid, old_data) #:nodoc:
         alcn, key = *iid
-        @website.tree[alcn].nil? ||
-          (key.nil? ? @website.tree[alcn].meta_info : @website.tree[alcn].meta_info[key]) != old_data
+        @website.tree[alcn].nil? || item_data(alcn, key) != old_data
       end
 
       def node_referenced?(iid, node_alcn) #:nodoc:
