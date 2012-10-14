@@ -279,7 +279,7 @@ module Webgen
         "[#{(@website.ext.destination.exists?(node.dest_path) ? 'update' : 'create')}] <#{node.dest_path}>"
       end
       time = Benchmark.measure { @website.ext.destination.write(node.dest_path, node.content) }
-      @website.logger.debug do
+      @website.logger.vinfo do
         "[timing] <#{node.dest_path}> rendered in " << ('%2.2f' % time.real) << ' seconds'
       end
     ensure
