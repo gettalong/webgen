@@ -22,7 +22,7 @@ class Webgen::ItemTracker::Sample
     'alcn' + TestItemTracker::Data[iid].to_s != old_data
   end
 
-  def node_referenced?(iid, node_alcn)
+  def node_referenced?(iid, _, node_alcn)
     iid == node_alcn
   end
 

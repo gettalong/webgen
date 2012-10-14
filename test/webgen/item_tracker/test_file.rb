@@ -25,7 +25,7 @@ class TestItemTrackerFile < MiniTest::Unit::TestCase
   end
 
   def test_node_referenced?
-    refute(@obj.node_referenced?('anything', '/alcn'))
+    refute(@obj.node_referenced?('anything', 'nothing', '/alcn'))
   end
 
 end

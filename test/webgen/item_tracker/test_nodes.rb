@@ -51,11 +51,11 @@ class TestItemTrackerNodes < MiniTest::Unit::TestCase
   def test_node_referenced?
     setup_default_nodes(@website.tree)
 
-    assert(@obj.node_referenced?(@args1, '/file.en.html'))
-    refute(@obj.node_referenced?(@args1, '/dir/file.html'))
+    assert(@obj.node_referenced?(@args1, @obj.item_data(*@args1), '/file.en.html'))
+    refute(@obj.node_referenced?(@args1, @obj.item_data(*@args1), '/dir/file.html'))
 
-    assert(@obj.node_referenced?(@args2, '/file.en.html'))
-    refute(@obj.node_referenced?(@args2, '/other.en.html'))
+    assert(@obj.node_referenced?(@args2, @obj.item_data(*@args2), '/file.en.html'))
+    refute(@obj.node_referenced?(@args2, @obj.item_data(*@args2), '/other.en.html'))
   end
 
 end

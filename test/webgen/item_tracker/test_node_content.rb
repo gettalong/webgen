@@ -35,8 +35,8 @@ class TestNodeContent < MiniTest::Unit::TestCase
   end
 
   def test_node_referenced?
-    assert(@obj.node_referenced?('alcn', 'alcn'))
-    refute(@obj.node_referenced?('other', 'alcn'))
+    assert(@obj.node_referenced?('alcn', nil, 'alcn'))
+    refute(@obj.node_referenced?('other', nil, 'alcn'))
   end
 
 end

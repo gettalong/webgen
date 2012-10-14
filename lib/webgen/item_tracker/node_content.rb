@@ -30,7 +30,7 @@ module Webgen
         @website.tree[alcn].nil? || @website.ext.item_tracker.node_changed?(@website.tree[alcn])
       end
 
-      def node_referenced?(alcn, node_alcn) #:nodoc:
+      def node_referenced?(alcn, nothing, node_alcn) #:nodoc:
         alcn == node_alcn
       end
 

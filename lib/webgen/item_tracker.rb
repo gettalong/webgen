@@ -36,9 +36,9 @@ module Webgen
   #   Return +true+ if the item identified by its unique ID has changed. The parameter +old_data+
   #   contains the last known data of the item.
   #
-  # [node_referenced?(item_id, node_alcn)]
-  #   Return +true+ if the node identified by +node_alcn+ is referenced in the item identified by
-  #   its unique ID.
+  # [node_referenced?(item_id, old_data, node_alcn)]
+  #   Return +true+ if the node identified by +node_alcn+ is referenced in the old data identified
+  #   by the unique ID.
   #
   # The parameter +item+ for the methods +item_id+ and +item_data+ contains the information needed
   # to identify the item and is depdendent on the specific item tracker extension class. Therefore
@@ -71,7 +71,7 @@ module Webgen
   #       @website.config[config_key] != old_val
   #     end
   #
-  #     def node_referenced?(config_key, node_alcn)
+  #     def node_referenced?(config_key, config_value, node_alcn)
   #       false
   #     end
   #
@@ -182,14 +182,13 @@ module Webgen
     # Return +true+ if the given node has been referenced by any item tracker extension.
     def node_referenced?(node)
       node_alcn = node.alcn
-      uids_to_check = Set.new(@cached[:item_data].keys)
+      checked_uids = Set.new
       @cached[:node_dependencies].each do |alcn, uids|
         next if alcn == node_alcn
-        break if uids_to_check.empty?
         uids.each do |uid|
-          next unless uids_to_check.include?(uid)
-          uids_to_check.delete(uid)
-          return true if item_tracker(uid.first).node_referenced?(uid.last, node_alcn)
+          next if checked_uids.include?(uid)
+          checked_uids << uid
+          return true if item_tracker(uid.first).node_referenced?(uid.last, @cached[:item_data][uid], node_alcn)
         end
       end
       false

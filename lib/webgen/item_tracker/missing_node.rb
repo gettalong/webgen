@@ -51,7 +51,7 @@ module Webgen
         missing || missing != old_data
       end
 
-      def node_referenced?(iid, node_alcn) #:nodoc:
+      def node_referenced?(iid, missing, node_alcn) #:nodoc:
         iid.first == node_alcn
       end
 

@@ -63,8 +63,8 @@ class TestItemTrackerMissingNode < MiniTest::Unit::TestCase
   end
 
   def test_node_referenced?
-    assert(@obj.node_referenced?(['alcn', 'lang'], 'alcn'))
-    refute(@obj.node_referenced?(['other', 'lang'], 'alcn'))
+    assert(@obj.node_referenced?(['alcn', 'lang'], true, 'alcn'))
+    refute(@obj.node_referenced?(['other', 'lang'], true, 'alcn'))
   end
 
 end
