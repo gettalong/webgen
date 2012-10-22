@@ -389,7 +389,7 @@ module Webgen
       versions = path.meta_info.delete('versions') || {'default' => {'version' => path.meta_info['version']}}
       versions.each do |name, mi|
         vpath = path.dup
-        mi['version'] ||= name
+        (mi ||= {})['version'] ||= name
         raise Webgen::NodeCreationError.new("Meta info 'version' must not be empty") if mi['version'].empty?
         vpath.meta_info.merge!(mi)
         next if vpath.meta_info['handler'] && vpath.meta_info['handler'] != handler
