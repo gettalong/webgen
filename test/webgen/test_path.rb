@@ -121,6 +121,12 @@ class TestPath < MiniTest::Unit::TestCase
     check_proc.call(Webgen::Path.new('/file.en.page#hallo'),
                     '/file.en.page', '#hallo', nil, '', '#hallo', '#hallo', '/file.page#hallo', '/file.en.page#hallo', nil, '#hallo')
 
+    # Check custom cn generation
+    check_proc.call(Webgen::Path.new('/dir/file.en.png', 'cn' => '<basename>-hallo(-<version>)<ext>'),
+                    '/dir/', 'file', 'en', 'png', 'file-hallo.png', 'file-hallo.en.png', '/dir/file-hallo.png', '/dir/file-hallo.en.png', nil, 'File')
+    check_proc.call(Webgen::Path.new('/dir/file.en.png', 'cn' => '<basename>(-<version>)<ext>', 'version' => 'hallo'),
+                    '/dir/', 'file', 'en', 'png', 'file-hallo.png', 'file-hallo.en.png', '/dir/file-hallo.png', '/dir/file-hallo.en.png', nil, 'File')
+
     # Check general exceptions
     assert_raises(RuntimeError) { Webgen::Path.new('/no_basename#').basename }
     assert_raises(RuntimeError) { Webgen::Path.new('relative.page').basename }

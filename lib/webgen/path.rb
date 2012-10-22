@@ -159,8 +159,13 @@ module Webgen
     #
     # Triggers analyzation of the path if invoked.
     def cn
-      basename + (!meta_info['version'] || meta_info['version'] == 'default' ? "" : "-#{meta_info['version']}") +
-        (ext.length > 0 ? '.' + ext : '') + (basename != '/' && @path =~ /.\/$/ ? '/' : '')
+      if meta_info['cn'].kind_of?(String)
+        tmp_cn = custom_cn
+      else
+        tmp_cn = basename + (use_version_for_cn? ? "-#{meta_info['version']}" : '') +
+          (ext.length > 0 ? '.' + ext : '')
+      end
+      tmp_cn + (@path =~ /.\/$/ ? '/' : '')
     end
 
     # The localized canonical name created from the +path+.
@@ -318,6 +323,35 @@ module Webgen
       @parent_path, @basename =  @path.scan(/^(.*?)(#.*?)$/).first
       raise "The parent path of a fragment path must be a file path and not a directory path: #{@path}" if @parent_path =~ /\/$/
       raise "A fragment path must only contain one hash character: #{path}" if @path.count("#") > 1
+    end
+
+    # Whether the version information should be added to the cn?
+    def use_version_for_cn?
+      meta_info['version'] && meta_info['version'] != 'default'
+    end
+
+    CN_SEGMENTS = /<.*?>|\(.*?\)/ # :nodoc:
+
+    # Construct a custom canonical name given by the 'cn' meta information.
+    def custom_cn
+      replace_segment = lambda do |match|
+        case match
+        when "<basename>"
+          basename
+        when "<ext>"
+          ext.empty? ? '' : '.' << ext
+        when "<version>"
+          use_version_for_cn? ? meta_info['version'] : ''
+        when /\((.*)\)/
+          inner = $1
+          replaced = inner.gsub(CN_SEGMENTS, &replace_segment)
+          removed = inner.gsub(CN_SEGMENTS, "")
+          replaced == removed ? '' : replaced
+        else
+          ''
+        end
+      end
+      self.meta_info['cn'].gsub(CN_SEGMENTS, &replace_segment).gsub(/\/+$/, '')
     end
 
   end
