@@ -62,11 +62,13 @@ class TestItemTracker < MiniTest::Unit::TestCase
 
     # Node should still be changed after all nodes are written because Data changed
     blackboard.dispatch_msg(:after_all_nodes_written)
+    blackboard.dispatch_msg(:before_all_nodes_written)
     assert(tracker.node_changed?(node))
 
     # Node should not be changed anymore
     blackboard.dispatch_msg(:after_node_written, node)
     blackboard.dispatch_msg(:after_all_nodes_written)
+    blackboard.dispatch_msg(:before_all_nodes_written)
     refute(tracker.node_changed?(node))
 
     # Test the initial loading of the cache data

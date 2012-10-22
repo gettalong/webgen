@@ -7,6 +7,7 @@ require 'stringio'
 require 'webgen/logger'
 
 require 'webgen/blackboard'
+require 'webgen/cache'
 require 'webgen/context'
 require 'webgen/page'
 require 'webgen/error'
@@ -105,6 +106,7 @@ module Webgen
       @website.expect(:tmpdir, File.join(directory, 'tmp'), ['ignored'])
       @website.expect(:ext, OpenStruct.new)
       @website.expect(:blackboard, Webgen::Blackboard.new)
+      @website.expect(:cache, Webgen::Cache.new)
       @logio = StringIO.new
       @website.expect(:logger, Webgen::Logger.new(@logio))
       @website.expect(:tree, Webgen::Tree.new(@website))

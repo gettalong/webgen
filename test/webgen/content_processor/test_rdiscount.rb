@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*-
 
 require 'webgen/test_helper'
-require 'webgen/content_processor/rdiscount'
+require 'webgen/content_processor/r_discount'
 
 class TestRDiscount < MiniTest::Unit::TestCase
 
