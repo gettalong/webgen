@@ -205,24 +205,21 @@ option('path_handler.default_meta_info',
          },
          'template' => {
            'no_output' => true,
-           'blocks' => {:default => {'pipeline' => 'erb,tags,blocks,html_head'}}
+           'blocks' => {'defaults' => {'pipeline' => 'erb,tags,blocks,html_head'}}
          },
          'page' => {
-           'blocks' => {:default => {'pipeline' => 'erb,tags,kramdown,blocks,fragments'}}
+           'blocks' => {'defaults' => {'pipeline' => 'erb,tags,kramdown,blocks,fragments'}}
          },
          'meta_info' => {
-           'no_output' => true,
-           'blocks' => {1 => {'name' => 'paths'}, 2 => {'name' => 'alcn'}}
+           'no_output' => true
          },
          'feed' => {
            'rss' => true,
            'atom' => true,
-           'blocks' => {:default => {'pipeline' => 'erb'}}
          },
          'sitemap' => {
            'default_priority' => 0.5,
            'default_change_freq' => 'weekly',
-           'blocks' => {1 => {'name' => 'sitemap', 'pipeline' => 'erb'}}
          },
        },
        'Default meta information for all nodes (key :all) and for nodes belonging to a specific path handler') do |val|

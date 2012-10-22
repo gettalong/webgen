@@ -29,14 +29,13 @@ module Webgen
 
     class << self
 
-      # Parse the given string +data+ in Webgen Page Format. The +meta_info+ parameter can be used
-      # to provide the default meta information hash.
+      # Parse the given string +data+ in Webgen Page Format.
       #
-      # This method returns a Page object containing the (probably updated) meta information hash
-      # and the parsed blocks.
-      def from_data(data, meta_info = {})
+      # This method returns a Page object containing the hash with the meta information and the
+      # parsed blocks.
+      def from_data(data)
         md = RE_PAGE.match(data)
-        meta_info = meta_info.merge(parse_meta_info(md[1], data =~ RE_META_INFO_START))
+        meta_info = parse_meta_info(md[1], data =~ RE_META_INFO_START)
         blocks = parse_blocks(md[2] || '', meta_info)
         new(meta_info, blocks)
       end
@@ -64,8 +63,8 @@ module Webgen
 
       # Parse all blocks in +data+ and return them.
       #
-      # The key 'blocks' of the meta information hash is used and probably updated with information
-      # found on block starting lines.
+      # The key 'blocks' of the meta information hash is updated with information found on block
+      # starting lines.
       def parse_blocks(data, meta_info)
         scanned = data.scan(RE_BLOCKS)
         raise(FormatError, 'No content blocks specified') if scanned.length == 0
@@ -82,10 +81,6 @@ module Webgen
             options = Hash[*md[1].to_s.scan(/(\w+):([^\s]*)/).map {|k,v| [k, (v == '' ? nil : YAML::load(v))]}.flatten]
           end
 
-          options = (meta_info['blocks'][:default] || {} rescue {}).
-            merge((meta_info['blocks'].delete(index) || {} rescue {})).
-            merge(options)
-
           name = options.delete('name') || (index == 1 ? 'content' : 'block' + (index).to_s)
           raise(FormatError, "Previously used name '#{name}' also used for block #{index}") if blocks.has_key?(name)
           content ||= ''
@@ -93,10 +88,10 @@ module Webgen
           content.chomp! unless index == scanned.length
 
           blocks[name] = content
-          (meta_info['blocks'] ||= {})[name] = options unless options.empty?
+          ((meta_info['blocks'] ||= {})[name] ||= {}).merge!(options) unless options.empty?
         end
-        meta_info['blocks'].delete(:default) if meta_info['blocks']
-        meta_info.delete('blocks') if meta_info['blocks'] && meta_info['blocks'].empty?
+        meta_info['blocks'].delete_if {|k,v| v.empty?} if meta_info.has_key?('blocks')
+        meta_info.delete('blocks') if meta_info.has_key?('blocks') && meta_info['blocks'].empty?
         blocks
       end
       private :parse_blocks

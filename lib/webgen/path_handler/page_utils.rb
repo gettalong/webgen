@@ -24,11 +24,13 @@ module Webgen
       # 'path.meta_info' with the meta info from the page and returns the content blocks.
       def parse_as_page!(path)
         begin
-          page = Webgen::Page.from_data(path.data, path.meta_info)
+          page = Webgen::Page.from_data(path.data)
         rescue Webgen::Page::FormatError => e
           raise Webgen::Error.new("Error reading source path: #{e.message}", self.class.name, path)
         end
-        path.meta_info.replace(page.meta_info)
+        blocks = page.meta_info.delete('blocks') || {}
+        path.meta_info.merge!(page.meta_info)
+        blocks.each {|key, val| ((path.meta_info['blocks'] ||= {})[key] ||= {}).merge!(val)}
         page.blocks
       end
       private :parse_as_page!
@@ -61,7 +63,9 @@ module Webgen
 
         context.content = node.blocks[name].dup
         context[:block_name] = name
-        pipeline ||= ((node.meta_info['blocks'] || {})[name] || {})['pipeline'] || []
+        pipeline ||= ((node.meta_info['blocks'] || {})[name] || {})['pipeline'] ||
+          ((node.meta_info['blocks'] || {})['defaults'] || {})['pipeline'] ||
+          []
         content_processor.normalize_pipeline(pipeline).each do |processor|
           content_processor.call(processor, context)
         end
