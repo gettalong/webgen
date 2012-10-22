@@ -180,7 +180,6 @@ module Webgen
     def save_cache
       cache_data = [@cache.dump, Webgen::VERSION]
       if config['website.cache'].first == :file
-        FileUtils.mkdir_p(File.dirname(cache_file))
         File.open(cache_file, 'wb') {|f| Marshal.dump(cache_data, f)}
       else
         config['website.cache'][1] = Marshal.dump(cache_data)
@@ -189,13 +188,17 @@ module Webgen
 
     # The full path of the cache filename.
     def cache_file
-      File.absolute_path(config['website.cache'].last, tmpdir)
+      tmpdir(config['website.cache'].last)
     end
     private :cache_file
 
     # Append the path to the website's temporary directory and return the full path to it.
     def tmpdir(path = '')
-      File.join(File.absolute_path(config['website.tmpdir'], @directory), path)
+      unless defined?(@_tmpdir)
+        @_tmpdir = File.absolute_path(config['website.tmpdir'], @directory)
+        FileUtils.mkdir_p(@_tmpdir)
+      end
+      File.join(@_tmpdir, path)
     end
 
     # Execute the given task.
