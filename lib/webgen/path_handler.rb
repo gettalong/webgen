@@ -219,7 +219,7 @@ module Webgen
         create_nodes
 
         used_paths = @website.tree.node_access[:alcn].values.map {|n| n.node_info[:path]}
-        unused_paths = @website.ext.source.paths.values - used_paths
+        unused_paths = @website.ext.source.paths - used_paths
         @website.logger.vinfo do
           "The following source paths have not been used: #{unused_paths.join(', ')}"
         end if unused_paths.length > 0
@@ -290,9 +290,9 @@ module Webgen
 
     # Use the registered path handlers to create nodes which are all returned.
     #
-    # If +paths+ is nil, all source paths are used. Otherwise +paths+ needs to be an array of path
-    # names.
-    def create_nodes(paths = nil)
+    # If +paths+ is not set, all source paths are used. Otherwise +paths+ needs to be an array of
+    # Path objects.
+    def create_nodes(paths = @website.ext.source.paths)
       nodes = Set.new
       @invocation_order.each do |name|
         paths_for_handler(name, paths).sort {|a,b| a.path.length <=> b.path.length}.each do |path|
@@ -354,10 +354,7 @@ module Webgen
     private :delete_secondary_nodes
 
     # Return the paths which are handled by the path handler +name+.
-    #
-    # If the parameter +paths+ is not nil, only handled paths that also appear in this array are
-    # returned.
-    def paths_for_handler(name, paths = nil)
+    def paths_for_handler(name, paths)
       patterns = ext_data(name).patterns
       if @website.config.option?("path_handler.#{name}.patterns")
         patterns += @website.config["path_handler.#{name}.patterns"]
@@ -368,9 +365,7 @@ module Webgen
         (@website.config['path_handler.patterns.match_leading_dot'] ? File::FNM_DOTMATCH : 0) |
         File::FNM_PATHNAME
 
-      (paths.nil? ? @website.ext.source.paths.values : paths).compact.select do |path|
-        patterns.any? {|pat| Webgen::Path.matches_pattern?(path, pat, options)}
-      end
+      paths.select {|path| patterns.any? {|pat| Webgen::Path.matches_pattern?(path, pat, options)}}
     end
     private :paths_for_handler
 

@@ -124,10 +124,10 @@ module Webgen
         passive_source.paths.each {|path| path['passive'] = true}
         source = extension('stacked').new(@website, [['/', active_source], ['/', passive_source]])
 
-        @paths = {}
+        @paths = []
         source.paths.each do |path|
           if !(@website.config['sources.ignore_paths'].any? {|pat| Webgen::Path.matches_pattern?(path, pat)})
-            @paths[path.path] = path
+            @paths << path
           end
         end
       end
