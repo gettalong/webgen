@@ -40,10 +40,6 @@ class TestPathHandlerCopy < MiniTest::Unit::TestCase
     check_node.call('/other.test.css', {'pipeline' => ['testing']}, '/other.test.css', ['testing'])
     check_node.call('/other.unke.css', {'pipeline' => ['test']}, '/other.unke.css', ['test'])
     check_node.call('/other', {}, '/other', nil)
-
-    assert_raises(Webgen::NodeCreationError) do
-      @copy.create_nodes(Webgen::Path.new('/other.test.css', 'dest_path' => '<parent><basename><ext>'))
-    end
   end
 
   def test_content

@@ -27,15 +27,19 @@ class TestPathHandlerBase < MiniTest::Unit::TestCase
   end
 
   def test_create_node
+    count = 0
     assert_nil(@obj.create_node(Webgen::Path.new('/test.html', 'draft' => true)))
 
     path = Webgen::Path.new('/path.html', 'dest_path' => '<parent><basename>(.<lang>)<ext>',
                             'modified_at' => 'unknown', 'parent_alcn' => '')
-    node = @obj.create_node(path) {|n| assert_kind_of(Webgen::Node, n)}
+    node = @obj.create_node(path) {|n| count += 1; assert_kind_of(Webgen::Node, n)}
     assert_equal(path, node.node_info[:path])
     assert_kind_of(Time, node.meta_info['modified_at'])
+    assert_equal(1, count)
 
-    assert_raises(Webgen::NodeCreationError) { @obj.create_node(path) }
+    second_node = @obj.create_node(path) {|n| count += 1}
+    assert_equal(1, count)
+    assert_equal(second_node, node)
   end
 
   def test_parent_node
@@ -138,12 +142,12 @@ class TestPathHandlerBase < MiniTest::Unit::TestCase
     child_de = Webgen::Node.new(node, 'somename.html', '/somename.html', {'lang' => 'de'})
     frag_de = Webgen::Node.new(child_de, '#othertest', '/somename.html#data1')
 
-    assert_equal(child_de, @obj.node_exists?(node, Webgen::Path.new('/somename.de.html'), '/unknown.html'))
-    assert_equal(child_de, @obj.node_exists?(node, Webgen::Path.new('/other.page'), '/somename.html'))
-    assert_equal(false, @obj.node_exists?(node, Webgen::Path.new('/somename.en.html', {'no_output' => true}),
+    assert_equal(child_de, @obj.node_exists?(Webgen::Path.new('/somename.de.html'), '/unknown.html'))
+    assert_equal(child_de, @obj.node_exists?(Webgen::Path.new('/other.page'), '/somename.html'))
+    assert_equal(false, @obj.node_exists?(Webgen::Path.new('/somename.en.html', {'no_output' => true}),
                                           '/somename.html'))
-    assert_equal(frag_de, @obj.node_exists?(child_de, Webgen::Path.new('/somename.de.html#othertest'), '/somename.html#no'))
-    assert_equal(nil, @obj.node_exists?(node, Webgen::Path.new('/unknown'), '/unknown'))
+    assert_equal(frag_de, @obj.node_exists?(Webgen::Path.new('/somename.de.html#othertest'), '/somename.html#no'))
+    assert_equal(nil, @obj.node_exists?(Webgen::Path.new('/unknown'), '/unknown'))
   end
 
 end

@@ -14,7 +14,7 @@ class TestPathHandlerVirtual < MiniTest::Unit::TestCase
       @virtual = virtual
     end
 
-    def create_secondary_nodes(path, content, handler)
+    def create_secondary_nodes(path)
       path.meta_info[:virtual] = true
       path.meta_info['dest_path'] ||= '<parent><basename>(.<lang>)<ext>'
       @virtual.create_nodes(path, {})

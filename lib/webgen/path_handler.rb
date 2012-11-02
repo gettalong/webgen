@@ -145,18 +145,21 @@ module Webgen
         @website.cache[:path_handler_secondary_nodes] = @secondary_nodes
       end
 
-      created_secondary_paths = {}
-      @website.blackboard.add_listener(:create_secondary_nodes, self) do |path, source_alcn|
-        (created_secondary_paths[source_alcn] ||= Set.new) << path if source_alcn
+      used_secondary_paths = {}
+      @website.blackboard.add_listener(:before_secondary_nodes_created, self) do |path, source_alcn|
+        (used_secondary_paths[source_alcn] ||= Set.new) << path if source_alcn
+      end
+      @website.blackboard.add_listener(:before_node_written, self) do |node|
+        used_secondary_paths = {}
       end
       @website.blackboard.add_listener(:after_node_written, self) do |node|
         @secondary_nodes.select do |path, data|
-          data.first == node.alcn && created_secondary_paths[node.alcn] &&
-            !created_secondary_paths[node.alcn].include?(path)
+          data[1] == node.alcn && used_secondary_paths[node.alcn] &&
+            !used_secondary_paths[node.alcn].include?(path)
         end.each do |path, data|
-          delete_secondary_nodes(path)
+          @secondary_nodes.delete(path)
+          data[2].each {|alcn| @website.tree.delete_node(@website.tree[alcn])}
         end
-        created_secondary_paths = {}
       end
     end
 
@@ -216,17 +219,19 @@ module Webgen
       raise Webgen::NodeCreationError.new("Can't populate tree twice", self.class.name) if @website.tree.root
 
       time = Benchmark.measure do
-        create_nodes
+        meta_info, rest = @website.ext.source.paths.partition {|path| path.path =~ /[\/.]metainfo$/}
+        create_nodes(meta_info, [:meta_info])
+        create_nodes(rest)
 
         used_paths = @website.tree.node_access[:alcn].values.map {|n| n.node_info[:path]}
-        unused_paths = @website.ext.source.paths - used_paths
+        unused_paths = rest - used_paths
         @website.logger.vinfo do
           "The following source paths have not been used: #{unused_paths.join(', ')}"
         end if unused_paths.length > 0
 
-        (@website.cache[:path_handler_secondary_nodes] || {}).each do |path, (source_alcn, handler, content, node_alcns)|
-          next if @secondary_nodes.has_key?(path) || !@website.tree[source_alcn]
-          create_secondary_nodes(path, content, handler, source_alcn)
+        (@website.cache[:path_handler_secondary_nodes] || {}).each do |path, (content, source_alcn, _)|
+          next if !@website.tree[source_alcn]
+          create_secondary_nodes(path, content, source_alcn)
         end
       end
       @website.logger.vinfo do
@@ -253,6 +258,7 @@ module Webgen
               (node['passive'] && !node['no_output'] && !@website.ext.item_tracker.node_referenced?(node)) ||
               (@website.ext.destination.exists?(node.dest_path) && !@website.ext.item_tracker.node_changed?(node))
 
+            @website.blackboard.dispatch_msg(:before_node_written, node)
             if !node['no_output']
               write_node(node)
               at_least_one_node_written = true
@@ -289,13 +295,11 @@ module Webgen
     private :write_node
 
     # Use the registered path handlers to create nodes which are all returned.
-    #
-    # If +paths+ is not set, all source paths are used. Otherwise +paths+ needs to be an array of
-    # Path objects.
-    def create_nodes(paths = @website.ext.source.paths)
-      nodes = Set.new
-      @invocation_order.each do |name|
-        paths_for_handler(name, paths).sort {|a,b| a.path.length <=> b.path.length}.each do |path|
+    def create_nodes(paths, handlers = @invocation_order)
+      nodes = []
+      paths.each {|path| @website.blackboard.dispatch_msg(:apply_meta_info_to_path, path)}
+      handlers.each do |name|
+        paths_for_handler(name.to_s, paths).each do |path|
           nodes += create_nodes_with_path_handler(path, name)
         end
       end
@@ -314,58 +318,46 @@ module Webgen
     # If the secondary nodes are created during the rendering phase (and not during node creation,
     # ie. in a #create_nodes method of a path handler), the +source_alcn+ has to be set to the node
     # alcn from which these nodes are created!
-    def create_secondary_nodes(path, content, handler = nil, source_alcn = nil)
-      @website.blackboard.dispatch_msg(:create_secondary_nodes, path, source_alcn)
-
-      sn = @secondary_nodes[path]
-      if sn && sn[0] == source_alcn && sn[1] == handler && sn[2] == content
-        nodes = sn[3].map {|a| @website.tree[a]}.compact
-        if sn[3].length == nodes.length
-          return nodes
-        elsif nodes.length > 0
-          raise "webgen bug - please report!"
-        else
-          @secondary_nodes.delete(path)
-        end
-      elsif sn
+    def create_secondary_nodes(path, content = '', source_alcn = nil)
+      if (sn = @secondary_nodes[path]) && sn[1] != source_alcn
         raise Webgen::NodeCreationError.new("Duplicate secondary path name <#{path}>", self.class.name, path)
       end
+      @website.blackboard.dispatch_msg(:before_secondary_nodes_created, path, source_alcn)
 
       path['modified_at'] ||= @website.tree[source_alcn]['modified_at'] if source_alcn
-      path.set_io(&nil)
-      @secondary_nodes[path.dup] = data = [source_alcn, handler, content] if source_alcn
-
       path.set_io { StringIO.new(content) }
-      nodes = if handler
-                create_nodes_with_path_handler(path, handler)
+
+      nodes = if path['handler']
+                @website.blackboard.dispatch_msg(:apply_meta_info_to_path, path)
+                create_nodes_with_path_handler(path, path['handler'])
               else
-                nodes = create_nodes([path])
+                create_nodes([path])
               end
-      data << nodes.map {|n| n.alcn} if source_alcn
+      @website.blackboard.dispatch_msg(:after_secondary_nodes_created, path, nodes)
+
+      if source_alcn
+        path.set_io(&nil)
+        _, _, stored_alcns = @secondary_nodes.delete(path)
+        cur_alcns = nodes.map {|n| n.alcn}
+        (stored_alcns - cur_alcns).each {|n| @website.tree.delete_node(@website.tree[n])} if stored_alcns
+        @secondary_nodes[path.dup] = [content, source_alcn, cur_alcns]
+      end
 
       nodes
     end
 
-    # Delete all secondary nodes created from the given path.
-    def delete_secondary_nodes(path)
-      data = @secondary_nodes.delete(path)
-      data[3].each {|alcn| @website.tree.delete_node(@website.tree[alcn])}
-    end
-    private :delete_secondary_nodes
-
-    # Return the paths which are handled by the path handler +name+.
+    # Return the paths which are handled by the path handler +name+ (where +name+ is a String).
     def paths_for_handler(name, paths)
-      patterns = ext_data(name).patterns
-      if @website.config.option?("path_handler.#{name}.patterns")
-        patterns += @website.config["path_handler.#{name}.patterns"]
-      end
-      return [] if patterns.nil? || patterns.empty?
+      patterns = ext_data(name).patterns || []
 
       options = (@website.config['path_handler.patterns.case_sensitive'] ? 0 : File::FNM_CASEFOLD) |
         (@website.config['path_handler.patterns.match_leading_dot'] ? File::FNM_DOTMATCH : 0) |
         File::FNM_PATHNAME
 
-      paths.select {|path| patterns.any? {|pat| Webgen::Path.matches_pattern?(path, pat, options)}}
+      paths.select do |path|
+        path.meta_info['handler'] == name ||
+          patterns.any? {|pat| Webgen::Path.matches_pattern?(path, pat, options)}
+      end.sort {|a,b| a.path <=> b.path}
     end
     private :paths_for_handler
 
@@ -374,27 +366,19 @@ module Webgen
     #
     # Returns an array with all created nodes.
     def create_nodes_with_path_handler(path, handler) #:yields: path
-      path = path.dup
-      apply_default_meta_info(path, handler)
-      @website.blackboard.dispatch_msg(:before_node_created, path)
-
       *data = instance(handler).parse_meta_info!(path)
-      nodes = []
 
-      versions = path.meta_info.delete('versions') || {'default' => {'version' => path.meta_info['version']}}
-      versions.each do |name, mi|
+      (path.meta_info.delete('versions') || {'default' => {}}).map do |name, mi|
         vpath = path.dup
         (mi ||= {})['version'] ||= name
-        raise Webgen::NodeCreationError.new("Meta info 'version' must not be empty") if mi['version'].empty?
         vpath.meta_info.merge!(mi)
-        next if vpath.meta_info['handler'] && vpath.meta_info['handler'] != handler
+        vpath.meta_info['dest_path'] ||= '<parent><basename>(-<version>)(.<lang>)<ext>'
         @website.logger.debug do
-          "Creating node version '#{mi['version']}' from path <#{path}> with #{handler} handler"
+          "Creating node version '#{vpath['version']}' from path <#{vpath}> with #{handler} handler"
         end
-        nodes << instance(handler).create_nodes(vpath, *data)
-      end
-
-      nodes.flatten.compact.each do |node|
+        @website.blackboard.dispatch_msg(:before_node_created, vpath)
+        instance(handler).create_nodes(vpath, *data)
+      end.flatten.compact.each do |node|
         @website.blackboard.dispatch_msg(:after_node_created, node)
       end
     rescue Webgen::Error => e
@@ -405,15 +389,6 @@ module Webgen
       raise Webgen::NodeCreationError.new(e, instance(handler).class.name, path)
     end
     private :create_nodes_with_path_handler
-
-    # Apply the default meta info (general and handler specific) to the path.
-    def apply_default_meta_info(path, handler)
-      mi = @website.config['path_handler.default_meta_info'][:all].dup
-      mi.merge!(@website.config['path_handler.default_meta_info'][handler.to_s] || {})
-      mi.merge!(path.meta_info)
-      path.meta_info.update(Marshal.load(Marshal.dump(mi)))
-    end
-    private :apply_default_meta_info
 
   end
 

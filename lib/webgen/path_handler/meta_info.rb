@@ -15,25 +15,24 @@ module Webgen
       include Base
       include PageUtils
 
-      # Upon creation the path handler registers itself as listener for the :before_node_created and
+      # Upon creation the path handler registers itself as listener for the :apply_meta_info_to_path and
       # :after_node_created hooks so that it can apply the meta information.
       def initialize(website)
         super
-        @website.blackboard.add_listener(:before_node_created, &method(:before_node_created))
+        @website.blackboard.add_listener(:apply_meta_info_to_path, &method(:apply_meta_info_to_path))
         @website.blackboard.add_listener(:after_node_created, &method(:after_node_created))
-        @nodes = []
+        @paths = []
+        @alcns = []
       end
 
       # Create a meta info node from +path+.
       def create_nodes(path, blocks)
-        create_node(path) do |node|
-          node.node_info[:mi_paths] = {}
-          node.node_info[:mi_alcn] = {}
-          add_data(blocks['paths'], 'paths', node)
-          add_data(blocks['alcn'], 'alcn', node)
-          update_existing_nodes(node)
-          @nodes << node
-        end
+        @paths += add_data(path, blocks['paths'], 'paths')
+        entries = add_data(path, blocks['alcn'], 'alcn')
+        @alcns += entries
+        update_existing_nodes(entries)
+
+        nil
       end
 
       #######
@@ -41,42 +40,41 @@ module Webgen
       #######
 
       # Add the data from the given page block to the hash.
-      def add_data(content, block_name, node)
+      def add_data(path, content, block_name)
+        entries = []
         if content && (data = YAML::load(content))
-          mi_key = (block_name == 'paths' ? :mi_paths : :mi_alcn)
-          data.each do |key, value|
-            key = Webgen::Path.append(node.parent.alcn, key)
-            node.node_info[mi_key][key] = value
+          data.each do |(*keys), value|
+            value = Marshal.dump(value)
+            keys.each {|key| entries << [Webgen::Path.append(path.parent_path, key), value]}
           end
         end
+        entries
       rescue Exception => e
         raise Webgen::NodeCreationError.new("Could not parse block '#{block_name}': #{e.message}", self.class.name)
       end
 
       # Update already existing nodes with meta information from the given meta info node.
-      def update_existing_nodes(mi_node)
+      def update_existing_nodes(entries)
         @website.tree.node_access[:alcn].each do |alcn, node|
-          mi_node.node_info[:mi_alcn].each do |pattern, mi|
-            node.meta_info.update(mi) if Webgen::Path.matches_pattern?(alcn, pattern)
+          entries.each do |pattern, mi|
+            node.meta_info.update(Marshal.load(mi)) if Webgen::Path.matches_pattern?(alcn, pattern)
           end
         end
       end
 
       # Update the meta info of matched path before a node is created.
-      def before_node_created(path)
-        @nodes.each do |mi_node|
-          mi_node.node_info[:mi_paths].each do |pattern, mi|
-            path.meta_info.update(mi) if Webgen::Path.matches_pattern?(path, pattern)
-          end
+      def apply_meta_info_to_path(path)
+        hash = {}
+        @paths.each do |pattern, mi|
+          hash.merge!(Marshal.load(mi)) if Webgen::Path.matches_pattern?(path, pattern)
         end
+        path.meta_info.replace(hash.merge!(path.meta_info)) if hash.length > 0
       end
 
       # Update the meta information of a matched alcn after the node has been created.
       def after_node_created(node)
-        @nodes.each do |mi_node|
-          mi_node.node_info[:mi_alcn].each do |pattern, mi|
-            node.meta_info.update(mi) if Webgen::Path.matches_pattern?(node.alcn, pattern)
-          end
+        @alcns.each do |pattern, mi|
+          node.meta_info.update(Marshal.load(mi)) if Webgen::Path.matches_pattern?(node.alcn, pattern)
         end
       end
 

@@ -1,0 +1,31 @@
+--- paths
+/**/:
+  handler: directory
+  proxy_path: index.html
+
+/**/*.template:
+  handler: template
+  blocks: {defaults: {pipeline: [erb,tags,blocks,html_head]}}
+
+/**/*.page:
+  handler: page
+  blocks: {defaults: {pipeline: [erb,tags,kramdown,blocks,fragments]}}
+
+/**/*.feed:
+  handler: feed
+  rss: true
+  atom: true
+
+/**/*.sitemap:
+  handler: sitemap
+  default_priority: 0.5
+  default_change_freq: weekly
+
+[/**/virtual, /**/*.virtual]:
+  handler: virtual
+
+[/**/*.css, /**/*.js, /**/*.html, /**/*.gif, /**/*.jpg, /**/*.png, /**/*.ico]:
+  handler: copy
+
+[/**/*.sass, /**/*.scss, /**/*.haml, /**/*.rdoc, /**/*.textile, /**/*.tikz]:
+  handler: copy

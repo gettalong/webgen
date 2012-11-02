@@ -15,6 +15,7 @@ module Webgen
       # Create a template node for +path+.
       def create_nodes(path, blocks)
         create_node(path) do |node|
+          node.meta_info['no_output'] = true
           set_blocks(node, blocks)
         end
       end

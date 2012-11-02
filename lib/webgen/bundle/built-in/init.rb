@@ -195,72 +195,22 @@ option('path_handler.version_in_dest_path', 'except_default',
   end
 end
 
-option('path_handler.default_meta_info',
-       {
-         :all => {
-           'dest_path' => '<parent><basename>(-<version>)(.<lang>)<ext>',
-         },
-         'directory' => {
-           'proxy_path' => 'index.html',
-         },
-         'template' => {
-           'no_output' => true,
-           'blocks' => {'defaults' => {'pipeline' => 'erb,tags,blocks,html_head'}}
-         },
-         'page' => {
-           'blocks' => {'defaults' => {'pipeline' => 'erb,tags,kramdown,blocks,fragments'}}
-         },
-         'meta_info' => {
-           'no_output' => true
-         },
-         'feed' => {
-           'rss' => true,
-           'atom' => true,
-         },
-         'sitemap' => {
-           'default_priority' => 0.5,
-           'default_change_freq' => 'weekly',
-         },
-       },
-       'Default meta information for all nodes (key :all) and for nodes belonging to a specific path handler') do |val|
-  raise "The value has to be a hash" unless val.kind_of?(Hash)
-  cur_val = Marshal.load(Marshal.dump(website.config['path_handler.default_meta_info']))
-  val.each do |handler, mi|
-    raise "The value for each key has to be a hash" unless mi.kind_of?(Hash)
-    action = ((mi.delete(:action) || 'modify') == 'modify' ? :update : :replace)
-    (cur_val[handler] ||= {}).send(action, mi)
-  end
-  cur_val
-end
-
 website.ext.path_handler = path_handler = Webgen::PathHandler.new(website)
 
 # handlers are registered in invocation order
 
-path_handler.register('Directory', :patterns => ['**/'])
-path_handler.register('MetaInfo', :patterns => ['**/metainfo', '**/*.metainfo'])
+path_handler.register('Directory')
+path_handler.register('MetaInfo', :patterns => ['/**/metainfo', '/**/*.metainfo'])
 
-path_handler.register('Template', :patterns => ['**/*.template'])
+path_handler.register('Template')
 option('path_handler.template.default_template', 'default.template',
        'The name of the default template file')
 
-path_handler.register('Page', :patterns => ['**/*.page'])
-
+path_handler.register('Page')
 path_handler.register('Copy')
-option('path_handler.copy.patterns',
-       ['**/*.css', '**/*.js', '**/*.html', '**/*.gif', '**/*.jpg', '**/*.png', '**/*.ico'],
-       'The path patterns for the paths that should just be copied to the destination') do |val|
-  raise "The value has to be an array of path patterns (strings)" unless val.kind_of?(Array) && val.all? {|i| i.kind_of?(String)}
-  val
-end
-website.blackboard.add_listener(:website_initialized) do
-  patterns = content_processor.extension_map.keys.map {|pattern| "**/*.#{pattern}"}
-  path_handler.registered_extensions[:copy].patterns += patterns
-end
-
-path_handler.register('Feed', :patterns => ['**/*.feed'])
-path_handler.register('Sitemap', :patterns => ['**/*.sitemap'])
-path_handler.register('Virtual', :patterns => ['**/virtual', '**/*.virtual'])
+path_handler.register('Feed')
+path_handler.register('Sitemap')
+path_handler.register('Virtual')
 
 
 ########################################################################

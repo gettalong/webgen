@@ -66,8 +66,15 @@ module Webgen
         parent = parent_node(path)
         dest_path = self.dest_path(parent, path)
 
-        if node = node_exists?(parent, path, dest_path)
-          raise Webgen::NodeCreationError.new("Another node <#{node}> with the same alcn or destination path already exists")
+        if node = node_exists?(path, dest_path)
+          node_path = node.node_info[:path]
+          if node_path != path
+            raise Webgen::NodeCreationError.new("Another node <#{node}> with the same alcn or destination path already exists")
+          elsif node_path.meta_info == path.meta_info
+            return node
+          else
+            node.tree.delete_node(node)
+          end
         end
 
         if !path.meta_info['modified_at'].kind_of?(Time)
@@ -107,7 +114,7 @@ module Webgen
       # destination path is returned.
       def dest_path(parent, path)
         dpath = construct_dest_path(parent, path, false)
-        if (node = node_exists?(parent, path, dpath)) && node.lang != path.meta_info['lang']
+        if (node = node_exists?(path, dpath)) && node.lang != path.meta_info['lang']
           dpath = construct_dest_path(parent, path, true)
         end
         dpath
@@ -199,8 +206,9 @@ module Webgen
       end
       private :adjust_index
 
-      # Check if the node alcn or the destination path which would be created by #create_node exists.
-      def node_exists?(parent, path, dest_path = self.dest_path(parent, path))
+      # Check if the node alcn or the destination path, which would be created by #create_node for
+      # the given paths, exists.
+      def node_exists?(path, dest_path)
         @website.tree[path.alcn] || (!path.meta_info['no_output'] && @website.tree[dest_path, :dest_path])
       end
       protected :node_exists?

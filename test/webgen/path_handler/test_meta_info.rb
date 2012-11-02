@@ -8,6 +8,11 @@ class TestPathHandlerMetaInfo < MiniTest::Unit::TestCase
 
   include Webgen::TestHelper
 
+  class TestPathHandler
+    include Webgen::PathHandler::Base
+    public :create_node
+  end
+
   CONTENT=<<EOF
 --- paths
 /default.*:
@@ -28,20 +33,29 @@ EOF
     setup_website
     @root = Webgen::Node.new(@website.tree.dummy_root, '/', '/')
     @mi = Webgen::PathHandler::MetaInfo.new(@website)
+    @ph = TestPathHandler.new(@website)
   end
 
   def setup_default_node
     @path = Webgen::Path.new('/metainfo', 'dest_path' => '<parent><basename><ext>')
-    @node = @mi.create_nodes(@path, Webgen::Page.from_data(CONTENT).blocks)
+    @mi.create_nodes(@path, Webgen::Page.from_data(CONTENT).blocks)
   end
 
   def test_create_node
     setup_default_node
-    refute_nil(@node)
-    assert_equal({'/default.*' => {'title' => 'new title', 'before' => 'valbef'},
-                 '/*/' => {'title' => 'test'}}, @node.node_info[:mi_paths])
-    assert_equal({'/default.css' => {'after' => 'valaft'},
-                 '/other.page' => {'title' => 'Not Other'}}, @node.node_info[:mi_alcn])
+    result = [['/default.*', {'title' => 'new title', 'before' => 'valbef'}],
+              ['/*/', {'title' => 'test'}]]
+    @mi.instance_variable_get(:@paths).each_with_index do |(pattern, mi), index|
+      assert_equal(result[index].first, pattern)
+      assert_equal(result[index].last, Marshal.load(mi))
+    end
+
+    result = [['/default.css', {'after' => 'valaft'}],
+              ['/other.page', {'title' => 'Not Other'}]]
+    @mi.instance_variable_get(:@alcns).each_with_index do |(pattern, mi), index|
+      assert_equal(result[index].first, pattern)
+      assert_equal(result[index].last, Marshal.load(mi))
+    end
 
     path = Webgen::Path.new('/default.metainfo', 'dest_path' => '<parent><basename><ext>')
     assert_raises(Webgen::NodeCreationError) do
@@ -63,7 +77,7 @@ EOF
 
   def test_update_existing_nodes
     path = Webgen::Path.new('/default.css', 'dest_path' => '<parent><basename><ext>')
-    node = @mi.create_nodes(path, {})
+    node = @ph.create_node(path)
 
     setup_default_node
 
@@ -74,7 +88,7 @@ EOF
     setup_default_node
 
     path = Webgen::Path.new('/default.css', 'dest_path' => '<parent><basename><ext>')
-    node = @mi.create_nodes(path, {})
+    node = @ph.create_node(path)
 
     refute_equal('valaft', node['after'])
     @website.blackboard.dispatch_msg(:after_node_created, node)

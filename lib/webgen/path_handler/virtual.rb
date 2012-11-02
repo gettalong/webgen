@@ -38,10 +38,12 @@ module Webgen
             entry_path = Webgen::Path.new(key, meta_info)
 
             if key =~ /\/$/
-              nodes << @website.ext.path_handler.create_secondary_nodes(entry_path, '', 'directory')
+              entry_path['handler'] = 'directory'
+              nodes << @website.ext.path_handler.create_secondary_nodes(entry_path)
             else
-              entry_path.meta_info[:virtual] = true
-              nodes << @website.ext.path_handler.create_secondary_nodes(entry_path, '', 'virtual')
+              entry_path[:virtual] = true
+              entry_path['handler'] = 'virtual'
+              nodes << @website.ext.path_handler.create_secondary_nodes(entry_path)
             end
           end
         end
@@ -65,13 +67,13 @@ module Webgen
       end
 
       # Create the needed parent directories for a virtual node.
-      def create_directories(dir, mi)
-        mi.merge('no_output' => true)
-        dir.sub(/^\//, '').split('/').inject('/') do |parent_path, dir|
+      def create_directories(directory, mi)
+        mi.merge!('no_output' => true, 'handler' => 'directory')
+        directory.sub(/^\//, '').split('/').inject('/') do |parent_path, dir|
           parent_path = File.join(parent_path, dir) + '/'
           path = Webgen::Path.new(parent_path, mi)
           if !@website.tree[path.alcn]
-            @website.ext.path_handler.create_secondary_nodes(path, '', 'directory')
+            @website.ext.path_handler.create_secondary_nodes(path)
           end
           parent_path
         end

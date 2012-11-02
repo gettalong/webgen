@@ -54,12 +54,12 @@ EOF
   def test_static_call
     setup_website
     @website.ext.path_handler = Object.new
-    def (@website.ext.path_handler).create_secondary_nodes(path, body, handler, source_node)
-      @proc.call(path, body, handler, source_node)
+    def (@website.ext.path_handler).create_secondary_nodes(path, body, source_node)
+      @proc.call(path, body, source_node)
     end
-    create_secondary_nodes = lambda do |path, body, handler, source_node|
+    create_secondary_nodes = lambda do |path, body, source_node|
       assert_equal('', body)
-      assert_equal('copy', handler)
+      assert_equal('copy', path['handler'])
       assert_equal(@website.tree['/test.html'].alcn, source_node)
       parent = @website.tree[path.meta_info['parent_alcn']]
       [Webgen::Node.new(parent, path.cn, path.alcn, path.meta_info)]
