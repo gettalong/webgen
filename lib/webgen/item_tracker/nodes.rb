@@ -75,6 +75,8 @@ module Webgen
         else
           send(method_name, options)
         end
+      rescue Exception
+        []
       end
       private :node_list
 
