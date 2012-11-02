@@ -88,7 +88,7 @@ DESC
       private :format_missing_node
 
       def format_nodes(alcn, uid, data)
-        method, options, type = *uid.last
+        method, _, type = *uid.last
 
         res = [(type == :content ? "Content" : "Meta info") + " from these nodes"]
         res.first << " (result of #{[method].flatten.join('.')})" if commandparser.verbose
