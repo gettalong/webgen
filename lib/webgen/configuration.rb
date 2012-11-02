@@ -46,7 +46,7 @@ module Webgen
       super
       @options = orig.options.dup
       @values = {}
-      orig.instance_eval { @values }.each {|k,v| @values[k] = v.dup}
+      orig.instance_eval { @values }.each {|k,v| @values[k] = v.dup rescue v}
     end
 
     def clone #:nodoc:
