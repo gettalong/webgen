@@ -10,9 +10,12 @@ module Webgen
     # The logger class used by the command line interface.
     class Logger < Webgen::Logger
 
+      attr_accessor :prefix
+
       # Create a new Logger object for the command line interface.
       def initialize(outdev = $stdout)
         super(outdev)
+        @prefix = ''
         outdev.sync = true if outdev.respond_to?(:sync=)
         self.formatter = Proc.new do |severity, timestamp, progname, msg|
           msg = msg.dup
@@ -21,13 +24,13 @@ module Webgen
           case severity
           when 'INFO'
             msg.sub!(/^\s*\[(?:create|update)\]/) {|m| Utils.bold(Utils.green(m))}
-            "%-5s %s\n" % [severity, msg]
+            "%s%-5s %s\n" % [@prefix, severity, msg]
           when 'WARN'
-            "%s%-5s%s %s\n" % [Utils.bold + Utils.yellow, severity, Utils.reset, msg]
+            "%s%s%-5s%s %s\n" % [@prefix, Utils.bold + Utils.yellow, severity, Utils.reset, msg]
           when 'ERROR', 'FATAL'
-            "%s%-5s%s %s\n" % [Utils.bold + Utils.red, severity, Utils.reset, msg]
+            "%s%s%-5s%s %s\n" % [@prefix, Utils.bold + Utils.red, severity, Utils.reset, msg]
           when 'DEBUG'
-            "%-5s%s %s\n" % [severity, progname ? " (#{progname})" : '', msg]
+            "%s%-5s%s %s\n" % [@prefix, severity, progname ? " (#{progname})" : '', msg]
           else
             raise ArgumentError, 'Unsupported logger severity level'
           end
