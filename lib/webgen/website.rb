@@ -178,6 +178,7 @@ module Webgen
 
     # Save the +cache+.
     def save_cache
+      return if config['website.dry_run']
       cache_data = [@cache.dump, Webgen::VERSION]
       if config['website.cache'].first == :file
         File.open(cache_file, 'wb') {|f| Marshal.dump(cache_data, f)}

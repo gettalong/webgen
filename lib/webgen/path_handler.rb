@@ -256,7 +256,8 @@ module Webgen
           begin
             next if node == @website.tree.dummy_root ||
               (node['passive'] && !node['no_output'] && !@website.ext.item_tracker.node_referenced?(node)) ||
-              (@website.ext.destination.exists?(node.dest_path) && !@website.ext.item_tracker.node_changed?(node))
+              ((@website.config['website.dry_run'] || @website.ext.destination.exists?(node.dest_path)) &&
+               !@website.ext.item_tracker.node_changed?(node))
 
             @website.blackboard.dispatch_msg(:before_node_written, node)
             if !node['no_output']

@@ -41,6 +41,8 @@ option('website.cache', [:file, 'webgen.cache'],
   raise "The first value has to be :file or :string" unless val[0] == :file || val[0] == :string
   val
 end
+option('website.dry_run', false,
+       "Perform a dry run, don't actually write files", &true_or_false)
 
 option('website.lang', 'en', 'The default language used for the website') do |val|
   lang = LanguageManager.language_for_code(val)

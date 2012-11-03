@@ -82,6 +82,9 @@ module Webgen
       # The log level. Default: Logger::INFO
       attr_reader :log_level
 
+      # Specifies whether anything should be actually written.
+      attr_reader :dry_run
+
       # Create a new CommandParser class.
       def initialize
         super(true, true, false)
@@ -89,6 +92,7 @@ module Webgen
         @verbose = false
         @do_search = false
         @log_level = ::Logger::INFO
+        @dry_run = false
 
         self.add_command(CmdParse::VersionCommand.new)
         self.add_command(CmdParse::HelpCommand.new)
@@ -116,6 +120,10 @@ module Webgen
           opts.on("-q", "--[no-]quiet",
                   *Utils.format_option_desc("Quiet output (default: no)")) do |v|
             @log_level = (v ? ::Logger::WARN : :Logger::INFO)
+          end
+          opts.on("-n", "--[no-]dry-run",
+                  *Utils.format_option_desc("Do a dry run, i.e. don't actually write anything (default: no)")) do |v|
+            @dry_run = v
           end
           opts.on("--[no-]debug",
                   *Utils.format_option_desc("Enable debugging")) do |v|
@@ -146,6 +154,9 @@ module Webgen
             site.ext.cli = self
             site.logger.level = @log_level
             site.logger.verbose = @verbose
+            site.logger.prefix = '[DRY-RUN] ' if @dry_run
+          else
+            site.config['website.dry_run'] = @dry_run
           end
         end
       end

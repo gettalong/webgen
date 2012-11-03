@@ -138,7 +138,7 @@ module Webgen
 
     # Write the +data+ (either a String or a Webgen::Path object) to the given +path+.
     def write(path, data)
-      instance.write(path, data)
+      instance.write(path, data) if !@website.config['website.dry_run']
     end
 
     # Return the content of the given +path+ which is opened in +mode+.
