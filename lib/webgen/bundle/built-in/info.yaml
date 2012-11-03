@@ -110,8 +110,7 @@ extensions:
 
   path_handler:
     author: *author
-    summary: Generic node finding extension, allows adding of custom filters
-
+    summary: Provides an extendable way to create nodes from source paths.
   path_handler.directory:
     author: *author
     summary: Creates the needed output directories from the source directories
