@@ -13,8 +13,6 @@ class TestPathHandlerFeed < MiniTest::Unit::TestCase
 
   FEED_CONTENT = <<EOF
 ---
-rss: true
-atom: true
 site_url: http://example.com
 entries:
   :alcn: "*.html"
@@ -44,14 +42,22 @@ EOF
     @path_blocks = Webgen::Page.from_data(FEED_CONTENT).blocks
   end
 
+  def create_nodes
+    @path['version'] = 'atom'
+    atom_node = @feed.create_nodes(@path.dup, @path_blocks)
+    @path['version'] = 'rss'
+    rss_node = @feed.create_nodes(@path.dup, @path_blocks)
+    [atom_node, rss_node]
+  end
+
   def test_create_node
-    atom_node, rss_node = @feed.create_nodes(@path, @path_blocks)
+    atom_node, rss_node = create_nodes
 
     refute_nil(atom_node)
     refute_nil(rss_node)
     refute_nil(atom_node.node_info[:blocks])
-    assert_equal('atom', atom_node.node_info[:feed_type])
-    assert_equal('rss', rss_node.node_info[:feed_type])
+    assert_equal('atom', atom_node['version'])
+    assert_equal('rss', rss_node['version'])
 
     assert_raises(Webgen::NodeCreationError) do
       path = Webgen::Path.new('/test_feed_2') { StringIO.new("---\nunknow: yes") }
@@ -64,14 +70,14 @@ EOF
     @website.ext.content_processor.register('Erb')
     @website.ext.content_processor.register('Blocks')
 
-    atom_node, rss_node = @feed.create_nodes(@path, @path_blocks)
+    atom_node, rss_node = create_nodes
     assert_equal("hallo\n", @feed.content(rss_node))
     assert(@feed.content(atom_node) =~ /Thomas Leitner/)
     assert(@feed.content(atom_node) =~ /RealContent/)
   end
 
   def test_feed_entries
-    atom_node, rss_node = @feed.create_nodes(@path, @path_blocks)
+    atom_node, rss_node = create_nodes
     assert_equal([@index_en, @file_en], atom_node.feed_entries)
     assert_equal([@index_en, @file_en], rss_node.feed_entries)
   end

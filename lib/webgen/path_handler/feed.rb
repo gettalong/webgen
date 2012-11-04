@@ -32,28 +32,26 @@ module Webgen
           raise Webgen::NodeCreationError.new("At least one of #{MANDATORY_INFOS.join('/')} is missing",
                                               self.class.name, path)
         end
-
-        create_feed_node = lambda do |type|
-          path.ext = type
-          create_node(path) do |node|
-            set_blocks(node, blocks)
-            node.meta_info['link'] ||= node.parent.alcn
-            node.node_info[:feed_type] = type
-            @website.ext.item_tracker.add(node, :nodes, :node_finder_option_set,
-                                          {:opts => node['entries'], :ref_alcn => node.alcn}, :content)
-          end
+        if !['atom', 'rss'].include?(path['version'])
+          raise Webgen::NodeCreationError.new("Invalid version '#{path['version']}' for feed path specified, only atom and rss allowed",
+                                              self.class.name, path)
         end
 
-        nodes = []
-        nodes << create_feed_node['atom'] if path.meta_info['atom']
-        nodes << create_feed_node['rss'] if path.meta_info['rss']
-        nodes
+        path.ext = path['version']
+        path['dest_path'] = '<parent><basename>(.<lang>)<ext>'
+        path['cn'] = '<basename><ext>'
+        create_node(path) do |node|
+          set_blocks(node, blocks)
+          node.meta_info['link'] ||= node.parent.alcn
+          @website.ext.item_tracker.add(node, :nodes, :node_finder_option_set,
+                                        {:opts => node['entries'], :ref_alcn => node.alcn}, :content)
+        end
       end
 
       # Return the rendered feed represented by +node+.
       def content(node)
         context = Webgen::Context.new(@website)
-        context.render_block(:name => "#{node.node_info[:feed_type]}_template", :node => 'first',
+        context.render_block(:name => "#{node['version']}_template", :node => 'first',
                              :chain => [node, node.resolve("/templates/feed.template", node.lang, true), node].compact)
       end
 

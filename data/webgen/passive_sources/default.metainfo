@@ -13,8 +13,9 @@
 
 /**/*.feed:
   handler: feed
-  rss: true
-  atom: true
+  versions:
+    rss:
+    atom:
 
 /**/*.sitemap:
   handler: sitemap
