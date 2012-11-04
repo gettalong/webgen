@@ -326,6 +326,8 @@ option('tag.langbar.show_own_lang', true,
        'Should the link to the currently displayed language page be shown?', &true_or_false)
 option('tag.langbar.template', '/templates/tag.template',
        'The block \'tag.langbar\' in this template file is used for rendering')
+option('tag.langbar.separator', ' | ',
+       'Specifies the string that should be used as separator between the individual language parts.')
 
 tag.register('BreadcrumbTrail')
 option('tag.breadcrumb_trail.omit_dir_index', false,

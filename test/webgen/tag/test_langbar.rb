@@ -23,15 +23,16 @@ class TestTagLangbar < MiniTest::Unit::TestCase
 
     de_link = '<a href="file.de.html" hreflang="de">de</a>'
     en_link = '<a class="webgen-langbar-current-lang" href="file.html" hreflang="en">en</a>'
-    check_results(node, "#{de_link} | #{en_link}", de_link, "#{de_link} | #{en_link}", de_link)
+    check_results(node, "#{de_link} | #{en_link}", de_link, "#{de_link} | #{en_link}", de_link, ' | ')
+    check_results(node, "#{de_link} --- #{en_link}", de_link, "#{de_link} --- #{en_link}", de_link, ' --- ')
 
     en_link = '<a class="webgen-langbar-current-lang" href="other.html" hreflang="en">en</a>'
-    check_results(other, en_link, '', '', '')
+    check_results(other, en_link, '', '', '', ' | ')
   end
 
-  def check_results(node, both_true, both_false, first_false, second_false)
+  def check_results(node, both_true, both_false, first_false, second_false, separator)
     @context[:chain] = [node]
-    @context[:config] = {'tag.langbar.template' => '/tag.template'}
+    @context[:config] = {'tag.langbar.template' => '/tag.template', 'tag.langbar.separator' => separator}
 
     @context[:config].update('tag.langbar.show_single_lang' => true, 'tag.langbar.show_own_lang' => true)
     assert_equal(both_true, @obj.call('langbar', '', @context))
