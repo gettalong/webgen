@@ -231,6 +231,14 @@ module Webgen
       end
     end
 
+    def respond_to_missing?(symbol, include_private) #:nodoc:
+      if node_info[:path_handler]
+        node_info[:path_handler].send(:respond_to?, symbol, include_private)
+      else
+        super
+      end
+    end
+
   end
 
 end
