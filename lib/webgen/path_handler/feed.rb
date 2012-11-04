@@ -69,7 +69,13 @@ module Webgen
 
       # Return the content of an +entry+ of the feed +node+.
       def entry_content(node, entry)
-        entry.render_block(node['content_block_name'] || 'content', Webgen::Context.new(@website, :chain => [entry])).content
+        block_name = node['content_block_name'] || 'content'
+        if entry.respond_to?(:render_block) && entry.blocks[block_name]
+          entry.render_block(block_name, Webgen::Context.new(@website, :chain => [entry])).content
+        else
+          @website.logger.warn { "Feed entry <#{entry}> not used, is not a renderable node" }
+          ''
+        end
       end
 
     end

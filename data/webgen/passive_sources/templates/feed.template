@@ -16,7 +16,7 @@
   <updated><%= Time.now.xmlschema %></updated>
   <id><%= context.node.feed_link %></id>
 
-  <% context.node.feed_entries.each do |entry| %>
+  <% context.node.feed_entries.flatten.each do |entry| %>
   <entry>
     <title type="html"><%= h(entry['title']) %></title>
     <% if entry['author'] %>
@@ -48,7 +48,7 @@
     <lastBuildDate><%= Time.now.rfc822 %></lastBuildDate>
     <generator>webgen - Webgen::PathHandler::Feed</generator>
 
-    <% context.node.feed_entries.each do |entry| %>
+    <% context.node.feed_entries.flatten.each do |entry| %>
     <item>
       <title><%= h(entry['title']) %></title>
       <link><%= Webgen::Path.url(File.join(context.node['site_url'], entry.dest_path), false) %></link>
