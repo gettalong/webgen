@@ -59,6 +59,8 @@ class TestNodeFinder < MiniTest::Unit::TestCase
     check.call(%w[/file.en.html /file.de.html /dir/dir/file.html /german.de.html /dir2/index.de.html
                   /dir2/index.en.html /other.html /other.en.html /dir/subfile.html],
                @nf.find({:alcn => '/**/*.html', :flatten => true, :sort => true}, tree['/']))
+    check.call(%w[/german.de.html /other.en.html /other.html /file.en.html /file.de.html],
+               @nf.find({:alcn => '/*.html', :flatten => true, :sort => 'sort_info'}, tree['/']))
     check.call(%w[/dir/dir/file.html /file.de.html /file.en.html /german.de.html /dir2/index.de.html /dir2/index.en.html
                   /other.html /other.en.html /dir/subfile.html],
                @nf.find({:alcn => '/**/*.html', :name => 'test', :flatten => true, :sort => 'title'}, tree['/']))

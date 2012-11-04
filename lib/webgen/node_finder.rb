@@ -51,7 +51,8 @@ module Webgen
   #   sorting is performed. If +true+ is specified, the meta information +sort_info+ (or if absent,
   #   the meta information +title+) is used for sorting. If the compared values are both integers, a
   #   numeric comparison is done, else a string comparison. If a meta information key is specified,
-  #   the value of this meta information is used for comparison of nodes.
+  #   the value of this meta information is used for comparison of nodes (again, if both compared
+  #   values are integers, a numeric comparison is done, else a string comparison).
   #
   # === Filter options
   #
@@ -249,7 +250,11 @@ module Webgen
           a <=> b
         end
       else
-        nodes.sort! {|(a,_),(b,_)| a[sort] <=> b[sort]}
+        nodes.sort! do |(a,_),(b,_)|
+          a, b = a[sort].to_s, b[sort].to_s
+          a, b = a.to_i, b.to_i if a !~ /\D/ && b !~ /\D/
+          a <=> b
+        end
       end
       nodes.each {|n, children| sort_nodes(children, sort, flat_mode) if children } unless flat_mode
     end
