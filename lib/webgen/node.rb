@@ -217,6 +217,13 @@ module Webgen
       "<a#{attrs}>#{link_text}</a>"
     end
 
+    # Return all versions of this node.
+    def versions
+      tree.node_access[:alcn].select {|alcn, n| n.node_info[:path] == node_info[:path]}.
+        each_with_object({}) {|(k, v), h| h[v['version']] = v}
+    end
+
+
     #######
     private
     #######

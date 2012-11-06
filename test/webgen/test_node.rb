@@ -161,4 +161,18 @@ class TestNode < MiniTest::Unit::TestCase
                  tree['/file.en.html'].link_to(tree['/dir2/'], 'de'))
   end
 
+  def test_versions
+    root = Webgen::Node.new(Webgen::Tree.new('website').dummy_root, '/', '/')
+    n1 = Webgen::Node.new(root, 'file.html', '/file.html', 'version' => 'html')
+    n1.node_info[:path] = '/file.html'
+    n2 = Webgen::Node.new(root, 'file.pdf', '/file.pdf', 'version' => 'pdf')
+    n2.node_info[:path] = '/file.html'
+    n3 = Webgen::Node.new(root, 'file.orig', '/file.orig', 'version' => 'html')
+    n3.node_info[:path] = '/file.other'
+
+    assert_equal({'html' => n1, 'pdf' => n2}, n1.versions)
+    assert_equal({'html' => n1, 'pdf' => n2}, n2.versions)
+    assert_equal({'html' => n3}, n3.versions)
+  end
+
 end
