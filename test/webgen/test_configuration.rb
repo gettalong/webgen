@@ -111,4 +111,21 @@ class TestConfiguration < MiniTest::Unit::TestCase
     assert_equal('value', @config['namespace.option'])
   end
 
+  def test_equality
+    other = Webgen::Configuration.new
+    other.define_option('namespace.option', 'default', 'desc') {|v| raise "Error with option" unless v.kind_of?(String); v}
+    assert_equal(@config, other)
+
+    other['namespace.option'] = 'val'
+    @config['namespace.option'] = 'val'
+    assert_equal(@config, other)
+
+    @config['namespace.option'] = 'val1'
+    refute_equal(@config, other)
+
+    other = Webgen::Configuration.new
+    other.define_option('namespace.option', 'default1', 'desc')
+    refute_equal(@config, other)
+  end
+
 end

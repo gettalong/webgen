@@ -27,8 +27,12 @@ module Webgen
 
     # Struct class for storing a configuration option.
     Option = Struct.new(:default, :description, :validator) do
-      def dupped_default
+      def dupped_default #:nodoc:
         default.dup rescue default
+      end
+
+      def ==(other) #:nodoc:
+        self.default == other.default
       end
     end
 
@@ -60,6 +64,10 @@ module Webgen
       @values.each_value {|v| v.freeze}
       @values.freeze
       self
+    end
+
+    def ==(other) #:nodoc:
+      @options == other.options && @values == other.instance_variable_get(:@values)
     end
 
     # Define a new option +name+ with a default value of +default+ and the description.
