@@ -20,6 +20,8 @@ module Webgen
   #     val.upcase
   #   end
   #
+  # **Note**: When a Configuration object is dumped (via Marshal), the option validator procs are
+  # not dumped and can therefore not be restored.
   class Configuration
 
     # Raised by the Webgen::Configuration class.
@@ -34,6 +36,16 @@ module Webgen
       def ==(other) #:nodoc:
         self.default == other.default
       end
+
+      def marshal_dump #:nodoc:
+        [self.default, self.description]
+      end
+
+      def marshal_load(data) #:nodoc:
+        self.default = data[0]
+        self.description = data[1]
+      end
+
     end
 
 
