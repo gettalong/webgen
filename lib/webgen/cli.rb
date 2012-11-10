@@ -1,6 +1,7 @@
 # -*- encoding: utf-8 -*-
 
 require 'cmdparse'
+require 'yaml'
 require 'webgen/website'
 require 'webgen/version'
 require 'webgen/cli/logger'
@@ -69,6 +70,12 @@ module Webgen
     # arguments and executing the requested command.
     class CommandParser < CmdParse::CommandParser
 
+      # This error is thrown when an invalid configuration option is encountered.
+      class ConfigurationOptionError < CmdParse::ParseError
+        reason 'Problem with configuration option'
+      end
+
+
       # The website directory. Default: the value of the WEBGEN_WEBSITE environment variable or the
       # current working directory.
       #
@@ -82,9 +89,6 @@ module Webgen
       # The log level. Default: Logger::INFO
       attr_reader :log_level
 
-      # Specifies whether anything should be actually written.
-      attr_reader :dry_run
-
       # Create a new CommandParser class.
       def initialize
         super(true, true, false)
@@ -92,7 +96,7 @@ module Webgen
         @verbose = false
         @do_search = false
         @log_level = ::Logger::INFO
-        @dry_run = false
+        @config_options = {}
 
         self.add_command(CmdParse::VersionCommand.new)
         self.add_command(CmdParse::HelpCommand.new)
@@ -123,7 +127,16 @@ module Webgen
           end
           opts.on("-n", "--[no-]dry-run",
                   *Utils.format_option_desc("Do a dry run, i.e. don't actually write anything (default: no)")) do |v|
-            @dry_run = v
+            @config_options['website.dry_run'] = v
+          end
+          opts.on("-o", "--option CONFIG_OPTION", String,
+                  *Utils.format_option_desc("Specify a simple configuration option (key=value)")) do |v|
+            k, v = v.split('=')
+            begin
+              @config_options[k] = YAML.load(v)
+            rescue YAML::SyntaxError
+              raise ConfigurationOptionError.new("Couldn't parse value for '#{k}': #{$!}")
+            end
           end
           opts.on("--[no-]debug",
                   *Utils.format_option_desc("Enable debugging")) do |v|
@@ -154,9 +167,15 @@ module Webgen
             site.ext.cli = self
             site.logger.level = @log_level
             site.logger.verbose = @verbose
-            site.logger.prefix = '[DRY-RUN] ' if @dry_run
+            site.logger.prefix = '[DRY-RUN] ' if @config_options['website.dry_run']
           else
-            site.config['website.dry_run'] = @dry_run
+            @config_options.each do |k, v|
+              if site.config.option?(k)
+                site.config[k] = v
+              else
+                raise ConfigurationOptionError.new("Unknown option '#{k}'")
+              end
+            end
           end
         end
       end
