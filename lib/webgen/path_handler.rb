@@ -247,6 +247,7 @@ module Webgen
     # Returns the number of passes needed for correctly writing out all paths.
     def write_tree
       passes = 0
+      content = nil
 
       begin
         at_least_one_node_written = false
@@ -261,10 +262,10 @@ module Webgen
 
             @website.blackboard.dispatch_msg(:before_node_written, node)
             if !node['no_output']
-              write_node(node)
+              content = write_node(node)
               at_least_one_node_written = true
             end
-            @website.blackboard.dispatch_msg(:after_node_written, node)
+            @website.blackboard.dispatch_msg(:after_node_written, node, content)
           rescue Webgen::Error => e
             e.path = node.alcn if e.path.to_s.empty?
             raise
@@ -286,10 +287,13 @@ module Webgen
       @website.logger.info do
         "[#{(@website.ext.destination.exists?(node.dest_path) ? 'update' : 'create')}] <#{node.dest_path}>"
       end
-      time = Benchmark.measure { @website.ext.destination.write(node.dest_path, node.content) }
+      content = nil
+      time = Benchmark.measure { content = node.content }
+      @website.ext.destination.write(node.dest_path, content)
       @website.logger.vinfo do
         "[timing] <#{node.dest_path}> rendered in " << ('%2.2f' % time.real) << ' seconds'
       end
+      content
     ensure
       @current_dest_node = nil
     end
