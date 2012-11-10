@@ -103,7 +103,7 @@ module Webgen
       @website.expect(:config, config)
       directory = Dir::Tmpname.create("test-webgen-website") {|path| raise Errno::EEXIST if File.directory?(path)}
       @website.expect(:directory, directory)
-      @website.expect(:tmpdir, File.join(directory, 'tmp'), ['ignored'])
+      def (@website).tmpdir(path=''); File.join(self.directory, 'tmp', path); end
       @website.expect(:ext, OpenStruct.new)
       @website.expect(:blackboard, Webgen::Blackboard.new)
       @website.expect(:cache, Webgen::Cache.new)
