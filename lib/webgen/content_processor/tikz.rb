@@ -2,6 +2,7 @@
 
 require 'erb'
 require 'tempfile'
+require 'fileutils'
 require 'webgen/content_processor'
 require 'webgen/utils/external_command'
 
@@ -52,11 +53,12 @@ EOF
       #
       # Returns the path to the created image.
       def self.compile(context)
-        tempfile = Tempfile.open(['webgen-tikz', '.tex'])
+        cwd = context.website.tmpdir('content_processor.tikz')
+        FileUtils.mkdir_p(cwd)
+        tempfile = Tempfile.open(['webgen-tikz', '.tex'], cwd)
         tempfile.write(context.content)
         tempfile.close
 
-        cwd = File.dirname(tempfile.path)
         file = File.basename(tempfile.path, '.tex')
         ext = File.extname(context.dest_node.dest_path)
         render_res, output_res = context['content_processor.tikz.resolution'].split(' ')
