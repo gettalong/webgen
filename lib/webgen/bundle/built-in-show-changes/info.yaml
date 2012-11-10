@@ -1,0 +1,5 @@
+author: &author Thomas Leitner <t_leitner@gmx.at>
+summary: Built-in webgen extension for showing destination path changes
+description: |
+  This is an extension bundle that comes with webgen. It provides a means for
+  showing the changes that would be written to a destination path.
