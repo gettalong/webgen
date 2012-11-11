@@ -3,6 +3,6 @@
 module Webgen
 
   # The version of webgen.
-  VERSION = '0.5.15'
+  VERSION = '1.0.0.beta1'
 
 end
