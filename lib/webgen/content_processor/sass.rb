@@ -14,7 +14,7 @@ module Webgen
       # the given root directory and not from the filesystem root!
       class FileSystemImporter < ::Sass::Importers::Filesystem
 
-        def find_real_file(dir, name) #:nodoc:
+        def find_real_file(dir, name, options = {}) #:nodoc:
           for (f,s) in possible_files(remove_root(name))
             if full_path = Dir["#{dir}/#{f}"].first
               full_path.gsub!(REDUNDANT_DIRECTORY,File::SEPARATOR)
