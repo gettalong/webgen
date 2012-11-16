@@ -1,5 +1,6 @@
 # -*- encoding: utf-8 -*-
 
+require 'set'
 require 'webgen/item_tracker'
 
 module Webgen
@@ -20,9 +21,13 @@ module Webgen
         @website = website
         @at_least_one_node_created = true
         @stop_reporting = false
+        @nodes_to_ignore = Set.new
 
-        @website.blackboard.add_listener(:after_node_created, self) do
-          @at_least_one_node_created = true
+        @website.blackboard.add_listener(:reused_existing_node, self) do |node, path|
+          @nodes_to_ignore << node
+        end
+        @website.blackboard.add_listener(:after_node_created, self) do |node|
+          @at_least_one_node_created = true unless @nodes_to_ignore.include?(node)
         end
         @website.blackboard.add_listener(:after_all_nodes_written, self) do
           if @at_least_one_node_created
@@ -30,10 +35,12 @@ module Webgen
           else
             @stop_reporting = true
           end
+          @nodes_to_ignore = Set.new
         end
         @website.blackboard.add_listener(:website_generated, self) do
           @at_least_one_node_created = true
           @stop_reporting = false
+          @nodes_to_ignore = Set.new
         end
       end
 

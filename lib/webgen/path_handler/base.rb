@@ -71,6 +71,7 @@ module Webgen
           if node_path != path
             raise Webgen::NodeCreationError.new("Another node <#{node}> with the same alcn or destination path already exists")
           elsif node_path.meta_info == path.meta_info
+            @website.blackboard.dispatch_msg(:reused_existing_node, node)
             return node
           else
             node.tree.delete_node(node)
