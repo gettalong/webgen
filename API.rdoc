@@ -62,18 +62,18 @@ Following are links and descriptions on how to develop specific types of extensi
 Here is a list of modules/classes that are used throughout webgen and provide useful methods for
 developing extensions:
 
-* Webgen::Node
-* Webgen::Tree
-* Webgen::Path
-* Webgen::Page
-* Webgen::Cache
-* Webgen::Utils
+* Webgen::Path (represens a source path that will get converted into a Webgen::Node)
+* Webgen::Node (the internal representation of destination paths)
+* Webgen::Tree (the tree structure holding all Webgen::Node objects)
+* Webgen::Page (provides methods for working with files in Webgen Page Format)
+* Webgen::Cache (provides caching functionality for other objects)
+* Webgen::Utils (a collection of useful utilities)
 
 == List of all blackboard messages
 
-The Blackboard (accessible via Webgen::Website#blackboard) provides an easy-to-use facility to be
-notified of certain messages. All registered listeners for a message are notified when the message
-gets dispatched.
+The blackboard (a Webgen::Blackboard object, accessible via Webgen::Website#blackboard) provides an
+easy-to-use facility to be notified of certain messages. All registered listeners for a message are
+notified when the message gets dispatched.
 
 Following is the list of all messages that are dispatched by the webgen core classes and built-in
 extensions:
@@ -86,6 +86,13 @@ extensions:
 
     No parameters are given.
 
+[:apply_meta_info_to_path]
+
+    This message is dispatched before a node from a path is created and can be used to add
+    additional meta information to the path.
+
+    The path in question is given as parameter.
+
 [:before_node_created]
 
     This message is dispatched after the meta information from the configuration option
@@ -95,11 +102,32 @@ extensions:
 
     The path in question is given as parameter.
 
-[:after_node_created]
+[:reused_existing_node]
 
-    As the name says this message is dispatched after a node has been created.
+    This message is dispatched when a node that should be created already exists and is therefore
+    not created again (which would lead to an error). An example would be fragment nodes that are
+    created during the rendering.
 
     The node is given as parameter.
+
+[:after_node_created]
+
+    This message is dispatched after a node has been created.
+
+    The node is given as parameter.
+
+[:before_secondary_nodes_created]
+
+    This message is dispatched before secondary nodes are created from a Webgen::Path object.
+
+    The path in question and the node alcn which led to the creation of the path (may be +nil+ if
+    the secondary nodes are not created during rendering) are given as parameters.
+
+[:after_secondary_nodes_created]
+
+    This message is dispatched after secondary nodes have been created from a Webgen::Path object.
+
+    The path in question and the created nodes are given as parameters.
 
 [:after_tree_populated]
 
@@ -108,6 +136,25 @@ extensions:
     additionally be created during the rendering phase.
 
     No parameters are given.
+
+[:before_all_nodes_written]
+
+    This message is dispatched before any node is written to its destination in a generation pass.
+    Since webgen may need multiple passes to correctly write all nodes, this message may also be
+    dispatched multiple times.
+
+    No parameters are given.
+
+[:before_node_written]
+
+    This message is dispatched after webgen determined that the content of a node has changed but
+    before it is written to its destination. Note that this message is also dispatched for those
+    nodes whose 'no_output' meta information key is set to +true+.
+
+    Also note that this message be may dispatched multiple times for the same node if, after all
+    nodes have been written, it is determined that it has changed again.
+
+    The node in question is given as parameter.
 
 [:after_node_written]
 
@@ -119,7 +166,7 @@ extensions:
     Also note that this message be may dispatched multiple times for the same node if, after all
     nodes have been written, it is determined that it has changed again.
 
-    The node is given as parameter.
+    The node and its (possibly) rendered content are given as parameters.
 
 [:after_all_nodes_written]
 
@@ -141,3 +188,9 @@ extensions:
     is dispatched, all child nodes have already been deleted.
 
     The node is given as parameter.
+
+[:website_generated]
+
+    This message is dispatched after the website is completely generated.
+
+    No parameters are given.
