@@ -31,7 +31,7 @@ Apart from this basic functionality, webgen offers many features that
 makes authoring websites easier:
 
 * Multiple markup languages to choose from for writing HTML and CSS
-  files (Markdown, Textile, RDoc, Haml, Sass ...)
+  files (Markdown, Textile, RDoc, Haml, Sass, ...)
 
 * Automatic generation of menus, breadcrumb trails, ... and more!
 
@@ -42,7 +42,7 @@ makes authoring websites easier:
   view the website *without a web server*)
 
 * Easily extendable (all major components can be extended with new
-  functionality)
+  functionality or existing functionality can be replaced)
 
 * No need to know the Ruby language for basic websites
 
