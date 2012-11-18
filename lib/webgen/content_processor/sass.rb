@@ -105,14 +105,18 @@ module Webgen
           context = options[:webgen_context]
           path = path.value
 
-          dest_node = context.website.tree[options[:filename]].resolve(path, context.dest_node.lang, true)
-          if dest_node
-            context.website.ext.item_tracker.add(context.dest_node, :node_meta_info, dest_node.alcn)
-            result = context.dest_node.route_to(dest_node)
+          ref_node = context.website.tree[options[:filename]]
+          ref_node = context.website.tree.root if ref_node.nil? && path[0] == ?/
+
+          if ref_node
+            if dest_node = ref_node.resolve(path, context.dest_node.lang, true)
+              context.website.ext.item_tracker.add(context.dest_node, :node_meta_info, dest_node.alcn)
+              path = context.dest_node.route_to(dest_node)
+            end
           else
-            result = path
+            context.website.logger.warn { "Couldn't determine reference node for resolving node in Sass file." }
           end
-          ::Sass::Script::String.new("url(\"#{result}\")")
+          ::Sass::Script::String.new(path, :string)
         end
         declare :relocatable, [:string]
 
