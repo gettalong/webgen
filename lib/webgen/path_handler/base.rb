@@ -85,7 +85,7 @@ module Webgen
           path.meta_info['modified_at'] = Time.now
         end
 
-        node = Webgen::Node.new(parent, path.cn, dest_path, path.meta_info)
+        node = Webgen::Node.new(parent, path.cn, dest_path, path.meta_info.dup)
         node.node_info[:path] = path
         node.node_info[:path_handler] = self
 
