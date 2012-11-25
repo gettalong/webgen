@@ -16,7 +16,7 @@ module Webgen
 
         add_tikz_options!(path, context)
 
-        node = context.website.ext.path_handler.create_secondary_nodes(path, body, 'copy', context.ref_node.alcn).first
+        node = context.website.ext.path_handler.create_secondary_nodes(path, body, context.ref_node.alcn).first
 
         attrs = {'alt' => ''}.merge(context[:config]['tag.tikz.img_attr']).collect do |name, value|
           "#{name.to_s}=\"#{value}\""
@@ -31,6 +31,7 @@ module Webgen
           path.meta_info[opt] = context[:config][opt]
         end
         path.meta_info['pipeline'] = 'tikz'
+        path.meta_info['handler'] = 'copy'
       end
       private_class_method :add_tikz_options!
 

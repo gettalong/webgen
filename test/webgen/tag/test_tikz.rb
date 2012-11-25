@@ -18,13 +18,13 @@ class TestTagTikz < MiniTest::Unit::TestCase
 
     body = '\tikz \draw (0,0) -- (0,1);'
     @website.ext.path_handler.expect(:create_secondary_nodes, [tikz_node],
-                                    [Webgen::Path.new('/test.png'), body, 'copy', '/file.page'])
+                                    [Webgen::Path.new('/test.png'), body, '/file.page'])
     assert_tag_result('<img src="test.png" alt="" />',
                       body, 'test.png', [], '', '72 72', false, {})
     @website.ext.path_handler.verify
 
     @website.ext.path_handler.expect(:create_secondary_nodes, [tikz_node],
-                                    [Webgen::Path.new('/images/test.png'), body, 'copy', '/file.page'])
+                                    [Webgen::Path.new('/images/test.png'), body, '/file.page'])
     assert_tag_result('<img src="test.png" alt="title" />',
                       body, 'images/test.png', ['arrows'], '->', '72 72', true, {'alt' => 'title'})
     @website.ext.path_handler.verify
