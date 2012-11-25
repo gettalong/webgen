@@ -155,7 +155,7 @@ class TestNode < MiniTest::Unit::TestCase
     # links to directories
     assert_equal('<a href="dir2/index.de.html" hreflang="de">routed de</a>',
                  tree['/file.de.html'].link_to(tree['/dir2/']))
-    assert_equal('<a href="dir2/index.en.html" hreflang="en">routed</a>',
+    assert_equal('<a class="help" href="dir2/index.en.html" hreflang="en">routed</a>',
                  tree['/file.en.html'].link_to(tree['/dir2/']))
     assert_equal('<a href="dir2/index.de.html" hreflang="de">routed de</a>',
                  tree['/file.en.html'].link_to(tree['/dir2/'], 'de'))

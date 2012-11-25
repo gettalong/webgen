@@ -29,7 +29,7 @@ class TestTagLink < MiniTest::Unit::TestCase
 
     # directory paths
     assert_tag_result('<a href="dir/">dir</a>', 'dir')
-    assert_tag_result('<a href="dir2/index.en.html" hreflang="en">routed</a>', 'dir2')
+    assert_tag_result('<a class="help" href="dir2/index.en.html" hreflang="en">routed</a>', 'dir2')
   end
 
   def assert_tag_result(result, path)

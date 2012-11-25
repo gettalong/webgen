@@ -206,8 +206,8 @@ module Webgen
     # If the special value :link_text is present in the attributes, it will be used as the link
     # text; otherwise the title of the +node+ will be used.
     def link_to(node, lang = @lang, attr = {})
-      attr = node['link_attrs'].merge(attr) if node['link_attrs'].kind_of?(Hash)
       rnode = node.proxy_node(lang)
+      attr = (rnode['link_attrs'].kind_of?(Hash) ? rnode['link_attrs'] : {}).merge(attr)
       link_text = attr[:link_text] || (rnode != node && rnode['routed_title']) || node['title']
       attr.delete_if {|k,v| k.kind_of?(Symbol)}
 
