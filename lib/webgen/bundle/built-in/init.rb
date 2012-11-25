@@ -59,6 +59,8 @@ website.ext.content_processor = content_processor = Webgen::ContentProcessor.new
 content_processor.register('Blocks')
 content_processor.register('Builder')
 content_processor.register('Erb')
+option('content_processor.erb.trim_mode', '',
+       "Specifies the ERB trim mode, can contain any combination of '%', '<' and '<>'", &is_string)
 
 content_processor.register('Erubis')
 option('content_processor.erubis.use_pi', false,
