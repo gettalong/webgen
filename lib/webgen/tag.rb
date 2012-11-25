@@ -134,7 +134,7 @@ module Webgen
     #
     def register(klass, options = {}, &block)
       if block_given? && !options[:config_base]
-        raise ArgumentError, "The option :config_base needs to be specified when using a block"
+        raise ArgumentError, "The option :config_base needs to be specified when registering a tag using a block"
       end
 
       names = [options.delete(:names)].flatten.compact
