@@ -18,7 +18,7 @@ extensions:
     summary: Provides a generic framework for processing content
   content_processor.blocks:
     author: *author
-    summary: Replaces a special xml tag with the rendered block of a path in Webgen Page Format
+    summary: Replaces a special xml tag with the rendered block of a node in Webgen Page Format
   content_processor.builder:
     author: *author
     summary: Allows one to programatically create valid XHTML/XML documents
