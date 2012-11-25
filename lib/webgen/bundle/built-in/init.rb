@@ -293,7 +293,7 @@ option('tag.coderay.lang', 'ruby',
 option('tag.coderay.process_body', true,
        'The tag body will be scanned for tags before highlighting if true', &true_or_false)
 option('tag.coderay.wrap', :div,
-       'Specifies how the code should be wrapped, either "div" or "span"') do |val|
+       "Specifies how the code should be wrapped, either 'div' or 'span'") do |val|
   val = val.to_s.intern
   raise "The value has to be either div or span" unless val == :div || val == :span
   val
