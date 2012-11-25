@@ -114,6 +114,8 @@ option('content_processor.tikz.resolution', '72 72',
 end
 option('content_processor.tikz.transparent', false,
        'Specifies whether the generated image should be transparent (only if the extension is png)', &true_or_false)
+option('content_processor.tikz.template', '/templates/tikz.template',
+       'Specifies the template with the LaTeX framework that should be used for rendering', &is_string)
 
 content_processor.register('Xmllint')
 option('content_processor.xmllint.options', "--catalogs --noout --valid",

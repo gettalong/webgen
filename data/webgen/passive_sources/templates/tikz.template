@@ -1,0 +1,14 @@
+--- name:content pipeline:erb
+\nonstopmode
+\documentclass{standalone}
+\usepackage{tikz}
+
+<% if context['content_processor.tikz.libraries'] %>
+\usetikzlibrary{<%= context['content_processor.tikz.libraries'].join(',') %>}
+<% end %>
+
+\begin{document}
+\begin{tikzpicture}[<%= context['content_processor.tikz.opts'] %>]
+<%= context['data'] %>
+\end{tikzpicture}
+\end{document}

@@ -18,22 +18,11 @@ module Webgen
     # Uses LaTeX and the TikZ library for creating images from LaTeX code.
     module Tikz
 
-      LATEX_TEMPLATE = <<EOF
-\\nonstopmode \\documentclass{article} \\usepackage{tikz} \\pagestyle{empty}
-<% if context['content_processor.tikz.libraries'] %>
-\\usetikzlibrary{<%= context['content_processor.tikz.libraries'].join(',') %>}
-<% end %>
-\\begin{document}
-\\begin{tikzpicture}[<%= context['content_processor.tikz.opts'] %>]
-<%= context.content %>
-\\end{tikzpicture}
-\\end{document}
-EOF
-
       # Process the content with LaTeX to generate a TikZ image.
       def self.call(context)
         prepare_options(context)
-        context.content = ERB.new(LATEX_TEMPLATE).result(binding)
+        context.content = context.render_block(:name => 'content',
+                                               :chain => [context.website.tree[context['content_processor.tikz.template']]])
         context.content = File.binread(compile(context))
         context
       end
@@ -41,9 +30,11 @@ EOF
       # Collect the necessary options and save them in the context object.
       def self.prepare_options(context)
         %w[content_processor.tikz.resolution content_processor.tikz.transparent
-           content_processor.tikz.libraries content_processor.tikz.opts].each do |opt|
+           content_processor.tikz.libraries content_processor.tikz.opts
+           content_processor.tikz.template].each do |opt|
           context[opt] = context.content_node[opt] || context.website.config[opt]
         end
+        context['data'] = context.content
       end
       private_class_method :prepare_options
 
@@ -54,17 +45,16 @@ EOF
       # Returns the path to the created image.
       def self.compile(context)
         cwd = context.website.tmpdir('content_processor.tikz')
+        tex_file = File.join(cwd, context.dest_node.dest_path.tr('/', '_').sub(/\..*?$/, '.tex'))
         FileUtils.mkdir_p(cwd)
-        tempfile = Tempfile.open(['webgen-tikz', '.tex'], cwd)
-        tempfile.write(context.content)
-        tempfile.close
+        File.write(tex_file, context.content)
 
-        file = File.basename(tempfile.path, '.tex')
+        file = File.basename(tex_file, '.tex')
         ext = File.extname(context.dest_node.dest_path)
         render_res, output_res = context['content_processor.tikz.resolution'].split(' ')
 
-        execute("pdflatex --shell-escape -interaction=batchmode #{file}.tex", cwd, context) do |status, stdout, stderr|
-          errors = stderr.scan(/^!(.*\n.*)/).join("\n")
+        execute("pdflatex -shell-escape -interaction=nonstopmode -halt-on-error #{file}.tex", cwd, context) do |status, stdout, stderr|
+          errors = (stdout+stderr).scan(/^!(.*\n.*)/).join("\n")
           raise Webgen::RenderError.new("Error while parsing TikZ picture commands with PDFLaTeX: #{errors}",
                                         self.name, context.dest_node, context.ref_node)
         end
