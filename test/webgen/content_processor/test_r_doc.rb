@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*-
 
 require 'webgen/test_helper'
-require 'webgen/content_processor/rdoc'
+require 'webgen/content_processor/r_doc'
 
 class TestRDoc < MiniTest::Unit::TestCase
 

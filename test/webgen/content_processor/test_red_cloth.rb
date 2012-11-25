@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*-
 
 require 'webgen/test_helper'
-require 'webgen/content_processor/redcloth'
+require 'webgen/content_processor/red_cloth'
 
 class TestRedCloth < MiniTest::Unit::TestCase
 
