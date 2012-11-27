@@ -25,9 +25,9 @@ class TestTag < MiniTest::Unit::TestCase
   end
 
   def test_register
-    check_tdata = lambda do |tdata, callable,  config_base, mandatory_options, initialized|
+    check_tdata = lambda do |tdata, callable,  config_prefix, mandatory_options, initialized|
       assert_equal(callable, tdata.object)
-      assert_equal(config_base, tdata.config_base)
+      assert_equal(config_prefix, tdata.config_prefix)
       assert_equal(mandatory_options, tdata.mandatory)
       assert_equal(initialized, tdata.initialized)
     end
@@ -44,12 +44,12 @@ class TestTag < MiniTest::Unit::TestCase
     assert(@tag.registered?('other'))
 
     assert_raises(ArgumentError) { @tag.register('doit') {} }
-    @tag.register('doit', :config_base => 'other') do |tag, body, context|
+    @tag.register('doit', :config_prefix => 'other') do |tag, body, context|
       'doit: now'
     end
     assert(@tag.registered?('doit'))
 
-    @tag.register('MyTag', :names => ['other'], :config_base => 'other', :mandatory => ['mandatory'])
+    @tag.register('MyTag', :names => ['other'], :config_prefix => 'other', :mandatory => ['mandatory'])
     check_tdata.call(@tag.registered_extensions[:other],
                      'Webgen::Tag::MyTag', 'other', ['mandatory'], false)
   end

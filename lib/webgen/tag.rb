@@ -42,7 +42,7 @@ module Webgen
   #
   # webgen tags allow the specification of options in the tag definition. When registering a tag,
   # one can specify which options are mandatory, i.e. which options always have to be set directly
-  # for the tag. The value of the option :config_base for the #register method is used to resolve
+  # for the tag. The value of the option :config_prefix for the #register method is used to resolve
   # partially stated configuration entries.
   #
   # == Sample Tag
@@ -111,10 +111,10 @@ module Webgen
     #          The name :default is used for specifying the default tag which is called if an
     #          unknown tag name is encountered.
     #
-    # [:config_base] The configuration base, i.e. the part of a configuration option name that does
-    #                not need to be specified. Defaults to the full class name without the Webgen
-    #                module downcased and all "::" substituted with "." (e.g. Webgen::Tag::Menu →
-    #                tag.menu). Needs to be specified when a block is used!
+    # [:config_prefix] The configuration prefix, i.e. the part of a configuration option name that
+    #                  does not need to be specified. Defaults to the full class name without the
+    #                  Webgen module downcased and all "::" substituted with "." (e.g.
+    #                  Webgen::Tag::Menu → tag.menu). Needs to be specified when a block is used!
     #
     # [:mandatory] A list of configuration option names whose values always need to be provided. The
     #              first configuration option name is used as the default mandatory option (used
@@ -128,20 +128,20 @@ module Webgen
     #
     #   tag.register('MyModule::Date', names: ['mydate', 'date'])
     #
-    #   tag.register('date', config_base: 'tag.date') do |tag, body, context|
+    #   tag.register('date', config_prefix: 'tag.date') do |tag, body, context|
     #     Time.now.strftime(param('tag.date.format'))
     #   end
     #
     def register(klass, options = {}, &block)
-      if block_given? && !options[:config_base]
-        raise ArgumentError, "The option :config_base needs to be specified when registering a tag using a block"
+      if block_given? && !options[:config_prefix]
+        raise ArgumentError, "The option :config_prefix needs to be specified when registering a tag using a block"
       end
 
       names = [options.delete(:names)].flatten.compact
       options[:name] = names.shift
       name = do_register(klass, options, true, &block)
       ext_data(name).mandatory = options[:mandatory] || []
-      ext_data(name).config_base = options[:config_base] ||
+      ext_data(name).config_prefix = options[:config_prefix] ||
         Webgen::Utils.snake_case(ext_data(name).object.to_s.gsub(/::/, '.').gsub(/^Webgen\./, ''))
       ext_data(name).initialized = false
       names.each {|n| @extensions[n.to_sym] = @extensions[name]}
@@ -182,7 +182,7 @@ module Webgen
     #######
 
     # Create the Webgen::Configuration object from the parameters and the given configuration
-    # base.
+    # prefix.
     def create_config(tag, params, tdata, context)
       values = case params
                when Hash then values_from_hash(tag, params, tdata, context)
@@ -208,8 +208,8 @@ module Webgen
       params.each do |key, value|
         if context.website.config.option?(key)
           result[key] = value
-        elsif context.website.config.option?(tdata.config_base + '.' + key)
-          result[tdata.config_base + '.' + key] = value
+        elsif context.website.config.option?(tdata.config_prefix + '.' + key)
+          result[tdata.config_prefix + '.' + key] = value
         else
           context.website.logger.warn do
             ["Invalid configuration option '#{key}' for tag '#{tag}' found in <#{context.ref_node}>",
@@ -241,7 +241,7 @@ module Webgen
         tdata.object = resolve_class(tdata.object)
         tdata.mandatory.each_with_index do |o, index|
           next if context.website.config.option?(o)
-          o = tdata.config_base + '.' + o
+          o = tdata.config_prefix + '.' + o
           if context.website.config.option?(o)
             tdata.mandatory[index] = o
           else
