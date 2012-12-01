@@ -144,10 +144,10 @@ class TestNode < MiniTest::Unit::TestCase
     assert_equal('<a href="#frag">frag</a>',
                  tree['/file.en.html'].link_to(tree['/file.en.html#frag']))
     assert_equal('<a href="#frag">link_text</a>',
-                 tree['/file.en.html'].link_to(tree['/file.en.html#frag'], 'en', :link_text => 'link_text'))
+                 tree['/file.en.html'].link_to(tree['/file.en.html#frag'], 'en', 'link_text' => 'link_text'))
     assert_equal('<a attr1="val1" href="#frag">frag</a>',
                  tree['/file.en.html'].link_to(tree['/file.en.html#frag'], 'en', 'attr1' => 'val1'))
-    assert_equal('<a href="#frag">frag</a>',
+    assert_equal('<a attr1="val1" href="#frag">frag</a>',
                  tree['/file.en.html'].link_to(tree['/file.en.html#frag'], 'en', :attr1 => 'val1'))
     assert_equal('<a class="help" href="dir2/index.en.html" hreflang="en">index en</a>',
                  tree['/file.en.html'].link_to(tree['/dir2/index.en.html']))

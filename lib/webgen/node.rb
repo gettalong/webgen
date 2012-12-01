@@ -200,16 +200,14 @@ module Webgen
     # You can optionally specify additional attributes for the HTML element in the +attr+ Hash.
     # Also, the meta information +link_attrs+ of the given +node+ is used, if available, to set
     # attributes. However, the +attr+ parameter takes precedence over the +link_attrs+ meta
-    # information. Be aware that all key-value pairs with Symbol keys are removed before the
-    # attributes are written. Therefore you always need to specify general attributes with strings!
+    # information.
     #
-    # If the special value :link_text is present in the attributes, it will be used as the link
+    # If the special value 'link_text' is present in the attributes, it will be used as the link
     # text; otherwise the title of the +node+ will be used.
     def link_to(node, lang = @lang, attr = {})
       rnode = node.proxy_node(lang)
       attr = (rnode['link_attrs'].kind_of?(Hash) ? rnode['link_attrs'] : {}).merge(attr)
-      link_text = attr[:link_text] || (rnode != node && rnode['routed_title']) || node['title']
-      attr.delete_if {|k,v| k.kind_of?(Symbol)}
+      link_text = attr.delete('link_text') || (rnode != node && rnode['routed_title']) || node['title']
 
       attr['href'] = self.route_to(node, lang)
       attr['hreflang'] = rnode.lang.to_s if rnode.lang
