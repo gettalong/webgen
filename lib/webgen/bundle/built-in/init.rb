@@ -259,7 +259,7 @@ tag.register('Date')
 option('tag.date.format', '%Y-%m-%d %H:%M:%S',
        'The format of the date (same options as Ruby\'s Time#strftime)', &is_string)
 
-tag.register('MetaInfo', :names => :default)
+tag.register('MetaInfo', :names => ['meta_info', :default])
 option('tag.meta_info.escape_html', true,
        'Special HTML characters in the output will be escaped if true', &true_or_false)
 
@@ -275,7 +275,7 @@ option('tag.link.path', nil,
 option('tag.link.attr', {},
        'A hash of additional HTML attributes that should be set on the link', &is_hash)
 
-tag.register('ExecuteCommand', :names => 'execute_cmd', :mandatory => ['command'])
+tag.register('ExecuteCommand', :mandatory => ['command'])
 option('tag.execute_command.command', nil,
        'The command which should be executed', &is_string)
 option('tag.execute_command.process_output', true,

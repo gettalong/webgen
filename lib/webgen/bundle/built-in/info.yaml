@@ -170,7 +170,7 @@ extensions:
   tag.link:
     author: *author
     summary: Creates a link to a given path
-  tag.execute_cmd:
+  tag.execute_command:
     author: *author
     summary: Includes the output of a command
   tag.include_file:
