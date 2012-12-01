@@ -314,9 +314,9 @@ module Webgen
         @basename = match_data[1]
         @ext = match_data[2]
       else
-        @meta_info['sort_info'] ||= (match_data[1].nil? ? nil : match_data[1].to_i)
+        @meta_info['sort_info'] ||= match_data[1].to_i unless match_data[1].nil?
         @basename               = match_data[2]
-        @meta_info['lang']      ||= Webgen::LanguageManager.language_for_code(match_data[3])
+        @meta_info['lang']      ||= Webgen::LanguageManager.language_for_code(match_data[3]) if match_data[3]
         @ext                    = (@meta_info['lang'].nil? && !match_data[3].nil? ? match_data[3].to_s + '.' : '') + match_data[4].to_s
       end
     end
