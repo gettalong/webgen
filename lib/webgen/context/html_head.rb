@@ -16,6 +16,13 @@ module Webgen
           @context = context
         end
 
+        # Set the meta tag to the provided value.
+        #
+        # Note that some meta information keys may not be specified multiple times!
+        def meta(name, content)
+          (cp_hash[:meta] ||= {})[name] = content
+        end
+
         # Add a link to the given file in the HTML head section.
         #
         # The type can either be :css for CSS files or :js for javascript files. The path to the

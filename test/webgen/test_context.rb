@@ -70,4 +70,14 @@ class TestContext < MiniTest::Unit::TestCase
     tag.verify
   end
 
+  def test_html_head_methods
+    @context.html_head.inline_fragment(:css, "content")
+    @context.html_head.inline_fragment(:js, "content")
+    @context.html_head.meta('name', 'content')
+
+    assert_equal(['content'], @context.persistent[:cp_html_head][:css_inline])
+    assert_equal(['content'], @context.persistent[:cp_html_head][:js_inline])
+    assert_equal({'name' => 'content'}, @context.persistent[:cp_html_head][:meta])
+  end
+
 end
