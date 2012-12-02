@@ -53,7 +53,7 @@ class TestNodeFinder < MiniTest::Unit::TestCase
                   [tree['/dir/'], [tree['/dir/subfile.html'], tree['/dir/dir/']]],
                   [tree['/dir2/'], [tree['/dir2/index.en.html'], tree['/dir2/index.de.html']]]
                  ],
-                 @nf.find({:levels => [1,2]}, tree['/']))
+                 @nf.find({:levels => [2,3]}, tree['/']))
 
     # test sort methods
     check.call(%w[/file.en.html /file.de.html /dir/dir/file.html /german.de.html /dir2/index.de.html
@@ -71,7 +71,7 @@ class TestNodeFinder < MiniTest::Unit::TestCase
                   [tree['/dir2/'], [tree['/dir2/index.de.html'], tree['/dir2/index.en.html']]],
                   tree['/german.de.html'], tree['/other.html'], tree['/other.en.html'],
                  ],
-                 @nf.find({:levels => [1,3], :sort => true}, tree['/']))
+                 @nf.find({:levels => [2,4], :sort => true}, tree['/']))
 
     # test filter: meta info keys/values
     check.call(['/file.en.html#frag', '/file.de.html#frag', '/dir/subfile.html#frag'],
@@ -92,13 +92,17 @@ class TestNodeFinder < MiniTest::Unit::TestCase
     check.call(%w[/dir/subfile.html /dir/dir/file.html /dir2/index.en.html /dir2/index.de.html],
                @nf.find({:alcn => '/**/*.html', :not => {:alcn => '*.html'}, :flatten => true}, tree['/']))
 
-    # test filter: levels
+    # test filter: absolute_levels
     check.call(%w[/],
-               @nf.find({:levels => [0, 0], :flatten => true}, tree['/dir/']))
+               @nf.find({:absolute_levels => [0, 0], :flatten => true}, tree['/dir/']))
     check.call(%w[/file.en.html#nested /dir/subfile.html#frag /dir/dir/file.html],
-               @nf.find({:levels => [3,3], :flatten => true}, tree['/dir/']))
+               @nf.find({:absolute_levels => [3,3], :flatten => true}, tree['/dir/']))
     check.call(%w[/ /file.en.html /file.de.html /other.html /other.en.html /german.de.html /dir/ /dir2/],
-               @nf.find({:levels => [0,1], :flatten => true}, tree['/dir/']))
+               @nf.find({:absolute_levels => [0,1], :flatten => true}, tree['/dir/']))
+    check.call(%w[/],
+               @nf.find({:absolute_levels => [0,1], :levels => 1}, tree['/dir/']))
+    check.call(%w[/file.en.html /file.de.html /other.html /other.en.html /german.de.html /dir/ /dir2/],
+               @nf.find({:absolute_levels => [0,1], :levels => 2}, tree['/dir/']))
 
     # test filter: langs
     check.call(%w[/file.en.html /other.en.html /dir2/index.en.html],

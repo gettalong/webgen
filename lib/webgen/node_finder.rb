@@ -38,6 +38,13 @@ module Webgen
   #   Value: an integer. Specifies how many nodes from the front of the list should *not* be
   #   returned. Implies 'flatten = true'.
   #
+  # [:levels]
+  #   Value: one integer (is used as start and end level) or an array with two integers (the start
+  #   and end levels). All nodes whose hierarchy level in the returned node hierarchy is greater
+  #   than or equal to the start level and lower than or equal to the end level are used.
+  #
+  #   Only used when the node hierarchy is not flattened.
+  #
   # [:flatten]
   #   Value: anything except +nil+ or +false+. A flat list of nodes is returned if this option is
   #   set, otherwise the nodes are returned in their correct hierarchical order using nested lists.
@@ -85,10 +92,10 @@ module Webgen
   #   Value: a finder option set or an array of finder options sets (specifying option set names is
   #   also possible). Only nodes that do not appear in any specified option set are used.
   #
-  # [:levels]
+  # [:absolute_levels]
   #   Value: one integer (is used as start and end level) or an array with two integers (the start
-  #   and end levels). All nodes whose hierarchy levels are greater than or equal to the start level
-  #   and lower than or equal to the end level are used.
+  #   and end levels). All nodes whose hierarchy level in the node tree are greater than or equal to
+  #   the start level and lower than or equal to the end level are used.
   #
   # [:ancestors]
   #   Value: +true+ or +false+/+nil+. If this filter option is set to +true+, only nodes that are
@@ -131,7 +138,7 @@ module Webgen
     def initialize(website)
       @website = website
       @mapping = {
-        :alcn => :filter_alcn, :levels => :filter_levels, :lang => :filter_lang,
+        :alcn => :filter_alcn, :absolute_levels => :filter_absolute_levels, :lang => :filter_lang,
         :and => :filter_and, :or => :filter_or, :not => :filter_not,
         :ancestors => :filter_ancestors, :descendants => :filter_descendants,
         :siblings => :filter_siblings,
@@ -170,8 +177,9 @@ module Webgen
       end
       opts = prepare_options_hash(opts_or_name)
 
-      limit, offset, flatten, sort = remove_non_filter_options(opts)
+      limit, offset, flatten, sort, levels = remove_non_filter_options(opts)
       flatten = true if limit || offset
+      levels = [levels || [1, 1_000_000]].flatten.map {|i| i.to_i}
 
       nodes = filter_nodes(opts, ref_node)
 
@@ -189,10 +197,17 @@ module Webgen
           hierarchy_nodes.inject(result) {|memo, hn| memo[hn] ||= {}}
         end
 
-        reducer = lambda do |h|
-          h.map {|k,v| v.empty? ? k : [k, reducer.call(v)]}
+        reducer = lambda do |h, level|
+          if level < levels.first
+            temp = h.map {|k,v| v.empty? ? nil : reducer.call(v, level + 1)}.compact
+            temp.length == 1 && temp.first.kind_of?(Array) ? temp.first : temp
+          elsif level < levels.last
+            h.map {|k,v| v.empty? ? k : [k, reducer.call(v, level + 1)]}
+          else
+            h.map {|k,v| k}
+          end
         end
-        nodes = reducer.call(result)
+        nodes = reducer.call(result, 1)
         sort_nodes(nodes, sort, false)
       end
 
@@ -222,7 +237,7 @@ module Webgen
     end
 
     def remove_non_filter_options(opts)
-      [opts.delete(:limit), opts.delete(:offset), opts.delete(:flatten), opts.delete(:sort)]
+      [opts.delete(:limit), opts.delete(:offset), opts.delete(:flatten), opts.delete(:sort), opts.delete(:levels)]
     end
 
     def filter_nodes(opts, ref_node)
@@ -297,7 +312,7 @@ module Webgen
       nodes.keep_if {|n| alcn.any? {|a| n =~ a}}
     end
 
-    def filter_levels(nodes, ref_node, range)
+    def filter_absolute_levels(nodes, ref_node, range)
       range = [range].flatten.map {|i| i.to_i}
       nodes.keep_if {|n| n.level >= range.first && n.level <= range.last}
     end
