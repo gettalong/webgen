@@ -52,7 +52,7 @@ module Webgen
         @website.tree.resolve_node(path, lang).nil?
       end
 
-      def changed?(iid, old_data) #:nodoc:
+      def item_changed?(iid, old_data) #:nodoc:
         return false if @stop_reporting
         missing = item_data(*iid)
         missing || missing != old_data

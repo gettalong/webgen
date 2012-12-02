@@ -32,7 +32,7 @@ module Webgen
   # [item_data(*item)]
   #   Return the data for the item so that it can be correctly checked later if it has changed.
   #
-  # [changed?(item_id, old_data)]
+  # [item_changed?(item_id, old_data)]
   #   Return +true+ if the item identified by its unique ID has changed. The parameter +old_data+
   #   contains the last known data of the item.
   #
@@ -67,7 +67,7 @@ module Webgen
   #       @website.config[config_key]
   #     end
   #
-  #     def changed?(config_key, old_val)
+  #     def item_changed?(config_key, old_val)
   #       @website.config[config_key] != old_val
   #     end
   #
@@ -217,7 +217,7 @@ module Webgen
       @item_changed[uid] = if !@cached[:item_data].has_key?(uid)
                              true
                            else
-                             item_tracker(uid.first).changed?(uid.last, @cached[:item_data][uid])
+                             item_tracker(uid.first).item_changed?(uid.last, @cached[:item_data][uid])
                            end
     end
 

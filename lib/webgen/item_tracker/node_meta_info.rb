@@ -38,7 +38,7 @@ module Webgen
         key.nil? ? (mi = mi.dup; mi.delete(CONTENT_MODIFICATION_KEY); mi) : mi[key].dup
       end
 
-      def changed?(iid, old_data) #:nodoc:
+      def item_changed?(iid, old_data) #:nodoc:
         alcn, key = *iid
         @website.tree[alcn].nil? || item_data(alcn, key) != old_data
       end

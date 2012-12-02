@@ -27,11 +27,11 @@ class TestNodeMetaInfo < MiniTest::Unit::TestCase
     @node.verify
   end
 
-  def test_changed?
+  def test_item_changed?
     @node.expect(:nil?, false)
-    assert(@obj.changed?(['unknown', nil], 'old'))
-    assert(@obj.changed?(['alcn', nil], {"key" => 'value', 'other' => 'new'}))
-    assert(@obj.changed?(['alcn', 'key'], 'new'))
+    assert(@obj.item_changed?(['unknown', nil], 'old'))
+    assert(@obj.item_changed?(['alcn', nil], {"key" => 'value', 'other' => 'new'}))
+    assert(@obj.item_changed?(['alcn', 'key'], 'new'))
     @website.verify
     @node.verify
   end

@@ -19,9 +19,9 @@ class TestItemTrackerFile < MiniTest::Unit::TestCase
     assert_equal(File.mtime(__FILE__), @obj.item_data(__FILE__))
   end
 
-  def test_changed?
-    refute(@obj.changed?(__FILE__, Time.now))
-    assert(@obj.changed?(__FILE__, Time.parse("1980-01-01")))
+  def test_item_changed?
+    refute(@obj.item_changed?(__FILE__, Time.now))
+    assert(@obj.item_changed?(__FILE__, Time.parse("1980-01-01")))
   end
 
   def test_node_referenced?

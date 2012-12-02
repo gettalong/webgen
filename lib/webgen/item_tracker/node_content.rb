@@ -26,7 +26,7 @@ module Webgen
         nil
       end
 
-      def changed?(alcn, old_data) #:nodoc:
+      def item_changed?(alcn, old_data) #:nodoc:
         @website.tree[alcn].nil? || @website.ext.item_tracker.node_changed?(@website.tree[alcn])
       end
 

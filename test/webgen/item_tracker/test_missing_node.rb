@@ -35,31 +35,31 @@ class TestItemTrackerMissingNode < MiniTest::Unit::TestCase
     assert_same(false, @obj.item_data('id', 'lang'))
   end
 
-  def test_changed?
+  def test_item_changed?
     @website.tree.answer = nil
 
     # run where missing node item was added
-    assert(@obj.changed?(['alcn', 'lang'], true))
+    assert(@obj.item_changed?(['alcn', 'lang'], true))
 
     @website.blackboard.dispatch_msg(:after_all_nodes_written)
 
     # run where at least one new node was created
     @website.blackboard.dispatch_msg(:after_node_created)
-    assert(@obj.changed?(['alcn', 'lang'], true))
+    assert(@obj.item_changed?(['alcn', 'lang'], true))
 
     @website.blackboard.dispatch_msg(:after_all_nodes_written)
     @website.blackboard.dispatch_msg(:after_all_nodes_written)
 
     # run where no new nodes were created and therefore "changing" stops
-    refute(@obj.changed?(['alcn', 'lang'], true))
+    refute(@obj.item_changed?(['alcn', 'lang'], true))
 
     @website.blackboard.dispatch_msg(:after_all_nodes_written)
     @website.blackboard.dispatch_msg(:website_generated)
 
     # on next invocation of website generation
     @website.tree.answer = :a42
-    assert(@obj.changed?(['alcn', 'lang'], true))
-    refute(@obj.changed?(['alcn', 'lang'], false))
+    assert(@obj.item_changed?(['alcn', 'lang'], true))
+    refute(@obj.item_changed?(['alcn', 'lang'], false))
   end
 
   def test_node_referenced?

@@ -18,7 +18,7 @@ class TestNodeContent < MiniTest::Unit::TestCase
     assert_nil(@obj.item_data('alcn'))
   end
 
-  def test_changed?
+  def test_item_changed?
     item_tracker = MiniTest::Mock.new
     item_tracker.expect(:node_changed?, true, [:node])
     ext = MiniTest::Mock.new
@@ -26,8 +26,8 @@ class TestNodeContent < MiniTest::Unit::TestCase
     @website.expect(:ext, ext)
     @website.expect(:tree, {'alcn' => :node})
 
-    assert(@obj.changed?('unknown', 'old'))
-    assert(@obj.changed?('alcn', 'other'))
+    assert(@obj.item_changed?('unknown', 'old'))
+    assert(@obj.item_changed?('alcn', 'other'))
 
     @website.verify
     item_tracker.verify

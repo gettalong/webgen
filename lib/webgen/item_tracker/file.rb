@@ -25,7 +25,7 @@ module Webgen
         ::File.mtime(filename)
       end
 
-      def changed?(filename, old_mtime) #:nodoc:
+      def item_changed?(filename, old_mtime) #:nodoc:
         ::File.mtime(filename) > old_mtime
       end
 

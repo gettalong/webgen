@@ -47,7 +47,7 @@ module Webgen
         nodes_to_alcn(node_list(method_name, options))
       end
 
-      def changed?(iid, old_data) #:nodoc:
+      def item_changed?(iid, old_data) #:nodoc:
         method_name, options, type = *iid
         nodes = node_list(method_name, options)
         old_data != nodes_to_alcn(nodes) ||

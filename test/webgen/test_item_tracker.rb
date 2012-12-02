@@ -18,7 +18,7 @@ class Webgen::ItemTracker::Sample
     'alcn' + TestItemTracker::Data[data].to_s
   end
 
-  def changed?(iid, old_data) #:nodoc:
+  def item_changed?(iid, old_data) #:nodoc:
     'alcn' + TestItemTracker::Data[iid].to_s != old_data
   end
 

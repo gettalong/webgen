@@ -36,15 +36,15 @@ class TestItemTrackerNodes < MiniTest::Unit::TestCase
                  @obj.item_data(*@args2))
   end
 
-  def test_changed?
+  def test_item_changed?
     setup_default_nodes(@website.tree)
     @website.ext.item_tracker = MiniTest::Mock.new
     @website.ext.item_tracker.expect(:item_changed?, false, [:node_meta_info, nil])
 
     [@args1, @args2].each do |args|
       old_data = @obj.item_data(*args)
-      assert(@obj.changed?(args, []))
-      refute(@obj.changed?(args, old_data))
+      assert(@obj.item_changed?(args, []))
+      refute(@obj.item_changed?(args, old_data))
     end
   end
 
