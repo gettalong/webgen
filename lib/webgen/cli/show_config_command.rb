@@ -33,7 +33,6 @@ DESC
           end
         end
         @modified = false
-        @unknown = true
       end
 
       def execute(args) # :nodoc:
