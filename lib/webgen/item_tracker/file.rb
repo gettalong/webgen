@@ -29,8 +29,8 @@ module Webgen
         ::File.mtime(filename) > old_mtime
       end
 
-      def node_referenced?(filename, mtime, node_alcn) #:nodoc:
-        false
+      def referenced_nodes(filename, mtime) #:nodoc:
+        []
       end
 
     end

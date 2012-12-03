@@ -187,17 +187,16 @@ module Webgen
 
     # Return +true+ if the given node has been referenced by any item tracker extension.
     def node_referenced?(node)
-      node_alcn = node.alcn
-      checked_uids = Set.new
-      @cached[:node_dependencies].each do |alcn, uids|
-        next if alcn == node_alcn
-        uids.each do |uid|
-          next if checked_uids.include?(uid)
-          checked_uids << uid
-          return true if item_tracker(uid.first).node_referenced?(uid.last, @cached[:item_data][uid], node_alcn)
+      if (cached = @website.cache.volatile[:item_tracker_referenced_nodes]).nil?
+        cached = @website.cache.volatile[:item_tracker_referenced_nodes] = Set.new
+        @cached[:node_dependencies].each do |alcn, uids|
+          uids.each do |uid|
+            cached.merge(item_tracker(uid.first).referenced_nodes(uid.last, @cached[:item_data][uid]) - [alcn])
+          end
         end
       end
-      false
+
+      cached.include?(node.alcn)
     end
 
     # Return +true+ if the given item that is handled by the item tracker extension +name+ has

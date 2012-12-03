@@ -43,8 +43,8 @@ module Webgen
         @website.tree[alcn].nil? || item_data(alcn, key) != old_data
       end
 
-      def node_referenced?(iid, mi, node_alcn) #:nodoc:
-        iid.first == node_alcn
+      def referenced_nodes(iid, mi) #:nodoc:
+        [iid.first]
       end
 
     end

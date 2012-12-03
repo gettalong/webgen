@@ -3,6 +3,7 @@
 require 'minitest/autorun'
 require 'webgen/item_tracker'
 require 'webgen/blackboard'
+require 'webgen/cache'
 
 class Webgen::ItemTracker::Sample
 
@@ -22,8 +23,8 @@ class Webgen::ItemTracker::Sample
     'alcn' + TestItemTracker::Data[iid].to_s != old_data
   end
 
-  def node_referenced?(iid, _, node_alcn)
-    iid == node_alcn
+  def referenced_nodes(iid, _)
+    [iid]
   end
 
 end
@@ -36,7 +37,7 @@ class TestItemTracker < MiniTest::Unit::TestCase
     # Needed mock objects
     website = MiniTest::Mock.new
     website.expect(:blackboard, blackboard = Webgen::Blackboard.new)
-    website.expect(:cache, cache = {})
+    website.expect(:cache, cache = Webgen::Cache.new)
     node = MiniTest::Mock.new
     node.expect(:alcn, '/alcn')
     node.expect(:!, false)
@@ -50,6 +51,8 @@ class TestItemTracker < MiniTest::Unit::TestCase
     tracker = Webgen::ItemTracker.new(website)
     tracker.register('Sample')
     tracker.add(node, :sample, '/alcn')
+
+    website.blackboard.add_listener(:after_all_nodes_written) {cache.reset_volatile_cache}
 
     # Node should be changed because no cache data is available
     assert(tracker.node_changed?(node))

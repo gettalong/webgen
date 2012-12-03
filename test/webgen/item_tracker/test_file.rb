@@ -24,8 +24,8 @@ class TestItemTrackerFile < MiniTest::Unit::TestCase
     assert(@obj.item_changed?(__FILE__, Time.parse("1980-01-01")))
   end
 
-  def test_node_referenced?
-    refute(@obj.node_referenced?('anything', 'nothing', '/alcn'))
+  def test_referenced_nodes
+    assert_equal([], @obj.referenced_nodes('anything', 'nothing'))
   end
 
 end

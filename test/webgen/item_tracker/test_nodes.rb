@@ -48,14 +48,12 @@ class TestItemTrackerNodes < MiniTest::Unit::TestCase
     end
   end
 
-  def test_node_referenced?
+  def test_referenced_nodes
     setup_default_nodes(@website.tree)
 
-    assert(@obj.node_referenced?(@args1, @obj.item_data(*@args1), '/file.en.html'))
-    refute(@obj.node_referenced?(@args1, @obj.item_data(*@args1), '/dir/file.html'))
-
-    assert(@obj.node_referenced?(@args2, @obj.item_data(*@args2), '/file.en.html'))
-    refute(@obj.node_referenced?(@args2, @obj.item_data(*@args2), '/other.en.html'))
+    assert(["/file.en.html", "/file.de.html", "/other.html", "/other.en.html", "/german.de.html",
+            "/dir/", "/dir2/"].map {|f| @website.tree[f]},
+           @obj.referenced_nodes(@args1, @obj.item_data(*@args1)))
   end
 
 end

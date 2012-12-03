@@ -54,8 +54,8 @@ module Webgen
           nodes.flatten.any? {|n| type == :content ? @website.ext.item_tracker.node_changed?(n) : @website.ext.item_tracker.item_changed?(:node_meta_info, n.alcn)}
       end
 
-      def node_referenced?(iid, alcn_list, node_alcn) #:nodoc:
-        alcn_list.flatten.any? {|alcn| alcn == node_alcn}
+      def referenced_nodes(iid, alcn_list) #:nodoc:
+        alcn_list.flatten
       end
 
       # Use Webgen::NodeFinder to generate a (nested) list of nodes. The options hash has to contain
