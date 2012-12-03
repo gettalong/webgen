@@ -4,6 +4,7 @@ require 'webgen/cli/utils'
 require 'webgen/cli/show_extensions_command'
 require 'webgen/cli/show_config_command'
 require 'webgen/cli/show_dependencies_command'
+require 'webgen/cli/show_tree_command'
 
 module Webgen
   module CLI
@@ -22,6 +23,7 @@ DESC
         add_command(ShowConfigCommand.new)
         add_command(ShowExtensionsCommand.new)
         add_command(ShowDependenciesCommand.new)
+        add_command(ShowTreeCommand.new)
       end
 
     end
