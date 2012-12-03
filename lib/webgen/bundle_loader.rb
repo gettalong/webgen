@@ -54,7 +54,7 @@ module Webgen
 
         info_file = File.join(File.dirname(file), 'info.yaml')
         next unless File.file?(info_file)
-        next unless YAML.load(File.read(info_file))['autoload']
+        next unless (begin YAML.load(File.read(info_file))['autoload']; rescue Exception; false end)
 
         load(bundle_name)
       end
