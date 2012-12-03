@@ -48,6 +48,23 @@ class TestPathHandlerVirtual < MiniTest::Unit::TestCase
     title: root
 EOF
 
+  INVALID_YAML=<<EOF
+--- content
+x: @/-::d
+EOF
+
+  INVALID_STRUCTURE=<<EOF
+--- content
+- x
+- y
+EOF
+
+  INVALID_KEY_VALUE=<<EOF
+--- content
+x: y
+EOF
+
+
 
   def setup
     setup_website
@@ -82,6 +99,10 @@ EOF
 
     assert_equal('http://www.example.com', @root.tree['/api.html'].dest_path)
     assert_equal('http://www.example.com', @root.tree['/path.de.html'].route_to(@root.tree['/api.html']))
+
+    assert_raises(RuntimeError) { @virtual.create_nodes(path, Webgen::Page.from_data(INVALID_YAML).blocks) }
+    assert_raises(RuntimeError) { @virtual.create_nodes(path, Webgen::Page.from_data(INVALID_STRUCTURE).blocks) }
+    assert_raises(RuntimeError) { @virtual.create_nodes(path, Webgen::Page.from_data(INVALID_KEY_VALUE).blocks) }
   end
 
 end

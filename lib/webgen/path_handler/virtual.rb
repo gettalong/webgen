@@ -60,8 +60,16 @@ module Webgen
       # each entry.
       def read_entries(blocks)
         blocks.each do |name, content|
-          YAML::load(content).each do |key, meta_info|
-            yield(key, meta_info || {})
+          begin
+            data = YAML::load(content)
+          rescue RuntimeError, ArgumentError, SyntaxError => e
+            raise RuntimeError, "Problem parsing block '#{name}' (it needs to contain a YAML hash): #{e.message}", e.backtrace
+          end
+          raise "Structure of block '#{name}' is invalid, it has to be a Hash" unless data.kind_of?(Hash)
+          data.each do |key, meta_info|
+            meta_info ||= {}
+            raise "Each path key value needs to be a Hash, found a #{meta_info.class} for '#{key}'" unless meta_info.kind_of?(Hash)
+            yield(key, meta_info)
           end
         end
       end
