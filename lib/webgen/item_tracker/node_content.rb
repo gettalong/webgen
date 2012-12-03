@@ -34,6 +34,10 @@ module Webgen
         [alcn]
       end
 
+      def item_description(alcn, data) #:nodoc:
+        "Content from node <#{alcn}>"
+      end
+
     end
 
   end

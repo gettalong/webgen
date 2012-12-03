@@ -47,6 +47,11 @@ module Webgen
         [iid.first]
       end
 
+      def item_description(iid, data) #:nodoc:
+        alcn, key = *iid
+        (key.nil? ? "Any meta info from <#{alcn}>" : "Meta info key '#{key}' from <#{alcn}>")
+      end
+
     end
 
   end

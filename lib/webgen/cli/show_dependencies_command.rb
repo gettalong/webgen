@@ -24,78 +24,21 @@ DESC
       end
 
       def execute(args) # :nodoc:
-        cache = commandparser.website.cache[:item_tracker_data]
-        if cache.nil?
+        data = commandparser.website.ext.item_tracker.cached_items(commandparser.verbose)
+        if data.empty?
           puts "No data available, you need to generate the website first!"
           return
         end
         arg = args.shift
 
-        data = cache[:node_dependencies]
-        data = data.select {|alcn, _| alcn.include?(arg) } if arg
-        data.sort.each do |alcn, deps|
-          deps = deps.sort {|a,b| a.first <=> b.first }.map do |uid|
-            method = "format_#{uid.first}"
-            if respond_to?(method, true)
-              send(method, alcn, uid, cache[:item_data][uid])
-            else
-              unknown_uid(uid)
-            end
-          end.compact
-
-          if deps.length > 0 || commandparser.verbose
+        data.select! {|alcn, _| alcn.include?(arg) } if arg
+        data.sort.each do |alcn, items|
+          if items.length > 0 || commandparser.verbose
             puts("#{Utils.light(Utils.blue(alcn))}: ")
-            deps.each {|d| puts("  #{[d].flatten.join("\n    ")}")}
+            items.each {|d| puts("  #{[d].flatten.join("\n    ")}")}
           end
         end
       end
-
-      def unknown_uid(uid)
-        uid.first.to_s
-      end
-      private :unknown_uid
-
-      def format_node_meta_info(alcn, uid, data)
-        dep_alcn, key = *uid.last
-        return if alcn == dep_alcn && !commandparser.verbose
-
-        if key.nil?
-          "Any meta info from <#{dep_alcn}>"
-        else
-          "Meta info key '#{key}' from <#{dep_alcn}>"
-        end
-      end
-      private :format_node_meta_info
-
-      def format_node_content(alcn, uid, data)
-        dep_alcn = uid.last
-        return if alcn == dep_alcn && !commandparser.verbose
-
-        "Content from node <#{dep_alcn}>"
-      end
-      private :format_node_content
-
-      def format_file(alcn, uid, data)
-        "Content from file '#{uid.last}'"
-      end
-      private :format_file
-
-      def format_missing_node(alcn, uid, data)
-        path, lang = *uid.last
-
-        "Missing acn, alcn or dest path <#{path}>" << (lang.nil? ? '' : " in language '#{lang}'")
-      end
-      private :format_missing_node
-
-      def format_nodes(alcn, uid, data)
-        method, _, type = *uid.last
-
-        res = [(type == :content ? "Content" : "Meta info") + " from these nodes"]
-        res.first << " (result of #{[method].flatten.join('.')})" if commandparser.verbose
-        res.first << ":"
-        res += data.flatten
-      end
-      private :format_nodes
 
     end
 

@@ -40,6 +40,11 @@ module Webgen
   #   Return +true+ if the node identified by +node_alcn+ is referenced in the old data identified
   #   by the unique ID.
   #
+  # [item_description(item_id, data)]
+  #   Return a string or an array of strings which describe the item (identified by its unique ID)
+  #   and the given item data. This is used for display purposes and should therefore include a
+  #   nice, human readable interpretation of the item.
+  #
   # The parameter +item+ for the methods +item_id+ and +item_data+ contains the information needed
   # to identify the item and is depdendent on the specific item tracker extension class. Therefore
   # you need to look at the documentation for an item tracker extension to see what it expects as
@@ -73,6 +78,10 @@ module Webgen
   #
   #     def node_referenced?(config_key, config_value, node_alcn)
   #       false
+  #     end
+  #
+  #     def item_description(config_key, old_val)
+  #       "The website configuration option '#{config_key}'"
   #     end
   #
   #   end
@@ -203,6 +212,24 @@ module Webgen
     # changed.
     def item_changed?(name, *item)
       item_changed_by_uid?(unique_id(name, item))
+    end
+
+    # Return a hash with mappings from node ALCNs to their used items (items are converted to
+    # a human readable representation by using the #item_description method).
+    #
+    # If the parameter +include_default+ is set to +false+, the default items added to each node so
+    # that it is possible to correctly detect changes, are not included.
+    #
+    # The cached data, not the current data, is used. So this information is only useful after a
+    # website has been generated.
+    def cached_items(include_default=true)
+      @cached[:node_dependencies].each_with_object({}) do |(alcn, uids), h|
+        h[alcn] = uids.sort {|a,b| a.first <=> b.first }.map do |uid|
+          next if !include_default && ((uid.first == :node_meta_info && uid.last.first == alcn )||
+                                       (uid.first == :node_content && uid.last == alcn))
+          item_tracker(uid.first).item_description(uid.last, @cached[:item_data][uid])
+        end.compact
+      end
     end
 
     #######

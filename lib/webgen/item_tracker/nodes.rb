@@ -58,6 +58,13 @@ module Webgen
         alcn_list.flatten
       end
 
+      def item_description(iid, data) #:nodoc:
+        method, _, type = *iid
+        str = (type == :content ? "Content" : "Meta info") << " from these nodes"
+        str << " (result of #{[method].flatten.join('.')}):"
+        [str] + data.flatten
+      end
+
       # Use Webgen::NodeFinder to generate a (nested) list of nodes. The options hash has to contain
       # two keys:
       #

@@ -33,6 +33,10 @@ module Webgen
         []
       end
 
+      def item_description(filename, data) #:nodoc:
+        "Content from file '#{filename}'"
+      end
+
     end
 
   end
