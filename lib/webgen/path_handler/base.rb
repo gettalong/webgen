@@ -50,7 +50,7 @@ module Webgen
         []
       end
 
-      # Create a node from +path+, if possible, yield the full initialized node if a block is given
+      # Create a node from +path+, if possible, yield the fully initialized node if a block is given
       # and return it.
       #
       # If no node can be created (e.g. when 'path.meta_info['draft']' is set), +nil+ is returned.
