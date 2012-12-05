@@ -28,7 +28,7 @@ class TestPageUtils < MiniTest::Unit::TestCase
   def test_render_block
     setup_context
     node = @context.node
-    node.expect(:blocks, {'content' => 'mycontent'})
+    node.expect(:node_info, {:blocks => {'content' => 'mycontent'}})
     @context.node.expect(:meta_info, {})
     @website.ext.content_processor = Webgen::ContentProcessor.new
     @website.ext.item_tracker = MiniTest::Mock.new

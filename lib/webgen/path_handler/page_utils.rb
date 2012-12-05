@@ -53,7 +53,7 @@ module Webgen
       #
       # Returns the given context with the rendered content.
       def render_block(node, name, context, pipeline = nil)
-        unless node.blocks.has_key?(name)
+        unless blocks(node).has_key?(name)
           raise Webgen::RenderError.new("No block named '#{name}' found", self.class.name,
                                         context.dest_node.alcn, node.alcn)
         end
@@ -61,7 +61,7 @@ module Webgen
         content_processor = context.website.ext.content_processor
         context.website.ext.item_tracker.add(context.dest_node, :node_content, node.alcn)
 
-        context.content = node.blocks[name].dup
+        context.content = blocks(node)[name].dup
         context[:block_name] = name
         pipeline ||= ((node.meta_info['blocks'] || {})[name] || {})['pipeline'] ||
           ((node.meta_info['blocks'] || {})['defaults'] || {})['pipeline'] ||
