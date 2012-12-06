@@ -143,10 +143,11 @@ module Webgen
 
       @website.blackboard.add_listener(:website_generated, self) do
         @cached[:node_dependencies].reject! {|alcn, data| !@website.tree[alcn]}
+
+        used_uids = @cached[:node_dependencies].each_with_object(Set.new) {|(_, uids), obj| obj.merge(uids)}
         @cached[:item_data].merge!(@item_data)
-        @cached[:item_data].reject! do |uid, _|
-          !@cached[:node_dependencies].find {|alcn, data| data.include?(uid)}
-        end
+        @cached[:item_data].reject! {|uid, _| !used_uids.include?(uid)}
+
         @website.cache[:item_tracker_data] = @cached
       end
     end
