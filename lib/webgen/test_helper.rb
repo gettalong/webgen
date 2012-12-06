@@ -22,23 +22,14 @@ module Webgen
 
     # A special subclass of Webgen::Node that is used in testing when a "renderable" node is needed,
     # ie. one that has the necessary info set to be processed via Webgen::PathHandler::PageUtils.
-    class RenderNode < Webgen::Node
-
-      include Webgen::PathHandler::PageUtils
+    class RenderNode < Webgen::PathHandler::PageUtils::Node
 
       def initialize(page_data, parent, cn, dest_path, meta_info = {})
         super(parent, cn, dest_path, meta_info)
         page = Webgen::Page.from_data(page_data)
         self.node_info[:blocks] = page.blocks
+        self.node_info[:path_handler] = self
         self.meta_info.update(page.meta_info)
-      end
-
-      def blocks
-        super(self)
-      end
-
-      def render_block(name, context)
-        super(self, name, context)
       end
 
       def template_chain

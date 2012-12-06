@@ -15,6 +15,18 @@ module Webgen
       include Base
       include PageUtils
 
+
+      # Provides custom methods for sitemap nodes.
+      class Node < PageUtils::Node
+
+        # Return the entries for the sitemap +node+.
+        def sitemap_entries
+          tree.website.ext.node_finder.find(node_info[:entries], self)
+        end
+
+      end
+
+
       # The mandatory keys that need to be set in a sitemap file.
       MANDATORY_INFOS = %W[site_url entries]
 
@@ -26,7 +38,7 @@ module Webgen
         end
 
         path.ext = 'xml'
-        create_node(path) do |node|
+        create_node(path, Node) do |node|
           set_blocks(node, blocks)
           node.node_info[:entries] = {:flatten => true, :and => node['entries']}
           @website.ext.item_tracker.add(node, :nodes, :node_finder_option_set,
@@ -39,11 +51,6 @@ module Webgen
         context = Webgen::Context.new(@website)
         context.render_block(:name => "sitemap", :node => 'first',
                              :chain => [node, node.resolve("/templates/sitemap.template", node.lang, true), node].compact)
-      end
-
-      # Return the entries for the sitemap +node+.
-      def sitemap_entries(node)
-        @website.ext.node_finder.find(node.node_info[:entries], node)
       end
 
     end

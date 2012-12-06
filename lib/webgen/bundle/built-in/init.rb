@@ -200,6 +200,8 @@ option('path_handler.version_in_dest_path', 'except_default',
     raise "The value has to be 'true', 'false' or 'except_default'"
   end
 end
+option('path_handler.default_template', 'default.template',
+       'The name of the default template file')
 
 website.ext.path_handler = path_handler = Webgen::PathHandler.new(website)
 
@@ -207,11 +209,7 @@ website.ext.path_handler = path_handler = Webgen::PathHandler.new(website)
 
 path_handler.register('Directory')
 path_handler.register('MetaInfo', :patterns => ['/**/metainfo', '/**/*.metainfo'])
-
 path_handler.register('Template')
-option('path_handler.template.default_template', 'default.template',
-       'The name of the default template file')
-
 path_handler.register('Page')
 path_handler.register('Copy')
 path_handler.register('Feed')

@@ -22,20 +22,19 @@ class TestPathHandlerBase < MiniTest::Unit::TestCase
     @obj = TestPathHandler.new(@website)
   end
 
-  def test_content
-    assert_nil(@obj.content(nil))
-  end
-
   def test_create_node
     count = 0
     assert_nil(@obj.create_node(Webgen::Path.new('/test.html', 'draft' => true)))
 
     path = Webgen::Path.new('/path.html', 'dest_path' => '<parent><basename>(.<lang>)<ext>',
                             'modified_at' => 'unknown', 'parent_alcn' => '')
-    node = @obj.create_node(path) {|n| count += 1; assert_kind_of(Webgen::Node, n)}
+    node = @obj.create_node(path) {|n| count += 1; assert_kind_of(Webgen::PathHandler::Base::Node, n)}
     assert_equal(path, node.node_info[:path])
     assert_kind_of(Time, node.meta_info['modified_at'])
     assert_equal(1, count)
+    assert_nil(node.content)
+    def (@obj).content(node); node; end
+    assert_equal(node, node.content)
 
     second_node = @obj.create_node(path) {|n| count += 1}
     assert_equal(1, count)

@@ -82,19 +82,6 @@ class TestNode < MiniTest::Unit::TestCase
     assert(node !~ '**/*.test')
   end
 
-  def test_method_missing
-    node = Webgen::Node.new(@website.tree.dummy_root, '/', '/')
-    assert_raises(NoMethodError) { node.unknown }
-    refute(node.respond_to?(:unknown))
-
-    path_handler = Object.new
-    def path_handler.unknown(node); :value; end
-    node.node_info[:path_handler] = path_handler
-
-    assert(node.respond_to?(:unknown))
-    assert_equal(:value, node.unknown)
-  end
-
   def test_route_to
     tree = @website.tree
     setup_default_nodes(tree)

@@ -221,29 +221,6 @@ module Webgen
         each_with_object({}) {|(k, v), h| h[v['version']] = v}
     end
 
-
-    #######
-    private
-    #######
-
-    # Delegate missing methods to the associated path handler. The current node is placed into the
-    # argument array as the first argument before the method +name+ is invoked on the path handler.
-    def method_missing(name, *args, &block)
-      if node_info[:path_handler]
-        node_info[:path_handler].send(name, *([self] + args), &block)
-      else
-        super
-      end
-    end
-
-    def respond_to_missing?(symbol, include_private) #:nodoc:
-      if node_info[:path_handler]
-        node_info[:path_handler].send(:respond_to?, symbol, include_private)
-      else
-        super
-      end
-    end
-
   end
 
 end

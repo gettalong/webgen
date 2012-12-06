@@ -27,15 +27,22 @@ module Webgen
     #
     module Base
 
+      # This is the base Node sub class used by the Base#create_node method if a path handler class
+      # does not specify another Node class.
+      class Node < Webgen::Node
+
+        # Return the result of the #content method on the associated path handler or +nil+ if the
+        # associated path handler does not have a #content method.
+        def content
+          (@node_info[:path_handler].respond_to?(:content) ? @node_info[:path_handler].content(self) : nil)
+        end
+
+      end
+
+
       # Initialize the path handler with the given Website object.
       def initialize(website)
         @website = website
-      end
-
-      # Return +nil+ as content of the given +node+.
-      #
-      # Should probably be over-written by path handler classes using this module!
-      def content(node)
       end
 
       # Update +path.meta_info+ with meta information found in the content of the path.
@@ -53,6 +60,9 @@ module Webgen
       # Create a node from +path+, if possible, yield the fully initialized node if a block is given
       # and return it.
       #
+      # The node class to be used for the created node can be specified via the +node_klass+
+      # parameter.
+      #
       # If no node can be created (e.g. when 'path.meta_info['draft']' is set), +nil+ is returned.
       #
       # The parent node under which the new node should be created can optionally be specified via
@@ -61,7 +71,7 @@ module Webgen
       #
       # On the created node, the node information +:path+ is set to the given path and
       # +:path_handler+ to the path handler instance.
-      def create_node(path)
+      def create_node(path, node_klass = Node)
         return nil if path.meta_info['draft']
         parent = parent_node(path)
         dest_path = self.dest_path(parent, path)
@@ -85,7 +95,7 @@ module Webgen
           path.meta_info['modified_at'] = Time.now
         end
 
-        node = Webgen::Node.new(parent, path.cn, dest_path, path.meta_info.dup)
+        node = node_klass.new(parent, path.cn, dest_path, path.meta_info.dup)
         node.node_info[:path] = path
         node.node_info[:path_handler] = self
 

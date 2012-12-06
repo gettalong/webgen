@@ -23,6 +23,34 @@ module Webgen
       include Base
       include PageUtils
 
+
+      # Provides custom methods needed for feed nodes.
+      class Node < PageUtils::Node
+
+        # Return the entries for this feed node.
+        def feed_entries
+          tree.website.ext.node_finder.find(self['entries'], self)
+        end
+
+        # Return the feed link URL for this feed node.
+        def feed_link
+          Webgen::Path.url(File.join(self['site_url'], tree[self['link']].dest_path), false)
+        end
+
+        # Return the content of an +entry+ (a Node object) of this feed node.
+        def entry_content(entry)
+          block_name = self['content_block_name'] || 'content'
+          if entry.respond_to?(:render_block) && entry.blocks[block_name]
+            entry.render_block(block_name, Webgen::Context.new(tree.website, :chain => [entry])).content
+          else
+            tree.website.logger.warn { "Feed entry <#{entry}> not used, is not a renderable node" }
+            ''
+          end
+        end
+
+      end
+
+
       # The mandatory keys that need to be set in a feed file.
       MANDATORY_INFOS = %W[site_url author entries]
 
@@ -40,7 +68,7 @@ module Webgen
         path.ext = path['version']
         path['dest_path'] = '<parent><basename>(.<lang>)<ext>'
         path['cn'] = '<basename><ext>'
-        create_node(path) do |node|
+        create_node(path, Node) do |node|
           set_blocks(node, blocks)
           node.meta_info['link'] ||= node.parent.alcn
           @website.ext.item_tracker.add(node, :nodes, :node_finder_option_set,
@@ -53,27 +81,6 @@ module Webgen
         context = Webgen::Context.new(@website)
         context.render_block(:name => "#{node['version']}_template", :node => 'first',
                              :chain => [node, node.resolve("/templates/feed.template", node.lang, true), node].compact)
-      end
-
-      # Return the entries for the feed node.
-      def feed_entries(node)
-        @website.ext.node_finder.find(node['entries'], node)
-      end
-
-      # Return the feed link URL for the feed node.
-      def feed_link(node)
-        Webgen::Path.url(File.join(node['site_url'], node.tree[node['link']].dest_path), false)
-      end
-
-      # Return the content of an +entry+ of the feed +node+.
-      def entry_content(node, entry)
-        block_name = node['content_block_name'] || 'content'
-        if entry.respond_to?(:render_block) && entry.blocks[block_name]
-          entry.render_block(block_name, Webgen::Context.new(@website, :chain => [entry])).content
-        else
-          @website.logger.warn { "Feed entry <#{entry}> not used, is not a renderable node" }
-          ''
-        end
       end
 
     end

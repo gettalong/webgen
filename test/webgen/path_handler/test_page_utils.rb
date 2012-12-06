@@ -25,34 +25,62 @@ class TestPageUtils < MiniTest::Unit::TestCase
     assert_equal('value', path.meta_info['key'])
   end
 
+  def test_template_chain
+    setup_website('path_handler.default_template' => 'default.template')
+    @website.expect(:cache, Webgen::Cache.new)
+    @root = Webgen::Node.new(@website.tree.dummy_root, '/', '/')
+
+    default_template = MyHandler::Node.new(@root, 'default.template', '/default.template')
+    default_de_template = MyHandler::Node.new(@root, 'default.template', '/default.de.template', {'lang' => 'de'})
+    other_template = MyHandler::Node.new(@root, 'other.template', '/other.template')
+    stopped_template = MyHandler::Node.new(@root, 'stopped.html', '/stopped.page', { 'template' => nil})
+    invalid_template = MyHandler::Node.new(@root, 'invalid.template', '/invalid.template', {'template' => 'invalidity'})
+    chained_template = MyHandler::Node.new(@root, 'chained.template', '/chained.template', {'template' => 'other.template'})
+    german_file = MyHandler::Node.new(@root, 'german.page', '/german.html', {'lang' => 'de', 'template' => 'other.template'})
+    dir = Webgen::Node.new(@root, 'dir/', '/dir/')
+    dir_default_template = MyHandler::Node.new(dir, 'default.template', '/dir/default.template')
+    dir_dir = Webgen::Node.new(dir, 'dir/', '/dir/dir/')
+    dir_dir_file = MyHandler::Node.new(dir_dir, 'file.page', '/dir/dir/file.html', {'lang' => 'en'})
+
+    assert_equal([], default_template.template_chain)
+    assert_equal([], stopped_template.template_chain)
+    assert_equal([default_template], other_template.template_chain)
+    assert_equal([default_template], invalid_template.template_chain)
+    assert_equal([default_template, other_template], chained_template.template_chain)
+    assert_equal([default_de_template, other_template], german_file.template_chain)
+    assert_equal([default_template], dir_default_template.template_chain)
+    assert_equal([default_template, dir_default_template], dir_dir_file.template_chain)
+
+    @website.cache.reset_volatile_cache
+    @root.tree.delete_node(default_template)
+    assert_equal([], other_template.template_chain)
+  end
+
   def test_render_block
     setup_context
-    node = @context.node
-    node.expect(:node_info, {:blocks => {'content' => 'mycontent'}})
-    @context.node.expect(:meta_info, {})
     @website.ext.content_processor = Webgen::ContentProcessor.new
-    @website.ext.item_tracker = MiniTest::Mock.new
-    @website.ext.item_tracker.expect(:add, nil, [node, :node_content, node.alcn])
+    node = MyHandler::Node.new(@website.tree.dummy_root, '/', '/')
+    node.node_info[:blocks] = {'content' => 'mycontent'}
 
     # invalid block name
-    assert_raises(Webgen::RenderError) { @handler.render_block(node, 'unknown', @context) }
+    assert_raises(Webgen::RenderError) { node.render_block('unknown', @context) }
 
     # nothing to render because pipeline is empty
-    @handler.render_block(node, 'content', @context)
+    node.render_block('content', @context)
     assert_equal('mycontent', @context.content)
 
     # invalid content processor
-    assert_raises(Webgen::Error) { @handler.render_block(node, 'content', @context, ['test']) }
+    assert_raises(Webgen::Error) { node.render_block('content', @context, ['test']) }
 
     node.meta_info['blocks'] = {'content' => {'pipeline' => ['test']}}
-    assert_raises(Webgen::Error) { @handler.render_block(node, 'content', @context) }
+    assert_raises(Webgen::Error) { node.render_block('content', @context) }
 
     # with content processor
     @website.ext.content_processor.register('test') {|ctx| ctx.content = 'test' + ctx.content; ctx}
-    @handler.render_block(node, 'content', @context)
+    node.render_block('content', @context)
     assert_equal('testmycontent', @context.content)
 
-    @handler.render_block(node, 'content', @context, ['test', 'test'])
+    node.render_block('content', @context, ['test', 'test'])
     assert_equal('testtestmycontent', @context.content)
   end
 
