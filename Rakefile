@@ -59,7 +59,7 @@ Webgen::RakeTask.new('htmldoc') do |site|
   end
 end
 
-rd = RDoc::Task.new do |rdoc|
+RDoc::Task.new do |rdoc|
   rdoc.rdoc_dir = 'htmldoc/rdoc'
   rdoc.title = 'webgen'
   rdoc.main = 'API.rdoc'
@@ -102,13 +102,11 @@ EOF
                             'README.md',
                             'bin/webgen',
                             'data/**/*',
-                            'doc/**/*',
                             'lib/**/*.rb',
                             'man/man1/webgen.1',
-                            'misc/**/*',
                             'test/**/*',
                            ]) do |fl|
-    fl.exclude('data/**/.gitignore')
+    fl.exclude('**/.gitignore')
   end
 
   CLOBBER << "VERSION"
@@ -143,7 +141,7 @@ Thanks for choosing webgen! Here are some places to get you started:
 * The mailing list archive at <http://rubyforge.org/pipermail/webgen-users/>
 * The webgen Wiki at <http://github.com/gettalong/webgen/wiki>
 
-Have a look at <http://webgen.rubyforge.org/news/index.html> for a list of changes!
+Have a look at <http://webgen.rubyforge.org/> for a list of changes!
 
 Have fun!
 
@@ -155,8 +153,9 @@ EOF
 
     s.add_dependency('cmdparse', '>= 2.0.5')
     s.add_dependency('systemu', '>= 2.5.0')
-    s.add_dependency('kramdown', '= 0.10.0')
+    s.add_dependency('kramdown', '>= 0.14.0')
     s.add_development_dependency('rake', '>= 0.8.3')
+    s.add_development_dependency('diff-lcs', '>= 1.1.0')
     s.add_development_dependency('rubyforge', '>= 2.0.2')
     s.add_development_dependency('maruku', '>= 0.6.0')
     s.add_development_dependency('RedCloth', '>= 4.1.9')
@@ -277,7 +276,7 @@ EOF
     failed.each {|file| puts "Problem with" + file.rjust(60) }
   end
 
-  EXCLUDED_FOR_TESTS=FileList.new(['lib/webgen/bundle/**',
+  EXCLUDED_FOR_TESTS=FileList.new(['lib/webgen/bundle/**/*',
                                    'lib/webgen/context/*',
                                    'lib/webgen/cli/*',
                                    'lib/webgen/test_helper',
