@@ -106,8 +106,14 @@ module Webgen
   #   descendants of the reference node are used. The reference node itself is used as well.
   #
   # [:siblings]
-  #   Value: +true+ or +false+/+nil+. If this filter option is set to +true+, only nodes that are
-  #   siblings of the reference are node used. The reference node itself is used as well.
+  #   Value: +true+, +false+/+nil+, or an array with two integers. If this filter option is set to
+  #   +true+, only nodes that are sibling node of the reference node are used. The reference node
+  #   itself is used as well. If set to +false+ or +nil+, this filter is ignored.
+  #
+  #   If an array with two numbers is specified, all sibling nodes of the reference node or its
+  #   parent nodes the hierarchy level of which lies between these numbers are used. The parent
+  #   nodes and the reference node are used as well if their level lies between the numbers.
+  #   Counting starts at zero (the root node).
   #
   # == Implementing a filter module
   #
@@ -341,9 +347,16 @@ module Webgen
       end
     end
 
-    def filter_siblings(nodes, ref_node, enabled)
-      return nodes unless enabled
-      nodes.keep_if { |n| n.parent == ref_node.parent}
+    def filter_siblings(nodes, ref_node, value)
+      return nodes unless value
+      if value == true
+        nodes.keep_if {|n| n.parent == ref_node.parent}
+      else
+        value = [value].flatten.map {|i| i.to_i}
+        nodes.keep_if do |n|
+          n.level >= value.first && n.level <= value.last && (n.parent.is_ancestor_of?(ref_node) || n.is_root?)
+        end
+      end
     end
 
   end

@@ -125,6 +125,14 @@ class TestNodeFinder < MiniTest::Unit::TestCase
     # test filter: siblings
     check.call(%w[/file.en.html /file.de.html /other.html /other.en.html /german.de.html /dir/ /dir2/],
                @nf.find({:siblings => true, :flatten => true}, tree['/dir/']))
+    check.call(%w[/dir/subfile.html /dir/dir/ /dir/dir/file.html],
+               @nf.find({:siblings => [2, 3], :flatten => true}, tree['/dir/dir/file.html']))
+    check.call(%w[/file.en.html /file.de.html /other.html /other.en.html /german.de.html
+                  /dir/ /dir/subfile.html /dir/dir/ /dir/dir/file.html /dir2/],
+               @nf.find({:siblings => [1, 5], :flatten => true}, tree['/dir/dir/file.html']))
+    check.call(%w[/ /file.en.html /file.de.html /other.html /other.en.html /german.de.html
+                  /dir/ /dir/subfile.html /dir/dir/ /dir2/],
+               @nf.find({:siblings => [0, 2], :flatten => true}, tree['/dir/dir/file.html']))
 
   end
 
