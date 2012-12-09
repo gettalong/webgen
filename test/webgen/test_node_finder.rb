@@ -97,6 +97,11 @@ class TestNodeFinder < MiniTest::Unit::TestCase
                @nf.find({:absolute_levels => [0, 0], :flatten => true}, tree['/dir/']))
     check.call(%w[/file.en.html#nested /dir/subfile.html#frag /dir/dir/file.html],
                @nf.find({:absolute_levels => [3,3], :flatten => true}, tree['/dir/']))
+    check.call(%w[/file.en.html#frag /file.en.html#nested /file.de.html#frag /dir/subfile.html
+                  /dir/subfile.html#frag /dir/dir/ /dir/dir/file.html /dir2/index.en.html /dir2/index.de.html],
+               @nf.find({:absolute_levels => [2,-1], :flatten => true}, tree['/dir/dir/file.html']))
+    check.call(%w[/file.en.html#frag /file.de.html#frag /dir/subfile.html /dir/dir/ /dir2/index.en.html /dir2/index.de.html],
+               @nf.find({:absolute_levels => [2,-2], :flatten => true}, tree['/dir/dir/file.html']))
     check.call(%w[/ /file.en.html /file.de.html /other.html /other.en.html /german.de.html /dir/ /dir2/],
                @nf.find({:absolute_levels => [0,1], :flatten => true}, tree['/dir/']))
     check.call(%w[/],
@@ -127,6 +132,8 @@ class TestNodeFinder < MiniTest::Unit::TestCase
                @nf.find({:siblings => true, :flatten => true}, tree['/dir/']))
     check.call(%w[/dir/subfile.html /dir/dir/ /dir/dir/file.html],
                @nf.find({:siblings => [2, 3], :flatten => true}, tree['/dir/dir/file.html']))
+    check.call(%w[/dir/subfile.html /dir/dir/ /dir/dir/file.html],
+               @nf.find({:siblings => [2, -1], :flatten => true}, tree['/dir/dir/file.html']))
     check.call(%w[/file.en.html /file.de.html /other.html /other.en.html /german.de.html
                   /dir/ /dir/subfile.html /dir/dir/ /dir/dir/file.html /dir2/],
                @nf.find({:siblings => [1, 5], :flatten => true}, tree['/dir/dir/file.html']))

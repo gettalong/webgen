@@ -97,6 +97,9 @@ module Webgen
   #   and end levels). All nodes whose hierarchy level in the node tree are greater than or equal to
   #   the start level and lower than or equal to the end level are used.
   #
+  #   Negative numbers, where -1 stands for the reference node, -2 for its parent node and so on,
+  #   can also be used.
+  #
   # [:ancestors]
   #   Value: +true+ or +false+/+nil+. If this filter option is set to +true+, only nodes that are
   #   ancestors of the reference node are used. The reference node itself is used as well.
@@ -114,6 +117,9 @@ module Webgen
   #   parent nodes the hierarchy level of which lies between these numbers are used. The parent
   #   nodes and the reference node are used as well if their level lies between the numbers.
   #   Counting starts at zero (the root node).
+  #
+  #   Negative numbers, where -1 stands for the reference node, -2 for its parent node and so on,
+  #   can also be used.
   #
   # == Implementing a filter module
   #
@@ -319,7 +325,7 @@ module Webgen
     end
 
     def filter_absolute_levels(nodes, ref_node, range)
-      range = [range].flatten.map {|i| i.to_i}
+      range = [range].flatten.map {|i| (i = i.to_i) < 0 ? ref_node.level + 1 + i : i}
       nodes.keep_if {|n| n.level >= range.first && n.level <= range.last}
     end
 
@@ -352,7 +358,7 @@ module Webgen
       if value == true
         nodes.keep_if {|n| n.parent == ref_node.parent}
       else
-        value = [value].flatten.map {|i| i.to_i}
+        value = [value].flatten.map {|i| (i = i.to_i) < 0 ? ref_node.level + 1 + i : i}
         nodes.keep_if do |n|
           n.level >= value.first && n.level <= value.last && (n.parent.is_ancestor_of?(ref_node) || n.is_root?)
         end
