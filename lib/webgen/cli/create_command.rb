@@ -1,6 +1,7 @@
 # -*- encoding: utf-8 -*-
 
 require 'webgen/cli/utils'
+require 'tmpdir'
 
 module Webgen
   module CLI
@@ -48,8 +49,9 @@ DESC
         raise OptionParser::MissingArgument.new('DIR') if args.length == 0
         Webgen::Website.new(args[0], Webgen::CLI::Logger.new) do |website|
           website.logger.verbose = commandparser.verbose
+          website.config['website.tmpdir'] = Dir.tmpdir
         end.execute_task(:create_website, @template)
-        puts "Created a new webgen website in <#{args[0]}>" + (@template ? "using the '#{template}' template" : '')
+        puts "Created a new webgen website in <#{args[0]}>" + (@template ? " using the '#{@template}' template" : '')
       rescue Webgen::Task::CreateWebsite::Error => e
         puts "An error occured while creating the website: #{e.message}"
       end
