@@ -44,11 +44,17 @@ module Webgen
 
     # Loads all bundles that are marked for auto-loading.
     def load_autoload_bundles
-      Gem::Specification.map {|s| s.name }.uniq.each do |gem_name|
+      bundles = Gem::Specification.map {|s| s.name }.uniq.map do |gem_name|
         md = /^webgen-(.*)-bundle$/.match(gem_name)
         next unless md
+        md[1]
+      end.compact
 
-        bundle_name = md[1]
+      bundles += $LOAD_PATH.map do |path|
+        Dir[File.join(path, 'webgen/bundle', '*')].map {|d| File.basename(d)}
+      end.flatten.compact
+
+      bundles.each do |bundle_name|
         file = resolve_init_file(bundle_name)
         next unless file
 
