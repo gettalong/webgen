@@ -4,6 +4,7 @@ require 'minitest/autorun'
 require 'ostruct'
 require 'tmpdir'
 require 'stringio'
+require 'fileutils'
 require 'webgen/logger'
 
 require 'webgen/blackboard'
@@ -94,7 +95,11 @@ module Webgen
       @website.expect(:config, config)
       directory = Dir::Tmpname.create("test-webgen-website") {|path| raise Errno::EEXIST if File.directory?(path)}
       @website.expect(:directory, directory)
-      def (@website).tmpdir(path=''); File.join(self.directory, 'tmp', path); end
+      def (@website).tmpdir(path='', create=false)
+        tmp = File.join(self.directory, 'tmp')
+        FileUtils.mkdir_p(tmp) if create
+        File.join(tmp, path)
+      end
       @website.expect(:ext, OpenStruct.new)
       @website.expect(:blackboard, Webgen::Blackboard.new)
       @website.expect(:cache, Webgen::Cache.new)
