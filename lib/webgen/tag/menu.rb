@@ -30,7 +30,7 @@ module Webgen
       def self.menu_item_details(dest_node, node, lang, level, has_submenu)
         styles = ['webgen-menu-level' + level.to_s]
         styles << 'webgen-menu-submenu' if has_submenu
-        styles << 'webgen-menu-submenu-inhierarchy' if has_submenu && node.is_ancestor_of?(dest_node)
+        styles << 'webgen-menu-submenu-inhierarchy' if node.is_ancestor_of?(dest_node)
         styles << 'webgen-menu-item-selected' if node == dest_node
         style = "class=\"#{styles.join(' ')}\"" if styles.length > 0
 
