@@ -139,7 +139,7 @@ module Webgen
         begin
           page = Webgen::Page.from_data(path.data)
         rescue Webgen::Page::FormatError => e
-          raise Webgen::Error.new("Error reading source path: #{e.message}", self.class.name, path)
+          raise Webgen::Error.new("Error reading source path: #{e.message}", nil, path)
         end
         blocks = page.meta_info.delete('blocks') || {}
         path.meta_info.merge!(page.meta_info)

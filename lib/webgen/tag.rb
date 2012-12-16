@@ -160,16 +160,16 @@ module Webgen
         result, process_output = tdata.object.call(tag, body, context)
         result = context.website.ext.content_processor.call('tags', context.clone(:content => result)).content if process_output
       else
-        raise Webgen::RenderError.new("No tag processor for '#{tag}' found", self.class.name,
+        raise Webgen::RenderError.new("No tag processor for '#{tag}' found", 'tag',
                                       context.dest_node, context.ref_node)
       end
       result
     rescue Webgen::Error => e
       e.path = context.dest_node if e.path.to_s.empty?
+      e.location = "tag.#{tag}" unless e.location
       raise
     rescue Exception => e
-      raise Webgen::RenderError.new(e, (tdata && tdata.object.respond_to?(:name) ? tdata.object.name : "tag '#{tag}'"),
-                                    context.dest_node, context.ref_node)
+      raise Webgen::RenderError.new(e, "tag.#{tag}", context.dest_node, context.ref_node)
     end
 
     # See Webgen::Utils::TagParser#replace_tags.
@@ -190,11 +190,11 @@ module Webgen
                when NilClass then {}
                else
                  raise Webgen::RenderError.new("Invalid parameter type (#{params.class})",
-                                               self.class.name, context.dest_node, context.ref_node)
+                                               "tag", context.dest_node, context.ref_node)
                end
 
       if !tdata.mandatory.all? {|k| values.has_key?(k)}
-        raise Webgen::RenderError.new("Not all mandatory parameters set", self.class.name, context.dest_node, context.ref_node)
+        raise Webgen::RenderError.new("Not all mandatory parameters set", "tag", context.dest_node, context.ref_node)
       end
       config = context.website.config.dup
       config.set_values(values)

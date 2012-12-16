@@ -34,7 +34,7 @@ module Webgen
       def create_nodes(path, blocks)
         if MANDATORY_INFOS.any? {|t| path.meta_info[t].nil?}
           raise Webgen::NodeCreationError.new("At least one of #{MANDATORY_INFOS.join('/')} is missing",
-                                              self.class.name, path)
+                                              "path_handler.sitemap", path)
         end
 
         path.ext = 'xml'

@@ -43,7 +43,7 @@ module Webgen
         def type_check!(type) #:nodoc:
           if ![:css, :js].include?(type)
             raise Webgen::RenderError.new("Type must either be :css or :js, not #{type}",
-                                          self.class.name, @context.dest_node, @context.ref_node)
+                                          "context.html_head", @context.dest_node, @context.ref_node)
           end
         end
         private :type_check!

@@ -50,7 +50,7 @@ module Webgen
         end
         entries
       rescue Exception => e
-        raise Webgen::NodeCreationError.new("Could not parse block '#{block_name}': #{e.message}", self.class.name)
+        raise Webgen::NodeCreationError.new("Could not parse block '#{block_name}': #{e.message}", "path_handler.meta_info")
       end
 
       # Update already existing nodes with meta information from the given meta info node.

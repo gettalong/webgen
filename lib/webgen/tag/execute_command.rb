@@ -19,7 +19,7 @@ module Webgen
         output = `#{command} 2> #{BIT_BUCKET}`
         if $?.exitstatus != 0
           raise Webgen::RenderError.new("Command '#{command}' has return value != 0: #{output}",
-                                        self.name, context.dest_node, context.ref_node)
+                                        "tag.#{tag}", context.dest_node, context.ref_node)
         end
         output = CGI::escapeHTML(output) if context[:config]['tag.execute_command.escape_html']
         [output, context[:config]['tag.execute_command.process_output']]

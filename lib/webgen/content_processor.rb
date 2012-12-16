@@ -104,10 +104,10 @@ module Webgen
       extension(name).call(context)
     rescue Webgen::Error => e
       e.path = context.dest_node if e.path.to_s.empty?
+      e.location = "content_processor.#{name}" unless e.location
       raise
     rescue Exception => e
-      ext = extension(name)
-      raise Webgen::RenderError.new(e, (ext.respond_to?(:name) ? ext.name : nil), context.dest_node)
+      raise Webgen::RenderError.new(e, "content_processor.#{name}", context.dest_node)
     end
 
     # Normalize the content processor pipeline.

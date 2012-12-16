@@ -17,7 +17,7 @@ module Webgen
         end
       rescue URI::InvalidURIError => e
         raise Webgen::RenderError.new("Error while parsing path '#{path}': #{e.message}",
-                                      self.name, context.dest_node, context.ref_node)
+                                      "tag.#{tag}", context.dest_node, context.ref_node)
       end
 
     end

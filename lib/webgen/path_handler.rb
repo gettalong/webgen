@@ -216,7 +216,7 @@ module Webgen
     #
     # Can only be called once because the tree can only be populated once!
     def populate_tree
-      raise Webgen::NodeCreationError.new("Can't populate tree twice", self.class.name) if @website.tree.root
+      raise Webgen::NodeCreationError.new("Can't populate tree twice", 'path_handler') if @website.tree.root
 
       time = Benchmark.measure do
         meta_info, rest = @website.ext.source.paths.partition {|path| path.path =~ /[\/.]metainfo$/}
@@ -268,9 +268,10 @@ module Webgen
             @website.blackboard.dispatch_msg(:after_node_written, node, content)
           rescue Webgen::Error => e
             e.path = node.alcn if e.path.to_s.empty?
+            e.location = "path_handler.#{node.node_info[:path_handler]}" unless e.location
             raise
           rescue Exception => e
-            raise Webgen::RenderError.new(e, nil, node)
+            raise Webgen::RenderError.new(e, "path_handler.#{node.node_info[:path_handler]}", node)
           end
         end
         @website.blackboard.dispatch_msg(:after_all_nodes_written)
@@ -325,7 +326,7 @@ module Webgen
     # alcn from which these nodes are created!
     def create_secondary_nodes(path, content = '', source_alcn = nil)
       if (sn = @secondary_nodes[path]) && sn[1] != source_alcn
-        raise Webgen::NodeCreationError.new("Duplicate secondary path name <#{path}>", self.class.name, path)
+        raise Webgen::NodeCreationError.new("Duplicate secondary path name <#{path}>", 'path_handler', path)
       end
       @website.blackboard.dispatch_msg(:before_secondary_nodes_created, path, source_alcn)
 
@@ -388,10 +389,10 @@ module Webgen
       end
     rescue Webgen::Error => e
       e.path = path.to_s if e.path.to_s.empty?
-      e.location = instance(handler).class.name unless e.location
+      e.location = "path_handler.#{handler}" unless e.location
       raise
     rescue Exception => e
-      raise Webgen::NodeCreationError.new(e, instance(handler).class.name, path)
+      raise Webgen::NodeCreationError.new(e, "path_handler.#{handler}", path)
     end
     private :create_nodes_with_path_handler
 

@@ -56,7 +56,7 @@ module Webgen
         execute("pdflatex -shell-escape -interaction=nonstopmode -halt-on-error #{file}.tex", cwd, context) do |status, stdout, stderr|
           errors = (stdout+stderr).scan(/^!(.*\n.*)/).join("\n")
           raise Webgen::RenderError.new("Error while parsing TikZ picture commands with PDFLaTeX: #{errors}",
-                                        self.name, context.dest_node, context.ref_node)
+                                        'content_processor.tikz', context.dest_node, context.ref_node)
         end
 
         execute("pdfcrop #{file}.pdf #{file}.pdf", cwd, context)
@@ -93,7 +93,7 @@ module Webgen
             yield(status, stdout, stderr)
           else
             raise Webgen::RenderError.new("Error while running a command for a TikZ picture: #{stdout + "\n" + stderr}",
-                                          self.name, context.dest_node, context.ref_node)
+                                          'content_processor.tikz', context.dest_node, context.ref_node)
           end
         end
         [status, stdout, stderr]

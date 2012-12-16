@@ -14,7 +14,7 @@ module Webgen
         context.content = ::Sass::Engine.new(context.content, options).render
         context
       rescue ::Sass::SyntaxError => e
-        raise Webgen::RenderError.new(e, self.class.name, context.dest_node, nil, (e.sass_line if e.sass_line))
+        raise Webgen::RenderError.new(e, 'content_processor.scss', context.dest_node, nil, (e.sass_line if e.sass_line))
       end
 
     end

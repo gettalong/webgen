@@ -77,11 +77,11 @@ module Webgen
             return ''
           elsif block_node
             raise Webgen::RenderError.new("No block named '#{options[:name]}' found in <#{block_node}>",
-                                          self.name, context.dest_node,
+                                          'content_processor.blocks', context.dest_node,
                                           context.ref_node, (options[:line_nr_proc].call if options[:line_nr_proc]))
           else
             raise Webgen::RenderError.new("No node in the render chain has a block named '#{options[:name]}'",
-                                          self.name, context.dest_node,
+                                          'content_processor.blocks', context.dest_node,
                                           context.ref_node, (options[:line_nr_proc].call if options[:line_nr_proc]))
           end
         end

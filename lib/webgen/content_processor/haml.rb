@@ -16,7 +16,7 @@ module Webgen
         context
       rescue ::Haml::Error => e
         line = (e.line ? e.line + 1 : Webgen::Error.error_line(e))
-        raise Webgen::RenderError.new(e, self.class.name, context.dest_node, nil, line)
+        raise Webgen::RenderError.new(e, 'content_processor.haml', context.dest_node, nil, line)
       end
 
     end

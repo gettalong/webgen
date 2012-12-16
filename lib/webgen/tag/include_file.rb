@@ -16,7 +16,7 @@ module Webgen
         filename = File.join(context.website.directory, filename) unless filename =~ /^(\/|\w:)/
         if !File.exists?(filename)
           raise Webgen::RenderError.new("File '#{filename}' cannot be included because it does not exist",
-                                        self.name, context.dest_node, context.ref_node)
+                                        "tag.#{tag}", context.dest_node, context.ref_node)
         end
 
         content = File.read(filename)
