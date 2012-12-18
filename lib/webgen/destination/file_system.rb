@@ -37,7 +37,8 @@ module Webgen
       # Write the +data+ to the given +path+.
       def write(path, data)
         dest = File.join(@root, path)
-        FileUtils.makedirs(File.dirname(dest))
+        parent_dir = File.dirname(dest)
+        FileUtils.makedirs(parent_dir) unless File.directory?(parent_dir)
         if path[-1] == ?/
           FileUtils.makedirs(dest)
         else
