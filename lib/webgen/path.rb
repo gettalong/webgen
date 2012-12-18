@@ -57,9 +57,9 @@ module Webgen
     # needs to have a trailing slash! The +path+ parameter doesn't need to be absolute and may
     # contain path patterns.
     def self.append(base, path)
-      raise(ArgumentError, 'base needs to start with a slash (i.e. be an absolute path)') unless base =~ /^\//
+      raise(ArgumentError, 'base needs to start with a slash (i.e. be an absolute path)') unless base[0] == ?/
       url = url(base) + url(path, false)
-      url.path + (url.fragment.nil? ? '' : '#' + url.fragment)
+      url.path << (url.fragment.nil? ? '' : "##{url.fragment}")
     end
 
     # Return +true+ if the given path string matches the given path pattern.
@@ -67,7 +67,7 @@ module Webgen
     # For information on which patterns are supported, have a look at the API documentation of
     # File.fnmatch.
     def self.matches_pattern?(path, pattern, options = File::FNM_DOTMATCH|File::FNM_CASEFOLD|File::FNM_PATHNAME)
-      pattern += '/' if path.to_s =~ /\/$/ && pattern !~ /\/$|^$/
+      pattern += '/' if path =~ /\/$/ && pattern !~ /\/$|^$/
       File.fnmatch(pattern, path, options)
     end
 
@@ -162,13 +162,13 @@ module Webgen
     #
     # Triggers analyzation of the path if invoked.
     def cn
-      if meta_info['cn'].kind_of?(String)
+      if meta_info['cn']
         tmp_cn = custom_cn
       else
-        tmp_cn = basename + (use_version_for_cn? ? "-#{meta_info['version']}" : '') +
-          (ext.length > 0 ? '.' + ext : '')
+        tmp_cn = basename.dup << (use_version_for_cn? ? "-#{meta_info['version']}" : '') <<
+          (ext.length > 0 ? ".#{ext}" : '')
       end
-      tmp_cn + (@path =~ /.\/$/ ? '/' : '')
+      tmp_cn << (@path =~ /.\/$/ ? '/' : '')
     end
 
     # The localized canonical name created from the +path+.
@@ -183,7 +183,7 @@ module Webgen
     # Triggers analyzation of the path if invoked.
     def acn
       if @path =~ /#/
-        self.class.new(parent_path).acn + cn
+        self.class.new(parent_path).acn << cn
       else
         parent_path + cn
       end
@@ -194,7 +194,7 @@ module Webgen
     # Triggers analyzation of the path if invoked.
     def alcn
       if @path =~ /#/
-        self.class.new(parent_path).alcn + lcn
+        self.class.new(parent_path).alcn << lcn
       else
         parent_path + lcn
       end
@@ -270,7 +270,7 @@ module Webgen
     end
 
     def to_s #:nodoc:
-      @path.dup
+      @path
     end
     alias_method :to_str, :to_s
 
@@ -317,7 +317,7 @@ module Webgen
         @meta_info['sort_info'] ||= match_data[1].to_i unless match_data[1].nil?
         @basename               = match_data[2]
         @meta_info['lang']      ||= Webgen::LanguageManager.language_for_code(match_data[3]) if match_data[3]
-        @ext                    = (@meta_info['lang'].nil? && !match_data[3].nil? ? match_data[3].to_s + '.' : '') + match_data[4].to_s
+        @ext                    = (@meta_info['lang'].nil? && !match_data[3].nil? ? match_data[3] << '.' : '') << match_data[4].to_s
       end
     end
 
@@ -354,7 +354,7 @@ module Webgen
           ''
         end
       end
-      self.meta_info['cn'].gsub(CN_SEGMENTS, &replace_segment).gsub(/\/+$/, '')
+      self.meta_info['cn'].to_s.gsub(CN_SEGMENTS, &replace_segment).gsub(/\/+$/, '')
     end
 
   end

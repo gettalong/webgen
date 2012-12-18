@@ -38,15 +38,18 @@ class TestSource < MiniTest::Unit::TestCase
     path1 = MiniTest::Mock.new
     path1.expect(:mount_at, path1, ['/'])
     path1.expect(:to_str, 'path1.file')
+    path1.expect(:=~, false, [/\/$/])
     path1.expect(:hash, 'path1.file'.hash)
     path2 = MiniTest::Mock.new
     path2.expect(:mount_at, path2, ['/'])
     path2.expect(:to_str, 'path2.data')
+    path2.expect(:=~, false, [/\/$/])
     path2.expect(:[]=, nil, ['passive', true])
     path2.expect(:hash, 'path2.data'.hash)
     path3 = MiniTest::Mock.new
     path3.expect(:mount_at, path3, ['/hallo/'])
     path3.expect(:to_str, 'path3.file')
+    path3.expect(:=~, false, [/\/$/])
     path3.expect(:hash, 'path3.file'.hash)
 
     @src.passive_sources << ['/', 'my_source', [path2]]
