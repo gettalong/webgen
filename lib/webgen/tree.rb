@@ -35,6 +35,11 @@ module Webgen
       @dummy_root.children.first
     end
 
+    # Access a node via its +:alcn+.
+    def [](path)
+      @node_access[:alcn][path]
+    end
+
     # Access a node via a +path+ of a specific +type+.
     #
     # If type is +:alcn+ (default) then +path+ has to be an absolute localized canonical name, if
@@ -51,7 +56,6 @@ module Webgen
         raise ArgumentError, "Unknown type '#{type}' for resolving path <#{path}>"
       end
     end
-    alias_method :[], :node
 
     # Return the node representing the given +path+ which can be an alcn/acn/destination path (name
     # resolution is done in the specified order). The path has to be absolute, i.e. starting with a

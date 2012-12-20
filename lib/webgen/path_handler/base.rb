@@ -220,7 +220,7 @@ module Webgen
       # Check if the node alcn or the destination path, which would be created by #create_node for
       # the given paths, exists.
       def node_exists?(path, dest_path)
-        @website.tree[path.alcn] || (!path.meta_info['no_output'] && @website.tree[dest_path, :dest_path])
+        @website.tree[path.alcn] || (!path.meta_info['no_output'] && @website.tree.node(dest_path, :dest_path))
       end
       protected :node_exists?
 

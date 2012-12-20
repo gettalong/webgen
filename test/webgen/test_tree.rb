@@ -99,9 +99,9 @@ class TestTree < MiniTest::Unit::TestCase
 
   def test_register_node
     node = Webgen::Node.new(@tree.dummy_root, '/', '/')
-    assert_equal(node, @tree['/', :alcn])
-    assert_equal(node, @tree['/', :acn])
-    assert_equal(node, @tree['/', :dest_path])
+    assert_equal(node, @tree.node('/', :alcn))
+    assert_equal(node, @tree.node('/', :acn))
+    assert_equal(node, @tree.node('/', :dest_path))
 
     other_node = Webgen::Node.new(node, 'dummy.html', '/', 'no_output' => true)
     assert_equal('/', other_node.dest_path)
@@ -126,19 +126,19 @@ class TestTree < MiniTest::Unit::TestCase
 
     @tree.delete_node(file)
     assert_nil(@tree['/testfile'])
-    assert_nil(@tree['/testfile', :acn])
-    assert_nil(@tree['/testfile', :dest_path])
+    assert_nil(@tree.node('/testfile', :acn))
+    assert_nil(@tree.node('/testfile', :dest_path))
     assert_equal(0, @tree.node_access[:translation_key]['/testfile'].length)
     assert_equal(2, root.children.size)
     assert_equal(1, nrcalls)
 
     @tree.delete_node(virtual_root)
-    assert_equal(root, @tree['/', :dest_path])
+    assert_equal(root, @tree.node('/', :dest_path))
 
     @tree.delete_node(root)
     assert_nil(@tree['/testdir'])
-    assert_nil(@tree['/testdir', :acn])
-    assert_nil(@tree['/testdir', :dest_path])
+    assert_nil(@tree.node('/testdir', :acn))
+    assert_nil(@tree.node('/testdir', :dest_path))
     assert_nil(@tree['/'])
     assert_equal(4, nrcalls)
     assert_equal([@tree.dummy_root], @tree.node_access[:alcn].values)
