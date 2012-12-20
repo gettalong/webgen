@@ -146,19 +146,24 @@ module Webgen
       end
 
       used_secondary_paths = {}
+      written_nodes = Set.new
       @website.blackboard.add_listener(:before_secondary_nodes_created, self) do |path, source_alcn|
         (used_secondary_paths[source_alcn] ||= Set.new) << path if source_alcn
       end
-      @website.blackboard.add_listener(:before_node_written, self) do |node|
+      @website.blackboard.add_listener(:before_all_nodes_written, self) do |node|
         used_secondary_paths = {}
+        written_nodes = Set.new
       end
       @website.blackboard.add_listener(:after_node_written, self) do |node|
-        @secondary_nodes.select do |path, data|
-          data[1] == node.alcn && used_secondary_paths[node.alcn] &&
-            !used_secondary_paths[node.alcn].include?(path)
-        end.each do |path, data|
-          @secondary_nodes.delete(path)
-          data[2].each {|alcn| @website.tree.delete_node(@website.tree[alcn])}
+        written_nodes << node.alcn
+      end
+      @website.blackboard.add_listener(:after_all_nodes_written, self) do |node|
+        @secondary_nodes.delete_if do |path, data|
+          if written_nodes.include?(data[1]) && (!used_secondary_paths[data[1]] ||
+                                                 !used_secondary_paths[data[1]].include?(path))
+            data[2].each {|alcn| @website.tree.delete_node(@website.tree[alcn])}
+            true
+          end
         end
       end
     end
