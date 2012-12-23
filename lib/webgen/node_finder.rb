@@ -71,9 +71,9 @@ module Webgen
   #   used.
   #
   # [:lang]
-  #   Value: a language code/+nil+/the special value :+node+ or an array of these values. Nodes that
+  #   Value: a language code/+nil+/the special value +node+ or an array of these values. Nodes that
   #   have one of the specified language codes, are language independent (in case of the value
-  #   +nil+) or have the same language as the reference node (in case of the value :+node+) are
+  #   +nil+) or have the same language as the reference node (in case of the value +node+) are
   #   used.
   #
   # [:mi]
@@ -330,7 +330,7 @@ module Webgen
     end
 
     def filter_lang(nodes, ref_node, langs)
-      langs = [langs].flatten.map {|l| l == :node ? ref_node.lang : l}.uniq
+      langs = [langs].flatten.map {|l| l == 'node' ? ref_node.lang : l}.uniq
       nodes.keep_if {|n| langs.any? {|l| n.lang == l}}
     end
 

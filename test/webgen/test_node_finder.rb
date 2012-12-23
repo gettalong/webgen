@@ -115,7 +115,7 @@ class TestNodeFinder < MiniTest::Unit::TestCase
     check.call(%w[/file.en.html /file.de.html /other.en.html /german.de.html /dir2/index.en.html /dir2/index.de.html],
                @nf.find({:lang => ['en', 'de'], :flatten => true}, tree['/dir/']))
     check.call(%w[/file.en.html /other.en.html /dir2/index.en.html],
-               @nf.find({:lang => :node, :flatten => true}, tree['/file.en.html']))
+               @nf.find({:lang => 'node', :flatten => true}, tree['/file.en.html']))
 
     # test filter: ancestors
     check.call(%w[/ /dir/ /dir/dir/ /dir/dir/file.html],
