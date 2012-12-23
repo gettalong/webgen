@@ -136,7 +136,7 @@ module Webgen
         opts.merge({
                      :filename => context.ref_node.alcn,
                      :syntax => :sass,
-                     :cache_store => ::Sass::CacheStores::Filesystem.new(context.website.tmpdir('sass')),
+                     :cache_store => ::Sass::CacheStores::Filesystem.new(context.website.tmpdir('content_processor.sass')),
                      :filesystem_importer => FileSystemImporter,
                      :load_paths => load_paths,
                      :webgen_context => context
