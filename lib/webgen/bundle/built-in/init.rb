@@ -260,6 +260,8 @@ option('tag.date.format', '%Y-%m-%d %H:%M:%S',
 tag.register('MetaInfo', :names => ['meta_info', :default])
 option('tag.meta_info.escape_html', true,
        'Special HTML characters in the output will be escaped if true', &true_or_false)
+option('tag.meta_info.mi', nil,
+       'The name of the meta information that should be output', &is_string)
 
 tag.register('Relocatable', :names => ['relocatable', 'r'], :mandatory => ['path'])
 option('tag.relocatable.path', nil,

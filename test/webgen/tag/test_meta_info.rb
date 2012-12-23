@@ -20,6 +20,9 @@ class TestTagMetaInfo < MiniTest::Unit::TestCase
 
     @context[:config] = {'tag.meta_info.escape_html' => false}
     assert_equal("value <br />", Webgen::Tag::MetaInfo.call('key', '', @context))
+
+    @context[:config] = {'tag.meta_info.mi' => 'key'}
+    assert_equal("value <br />", Webgen::Tag::MetaInfo.call('meta_info', '', @context))
   end
 
 end

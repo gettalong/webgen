@@ -9,6 +9,7 @@ module Webgen
 
       # Treat +tag+ as a meta information key and return its value from the content node.
       def self.call(tag, body, context)
+        tag = context[:config]['tag.meta_info.mi'] if tag == 'meta_info'
         output = ''
         if tag == 'lang'
           output = context.content_node.lang
