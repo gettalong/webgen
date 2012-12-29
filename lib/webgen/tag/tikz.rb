@@ -15,7 +15,6 @@ module Webgen
         path = Webgen::Path.new(path)
 
         add_tikz_options!(path, context)
-
         node = context.website.ext.path_handler.create_secondary_nodes(path, body, context.ref_node.alcn).first
 
         attrs = {'alt' => ''}.merge(context[:config]['tag.tikz.img_attr']).collect do |name, value|
@@ -27,7 +26,8 @@ module Webgen
       # Add all needed options for Webgen::ContentProcessor::Tikz to the given path.
       def self.add_tikz_options!(path, context)
         %w[content_processor.tikz.resolution content_processor.tikz.transparent
-           content_processor.tikz.libraries content_processor.tikz.opts].each do |opt|
+           content_processor.tikz.libraries content_processor.tikz.opts
+           content_processor.tikz.template].each do |opt|
           path.meta_info[opt] = context[:config][opt]
         end
         path.meta_info['pipeline'] = 'tikz'
