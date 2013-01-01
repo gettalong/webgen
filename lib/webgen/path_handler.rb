@@ -213,7 +213,7 @@ module Webgen
 
     # Return the instance of the path handler class with the given name.
     def instance(handler)
-      @instances[handler] ||= extension(handler).new(@website)
+      @instances[handler.intern] ||= extension(handler).new(@website)
     end
 
 
