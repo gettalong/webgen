@@ -32,8 +32,13 @@ module Webgen
             parent_path = create_directories(File.dirname(key), 'modified_at' => meta_info['modified_at'])
 
             dest_path = meta_info.delete('dest_path') || key
-            dest_path = (URI::parse(dest_path).absolute? || dest_path =~ /^\// ?
-                         dest_path : File.join(parent_path, dest_path))
+            dest_path = if URI::parse(dest_path).absolute?
+                          dest_path
+                        elsif dest_path =~ /^\//
+                          "webgen:#{dest_path}"
+                        else
+                          "webgen:#{File.join(parent_path, dest_path)}"
+                        end
             meta_info['dest_path'] = dest_path
             entry_path = Webgen::Path.new(key, meta_info)
 
