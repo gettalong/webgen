@@ -99,6 +99,8 @@ class TestNode < MiniTest::Unit::TestCase
 
     n = Webgen::Node.new(tree['/'], 'testing', '../../.././dir2')
     assert_equal('../dir2', tree['/dir/subfile.html'].route_to(n))
+
+    assert_equal('../routed.html', tree['/dir2/index.en.html'].route_to(tree['/file.en.html#nested']))
   end
 
   def test_proxy_node

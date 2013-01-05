@@ -167,7 +167,8 @@ module Webgen
     # If the +lang+ parameter is not used, it defaults to the language of the current node.
     def route_to(node, lang = @lang)
       my_url = Webgen::Path.url(@dest_path)
-      other_url = Webgen::Path.url(node.proxy_node(lang).dest_path)
+      pnode = node.proxy_node(lang)
+      other_url = Webgen::Path.url(pnode['routing_path'] || pnode.dest_path)
 
       # resolve any '.' and '..' paths in the target url
       if other_url.path =~ /\/\.\.?\// && other_url.scheme == 'webgen'

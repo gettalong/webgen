@@ -116,7 +116,7 @@ module Webgen
     #   /
     #   /file.en.html            'file en' sort_info=3
     #   /file.en.html#frag       'frag'
-    #   /file.en.html#nested     'fragnested'
+    #   /file.en.html#nested     'fragnested' routing_path="/routed.html"
     #   /file.de.html            'file de' sort_info=5
     #   /file.de.html#frag       'frag'
     #   /other.html              'other'
@@ -135,7 +135,7 @@ module Webgen
 
       file_en = Webgen::Node.new(root, 'file.html', '/file.en.html', {'lang' => 'en', 'title' => 'file en', 'sort_info' => 3})
       frag_en = Webgen::Node.new(file_en, '#frag', '/file.en.html#frag', {'title' => 'frag'})
-      Webgen::Node.new(frag_en, '#nested', '/file.en.html#nested', {'title' => 'fragnested'})
+      Webgen::Node.new(frag_en, '#nested', '/file.en.html#nested', {'title' => 'fragnested', 'routing_path' => '/routed.html'})
       file_de = Webgen::Node.new(root, 'file.html', '/file.de.html', {'lang' => 'de', 'title' => 'file de', 'sort_info' => 5})
       Webgen::Node.new(file_de, '#frag', '/file.de.html#frag', {'title' => 'frag'})
 
