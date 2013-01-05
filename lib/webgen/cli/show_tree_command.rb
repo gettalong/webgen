@@ -56,10 +56,11 @@ DESC
         children.sort {|a,b| a.alcn <=> b.alcn}.map do |node|
           sub = collect_data(node.children, selector)
           if sub.length > 0 ||
-              ((selector.nil? || node.lcn.include?(selector)) &&
+              ((selector.nil? || node.alcn.include?(selector)) &&
                ((!node.is_fragment? || @show_fragments) &&
                 (!node['passive'] || commandparser.website.ext.item_tracker.node_referenced?(node))))
             data = [@use_alcn ? node.alcn : node.lcn]
+            data << node.alcn
             data << (@meta_info ? node.meta_info.map {|k,v| "#{k}: #{v.inspect}"} : [])
             data << sub
             data
@@ -71,9 +72,9 @@ DESC
       private :collect_data
 
       def print_tree(data, indent = '', selector)
-        data.each do |name, info, children|
+        data.each do |name, alcn, info, children|
           puts("#{indent}#{Utils.light(Utils.blue(name))}")
-          info.each {|i| puts("#{indent}  #{i}")} if info.length > 0 && (selector.nil? || name.include?(selector))
+          info.each {|i| puts("#{indent}  #{i}")} if info.length > 0 && (selector.nil? || alcn.include?(selector))
           print_tree(children, indent + '  ', selector)
         end
       end
