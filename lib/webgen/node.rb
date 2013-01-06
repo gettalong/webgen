@@ -186,12 +186,7 @@ module Webgen
     #
     # If the +lang+ parameter is not used, it defaults to the language of the current node.
     def proxy_node(lang = @lang)
-      proxy_path = self['proxy_path']
-      if proxy_path.nil?
-        self
-      else
-        resolve(proxy_path, lang, true) || self
-      end
+      self['proxy_path'] && resolve(self['proxy_path'], lang, true) || self
     end
 
     # Return a HTML link from this node to the given node.
