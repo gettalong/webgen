@@ -12,6 +12,8 @@ module Webgen
   # information is available through the #[] and #meta_info accessors, the internal processing
   # information through the #node_info accessor.
   #
+  # This class is not directly used. Instead path handlers define sub-classes that provide handler
+  # specific methods. See the basic sub-class Webgen::PathHandler::Base::Node.
   class Node
 
     # The parent node. This is in all but one case a Node object. The one exception is that the

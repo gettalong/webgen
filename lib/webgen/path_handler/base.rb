@@ -27,8 +27,8 @@ module Webgen
     #
     module Base
 
-      # This is the base Node sub class used by the Base#create_node method if a path handler class
-      # does not specify another Node class.
+      # This is the Node sub class used by the Base#create_node method if a path handler class does
+      # not specify another Node class.
       class Node < Webgen::Node
 
         # Return the result of the #content method on the associated path handler or +nil+ if the
