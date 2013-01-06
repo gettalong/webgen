@@ -112,6 +112,16 @@ module Webgen
       @blocks = blocks
     end
 
+    # Convert the Page object back into a string.
+    def to_s
+      str = ""
+      str << @meta_info.to_yaml
+      blocks.each do |name, value|
+        str << "--- #{name}\n" << value.gsub(/^---.*?$/) {|m| "\\#{m}" } << (value =~ /\n$/ ? "" : "\n")
+      end
+      str
+    end
+
   end
 
 end

@@ -225,4 +225,12 @@ EOF
     assert_equal('content', d.blocks['content'])
   end
 
+  def test_to_s
+    data = "---\ntitle: test\n---\ncontent\n\\--- name\nother content\n--- block2\ncontent block2"
+    result = "---\ntitle: test\n--- content\ncontent\n\\--- name\nother content\n--- block2\ncontent block2\n"
+    page = Webgen::Page.from_data(data)
+    assert_equal(result, page.to_s)
+    assert_equal(result, Webgen::Page.from_data(page.to_s).to_s)
+  end
+
 end
