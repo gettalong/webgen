@@ -31,6 +31,14 @@ module Webgen
       # not specify another Node class.
       class Node < Webgen::Node
 
+        # Does exactly the same as Node#route_to but also automatically adds the necessary item
+        # tracking information.
+        def route_to(node, lang = @lang)
+          tree.website.ext.item_tracker.add(self, :node_meta_info, node)
+          tree.website.ext.item_tracker.add(self, :node_meta_info, node.proxy_node(lang))
+          super
+        end
+
         # Return the result of the #content method on the associated path handler or +nil+ if the
         # associated path handler does not have a #content method.
         def content
