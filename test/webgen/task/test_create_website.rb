@@ -38,8 +38,8 @@ class TestTaskCreateWebsite < MiniTest::Unit::TestCase
       assert(File.directory?(@website.directory))
       assert(File.directory?(File.join(@website.directory, 'tmp')))
       assert_equal(tmpdir, File.read(File.join(@website.directory, 'tmp', 'test.txt')))
-      refute(File.directory?(File.join(@website.directory, 'src')))
-      refute(File.file?(File.join(@website.directory, 'webgen.config')))
+      assert(File.directory?(File.join(@website.directory, 'src')))
+      assert(File.file?(File.join(@website.directory, 'webgen.config')))
     end
   end
 

@@ -67,7 +67,7 @@ module Webgen
             ws = Webgen::Website.new(tmpdir) do |ws|
               ws.config['sources'] = [['/', :file_system, File.join(Webgen::Utils.data_dir, 'basic_website_template')]]
               if template
-                ws.config['sources'] = [(['/', :file_system, website.ext.task.data(:create_website)[:templates][template]])]
+                ws.config['sources'].unshift(['/', :file_system, website.ext.task.data(:create_website)[:templates][template]])
               end
               ws.config['destination'] = [:file_system, File.expand_path(website.directory)]
               ws.ext.path_handler.registered_extensions.each do |name, data|
