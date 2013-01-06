@@ -35,7 +35,7 @@ module Webgen
           end
 
           content_processor = context.website.ext.content_processor
-          context.website.ext.item_tracker.add(context.dest_node, :node_content, alcn)
+          context.website.ext.item_tracker.add(context.dest_node, :node_content, self)
 
           context.content = blocks[name].dup
           context[:block_name] = name

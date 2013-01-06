@@ -8,9 +8,9 @@ module Webgen
     # This class is used to track changes to the content of a node. The content of a node is changed
     # if any of its dependencies are changed.
     #
-    # The item for this tracker is the alcn of the node:
+    # The item for this tracker is the node:
     #
-    #   website.ext.item_tracker.add(some_node, :node_content, my_node.alcn)
+    #   website.ext.item_tracker.add(some_node, :node_content, my_node)
     #
     class NodeContent
 
@@ -18,8 +18,8 @@ module Webgen
         @website = website
       end
 
-      def item_id(alcn) #:nodoc:
-        alcn
+      def item_id(node) #:nodoc:
+        node.alcn
       end
 
       def item_data(alcn) #:nodoc:

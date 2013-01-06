@@ -85,7 +85,7 @@ module Webgen
       def self.links_to_translations(context)
         context.website.tree.translations(context.dest_node).map do |node|
           next '' if node.alcn == context.dest_node.alcn
-          context.website.ext.item_tracker.add(context.dest_node, :node_meta_info, node.alcn)
+          context.website.ext.item_tracker.add(context.dest_node, :node_meta_info, node)
 
           result = "\n<link type=\"text/html\" rel=\"alternate\" hreflang=\"#{node.lang}\" "
           result << "href=\"#{context.dest_node.route_to(node)}\" "
@@ -103,7 +103,7 @@ module Webgen
           next path if Webgen::Path.url(path, false).absolute?
           node = context.content_node.resolve(path, context.dest_node.lang, true)
           if node
-            context.website.ext.item_tracker.add(context.dest_node, :node_meta_info, node.alcn)
+            context.website.ext.item_tracker.add(context.dest_node, :node_meta_info, node)
             context.dest_node.route_to(node)
           else
             nil

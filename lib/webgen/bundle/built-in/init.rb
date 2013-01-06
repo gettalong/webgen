@@ -153,8 +153,8 @@ item_tracker.register('NodeContent')
 
 item_tracker.register('NodeMetaInfo')
 website.blackboard.add_listener(:after_node_created) do |node|
-  item_tracker.add(node, :node_meta_info, node.alcn)
-  item_tracker.add(node, :node_meta_info, node.alcn, Webgen::ItemTracker::NodeMetaInfo::CONTENT_MODIFICATION_KEY)
+  item_tracker.add(node, :node_meta_info, node)
+  item_tracker.add(node, :node_meta_info, node, Webgen::ItemTracker::NodeMetaInfo::CONTENT_MODIFICATION_KEY)
 end
 
 item_tracker.register('Nodes')

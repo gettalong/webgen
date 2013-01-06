@@ -11,7 +11,9 @@ class TestNodeContent < MiniTest::Unit::TestCase
   end
 
   def test_item_id
-    assert_equal('id', @obj.item_id('id'))
+    s = 'id'
+    def s.alcn; self; end
+    assert_equal('id', @obj.item_id(s))
   end
 
   def test_item_data

@@ -9,17 +9,17 @@ module Webgen
     #
     # Depending on what should be tracked, one needs to provide the following item:
     #
-    # [node_alcn, nil]
+    # [node, nil]
     #   Tracks changes to the whole meta information of the node, i.e. if any meta information value
     #   changes, a change is detected.
     #
-    # [node_alcn, key]
+    # [node, key]
     #   Tracks changes to a specific meta information key of the node.
     #
     # Here are some examples:
     #
-    #   website.ext.item_tracker.add(some_node, :node_meta_info, my_node.alcn) # first case
-    #   website.ext.item_tracker.add(some_node, :node_meta_info, my_node.alcn, 'title') # second case
+    #   website.ext.item_tracker.add(some_node, :node_meta_info, my_node) # first case
+    #   website.ext.item_tracker.add(some_node, :node_meta_info, my_node, 'title') # second case
     #
     class NodeMetaInfo
 
@@ -29,8 +29,8 @@ module Webgen
         @website = website
       end
 
-      def item_id(alcn, key = nil) #:nodoc:
-        [alcn, key]
+      def item_id(node, key = nil) #:nodoc:
+        [node.alcn, key]
       end
 
       def item_data(alcn, key = nil) #:nodoc:

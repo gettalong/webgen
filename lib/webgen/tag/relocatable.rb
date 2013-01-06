@@ -46,7 +46,7 @@ module Webgen
         end
 
         if dest_node
-          context.website.ext.item_tracker.add(context.dest_node, :node_meta_info, dest_node.alcn)
+          context.website.ext.item_tracker.add(context.dest_node, :node_meta_info, dest_node)
           context.dest_node.route_to(dest_node) + fragment
         else
           ''

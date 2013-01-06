@@ -51,7 +51,7 @@ module Webgen
         method_name, options, type = *iid
         nodes = node_list(method_name, options)
         old_data != nodes_to_alcn(nodes) ||
-          nodes.flatten.any? {|n| type == :content ? @website.ext.item_tracker.node_changed?(n) : @website.ext.item_tracker.item_changed?(:node_meta_info, n.alcn)}
+          nodes.flatten.any? {|n| type == :content ? @website.ext.item_tracker.node_changed?(n) : @website.ext.item_tracker.item_changed?(:node_meta_info, n)}
       end
 
       def referenced_nodes(iid, alcn_list) #:nodoc:

@@ -14,8 +14,9 @@ class TestNodeMetaInfo < MiniTest::Unit::TestCase
   end
 
   def test_item_id
-    assert_equal(['id', nil], @obj.item_id('id'))
-    assert_equal(['id', 'key'], @obj.item_id('id', 'key'))
+    @node.expect(:alcn, 'id')
+    assert_equal(['id', nil], @obj.item_id(@node))
+    assert_equal(['id', 'key'], @obj.item_id(@node, 'key'))
   end
 
   def test_item_data

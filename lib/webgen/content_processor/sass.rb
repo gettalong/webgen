@@ -110,7 +110,7 @@ module Webgen
 
           if ref_node
             if dest_node = ref_node.resolve(path, context.dest_node.lang, true)
-              context.website.ext.item_tracker.add(context.dest_node, :node_meta_info, dest_node.alcn)
+              context.website.ext.item_tracker.add(context.dest_node, :node_meta_info, dest_node)
               path = context.dest_node.route_to(dest_node)
             end
           else
