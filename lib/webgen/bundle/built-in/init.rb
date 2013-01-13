@@ -174,7 +174,8 @@ end
 require 'webgen/node_finder'
 
 website.ext.node_finder = Webgen::NodeFinder.new(website)
-
+option('node_finder.option_sets', {},
+       'Node finder option sets that can be referenced by name')
 
 ########################################################################
 # Everything related to the path handler extension
