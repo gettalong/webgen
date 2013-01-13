@@ -55,12 +55,17 @@ class TestNodeFinder < MiniTest::Unit::TestCase
                  ],
                  @nf.find({:levels => [2,3]}, tree['/']))
 
-    # test sort methods
+    # test sort and reverse
     check.call(%w[/file.en.html /file.de.html /dir/dir/file.html /german.de.html /dir2/index.de.html
                   /dir2/index.en.html /other.html /other.en.html /dir/subfile.html],
                @nf.find({:alcn => '/**/*.html', :flatten => true, :sort => true}, tree['/']))
+    check.call(%w[/dir/subfile.html /other.en.html /other.html /dir2/index.en.html /dir2/index.de.html
+                   /german.de.html /dir/dir/file.html /file.de.html /file.en.html],
+               @nf.find({:alcn => '/**/*.html', :flatten => true, :sort => true, :reverse => true}, tree['/']))
     check.call(%w[/german.de.html /other.en.html /other.html /file.en.html /file.de.html],
                @nf.find({:alcn => '/*.html', :flatten => true, :sort => 'sort_info'}, tree['/']))
+    check.call(%w[/file.de.html /file.en.html /other.html /other.en.html /german.de.html],
+               @nf.find({:alcn => '/*.html', :flatten => true, :sort => 'sort_info', :reverse => true}, tree['/']))
     check.call(%w[/dir/dir/file.html /file.de.html /file.en.html /german.de.html /dir2/index.de.html /dir2/index.en.html
                   /other.html /other.en.html /dir/subfile.html],
                @nf.find({:alcn => '/**/*.html', :name => 'test', :flatten => true, :sort => 'title'}, tree['/']))
@@ -72,6 +77,14 @@ class TestNodeFinder < MiniTest::Unit::TestCase
                   tree['/german.de.html'], tree['/other.html'], tree['/other.en.html'],
                  ],
                  @nf.find({:levels => [2,4], :sort => true}, tree['/']))
+    assert_equal([tree['/other.en.html'], tree['/other.html'], tree['/german.de.html'],
+                  [tree['/dir2/'], [tree['/dir2/index.en.html'], tree['/dir2/index.de.html']]],
+                  [tree['/dir/'], [[tree['/dir/subfile.html'], [tree['/dir/subfile.html#frag']]],
+                                   [tree['/dir/dir/'], [tree['/dir/dir/file.html']]]]],
+                  [tree['/file.de.html'], [tree['/file.de.html#frag']]],
+                  [tree['/file.en.html'], [[tree['/file.en.html#frag'], [tree['/file.en.html#nested']]]]],
+                 ],
+                 @nf.find({:levels => [2,4], :sort => true, :reverse => true}, tree['/']))
 
     # test filter: meta info keys/values
     check.call(['/file.en.html#frag', '/file.de.html#frag', '/dir/subfile.html#frag'],

@@ -61,6 +61,9 @@ module Webgen
   #   the value of this meta information is used for comparison of nodes (again, if both compared
   #   values are integers, a numeric comparison is done, else a string comparison).
   #
+  # [:reverse]
+  #   Value: +true+ of +false+/+nil+. If this option is set to +true+, the sort order is reversed.
+  #
   # === Filter options
   #
   # These options are used for filtering the nodes. All nodes are used by default if no filter
@@ -189,14 +192,14 @@ module Webgen
       end
       opts = prepare_options_hash(opts_or_name)
 
-      limit, offset, flatten, sort, levels = remove_non_filter_options(opts)
+      limit, offset, flatten, sort, levels, reverse = remove_non_filter_options(opts)
       flatten = true if limit || offset
       levels = [levels || [1, 1_000_000]].flatten.map {|i| i.to_i}
 
       nodes = filter_nodes(opts, ref_node)
 
       if flatten
-        sort_nodes(nodes, sort)
+        sort_nodes(nodes, sort, reverse)
         nodes = nodes[(offset.to_s.to_i)..(limit ? offset.to_s.to_i + limit.to_s.to_i - 1 : -1)] if limit || offset
       else
         result = {}
@@ -220,7 +223,7 @@ module Webgen
           end
         end
         nodes = reducer.call(result, 1)
-        sort_nodes(nodes, sort, false)
+        sort_nodes(nodes, sort, reverse, false)
       end
 
       cache_result(opts_or_name, ref_node, nodes)
@@ -249,7 +252,8 @@ module Webgen
     end
 
     def remove_non_filter_options(opts)
-      [opts.delete(:limit), opts.delete(:offset), opts.delete(:flatten), opts.delete(:sort), opts.delete(:levels)]
+      [opts.delete(:limit), opts.delete(:offset), opts.delete(:flatten),
+       opts.delete(:sort), opts.delete(:levels), opts.delete(:reverse)]
     end
 
     def filter_nodes(opts, ref_node)
@@ -267,23 +271,23 @@ module Webgen
       nodes
     end
 
-    def sort_nodes(nodes, sort, flat_mode = true)
+    def sort_nodes(nodes, sort, reverse, flat_mode = true)
       return unless sort
       if sort == true
         nodes.sort! do |(a,_),(b,_)|
           a = (a['sort_info'] && a['sort_info'].to_s) || a['title'].to_s || ''
           b = (b['sort_info'] && b['sort_info'].to_s) || b['title'].to_s || ''
           (a = a.to_i; b = b.to_i) if a !~ /\D/ && b !~ /\D/
-          a <=> b
+          (reverse ? b <=> a : a <=> b)
         end
       else
         nodes.sort! do |(a,_),(b,_)|
           a, b = a[sort].to_s, b[sort].to_s
           a, b = a.to_i, b.to_i if a !~ /\D/ && b !~ /\D/
-          a <=> b
+          (reverse ? b <=> a : a <=> b)
         end
       end
-      nodes.each {|n, children| sort_nodes(children, sort, flat_mode) if children } unless flat_mode
+      nodes.each {|n, children| sort_nodes(children, sort, reverse, flat_mode) if children } unless flat_mode
     end
 
     # :section: Filter methods
