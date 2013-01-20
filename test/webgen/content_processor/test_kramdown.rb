@@ -16,6 +16,7 @@ class TestContentProcessorKramdown < MiniTest::Unit::TestCase
     @website.config['content_processor.kramdown.handle_links'] = true
     @website.config['content_processor.kramdown.ignore_unknown_fragments'] = false
 
+    @website.ext.link_definitions = {'hallo' => ['/hello.html', 'Hello you']}
     @website.ext.tag = MiniTest::Mock.new
     @website.ext.tag.expect(:call, 'hello.en.html', ['relocatable', {'path' => 'hello.html',
                                                        'ignore_unknown_fragment' => false}, '', @context])
@@ -23,6 +24,10 @@ class TestContentProcessorKramdown < MiniTest::Unit::TestCase
     # test normal invocation
     @context.content = '# header'
     assert_equal("<h1 id=\"header\">header</h1>\n", cp.call(@context).content)
+
+    # test usage of link definitions
+    @context.content = 'Link [hallo]'
+    assert_equal("<p>Link <a href=\"hello.en.html\" title=\"Hello you\">hallo</a></p>\n", cp.call(@context).content)
 
     # test automatic handling of links
     @website.config['content_processor.kramdown.handle_links'] = true

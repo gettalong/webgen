@@ -35,7 +35,9 @@ module Webgen
 
       # Convert the content in +context+ to HTML.
       def self.call(context)
-        doc = ::Kramdown::Document.new(context.content, context.website.config['content_processor.kramdown.options'])
+        options = context.website.config['content_processor.kramdown.options'].dup
+        options[:link_defs] = context.website.ext.link_definitions.merge(options[:link_defs] || {})
+        doc = ::Kramdown::Document.new(context.content, options)
         context.content = CustomHtmlConverter.new(doc.root, doc.options, context).convert(doc.root)
         doc.warnings.each do |warn|
           context.website.logger.warn { "kramdown warning while parsing <#{context.ref_node}>: #{warn}" }

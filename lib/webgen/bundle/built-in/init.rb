@@ -170,6 +170,11 @@ website.blackboard.add_listener(:node_resolution_failed) do |path, lang|
 end
 
 ########################################################################
+# The link definitions extension
+website.ext.link_definitions = {}
+
+
+########################################################################
 # Everything related to the node finder extension
 require 'webgen/node_finder'
 
