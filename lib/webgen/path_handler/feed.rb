@@ -68,7 +68,8 @@ module Webgen
         path.ext = path['version']
         path['dest_path'] = '<parent><basename>(.<lang>)<ext>'
         path['cn'] = '<basename><ext>'
-        create_node(path, Node) do |node|
+        path['node_class'] = Node.to_s
+        create_node(path) do |node|
           set_blocks(node, blocks)
           node.meta_info['link'] ||= node.parent.alcn
           @website.ext.item_tracker.add(node, :nodes, :node_finder_option_set,

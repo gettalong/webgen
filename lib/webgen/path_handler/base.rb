@@ -4,6 +4,7 @@ require 'webgen/path_handler'
 require 'webgen/error'
 require 'webgen/node'
 require 'webgen/path'
+require 'webgen/utils'
 
 module Webgen
   class PathHandler
@@ -68,18 +69,19 @@ module Webgen
       # Create a node from +path+, if possible, yield the fully initialized node if a block is given
       # and return it.
       #
-      # The node class to be used for the created node can be specified via the +node_klass+
-      # parameter.
+      # The node class to be used for the to-be-created node can be specified via
+      # `path.meta_info['node_class']`. If this node processing information is not set, the
+      # Base::Node class is used.
+      #
+      # The parent node under which the new node should be created can optionally be specified via
+      # 'path.meta_info['parent_alcn']'. This node processing information has to be set to the alcn
+      # of an existing node.
       #
       # If no node can be created (e.g. when 'path.meta_info['draft']' is set), +nil+ is returned.
       #
-      # The parent node under which the new node should be created can optionally be specified via
-      # 'path.meta_info['parent_alcn']'. This meta information has to be set to an alcn of an
-      # existing node.
-      #
       # On the created node, the node information +:path+ is set to the given path and
       # +:path_handler+ to the path handler instance.
-      def create_node(path, node_klass = Node)
+      def create_node(path)
         return nil if path.meta_info['draft']
         parent = parent_node(path)
         dest_path = self.dest_path(parent, path)
@@ -103,7 +105,7 @@ module Webgen
           path.meta_info['modified_at'] = Time.now
         end
 
-        node = node_klass.new(parent, path.cn, dest_path, path.meta_info.dup)
+        node = node_class(path).new(parent, path.cn, dest_path, path.meta_info.dup)
         node.node_info[:path] = path
         node.node_info[:path_handler] = self
 
@@ -231,6 +233,18 @@ module Webgen
         @website.tree[path.alcn] || (!path.meta_info['no_output'] && @website.tree.node(dest_path, :dest_path))
       end
       protected :node_exists?
+
+      # Retrieve the node class that should be used for the given path.
+      def node_class(path)
+        if String === (klass = path.meta_info['node_class'])
+          Webgen::Utils.const_for_name(klass) rescue Node
+        elsif String === (klass = path.meta_info['base_node_class'])
+          Webgen::Utils.const_for_name(klass) rescue Node
+        else
+          Node
+        end
+      end
+      protected :node_class
 
     end
 

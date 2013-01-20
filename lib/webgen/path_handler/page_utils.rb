@@ -123,7 +123,8 @@ module Webgen
       end
 
 
-      def create_node(path, node_klass = Node) #:nodoc:
+      def create_node(path) #:nodoc:
+        path['node_class'] ||= Node.to_s
         super
       end
 
