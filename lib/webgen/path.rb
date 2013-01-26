@@ -29,7 +29,7 @@ module Webgen
   #
   # * Path.url
   # * Path.append
-  # * Path.matches_pattern
+  # * Path.matches_pattern?
   # * Path.lcn
   #
   class Path
