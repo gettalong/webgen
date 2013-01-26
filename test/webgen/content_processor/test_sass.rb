@@ -41,4 +41,8 @@ class TestSass < MiniTest::Unit::TestCase
     assert_equal("#{result}\n#{result}\n#{result}", cp.call(@context).content)
   end
 
+  def teardown
+    FileUtils.rm_rf(@website.directory)
+  end
+
 end

@@ -37,4 +37,8 @@ class TestContentProcessorTikz < MiniTest::Unit::TestCase
     Webgen::ContentProcessor::Tikz.call(@context)
   end
 
+  def teardown
+    FileUtils.rm_rf(@website.directory)
+  end
+
 end

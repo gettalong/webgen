@@ -20,4 +20,8 @@ class TestScss < MiniTest::Unit::TestCase
     assert_error_on_line(Webgen::RenderError, 2) { cp.call(@context) }
   end
 
+  def teardown
+    FileUtils.rm_rf(@website.directory)
+  end
+
 end
