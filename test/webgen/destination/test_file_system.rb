@@ -7,9 +7,9 @@ require 'webgen/path'
 class TestDestinationFileSystem < MiniTest::Unit::TestCase
 
   def setup
-    @website = MiniTest::Mock.new
-    @dir = Dir.mktmpdir('test-webgen')
-    @website.expect(:directory, @dir)
+    @dir = dir = Dir.mktmpdir('test-webgen')
+    @website = Object.new
+    @website.define_singleton_method(:directory) { dir }
   end
 
   def teardown
@@ -23,7 +23,6 @@ class TestDestinationFileSystem < MiniTest::Unit::TestCase
     assert_equal('/tmp/hallo', dest.root)
     dest = Webgen::Destination::FileSystem.new(@website, '../hallo')
     assert_equal(File.expand_path(File.join(@dir, '../hallo')), dest.root)
-    @website.verify
   end
 
   def test_file_methods

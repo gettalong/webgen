@@ -15,7 +15,7 @@ class TestContentProcessorTikz < MiniTest::Unit::TestCase
     template_data = File.read(File.join(Webgen::Utils.data_dir, 'passive_sources', 'templates', 'tikz.template'))
     node = RenderNode.new(template_data, @website.tree.dummy_root, '/template', '/template')
 
-    @context.node.expect(:[], nil, ['ignored'])
+    @context.node.define_singleton_method(:[]) {|ignored| nil}
 
     call('\tikz \draw (0,0) -- (0,1);', 'test.png', [], '', '72 72', false)
     refute_nil(@context.content)
@@ -28,7 +28,7 @@ class TestContentProcessorTikz < MiniTest::Unit::TestCase
 
   def call(content, path, libs, opts, res, trans)
     @context.content = content
-    @context.dest_node.expect(:dest_path, path)
+    @context.dest_node.define_singleton_method(:dest_path) {path}
     @context.website.config.update('content_processor.tikz.resolution' => res,
                                    'content_processor.tikz.transparent' => trans,
                                    'content_processor.tikz.libraries' => libs,

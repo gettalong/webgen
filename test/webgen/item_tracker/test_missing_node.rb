@@ -17,9 +17,9 @@ class TestItemTrackerMissingNode < MiniTest::Unit::TestCase
   end
 
   def setup
-    @website = MiniTest::Mock.new
-    @website.expect(:tree, StubTree.new)
-    @website.expect(:blackboard, Webgen::Blackboard.new)
+    @website = OpenStruct.new
+    @website.tree = StubTree.new
+    @website.blackboard = Webgen::Blackboard.new
     @obj = Webgen::ItemTracker::MissingNode.new(@website)
   end
 

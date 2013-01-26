@@ -27,7 +27,7 @@ class TestPageUtils < MiniTest::Unit::TestCase
 
   def test_template_chain
     setup_website('path_handler.default_template' => 'default.template')
-    @website.expect(:cache, Webgen::Cache.new)
+    @website.cache = Webgen::Cache.new
     @root = Webgen::Node.new(@website.tree.dummy_root, '/', '/')
 
     default_template = MyHandler::Node.new(@root, 'default.template', '/default.template')

@@ -124,7 +124,7 @@ class TestTag < MiniTest::Unit::TestCase
     context.expect(:content_node, ref_node)
     context.expect(:dest_node, dest_node)
     context.expect(:render_block, 'ahoi', [{:name => "tag.tag", :node => 'first',
-                                             :chain => [:hallo, template_node, context.content_node]}])
+                                             :chain => [:hallo, template_node, ref_node]}])
 
     assert_equal('ahoi', Webgen::Tag.render_tag_template(context, 'tag'))
 

@@ -17,9 +17,8 @@ class TestContentProcessorKramdown < MiniTest::Unit::TestCase
     @website.config['content_processor.kramdown.ignore_unknown_fragments'] = false
 
     @website.ext.link_definitions = {'hallo' => ['/hello.html', 'Hello you']}
-    @website.ext.tag = MiniTest::Mock.new
-    @website.ext.tag.expect(:call, 'hello.en.html', ['relocatable', {'path' => 'hello.html',
-                                                       'ignore_unknown_fragment' => false}, '', @context])
+    @website.ext.tag = Object.new
+    @website.ext.tag.define_singleton_method(:call) {|*args| 'hello.en.html'}
 
     # test normal invocation
     @context.content = '# header'
@@ -47,8 +46,6 @@ class TestContentProcessorKramdown < MiniTest::Unit::TestCase
     cp.call(@context)
     assert_equal("<p>{::comment}</p>\n", @context.content)
     assert_log_match(/No stop tag for extension 'comment' found/)
-
-    @website.ext.tag.verify
   end
 
 end

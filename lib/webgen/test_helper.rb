@@ -67,7 +67,7 @@ module Webgen
       @logio.string = ''
     end
 
-    # Creates a basic mock website that is accessible via @website with the following methods:
+    # Creates a basic stub website that is accessible via @website with the following methods:
     #
     # [@website.config]
     #   The given config object or {} if none specified
@@ -91,23 +91,22 @@ module Webgen
     # [@website.tree]
     #   Webgen::Tree instance
     def setup_website(config = {})
-      @website = MiniTest::Mock.new
-      @website.expect(:config, config)
-      directory = Dir::Tmpname.create("test-webgen-website") {|path| raise Errno::EEXIST if File.directory?(path)}
-      @website.expect(:directory, directory)
-      def (@website).tmpdir(path='', create=false)
+      @website = OpenStruct.new
+      @website.config = config
+      @website.directory = Dir::Tmpname.create("test-webgen-website") {|path| raise Errno::EEXIST if File.directory?(path)}
+      @website.define_singleton_method(:tmpdir) do |path='', create=false|
         tmp = File.join(self.directory, 'tmp')
         FileUtils.mkdir_p(tmp) if create
         File.join(tmp, path)
       end
-      @website.expect(:ext, OpenStruct.new)
-      @website.expect(:blackboard, Webgen::Blackboard.new)
-      @website.expect(:cache, Webgen::Cache.new)
+      @website.ext = OpenStruct.new
+      @website.blackboard = Webgen::Blackboard.new
+      @website.cache = Webgen::Cache.new
       @logio = StringIO.new
-      @website.expect(:logger, Webgen::Logger.new(@logio))
-      @website.expect(:tree, Webgen::Tree.new(@website))
+      @website.logger = Webgen::Logger.new(@logio)
+      @website.tree = Webgen::Tree.new(@website)
       @website.ext.item_tracker = Object.new
-      def (@website.ext.item_tracker).add(*args); end
+      @website.ext.item_tracker.define_singleton_method(:add) {|*args|}
     end
 
     # Adds the following nodes (showing alcn=dest_path, title, other meta info) to the tree which
@@ -163,8 +162,8 @@ module Webgen
     # node that responds to :alcn with '/test'.
     def setup_context
       setup_website
-      node = MiniTest::Mock.new
-      node.expect(:alcn, '/test')
+      node = Object.new
+      node.define_singleton_method(:alcn) { '/test' }
       @context = Webgen::Context.new(@website, :chain => [node], :doit => 'hallo')
     end
 

@@ -4,6 +4,7 @@ require 'minitest/autorun'
 require 'webgen/item_tracker'
 require 'webgen/blackboard'
 require 'webgen/cache'
+require 'webgen/node'
 
 class Webgen::ItemTracker::Sample
 
@@ -31,22 +32,19 @@ end
 
 class TestItemTracker < MiniTest::Unit::TestCase
 
+  DummyNode = Struct.new(:alcn)
+
   Data = {'/alcn' => 'mydata'}
 
   def test_functionality
-    # Needed mock objects
-    website = MiniTest::Mock.new
-    website.expect(:blackboard, blackboard = Webgen::Blackboard.new)
-    website.expect(:cache, cache = Webgen::Cache.new)
-    node = MiniTest::Mock.new
-    node.expect(:alcn, '/alcn')
-    node.expect(:!, false)
-    node.expect(:hash, 12345)
-    other = MiniTest::Mock.new
-    other.expect(:alcn, '/other')
-    other.expect(:!, false)
-    other.expect(:hash, 12346)
-    website.expect(:tree, {'/alcn' => node, '/other' => other})
+    # Needed stub objects
+    website = Struct.new(:blackboard, :cache, :tree).new
+    website.blackboard = blackboard = Webgen::Blackboard.new
+    website.cache = cache = Webgen::Cache.new
+
+    node = DummyNode.new('/alcn')
+    other = DummyNode.new('/other')
+    website.tree = {'/alcn' => node, '/other' => other}
 
     tracker = Webgen::ItemTracker.new(website)
     tracker.register('Sample')
@@ -101,9 +99,6 @@ class TestItemTracker < MiniTest::Unit::TestCase
     blackboard.dispatch_msg(:after_all_nodes_written)
 
     assert(tracker.node_referenced?(node))
-
-    website.verify
-    node.verify
   end
 
 end

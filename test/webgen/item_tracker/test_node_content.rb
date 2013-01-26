@@ -6,7 +6,7 @@ require 'webgen/item_tracker/node_content'
 class TestNodeContent < MiniTest::Unit::TestCase
 
   def setup
-    @website = MiniTest::Mock.new
+    @website = Object.new
     @obj = Webgen::ItemTracker::NodeContent.new(@website)
   end
 
@@ -21,19 +21,14 @@ class TestNodeContent < MiniTest::Unit::TestCase
   end
 
   def test_item_changed?
-    item_tracker = MiniTest::Mock.new
-    item_tracker.expect(:node_changed?, true, [:node])
-    ext = MiniTest::Mock.new
-    ext.expect(:item_tracker, item_tracker)
-    @website.expect(:ext, ext)
-    @website.expect(:tree, {'alcn' => :node})
+    ext = OpenStruct.new
+    ext.item_tracker = Object.new
+    ext.item_tracker.define_singleton_method(:node_changed?) {|n| raise unless n == :node; true}
+    @website.define_singleton_method(:ext) { ext }
+    @website.define_singleton_method(:tree) { {'alcn' => :node} }
 
     assert(@obj.item_changed?('unknown', 'old'))
     assert(@obj.item_changed?('alcn', 'other'))
-
-    @website.verify
-    item_tracker.verify
-    ext.verify
   end
 
   def test_referenced_nodes

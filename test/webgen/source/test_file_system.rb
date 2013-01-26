@@ -9,9 +9,9 @@ require 'webgen/source/file_system'
 class TestSourceFileSystem < MiniTest::Unit::TestCase
 
   def setup
-    @website = MiniTest::Mock.new
-    @root = File.expand_path(File.dirname(__FILE__))
-    @website.expect(:directory, @root)
+    @root = root = File.expand_path(File.dirname(__FILE__))
+    @website = Object.new
+    @website.define_singleton_method(:directory) { root }
   end
 
   def test_initialize

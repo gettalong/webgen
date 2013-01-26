@@ -9,14 +9,13 @@ class TestTagCoderay < MiniTest::Unit::TestCase
 
   def test_call
     setup_context
-    @website.ext.content_processor = MiniTest::Mock.new
-    @website.ext.content_processor.expect(:call, @context, ['tags', @context])
+    @website.ext.content_processor = Object.new
+    @website.ext.content_processor.define_singleton_method(:call) {|_, context| context}
     root = Webgen::Node.new(@website.tree.dummy_root, '/', '/', {'title' => 'Hallo'})
     @context[:chain] = [root]
 
     assert_result_includes('TestData', @context, 'TestData', 'html', false, 'style')
-    @context.content = 'Hallo'
-    assert_result_includes('Hallo', @context, '{title:}', :ruby, true, 'other')
+    assert_result_includes('title', @context, '{title:}', :ruby, true, 'other')
     assert_result_includes('class="constant"', @context, 'TestData', 'ruby', false, 'other')
   end
 
