@@ -93,7 +93,6 @@ EOF
                             'Rakefile',
                             'setup.rb',
                             'VERSION',
-                            'ChangeLog',
                             'AUTHORS',
                             'THANKS',
                             'COPYING',
@@ -113,12 +112,6 @@ EOF
   file 'VERSION' do
     puts "Generating VERSION file"
     File.open('VERSION', 'w+') {|file| file.write(Webgen::VERSION + "\n")}
-  end
-
-  CLOBBER << 'ChangeLog'
-  file 'ChangeLog' do
-    puts "Generating ChangeLog file"
-    `git log --name-only > ChangeLog`
   end
 
   Rake::PackageTask.new('webgen', Webgen::VERSION) do |pkg|
