@@ -137,6 +137,9 @@ extensions:
   path_handler.virtual:
     author: *author
     summary: Creates nodes for additional, virtual paths
+  path_handler.api:
+    author: *author
+    summary: Creates Ruby API documentation pages via RDoc
 
   sass_load_paths:
     author: *author

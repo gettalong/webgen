@@ -1,0 +1,284 @@
+/*
+ * "Darkfish" Rdoc CSS
+ * $Id: rdoc.css 54 2009-01-27 01:09:48Z deveiant $
+ *
+ * Author: Michael Granger <ged@FaerieMUD.org>
+ *
+ * Adapted for webgen by Thomas Leitner <t_leitner@gmx.at>
+ *
+ */
+
+.api-documentation h1 span,
+.api-documentation h2 span,
+.api-documentation h3 span,
+.api-documentation h4 span,
+.api-documentation h5 span,
+.api-documentation h6 span {
+  display: none;
+}
+
+.api-documentation pre {
+  background: #ddd;
+  padding: 0.5em 0;
+}
+
+.api-documentation blockquote {
+  background: #ddd;
+  margin: 1em;
+  padding: 0.25em;
+}
+
+.api-documentation blockquote > :first-child {
+  margin-top: 0 !important;
+}
+
+.api-documentation .missing-docs {
+  font-size: 120%;
+  background: white;
+  color: #ccc;
+  line-height: 2em;
+  border: 1px solid #d00;
+  opacity: 1;
+  padding-left: 20px;
+  text-indent: 24px;
+  letter-spacing: 3px;
+  font-weight: bold;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+}
+
+.api-documentation .target-section {
+  border: 2px solid #dcce90;
+  border-left-width: 8px;
+  padding: 0 1em;
+  background: #fff3c2;
+}
+
+/* @group Documentation Section */
+.api-documentation .description {
+  font-size: 100%;
+  color: #333;
+}
+
+.api-documentation .description p {
+  margin: 1em 0.4em;
+}
+
+.api-documentation .description li p {
+  margin: 0;
+}
+
+.api-documentation .description ol,
+.api-documentation .description ul {
+  margin-left: 1.5em;
+}
+.api-documentation .description ol li,
+.api-documentation .description ul li {
+  line-height: 1.4em;
+}
+
+.api-documentation .note-list {
+  margin: 8px 0;
+}
+
+.api-documentation .label-list {
+  margin: 8px 1.5em;
+  border: 1px solid #ccc;
+}
+.api-documentation .description .label-list {
+  font-size: 14px;
+}
+
+.api-documentation .note-list dt {
+  font-weight: bold;
+}
+.api-documentation .note-list dd {
+  padding: 0 12px;
+}
+
+.api-documentation .label-list dt {
+  padding: 2px 4px;
+  font-weight: bold;
+  background: #ddd;
+}
+.api-documentation .label-list dd {
+  padding: 2px 12px;
+}
+.api-documentation .label-list dd + dt,
+.api-documentation .note-list dd + dt {
+  margin-top: 0.7em;
+}
+
+.api-documentation .section {
+  font-size: 90%;
+}
+
+.api-documentation h2.section-header {
+  margin-top: 1em;
+  padding: 0.25em 0.5em;
+  background: #ccc;
+  color: #333;
+  font-size: 175%;
+  border: 1px solid #bbb;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+}
+
+.documentation-section-title {
+  position: relative;
+}
+.documentation-section-title .section-click-top {
+  position: absolute;
+  top: 6px;
+  right: 12px;
+  font-size: 10px;
+  color: #9b9877;
+  visibility: hidden;
+  padding-right: 0.5px;
+}
+
+.documentation-section-title:hover .section-click-top {
+  visibility: visible;
+}
+
+.api-documentation h3.section-header {
+  margin-top: 1em;
+  padding: 0.25em 0.5em;
+  background-color: #dedede;
+  color: #333;
+  font-size: 150%;
+  border: 1px solid #bbb;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+}
+
+.documentation-section h2 {
+  position: relative;
+}
+
+.documentation-section h2 a {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  font-size: 12px;
+  color: #9b9877;
+  visibility: hidden;
+}
+
+.documentation-section h2:hover a {
+  visibility: visible;
+}
+
+/* @group Method Details */
+
+.api-documentation .method-source-code {
+  display: none;
+}
+
+.api-documentation .method-description .method-calls-super {
+  color: #333;
+  font-weight: bolder;
+}
+
+.api-documentation .method-detail {
+  margin: 0.5em 0;
+  padding: 0.5em 0;
+  cursor: pointer;
+}
+.api-documentation .method-detail:hover {
+  background-color: #f1edba;
+}
+.api-documentation .method-heading {
+  position: relative;
+  padding: 2px 4px 0 20px;
+  font-size: 125%;
+  font-weight: bold;
+  color: #333;
+}
+.api-documentation .method-heading :link,
+.api-documentation .method-heading :visited {
+  color: inherit;
+}
+.api-documentation .method-click-advice {
+  position: absolute;
+  top: 2px;
+  right: 5px;
+  font-size: 10px;
+  color: #9b9877;
+  visibility: hidden;
+  padding-right: 20px;
+  line-height: 20px;
+}
+.api-documentation .method-heading:hover .method-click-advice {
+  visibility: visible;
+}
+
+.api-documentation .method-alias .method-heading {
+  color: #666;
+}
+
+.api-documentation .method-description,
+.api-documentation .aliases {
+  margin: 0 20px;
+  color: #666;
+}
+
+.api-documentation .method-description p,
+.api-documentation .aliases p {
+  line-height: 1.2em;
+}
+
+.api-documentation .aliases {
+  padding-top: 4px;
+  font-style: italic;
+  cursor: default;
+}
+.api-documentation .method-description p {
+  margin-bottom: 0.5em;
+}
+.api-documentation .method-description ul {
+  margin-left: 1.5em;
+}
+.api-documentation pre {
+  margin: 0.5em 0;
+}
+
+.api-documentation #attribute-method-details .method-detail:hover {
+  background-color: transparent;
+  cursor: default;
+}
+.api-documentation .attribute-access-type {
+  font-size: 60%;
+  text-transform: uppercase;
+  vertical-align: super;
+  padding: 0 2px;
+}
+/* @end */
+
+/* @end */
+
+/* @group Source Code */
+
+.api-documentation pre {
+  overflow: auto;
+  background: #262626;
+  color: white;
+  border: 1px dashed #999;
+  padding: 0.5em;
+}
+
+.api-documentation .description pre {
+  margin: 0 0.4em;
+}
+
+.ruby-constant   { color: #7fffd4; background: transparent; }
+.ruby-keyword    { color: #00ffff; background: transparent; }
+.ruby-ivar       { color: #eedd82; background: transparent; }
+.ruby-operator   { color: #00ffee; background: transparent; }
+.ruby-identifier { color: #ffdead; background: transparent; }
+.ruby-node       { color: #ffa07a; background: transparent; }
+.ruby-comment    { color: #dc0000; font-weight: bold; background: transparent; }
+.ruby-regexp     { color: #ffa07a; background: transparent; }
+.ruby-value      { color: #7fffd4; background: transparent; }
+
+/* @end */

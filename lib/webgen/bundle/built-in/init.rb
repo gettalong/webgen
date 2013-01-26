@@ -182,6 +182,7 @@ website.ext.node_finder = Webgen::NodeFinder.new(website)
 option('node_finder.option_sets', {},
        'Node finder option sets that can be referenced by name')
 
+
 ########################################################################
 # Everything related to the path handler extension
 require 'webgen/path_handler'
@@ -212,7 +213,6 @@ option('path_handler.default_template', 'default.template',
 website.ext.path_handler = path_handler = Webgen::PathHandler.new(website)
 
 # handlers are registered in invocation order
-
 path_handler.register('Directory')
 path_handler.register('MetaInfo', :patterns => ['/**/metainfo', '/**/*.metainfo'])
 path_handler.register('Template')
@@ -221,6 +221,7 @@ path_handler.register('Copy')
 path_handler.register('Feed')
 path_handler.register('Sitemap')
 path_handler.register('Virtual')
+path_handler.register('Api')
 
 
 ########################################################################

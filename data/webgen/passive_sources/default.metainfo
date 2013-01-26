@@ -25,6 +25,11 @@
 [/**/virtual, /**/*.virtual]:
   handler: virtual
 
+/**/*.api:
+  handler: api
+  api_template: /templates/api.template
+  prefix_for_link_defs: true
+
 [/**/*.css, /**/*.js, /**/*.html, /**/*.gif, /**/*.jpg, /**/*.png, /**/*.ico]:
   handler: copy
 

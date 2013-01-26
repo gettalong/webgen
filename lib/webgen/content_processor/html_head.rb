@@ -14,11 +14,12 @@ module Webgen
     # processor should be the last in the processing pipeline so that all other processors have been
     # able to set the data.
     #
-    # Use the methods defined on the special Context#html_head object to provide values.
+    # Use the methods defined on the special Webgen::Context::HtmlHead::Proxy object which can be
+    # accessed via Webgen::Context#html_head to provide values.
     #
     # == Internal details
     #
-    # The key ':cp_html_head' of 'context.persistent' is used (the normal 'context.options' won't do
+    # The key +:cp_html_head+ of +context.persistent+ is used (the normal +context.options+ won't do
     # because the data needs to be shared 'backwards' during the rendering) and it has to be a Hash
     # with the following values:
     #
