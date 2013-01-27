@@ -155,7 +155,7 @@ EOF
     s.add_development_dependency('haml', '>= 3.1.0')
     s.add_development_dependency('sass', '>= 3.2.0')
     s.add_development_dependency('builder', '>= 2.1.0')
-    s.add_development_dependency('rdoc', '>= 3.0')
+    s.add_development_dependency('rdoc', '>= 4.0')
     s.add_development_dependency('coderay', '>= 1.0.0')
     s.add_development_dependency('erubis', '>= 2.6.5')
     s.add_development_dependency('rdiscount', '>= 1.3.5')
