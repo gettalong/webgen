@@ -158,7 +158,7 @@ module Webgen
 
       # Add a link definition for the given node.
       def add_link_definition(api_path, link_name, url, title)
-        link = if api_path['prefix_for_link_defs']
+        link = if api_path['prefix_link_defs']
                  "#{api_path['api_name']}:#{link_name}"
                else
                  link_name

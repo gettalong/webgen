@@ -17,7 +17,7 @@ class TestPathHandlerApi < MiniTest::Unit::TestCase
     @path = Webgen::Path.new('/test.api', 'dest_path' => '<parent><basename><ext>',
                              'api_name' => 'my_api',
                              'dir_name' => 'my_dir',
-                             'prefix_for_link_defs' => true,
+                             'prefix_link_defs' => true,
                              'rdoc_options' => ['-t', 'Title', __FILE__])
   end
 
