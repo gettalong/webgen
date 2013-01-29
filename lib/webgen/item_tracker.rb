@@ -134,11 +134,13 @@ module Webgen
 
       @website.blackboard.add_listener(:after_all_nodes_written, self) do
         # update cached data with data from the run
+        uids_to_update = Set.new
         @written_nodes.each do |node|
           next unless @website.tree[node.alcn]
           @cached[:node_dependencies][node.alcn] = @node_dependencies[node.alcn]
-          @node_dependencies[node.alcn].each {|uid| @cached[:item_data][uid] = @item_data[uid]}
+          uids_to_update.merge(@node_dependencies[node.alcn])
         end
+        uids_to_update.each {|uid| @cached[:item_data][uid] = @item_data[uid]}
       end
 
       @website.blackboard.add_listener(:website_generated, self) do
