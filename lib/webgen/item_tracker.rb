@@ -30,7 +30,9 @@ module Webgen
   #   tracker extension
   #
   # [item_data(*item)]
-  #   Return the data for the item so that it can be correctly checked later if it has changed.
+  #   Return the data for the item so that it can be correctly checked later if it has changed. If
+  #   data for the given item cannot be computer anymore because the item got invalid, raise an
+  #   exception.
   #
   # [item_changed?(item_id, old_data)]
   #   Return +true+ if the item identified by its unique ID has changed. The parameter +old_data+
@@ -117,13 +119,28 @@ module Webgen
       end
 
       @website.blackboard.add_listener(:before_all_nodes_written, self) do
-        # make all used item data from the previous pass current again if applicable
-        @written_nodes.each do |node|
+        # make all used item data from the previous pass current again if applicable and remove
+        # invalid UIDs
+        uids_to_update = @written_nodes.each_with_object(Set.new) do |node, set|
           next unless @website.tree[node.alcn]
-          @node_dependencies[node.alcn].each do |uid|
+          set.merge(@node_dependencies[node.alcn])
+        end
+        uids_to_update.each do |uid|
+          begin
             @item_data[uid] = item_tracker(uid.first).item_data(*uid.last)
+          rescue Exception
+            @item_data.delete(uid)
+            @cached[:item_data].delete(uid)
+            @written_nodes.each do |node|
+              if @node_dependencies[node.alcn].include?(uid)
+                @node_dependencies[node.alcn].delete(uid)
+                @cached[:node_dependencies][node.alcn].delete(uid)
+                node.node_info[:item_tracker_changed_once] = true
+              end
+            end
           end
         end
+
         @written_nodes = []
         @item_changed = {}
       end
@@ -137,6 +154,7 @@ module Webgen
         uids_to_update = Set.new
         @written_nodes.each do |node|
           next unless @website.tree[node.alcn]
+          node.node_info.delete(:item_tracker_changed_once)
           @cached[:node_dependencies][node.alcn] = @node_dependencies[node.alcn]
           uids_to_update.merge(@node_dependencies[node.alcn])
         end
@@ -191,7 +209,8 @@ module Webgen
     def node_changed?(node)
       return false if @checked_nodes.include?(node)
       @checked_nodes << node
-      !@cached[:node_dependencies].has_key?(node.alcn) ||
+      node.node_info[:item_tracker_changed_once] ||
+        !@cached[:node_dependencies].has_key?(node.alcn) ||
         @cached[:node_dependencies][node.alcn].any? {|uid| item_changed_by_uid?(uid)}
     ensure
       @checked_nodes.delete(node)

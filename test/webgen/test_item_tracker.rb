@@ -17,7 +17,11 @@ class Webgen::ItemTracker::Sample
   end
 
   def item_data(data) #:nodoc:
-    'alcn' + TestItemTracker::Data[data].to_s
+    if TestItemTracker::Data.has_key?(data)
+      'alcn' + TestItemTracker::Data[data].to_s
+    else
+      raise "Unkown key"
+    end
   end
 
   def item_changed?(iid, old_data) #:nodoc:
@@ -32,7 +36,7 @@ end
 
 class TestItemTracker < MiniTest::Unit::TestCase
 
-  DummyNode = Struct.new(:alcn)
+  DummyNode = Struct.new(:alcn, :node_info)
 
   Data = {'/alcn' => 'mydata'}
 
@@ -42,8 +46,8 @@ class TestItemTracker < MiniTest::Unit::TestCase
     website.blackboard = blackboard = Webgen::Blackboard.new
     website.cache = cache = Webgen::Cache.new
 
-    node = DummyNode.new('/alcn')
-    other = DummyNode.new('/other')
+    node = DummyNode.new('/alcn', {})
+    other = DummyNode.new('/other', {})
     website.tree = {'/alcn' => node, '/other' => other}
 
     tracker = Webgen::ItemTracker.new(website)
@@ -71,6 +75,23 @@ class TestItemTracker < MiniTest::Unit::TestCase
     blackboard.dispatch_msg(:after_all_nodes_written)
     blackboard.dispatch_msg(:before_all_nodes_written)
     refute(tracker.node_changed?(node))
+
+    # Node should be changed because item id got invalid
+    blackboard.dispatch_msg(:after_node_written, node)
+    blackboard.dispatch_msg(:after_all_nodes_written)
+    Data.delete('/alcn')
+    blackboard.dispatch_msg(:before_all_nodes_written)
+    assert(tracker.node_changed?(node))
+
+    # Node should not be changed anymore, again
+    blackboard.dispatch_msg(:after_node_written, node)
+    blackboard.dispatch_msg(:after_all_nodes_written)
+    blackboard.dispatch_msg(:before_all_nodes_written)
+    refute(tracker.node_changed?(node))
+
+    # Re-add needed item and data
+    Data['/alcn'] = 'other'
+    tracker.add(node, :sample, '/alcn')
 
     # Test the initial loading of the cache data
     cache[:item_tracker_data] = {
