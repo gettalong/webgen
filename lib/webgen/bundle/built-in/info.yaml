@@ -104,6 +104,10 @@ extensions:
     author: *author
     summary: Tracks missing nodes via their expected alcn/acn/dest_path
 
+  link_definitions:
+    author: *author
+    summary: Provides an easy way to provide globally shared link definitions (used, for example, by the content processor kramdown)
+
   node_finder:
     author: *author
     summary: Generic node finding extension, allows adding of custom filters
