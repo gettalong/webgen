@@ -108,6 +108,13 @@ extensions:
     author: *author
     summary: Provides an easy way to provide globally shared link definitions (used, for example, by the content processor kramdown)
 
+  misc:
+    author: *author
+    summary: Namespace for miscellaneous extensions
+  misc.dummy_index:
+    author: *author
+    summary: Creates dummy index destination paths for directories that don't have any
+
   node_finder:
     author: *author
     summary: Generic node finding extension, allows adding of custom filters

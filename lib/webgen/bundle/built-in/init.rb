@@ -177,6 +177,18 @@ website.ext.link_definitions = {}
 
 
 ########################################################################
+# Miscellaneous extensions
+website.ext.misc = OpenStruct.new
+
+require 'webgen/misc/dummy_index'
+website.ext.misc.dummy_index = Webgen::Misc::DummyIndex.new(website)
+option('misc.dummy_index.enabled', true,
+       'Specifies whether this extension is enabled or not', &true_or_false)
+option('misc.dummy_index.directory_indexes', ['index.html'],
+       'List of directory index names to look for')
+
+
+########################################################################
 # Everything related to the node finder extension
 require 'webgen/node_finder'
 
