@@ -24,12 +24,16 @@ class TestExtensionDocumentation < MiniTest::Unit::TestCase
 
     ext_keys.each do |key|
       check_docu.call(key.to_s)
+      if ws.ext.send(key).kind_of?(OpenStruct)
+        ws.ext.send(key).instance_eval {@table.keys}.each do |s_key|
+          check_docu.call("#{key}.#{s_key}")
+        end
+      end
 
       if ws.ext.send(key).respond_to?(:registered_extensions)
         ws.ext.send(key).registered_extensions.keys.each do |skey|
           skey = "#{key}.#{skey}"
-          skey = "tag.meta_info" if skey == "tag.default"
-          next if %w[tag.r].include?(skey)
+          next if %w[tag.r tag.default].include?(skey)
 
           check_docu.call(skey)
         end
