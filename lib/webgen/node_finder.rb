@@ -128,8 +128,13 @@ module Webgen
   #
   # Implementing a filter module is very easy. Just create a module that contains your filter
   # methods and tell the NodeFinder object about it using the #add_filter_module method. A filter
-  # method needs to take three arguments: an array of nodes, the reference node and the filter
+  # method needs to take three arguments: the Result stucture, the reference node and the filter
   # value.
+  #
+  # The +result.nodes+ accessor contains the array of nodes that should be manipulated in-place.
+  #
+  # If a filter uses the reference node in any way, it has to set +result.ref_node_used+ to +true+
+  # to allow proper caching!
   #
   # Here is a sample filter module which provides the ability to filter nodes based on the meta
   # information key +category+. The +category+ key contains an array with one or more categories.
@@ -138,9 +143,9 @@ module Webgen
   #
   #   module CategoryFilter
   #
-  #     def filter_on_category(nodes, ref_node, categories)
+  #     def filter_on_category(result, ref_node, categories)
   #       categories = [categories].flatten # needed in case categories is a string
-  #       nodes.select {|n| categories.any? {|c| n['category'].include?(c)}}
+  #       result.nodes.select! {|n| categories.any? {|c| n['category'].include?(c)}}
   #     end
   #
   #   end
@@ -148,6 +153,11 @@ module Webgen
   #   website.ext.node_finder.add_filter_module(CategoryFilter, category: 'filter_on_category')
   #
   class NodeFinder
+
+    # Result class used when filtering the nodes.
+    #
+    # The attribute +ref_node_used+ must not be set to +false+ once it is +true+!
+    Result = Struct.new(:nodes, :ref_node_used)
 
     # Create a new NodeFinder object for the given website.
     def initialize(website)
@@ -196,7 +206,7 @@ module Webgen
       flatten = true if limit || offset
       levels = [levels || [1, 1_000_000]].flatten.map {|i| i.to_i}
 
-      nodes = filter_nodes(opts, ref_node)
+      nodes, ref_node_used = filter_nodes(opts, ref_node)
 
       if flatten
         sort_nodes(nodes, sort, reverse)
@@ -226,7 +236,7 @@ module Webgen
         sort_nodes(nodes, sort, reverse, false)
       end
 
-      cache_result(opts_or_name, ref_node, nodes)
+      cache_result(opts_or_name, ref_node, nodes, ref_node_used)
     end
 
     #######
@@ -234,11 +244,19 @@ module Webgen
     #######
 
     def cached_result(opts, ref_node)
-      (@website.cache.volatile[:node_finder] ||= {})[[opts, ref_node.alcn]]
+      result_cache[opts] || result_cache[[opts, ref_node.alcn]]
     end
 
-    def cache_result(opts, ref_node, result)
-      (@website.cache.volatile[:node_finder] ||= {})[[opts, ref_node.alcn]] = result
+    def cache_result(opts, ref_node, result, ref_node_used)
+      if ref_node_used
+        result_cache[[opts, ref_node.alcn]] = result
+      else
+        result_cache[opts] = result
+      end
+    end
+
+    def result_cache
+      @website.cache.volatile[:node_finder] ||= {}
     end
 
     def prepare_options_hash(opts_or_name)
@@ -260,15 +278,17 @@ module Webgen
       nodes = @website.tree.node_access[:alcn].values
       nodes.delete(@website.tree.dummy_root)
 
+      result = Result.new(nodes, false)
+
       opts.each do |filter, value|
         if @mapping.has_key?(filter)
-          nodes = send(@mapping[filter], nodes, ref_node, value)
+          send(@mapping[filter], result, ref_node, value)
         else
           @website.logger.warn { "Ignoring unknown node finder filter '#{filter}'" }
         end
       end
 
-      nodes
+      [result.nodes, result.ref_node_used]
     end
 
     def sort_nodes(nodes, sort, reverse, flat_mode = true)
@@ -292,78 +312,102 @@ module Webgen
 
     # :section: Filter methods
 
-    def filter_and(nodes, ref_node, opts)
+    def filter_and(result, ref_node, opts)
       [opts].flatten.each do |cur_opts|
         cur_opts = prepare_options_hash(cur_opts)
         remove_non_filter_options(cur_opts)
-        nodes &= filter_nodes(cur_opts, ref_node)
+        nodes, ref_node_used = filter_nodes(cur_opts, ref_node)
+        result.nodes &= nodes
+        result.ref_node_used |= ref_node_used
       end
-      nodes
     end
 
-    def filter_or(nodes, ref_node, opts)
+    def filter_or(result, ref_node, opts)
       [opts].flatten.each do |cur_opts|
         cur_opts = prepare_options_hash(cur_opts)
         remove_non_filter_options(cur_opts)
-        nodes |= filter_nodes(cur_opts, ref_node)
+        nodes, ref_node_used = filter_nodes(cur_opts, ref_node)
+        result.nodes |= nodes
+        result.ref_node_used |= ref_node_used
       end
-      nodes
     end
 
-    def filter_not(nodes, ref_node, opts)
+    def filter_not(result, ref_node, opts)
       [opts].flatten.each do |cur_opts|
         cur_opts = prepare_options_hash(cur_opts)
         remove_non_filter_options(cur_opts)
-        nodes -= filter_nodes(cur_opts, ref_node)
+        nodes, ref_node_used = filter_nodes(cur_opts, ref_node)
+        result.nodes -= nodes
+        result.ref_node_used |= ref_node_used
       end
-      nodes
     end
 
-    def filter_meta_info(nodes, ref_node, mi)
-      nodes.keep_if {|n| mi.all? {|key, val| n[key] == val}}
+    def filter_meta_info(result, ref_node, mi)
+      result.nodes.keep_if {|n| mi.all? {|key, val| n[key] == val}}
     end
 
-    def filter_alcn(nodes, ref_node, alcn)
+    def filter_alcn(result, ref_node, alcn)
+      result.ref_node_used = true
       alcn = [alcn].flatten.map {|a| Webgen::Path.append(ref_node.alcn, a.to_s)}
-      nodes.keep_if {|n| alcn.any? {|a| n =~ a}}
+      result.nodes.keep_if {|n| alcn.any? {|a| n =~ a}}
     end
 
-    def filter_absolute_levels(nodes, ref_node, range)
-      range = [range].flatten.map {|i| (i = i.to_i) < 0 ? ref_node.level + 1 + i : i}
-      nodes.keep_if {|n| n.level >= range.first && n.level <= range.last}
+    def filter_absolute_levels(result, ref_node, range)
+      range = [range].flatten.map do |i|
+        if (i = i.to_i) < 0
+          result.ref_node_used = true
+          ref_node.level + 1 + i
+        else
+          i
+        end
+      end
+      result.nodes.keep_if {|n| n.level >= range.first && n.level <= range.last}
     end
 
-    def filter_lang(nodes, ref_node, langs)
-      langs = [langs].flatten.map {|l| l == 'node' ? ref_node.lang : l}.uniq
-      nodes.keep_if {|n| langs.any? {|l| n.lang == l}}
+    def filter_lang(result, ref_node, langs)
+      langs = [langs].flatten.map do |l|
+        if l == 'node'
+          result.ref_node_used = true
+          ref_node.lang
+        else
+          l
+        end
+      end.uniq
+      result.nodes.keep_if {|n| langs.any? {|l| n.lang == l}}
     end
 
-    def filter_ancestors(nodes, ref_node, enabled)
-      return nodes unless enabled
+    def filter_ancestors(result, ref_node, enabled)
+      return unless enabled
+      result.ref_node_used = true
+
       nodes = []
       node = ref_node
       until node == node.tree.dummy_root
         nodes.unshift(node)
         node = node.parent
       end
-      nodes
+      result.nodes = nodes
     end
 
-    def filter_descendants(nodes, ref_node, enabled)
-      return nodes unless enabled
-      nodes.keep_if do |n|
+    def filter_descendants(result, ref_node, enabled)
+      return unless enabled
+      result.ref_node_used = true
+
+      result.nodes.keep_if do |n|
         n = n.parent while n != n.tree.dummy_root && n != ref_node
         n == ref_node
       end
     end
 
-    def filter_siblings(nodes, ref_node, value)
-      return nodes unless value
+    def filter_siblings(result, ref_node, value)
+      return unless value
+      result.ref_node_used = true
+
       if value == true
-        nodes.keep_if {|n| n.parent == ref_node.parent}
+        result.nodes.keep_if {|n| n.parent == ref_node.parent}
       else
         value = [value].flatten.map {|i| (i = i.to_i) < 0 ? ref_node.level + 1 + i : i}
-        nodes.keep_if do |n|
+        result.nodes.keep_if do |n|
           n.level >= value.first && n.level <= value.last && (n.parent.is_ancestor_of?(ref_node) || n.is_root?)
         end
       end
