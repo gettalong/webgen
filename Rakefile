@@ -68,7 +68,7 @@ RDoc::Task.new do |rdoc|
 end
 
 Rake::TestTask.new do |test|
-  test.test_files = FileList['test/webgen/**/test_*.rb']
+  test.test_files = FileList['test/**/test_*.rb']
 end
 
 # Release tasks and development tasks ############################################
