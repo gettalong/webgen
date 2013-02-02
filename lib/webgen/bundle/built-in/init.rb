@@ -161,11 +161,13 @@ item_tracker.register('Nodes')
 item_tracker.register('File')
 item_tracker.register('MissingNode')
 website.blackboard.add_listener(:node_resolution_failed) do |path, lang|
-  website.ext.item_tracker.add(website.ext.path_handler.current_dest_node, :missing_node, path, lang)
-  website.logger.error do
-    ["Could not resolve '#{path}' in language '#{lang}' in <#{website.ext.path_handler.current_dest_node}>",
-     "webgen will automatically try to resolve this error by rendering this path again later.",
-     "If the error persists, the content of the path in question needs to be edited to correct the error."]
+  if website.ext.path_handler.current_dest_node
+    website.ext.item_tracker.add(website.ext.path_handler.current_dest_node, :missing_node, path, lang)
+    website.logger.error do
+      ["Could not resolve '#{path}' in language '#{lang}' in <#{website.ext.path_handler.current_dest_node}>",
+       "webgen will automatically try to resolve this error by rendering this path again later.",
+       "If the error persists, the content of the path in question needs to be edited to correct the error."]
+    end
   end
 end
 
