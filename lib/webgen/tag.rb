@@ -186,7 +186,7 @@ module Webgen
     def create_config(tag, params, tdata, context)
       values = case params
                when Hash then values_from_hash(tag, params, tdata, context)
-               when String then values_from_string(tag, params, tdata, context)
+               when String, Array then values_for_default_mandatory(tag, params, tdata, context)
                when NilClass then {}
                else
                  raise Webgen::RenderError.new("Invalid parameter type (#{params.class})",
@@ -221,16 +221,16 @@ module Webgen
     end
 
     # Return a hash containing valid configuration options by setting the default mandatory
-    # parameter for +tag+ to +str+.
-    def values_from_string(tag, str, tdata, context)
+    # parameter for +tag+ to +value+.
+    def values_for_default_mandatory(tag, value, tdata, context)
       if tdata.mandatory.first.nil?
         context.website.logger.error do
           ["No default mandatory option specified for tag '#{tag}' but set in <#{context.ref_node}>",
-           "Use the {key: value} syntax for assigning the value '#{str}' to the intended tag option!"]
+           "Use the {key: value} syntax for assigning the value '#{value}' to the intended tag option!"]
         end
         {}
       else
-        {tdata.mandatory.first => str}
+        {tdata.mandatory.first => value}
       end
     end
 

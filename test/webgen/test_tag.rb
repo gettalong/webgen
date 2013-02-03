@@ -55,7 +55,7 @@ class TestTag < MiniTest::Unit::TestCase
   end
 
   def test_call
-    @config.define_option('tag.my_tag.opt', 'param1', 'desc') {|v| raise "Error" unless v.kind_of?(String); v}
+    @config.define_option('tag.my_tag.opt', 'param1', 'desc') {|v| raise "Error" unless v.kind_of?(String) || v.kind_of?(Array); [v].flatten.join('')}
     @config.freeze
     @website.logger.level = Logger::WARN
 
@@ -94,6 +94,9 @@ class TestTag < MiniTest::Unit::TestCase
     assert_raises(Webgen::RenderError) { @tag.call('my_tag', {}, 'body', context) }
 
     result = @tag.call('my_tag', 'unknown', 'body', context)
+    assert_equal('my_tagbodyunknown', result)
+
+    result = @tag.call('my_tag', ['unknown'], 'body', context)
     assert_equal('my_tagbodyunknown', result)
   end
 
