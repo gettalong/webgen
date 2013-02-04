@@ -63,7 +63,7 @@ module Webgen
       end
 
       def item_description(iid, data) #:nodoc:
-        path, lang = *iid.last
+        path, lang = iid
         "Missing acn, alcn or dest path <#{path}>" << (lang.nil? ? '' : " in language '#{lang}'")
       end
 
