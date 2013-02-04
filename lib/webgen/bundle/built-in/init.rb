@@ -35,10 +35,11 @@ end
 
 option('website.tmpdir', 'tmp',
        'Storage location relative to website directory for cache and temporary files created when webgen is run', &is_string)
-option('website.cache', [:file, 'webgen.cache'],
+option('website.cache', ['file', 'webgen.cache'],
        'The file name relative to website.tmpdir (or a string) from/to which the cache is read/written') do |val|
   raise "The value has to be an array with two values" unless val.kind_of?(Array) && val.length == 2
-  raise "The first value has to be :file or :string" unless val[0] == :file || val[0] == :string
+  val.map! {|v| v.to_s}
+  raise "The first value has to be 'file' or 'string'" unless val[0] == 'file' || val[0] == 'string'
   val
 end
 option('website.dry_run', false,

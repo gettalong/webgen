@@ -166,7 +166,7 @@ module Webgen
     # Restore the cache using the +website.cache+ configuration option.
     def restore_cache
       @cache = Cache.new
-      data = if config['website.cache'].first == :file
+      data = if config['website.cache'].first == 'file'
                File.binread(cache_file) if File.file?(cache_file)
              else
                config['website.cache'].last
@@ -180,7 +180,7 @@ module Webgen
     def save_cache
       return if config['website.dry_run']
       cache_data = [@cache.dump, Webgen::VERSION]
-      if config['website.cache'].first == :file
+      if config['website.cache'].first == 'file'
         File.open(cache_file(true), 'wb') {|f| Marshal.dump(cache_data, f)}
       else
         config['website.cache'][1] = Marshal.dump(cache_data)
