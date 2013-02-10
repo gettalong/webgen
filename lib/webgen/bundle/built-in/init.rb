@@ -30,6 +30,11 @@ is_integer = lambda do |val|
   val
 end
 
+symbolic_hash = lambda do |val|
+  raise 'The value has to be a hash' unless val.kind_of?(Hash)
+  val.each_with_object({}) {|(k,v), h| h[k.to_sym] = v}
+end
+
 ########################################################################
 # General configuration parameters
 
@@ -67,7 +72,7 @@ content_processor.register('Erubis')
 option('content_processor.erubis.use_pi', false,
        'Specifies whether processing instructions should be used', &true_or_false)
 option('content_processor.erubis.options', {},
-       'A hash of additional, erubis specific options')
+       'A hash of additional, erubis specific options', &symbolic_hash)
 
 content_processor.register('Fragments')
 content_processor.register('Haml', :ext_map => {'haml' => 'html'})
@@ -75,7 +80,7 @@ content_processor.register('HtmlHead')
 
 content_processor.register('Kramdown')
 option('content_processor.kramdown.options', {:auto_ids => true},
-       'The options hash for the kramdown processor')
+       'The options hash for the kramdown processor', &symbolic_hash)
 option('content_processor.kramdown.handle_links', true,
        'Whether all links in a kramdown document should be processed by webgen', &true_or_false)
 option('content_processor.kramdown.ignore_unknown_fragments', false,
@@ -94,7 +99,7 @@ content_processor.register('Ruby')
 content_processor.register('Sass', :ext_map => {'sass' => 'css'})
 content_processor.register('Scss', :ext_map => {'scss' => 'css'})
 option('content_processor.sass.options', {},
-       'Additional Sass options (also used by the scss processor)', &is_hash)
+       'Additional Sass options (also used by the scss processor)', &symbolic_hash)
 website.ext.sass_load_paths = []
 
 content_processor.register('Tags')
@@ -132,7 +137,7 @@ website.ext.context_modules = []
 # Everything related to the destination extension
 require 'webgen/destination'
 
-option('destination', [:file_system, 'out'],
+option('destination', ['file_system', 'out'],
        'The destination extension which is used to output the generated paths.') do |val|
   raise "The value needs to be an array with at least one value (the destination extension name)" unless val.kind_of?(Array) && val.length >=1
   val
@@ -318,7 +323,7 @@ option('tag.coderay.lang', 'ruby',
        'The language used for highlighting')
 option('tag.coderay.process_body', true,
        'The tag body will be scanned for tags before highlighting if true', &true_or_false)
-option('tag.coderay.wrap', :div,
+option('tag.coderay.wrap', 'div',
        "Specifies how the code should be wrapped, either 'div' or 'span'") do |val|
   val = val.to_s.intern
   raise "The value has to be either div or span" unless val == :div || val == :span
