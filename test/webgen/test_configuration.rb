@@ -14,13 +14,12 @@ class TestConfiguration < MiniTest::Unit::TestCase
   end
 
   def add_default_option
-    @config.define_option('namespace.option', 'default', 'desc') {|v| raise "Error with option" unless v.kind_of?(String); v}
+    @config.define_option('namespace.option', 'default') {|v| raise "Error with option" unless v.kind_of?(String); v}
   end
 
   def test_defining_options
     assert(@config.options['namespace.option'])
     assert_equal('default', @config.options['namespace.option'].default)
-    assert_equal('desc', @config.options['namespace.option'].description)
     assert_kind_of(Proc, @config.options['namespace.option'].validator)
 
     assert_raises(ArgumentError) { add_default_option }
@@ -35,7 +34,7 @@ class TestConfiguration < MiniTest::Unit::TestCase
     assert_equal('default', @config['namespace.option'])
     assert_raises(Webgen::Configuration::Error) { @config['unknown'] }
 
-    @config.define_option('other', :sym, 'desc')
+    @config.define_option('other', :sym)
     assert_equal(:sym, @config['other'])
   end
 
@@ -66,7 +65,7 @@ class TestConfiguration < MiniTest::Unit::TestCase
     @config.freeze
     assert_equal('default', @config['namespace.option'])
     assert_raises(Webgen::Configuration::Error) { @config['namespace.option'] = 'other' }
-    assert_raises(RuntimeError) { @config.define_option('nonsense', 'val', 'desc') }
+    assert_raises(RuntimeError) { @config.define_option('nonsense', 'val') }
   end
 
   def test_load_from_file_exceptions
@@ -97,12 +96,12 @@ class TestConfiguration < MiniTest::Unit::TestCase
     cloned = @config.clone
     assert(@config.frozen?)
     assert_raises(Webgen::Configuration::Error) { cloned['namespace.option'] = 'other' }
-    assert_raises(RuntimeError) { cloned.define_option('nonsense', 'val', 'desc') }
+    assert_raises(RuntimeError) { cloned.define_option('nonsense', 'val') }
 
     dupped = @config.dup
     refute(dupped.frozen?)
 
-    dupped.define_option('test', '', '')
+    dupped.define_option('test', '')
     assert(dupped.option?('test'))
     refute(@config.option?('test'))
 
@@ -113,7 +112,7 @@ class TestConfiguration < MiniTest::Unit::TestCase
 
   def test_equality
     other = Webgen::Configuration.new
-    other.define_option('namespace.option', 'default', 'desc') {|v| raise "Error with option" unless v.kind_of?(String); v}
+    other.define_option('namespace.option', 'default') {|v| raise "Error with option" unless v.kind_of?(String); v}
     assert_equal(@config, other)
 
     other['namespace.option'] = 'val'
@@ -124,7 +123,7 @@ class TestConfiguration < MiniTest::Unit::TestCase
     refute_equal(@config, other)
 
     other = Webgen::Configuration.new
-    other.define_option('namespace.option', 'default1', 'desc')
+    other.define_option('namespace.option', 'default1')
     refute_equal(@config, other)
   end
 

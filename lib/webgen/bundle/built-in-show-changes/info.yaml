@@ -3,3 +3,15 @@ summary: Built-in webgen extension for showing destination path changes
 description: |
   This is an extension bundle that comes with webgen. It provides a means for
   showing the changes that would be written to a destination path.
+
+options:
+  destination.show_changes:
+    summary: |
+      Specifies whether changes to the content of destination paths should be shown in a diff-like
+      manner. This option combined with the website.dry_run configuration option allows one to
+      preview the changes that the invocation of webgen would do.
+    syntax: |
+      `true` or `false`
+    example:
+      config: |
+        destination.show_changes: true

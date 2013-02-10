@@ -55,7 +55,7 @@ class TestTag < MiniTest::Unit::TestCase
   end
 
   def test_call
-    @config.define_option('tag.my_tag.opt', 'param1', 'desc') {|v| raise "Error" unless v.kind_of?(String) || v.kind_of?(Array); [v].flatten.join('')}
+    @config.define_option('tag.my_tag.opt', 'param1') {|v| raise "Error" unless v.kind_of?(String) || v.kind_of?(Array); [v].flatten.join('')}
     @config.freeze
     @website.logger.level = Logger::WARN
 
@@ -101,7 +101,7 @@ class TestTag < MiniTest::Unit::TestCase
   end
 
   def test_replace_tags
-    @config.define_option('tag.prefix', '', 'desc')
+    @config.define_option('tag.prefix', '')
     @config.freeze
 
     assert_raises(NoMethodError) { @tag.replace_tags("{test:}") }

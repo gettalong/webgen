@@ -220,3 +220,773 @@ extensions:
   task.generate_website:
     author: *author
     summary: Generates the website
+
+
+options:
+  content_processor.erb.trim_mode:
+    summary: |
+      The ERB trim mode. The string can contain any combination of '%', '<' and '<>' -- see the API
+      documentation of ERB for more information.
+    syntax: |
+      `STRING` where `STRING` is any combination of any combination of '%', '<' and '<>'
+    example:
+      config: |
+        content_processor.erb.trim_mode: true
+
+  content_processor.erubis.options:
+    summary: |
+      Additional Erubis options. Have a look at the Erubis documentation for available options.
+    syntax: |
+      `{KEY: VALUE, ...}` where `KEY` and `VALUE` are key-value pairs of options
+    example:
+      config: |
+        content_processor.erubis.options: {trim: true}
+
+  content_processor.erubis.use_pi:
+    summary: |
+      Specifies whether Erubis should look for XML processing instructions or the standard ERB tags
+      when processing content.
+    syntax: |
+      `true` or `false`
+    example:
+      config: |
+        content_processor.erubis.use_pi: true
+
+  content_processor.kramdown.handle_links:
+    summary: |
+      Specifies whether all links in a kramdown document should be processed by webgen. If this
+      option is set, all links are automatically resolved using webgen's built-in facilities. This
+      saves some typing and makes the document more robust since all links are automatically checked
+      and warnings displayed if the link target is not found.
+    syntax: |
+      `true` or `false`
+    example:
+      config: |
+        content_processor.kramdown.handle_links: false
+
+  content_processor.kramdown.ignore_unknown_fragments:
+    summary: |
+      Specifies whether unknown, non-resolvable fragment parts should be ignored. This is useful
+      when there are links to fragments that have no internal representation.
+    syntax: |
+      `true` or `false`
+    example:
+      config: |
+        content_processor.kramdown.ignore_unknown_fragments: true
+
+  content_processor.kramdown.options:
+    summary: |
+      Additional options for the kramdown processor. Have a look at the kramdown documentation for
+      available options.
+    syntax: |
+      `{KEY: VALUE, ...}` where `KEY` and `VALUE` are key-value pairs of kramdown options
+    example:
+      config: |
+        content_processor.kramdown.options: {auto_ids: false, coderay_line_numbers: null}
+
+  content_processor.redcloth.hard_breaks:
+    summary: |
+      Specifies whether hard breaks (i.e. single newlines) in paragraphs are converted to HTML break
+      tags.
+    syntax: |
+      `true` or `false`
+    example:
+      config: |
+        content_processor.redcloth.hard_breaks: true
+
+  content_processor.sass.options:
+    summary: |
+      Additional Sass options (also used by the scss content processors). Have a look at the Sass
+      documentation for available options.
+    syntax: |
+      `{KEY: VALUE, ...}` where `KEY` and `VALUE` are key-value pairs of Sass options
+    example:
+      config: |
+        content_processor.sass.options: {line_numbers: true}
+
+  content_processor.tidy.options:
+    summary: |
+      Additional options passed to the `tidy` command (`-q` is always used).
+    syntax: |
+      `STRING` where `STRING` is the string with the command line options
+    example:
+      config: |
+        content_processor.tidy.options: "-utf8"
+
+  content_processor.tikz.libraries:
+    summary: |
+      Array of additional TikZ library names.
+    syntax: |
+      `[NAME, ...]` where `NAME` is the name of a TikZ library
+    example:
+      config: |
+        content_processor.tikz.libraries: [mindmap, arrows]
+    example:
+      tag: |
+        {tikz:: {path: tikz.png, content_processor.tikz.libraries: [mindmap, arrows]}}
+        \tikz \draw (0,0) -- (0,2) -- (2,2);
+        {tikz}
+
+  content_processor.tikz.opts:
+    summary: |
+      A string with global options for the `tikzpicture` environment
+    syntax: |
+      `OPTS` where `OPTS` is the string with the global options
+    example:
+      config: |
+        content_processor.tikz.opts: 'scale=3, line cap=round'
+      tag: |
+        {tikz:: {path: tikz.png, content_processor.tikz.opts: 'scale=3, line cap=round'}}
+        \tikz \draw (0,0) -- (0,2) -- (2,2);
+        {tikz}
+
+  content_processor.tikz.resolution:
+    summary: |
+      The render and output resolutions that should be used for converting the TikZ image in PDF
+      format to the chosen image format. The first number specifies the render resolution and the
+      second the output resolution. If the render resolution is higher than the output resolution,
+      the final image quality is better by scaling the image down to the output resolution.
+    syntax: |
+      `RENDER OUTPUT` where `RENDER` is the integer specifying the render resolution and `OUTPUT` is
+      the integer specifying the output resolution.
+    example:
+      config: |
+        content_processor.tikz.resolution: 300 72
+      tag: |
+        {tikz:: {path: tikz.png, content_processor.tikz.resolution: 300 72}}
+        \tikz \draw (0,0) -- (0,2) -- (2,2);
+        {tikz}
+
+  content_processor.tikz.template:
+    summary: |
+      The template node containing the LaTeX framework that should be used for creating the TikZ
+      image.
+    syntax: |
+      `PATH` where `PATH` is the (a)(l)cn of a template node
+    example:
+      config: |
+        content_processor.tikz.template: /tmpl/my_tikz.template
+      tag: |
+        {tikz:: {path: tikz.png, content_processor.tikz.template: /my_tikz.template}}
+        \tikz \draw (0,0) -- (0,2) -- (2,2);
+        {tikz}
+
+  content_processor.tikz.transparent:
+    summary: |
+      Specifies whether the generated image should be transparent. This configuration option is only
+      used when the destination path of the TikZ image has the extension ".png"!
+    syntax: |
+      `true` or `false`
+    example:
+      config: |
+        content_processor.tikz.transparent: true
+      tag: |
+        {tikz:: {path: tikz.png, content_processor.tikz.transparent: true}}
+        \tikz \draw (0,0) -- (0,2) -- (2,2);
+        {tikz}
+
+  content_processor.xmllint.options:
+    summary: |
+      Options passed to the `xmllint` command.
+    syntax: |
+      `STRING` where `STRING` is the string with the command line options.
+    example:
+      config: |
+        content_processor.xmllint.options: "--catalogs --noout"
+
+
+  destination:
+    summary: |
+      The destination extension that should be used for writing out the generated paths.
+    syntax: |
+      `[NAME, ARG1, ARG2, ...]` where `NAME` is the short name of the destination extension (for
+      example "file_system") and `ARG1`, `ARG2` and so on are the parameters for the destination
+      extension. The supported parameters can be found in the documentation for each destination
+      extension.
+    example:
+      config: |
+        destination: [file_system, custom_out_dir]
+
+  misc.dummy_index.directory_indexes:
+    summary: |
+      A list of directory index names that should be recognized. These index names are used to
+      determine whether a directory already has a valid directory index. The first entry is also
+      used as the name for the dummy directory index that is created if needed.
+    syntax: |
+      `[INDEX NAME, ...]` where `INDEX NAME` is a directory index name
+    example:
+      config: |
+        misc.dummy_index.directory_indexes: [index.html, index.htm, default.htm]
+
+  misc.dummy_index.enabled:
+    summary: |
+      Specifies whether dummy index paths should automatically be created.
+    syntax: |
+      `true` or `false`
+    example:
+      config: |
+        misc.dummy_index.enabled: false
+
+  node_finder.option_sets:
+    summary: |
+      Predefined node finder option sets. This option allows one to define common node finder option
+      sets beforehand and then use them for any node finder operation.
+    syntax: |
+      `{NAME: OPTION SET, ...}` where `NAME` is the name of the to-be-defined option set and `OPTION
+      SET` is a hash with node finder options
+    example:
+      config: |
+        node_finder.option_sets:
+          menu: {in_menu: true, sort: sort_info, levels: [1,3]}
+          sub_menu: {descendants: true, levels: [2,10]}
+
+  path_handler.default_template:
+    summary: |
+      The name of the default template of a directory. This template is used as fallback when no
+      specific template is specified.
+    syntax: |
+      `PATH` where `PATH` is the (a)(l)cn of the default template
+    example:
+      config: |
+        path_handler.default_template: other.template
+
+  path_handler.lang_code_in_dest_path:
+    summary: |
+      Specifies whether destination paths should have the language part in their name. This option
+      can either be set to `true` (all paths get the language part), `false` (no path gets a
+      language part) or `except_default` (all paths except those in the default language -- see the
+      website.lang configuration option -- get the language part).
+    syntax: |
+      `true`, `false` or `except_default`
+    example:
+      config: |
+        path_handler.lang_code_in_dest_path: true
+
+  path_handler.patterns.case_sensitive:
+    summary: |
+      Specifies whether path names should be considered case-sensitive (value `true`) or
+      case-insensitive (value `false`).
+    syntax: |
+      `true` or `false`
+    example:
+      config: |
+        path_handler.patterns.case_sensitive: true
+
+  path_handler.patterns.match_leading_dot:
+    summary: |
+      Specifies whether paths with a leading dot, i.e. hidden files, should be used.
+    syntax: |
+      `true` or `false`
+    example:
+      config: |
+        path_handler.patterns.match_leading_dot: true
+
+  path_handler.version_in_dest_path:
+    summary: |
+      Specifies whether destination paths should use the version name in their name. This option can
+      either be set to `true` (all paths get the version part), `false` (no path gets a version
+      part) or `except_default` (all paths except those with the default version name get the
+      version part).
+    syntax: |
+      `true`, `false` or `except_default`
+    example:
+      config: |
+        path_handler.version_in_dest_path: true
+
+  sources:
+    summary: |
+      One or more source extensions from which paths are read. This can be used, for example, to
+      additionally add source directories that may or may not be located in the website directory.
+    syntax: |
+      `[[MOUNT POINT, NAME, ARG1, ARG2, ...], ...]` where `MOUNT POINT` is the absolute path under
+      which the source should be mounted, `NAME` is the short name of the source extension (for
+      example, "file_system") and `ARG1`, `ARG2` and so on are the parameters for the source
+      extension. The supported parameters can be found in the documentation for each source
+      extension.
+    example:
+      config: |
+        sources: [[/, file_system, src], [/, file_system, /mnt/pictures, '**/*.jpg']]
+
+  sources.ignore_paths:
+    summary: |
+      The path patterns that should be ignored. All paths that match at least one of the patterns
+      are ignored.
+    syntax: |
+      `[PATTERN, ...]` where `PATTERN` is a valid path pattern
+    example:
+      config: |
+        sources.ignore_paths: [**/*~, **/CVS/**]
+
+
+  tag.breadcrumb_trail.end_level:
+    summary: |
+      The level at which the breadcrumb trail ends. Have a look at the documentation for
+      tag.breadcrumb_trail.start_level for more information on the useable level numbers.
+    syntax: |
+      `INTEGER` where `INTEGER` is an integer
+    example:
+      config: |
+        tag.breadcrumb_trail.end_level: 2
+      tag: |
+        {breadcrumb_trail: {end_level: 2}}
+
+  tag.breadcrumb_trail.omit_dir_index:
+    summary: |
+      Specifies whether the last path component should be omitted if it is an index path.
+    syntax: |
+      `true` or `false`
+    example:
+      config: |
+        tag.breadcrumb_trail.omit_dir_index: true
+      tag: |
+        {breadcrumb_trail: {omit_dir_index: true}}
+
+  tag.breadcrumb_trail.separator:
+    summary: |
+      The string that should be used as separator between indivdual parts of the breadcrumb trail.
+    syntax: |
+      `SEPARATOR` where `SEPARATOR` is a string (special HTML characters like `<` need to be
+      properly escaped)
+    example:
+      config: |
+        tag.breadcrumb_trail.separator: '---'
+      tag: |
+        {breadcrumb_trail: {separator: ' --- '}}
+
+  tag.breadcrumb_trail.start_level:
+    summary: |
+      The level at which the breadcrumb trail starts. The default of 0 means to start a the root
+      directory. Setting this option to 1 starts the breadcrumb trail at the first level. If you
+      specify negative numbers, then everything is calculated from the end of the trail. Following
+      is a diagram showing the level numbers for a sample path:
+
+          0   1        2           3
+          /  dir1  /  dir2  /  myfile.html
+          -4  -3       -2          -1
+
+      Be aware that the you need to take the tag.breadcrumbtrail.omit_index_path configuration
+      option into account when specifying the level number.
+    syntax: |
+      `INTEGER` where `INTEGER` is an integer
+    example:
+      config: |
+        tag.breadcrumb_trail.start_level: 2
+      tag: |
+        {breadcrumb_trail: {start_level: 2}}
+
+  tag.breadcrumb_trail.template:
+    summary: |
+      The template node used for rendering the tag. It has to contain the block
+      'tag.breadcrumb_trail' because this block is used for rendering.
+    syntax: |
+      `PATH` where `PATH` is the (a)(l)cn of the template node
+    example:
+      config: |
+        tag.breadcrumb_trail.template: /other.template
+      tag: |
+        {breadcrumb_trail: {template: /other.template}}
+
+  tag.coderay.bold_every:
+    summary: |
+      The interval at which the line numbers should appear bold.
+    syntax: |
+      `INTEGER` where `INTEGER` is an integer
+    example:
+      config: |
+        tag.coderay.bold_every: 2
+      tag: |
+        {coderay:: {lang: ruby, bold_every: 2}}puts 5 + 5{coderay}
+
+  tag.coderay.css:
+    summary: |
+      Specifies how the highlighted code should be styled. If set to `style`, the CSS style
+      attributes are set directly on the various HTML elements. If set to `class`, only classes are
+      set on the HTML elements and the default external stylesheet is used - the content processor
+      html_head is needed for this to work. If set to `other`, only classes are set like with the
+      `class` value but no default external stylesheet is used.
+    syntax: |
+      `STYLE` where `STYLE` is either `style`, `css` or `other`
+    example:
+      config: |
+        tag.coderay.css: style
+      tag: |
+        {coderay:: {lang: ruby, css: class}}puts 5 + 5{coderay}
+
+  tag.coderay.lang:
+    summary: |
+      The language used for highlighting.
+    syntax: |
+      `LANG` where `LANG` is one of the languages supported by coderay
+    example:
+      config: |
+        tag.coderay.lang: ruby
+      tag: |
+        {coderay:: ruby}puts 5 + 5{coderay}
+
+  tag.coderay.line_number_start:
+    summary: |
+      The line number that should be used for the first line.
+    syntax: |
+      `INTEGER` where `INTEGER` is an integer
+    example:
+      config: |
+        tag.coderay.line_number_start: 4
+      tag: |
+        {coderay:: {lang: ruby, line_number_start: 4}}puts 5 + 5{coderay}
+
+  tag.coderay.line_numbers:
+    summary: |
+      Specifies whether line numbers should be shown.
+    syntax: |
+      `true` or `false`
+    example:
+      config: |
+        tag.coderay.line_numbers: false
+      tag: |
+        {coderay:: {lang: ruby, line_numbers: false}}puts 5 + 5{coderay}
+
+  tag.coderay.process_body:
+    summary: |
+      Specifies whether the body of the tag should be processed by the content processor tags first.
+    syntax: |
+      `true` or `false`
+    example:
+      config: |
+        tag.coderay.process_body: false
+      tag: |
+        {coderay:: {lang: ruby, process_body: false}}puts 5 + 5{coderay}
+
+  tag.coderay.tab_width:
+    summary: |
+      The number of spaces that should be used to replace tabulator characters.
+    syntax: |
+      `INTEGER` where `INTEGER` is an integer
+    example:
+      config: |
+        tag.coderay.tab_width: 4
+      tag: |
+        {coderay:: {lang: ruby, tab_width: 4}}puts 5 + 5{coderay}
+
+  tag.coderay.wrap:
+    summary: |
+      The HTML element the highlighted code should be wrapped in.
+    syntax: |
+      `WRAP` where `WRAP` is either `:div` or `:span`
+    example:
+      config: |
+        tag.coderay.wrap: span
+      tag: |
+        {coderay:: {lang: ruby, wrap: span}}puts 5 + 5{coderay}
+
+  tag.date.format:
+    summary: |
+      The format that should be used for formatting the current date. The format string needs to be
+      in a format supported by Ruby's Time#strftime method.
+    syntax: |
+      `FORMAT` where `FORMAT` is the date format string
+    example:
+      config: |
+        tag.date.format: '%Y-%m-%d'
+      tag: |
+        {date: {format: '%Y-%m-%d'}}
+
+  tag.execute_command.command:
+    summary: |
+      The command that should be executed.
+    syntax: |
+      `COMMAND` where `COMMAND` is a string containing the command and its arguments
+    example:
+      tag: |
+        {exeucte_cmd: echo hallo}
+
+  tag.execute_command.escape_html:
+    summary: |
+      Specifies whether special HTML characters in the output of the executed command should be
+      escaped.
+    syntax: |
+      `true` or `false`
+    example:
+      config: |
+        tag.execute_command.escape_html: false
+      tag: |
+        {execute_cmd: {command: 'echo hallo', escape_html: false}}
+
+  tag.execute_command.process_output:
+    summary: |
+      Specifies whether the output of the executed command should be further processed by the
+      content processor tags.
+    syntax: |
+      `true` or `false`
+    example:
+      config: |
+        tag.execute_command.process_output: false
+      tag: |
+        {execute_cmd: {command: 'echo hallo', process_output: false}}
+
+  tag.include_file.escape_html:
+    summary: |
+      Specifies whether special HTML characters in the content of the file should be escaped.
+    syntax: |
+      `true` or `false`
+    example:
+      config: |
+        tag.include_file.escape_html: false
+      tag: |
+        {include_file: {filename: my_file.txt, escape_html: false}}
+
+  tag.include_file.filename:
+    summary: |
+      The name of the file that should be included. The filename needs to be relative to the website
+      directory or an absolute path.
+    syntax: |
+      `FILENAME` where `FILENAME` is the name of a file
+    example:
+      tag: |
+        {include_file: my_file.txt}
+
+  tag.include_file.process_output:
+    summary: |
+      Specifies whether the content of the file should be further processed by the content
+      processor tags.
+    syntax: |
+      `true` or `false`
+    example:
+      config: |
+        tag.include_file.process_output: false
+      tag: |
+        {include_file: {filename: my_file.txt, process_output: false}}
+
+  tag.langbar.separator:
+    summary: |
+      The string that should be used as separator between the individual language parts.
+    syntax: |
+      `SEPARATOR` where `SEPARATOR` is a string (special HTML characters like `<` need to be
+      properly escaped)
+    example:
+      config: |
+        tag.langbar.separator: ' --- '
+      tag: |
+        {langbar: {separator: ' --- '}}
+
+  tag.langbar.show_own_lang:
+    summary: |
+      Specifies whether the link to the language of the current page should be displayed.
+    syntax: |
+      `true` or `false`
+    example:
+      config: |
+        tag.langbar.show_own_lang: false
+      tag: |
+        {langbar: {show_own_lang: false}}
+
+  tag.langbar.show_single_lang:
+    summary: |
+      Specifies whether the langbar should be displayed even if there are no translations of the
+      page (i.e. when there is only one page).
+    syntax: |
+      `true` or `false`
+    example:
+      config: |
+        tag.langbar.show_single_lang: false
+      tag: |
+        {langbar: {show_single_lang: false}}
+
+  tag.langbar.template:
+    summary: |
+      The template node used for rendering the tag. It has to contain the block
+      'tag.langbar' because this block is used for rendering.
+    syntax: |
+      `PATH` where `PATH` is the (a)(l)cn of the template node
+    example:
+      config: |
+        tag.langbar.template: /other.template
+      tag: |
+        {langbar: {template: /other.template}}
+
+  tag.link.attr:
+    summary: |
+      Additional HTML attributes that should be set on the generated link.
+    syntax: |
+      `{NAME: VALUE, ...}` where `NAME` is a valid HTML attribute name and `VALUE` its value
+    example:
+      config: |
+        tag.link.attr: {title: DocuPage}
+      tag: |
+        {link: {path: docu.html, attr: {title: DocuPage}}}
+
+  tag.link.path:
+    summary: |
+      The (a)(l)cn or destination path to which a link should be created.
+    syntax: |
+      `PATH` where `PATH` is an (a)(l)cn or a destination path
+    example:
+      tag: |
+        {link: docu.html}
+
+  tag.menu.options:
+    summary: |
+      Node finder options that specify which nodes the menu should use.
+    syntax: |
+      `OPTIONS` where `OPTIONS` is a hash with node finder options
+    example:
+      tag: |
+        {menu: {options: {in_menu: true, sort: sort_info, levels: [1,3]}}}
+
+  tag.menu.style:
+    summary: |
+      The menu rendering style that should be used. The value can either be 'nested' for a nested
+      menu or 'flat' for a flat menu.
+
+      For example, this would be a menu with style 'nested'
+
+          ul           1
+            li         2
+              ul       3
+                li     4
+                li     5
+            li         6
+
+      and this with style 'flat'
+
+          ul           1
+            li         2
+            li         6
+          ul           3
+            li         4
+            li         5
+    syntax: |
+      `STYLE` where `STYLE` is either `nested` or `flat`
+    example:
+      config: |
+        tag.menu.style: flat
+      tag: |
+        {menu: {options: {mi: {menu: true}}, style: nested}}
+
+  tag.menu.template:
+    summary: |
+      The template node used for rendering the tag. It has to contain the block
+      'tag.menu' because this block is used for rendering.
+    syntax: |
+      `PATH` where `PATH` is the (a)(l)cn of the template node
+    example:
+      config: |
+        tag.menu.template: /other.template
+      tag: |
+        {menu: {options: {mi: {menu: true}}, template: /other.template}}
+
+  tag.meta_info.escape_html:
+    summary: |
+      Specifies whether special HTML characters in the meta information value should be escaped.
+    syntax: |
+      `true` or `false`
+    example:
+      config: |
+        tag.meta_info.escape_html: true
+      tag: |
+        {title: {escape_html: false}}
+        {meta_info: {mi: title, escape_html: false}}
+
+  tag.meta_info.mi:
+    summary: |
+      The name of the meta information key the value of which should be output.
+    syntax: |
+      `KEY` where `KEY` is the name of a meta information key
+    example:
+      tag: |
+        {title: }
+        {meta_info: {mi: title}
+
+  tag.prefix:
+    summary: |
+      The prefix used for tag names to avoid name clashes when another content processor uses
+      similar markup.
+    syntax: |
+      `PREFIX` where `PREFIX` is the prefix name
+    example:
+      config: |
+        tag.prefix: webgen
+
+  tag.relocatable.ignore_unknown_fragment:
+    summary: |
+      Specifies whether an unknown, non-resolvable fragment part should be ignored.
+    syntax: |
+      `true` or `false`
+    example:
+      config: |
+        tag.relocatable.ignore_unknown_fragment: true
+
+  tag.relocatable.path:
+    summary: |
+      The path that should be made relocatable.
+    syntax: |
+      `PATH` where `PATH` is an (a)(l)cn
+    example:
+      tag: |
+        {relocatable: default.css}
+
+  tag.tikz.img_attr:
+    summary: |
+      Additional HTML attributes that should be set on the generated `img` tag.
+    syntax: |
+      `\{KEY:VALUE, ...}` where `KEY` is a valid HTML `img` tag attribute name and `VALUE` its
+      value.
+    example:
+      config: |
+        tag.tikz.img_attr: {alt: Some TikZ picture}
+      tag: |
+        {tikz:: {path: tikz.png, img_attr: {alt: Some TikZ picture}}}
+        \tikz \draw (0,0) -- (0,2) -- (2,2);
+        {tikz}
+
+  tag.tikz.path:
+    summary: |
+      The source path that should be used for creating the TikZ image. The destination path is
+      derived from this path the usual way. Don't use a path that does already exist!
+    syntax: |
+      `PATH` where `PATH` is a relative or absolute source path
+    example:
+      tag: |
+        {tikz:: images/tikz.png}\tikz \draw (0,0) -- (0,2);{tikz}
+
+  website.cache:
+    summary: |
+      The type and location of the cache. Two types are currently supported: `file` and `string`.
+      The file cache type stores the cache in a file relative to the website's temporary directory.
+      The string cache type stores the cache directly in the second part of the configuration option
+      (this is only useful when webgen is used as a library).
+    syntax: |
+      `[TYPE, LOCATION]` where `TYPE` is one of `file` or `string`
+    example:
+      config: |
+        website.cache: [file, my.cache]
+
+  website.dry_run:
+    summary:
+      Specifies whether anything should be written to the destination.
+    syntax: |
+      `true` or `false`.
+    example:
+      config: |
+        website.dry_run: false
+
+  website.lang:
+    summary: |
+      The default language of the website. This language is assigned, for example, to page paths for
+      which no language has explicitly been specified.
+    syntax: |
+      `LANGUAGE` where `LANGUAGE` is a ISO-639-1/2 two or three letter language code (e.g. 'de',
+      'en', 'fr', ...)
+    example:
+      config: |
+        website.lang: de
+
+  website.tmpdir:
+    summary: |
+      The directory used for temporary files. It is taken relative to website directory and used for
+      cache and temporary files created when webgen is run. Note that this directory *cannot* be
+      shared between webgen websites!
+    syntax: |
+      `DIRECTORY` where `DIRECTORY` is a directory (relative to the website directory or absolute)
+    example:
+      config: |
+        website.tmpdir: /tmp/webgen-tmp-dir

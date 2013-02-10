@@ -104,8 +104,8 @@ module Webgen
     # Define a configuration option.
     #
     # See Webgen::Configuration#define_option for more information.
-    def option(name, default, description, &validator)
-      @website.config.define_option(name, default, description, &validator)
+    def option(name, default, &validator)
+      @website.config.define_option(name, default, &validator)
     end
 
     # Return the website object.

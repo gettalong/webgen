@@ -44,4 +44,24 @@ class TestExtensionDocumentation < MiniTest::Unit::TestCase
     assert(documentation.empty?, "Superfluous documentation keys: #{documentation.keys.join(", ")}")
   end
 
+  def test_all_config_options_documented
+    ws = Webgen::Website.new(File.join(Dir.tmpdir, '/abcdefgh'))
+    documentation = YAML::load(File.read(ws.ext.bundles['built-in']))['options']
+    documentation.merge!(YAML::load(File.read(ws.ext.bundles['built-in-show-changes']))['options'])
+    docu_keys = Set.new(documentation.keys)
+
+    check_docu = lambda do |key|
+      data = documentation.delete(key.to_s)
+      assert(data, "Missing options documentation for '#{key}'")
+      assert(!data['summary'].to_s.empty?, "Missing summary for option '#{key}'")
+      assert(!data['syntax'].to_s.empty?, "Missing syntax for option '#{key}'")
+      assert(data['example'].kind_of?(Hash) && data['example'].length > 0, "Missing example for option '#{key}'")
+    end
+
+    ws.config.options.each do |key, value|
+      check_docu.call(key.to_s)
+    end
+    assert(documentation.empty?, "Superfluous option documentation keys: #{documentation.keys.join(", ")}")
+  end
+
 end

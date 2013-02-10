@@ -9,26 +9,26 @@ module Webgen
   #
   # Configuration options can be created by using the define_option method:
   #
-  #   config.define_option "my.new.option", 'default value', 'description'
+  #   config.define_option "my.new.option", 'default value'
   #
   # and later accessed or set using the accessor methods #[] and #[]=. A validation block can also
   # be specified when defining an option. This validation block is called when a new value should be
   # set and it should return the (possibly changed) value to be set:
   #
-  #   config.define_option "my.new.option", 'default value', 'description' do |val|
+  #   config.define_option "my.new.option", 'default value' do |val|
   #     raise "Option must be a string" unless val.kind_of?(String)
   #     val.upcase
   #   end
   #
   # **Note**: When a Configuration object is dumped (via Marshal), the option validator procs are
-  # not dumped and can therefore not be restored.
+  # not dumped and can therefore not be restored!
   class Configuration
 
     # Raised by the Webgen::Configuration class.
     class Error < Webgen::Error; end
 
     # Struct class for storing a configuration option.
-    Option = Struct.new(:default, :description, :validator) do
+    Option = Struct.new(:default, :validator) do
       def dupped_default #:nodoc:
         default.dup rescue default
       end
@@ -38,12 +38,11 @@ module Webgen
       end
 
       def marshal_dump #:nodoc:
-        [self.default, self.description]
+        self.default
       end
 
       def marshal_load(data) #:nodoc:
-        self.default = data[0]
-        self.description = data[1]
+        self.default = data
       end
 
     end
@@ -82,17 +81,16 @@ module Webgen
       @options == other.options && @values == other.instance_variable_get(:@values)
     end
 
-    # Define a new option +name+ with a default value of +default+ and the description.
+    # Define a new option +name+ with a default value of +default+.
     #
     # If a validation block is provided, it is called with the new value when one is set and should
     # return a (possibly altered) value to be set.
-    def define_option(name, default, description, &validator)
+    def define_option(name, default, &validator)
       if @options.has_key?(name)
         raise ArgumentError, "Configuration option '#{name}' has already be defined"
       else
         @options[name] = Option.new
         @options[name].default = default.freeze
-        @options[name].description = description.freeze
         @options[name].validator = validator.freeze
         @options[name].freeze
       end

@@ -2,8 +2,7 @@
 #
 # This file initializes the show-changes built-in extension.
 
-option('destination.show_changes', false,
-       'Show changes to destination paths') do |val|
+option('destination.show_changes', false) do |val|
   raise "The value has to be 'true' or 'false'" unless val == true || val == false
   val
 end
