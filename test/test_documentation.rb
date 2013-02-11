@@ -10,7 +10,7 @@ class TestExtensionDocumentation < MiniTest::Unit::TestCase
 
   def test_all_extensions_documented
     ws = Webgen::Website.new(File.join(Dir.tmpdir, '/abcdefgh'))
-    documentation = YAML::load(File.read(ws.ext.bundles['built-in']))['extensions']
+    documentation = ws.ext.bundle_infos.extensions.dup
     author = "Thomas Leitner <t_leitner@gmx.at>"
     docu_keys = Set.new(documentation.keys)
     ext_keys = Set.new(ws.ext.instance_eval { @table.keys })
@@ -46,8 +46,7 @@ class TestExtensionDocumentation < MiniTest::Unit::TestCase
 
   def test_all_config_options_documented
     ws = Webgen::Website.new(File.join(Dir.tmpdir, '/abcdefgh'))
-    documentation = YAML::load(File.read(ws.ext.bundles['built-in']))['options']
-    documentation.merge!(YAML::load(File.read(ws.ext.bundles['built-in-show-changes']))['options'])
+    documentation = ws.ext.bundle_infos.options.dup
     docu_keys = Set.new(documentation.keys)
 
     check_docu = lambda do |key|

@@ -19,7 +19,18 @@ class TestBundleLoader < MiniTest::Unit::TestCase
     @ext_file = File.join(@extdir, 'my_ext', 'init.rb')
     FileUtils.touch(@ext_file)
     @ext_info_file = File.join(@extdir, 'my_ext', 'info.yaml')
-    FileUtils.touch(@ext_info_file)
+    File.write(@ext_info_file, <<EOF)
+author: authority
+summary: summaries
+
+extensions:
+  dummy:
+    summary: dummy
+
+options:
+  dummy:
+    summary: dummy
+EOF
 
     @loader = Webgen::BundleLoader.new(@website, @extdir)
   end
@@ -30,19 +41,25 @@ class TestBundleLoader < MiniTest::Unit::TestCase
 
   def test_load
     @loader.load('webgen')
+    assert_nil(@website.ext.bundle_infos.instance_variable_get(:@infos))
+    assert_equal({}, @website.ext.bundle_infos.bundles['webgen'])
+
     @loader.load('my_ext')
     @loader.load('my_ext')
     assert_equal([File.expand_path(@webgen_file), File.expand_path(@ext_file)], @loader.instance_variable_get(:@loaded))
-    assert_equal({'webgen' => nil, 'my_ext' => @ext_info_file}, @website.ext.bundles)
+    assert_equal({}, @website.ext.bundle_infos.bundles['webgen'])
+    assert_equal({'author' => 'authority', 'summary' => 'summaries'},
+                 @website.ext.bundle_infos.bundles['my_ext'])
+    assert_equal({'author' => 'authority', 'bundle' => 'my_ext', 'summary' => 'dummy'},
+                 @website.ext.bundle_infos.extensions['dummy'])
+    assert_equal({'author' => 'authority', 'bundle' => 'my_ext', 'summary' => 'dummy'},
+                 @website.ext.bundle_infos.options['dummy'])
   end
 
   def test_dsl
-    File.open(File.join(@extdir, 'init.rb'), 'w+') do |f|
-      f.puts("load('my_ext'); require_relative('webgen/init.rb')")
-    end
-    File.open(@ext_file, 'w+') do |f|
-      f.puts("mount_passive('data', '/test', '*.hallo')")
-    end
+    File.write(File.join(@extdir, 'init.rb'), "load('my_ext'); require_relative('webgen/init.rb')")
+    File.write(@ext_file, "mount_passive('data', '/test', '*.hallo')")
+
     @website.ext.source = OpenStruct.new
     @website.ext.source.passive_sources = [['/', :file, 'other']]
 

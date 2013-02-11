@@ -14,10 +14,74 @@ module Webgen
   # 'webgen-BUNDLE_NAME-bundle'.
   class BundleLoader
 
+    # Exposes information about bundles like author, license, bundle homepage as well as extension
+    # and configuration option documentation.
+    class BundleInformation
+
+      def initialize #:nodoc:
+        @bundles = {}
+        @infos = nil
+      end
+
+      # Add the bundle +name+ with the given information file to the list of available bundles.
+      def add_bundle(name, info_file)
+        raise "Bundle information already registered for #{name}" if @bundles.has_key?(name)
+        @bundles[name] = info_file
+        load_bundle_information unless @infos.nil?
+      end
+
+      # Return a hash with information about bundles.
+      def bundles
+        infos[:bundles]
+      end
+
+      # Return a hash with information about extensions.
+      def extensions
+        infos[:extensions]
+      end
+
+      # Return a hash with information about options.
+      def options
+        infos[:options]
+      end
+
+      def infos #:nodoc:
+        load_bundle_information if @infos.nil?
+        @infos
+      end
+      private :infos
+
+      def load_bundle_information #:nodoc:
+        @infos = {:bundles => {}, :extensions => {}, :options => {}}
+
+        @bundles.each do |bundle, info_file|
+          if info_file.nil?
+            @infos[:bundles][bundle] = {}
+          else
+            infos = YAML.load(File.read(info_file))
+            [:extensions, :options].each do |type|
+              if data = infos.delete(type.to_s)
+                data.each do |name, hash|
+                  hash['bundle'] = bundle
+                  hash['author'] ||= infos['author']
+                end
+                @infos[type].update(data)
+              end
+            end
+            @infos[:bundles][bundle] = infos
+          end
+        end
+
+        @infos
+      end
+      private :load_bundle_information
+
+    end
+
     # Create a new BundleLoader object belonging to the website object +website+.
     def initialize(website, ext_dir)
       @website = website
-      @website.ext.bundles = {}
+      @website.ext.bundle_infos = BundleInformation.new
       @ext_dir = ext_dir
       @loaded = []
       @stack = []
@@ -38,7 +102,7 @@ module Webgen
       if file != File.expand_path(File.join(@ext_dir, 'init.rb'))
         name = File.basename(File.dirname(file))
         info_file = File.join(File.dirname(file), 'info.yaml')
-        @website.ext.bundles[name] = (File.file?(info_file) ? info_file : nil)
+        @website.ext.bundle_infos.add_bundle(name, File.file?(info_file) ? info_file : nil)
       end
     end
 

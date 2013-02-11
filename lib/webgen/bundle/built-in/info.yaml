@@ -5,9 +5,9 @@ description: |
   core extensions and a handful of generally useful extensions.
 
 extensions:
-  bundles:
+  bundle_infos:
     author: *author
-    summary: Contains a hash associating bundle names with their documentation files
+    summary: Provides access to information about bundles and their ressources like extensions and options
 
   cli:
     author: *author
