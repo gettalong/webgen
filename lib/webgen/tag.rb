@@ -18,16 +18,16 @@ module Webgen
   #
   # A tag object only needs to respond to the method +call+ which needs to accept three parameters:
   #
-  # [tag]: The name of the tag which should be processed (useful for tag objects which can process
-  #        different tags).
+  # [tag] The name of the tag which should be processed (useful for tag objects which can process
+  #       different tags).
   #
-  # [body]: Holds the body value for the tag if any.
+  # [body] Holds the body value for the tag if any.
   #
-  # [context]: Holds all relevant information for processing -- have a look at the Webgen::Context
-  #            class to see what is available. The special key :config is set to an
-  #            Webgen::Configuration object that should be used to retrieve configuration option
-  #            values because the values might be changed due to options set directly via the tag
-  #            syntax.
+  # [context] Holds all relevant information for processing -- have a look at the Webgen::Context
+  #           class to see what is available. The special key :config is set to an
+  #           Webgen::Configuration object that should be used to retrieve configuration option
+  #           values because the values might be changed due to options set directly via the tag
+  #           syntax.
   #
   # The method has to return the result of the processing and, optionally, a boolean value
   # specifying if the result should further be processed (ie. webgen tags replaced).
