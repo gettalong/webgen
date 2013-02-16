@@ -26,7 +26,7 @@ website.blackboard.add_listener(:after_node_written) do |node, content|
     website.logger.info { "New destination path <#{node.dest_path}>" }
     next
   end
-  new_data = (content.kind_of?(String) ? content : content.data)
+  new_data = (content.kind_of?(String) ? content : content.data).force_encoding('ASCII-8BIT')
 
   binary = data[0...4096]["\0"] || new_data[0..4096]["\0"]
   if binary
