@@ -23,7 +23,7 @@ module Webgen
         prepare_options(context)
         context.content = context.render_block(:name => 'content',
                                                :chain => [context.website.tree[context['content_processor.tikz.template']]])
-        context.content = File.binread(compile(context))
+        context.content = File.binread(use_cache_or_compile(context))
         context
       end
 
@@ -38,47 +38,90 @@ module Webgen
       end
       private_class_method :prepare_options
 
+      # Checks whether a cached version exists and if it is usable. If not, the LaTeX document is
+      # compiled.
+      def self.use_cache_or_compile(context)
+        cwd = context.website.tmpdir('content_processor.tikz')
+        FileUtils.mkdir_p(cwd)
+
+        tex_file = File.join(cwd, context.dest_node.dest_path.tr('/', '_').sub(/\..*?$/, '.tex'))
+        basename = File.basename(tex_file, '.tex')
+        ext = File.extname(context.dest_node.dest_path)
+        image_file = tex_file.sub(/\.tex$/, ext)
+
+        if !cache_usable?(context, tex_file, image_file)
+          compile(context, cwd, tex_file, basename, ext)
+          save_cache(context, tex_file)
+        end
+
+        image_file
+      end
+      private_class_method :use_cache_or_compile
+
       # Compile the LaTeX document stored in the Context and convert the resulting PDF to the
       # correct output image format specified by context[:ext] (the extension needs to include the
       # dot).
       #
       # Returns the path to the created image.
-      def self.compile(context)
-        cwd = context.website.tmpdir('content_processor.tikz')
-        tex_file = File.join(cwd, context.dest_node.dest_path.tr('/', '_').sub(/\..*?$/, '.tex'))
-        FileUtils.mkdir_p(cwd)
-        File.write(tex_file, context.content)
-
-        file = File.basename(tex_file, '.tex')
-        ext = File.extname(context.dest_node.dest_path)
+      def self.compile(context, cwd, tex_file, basename, ext)
         render_res, output_res = context['content_processor.tikz.resolution'].split(' ')
 
-        execute("pdflatex -shell-escape -interaction=nonstopmode -halt-on-error #{file}.tex", cwd, context) do |status, stdout, stderr|
+        File.write(tex_file, context.content)
+        execute("pdflatex -shell-escape -interaction=nonstopmode -halt-on-error #{basename}.tex", cwd, context) do |status, stdout, stderr|
           errors = (stdout+stderr).scan(/^!(.*\n.*)/).join("\n")
           raise Webgen::RenderError.new("Error while parsing TikZ picture commands with PDFLaTeX: #{errors}",
                                         'content_processor.tikz', context.dest_node, context.ref_node)
         end
 
-        execute("pdfcrop #{file}.pdf #{file}.pdf", cwd, context)
+        execute("pdfcrop #{basename}.pdf #{basename}.pdf", cwd, context)
 
         if context['content_processor.tikz.transparent'] && ext =~ /\.png/i
           cmd = "gs -dSAFER -dBATCH -dNOPAUSE -r#{render_res} -sDEVICE=pngalpha -dGraphicsAlphaBits=4 " +
-            "-dTextAlphaBits=4 -sOutputFile=#{file}#{ext} #{file}.pdf"
+            "-dTextAlphaBits=4 -sOutputFile=#{basename}#{ext} #{basename}.pdf"
         else
-          cmd = "convert -density #{render_res} #{file}.pdf #{file}#{ext}"
+          cmd = "convert -density #{render_res} #{basename}.pdf #{basename}#{ext}"
         end
         execute(cmd, cwd, context)
 
         if render_res != output_res
-          status, stdout, stderr = execute("identify #{file}#{ext}", cwd, context)
+          status, stdout, stderr = execute("identify #{basename}#{ext}", cwd, context)
           width, height = stdout.scan(/\s\d+x\d+\s/).first.strip.split('x').collect do |s|
             s.to_f * output_res.to_f / render_res.to_f
           end
-          execute("convert -resize #{width}x#{height} #{file}#{ext} #{file}#{ext}", cwd, context)
+          execute("convert -resize #{width}x#{height} #{basename}#{ext} #{basename}#{ext}", cwd, context)
         end
-        File.join(cwd, file + ext)
       end
       private_class_method :compile
+
+      # Save cache data so that it is possible to use it the next time.
+      def self.save_cache(context, tex_file)
+        File.write(cache_file(tex_file), cache_data(context))
+      end
+      private_class_method :save_cache
+
+      # Check if the content of the LaTeX document or the used options have changed.
+      def self.cache_usable?(context, tex_file, image_file)
+        cfile = cache_file(tex_file)
+        File.exist?(image_file) && File.exist?(cfile) && File.binread(cfile) == cache_data(context)
+      end
+      private_class_method :cache_usable?
+
+      # The data that should be written to the cache file.
+      def self.cache_data(context)
+        ("" << context.content <<
+          "\n" << context['content_processor.tikz.resolution'].to_s <<
+          "\n" << context['content_processor.tikz.transparent'].to_s <<
+          "\n" << context['content_processor.tikz.libraries'].to_s <<
+          "\n" << context['content_processor.tikz.opts'].to_s <<
+          "\n" << context['content_processor.tikz.template'].to_s).force_encoding('BINARY')
+      end
+      private_class_method :cache_data
+
+      # Return the name of the cache file for the give LaTeX file.
+      def self.cache_file(tex_file)
+        tex_file.sub(/\.tex$/, ".cache")
+      end
+      private_class_method :cache_file
 
       # Execute the command +cmd+ in the working directory +cwd+.
       #

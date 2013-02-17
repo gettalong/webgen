@@ -1,5 +1,6 @@
 # -*- encoding: utf-8 -*-
 
+require 'timeout'
 require 'webgen/test_helper'
 require 'webgen/content_processor/tikz'
 
@@ -18,6 +19,7 @@ class TestContentProcessorTikz < MiniTest::Unit::TestCase
     @context.node.define_singleton_method(:[]) {|ignored| nil}
 
     call('\tikz \draw (0,0) -- (0,1);', 'test.png', [], '', '72 72', false)
+    Timeout.timeout(0.2) { call('\tikz \draw (0,0) -- (0,1);', 'test.png', [], '', '72 72', false) } # test cache
     refute_nil(@context.content)
 
     assert_raises(Webgen::RenderError) { call('\tikz \asdfasdfasf', 'test.png', [], '', '72 72', false) }
