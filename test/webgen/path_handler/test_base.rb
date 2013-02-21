@@ -18,7 +18,7 @@ class TestPathHandlerBase < MiniTest::Unit::TestCase
   end
 
   def setup
-    setup_website
+    setup_website('website.base_url' => 'http://example.com/sub')
     @obj = TestPathHandler.new(@website)
   end
 
@@ -31,6 +31,7 @@ class TestPathHandlerBase < MiniTest::Unit::TestCase
     node = @obj.create_node(path) {|n| count += 1; assert_kind_of(Webgen::PathHandler::Base::Node, n)}
     assert_equal(path, node.node_info[:path])
     assert_kind_of(Time, node.meta_info['modified_at'])
+    assert_equal('http://example.com/sub/path.html', node.url)
     assert_equal(1, count)
     assert_nil(node.content)
     def (@obj).content(node); node; end

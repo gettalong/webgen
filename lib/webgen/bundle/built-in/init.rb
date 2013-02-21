@@ -53,6 +53,8 @@ option('website.lang', 'en') do |val|
   lang
 end
 
+option('website.base_url', '', &is_string)
+
 
 ########################################################################
 # Everything related to the content processor extension

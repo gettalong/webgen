@@ -980,6 +980,16 @@ options:
       config: |
         website.lang: de
 
+  website.base_url:
+    summary: |
+      The base URL of the website. It is used to create absolute URLs when relative URLs won't
+      work.
+    syntax: |
+      `URL` where `URL` is the base URL of the website
+    example:
+      config: |
+        website.base_url: http://webgen.rubyforge.org
+
   website.tmpdir:
     summary: |
       The directory used for temporary files. It is taken relative to website directory and used for

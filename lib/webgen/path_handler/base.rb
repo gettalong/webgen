@@ -32,6 +32,15 @@ module Webgen
       # not specify another Node class.
       class Node < Webgen::Node
 
+        # Return the absolute URL of this node.
+        #
+        # This method uses the configuration option 'website.base_url' for constructing the absolute
+        # URL.
+        def url
+          node_url = Webgen::Path.url(dest_path, false)
+          node_url.absolute? ? node_url : File.join(tree.website.config['website.base_url'], dest_path)
+        end
+
         # Does exactly the same as Node#route_to but also automatically adds the necessary item
         # tracking information.
         def route_to(node, lang = @lang)
