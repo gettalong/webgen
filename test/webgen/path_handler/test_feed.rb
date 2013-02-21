@@ -13,7 +13,6 @@ class TestPathHandlerFeed < MiniTest::Unit::TestCase
 
   FEED_CONTENT = <<EOF
 ---
-site_url: http://example.com
 entries:
   :alcn: "*.html"
 author: Thomas Leitner
@@ -23,12 +22,12 @@ hallo
 EOF
 
   def setup
-    setup_website('website.lang' => 'en')
+    setup_website('website.lang' => 'en', 'website.base_url' => 'http://example.com')
     @website.ext.node_finder = Webgen::NodeFinder.new(@website)
 
     @feed = Webgen::PathHandler::Feed.new(@website)
 
-    root = Webgen::Node.new(@website.tree.dummy_root, '/', '/')
+    root = Webgen::PathHandler::Base::Node.new(@website.tree.dummy_root, '/', '/')
     @index_en = RenderNode.new("--- name:content\nMyContent\n--- name:abstract\nRealContent", root,
                                'index.html', '/index.en.html', {'lang' => 'en', 'modified_at' => Time.now - 1, 'author' => 'test'})
     @file_en = RenderNode.new("--- name:content\nCContent\n--- name:abstract\nAContent", root,

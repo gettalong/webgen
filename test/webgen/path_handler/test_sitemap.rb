@@ -12,7 +12,6 @@ class TestPathHandlerSitemap < MiniTest::Unit::TestCase
 
   SITEMAP_CONTENT = <<EOF
 ---
-site_url: http://example.com
 default_change_freq: daily
 default_priority: 0.5
 entries:
@@ -21,7 +20,6 @@ EOF
 
   SITEMAP_CONTENT_TEMPLATE = <<EOF
 ---
-site_url: http://example.com
 default_change_freq: daily
 default_priority: 0.5
 entries:
@@ -31,12 +29,12 @@ Yeah <%= context.node['title'] %>
 EOF
 
   def setup
-    setup_website('website.lang' => 'en')
+    setup_website('website.lang' => 'en', 'website.base_url' => 'http://example.com')
     @website.ext.node_finder = Webgen::NodeFinder.new(@website)
 
     @sitemap = Webgen::PathHandler::Sitemap.new(@website)
 
-    setup_default_nodes(@website.tree)
+    setup_default_nodes(@website.tree, Webgen::PathHandler::Base::Node)
     @website.tree.node_access[:alcn].each_value {|n| n.meta_info['modified_at'] = Time.now}
     @website.tree['/file.en.html'].meta_info['priority'] = 0.9
     @website.tree['/file.en.html'].meta_info['change_freq'] = 'hourly'

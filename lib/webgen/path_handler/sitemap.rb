@@ -28,12 +28,17 @@ module Webgen
 
 
       # The mandatory keys that need to be set in a sitemap file.
-      MANDATORY_INFOS = %W[site_url entries]
+      MANDATORY_INFOS = %W[entries]
 
       # Create an XML sitemap from +path+.
       def create_nodes(path, blocks)
         if MANDATORY_INFOS.any? {|t| path.meta_info[t].nil?}
           raise Webgen::NodeCreationError.new("At least one of #{MANDATORY_INFOS.join('/')} is missing",
+                                              "path_handler.sitemap", path)
+        end
+
+        if @website.config['website.base_url'].empty?
+          raise Webgen::NodeCreationError.new("The configuration option 'website.base_url' needs to be set",
                                               "path_handler.sitemap", path)
         end
 

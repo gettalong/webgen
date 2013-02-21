@@ -9,7 +9,7 @@
   </author>
 
   <link href="<%= context.node.feed_link %>" rel="alternate" />
-  <link href="<%= Webgen::Path.url(File.join(context.node['site_url'], context.node.dest_path), false) %>" rel="self" />
+  <link href="<%= context.node.url %>" rel="self" />
   <generator uri="http://webgen.rubyforge.org/" version="<%= Webgen::VERSION %>">
     webgen - Webgen::PathHandler::Feed
   </generator>
@@ -25,8 +25,8 @@
       <uri><%= h(entry['author_url']) %></uri>
     </author>
     <% end %>
-    <link href="<%= Webgen::Path.url(File.join(context.node['site_url'], entry.dest_path), false) %>" rel="alternate" />
-    <id><%= Webgen::Path.url(File.join(context.node['site_url'], entry.dest_path), false) %></id>
+    <link href="<%= entry.url %>" rel="alternate" />
+    <id><%= entry.url %></id>
     <updated><%= entry['modified_at'].xmlschema %></updated>
     <% if entry['created_at'].kind_of?(Time) %>
     <published><%= entry['created_at'].xmlschema %></published>
@@ -55,10 +55,10 @@
     <% context.node.feed_entries.flatten.each do |entry| %>
     <item>
       <title><%= h(entry['title']) %></title>
-      <link><%= Webgen::Path.url(File.join(context.node['site_url'], entry.dest_path), false) %></link>
+      <link><%= entry.url %></link>
       <description><%= h(context.node.entry_content(entry)) %></description>
       <pubDate><%= entry['modified_at'].rfc822 %></pubDate>
-      <guid isPermaLink="true"><%= Webgen::Path.url(File.join(context.node['site_url'], entry.dest_path), false) %></guid>
+      <guid isPermaLink="true"><%= entry.url %></guid>
     </item>
     <% end %>
 

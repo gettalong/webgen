@@ -34,7 +34,7 @@ module Webgen
 
         # Return the feed link URL for this feed node.
         def feed_link
-          Webgen::Path.url(File.join(self['site_url'], tree[self['link']].dest_path), false)
+          tree[self['link']].url
         end
 
         # Return the content of an +entry+ (a Node object) of this feed node.
@@ -52,12 +52,16 @@ module Webgen
 
 
       # The mandatory keys that need to be set in a feed file.
-      MANDATORY_INFOS = %W[site_url author entries]
+      MANDATORY_INFOS = %W[author entries]
 
       # Create the feed nodes.
       def create_nodes(path, blocks)
         if MANDATORY_INFOS.any? {|t| path.meta_info[t].nil?}
           raise Webgen::NodeCreationError.new("At least one of #{MANDATORY_INFOS.join('/')} is missing",
+                                              "path_handler.feed", path)
+        end
+        if @website.config['website.base_url'].empty?
+          raise Webgen::NodeCreationError.new("The configuration option 'website.base_url' needs to be set",
                                               "path_handler.feed", path)
         end
         if !['atom', 'rss'].include?(path['version'])
