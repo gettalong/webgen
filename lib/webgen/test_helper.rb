@@ -129,30 +129,30 @@ module Webgen
     #   /dir2/                   'dir2' proxy_path='index.html'
     #   /dir2/index.en.html      'index en' routed_title='routed en' link_attrs={'class' => 'help'}
     #   /dir2/index.de.html      'index de' routed_title='routed de'
-    def setup_default_nodes(tree)
-      root = Webgen::Node.new(tree.dummy_root, '/', '/')
+    def setup_default_nodes(tree, klass = Webgen::Node)
+      root = klass.new(tree.dummy_root, '/', '/')
 
-      file_en = Webgen::Node.new(root, 'file.html', '/file.en.html', {'lang' => 'en', 'title' => 'file en', 'sort_info' => 3})
-      frag_en = Webgen::Node.new(file_en, '#frag', '/file.en.html#frag', {'title' => 'frag'})
-      Webgen::Node.new(frag_en, '#nested', '/file.en.html#nested', {'title' => 'fragnested', 'routing_path' => '/routed.html'})
-      file_de = Webgen::Node.new(root, 'file.html', '/file.de.html', {'lang' => 'de', 'title' => 'file de', 'sort_info' => 5})
-      Webgen::Node.new(file_de, '#frag', '/file.de.html#frag', {'title' => 'frag'})
+      file_en = klass.new(root, 'file.html', '/file.en.html', {'lang' => 'en', 'title' => 'file en', 'sort_info' => 3})
+      frag_en = klass.new(file_en, '#frag', '/file.en.html#frag', {'title' => 'frag'})
+      klass.new(frag_en, '#nested', '/file.en.html#nested', {'title' => 'fragnested', 'routing_path' => '/routed.html'})
+      file_de = klass.new(root, 'file.html', '/file.de.html', {'lang' => 'de', 'title' => 'file de', 'sort_info' => 5})
+      klass.new(file_de, '#frag', '/file.de.html#frag', {'title' => 'frag'})
 
-      Webgen::Node.new(root, 'other.html', '/other.html', {'title' => 'other'})
-      Webgen::Node.new(root, 'other.html', '/other.en.html', {'lang' => 'en', 'title' => 'other en'})
+      klass.new(root, 'other.html', '/other.html', {'title' => 'other'})
+      klass.new(root, 'other.html', '/other.en.html', {'lang' => 'en', 'title' => 'other en'})
 
-      Webgen::Node.new(root, 'german.html', '/german.other.html', {'title' => 'german', 'lang' => 'de'})
+      klass.new(root, 'german.html', '/german.other.html', {'title' => 'german', 'lang' => 'de'})
 
-      dir = Webgen::Node.new(root, 'dir/', '/dir/', {'title' => 'dir'})
-      dir_file = Webgen::Node.new(dir, 'subfile.html', '/dir/subfile.html', {'title' => 'subfile'})
-      Webgen::Node.new(dir_file, '#frag', '/dir/subfile.html#frag', {'title' => 'frag'})
-      dir_dir = Webgen::Node.new(dir, 'dir/' , '/dir/dir/', {'title' => 'dir'})
-      Webgen::Node.new(dir_dir, 'file.html', '/dir/dir/file.html', {'title' => 'file'})
+      dir = klass.new(root, 'dir/', '/dir/', {'title' => 'dir'})
+      dir_file = klass.new(dir, 'subfile.html', '/dir/subfile.html', {'title' => 'subfile'})
+      klass.new(dir_file, '#frag', '/dir/subfile.html#frag', {'title' => 'frag'})
+      dir_dir = klass.new(dir, 'dir/' , '/dir/dir/', {'title' => 'dir'})
+      klass.new(dir_dir, 'file.html', '/dir/dir/file.html', {'title' => 'file'})
 
-      dir2 = Webgen::Node.new(root, 'dir2/', '/dir2/', {'proxy_path' => 'index.html', 'title' => 'dir2'})
-      Webgen::Node.new(dir2, 'index.html', '/dir2/index.en.html',
+      dir2 = klass.new(root, 'dir2/', '/dir2/', {'proxy_path' => 'index.html', 'title' => 'dir2'})
+      klass.new(dir2, 'index.html', '/dir2/index.en.html',
                        {'lang' => 'en', 'routed_title' => 'routed', 'title' => 'index en', 'link_attrs' => {'class'=>'help'}})
-      Webgen::Node.new(dir2, 'index.html', '/dir2/index.de.html',
+      klass.new(dir2, 'index.html', '/dir2/index.de.html',
                        {'lang' => 'de', 'routed_title' => 'routed de', 'title' => 'index de'})
     end
 
