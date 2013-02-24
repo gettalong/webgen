@@ -79,7 +79,7 @@ class TestTag < MiniTest::Unit::TestCase
     result = @tag.call('my_tag', {'opt' => 'value'}, 'body', context)
     assert_equal('my_tagbodyvalue', result)
     assert_nothing_logged
-    assert_equal('value', context[:config]['tag.my_tag.opt'])
+    assert_nil(context[:config])
 
     result = @tag.call('my_tag', {'tag.my_tag.opt' => 'value1', 'unknown' => 'unknown'}, 'body', context)
     assert_equal('my_tagbodyvalue1', result)

@@ -156,9 +156,12 @@ module Webgen
       result = ''
       tdata = tag_data(tag, context)
       if !tdata.nil?
-        context[:config] = create_config(tag, params, tdata, context)
+        context = context.clone(:config => create_config(tag, params, tdata, context))
         result, process_output = tdata.object.call(tag, body, context)
-        result = context.website.ext.content_processor.call('tags', context.clone(:content => result)).content if process_output
+        if process_output
+          context.content = result
+          result = context.website.ext.content_processor.call('tags', context).content
+        end
       else
         raise Webgen::RenderError.new("No tag processor for '#{tag}' found", 'tag',
                                       context.dest_node, context.ref_node)
