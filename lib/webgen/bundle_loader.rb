@@ -94,16 +94,25 @@ module Webgen
       file = File.expand_path(file)
       return if @loaded.include?(file)
 
-      @loaded.push(file)
-      @stack.push(file)
-      self.instance_eval(File.read(file), file)
-      @stack.pop
+      load!(file)
 
       if file != File.expand_path(File.join(@ext_dir, 'init.rb'))
         name = File.basename(File.dirname(file))
         info_file = File.join(File.dirname(file), 'info.yaml')
         @website.ext.bundle_infos.add_bundle(name, File.file?(info_file) ? info_file : nil)
       end
+    end
+
+    # Force-loads the given file and does just that (i.e. no checking if file exists and no bundle
+    # registration).
+    #
+    # **Note**: This method should normally not be called in an extension bundle, use the #load
+    # method instead.
+    def load!(file)
+      @loaded.push(file)
+      @stack.push(file)
+      self.instance_eval(File.read(file), file)
+      @stack.pop
     end
 
     # Loads all bundles that are marked for auto-loading.

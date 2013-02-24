@@ -109,8 +109,8 @@ module Webgen
       @ext = OpenStruct.new
 
       @init_block.call(self, true) if @init_block && @init_block.arity == 2
-      load_bundles
-      load_configuration
+      loader = load_bundles
+      load_configuration(loader)
       if @init_block
         @init_block.arity == 1 ? @init_block.call(self) : @init_block.call(self, false)
       end
@@ -132,6 +132,7 @@ module Webgen
       ext_loader.load_autoload_bundles
       Dir[File.join(ext_dir, '**/init.rb')].sort.each {|file| ext_loader.load(file[ext_dir.length..-1])}
       ext_loader.load('init.rb') if File.file?(File.join(ext_dir, 'init.rb'))
+      ext_loader
     end
     private :load_bundles
 
@@ -139,17 +140,16 @@ module Webgen
     CONFIG_FILENAME = 'webgen.config'
 
     # Load the configuration file into the Configuration object.
-    def load_configuration
+    #
+    # If it is a Ruby configuration file, the given bundle loader is used to load it.
+    def load_configuration(bundle_loader)
       config_file = File.join(@directory, CONFIG_FILENAME)
       return unless File.exist?(config_file)
 
       first_line = File.open(config_file, 'r') {|f| f.gets}
       if first_line =~ /^\s*#.*\bruby\b/
-        o = Object.new
-        o.instance_variable_set(:@website, self)
-        def o.website; @website; end
         begin
-          o.instance_eval(File.read(config_file), config_file)
+          bundle_loader.load!(config_file)
         rescue Exception => e
           raise Webgen::Error.new("Couldn't load webgen configuration file (using Ruby syntax):\n#{e.message}")
         end
