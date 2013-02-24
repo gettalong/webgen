@@ -76,11 +76,11 @@ module Webgen
     # If the template node cannot be found, an empty string is returned.
     def self.render_tag_template(context, tag)
       path = context[:config]["tag.#{tag}.template"]
-      template_node = context.ref_node.resolve(path, context.dest_node.lang, true)
-      if template_node
+      if path && template_node = context.ref_node.resolve(path, context.dest_node.lang, true)
         context.render_block(:name => "tag.#{tag}", :node => 'first',
                              :chain => [*template_node.template_chain, template_node, context.content_node])
       else
+        context.website.logger.warn { "Template node '#{path}' for tag '#{tag}' not found" }
         ''
       end
     end
