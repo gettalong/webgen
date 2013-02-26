@@ -258,7 +258,7 @@ module Webgen
         at_least_one_node_written = false
         @website.cache.reset_volatile_cache
         @website.blackboard.dispatch_msg(:before_all_nodes_written)
-        @website.tree.node_access[:alcn].sort.each do |name, node|
+        @website.tree.node_access[:alcn].sort_by {|a, n| [n['write_order'].to_s, a]}.each do |name, node|
           begin
             next if node == @website.tree.dummy_root ||
               (node['passive'] && !node['no_output'] && !@website.ext.item_tracker.node_referenced?(node)) ||
