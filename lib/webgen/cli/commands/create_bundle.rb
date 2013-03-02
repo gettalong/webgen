@@ -11,7 +11,7 @@ module Webgen
     class CreateBundleCommand < CmdParse::Command
 
       def initialize # :nodoc:
-        super('create', false, false, true)
+        super('bundle', false, false, true)
         self.short_desc = 'Create an extension bundle'
         self.description = Utils.format_command_desc(<<DESC)
 Creates a new extension bundle. This command can either create a local bundle in the
@@ -30,7 +30,7 @@ DESC
       end
 
       def usage # :nodoc:
-        "Usage: webgen [global options] bundle create [options] BUNDLE_NAME [DIRECTORY]"
+        "Usage: webgen [global options] create bundle [options] BUNDLE_NAME [DIRECTORY]"
       end
 
       def execute(args) # :nodoc:

@@ -1,10 +1,11 @@
 # -*- encoding: utf-8 -*-
 
 require 'webgen/cli/utils'
-require 'webgen/cli/show_extensions_command'
-require 'webgen/cli/show_config_command'
-require 'webgen/cli/show_dependencies_command'
-require 'webgen/cli/show_tree_command'
+require 'webgen/cli/commands/show_extensions'
+require 'webgen/cli/commands/show_config'
+require 'webgen/cli/commands/show_dependencies'
+require 'webgen/cli/commands/show_tree'
+require 'webgen/cli/commands/show_bundles'
 
 module Webgen
   module CLI
@@ -24,6 +25,7 @@ DESC
         add_command(ShowExtensionsCommand.new)
         add_command(ShowDependenciesCommand.new)
         add_command(ShowTreeCommand.new)
+        add_command(ShowBundlesCommand.new)
       end
 
     end

@@ -20,6 +20,9 @@ This command can be used before or after the website has been generated. Note,
 however, that nodes that are created during generation like fragment nodes can
 only be shown if the website has been generated.
 
+Due to the way webgen works this command may take some time before actually
+showing the tree because it has to be built first.
+
 If an argument is given, only those nodes that have the argument in their LCN
 are displayed.
 

@@ -7,10 +7,10 @@ module Webgen
   module CLI
 
     # The CLI command for creating a webgen website.
-    class CreateCommand < CmdParse::Command
+    class CreateWebsiteCommand < CmdParse::Command
 
       def initialize # :nodoc:
-        super('create', false)
+        super('website', false)
         self.short_desc = 'Create a basic webgen website'
         self.description = Utils.format_command_desc(<<DESC)
 Creates a webgen website at the specified directory. If the --template

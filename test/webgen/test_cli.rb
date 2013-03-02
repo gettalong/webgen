@@ -35,7 +35,7 @@ class TestCLICommandParser < MiniTest::Unit::TestCase
       end
     end
     assert_match(/Global options:/, out)
-    assert_match(/bundle.*create.*install.*list.*generate.*help.*sample.*.*show.*config.*deps.*extensions.*version/m, out)
+    assert_match(/create.*generate.*help.*install.*sample.*.*show.*config.*deps.*extensions.*version/m, out)
   end
 
 end

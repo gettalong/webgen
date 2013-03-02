@@ -7,7 +7,7 @@ module Webgen
   module CLI
 
     # The CLI command for installing extension bundles.
-    class InstallBundleCommand < CmdParse::Command
+    class InstallCommand < CmdParse::Command
 
       def initialize # :nodoc:
         super('install', false, false, true)

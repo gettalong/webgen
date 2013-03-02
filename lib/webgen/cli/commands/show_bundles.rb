@@ -5,24 +5,24 @@ require 'webgen/cli/utils'
 module Webgen
   module CLI
 
-    # The CLI command for listing extension bundles.
-    class ListBundleCommand < CmdParse::Command
+    # The CLI command for showing extension bundles.
+    class ShowBundlesCommand < CmdParse::Command
 
       def initialize # :nodoc:
-        super('list', false, false, true)
-        self.short_desc = 'List extension bundles'
+        super('bundles', false, false, true)
+        self.short_desc = 'Show extension bundles'
         self.description = Utils.format_command_desc(<<DESC)
-Lists all loaded, installed and available extension bundles.
+Shows all loaded, available and installable bundles.
 
-Loaded bundles are already used by the website, installed ones are installed but
-not used and available bundles can be installed if needed.
+Loaded bundles are already used by the website, available ones are installed but
+not used and installable bundles can be installed if needed.
 
 Hint: The global verbosity option enables additional output.
 DESC
         self.options = CmdParse::OptionParserWrapper.new do |opts|
           opts.separator "Options:"
           opts.on("-r", "--[no-]remote",
-                  *Utils.format_option_desc("Use remote server for listing available bundles")) do |remote|
+                  *Utils.format_option_desc("Use remote server for listing installable bundles")) do |remote|
             @remote = remote
           end
         end
@@ -30,10 +30,7 @@ DESC
       end
 
       def execute(args) # :nodoc:
-        bundles = {}
-        commandparser.website.ext.bundles.each do |bundle, info_file|
-          bundles.update(bundle => (info_file ? YAML.load(File.read(info_file)) : {}))
-        end
+        bundles = commandparser.website.ext.bundle_infos.bundles.dup
         bundles.each {|n,d| d[:state] = :loaded}
 
         populate_hash = lambda do |file|
@@ -62,9 +59,9 @@ DESC
         end
 
         if @remote
-          dep = Gem::Deprecate.skip_during { Gem::Dependency.new(/webgen-.*-bundle/, Gem::Requirement.default) }
-          Gem::SpecFetcher.fetcher.find_matching(dep).each do |spec, uri|
-            bundle_name = spec.first.sub(/webgen-(.*)-bundle/, '\1')
+          Gem::SpecFetcher.fetcher.detect(:latest) do |name_tuple|
+            next unless name_tuple.name =~ /webgen-(.*)-bundle/
+            bundle_name = $1
             if !bundles.has_key?(bundle_name)
               bundles[bundle_name] = {:state => :installable, :gem => spec.first}
             end

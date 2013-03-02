@@ -31,20 +31,8 @@ DESC
       end
 
       def execute(args) # :nodoc:
-        exts = {}
-        commandparser.website.ext.bundles.each do |bundle, info_file|
-          next if info_file.nil? || (@bundle && @bundle != bundle)
-          infos = YAML.load(File.read(info_file))
-          next unless infos['extensions']
-          infos['extensions'].each do |n, d|
-            d['bundle'] = bundle
-            d['author'] ||= infos['author']
-          end
-          exts.update(infos['extensions'])
-        end
-
         selector = args.first.to_s
-        exts.select {|n, d| n.include?(selector)}.sort.each do |name, data|
+        commandparser.website.ext.bundle_infos.extensions.select {|n, d| n.include?(selector)}.sort.each do |name, data|
           format_extension_info(name, data, !selector.empty?)
         end
       end
