@@ -928,7 +928,7 @@ options:
     summary: |
       Additional HTML attributes that should be set on the generated `img` tag.
     syntax: |
-      `\{KEY:VALUE, ...}` where `KEY` is a valid HTML `img` tag attribute name and `VALUE` its
+      `{KEY:VALUE, ...}` where `KEY` is a valid HTML `img` tag attribute name and `VALUE` its
       value.
     example:
       config: |
