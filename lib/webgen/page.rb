@@ -53,7 +53,7 @@ module Webgen
             unless meta_info.kind_of?(Hash)
               raise FormatError, "Invalid structure of meta information block: expected YAML hash but found #{meta_info.class}"
             end
-          rescue ArgumentError, SyntaxError => e
+          rescue ArgumentError, SyntaxError, YAML::SyntaxError => e
             raise FormatError, "Invalid YAML syntax in meta information block: #{e.message}"
           end
           meta_info

@@ -67,7 +67,7 @@ module Webgen
         blocks.each do |name, content|
           begin
             data = YAML::load(content)
-          rescue RuntimeError, ArgumentError, SyntaxError => e
+          rescue RuntimeError, ArgumentError, SyntaxError, YAML::SyntaxError => e
             raise RuntimeError, "Problem parsing block '#{name}' (it needs to contain a YAML hash): #{e.message}", e.backtrace
           end
           raise "Structure of block '#{name}' is invalid, it has to be a Hash" unless data.kind_of?(Hash)
