@@ -43,6 +43,9 @@ extensions:
   content_processor.maruku:
     author: *author
     summary: Converts content written in a superset of Markdown to HTML
+  content_processor.rainpress:
+    author: *author
+    summary: Compresses CSS files
   content_processor.rdiscount:
     author: *author
     summary: Converts content written in Markdown to HTML
@@ -283,6 +286,16 @@ options:
     example:
       config: |
         content_processor.kramdown.options: {auto_ids: false, coderay_line_numbers: null}
+
+  content_processor.rainpress.options:
+    summary: |
+      Options for the rainpress CSS compressor. All rainpress options are enabled by default, so
+      this can be used to disable some compression methods.
+    syntax: |
+      `{KEY: false, ...}` where `KEY` are valid rainpress option keys
+    example:
+      config: |
+        content_processor.rainpress.options: {comments: false}
 
   content_processor.redcloth.hard_breaks:
     summary: |

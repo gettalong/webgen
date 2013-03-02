@@ -80,6 +80,10 @@ option('content_processor.kramdown.handle_links', true, &true_or_false)
 option('content_processor.kramdown.ignore_unknown_fragments', false, &true_or_false)
 
 content_processor.register('Maruku')
+
+content_processor.register('Rainpress')
+option('content_processor.rainpress.options', {}, &is_hash)
+
 content_processor.register('RDiscount', :name => 'rdiscount')
 content_processor.register('RDoc', :name => 'rdoc', :ext_map => {'rdoc' => 'html'})
 
