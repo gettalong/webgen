@@ -1,13 +1,14 @@
 # -*- encoding: utf-8 -*-
 
 require 'webgen/test_helper'
-require 'webgen/content_processor/builder'
 
 class TestBuilder < MiniTest::Unit::TestCase
 
   include Webgen::TestHelper
 
   def test_static_call
+    require 'webgen/content_processor/builder' rescue skip('Library builder not installed')
+
     setup_context
     cp = Webgen::ContentProcessor::Builder
 

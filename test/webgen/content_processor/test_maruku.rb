@@ -1,13 +1,13 @@
 # -*- encoding: utf-8 -*-
 
 require 'webgen/test_helper'
-require 'webgen/content_processor/maruku'
 
 class TestMaruku < MiniTest::Unit::TestCase
 
   include Webgen::TestHelper
 
   def setup
+    require 'webgen/content_processor/maruku' rescue skip('Library maruku not installed')
     setup_context
     @cp = Webgen::ContentProcessor::Maruku
   end

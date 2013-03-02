@@ -13,7 +13,7 @@ module Webgen
       #
       # This just checks if the exit status is zero.
       def self.ensure_available!(cmd, *args)
-        status = systemu([cmd, *args], 'stdout' => '')
+        status = systemu([cmd, *args], 'stdout' => '', 'stdin' => '')
         raise Webgen::CommandNotFoundError.new(cmd) if status.exitstatus != 0
       end
 

@@ -3,7 +3,6 @@
 require 'minitest/autorun'
 require 'fileutils'
 require 'rbconfig'
-require 'webgen/source/tar_archive'
 
 class TestSourceTarArchive < MiniTest::Unit::TestCase
 
@@ -30,6 +29,7 @@ class TestSourceTarArchive < MiniTest::Unit::TestCase
   end
 
   def setup
+    require 'webgen/source/tar_archive' rescue skip('Library archive-tar-minitar not installed')
     @stream = FakeStream.new
   end
 

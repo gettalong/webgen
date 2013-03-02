@@ -1,13 +1,14 @@
 # -*- encoding: utf-8 -*-
 
 require 'webgen/test_helper'
-require 'webgen/tag/tikz'
 
 class TestTagTikz < MiniTest::Unit::TestCase
 
   include Webgen::TestHelper
 
   def test_call
+    require 'webgen/tag/tikz' rescue skip($!.message)
+
     setup_context
     @website.ext.path_handler = MiniTest::Mock.new
 

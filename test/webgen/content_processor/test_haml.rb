@@ -1,13 +1,13 @@
 # -*- encoding: utf-8 -*-
 
 require 'webgen/test_helper'
-require 'webgen/content_processor/haml'
 
 class TestHaml < MiniTest::Unit::TestCase
 
   include Webgen::TestHelper
 
   def test_static_call
+    require 'webgen/content_processor/haml' rescue skip('Library haml not installed')
     setup_context
     cp = Webgen::ContentProcessor::Haml
 

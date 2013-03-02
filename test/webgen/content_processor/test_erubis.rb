@@ -1,13 +1,13 @@
 # -*- encoding: utf-8 -*-
 
 require 'webgen/test_helper'
-require 'webgen/content_processor/erubis'
 
 class TestErubis < MiniTest::Unit::TestCase
 
   include Webgen::TestHelper
 
   def test_static_call
+    require 'webgen/content_processor/erubis' rescue skip('Library erubis not installed')
     setup_context
     @website.config.merge!('content_processor.erubis.options' => {}, 'content_processor.erubis.use_pi' => false)
     cp = Webgen::ContentProcessor::Erubis

@@ -1,13 +1,14 @@
 # -*- encoding: utf-8 -*-
 
 require 'webgen/test_helper'
-require 'webgen/tag/coderay'
 
 class TestTagCoderay < MiniTest::Unit::TestCase
 
   include Webgen::TestHelper
 
   def test_call
+    require 'webgen/tag/coderay' rescue skip("Library coderay not installed")
+
     setup_context
     @website.ext.content_processor = Object.new
     @website.ext.content_processor.define_singleton_method(:call) {|_, context| context}

@@ -1,16 +1,23 @@
 # -*- encoding: utf-8 -*-
 
 require 'webgen/test_helper'
-require 'webgen/content_processor/xmllint'
 
 class TestXmllint < MiniTest::Unit::TestCase
 
   include Webgen::TestHelper
 
   def test_static_call
+    require 'webgen/content_processor/xmllint' rescue skip($!.message)
+
     setup_context
     @website.config['content_processor.xmllint.options'] = ''
     cp = Webgen::ContentProcessor::Xmllint
+
+    begin
+      cp.call(@context)
+    rescue Webgen::CommandNotFoundError
+      skip("Binary xmllint not found")
+    end
 
     begin
       tmp, ENV['PATH'] = ENV['PATH'], '/sbin'

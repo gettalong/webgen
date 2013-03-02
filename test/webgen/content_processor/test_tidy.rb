@@ -8,9 +8,17 @@ class TestTidy < MiniTest::Unit::TestCase
   include Webgen::TestHelper
 
   def test_static_call
+    require 'webgen/content_processor/tidy' rescue skip($!.message)
+
     setup_context
     @website.config['content_processor.tidy.options'] = ''
     cp = Webgen::ContentProcessor::Tidy
+
+    begin
+      cp.call(@context)
+    rescue Webgen::CommandNotFoundError
+      skip("Binary tidy not found")
+    end
 
     begin
       tmp, ENV['PATH'] = ENV['PATH'], '/sbin'

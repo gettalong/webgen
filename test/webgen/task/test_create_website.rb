@@ -16,7 +16,7 @@ class TestTaskCreateWebsite < MiniTest::Unit::TestCase
   end
 
   def teardown
-    FileUtils.remove_entry_secure(@website.directory)
+    FileUtils.remove_entry_secure(@website.directory) if Dir.exist?(@website.directory)
   end
 
   def test_static_call

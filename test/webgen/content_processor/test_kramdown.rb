@@ -1,13 +1,13 @@
 # -*- encoding: utf-8 -*-
 
 require 'webgen/test_helper'
-require 'webgen/content_processor/kramdown'
 
 class TestContentProcessorKramdown < MiniTest::Unit::TestCase
 
   include Webgen::TestHelper
 
   def test_static_call
+    require 'webgen/content_processor/kramdown' rescue skip('Library kramdown not installed')
     setup_context
     cp = Webgen::ContentProcessor::Kramdown
     root = Webgen::Node.new(@website.tree.dummy_root, '/', '/')

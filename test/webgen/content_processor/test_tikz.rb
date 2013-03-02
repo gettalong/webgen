@@ -2,13 +2,14 @@
 
 require 'timeout'
 require 'webgen/test_helper'
-require 'webgen/content_processor/tikz'
 
 class TestContentProcessorTikz < MiniTest::Unit::TestCase
 
   include Webgen::TestHelper
 
   def test_static_call
+    require 'webgen/content_processor/tikz' rescue skip($!.message)
+
     setup_context
     @website.ext.content_processor = Webgen::ContentProcessor.new
     @website.ext.content_processor.register('Blocks')
@@ -40,7 +41,7 @@ class TestContentProcessorTikz < MiniTest::Unit::TestCase
   end
 
   def teardown
-    FileUtils.rm_rf(@website.directory)
+    FileUtils.rm_rf(@website.directory) if @website
   end
 
 end

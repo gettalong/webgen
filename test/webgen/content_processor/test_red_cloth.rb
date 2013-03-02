@@ -1,13 +1,13 @@
 # -*- encoding: utf-8 -*-
 
 require 'webgen/test_helper'
-require 'webgen/content_processor/red_cloth'
 
 class TestRedCloth < MiniTest::Unit::TestCase
 
   include Webgen::TestHelper
 
   def test_static_call
+    require 'webgen/content_processor/red_cloth' rescue skip('Library RedCloth not installed')
     setup_context
     @website.config['content_processor.redcloth.hard_breaks'] = false
     cp = Webgen::ContentProcessor::RedCloth

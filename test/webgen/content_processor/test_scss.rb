@@ -1,13 +1,13 @@
 # -*- encoding: utf-8 -*-
 
 require 'webgen/test_helper'
-require 'webgen/content_processor/scss'
 
 class TestScss < MiniTest::Unit::TestCase
 
   include Webgen::TestHelper
 
   def test_static_call
+    require 'webgen/content_processor/scss' rescue skip('Library sass not installed')
     setup_context
     @website.config['content_processor.sass.options'] = {}
     @website.ext.sass_load_paths = []
@@ -21,7 +21,7 @@ class TestScss < MiniTest::Unit::TestCase
   end
 
   def teardown
-    FileUtils.rm_rf(@website.directory)
+    FileUtils.rm_rf(@website.directory) if @website
   end
 
 end
