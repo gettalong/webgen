@@ -153,7 +153,11 @@ module Webgen
       end
 
       # Utility method for getting the Webgen::Website object.
-      def website
+      #
+      # Returns a new website object (not an already created one) if +force_new+ is set to +true+.
+      def website(force_new = false)
+        return @website if defined?(@website) && !force_new
+
         @directory = ENV['WEBGEN_WEBSITE'] if @directory.nil? && !ENV['WEBGEN_WEBSITE'].to_s.empty?
         if @directory.nil? && @do_search
           dir = Dir.pwd
@@ -162,7 +166,7 @@ module Webgen
           @directory = dir if !file_missing
         end
         @directory = Dir.pwd if @directory.nil?
-        @website ||= Webgen::Website.new(@directory, Webgen::CLI::Logger.new) do |site, before_init|
+        @website = Webgen::Website.new(@directory, Webgen::CLI::Logger.new) do |site, before_init|
           if before_init
             site.ext.cli = self
             site.logger.level = @log_level
