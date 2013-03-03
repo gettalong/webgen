@@ -10,7 +10,7 @@ module Webgen
     module Utils
 
       class << self; attr_accessor :use_colors; end
-      @use_colors = $stdout.tty? && RbConfig::CONFIG['host_os'] !~ /mswin|mingw/
+      @use_colors = $stdout.tty? && (RbConfig::CONFIG['host_os'] !~ /mswin|mingw/ || ENV['ANSICON'])
 
       DEFAULT_WIDTH = 80
 
