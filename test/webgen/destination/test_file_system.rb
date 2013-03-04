@@ -20,7 +20,7 @@ class TestDestinationFileSystem < MiniTest::Unit::TestCase
     dest = Webgen::Destination::FileSystem.new(@website, 'test')
     assert_equal(File.join(@dir, 'test'), dest.root)
     dest = Webgen::Destination::FileSystem.new(@website, '/tmp/hallo')
-    assert_equal('/tmp/hallo', dest.root)
+    assert_equal(File.absolute_path('/tmp/hallo', @website.directory), dest.root)
     dest = Webgen::Destination::FileSystem.new(@website, '../hallo')
     assert_equal(File.expand_path(File.join(@dir, '../hallo')), dest.root)
   end
@@ -40,8 +40,8 @@ class TestDestinationFileSystem < MiniTest::Unit::TestCase
 
     dest.write('/dir/hallo', Webgen::Path.new('fu') { StringIO.new("contentö")})
     assert(dest.exists?('/dir/hallo'))
-    assert_equal('contentö', dest.read('/dir/hallo', 'r'))
-    assert_equal('contentö', File.read(File.join(dest.root, 'dir/hallo')))
+    assert_equal('contentö', dest.read('/dir/hallo', 'r:UTF-8'))
+    assert_equal('contentö', File.read(File.join(dest.root, 'dir/hallo'), :mode => 'r:UTF-8'))
 
     dest.delete('/dir')
     refute(dest.exists?('/dir'))

@@ -93,16 +93,12 @@ class TestPath < MiniTest::Unit::TestCase
                     '/', 'default', nil, 'tar.bz2', 'default.tar.bz2', 'default.tar.bz2', '/default.tar.bz2', '/default.tar.bz2', nil, 'Default')
     check_proc.call(Webgen::Path.new('/default.en.tar.bz2'),
                     '/', 'default', 'en', 'tar.bz2', 'default.tar.bz2', 'default.en.tar.bz2', '/default.tar.bz2', '/default.en.tar.bz2', nil, 'Default')
-    check_proc.call(Webgen::Path.new('/default.deu.'),
-                    '/',  'default', 'de', '', 'default', 'default.de', '/default', '/default.de', nil, 'Default')
     check_proc.call(Webgen::Path.new('/default'),
                     '/', 'default', nil, '', 'default', 'default', '/default', '/default', nil, 'Default')
     check_proc.call(Webgen::Path.new('/.htaccess'),
                     '/', '.htaccess', nil, '', '.htaccess', '.htaccess', '/.htaccess', '/.htaccess', nil, '.htaccess')
     check_proc.call(Webgen::Path.new('/.htaccess.page'),
                     '/', '.htaccess', nil, 'page', '.htaccess.page', '.htaccess.page', '/.htaccess.page', '/.htaccess.page', nil, '.htaccess')
-    check_proc.call(Webgen::Path.new('/.htaccess.en.'),
-                    '/', '.htaccess', 'en', '', '.htaccess', '.htaccess.en', '/.htaccess', '/.htaccess.en', nil, '.htaccess')
     check_proc.call(Webgen::Path.new('/.htaccess.en.page'),
                     '/', '.htaccess', 'en', 'page', '.htaccess.page', '.htaccess.en.page', '/.htaccess.page', '/.htaccess.en.page', nil, '.htaccess')
     check_proc.call(Webgen::Path.new('/5.png'),
@@ -221,8 +217,6 @@ class TestPath < MiniTest::Unit::TestCase
       path = Webgen::Path.new('/test') {|mode| File.open(File.join(dir, 'src'), mode) }
       assert_equal(1, path.data('r:UTF-8').length)
       assert_equal(2, path.data('rb').length)
-      assert_equal(1, path.data.length)
-      assert_equal(1, path.io {|f| f.read}.length)
     end
 
     path = Webgen::Path.new('/test.page')
