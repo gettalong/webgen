@@ -157,7 +157,7 @@ module Webgen
       @website.blackboard.add_listener(:after_node_written, self) do |node|
         written_nodes << node.alcn
       end
-      @website.blackboard.add_listener(:after_all_nodes_written, self) do |node|
+      @website.blackboard.add_listener(:after_all_nodes_written, self) do
         @secondary_nodes.delete_if do |path, data|
           if written_nodes.include?(data[1]) && (!used_secondary_paths[data[1]] ||
                                                  !used_secondary_paths[data[1]].include?(path))
@@ -262,7 +262,7 @@ module Webgen
           begin
             next if node == @website.tree.dummy_root ||
               (node['passive'] && !node['no_output'] && !@website.ext.item_tracker.node_referenced?(node)) ||
-              ((@website.config['website.dry_run'] || @website.ext.destination.exists?(node.dest_path)) &&
+              ((@website.config['website.dry_run'] || node['no_output'] || @website.ext.destination.exists?(node.dest_path)) &&
                !@website.ext.item_tracker.node_changed?(node))
 
             @website.blackboard.dispatch_msg(:before_node_written, node)
