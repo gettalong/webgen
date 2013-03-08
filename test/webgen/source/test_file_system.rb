@@ -24,7 +24,7 @@ class TestSourceFileSystem < MiniTest::Unit::TestCase
       assert_equal('c:/tmp/hallo', source.root)
     else
       source = Webgen::Source::FileSystem.new(@website, '/tmp/hallo')
-      assert_equal('**/*', source.glob)
+      assert_equal('{*,**/*}', source.glob)
       assert_equal('/tmp/hallo', source.root)
     end
     source = Webgen::Source::FileSystem.new(@website, '../hallo')
@@ -32,8 +32,13 @@ class TestSourceFileSystem < MiniTest::Unit::TestCase
   end
 
   def test_paths
-    source = Webgen::Source::FileSystem.new(@website, '.', '/../source/**/*')
-    assert(source.paths.length > 1)
+    source = Webgen::Source::FileSystem.new(@website, '.')
+    assert_equal(4, source.paths.length)
+    assert(source.paths.include?(Webgen::Path.new('/')))
+    assert(source.paths.include?(Webgen::Path.new('/test_file_system.rb')))
+
+    source = Webgen::Source::FileSystem.new(@website, '.', '/../source/{*,**/*}')
+    assert_equal(4, source.paths.length)
     assert(source.paths.include?(Webgen::Path.new('/source/')))
     assert(source.paths.include?(Webgen::Path.new('/source/test_file_system.rb')))
   end

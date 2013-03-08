@@ -190,7 +190,7 @@ module Webgen
     # source.
     #
     # See Webgen::Source for more information.
-    def mount_passive(dir, mount_point = '/', glob = '**/*')
+    def mount_passive(dir, mount_point = '/', glob = '{*,**/*}')
       @website.ext.source.passive_sources.unshift([mount_point, :file_system, absolute_path(dir), glob])
     end
 
