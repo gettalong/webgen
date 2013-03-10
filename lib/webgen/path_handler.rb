@@ -225,10 +225,14 @@ module Webgen
 
       time = Benchmark.measure do
         meta_info, rest = @website.ext.source.paths.partition {|path| path.path =~ /[\/.]metainfo$/}
+
+        used_paths = []
+
+        @website.blackboard.add_listener(:before_node_created, :temp_populate_tree) {|path| used_paths << path}
         create_nodes(meta_info, [:meta_info])
         create_nodes(rest)
+        @website.blackboard.remove_listener(:before_node_created, :temp_populate_tree)
 
-        used_paths = @website.tree.node_access[:alcn].values.map {|n| n.node_info[:path]}
         unused_paths = rest - used_paths
         @website.logger.vinfo do
           "The following source paths have not been used: #{unused_paths.join(', ')}"
