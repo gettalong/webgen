@@ -78,8 +78,6 @@ EOF
     path = Webgen::Path.new('/virtual', 'dest_path' => '<parent><basename>(.<lang>)<ext>', 'modified_at' => @time)
     nodes = @virtual.create_nodes(path, Webgen::Page.from_data(CONTENT).blocks)
 
-    nodes.each {|n| assert_equal(path, n.node_info[:path])}
-
     node_de = @root.tree['/path.de.html']
     node_en = @root.tree['/directory/path.en.html']
     dir = @root.tree['/dir/']

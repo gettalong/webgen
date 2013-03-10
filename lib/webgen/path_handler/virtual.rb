@@ -52,9 +52,7 @@ module Webgen
             end
           end
         end
-        nodes.flatten.compact.each do |node|
-          node.node_info[:path] = path
-        end
+        nodes
       end
 
       #######
