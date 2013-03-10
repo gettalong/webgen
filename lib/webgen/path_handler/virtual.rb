@@ -20,9 +20,8 @@ module Webgen
 
       # Create all virtual nodes which are specified in +path+.
       def create_nodes(path, blocks)
-        nodes = []
         if path.meta_info.delete(:virtual)
-          nodes << create_node(path)
+          create_node(path)
         else
           read_entries(blocks) do |key, meta_info|
             meta_info['modified_at'] = path.meta_info['modified_at']
@@ -44,15 +43,16 @@ module Webgen
 
             if key =~ /\/$/
               entry_path['handler'] = 'directory'
-              nodes << @website.ext.path_handler.create_secondary_nodes(entry_path)
+              @website.ext.path_handler.create_secondary_nodes(entry_path)
             else
               entry_path[:virtual] = true
               entry_path['handler'] = 'virtual'
-              nodes << @website.ext.path_handler.create_secondary_nodes(entry_path)
+              @website.ext.path_handler.create_secondary_nodes(entry_path)
             end
           end
+
+          nil
         end
-        nodes
       end
 
       #######
