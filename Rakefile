@@ -142,11 +142,11 @@ EOF
 
     #### Dependencies, requirements and files
 
-    s.required_ruby_version = '>= 1.9.2'
+    s.required_ruby_version = '>= 1.9.3'
 
     s.add_dependency('cmdparse', '>= 2.0.5')
     s.add_dependency('systemu', '>= 2.5.0')
-    s.add_dependency('kramdown', '>= 0.14.0')
+    s.add_dependency('kramdown', '~> 1.0')
     s.add_development_dependency('rake', '>= 0.8.3')
     s.add_development_dependency('diff-lcs', '>= 1.1.0')
     s.add_development_dependency('rubyforge', '>= 2.0.2')
