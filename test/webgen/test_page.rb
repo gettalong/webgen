@@ -90,9 +90,9 @@ class TestPage < MiniTest::Unit::TestCase
     content2
     --- block3
     content3
-    --- block4 -
+    --- block4  -
     content4
-    --- block5 -----------------------------------
+    ---   block5 -----------------------------------  
     content5
   meta_info: {}
   blocks:
@@ -109,11 +109,11 @@ class TestPage < MiniTest::Unit::TestCase
 
 # named block and block with other options
 - in: |
-    --- name:block -------------------------------
+    --- name:block  -------------------------------
     content doing -
     with?: with some things
 
-    --- other:options test1:true test2:false test3:542 pipeline: ----------------
+    ---   other:options test1:true test2:false 	test3:542 pipeline: ----------------  
   meta_info:
     blocks: {block2: {other: options, test1: true, test2: false, test3: 542, pipeline: ~}}
   blocks:
