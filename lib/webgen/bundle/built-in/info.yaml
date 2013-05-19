@@ -234,7 +234,7 @@ options:
       `STRING` where `STRING` is any combination of any combination of '%', '<' and '<>'
     example:
       config: |
-        content_processor.erb.trim_mode: true
+        content_processor.erb.trim_mode: '%<'
 
   content_processor.erubis.options:
     summary: |
