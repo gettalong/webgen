@@ -14,9 +14,9 @@ module Webgen
       def initialize(website) #:nodoc:
         @website = website
 
-        @website.blackboard.add_listener(:website_initialized) do
+        @website.blackboard.add_listener(:website_initialized, 'misc.dummy_index') do
           if @website.config['misc.dummy_index.enabled'] && @website.config['misc.dummy_index.directory_indexes'].length > 0
-            @website.blackboard.add_listener(:website_generated, &method(:create_dummy_indexes))
+            @website.blackboard.add_listener(:website_generated, 'misc.dummy_index', &method(:create_dummy_indexes))
           end
         end
       end

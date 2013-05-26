@@ -19,8 +19,10 @@ module Webgen
       # :after_node_created hooks so that it can apply the meta information.
       def initialize(website)
         super
-        @website.blackboard.add_listener(:apply_meta_info_to_path, &method(:apply_meta_info_to_path))
-        @website.blackboard.add_listener(:after_node_created, &method(:after_node_created))
+        @website.blackboard.add_listener(:apply_meta_info_to_path, 'path_handler.meta_info',
+                                         &method(:apply_meta_info_to_path))
+        @website.blackboard.add_listener(:after_node_created, 'path_handler.meta_info',
+                                         :before => 'item_tracker.node_meta_info', &method(:after_node_created))
         @paths = []
         @alcns = []
       end

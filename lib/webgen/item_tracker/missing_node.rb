@@ -23,13 +23,13 @@ module Webgen
         @stop_reporting = false
         @nodes_to_ignore = Set.new
 
-        @website.blackboard.add_listener(:reused_existing_node, self) do |node, path|
+        @website.blackboard.add_listener(:reused_existing_node, 'item_tracker.missing_node') do |node, path|
           @nodes_to_ignore << node
         end
-        @website.blackboard.add_listener(:after_node_created, self) do |node|
+        @website.blackboard.add_listener(:after_node_created, 'item_tracker.missing_node') do |node|
           @at_least_one_node_created = true unless @nodes_to_ignore.include?(node)
         end
-        @website.blackboard.add_listener(:after_all_nodes_written, self) do
+        @website.blackboard.add_listener(:after_all_nodes_written, 'item_tracker.missing_node') do
           if @at_least_one_node_created
             @at_least_one_node_created = false
           else
@@ -37,7 +37,7 @@ module Webgen
           end
           @nodes_to_ignore = Set.new
         end
-        @website.blackboard.add_listener(:website_generated, self) do
+        @website.blackboard.add_listener(:website_generated, 'item_tracker.missing_node') do
           @at_least_one_node_created = true
           @stop_reporting = false
           @nodes_to_ignore = Set.new

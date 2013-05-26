@@ -108,17 +108,17 @@ module Webgen
 
       @item_changed = {}
 
-      @website.blackboard.add_listener(:website_initialized, self) do
+      @website.blackboard.add_listener(:website_initialized, 'item_tracker') do
         @cached = @website.cache[:item_tracker_data] || @cached
       end
 
-      @website.blackboard.add_listener(:after_tree_populated, self) do |node|
+      @website.blackboard.add_listener(:after_tree_populated, 'item_tracker') do |node|
         @item_data.keys.each do |uid|
           @item_data[uid] = item_tracker(uid.first).item_data(*uid.last)
         end
       end
 
-      @website.blackboard.add_listener(:before_all_nodes_written, self) do
+      @website.blackboard.add_listener(:before_all_nodes_written, 'item_tracker') do
         # make all used item data from the previous pass current again if applicable and remove
         # invalid UIDs
         uids_to_update = @written_nodes.each_with_object(Set.new) do |node, set|
@@ -145,11 +145,11 @@ module Webgen
         @item_changed = {}
       end
 
-      @website.blackboard.add_listener(:after_node_written, self) do |node|
+      @website.blackboard.add_listener(:after_node_written, 'item_tracker') do |node|
         @written_nodes << node
       end
 
-      @website.blackboard.add_listener(:after_all_nodes_written, self) do
+      @website.blackboard.add_listener(:after_all_nodes_written, 'item_tracker') do
         # update cached data with data from the run
         uids_to_update = Set.new
         @written_nodes.each do |node|
@@ -161,7 +161,7 @@ module Webgen
         uids_to_update.each {|uid| @cached[:item_data][uid] = @item_data[uid]}
       end
 
-      @website.blackboard.add_listener(:website_generated, self) do
+      @website.blackboard.add_listener(:website_generated, 'item_tracker') do
         @cached[:node_dependencies].reject! {|alcn, data| !@website.tree[alcn]}
 
         used_uids = @cached[:node_dependencies].each_with_object(Set.new) {|(_, uids), obj| obj.merge(uids)}

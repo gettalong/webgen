@@ -141,23 +141,23 @@ module Webgen
       @instances = {}
       @secondary_nodes = {}
 
-      @website.blackboard.add_listener(:website_generated, self) do
+      @website.blackboard.add_listener(:website_generated, 'path_handler') do
         @website.cache[:path_handler_secondary_nodes] = @secondary_nodes
       end
 
       used_secondary_paths = {}
       written_nodes = Set.new
-      @website.blackboard.add_listener(:before_secondary_nodes_created, self) do |path, source_alcn|
+      @website.blackboard.add_listener(:before_secondary_nodes_created, 'path_handler') do |path, source_alcn|
         (used_secondary_paths[source_alcn] ||= Set.new) << path if source_alcn
       end
-      @website.blackboard.add_listener(:before_all_nodes_written, self) do |node|
+      @website.blackboard.add_listener(:before_all_nodes_written, 'path_handler') do |node|
         used_secondary_paths = {}
         written_nodes = Set.new
       end
-      @website.blackboard.add_listener(:after_node_written, self) do |node|
+      @website.blackboard.add_listener(:after_node_written, 'path_handler') do |node|
         written_nodes << node.alcn
       end
-      @website.blackboard.add_listener(:after_all_nodes_written, self) do
+      @website.blackboard.add_listener(:after_all_nodes_written, 'path_handler') do
         @secondary_nodes.delete_if do |path, data|
           if written_nodes.include?(data[1]) && (!used_secondary_paths[data[1]] ||
                                                  !used_secondary_paths[data[1]].include?(path))
@@ -228,10 +228,12 @@ module Webgen
 
         used_paths = []
 
-        @website.blackboard.add_listener(:before_node_created, :temp_populate_tree) {|path| used_paths << path}
+        @website.blackboard.add_listener(:before_node_created, 'path_handler (temp_populate_tree)') do |path|
+          used_paths << path
+        end
         create_nodes(meta_info, [:meta_info])
         create_nodes(rest)
-        @website.blackboard.remove_listener(:before_node_created, :temp_populate_tree)
+        @website.blackboard.remove_listener(:before_node_created, 'path_handler (temp_populate_tree)')
 
         unused_paths = rest - used_paths
         @website.logger.vinfo do

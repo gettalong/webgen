@@ -145,7 +145,7 @@ website.ext.item_tracker = item_tracker = Webgen::ItemTracker.new(website)
 item_tracker.register('NodeContent')
 
 item_tracker.register('NodeMetaInfo')
-website.blackboard.add_listener(:after_node_created) do |node|
+website.blackboard.add_listener(:after_node_created, 'item_tracker.node_meta_info') do |node|
   item_tracker.add(node, :node_meta_info, node)
   item_tracker.add(node, :node_meta_info, node, Webgen::ItemTracker::NodeMetaInfo::CONTENT_MODIFICATION_KEY)
 end
@@ -153,7 +153,7 @@ end
 item_tracker.register('Nodes')
 item_tracker.register('File')
 item_tracker.register('MissingNode')
-website.blackboard.add_listener(:node_resolution_failed) do |path, lang|
+website.blackboard.add_listener(:node_resolution_failed, 'item_tracker.missing_node') do |path, lang|
   if website.ext.path_handler.current_dest_node
     website.ext.item_tracker.add(website.ext.path_handler.current_dest_node, :missing_node, path, lang)
     website.logger.error do

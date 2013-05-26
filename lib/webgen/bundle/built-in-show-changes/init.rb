@@ -9,7 +9,7 @@ end
 
 data = nil
 
-website.blackboard.add_listener(:before_node_written) do |node|
+website.blackboard.add_listener(:before_node_written, 'destination.show_changes') do |node|
   next unless website.config['destination.show_changes'] && node.is_file? && !node['no_output']
   webgen_require('diff/lcs', 'diff-lcs')
   webgen_require('diff/lcs/hunk', 'diff-lcs')
@@ -20,7 +20,7 @@ website.blackboard.add_listener(:before_node_written) do |node|
   end
 end
 
-website.blackboard.add_listener(:after_node_written) do |node, content|
+website.blackboard.add_listener(:after_node_written, 'destination.show_changes') do |node, content|
   next unless website.config['destination.show_changes'] && node.is_file? && !node['no_output']
   if data.nil?
     website.logger.info { "New destination path <#{node.dest_path}>" }
