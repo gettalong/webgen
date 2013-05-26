@@ -836,6 +836,15 @@ options:
       tag: |
         {link: docu.html}
 
+  tag.menu.css_class:
+    summary: |
+      The content of the class attribute of the top level list element.
+    syntax: |
+      `STRING` where `STRING` is a space-separated list of CSS class names
+    example:
+      tag: |
+        {menu: {options: {in_menu: true}, css_class: sidebar menu}}
+
   tag.menu.options:
     summary: |
       Node finder options that specify which nodes the menu should use.

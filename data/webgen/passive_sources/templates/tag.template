@@ -13,8 +13,12 @@ end.join(context[:config]['tag.breadcrumb_trail.separator'])
 
 
 --- name:tag.menu pipeline:ruby --------------------------------------------------------------------
+start_tag = "<ul"
+start_tag << " class=\"#{context[:config]['tag.menu.css_class']}\"" if context[:config]['tag.menu.css_class']
+start_tag << ">"
+
 nested_list = lambda do |nodes, level|
-  out = "<ul>"
+  out = (level == 1 ? start_tag.dup : "<ul>")
   nodes.each do |node, children|
     menu = (children ? nested_list.call(children, level + 1) : '')
     style, link = Webgen::Tag::Menu.menu_item_details(context.dest_node, node, context.content_node.lang, level, !children.nil?)
@@ -28,7 +32,7 @@ end
 
 flat_list = lambda do |nodes, level|
   submenu = ''
-  out = "<ul>"
+  out = (level == 1 ? start_tag.dup : "<ul>")
   nodes.each do |node, children|
     submenu << (children ? flat_list.call(children, level + 1) : '')
     style, link = Webgen::Tag::Menu.menu_item_details(context.dest_node, node, context.content_node.lang, level, !children.nil?)

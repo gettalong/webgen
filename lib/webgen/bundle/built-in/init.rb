@@ -322,6 +322,7 @@ option('tag.menu.style', 'nested') do |val|
 end
 option('tag.menu.options', {})
 option('tag.menu.template', '/templates/tag.template')
+option('tag.menu.css_class', nil)
 
 
 ########################################################################
