@@ -13,16 +13,32 @@ module Webgen
       @listener = {}
     end
 
-    # Add the given block as listener for the messages +msg_names+ (one message name or an array of
-    # message names). If you want to be able to remove the block from being called by the blackboard
-    # later, you have to provide a unique ID object!
-    def add_listener(msg_names = nil, id = nil, &block)
+    # Add the given block as listener for the message +msg_name+.
+    #
+    # The +id+ parameter can be used to specify a string which uniquely identifies the listener.
+    #
+    # The +position+ parameter can be used to specify where the listener should be added. The keys
+    # :before and :after are recognized and must contain a valid listener ID. If no key is or an
+    # unknown ID is specified, the listener is added as last entry in the listener array.
+    def add_listener(msg_name, id = nil, position = {}, &block)
+      position = if position[:before]
+                   (@listener[msg_name] || []).index {|id, obj| id == position[:before]}
+                 elsif position[:after]
+                   (pos = (@listener[msg_name] || []).index {|id, obj| id == position[:after]}) && pos + 1
+                 end
+      insert_listener_at_position(msg_name, id, position || -1, &block)
+    end
+
+    # Insert the block as listener for +msg_name+ with the given +id+ at the +position+ in the
+    # listener array.
+    def insert_listener_at_position(msg_name, id, position, &block)
       if !block.nil?
-        [msg_names].flatten.compact.each {|name| (@listener[name] ||= []) << [id, block]}
+        (@listener[msg_name] ||= []).insert(position, [id, block])
       else
         raise ArgumentError, "You have to provide a block"
       end
     end
+    private :insert_listener_at_position
 
     # Remove the blocks associated with the given ID from the dispatcher queues of the given message
     # names.

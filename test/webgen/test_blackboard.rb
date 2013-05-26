@@ -11,9 +11,17 @@ class TestBlackboard < MiniTest::Unit::TestCase
 
   def test_add_listener
     assert_raises(ArgumentError) { @blackboard.add_listener(:test) }
-    @blackboard.add_listener([:test, :other]) { throw :called }
+    @blackboard.add_listener(:test) { throw :called }
     assert_throws(:called) { @blackboard.dispatch_msg(:test) }
-    assert_throws(:called) { @blackboard.dispatch_msg(:other) }
+
+    msgs = []
+    @blackboard.add_listener(:other, 'test') { msgs << 'test' }
+    @blackboard.add_listener(:other, nil, :before => 'test') { msgs << 'before' }
+    @blackboard.add_listener(:other, nil, :before => 'non-existing') { msgs << 'after 2' }
+    @blackboard.add_listener(:other, nil, :after => 'non-existing') { msgs << 'last' }
+    @blackboard.add_listener(:other, nil, :after => 'test') { msgs << 'after 1' }
+    @blackboard.dispatch_msg(:other)
+    assert_equal(['before', 'test', 'after 1', 'after 2', 'last'], msgs)
   end
 
   def test_remove_listener
