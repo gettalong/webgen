@@ -27,11 +27,11 @@ module Webgen
       # Return style information (node is selected, ...) and a link from +dest_node+ to +node+.
       #
       # This method can be used in a menu template.
-      def self.menu_item_details(dest_node, node, lang, level, has_submenu)
-        styles = ['webgen-menu-level' + level.to_s]
-        styles << 'webgen-menu-submenu' if has_submenu
-        styles << 'webgen-menu-submenu-inhierarchy' if node.is_ancestor_of?(dest_node)
-        styles << 'webgen-menu-item-selected' if node == dest_node
+      def self.menu_item_details(dest_node, node, lang, level, has_submenu, config)
+        styles = [config['tag.menu.item_level_class'] + level.to_s]
+        styles << config['tag.menu.item_submenu_class'] if has_submenu
+        styles << config['tag.menu.item_submenu_inhierarchy_class'] if node.is_ancestor_of?(dest_node)
+        styles << config['tag.menu.item_selected_class'] if node == dest_node
         style = "class=\"#{styles.join(' ')}\"" if styles.length > 0
 
         link = dest_node.link_to(node, lang)

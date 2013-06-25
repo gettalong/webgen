@@ -21,7 +21,7 @@ nested_list = lambda do |nodes, level|
   out = (level == 1 ? start_tag.dup : "<ul>")
   nodes.each do |node, children|
     menu = (children ? nested_list.call(children, level + 1) : '')
-    style, link = Webgen::Tag::Menu.menu_item_details(context.dest_node, node, context.content_node.lang, level, !children.nil?)
+    style, link = Webgen::Tag::Menu.menu_item_details(context.dest_node, node, context.content_node.lang, level, !children.nil?, context[:config])
     out << "<li #{style}>#{link}"
     out << menu
     out << "</li>"
@@ -35,7 +35,7 @@ flat_list = lambda do |nodes, level|
   out = (level == 1 ? start_tag.dup : "<ul>")
   nodes.each do |node, children|
     submenu << (children ? flat_list.call(children, level + 1) : '')
-    style, link = Webgen::Tag::Menu.menu_item_details(context.dest_node, node, context.content_node.lang, level, !children.nil?)
+    style, link = Webgen::Tag::Menu.menu_item_details(context.dest_node, node, context.content_node.lang, level, !children.nil?, context[:config])
     out << "<li #{style}>#{link}</li>"
   end
   out << "</ul>" << submenu

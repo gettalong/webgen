@@ -845,6 +845,43 @@ options:
       tag: |
         {menu: {options: {in_menu: true}, css_class: sidebar menu}}
 
+  tag.menu.item_level_class:
+    summary: |
+      The CSS class that is used on list items to indicate the nesting level.
+    syntax: |
+      `STRING` where `STRING` is a CSS class name
+    example:
+      tag: |
+        {menu: {options: {in_menu: true}, item_level_class: mlevel}}
+
+  tag.menu.item_submenu_class:
+    summary: |
+      The CSS class that is used on list items to indicate an item with a sub-menu.
+    syntax: |
+      `STRING` where `STRING` is a CSS class name
+    example:
+      tag: |
+        {menu: {options: {in_menu: true}, item_submenu_class: submenu}}
+
+  tag.menu.item_submenu_inhierarchy_class:
+    summary: |
+      The CSS class that is used on list items to indicate an item that is in the hierarchy of the
+      current page.
+    syntax: |
+      `STRING` where `STRING` is a CSS class name
+    example:
+      tag: |
+        {menu: {options: {in_menu: true}, item_submenu_inhierarchy_class: submenu-hier}}
+
+  tag.menu.item_selected_class:
+    summary: |
+      The CSS class that is used on list items to indicate the current page.
+    syntax: |
+      `STRING` where `STRING` is a CSS class name
+    example:
+      tag: |
+        {menu: {options: {in_menu: true}, item_selected_class: active}}
+
   tag.menu.options:
     summary: |
       Node finder options that specify which nodes the menu should use.
