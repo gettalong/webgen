@@ -30,9 +30,8 @@ module Webgen
       class NodeTreeImporter < ::Sass::Importers::Base
 
         # Creates a new importer that imports files from the node tree relative to the given node alcn.
-        def initialize(website, alcn)
-          @website = website
-          @alcn = alcn
+        def initialize(context)
+          @context = context
         end
 
         # @see Base#find_relative
@@ -42,11 +41,11 @@ module Webgen
 
         # @see Base#find
         def find(name, options)
-          _find(@alcn, name, options)
+          _find(@context.ref_node.alcn, name, options)
         end
 
         def mtime(name, options) #:nodoc:
-          node = resolve_node(@alcn, name)
+          node = resolve_node(@context.ref_node.alcn, name)
           node['modified_at'] if node
         end
 
@@ -55,7 +54,7 @@ module Webgen
         end
 
         def to_s #:nodoc:
-          "webgen: #{@alcn}"
+          "webgen: #{@context.ref_node.alcn}"
         end
 
         #######
@@ -69,6 +68,7 @@ module Webgen
           node, syntax = resolve_node(base, name)
           return unless node
 
+          @context.website.ext.item_tracker.add(@context.dest_node, :node_content, node)
           options[:syntax] = syntax
           options[:filename] = node.alcn
           options[:importer] = self
@@ -80,7 +80,7 @@ module Webgen
         # Returns [node, syntax] if a node was found or nil otherwise
         def resolve_node(base, path)
           possible_filenames(path).each do |filename, syntax|
-            node = @website.tree.resolve_node(Webgen::Path.append(base, filename), nil)
+            node = @context.website.tree.resolve_node(Webgen::Path.append(base, filename), nil)
             return [node, syntax] if node
           end
           nil
@@ -132,7 +132,7 @@ module Webgen
 
       def self.default_options(context) # :nodoc:
         opts = context.website.config['content_processor.sass.options']
-        load_paths = context.website.ext.sass_load_paths + [NodeTreeImporter.new(context.website, '/')]
+        load_paths = context.website.ext.sass_load_paths + [NodeTreeImporter.new(context)]
         opts.merge({
                      :filename => context.ref_node.alcn,
                      :syntax => :sass,

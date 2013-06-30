@@ -35,3 +35,13 @@
 
 [/**/*.sass, /**/*.scss, /**/*.haml, /**/*.rdoc, /**/*.textile, /**/*.tikz]:
   handler: copy
+
+/**/_*.sass:
+  handler: copy
+  pipeline: sass
+  no_output: true
+
+/**/_*.scss:
+  handler: copy
+  pipeline: scss
+  no_output: true
