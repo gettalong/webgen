@@ -147,7 +147,7 @@ module Webgen
       return unless File.exist?(config_file)
 
       first_line = File.open(config_file, 'r') {|f| f.gets}
-      if first_line =~ /^\s*#.*\bruby\b/
+      if first_line =~ /^\s*#.*\bruby\b/i
         begin
           bundle_loader.load!(config_file)
         rescue Exception => e
