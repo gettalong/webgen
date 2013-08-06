@@ -133,7 +133,7 @@ module Webgen
                   *Utils.format_option_desc("Specify a simple configuration option (key=value)")) do |v|
             k, v = v.split('=')
             begin
-              @config_options[k] = YAML.load(v)
+              @config_options[k.to_s] = YAML.load(v.to_s)
             rescue YAML::SyntaxError
               raise ConfigurationOptionError.new("Couldn't parse value for '#{k}': #{$!}")
             end
