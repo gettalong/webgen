@@ -216,7 +216,7 @@ module Webgen
     # Return all versions of this node.
     def versions
       tree.node_access[:alcn].select {|alcn, n| n.node_info[:path] == node_info[:path]}.
-        each_with_object({}) {|(k, v), h| h[v['version']] = v}
+        each_with_object({}) {|(_, v), h| h[v['version']] = v}
     end
 
   end
