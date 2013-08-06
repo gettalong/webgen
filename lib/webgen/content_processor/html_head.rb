@@ -69,10 +69,9 @@ module Webgen
           process_data_array(context, :css_inline) do |content|
             result += "\n<style type=\"text/css\">/*<![CDATA[/*/\n#{content}\n/*]]>*/</style>"
           end
-
-          (context.persistent[:cp_html_head][:meta] || {}).merge(context.content_node['meta'] || {}).each do |name, content|
-            result += "\n<meta name=\"#{ERB::Util.h(name)}\" content=\"#{ERB::Util.h(content)}\" />"
-          end
+        end
+        ((context.persistent[:cp_html_head] || {})[:meta] || {}).merge(context.content_node['meta'] || {}).each do |name, content|
+          result += "\n<meta name=\"#{ERB::Util.h(name)}\" content=\"#{ERB::Util.h(content)}\" />"
         end
         result
       end

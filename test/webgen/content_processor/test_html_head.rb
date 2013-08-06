@@ -42,6 +42,10 @@ class TestHtmlHead < MiniTest::Unit::TestCase
                  "\n<style type=\"text/css\">/*<![CDATA[/*/\nanotherstyle\n/*]]>*/</style>" +
                  "\n<meta name=\"lucky\" content=\"me&lt;&quot;\" />" +
                  "\n<meta name=\"other\" content=\"me\" />", @obj.tags_from_context_data(context))
+
+    context.persistent[:cp_html_head] = nil
+    assert_equal("\n<meta name=\"other\" content=\"me\" />", @obj.tags_from_context_data(context))
+
   end
 
   def test_links_to_translations
