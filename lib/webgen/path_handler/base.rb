@@ -79,8 +79,11 @@ module Webgen
       # and return it.
       #
       # The node class to be used for the to-be-created node can be specified via
-      # `path.meta_info['node_class']`. If this node processing information is not set, the
-      # Base::Node class is used.
+      # `path.meta_info['node_class']`. This is normally used by specific path handlers to provide
+      # custom node classes.
+      #
+      # The default base node class can be changed by setting `path.meta_info['base_node_class']`.
+      # Note that the `node_class` key takes precedence over this key!
       #
       # The parent node under which the new node should be created can optionally be specified via
       # 'path.meta_info['parent_alcn']'. This node processing information has to be set to the alcn
