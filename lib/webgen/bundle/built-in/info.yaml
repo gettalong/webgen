@@ -106,6 +106,9 @@ extensions:
   item_tracker.missing_node:
     author: *author
     summary: Tracks missing nodes via their expected alcn/acn/dest_path
+  item_tracker.template_chain:
+    author: *author
+    summary: Tracks the template chain of a node
 
   link_definitions:
     author: *author

@@ -164,6 +164,8 @@ website.blackboard.add_listener(:node_resolution_failed, 'item_tracker.missing_n
   end
 end
 
+item_tracker.register('TemplateChain')
+
 ########################################################################
 # The link definitions extension
 website.ext.link_definitions = {}
