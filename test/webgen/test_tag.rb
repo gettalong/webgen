@@ -115,26 +115,15 @@ class TestTag < MiniTest::Unit::TestCase
   end
 
   def test_class_render_tag_template
-    dest_node = MiniTest::Mock.new
-    dest_node.expect(:lang, 'en')
-    template_node = MiniTest::Mock.new
-    template_node.expect(:template_chain, [:hallo])
-    ref_node = MiniTest::Mock.new
-    ref_node.expect(:resolve, template_node, ['/tag.template', 'en', true])
-    context = MiniTest::Mock.new
-    context.expect(:[], {'tag.tag.template' => '/tag.template'}, [:config])
-    context.expect(:ref_node, ref_node)
-    context.expect(:content_node, ref_node)
-    context.expect(:dest_node, dest_node)
-    context.expect(:render_block, 'ahoi', [{:name => "tag.tag", :node => 'first',
-                                             :chain => [:hallo, template_node, ref_node]}])
+    @website.ext.content_processor = Webgen::ContentProcessor.new
+    context = Webgen::Context.new(@website)
+    context[:config] = {'tag.tag.template' => '/tag.template'}
 
-    assert_equal('ahoi', Webgen::Tag.render_tag_template(context, 'tag'))
+    root = Webgen::Node.new(@website.tree.dummy_root, '/', '/')
+    template = RenderNode.new("--- name:tag.tag\nnothing", root, 'tag.template', '/tag.template')
+    context[:chain] = [template]
 
-    context.verify
-    dest_node.verify
-    ref_node.verify
-    template_node.verify
+    assert_equal('nothing', Webgen::Tag.render_tag_template(context, 'tag'))
   end
 
 end

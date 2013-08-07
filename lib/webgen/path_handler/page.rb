@@ -21,13 +21,11 @@ module Webgen
         end
       end
 
-      # Render the block +block_name+ of the given +node+.
-      #
-      # If the parameter +chain+ (an array of template nodes) is not set, the default template chain
-      # for the given +node+ is used.
-      def content(node, block_name = 'content', chain = node.template_chain)
-        chain << node
-        chain.first.render_block(block_name, Webgen::Context.new(@website, :chain => chain)).content
+      # Render the content of the given page +node+.
+      def content(node)
+        @website.ext.item_tracker.add(node, :template_chain, node)
+        chain = node.template_chain << node
+        chain.first.render_block('content', Webgen::Context.new(@website, :chain => chain)).content
       end
 
     end

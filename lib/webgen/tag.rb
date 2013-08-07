@@ -77,6 +77,7 @@ module Webgen
     def self.render_tag_template(context, tag)
       path = context[:config]["tag.#{tag}.template"]
       if path && template_node = context.ref_node.resolve(path, context.dest_node.lang, true)
+        context.website.ext.item_tracker.add(context.dest_node, :template_chain, template_node)
         context.render_block(:name => "tag.#{tag}", :node => 'first',
                              :chain => [*template_node.template_chain, template_node, context.content_node])
       else
