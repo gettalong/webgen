@@ -75,8 +75,12 @@ module Webgen
         []
       end
 
-      # Create a node from +path+, if possible, yield the fully initialized node if a block is given
-      # and return it.
+      # Create a node from +path+, if possible, and yield the fully initialized node if a block is
+      # given as well as return it.
+      #
+      # Note that the block should be used when the newly created node need to be modified because
+      # the returned node can also be a reused node (in case the information in the supplied path
+      # applies uniquely to an already existing node)!
       #
       # The node class to be used for the to-be-created node can be specified via
       # `path.meta_info['node_class']`. This is normally used by specific path handlers to provide

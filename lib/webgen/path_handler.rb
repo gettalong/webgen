@@ -17,14 +17,10 @@ module Webgen
   # source to the destination, or a complex things, like generating a whole set of nodes from one
   # input path (e.g. generating a whole image gallery)!
   #
-  # The paths that are handled by a path handler are specified via path patterns (see below). The
-  # #create_nodes method of a path handler is called for each source path that matches a specified
-  # path pattern. And when it is time to write out a node, the #content method on the associated
-  # path handler is called to retrieve the rendered content of the node.
-  #
-  # Also note that any method invoked on a Node object that is not defined in the Node class itself
-  # is forwarded to the associated path handler, adding the node as first parameter to the parameter
-  # list.
+  # The paths that are handled by a path handler are generally specified via path patterns. The
+  # #create_nodes method of a path handler is called for each source path that should be handled.
+  # And when it is time to write out a node, the #content method on the path handler associated with
+  # the node is called to retrieve the rendered content of the node.
   #
   # === Tree creation
   #
@@ -40,10 +36,11 @@ module Webgen
   #    created before their file nodes.
   #
   # 2. When a path handler is used for creating nodes, all source paths (retrieved by using
-  #    Webgen::Source#paths method) that match one of the associated patterns are used.
+  #    Webgen::Source#paths method) that match one of the associated patterns and/or all path with
+  #    the 'handler' meta information set to the path handler are used.
   #
-  # 3. The meta information of a used source path is then updated with the meta information from the
-  #    'path_handler.default_meta_info' configuration option key.
+  # 3. The meta information of a used source path is then updated with the meta information applied
+  #    by methods registered for the :apply_meta_info_to_path blackboard message.
   #
   #    After that the source path is given to the #parse_meta_info! method of the path handler so
   #    that meta information of the path can be updated with meta information stored in the content
@@ -53,7 +50,7 @@ module Webgen
   #    should be used for creating nodes and each path version is then given to the #create_nodes
   #    method of the path handler so that it can create one or more nodes.
   #
-  # 4. Nodes returned by the #creates_nodes of a path handler are assumed to have the Node#node_info
+  # 4. Nodes returned by #creates_nodes of a path handler are assumed to have the Node#node_info
   #    keys :path and :path_handler and the meta info key 'modified_at' correctly set (this is
   #    automatically done if the Webgen::PathHandler::Base#create_node method is used).
   #
@@ -61,7 +58,8 @@ module Webgen
   #
   # Path patterns define which paths are handled by a specific path handler. These patterns are
   # specified when a path handler is registered using #register method. The patterns need to have a
-  # format that Dir.glob can handle.
+  # format that Dir.glob can handle. Note that a user can always associate any path with a path
+  # handler through a meta information path and the 'handler' meta information key.
   #
   # In addition to specifying the patterns a path handler uses, one can also specify the place in
   # the invocation list which the path handler should use. The invocation list is used from the
