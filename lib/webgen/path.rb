@@ -64,11 +64,14 @@ module Webgen
 
     # Return +true+ if the given path string matches the given path pattern.
     #
+    # If a fragment path (i.e. one which has a hash character somewhere) should be matched, the
+    # pattern needs to have a hash character as well.
+    #
     # For information on which patterns are supported, have a look at the API documentation of
     # File.fnmatch.
     def self.matches_pattern?(path, pattern, options = File::FNM_DOTMATCH|File::FNM_CASEFOLD|File::FNM_PATHNAME)
       pattern += '/' if path =~ /\/$/ && pattern !~ /\/$|^$/
-      File.fnmatch(pattern, path, options)
+      (path.to_s.include?('#') ? pattern.include?('#') : true) && File.fnmatch(pattern, path, options)
     end
 
     # Construct a localized canonical name from a given canonical name and a language.

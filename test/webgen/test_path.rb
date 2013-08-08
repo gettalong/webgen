@@ -37,7 +37,7 @@ class TestPath < MiniTest::Unit::TestCase
     assert(Webgen::Path.matches_pattern?(path, '**/*'))
     assert(Webgen::Path.matches_pattern?(path, '**/file.de.PAGE'))
     assert(Webgen::Path.matches_pattern?(path, '/dir/*/file.*.page'))
-    assert(!Webgen::Path.matches_pattern?(path, '**/*.test'))
+    refute(Webgen::Path.matches_pattern?(path, '**/*.test'))
 
     path = '/dir/'
     assert(Webgen::Path.matches_pattern?(path, '/dir/'))
@@ -57,6 +57,12 @@ class TestPath < MiniTest::Unit::TestCase
 
     path = ''
     assert(!Webgen::Path.matches_pattern?(path, '/'))
+
+    path = '/dir/to/file.de.page#somefile.page'
+    refute(Webgen::Path.matches_pattern?(path, '**/*'))
+    refute(Webgen::Path.matches_pattern?(path, '/dir/*/file.*.page'))
+    assert(Webgen::Path.matches_pattern?(path, '**/*#*'))
+    assert(Webgen::Path.matches_pattern?(path, '**/*#*.page'))
   end
 
   def test_initialize_and_accessors
