@@ -16,9 +16,7 @@ require 'rake/testtask'
 require 'rake/packagetask'
 
 $:.unshift('lib')
-require 'webgen/rake_task'
 require 'webgen/version'
-require 'webgen/page'
 
 # End user tasks ###############################################################
 
@@ -35,32 +33,8 @@ task :clobber do
   ruby "setup.rb clean"
 end
 
-desc "Build the whole user documentation"
-task :doc => [:rdoc, :htmldoc]
-
-desc "Generate the HTML documentation"
-Webgen::RakeTask.new('htmldoc') do |site|
-  site.clobber_outdir = true
-  site.config_block = lambda do |config|
-    config['sources'] = [['/', "Webgen::Source::FileSystem", 'doc'],
-                         ['/', "Webgen::Source::FileSystem", 'misc', 'default.*'],
-                         ['/', "Webgen::Source::FileSystem", 'misc', 'htmldoc.metainfo'],
-                         ['/', "Webgen::Source::FileSystem", 'misc', 'htmldoc.virtual'],
-                         ['/', "Webgen::Source::FileSystem", 'misc', 'images/**/*']]
-    prefix = "webgen-website-bundle-"
-    config['resources'].select {|name, data| name =~ /^#{prefix}style/}.each do |name, data|
-      config['sources'] <<
-        ["/references/website_styles/#{name.sub(prefix, '')}/", "Webgen::Source::FileSystem", 'misc', 'style.page']
-      config['sources'] <<
-        ["/references/website_styles/#{name.sub(prefix, '')}/", 'Webgen::Source::Resource', name, '/src/**', '/src/']
-    end
-    config['output'] = ['Webgen::Output::FileSystem', 'htmldoc']
-    config.default_processing_pipeline('Page' => 'erb,tags,kramdown,blocks,fragments')
-  end
-end
-
 RDoc::Task.new do |rdoc|
-  rdoc.rdoc_dir = 'htmldoc/rdoc'
+  rdoc.rdoc_dir = 'rdoc'
   rdoc.title = 'webgen'
   rdoc.main = 'API.rdoc'
   rdoc.options << '--line-numbers'
@@ -83,12 +57,6 @@ dynamic content like menus on the fly and comes with many powerful
 extensions.
 EOF
 
-  begin
-    REL_PAGE = Webgen::Page.from_data(File.read('website/src/news/release_' + Webgen::VERSION.split('.').join('_') + '.page'))
-  rescue
-    puts 'NO RELEASE NOTES/CHANGES FILE'
-  end
-
   PKG_FILES = FileList.new([
                             'Rakefile',
                             'setup.rb',
@@ -101,7 +69,7 @@ EOF
                             'README.md',
                             'bin/webgen',
                             'data/**/*',
-                            'lib/**/*.rb',
+                            'lib/**/*',
                             'man/man1/webgen.1',
                             'test/**/*',
                            ]) do |fl|
@@ -127,14 +95,15 @@ EOF
     s.version = Webgen::VERSION
     s.summary = SUMMARY
     s.description = DESCRIPTION
+    s.license = 'GPL'
     s.post_install_message = <<EOF
 
 Thanks for choosing webgen! Here are some places to get you started:
-* The webgen User Documentation at <http://webgen.rubyforge.org/documentation/index.html>
+* The webgen User Documentation at <http://webgen.rubyforge.org/documentation/>
 * The mailing list archive at <http://rubyforge.org/pipermail/webgen-users/>
 * The webgen Wiki at <http://github.com/gettalong/webgen/wiki>
 
-Have a look at <http://webgen.rubyforge.org/> for a list of changes!
+Have a look at <http://webgen.rubyforge.org/news.html> for a list of changes!
 
 Have fun!
 
@@ -186,12 +155,7 @@ EOF
   end
 
   desc 'Release webgen version ' + Webgen::VERSION
-  task :release => [:clobber, :package, :publish_files, :publish_doc, :website, :publish_website, :post_news]
-
-  desc "Upload webgen documentation to Rubyforge homepage"
-  task :publish_doc => [:doc] do
-    sh "rsync -avc --delete htmldoc/ gettalong@rubyforge.org:/var/www/gforge-projects/webgen/documentation/#{(Webgen::VERSION.split('.')[0..-2] + ['x']).join('.')}"
-  end
+  task :release => [:clobber, :package, :publish_files, :post_news]
 
   if defined? RubyForge
     desc "Upload the release to Rubyforge"
@@ -203,8 +167,8 @@ EOF
       rf.configure
       rf.login
 
-      rf.userconfig["release_notes"] = REL_PAGE.blocks['notes'].content
-      rf.userconfig["release_changes"] = REL_PAGE.blocks['changes'].content
+      rf.userconfig["release_notes"] = ""
+      rf.userconfig["release_changes"] = ""
       rf.userconfig["preformatted"] = false
 
       files = %w[.gem .tgz .zip].collect {|ext| "pkg/webgen-#{Webgen::VERSION}" + ext}
@@ -224,35 +188,10 @@ EOF
       rf.configure
       rf.login
 
-      rf.post_news('webgen', "webgen #{Webgen::VERSION} released", REL_PAGE.blocks['notes'].content)
+      text = "Have a look at http://webgen.rubyforge.org/news.html for the release details!"
+      rf.post_news('webgen', "webgen #{Webgen::VERSION} released", text)
       puts "done"
     end
-  end
-
-  desc 'Generates the webgen website'
-  Webgen::RakeTask.new(:website) do |site|
-    site.directory = 'website'
-    site.clobber_outdir = true
-    site.config_block = lambda do |config|
-      config['sources'] += [['/documentation/', 'Webgen::Source::FileSystem', '../doc'],
-                            ['/', "Webgen::Source::FileSystem", '../misc', 'default.less.css'],
-                            ['/documentation/', "Webgen::Source::FileSystem", '../misc', 'htmldoc.virtual'],
-                            ['/', "Webgen::Source::FileSystem", '../misc', 'images/**/*']]
-      prefix = "webgen-website-bundle-"
-      config['resources'].select {|name, data| name =~ /^#{prefix}style/}.each do |name, data|
-        config['sources'] <<
-          ["/documentation/references/website_styles/#{name.sub(prefix, '')}/", "Webgen::Source::FileSystem", '../misc', 'style.page']
-        config['sources'] <<
-          ["/documentation/references/website_styles/#{name.sub(prefix, '')}/", 'Webgen::Source::Resource', name, '/src/**', '/src/']
-      end
-      config.default_processing_pipeline('Page' => 'erb,tags,kramdown,blocks,fragments')
-    end
-  end
-
-  desc "Upload the webgen website to Rubyforge"
-  task :publish_website => ['rdoc', :website] do
-    sh "rsync -avc --delete --exclude documentation/rdoc --exclude 'documentation/0.5.x' --exclude 'documentation/0.4.x' --exclude 'wiki' --exclude 'robots.txt'  website/out/ gettalong@rubyforge.org:/var/www/gforge-projects/webgen/"
-    sh "rsync -avc --delete htmldoc/rdoc/ gettalong@rubyforge.org:/var/www/gforge-projects/webgen/documentation/rdoc"
   end
 
 
