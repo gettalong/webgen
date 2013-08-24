@@ -1,6 +1,0 @@
----
-template: extensions.template
---- name:summary pipeline:erb,tags,kramdown,blocks
-
-Short names: `<%= context.website.config['contentprocessor.map'].select {|k,v| v ==
-context.content_node['title']}.map {|k,v| k}.join(', ') %>`.
