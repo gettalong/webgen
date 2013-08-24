@@ -1,6 +1,7 @@
 # -*- encoding: utf-8 -*-
 
 require 'time'
+require 'ostruct'
 require 'shellwords'
 require 'webgen/path_handler/base'
 require 'webgen/path_handler/page_utils'
@@ -36,8 +37,14 @@ module Webgen
 
         dir_node = create_directory(path, Webgen::Path.new(path.parent_path + path['dir_name'] + '/'), false)
 
+        api = OpenStruct.new
+        api.directory = dir_node
+        api.class_nodes = {}
+
         rdoc.store.all_classes_and_modules.sort.each do |klass|
           klass_node = create_page_node_for_class(path, dir_node, klass, output_flag_file)
+          api.class_nodes[klass.full_name] = klass_node
+          klass_node.node_info[:api] = api
           klass.each_method {|method| create_fragment_node_for_method(path, klass_node, method)}
         end
 
