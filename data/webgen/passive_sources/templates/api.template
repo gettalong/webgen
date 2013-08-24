@@ -1,5 +1,19 @@
---- name:content pipeline:erb
-<% klass = context.node.node_info[:api_class_object] %>
+--- name:content pipeline:ruby
+rdoc_object = context.node.node_info[:rdoc_object]
+if rdoc_object.kind_of?(::RDoc::ClassModule)
+  context.content = context.render_block(:name => 'klass', :node => 'current')
+else
+  context.content = context.render_block(:name => 'page', :node => 'current')
+end
+--- name:page pipeline:erb
+<% page = context.node.node_info[:rdoc_object] %>
+<div class="api-documentation api-page">
+  <div class="description">
+    <%= page.description %>
+  </div>
+</div>
+--- name:klass pipeline:erb
+<% klass = context.node.node_info[:rdoc_object] %>
 <div class="api-documentation api-<%= klass.type %>">
   <h1 class="<%= klass.type %>"><%= klass.type %> <%= klass.full_name %></h1>
 

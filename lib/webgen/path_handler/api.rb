@@ -40,12 +40,20 @@ module Webgen
         api = OpenStruct.new
         api.directory = dir_node
         api.class_nodes = {}
+        api.file_nodes = {}
 
         rdoc.store.all_classes_and_modules.sort.each do |klass|
           klass_node = create_page_node_for_class(path, dir_node, klass, output_flag_file)
           api.class_nodes[klass.full_name] = klass_node
           klass_node.node_info[:api] = api
           klass.each_method {|method| create_fragment_node_for_method(path, klass_node, method)}
+        end
+
+        rdoc.store.all_files.sort.each do |file|
+          next unless file.text?
+          file_node = create_page_node_for_file(path, dir_node, file, output_flag_file)
+          api.file_nodes[file.full_name] = file_node
+          file_node.node_info[:api] = api
         end
 
         nil
@@ -138,11 +146,11 @@ module Webgen
         create_directory(api_path, Webgen::Path.new(File.dirname(klass_path_str) + '/'))
 
         path = Webgen::Path.new(klass_path_str, 'handler' => 'page', 'modified_at' => api_path['modified_at'],
-                                'title' => "#{klass.type} #{klass.full_name}", 'api_class' => klass.full_name,
+                                'title' => "#{klass.type} #{klass.full_name}", 'api_class_name' => klass.full_name,
                                 'api_name' => api_path['api_name'], 'template' => api_path['api_template'])
         node = @website.ext.path_handler.create_secondary_nodes(path).first
 
-        node.node_info[:api_class_object] = klass
+        node.node_info[:rdoc_object] = klass
         @website.ext.item_tracker.add(node, :file, output_flag_file)
         add_link_definition(api_path, klass.full_name, node.alcn, klass.full_name)
 
@@ -162,6 +170,24 @@ module Webgen
         add_link_definition(api_path, method.full_name, method_url, method.full_name)
       end
       protected :create_fragment_node_for_method
+
+      # Create a page node for the given file and return it.
+      def create_page_node_for_file(api_path, dir_node, file, output_flag_file)
+        file_path_str = file.http_url(dir_node.alcn)
+
+        create_directory(api_path, Webgen::Path.new(File.dirname(file_path_str) + '/'))
+
+        path = Webgen::Path.new(file_path_str, 'handler' => 'page', 'modified_at' => api_path['modified_at'],
+                                'title' => "File #{file.full_name}", 'api_file_name' => file.full_name,
+                                'api_name' => api_path['api_name'], 'template' => api_path['api_template'])
+        node = @website.ext.path_handler.create_secondary_nodes(path).first
+
+        node.node_info[:rdoc_object] = file
+        @website.ext.item_tracker.add(node, :file, output_flag_file)
+
+        node
+      end
+      protected :create_page_node_for_file
 
       # Add a link definition for the given node.
       def add_link_definition(api_path, link_name, url, title)
