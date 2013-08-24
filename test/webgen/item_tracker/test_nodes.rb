@@ -31,8 +31,7 @@ class TestItemTrackerNodes < MiniTest::Unit::TestCase
     assert_equal(["/file.en.html", "/file.de.html"],
                  @obj.item_data(*@args1))
 
-    assert_equal(["/file.en.html",
-                  ["/file.de.html", ["/file.de.html#frag"]]],
+    assert_equal(["/file.en.html", "/file.de.html"],
                  @obj.item_data(*@args2))
   end
 
@@ -43,7 +42,6 @@ class TestItemTrackerNodes < MiniTest::Unit::TestCase
       @website.ext.item_tracker.expect(:item_changed?, false, [:node_meta_info, @website.tree['/file.en.html']])
       @website.ext.item_tracker.expect(:item_changed?, false, [:node_meta_info, @website.tree['/file.de.html']])
     end
-    @website.ext.item_tracker.expect(:item_changed?, false, [:node_meta_info, @website.tree['/file.de.html#frag']])
 
     [@args1, @args2].each do |args|
       old_data = @obj.item_data(*args)

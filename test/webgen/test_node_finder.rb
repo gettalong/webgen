@@ -93,7 +93,7 @@ class TestNodeFinder < MiniTest::Unit::TestCase
     # test filter: alcn
     check.call(%w[/],
                @nf.find({:alcn => '/'}, tree['/']))
-    check.call(%w[/ /dir/subfile.html /dir/subfile.html#frag /dir/dir/],
+    check.call(%w[/ /dir/subfile.html /dir/dir/],
                @nf.find({:alcn => ['/', '*'], :flatten => true}, tree['/dir/']))
 
     # test filter: and/or/not
