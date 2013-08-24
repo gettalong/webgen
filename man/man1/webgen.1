@@ -1,4 +1,4 @@
-.TH "WEBGEN" 1 "July 2008"
+.TH "WEBGEN" 1 "September 2013"
 .SH NAME
 webgen \- a fast, powerful and extensible static website generator
 .SH SYNOPSIS
@@ -18,6 +18,21 @@ automatically be generated.
 .B \-d, \-\-directory DIR
 Set the website directectory. if none specified, the current directory is used.
 .TP
+.B \-s, \-\-search-dirs
+Search the parent directories for a directory with a webgen configuration file and use this as
+website directory.
+.TP
+.B \-c, \-\-color
+Use ANSI colors for the output.
+.TP
+.B \-n, \-\-dry-run
+Simulate the website generation. Does everything as it would be done without the option but nothing
+gets written to the destination directory.
+.TP
+.B \-o, \-\-option CONFIG_OPTION
+Specify a simple configuration option. The argument must be of the form KEY=VALUE where the VALUE is
+a valid YAML type.
+.TP
 .B \-v, \-\-verbose
 Show more output by default.
 .TP
@@ -25,40 +40,55 @@ Show more output by default.
 Show less output by default. If this option is specified, then no output is shown during rendering
 of a website.
 .TP
-.B \-l, \-\-log-level LEVEL
-Set the logging level to LEVEL which can be a number between 0 (debug output) and 3 (only error
-output).
+.B \-\-debug
+Enable debugging (shows much more output).
 .TP
 .B \-h, \-\-help
 Show generic help.
 .TP
-.B \-\-version
+.B \-V, \-\-version
 Show the version of the program and exit.
 .SH COMMANDS
+Commands are used to execute different actions (e.g. creating a website directory, generating the
+website, showing help, ...). The command names can be shortened as long as the used name is
+unambiguous. For example, the command "show deps" can also be executed by specifying "s d".
 .TP
-\fBapply\fR
-Applies a website bundle to an existing website. The \fIbundle\fR argument may either be the name of
-a bundle shipped with webgen or an URL to a (gzipped) tar archive bundle.
+\fBcreate bundle\fR
+Creates a new extension bundle either as a standalone extension or inside the website extension directory.
 .TP
-\fBcreate\fR
-Creates the basic directories and files for webgen.  This includes the source and
-output directories as well as an empty extensions directory.  Also, a basic template plus a CSS and
-an index file are created.  Takes the \fIdirectory\fR to create the webgen structure in as an
-argument.
+\fBcreate website\fR
+Creates the basic directories and files for webgen. This includes the source and destination
+directories as well as the extension directory. Takes the \fIdirectory\fR in which to create the
+webgen structure as an argument.
+.TP
+\fBgenerate\fR
+Generates the website. This command will be executed if no command is explicitly specified.
 .TP
 \fBhelp\fR
-Provides help for the individual commands.
+Provides help for individual commands.
 .TP
-\fBrender\fR
-Runs webgen which will result in the generation of the HTML data in the output
-directory from the files in the source directory.  This command is used as the default command when
-no command was issued.
+\fBinstall\fR
+Installs an extension bundle. The name of the extension bundle is needed as argument.
 .TP
-\fBversion\fR
-Shows the version of the program and exit.
+\fBshow bundles\fR
+Shows all available bundles and additional information them.
 .TP
-\fBwebgui\fR
-Starts the webgen webgui, a browser based graphical user interface for manging webgen websites.
+\fBshow config\fR
+Shows all available configuration options. Command options can be used to additionally show default
+values and/or current values.
+.TP
+\fBshow deps\fR
+Shows dependencies of nodes. After webgen generates the website (see generate) information about the
+generated website is stored in cache files and this command reads this information to show the
+dependencies of nodes.
+.TP
+\fBshow extensions\fR
+Shows all available extensions.
+.TP
+\fBshow tree\fR
+Shows the node tree. Command options can be used to customize the output.
+.TP
+\fBversion\fR Shows the version of the program and exit.
 .SH ENVIRONMENT VARIABLES
 webgen's behaviour is affected by the following environment variables:
 .TP
@@ -66,12 +96,13 @@ webgen's behaviour is affected by the following environment variables:
 If no website is specified via the \-d option and this variable is set, webgen assumes that its
 content is the webgen website directory that should be used.
 .SH SEE ALSO
-The webgen website, http://webgen.rubyforge.org/ for more information.
+The webgen website, http://webgen.rubyforge.org/ for detailed information.
 .SH AUTHOR
 webgen was written by Thomas Leitner <t_leitner@gmx.at>
 .PP
 This manual page was written by Paul van Tilburg <paulvt@debian.org> for the Debian project (but may
 be used by others).  This manual page was update to reflect webgen 0.4 change by Arnaud Cornet
 <arnaud.cornet@gmail.com>.  This manual page was updated to reflect webgen 0.5.x changes by Thomas
+Leitner <t_leitner@gmx.at>.  This manual page was updated to reflect webgen 1.x changes by Thomas
 Leitner <t_leitner@gmx.at>.
 
