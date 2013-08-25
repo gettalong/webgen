@@ -236,7 +236,7 @@ sources_validator = lambda do |val|
 end
 
 option('sources', [['/', :file_system, 'src']], &sources_validator)
-option('sources.ignore_paths', ['**/*~', '**/.svn/**']) do |val|
+option('sources.ignore_paths', ['**/*~', '**/.svn/**', '**/.gitignore']) do |val|
   raise "The value has to be an array of patterns" unless val.kind_of?(Array) && val.all? {|item| item.kind_of?(String)}
   val
 end
