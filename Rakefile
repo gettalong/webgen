@@ -69,12 +69,11 @@ EOF
                             'README.md',
                             'bin/webgen',
                             'data/**/*',
+                            'data/**/.gitignore',
                             'lib/**/*',
                             'man/man1/webgen.1',
                             'test/**/*',
-                           ]) do |fl|
-    fl.exclude('**/.gitignore')
-  end
+                           ])
 
   CLOBBER << "VERSION"
   file 'VERSION' do
