@@ -4,7 +4,7 @@ require 'webgen/test_helper'
 require 'webgen/destination/file_system'
 require 'webgen/path'
 
-class TestDestinationFileSystem < MiniTest::Unit::TestCase
+class TestDestinationFileSystem < Minitest::Test
 
   def setup
     @dir = dir = Dir.mktmpdir('test-webgen')

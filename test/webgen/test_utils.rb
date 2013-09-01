@@ -3,7 +3,7 @@
 require 'minitest/autorun'
 require 'webgen/utils'
 
-class TestUtils < MiniTest::Unit::TestCase
+class TestUtils < Minitest::Test
 
   def test_class_const_for_name
     assert_equal(Webgen::Utils, Webgen::Utils.const_for_name('Webgen::Utils'))

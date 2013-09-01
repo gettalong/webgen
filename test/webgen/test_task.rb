@@ -11,7 +11,7 @@ class Webgen::Task::SampleTestTask
 
 end
 
-class TestTask < MiniTest::Unit::TestCase
+class TestTask < Minitest::Test
 
   def setup
     @website = :dummy

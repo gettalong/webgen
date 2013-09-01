@@ -34,7 +34,7 @@ class Webgen::ItemTracker::Sample
 
 end
 
-class TestItemTracker < MiniTest::Unit::TestCase
+class TestItemTracker < Minitest::Test
 
   DummyNode = Struct.new(:alcn, :node_info)
 

@@ -13,7 +13,7 @@ class Webgen::Tag::MyTag
 end
 
 
-class TestTag < MiniTest::Unit::TestCase
+class TestTag < Minitest::Test
 
   include Webgen::TestHelper
 

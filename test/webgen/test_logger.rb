@@ -4,7 +4,7 @@ require 'minitest/autorun'
 require 'stringio'
 require 'webgen/logger'
 
-class TestLogger < MiniTest::Unit::TestCase
+class TestLogger < Minitest::Test
 
   def test_logging
     @logio = StringIO.new

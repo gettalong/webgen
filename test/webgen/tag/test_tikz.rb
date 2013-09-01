@@ -2,7 +2,7 @@
 
 require 'webgen/test_helper'
 
-class TestTagTikz < MiniTest::Unit::TestCase
+class TestTagTikz < Minitest::Test
 
   include Webgen::TestHelper
 

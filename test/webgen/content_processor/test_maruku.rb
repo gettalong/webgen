@@ -2,7 +2,7 @@
 
 require 'webgen/test_helper'
 
-class TestMaruku < MiniTest::Unit::TestCase
+class TestMaruku < Minitest::Test
 
   include Webgen::TestHelper
 

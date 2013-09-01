@@ -3,7 +3,7 @@
 require 'minitest/autorun'
 require 'webgen/languages'
 
-class TestLanguages < MiniTest::Unit::TestCase
+class TestLanguages < Minitest::Test
 
   def test_get_language
     assert_nil(Webgen::LanguageManager.language_for_code(nil))

@@ -3,7 +3,7 @@
 require 'webgen/test_helper'
 require 'webgen/path_handler/api'
 
-class TestPathHandlerApi < MiniTest::Unit::TestCase
+class TestPathHandlerApi < Minitest::Test
 
   include Webgen::TestHelper
 

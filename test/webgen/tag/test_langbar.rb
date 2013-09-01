@@ -4,7 +4,7 @@ require 'webgen/test_helper'
 require 'webgen/content_processor'
 require 'webgen/tag/langbar'
 
-class TestTagLangbar < MiniTest::Unit::TestCase
+class TestTagLangbar < Minitest::Test
 
   include Webgen::TestHelper
 

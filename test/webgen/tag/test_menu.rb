@@ -5,7 +5,7 @@ require 'webgen/content_processor'
 require 'webgen/tag/menu'
 require 'webgen/node_finder'
 
-class TestTagMenu < MiniTest::Unit::TestCase
+class TestTagMenu < Minitest::Test
 
   include Webgen::TestHelper
 

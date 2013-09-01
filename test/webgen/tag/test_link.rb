@@ -3,7 +3,7 @@
 require 'webgen/test_helper'
 require 'webgen/tag/link'
 
-class TestTagLink < MiniTest::Unit::TestCase
+class TestTagLink < Minitest::Test
 
   include Webgen::TestHelper
 

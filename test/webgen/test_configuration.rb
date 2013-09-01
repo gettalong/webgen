@@ -6,7 +6,7 @@ require 'stringio'
 require 'minitest/autorun'
 require 'webgen/configuration'
 
-class TestConfiguration < MiniTest::Unit::TestCase
+class TestConfiguration < Minitest::Test
 
   def setup
     @config = Webgen::Configuration.new

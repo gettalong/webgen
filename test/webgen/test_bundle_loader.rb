@@ -4,7 +4,7 @@ require 'fileutils'
 require 'webgen/test_helper'
 require 'webgen/bundle_loader'
 
-class TestBundleLoader < MiniTest::Unit::TestCase
+class TestBundleLoader < Minitest::Test
 
   include Webgen::TestHelper
 

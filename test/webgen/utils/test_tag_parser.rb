@@ -3,7 +3,7 @@
 require 'webgen/test_helper'
 require 'webgen/utils/tag_parser'
 
-class TestTagParser < MiniTest::Unit::TestCase
+class TestTagParser < Minitest::Test
 
   include Webgen::TestHelper
 

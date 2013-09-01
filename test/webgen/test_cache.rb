@@ -3,7 +3,7 @@
 require 'minitest/autorun'
 require 'webgen/cache'
 
-class TestCache < MiniTest::Unit::TestCase
+class TestCache < Minitest::Test
 
   def setup
     @cache = Webgen::Cache.new

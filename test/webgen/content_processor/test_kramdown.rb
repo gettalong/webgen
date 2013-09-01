@@ -2,7 +2,7 @@
 
 require 'webgen/test_helper'
 
-class TestContentProcessorKramdown < MiniTest::Unit::TestCase
+class TestContentProcessorKramdown < Minitest::Test
 
   include Webgen::TestHelper
 

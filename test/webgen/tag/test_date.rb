@@ -4,7 +4,7 @@ require 'webgen/test_helper'
 require 'webgen/tag/date'
 require 'time'
 
-class TestTagDate < MiniTest::Unit::TestCase
+class TestTagDate < Minitest::Test
 
   include Webgen::TestHelper
 

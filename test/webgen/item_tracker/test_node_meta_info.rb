@@ -3,7 +3,7 @@
 require 'minitest/autorun'
 require 'webgen/item_tracker/node_meta_info'
 
-class TestNodeMetaInfo < MiniTest::Unit::TestCase
+class TestNodeMetaInfo < Minitest::Test
 
   def setup
     @website = Object.new

@@ -5,7 +5,7 @@ require 'tmpdir'
 require 'minitest/autorun'
 require 'webgen/website'
 
-class TestWebsite < MiniTest::Unit::TestCase
+class TestWebsite < Minitest::Test
 
   def test_initialize
     i = 0

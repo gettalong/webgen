@@ -7,7 +7,7 @@ require 'webgen/node_finder'
 require 'webgen/path'
 require 'webgen/version'
 
-class TestPathHandlerFeed < MiniTest::Unit::TestCase
+class TestPathHandlerFeed < Minitest::Test
 
   include Webgen::TestHelper
 

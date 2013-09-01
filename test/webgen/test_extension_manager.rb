@@ -13,7 +13,7 @@ class DummyExtensionManager
 
 end
 
-class TestExtensionManager < MiniTest::Unit::TestCase
+class TestExtensionManager < Minitest::Test
 
   def setup
     @dummy = DummyExtensionManager.new

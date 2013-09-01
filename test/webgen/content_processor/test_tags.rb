@@ -4,7 +4,7 @@ require 'webgen/test_helper'
 require 'webgen/content_processor/tags'
 require 'webgen/utils/tag_parser'
 
-class TestContentProcessorTags < MiniTest::Unit::TestCase
+class TestContentProcessorTags < Minitest::Test
 
   include Webgen::TestHelper
 

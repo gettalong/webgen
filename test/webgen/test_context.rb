@@ -3,7 +3,7 @@
 require 'webgen/test_helper'
 require 'webgen/context'
 
-class TestContext < MiniTest::Unit::TestCase
+class TestContext < Minitest::Test
 
   include Webgen::TestHelper
 

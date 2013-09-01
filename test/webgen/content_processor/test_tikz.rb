@@ -3,7 +3,7 @@
 require 'timeout'
 require 'webgen/test_helper'
 
-class TestContentProcessorTikz < MiniTest::Unit::TestCase
+class TestContentProcessorTikz < Minitest::Test
 
   include Webgen::TestHelper
 

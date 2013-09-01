@@ -3,7 +3,7 @@
 require 'webgen/test_helper'
 require 'webgen/node'
 
-class TestNode < MiniTest::Unit::TestCase
+class TestNode < Minitest::Test
 
   include Webgen::TestHelper
 

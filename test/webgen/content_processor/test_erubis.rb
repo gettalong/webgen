@@ -2,7 +2,7 @@
 
 require 'webgen/test_helper'
 
-class TestErubis < MiniTest::Unit::TestCase
+class TestErubis < Minitest::Test
 
   include Webgen::TestHelper
 

@@ -4,7 +4,7 @@ require 'webgen/test_helper'
 require 'webgen/path_handler/meta_info'
 require 'webgen/path'
 
-class TestPathHandlerMetaInfo < MiniTest::Unit::TestCase
+class TestPathHandlerMetaInfo < Minitest::Test
 
   include Webgen::TestHelper
 

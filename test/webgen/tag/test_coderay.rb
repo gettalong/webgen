@@ -2,7 +2,7 @@
 
 require 'webgen/test_helper'
 
-class TestTagCoderay < MiniTest::Unit::TestCase
+class TestTagCoderay < Minitest::Test
 
   include Webgen::TestHelper
 

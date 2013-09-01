@@ -3,7 +3,7 @@
 require 'webgen/test_helper'
 require 'webgen/path'
 
-class TestSass < MiniTest::Unit::TestCase
+class TestSass < Minitest::Test
 
   include Webgen::TestHelper
 

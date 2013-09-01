@@ -4,7 +4,7 @@ require 'webgen/test_helper'
 require 'webgen/path_handler/base'
 require 'time'
 
-class TestPathHandlerBase < MiniTest::Unit::TestCase
+class TestPathHandlerBase < Minitest::Test
 
   include Webgen::TestHelper
 

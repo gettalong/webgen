@@ -4,7 +4,7 @@ require 'minitest/autorun'
 require 'time'
 require 'webgen/item_tracker/template_chain'
 
-class TestItemTrackerTemplateChain < MiniTest::Unit::TestCase
+class TestItemTrackerTemplateChain < Minitest::Test
 
   def setup
     @website = Object.new

@@ -3,7 +3,7 @@
 require 'minitest/autorun'
 require 'webgen/blackboard'
 
-class TestBlackboard < MiniTest::Unit::TestCase
+class TestBlackboard < Minitest::Test
 
   def setup
     @blackboard = Webgen::Blackboard.new

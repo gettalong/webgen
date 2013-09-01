@@ -5,7 +5,7 @@ require 'webgen/path_handler/copy'
 require 'webgen/content_processor'
 require 'webgen/path'
 
-class TestPathHandlerCopy < MiniTest::Unit::TestCase
+class TestPathHandlerCopy < Minitest::Test
 
   include Webgen::TestHelper
 

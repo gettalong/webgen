@@ -6,7 +6,7 @@ require 'fileutils'
 require 'rbconfig'
 require 'webgen/source/file_system'
 
-class TestSourceFileSystem < MiniTest::Unit::TestCase
+class TestSourceFileSystem < Minitest::Test
 
   def setup
     @root = root = File.expand_path(File.dirname(__FILE__))

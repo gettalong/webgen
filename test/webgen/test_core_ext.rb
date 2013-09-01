@@ -3,7 +3,7 @@
 require 'minitest/autorun'
 require 'webgen/core_ext'
 
-class TestCoreExtensions < MiniTest::Unit::TestCase
+class TestCoreExtensions < Minitest::Test
 
   def test_webgen_require
     assert_raises(Webgen::LoadError) { webgen_require('unknown_library_here') }

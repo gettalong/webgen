@@ -4,7 +4,7 @@ require 'webgen/test_helper'
 require 'webgen/path_handler/virtual'
 require 'webgen/path'
 
-class TestPathHandlerVirtual < MiniTest::Unit::TestCase
+class TestPathHandlerVirtual < Minitest::Test
 
   include Webgen::TestHelper
 

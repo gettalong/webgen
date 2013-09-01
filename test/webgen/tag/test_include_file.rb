@@ -5,7 +5,7 @@ require 'webgen/tag/include_file'
 require 'fileutils'
 require 'tempfile'
 
-class TestTagIncludeFile < MiniTest::Unit::TestCase
+class TestTagIncludeFile < Minitest::Test
 
   include Webgen::TestHelper
 

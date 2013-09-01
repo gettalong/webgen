@@ -4,7 +4,7 @@ require 'minitest/autorun'
 require 'webgen/item_tracker/missing_node'
 require 'webgen/blackboard'
 
-class TestItemTrackerMissingNode < MiniTest::Unit::TestCase
+class TestItemTrackerMissingNode < Minitest::Test
 
   class StubTree
 

@@ -3,7 +3,7 @@
 require 'minitest/autorun'
 require 'webgen/page'
 
-class TestPage < MiniTest::Unit::TestCase
+class TestPage < Minitest::Test
 
   VALID = <<EOF
 # with more blocks

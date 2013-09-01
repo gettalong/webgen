@@ -4,7 +4,7 @@ require 'webgen/test_helper'
 require 'webgen/content_processor/blocks'
 require 'webgen/context'
 
-class TestBlocks < MiniTest::Unit::TestCase
+class TestBlocks < Minitest::Test
 
   include Webgen::TestHelper
 

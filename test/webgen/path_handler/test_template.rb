@@ -5,7 +5,7 @@ require 'webgen/path_handler/template'
 require 'webgen/path'
 require 'webgen/cache'
 
-class TestPathHandlerTemplate < MiniTest::Unit::TestCase
+class TestPathHandlerTemplate < Minitest::Test
 
   include Webgen::TestHelper
 

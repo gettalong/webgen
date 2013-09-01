@@ -3,7 +3,7 @@
 require 'minitest/autorun'
 require 'webgen/item_tracker/node_content'
 
-class TestNodeContent < MiniTest::Unit::TestCase
+class TestNodeContent < Minitest::Test
 
   def setup
     @website = Object.new

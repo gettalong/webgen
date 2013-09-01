@@ -2,7 +2,7 @@
 
 require 'webgen/test_helper'
 
-class TestHaml < MiniTest::Unit::TestCase
+class TestHaml < Minitest::Test
 
   include Webgen::TestHelper
 

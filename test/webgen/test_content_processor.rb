@@ -13,7 +13,7 @@ class Webgen::ContentProcessor::MyProcessor
 
 end
 
-class TestContentProcessor < MiniTest::Unit::TestCase
+class TestContentProcessor < Minitest::Test
 
   def setup
     @cp = Webgen::ContentProcessor.new

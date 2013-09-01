@@ -3,7 +3,7 @@
 require 'minitest/autorun'
 require 'webgen/rake_task'
 
-class TestRakeTask < MiniTest::Unit::TestCase
+class TestRakeTask < Minitest::Test
 
   include Rake
 

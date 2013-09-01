@@ -3,7 +3,7 @@
 require 'webgen/test_helper'
 require 'webgen/content_processor/r_doc'
 
-class TestRDoc < MiniTest::Unit::TestCase
+class TestRDoc < Minitest::Test
 
   include Webgen::TestHelper
 

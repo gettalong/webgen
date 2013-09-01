@@ -5,7 +5,7 @@ require 'webgen/path'
 require 'stringio'
 require 'tmpdir'
 
-class TestPath < MiniTest::Unit::TestCase
+class TestPath < Minitest::Test
 
   def test_class_url
     assert_equal("webgen://webgen.localhost/hallo", Webgen::Path.url("hallo").to_s)

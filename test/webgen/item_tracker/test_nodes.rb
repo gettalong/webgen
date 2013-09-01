@@ -4,7 +4,7 @@ require 'webgen/test_helper'
 require 'webgen/item_tracker/nodes'
 require 'webgen/node_finder'
 
-class TestItemTrackerNodes < MiniTest::Unit::TestCase
+class TestItemTrackerNodes < Minitest::Test
 
   include Webgen::TestHelper
 

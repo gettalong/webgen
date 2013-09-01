@@ -6,7 +6,7 @@ require 'tmpdir'
 require 'yaml'
 require 'set'
 
-class TestExtensionDocumentation < MiniTest::Unit::TestCase
+class TestExtensionDocumentation < Minitest::Test
 
   def test_all_extensions_documented
     ws = Webgen::Website.new(File.join(Dir.tmpdir, '/abcdefgh'))

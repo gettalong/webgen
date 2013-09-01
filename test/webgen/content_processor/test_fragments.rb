@@ -4,7 +4,7 @@ require 'webgen/test_helper'
 require 'webgen/content_processor/fragments'
 require 'yaml'
 
-class TestContentProcessorFragments < MiniTest::Unit::TestCase
+class TestContentProcessorFragments < Minitest::Test
 
   include Webgen::TestHelper
 

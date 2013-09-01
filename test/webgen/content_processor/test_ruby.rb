@@ -3,7 +3,7 @@
 require 'webgen/test_helper'
 require 'webgen/content_processor/ruby'
 
-class TestBuilder < MiniTest::Unit::TestCase
+class TestBuilder < Minitest::Test
 
   include Webgen::TestHelper
 

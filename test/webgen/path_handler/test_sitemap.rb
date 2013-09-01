@@ -6,7 +6,7 @@ require 'webgen/content_processor'
 require 'webgen/node_finder'
 require 'webgen/path'
 
-class TestPathHandlerSitemap < MiniTest::Unit::TestCase
+class TestPathHandlerSitemap < Minitest::Test
 
   include Webgen::TestHelper
 

@@ -5,7 +5,7 @@ require 'webgen/path_handler/page_utils'
 require 'webgen/content_processor'
 require 'webgen/path'
 
-class TestPageUtils < MiniTest::Unit::TestCase
+class TestPageUtils < Minitest::Test
 
   include Webgen::TestHelper
 

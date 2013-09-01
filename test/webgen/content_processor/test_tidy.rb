@@ -3,7 +3,7 @@
 require 'webgen/test_helper'
 require 'webgen/content_processor/tidy'
 
-class TestTidy < MiniTest::Unit::TestCase
+class TestTidy < Minitest::Test
 
   include Webgen::TestHelper
 

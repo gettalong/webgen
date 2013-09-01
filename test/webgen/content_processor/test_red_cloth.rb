@@ -2,7 +2,7 @@
 
 require 'webgen/test_helper'
 
-class TestRedCloth < MiniTest::Unit::TestCase
+class TestRedCloth < Minitest::Test
 
   include Webgen::TestHelper
 

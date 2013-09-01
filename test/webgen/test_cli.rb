@@ -3,7 +3,7 @@
 require 'minitest/autorun'
 require 'webgen/cli'
 
-class TestCLICommandParser < MiniTest::Unit::TestCase
+class TestCLICommandParser < Minitest::Test
 
   class SampleCommand < CmdParse::Command
     def initialize

@@ -12,7 +12,7 @@ class Webgen::Source::MySource
 
 end
 
-class TestSource < MiniTest::Unit::TestCase
+class TestSource < Minitest::Test
 
   def setup
     @website = Object.new

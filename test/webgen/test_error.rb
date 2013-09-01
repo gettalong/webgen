@@ -3,7 +3,7 @@
 require 'minitest/autorun'
 require 'webgen/error'
 
-class TestError < MiniTest::Unit::TestCase
+class TestError < Minitest::Test
 
   def test_all
     e = Webgen::Error.new("test")
@@ -54,7 +54,7 @@ class TestError < MiniTest::Unit::TestCase
 
 end
 
-class TestNodeCreationError < MiniTest::Unit::TestCase
+class TestNodeCreationError < Minitest::Test
 
   def test_all
     e = Webgen::NodeCreationError.new("test")
@@ -65,7 +65,7 @@ class TestNodeCreationError < MiniTest::Unit::TestCase
 
 end
 
-class TestRenderError < MiniTest::Unit::TestCase
+class TestRenderError < Minitest::Test
 
   def test_all
     e = Webgen::RenderError.new("test", 'location', '/path', '/error')
@@ -89,7 +89,7 @@ class TestRenderError < MiniTest::Unit::TestCase
 
 end
 
-class TestLoadError < MiniTest::Unit::TestCase
+class TestLoadError < Minitest::Test
 
   def test_all
     e = Webgen::LoadError.new(Exception.new("something"), 'location', '/path')
@@ -110,7 +110,7 @@ class TestLoadError < MiniTest::Unit::TestCase
 
 end
 
-class TestCommandNotFoundError < MiniTest::Unit::TestCase
+class TestCommandNotFoundError < Minitest::Test
 
   def test_all
     e = Webgen::CommandNotFoundError.new("test", 'location', '/path')

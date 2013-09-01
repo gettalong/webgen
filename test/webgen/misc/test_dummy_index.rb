@@ -5,7 +5,7 @@ require 'tmpdir'
 require 'webgen/test_helper'
 require 'webgen/misc/dummy_index'
 
-class TestMiscDummyIndex < MiniTest::Unit::TestCase
+class TestMiscDummyIndex < Minitest::Test
 
   class DummyDestination
 

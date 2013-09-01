@@ -4,7 +4,7 @@ require 'minitest/autorun'
 require 'time'
 require 'webgen/item_tracker/file'
 
-class TestItemTrackerFile < MiniTest::Unit::TestCase
+class TestItemTrackerFile < Minitest::Test
 
   def setup
     @website = MiniTest::Mock.new

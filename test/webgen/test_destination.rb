@@ -9,7 +9,7 @@ class Webgen::Destination::MyDestination
 
 end
 
-class TestDestination < MiniTest::Unit::TestCase
+class TestDestination < Minitest::Test
 
   def setup
     @website = MiniTest::Mock.new

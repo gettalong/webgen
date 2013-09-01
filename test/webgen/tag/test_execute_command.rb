@@ -4,7 +4,7 @@ require 'webgen/test_helper'
 require 'webgen/tag/execute_command'
 require 'time'
 
-class TestTagExecuteCommand < MiniTest::Unit::TestCase
+class TestTagExecuteCommand < Minitest::Test
 
   include Webgen::TestHelper
 

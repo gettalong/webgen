@@ -4,7 +4,7 @@ require 'webgen/test_helper'
 require 'webgen/content_processor'
 require 'webgen/tag/breadcrumb_trail'
 
-class TestTagBreadcrumbTrail < MiniTest::Unit::TestCase
+class TestTagBreadcrumbTrail < Minitest::Test
 
   include Webgen::TestHelper
 

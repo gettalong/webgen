@@ -3,7 +3,7 @@
 require 'minitest/autorun'
 require 'webgen/source/stacked'
 
-class TestSourceStacked < MiniTest::Unit::TestCase
+class TestSourceStacked < Minitest::Test
 
   class TestSource
     def initialize(paths); @paths = paths; end

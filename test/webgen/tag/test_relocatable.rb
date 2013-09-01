@@ -3,7 +3,7 @@
 require 'webgen/test_helper'
 require 'webgen/tag/relocatable'
 
-class TestTagRelocatable < MiniTest::Unit::TestCase
+class TestTagRelocatable < Minitest::Test
 
   include Webgen::TestHelper
 

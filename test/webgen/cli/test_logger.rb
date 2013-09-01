@@ -3,7 +3,7 @@
 require 'minitest/autorun'
 require 'webgen/cli/logger'
 
-class TestLogger < MiniTest::Unit::TestCase
+class TestLogger < Minitest::Test
 
   def test_initialize
     l = Webgen::CLI::Logger.new

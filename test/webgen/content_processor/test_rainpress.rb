@@ -3,7 +3,7 @@
 require 'webgen/test_helper'
 require 'webgen/content_processor/rainpress'
 
-class TestContentProcessorRainpress < MiniTest::Unit::TestCase
+class TestContentProcessorRainpress < Minitest::Test
 
   include Webgen::TestHelper
 

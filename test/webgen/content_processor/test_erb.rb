@@ -3,7 +3,7 @@
 require 'webgen/test_helper'
 require 'webgen/content_processor/erb'
 
-class TestErb < MiniTest::Unit::TestCase
+class TestErb < Minitest::Test
 
   include Webgen::TestHelper
 

@@ -2,7 +2,7 @@
 
 require 'webgen/test_helper'
 
-class TestXmllint < MiniTest::Unit::TestCase
+class TestXmllint < Minitest::Test
 
   include Webgen::TestHelper
 

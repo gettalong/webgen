@@ -3,7 +3,7 @@
 require 'webgen/test_helper'
 require 'webgen/content_processor/html_head'
 
-class TestHtmlHead < MiniTest::Unit::TestCase
+class TestHtmlHead < Minitest::Test
 
   include Webgen::TestHelper
 

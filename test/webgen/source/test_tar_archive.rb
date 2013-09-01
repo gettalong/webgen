@@ -4,7 +4,7 @@ require 'minitest/autorun'
 require 'fileutils'
 require 'rbconfig'
 
-class TestSourceTarArchive < MiniTest::Unit::TestCase
+class TestSourceTarArchive < Minitest::Test
 
   class FakeStream
 

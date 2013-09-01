@@ -5,7 +5,7 @@ require 'webgen/task/create_website'
 require 'fileutils'
 require 'ostruct'
 
-class TestTaskCreateWebsite < MiniTest::Unit::TestCase
+class TestTaskCreateWebsite < Minitest::Test
 
   include Webgen::TestHelper
 

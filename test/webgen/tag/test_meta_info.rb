@@ -4,7 +4,7 @@ require 'webgen/test_helper'
 require 'webgen/tag/meta_info'
 require 'time'
 
-class TestTagMetaInfo < MiniTest::Unit::TestCase
+class TestTagMetaInfo < Minitest::Test
 
   include Webgen::TestHelper
 

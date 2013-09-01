@@ -2,7 +2,7 @@
 
 require 'webgen/test_helper'
 
-class TestRDiscount < MiniTest::Unit::TestCase
+class TestRDiscount < Minitest::Test
 
   include Webgen::TestHelper
 
