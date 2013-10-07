@@ -50,19 +50,27 @@ module Webgen
   # Following is a simple tag class example which just reverses the body text and adds some
   # information about the context to the result.
   #
+  # Put the following into the ext/init.rb file of your webgen website:
+  #
   #   class Reverser
   #
   #     def self.call(tag, body, context)
-  #       result = context[:config]['do_reverse'] ? body.reverse : body
-  #       result << "Node: " << context.content_node.alcn << " (" << context.content_node['title'] << ")"
-  #       result << "Reference node: " << context.ref_node.alcn
+  #       result = context[:config]['tag.reverser.do_reverse'] ? body.reverse : body
+  #       result << "\nNode: " << context.content_node.alcn << " (" << context.content_node['title'] << ")"
+  #       result << "\nReference node: " << context.ref_node.alcn
   #       result
   #     end
   #
   #   end
   #
-  #   website.config.define_option('reverser.do_reverse', nil, 'Actually do reverse the text')
-  #   website.ext.tag.register Reverser, :names => 'reverse', :mandatory => ['do_reverse']
+  #   website.config.define_option('tag.reverser.do_reverse', nil)
+  #   website.ext.tag.register(Reverser, :names => 'reverse',
+  #                            :config_prefix => 'tag.reverser',
+  #                            :mandatory => ['do_reverse'])
+  #
+  # Then you can use the reverser tag as follows in a page file:
+  #
+  #   {reverse:: {do_reverse: true}}This text is reversed{reverse}
   #
   class Tag
 
