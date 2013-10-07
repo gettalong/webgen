@@ -67,7 +67,7 @@ class TestTag < Minitest::Test
     assert_raises(Webgen::RenderError) { @tag.call('my_tag', {}, 'body', context) }
 
     @tag.register('MyTag')
-    assert_raises(Webgen::RenderError) { @tag.call('my_tag', 5, 'body', context) }
+    assert_raises(Webgen::RenderError) { @tag.call('my_tag', Class.new, 'body', context) }
     assert_raises(Webgen::Configuration::Error) { @tag.call('my_tag', {'opt' => :value}, 'body', context) }
 
 

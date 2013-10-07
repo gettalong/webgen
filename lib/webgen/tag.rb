@@ -189,8 +189,10 @@ module Webgen
     # prefix.
     def create_config(tag, params, tdata, context)
       values = case params
-               when Hash then values_from_hash(tag, params, tdata, context)
-               when String, Array then values_for_default_mandatory(tag, params, tdata, context)
+               when Hash
+                 values_from_hash(tag, params, tdata, context)
+               when String, Array, TrueClass, FalseClass, Numeric
+                 values_for_default_mandatory(tag, params, tdata, context)
                when NilClass then {}
                else
                  raise Webgen::RenderError.new("Invalid parameter type (#{params.class})",
