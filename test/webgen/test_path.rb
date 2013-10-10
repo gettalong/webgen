@@ -30,6 +30,9 @@ class TestPath < Minitest::Test
     assert_equal('/test/dir', Webgen::Path.append('/other', '../test/dir'))
     assert_equal('/test', Webgen::Path.append('/', '/../test'))
     assert_equal('/dir/', Webgen::Path.append('/', '/../dir/.'))
+
+    assert_equal(Encoding::UTF_8, Webgen::Path.append('/', '/../dir/.').encoding)
+    assert_equal(Encoding::UTF_8, Webgen::Path.append('/', '/**.css').encoding)
   end
 
   def test_class_matches_pattern
