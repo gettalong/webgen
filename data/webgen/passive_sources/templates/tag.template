@@ -1,6 +1,6 @@
 --- name:tag.langbar pipeline:ruby ------------------------------------------------------------------
 context.content = context[:nodes].map do |node|
-  attrs = {'link_text' => node.lang}
+  attrs = {'link_text' => context[:config]['tag.langbar.mapping'][node.lang] || node.lang}
   attrs['class'] = 'webgen-langbar-current-lang' if context.content_node.lang == node.lang
   context.dest_node.link_to(node, node.lang, attrs)
 end.join(context[:config]['tag.langbar.separator'])

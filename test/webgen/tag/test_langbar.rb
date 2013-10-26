@@ -28,11 +28,18 @@ class TestTagLangbar < Minitest::Test
 
     en_link = '<a class="webgen-langbar-current-lang" href="other.html" hreflang="en">en</a>'
     check_results(other, en_link, '', '', '', ' | ')
+
+    @context[:chain] = [node]
+    @context[:config] = {'tag.langbar.template' => '/tag.template', 'tag.langbar.mapping' => {'de' => 'Deutsch'}}
+    assert_equal('<a href="file.de.html" hreflang="de">Deutsch</a>', @obj.call('langbar', '', @context))
   end
 
   def check_results(node, both_true, both_false, first_false, second_false, separator)
     @context[:chain] = [node]
-    @context[:config] = {'tag.langbar.template' => '/tag.template', 'tag.langbar.separator' => separator}
+    @context[:config] = {'tag.langbar.template' => '/tag.template',
+      'tag.langbar.separator' => separator,
+      'tag.langbar.mapping' => {}
+    }
 
     @context[:config].update('tag.langbar.show_single_lang' => true, 'tag.langbar.show_own_lang' => true)
     assert_equal(both_true, @obj.call('langbar', '', @context))

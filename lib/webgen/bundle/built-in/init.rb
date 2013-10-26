@@ -309,6 +309,7 @@ option('tag.langbar.show_single_lang', true, &true_or_false)
 option('tag.langbar.show_own_lang', true, &true_or_false)
 option('tag.langbar.template', '/templates/tag.template')
 option('tag.langbar.separator', ' | ')
+option('tag.langbar.mapping', {}, &is_hash)
 
 tag.register('BreadcrumbTrail')
 option('tag.breadcrumb_trail.omit_dir_index', false &true_or_false)

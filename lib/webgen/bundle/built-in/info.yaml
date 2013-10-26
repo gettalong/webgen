@@ -772,6 +772,18 @@ options:
       tag: |
         {include_file: {filename: my_file.txt, process_output: false}}
 
+  tag.langbar.mapping:
+    summary: |
+      A hash with a mapping from language codes to display strings. If there is no mapping for a
+      language code, the language code itself is displayed.
+    syntax: |
+      `MAPPING` where `MAPPING` is a hash with the mappings
+    example:
+      config: |
+        tag.langbar.mapping: {de: Deutsch, en: English}
+      tag: |
+        {menu: {mapping: {de: Deutsch, en: English}}}
+
   tag.langbar.separator:
     summary: |
       The string that should be used as separator between the individual language parts.
