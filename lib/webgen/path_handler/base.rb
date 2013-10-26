@@ -41,12 +41,23 @@ module Webgen
           node_url.absolute? ? node_url : File.join(tree.website.config['website.base_url'], dest_path)
         end
 
-        # Does exactly the same as Node#route_to but also automatically adds the necessary item
-        # tracking information.
+        # Does exactly the same as Webgen::Node#route_to but also automatically adds the necessary
+        # item tracking information.
         def route_to(node, lang = @lang)
           tree.website.ext.item_tracker.add(self, :node_meta_info, node)
           tree.website.ext.item_tracker.add(self, :node_meta_info, node.proxy_node(lang))
           super
+        end
+
+        # Does exactly the same as Webgen::Node#link_to but replaces the HTML a-tag with a span-tag
+        # depending on the configuration option 'website.link_to_current_page'.
+        def link_to(*args, &block)
+          result = super
+          if !tree.website.config['website.link_to_current_page']
+            result.sub!(/<a/, '<span').sub!(/<\/a>/, '</span>').
+              gsub!(/ (?:href|hreflang)=".*"/, '')
+          end
+          result
         end
 
         # Return the result of the #content method on the associated path handler or +nil+ if the

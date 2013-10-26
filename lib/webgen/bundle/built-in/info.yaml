@@ -1042,6 +1042,16 @@ options:
       config: |
         website.lang: de
 
+  website.link_to_current_page:
+    summary:
+      Specifies whether generated links to the current page should be used. If `false`, then a
+      `<span>` element is used instead of a `<href>` element.
+    syntax: |
+      `true` or `false`.
+    example:
+      config: |
+        website.link_to_current_page: false
+
   website.base_url:
     summary: |
       The base URL of the website. It is used to create absolute URLs when relative URLs won't

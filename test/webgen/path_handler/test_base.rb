@@ -18,7 +18,7 @@ class TestPathHandlerBase < Minitest::Test
   end
 
   def setup
-    setup_website('website.base_url' => 'http://example.com/sub')
+    setup_website
     @obj = TestPathHandler.new(@website)
   end
 
@@ -31,7 +31,6 @@ class TestPathHandlerBase < Minitest::Test
     node = @obj.create_node(path) {|n| count += 1; assert_kind_of(Webgen::PathHandler::Base::Node, n)}
     assert_equal(path, node.node_info[:path])
     assert_kind_of(Time, node.meta_info['modified_at'])
-    assert_equal('http://example.com/sub/path.html', node.url)
     assert_equal(1, count)
     assert_nil(node.content)
     def (@obj).content(node); node; end
@@ -148,6 +147,19 @@ class TestPathHandlerBase < Minitest::Test
                                           '/somename.html'))
     assert_equal(frag_de, @obj.node_exists?(Webgen::Path.new('/somename.de.html#othertest'), '/somename.html#no'))
     assert_equal(nil, @obj.node_exists?(Webgen::Path.new('/unknown'), '/unknown'))
+  end
+
+  def test_base_node_methods
+    node = Webgen::PathHandler::Base::Node.new(@website.tree.dummy_root, '/', '/')
+    child_de = Webgen::PathHandler::Base::Node.new(node, 'somename.html', '/somename.html',
+                                                   {'lang' => 'de', 'title' => 'Somename'})
+    @website.config = {'website.base_url' => 'http://example.com/sub', 'website.link_to_current_page' => true}
+
+    assert_equal('http://example.com/sub/somename.html', child_de.url)
+
+    assert_equal('<a href="somename.html" hreflang="de">Somename</a>', node.link_to(child_de))
+    @website.config['website.link_to_current_page'] = false
+    assert_equal('<span>Somename</span>', node.link_to(child_de))
   end
 
 end

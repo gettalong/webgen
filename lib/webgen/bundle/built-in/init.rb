@@ -54,7 +54,7 @@ option('website.lang', 'en') do |val|
 end
 
 option('website.base_url', '', &is_string)
-
+option('website.link_to_current_page', true, &true_or_false)
 
 ########################################################################
 # Everything related to the content processor extension
