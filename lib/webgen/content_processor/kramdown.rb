@@ -39,6 +39,7 @@ module Webgen
         options[:link_defs] = context.website.ext.link_definitions.merge(options[:link_defs] || {})
         doc = ::Kramdown::Document.new(context.content, options)
         context.content = CustomHtmlConverter.new(doc.root, doc.options, context).convert(doc.root)
+        context.content.encode!(doc.root.options[:encoding])
         doc.warnings.each do |warn|
           context.website.logger.warn { "kramdown warning while parsing <#{context.ref_node}>: #{warn}" }
         end

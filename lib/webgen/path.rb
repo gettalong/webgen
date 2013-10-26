@@ -59,7 +59,7 @@ module Webgen
     def self.append(base, path)
       raise(ArgumentError, 'base needs to start with a slash (i.e. be an absolute path)') unless base[0] == ?/
       url = url(base) + url(path, false)
-      (url.path << (url.fragment.nil? ? '' : "##{url.fragment}"))#.encode!(Encoding.default_external)
+      (url.path << (url.fragment.nil? ? '' : "##{url.fragment}")).encode!(path.encoding)
     end
 
     # Return +true+ if the given path string matches the given path pattern.
