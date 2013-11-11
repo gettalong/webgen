@@ -46,14 +46,14 @@ makes authoring websites easier:
 
 * No need to know the Ruby language for basic websites
 
-The main documentation lives at <http://webgen.rubyforge.org/documentation/>.
+The main documentation lives at <http://webgen.gettalong.org/documentation/>.
 
 
 ## Installation
 
 webgen is written in Ruby, so you need the Ruby interpreter on your
 system. You can get it from http://ruby-lang.org/. See
-<http://webgen.rubyforge.org/installation.html> for more information.
+<http://webgen.gettalong.org/installation.html> for more information.
 
 You can install webgen via Rubygems:
 

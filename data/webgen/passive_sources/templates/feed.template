@@ -10,7 +10,7 @@
 
   <link href="<%= context.node.feed_link %>" rel="alternate" />
   <link href="<%= context.node.url %>" rel="self" />
-  <generator uri="http://webgen.rubyforge.org/" version="<%= Webgen::VERSION %>">
+  <generator uri="http://webgen.gettalong.org/" version="<%= Webgen::VERSION %>">
     webgen - Webgen::PathHandler::Feed
   </generator>
   <updated><%= Time.now.xmlschema %></updated>

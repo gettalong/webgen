@@ -1072,7 +1072,7 @@ options:
       `URL` where `URL` is the base URL of the website
     example:
       config: |
-        website.base_url: http://webgen.rubyforge.org
+        website.base_url: http://webgen.gettalong.org
 
   website.tmpdir:
     summary: |

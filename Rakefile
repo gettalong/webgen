@@ -98,11 +98,11 @@ EOF
     s.post_install_message = <<EOF
 
 Thanks for choosing webgen! Here are some places to get you started:
-* The webgen User Documentation at <http://webgen.rubyforge.org/documentation/>
+* The webgen User Documentation at <http://webgen.gettalong.org/documentation/>
 * The mailing list archive at <http://rubyforge.org/pipermail/webgen-users/>
 * The webgen Wiki at <http://github.com/gettalong/webgen/wiki>
 
-Have a look at <http://webgen.rubyforge.org/news.html> for a list of changes!
+Have a look at <http://webgen.gettalong.org/news.html> for a list of changes!
 
 Have fun!
 
@@ -145,7 +145,7 @@ EOF
 
     s.author = 'Thomas Leitner'
     s.email = 't_leitner@gmx.at'
-    s.homepage = "http://webgen.rubyforge.org"
+    s.homepage = "http://webgen.gettalong.org"
     s.rubyforge_project = 'webgen'
   end
 
@@ -188,7 +188,7 @@ EOF
       rf.configure
       rf.login
 
-      text = "Have a look at http://webgen.rubyforge.org/news.html for the release details!"
+      text = "Have a look at http://webgen.gettalong.org/news.html for the release details!"
       rf.post_news('webgen', "webgen #{Webgen::VERSION} released", text)
       puts "done"
     end

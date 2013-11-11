@@ -31,7 +31,7 @@ class TestNode < Minitest::Test
     check_proc.call(child, node, '/somename.html', 'somename.html', 'somename.de.html',
                     '/somename.de.html', 'de', {})
 
-    ['http://webgen.rubyforge.org', 'c:\\test'].each_with_index do |abspath, index|
+    ['http://webgen.gettalong.org', 'c:\\test'].each_with_index do |abspath, index|
       cn = "test#{index}.html"
       c = Webgen::Node.new(node, cn, abspath)
       check_proc.call(c, node, abspath, cn, cn, '/' + cn, nil, {})

@@ -10,7 +10,7 @@
 # * For information on how to write extensions, have a look at the API
 #   documentation of webgen at
 #
-#     http://webgen.rubyforge.org/documentation/reference/api/
+#     http://webgen.gettalong.org/documentation/reference/api/
 #
 # * Have a look at the API documentation of Webgen::BundlerLoader to see
 #   what methods are available in init.rb files.
