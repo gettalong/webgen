@@ -2,6 +2,7 @@
 
 require 'rbconfig'
 require 'yaml'
+require 'webgen/error'
 
 module Webgen
 
@@ -90,7 +91,7 @@ module Webgen
     # Load the extension bundle in the context of this BundleLoader object.
     def load(name)
       file = resolve_init_file(name)
-      raise(ArgumentError, "Extension bundle '#{name}' not found") if !file
+      raise Webgen::BundleLoadError.new(name) if !file
       file = File.expand_path(file)
       return if @loaded.include?(file)
 

@@ -40,6 +40,8 @@ EOF
   end
 
   def test_load
+    assert_raises(Webgen::BundleLoadError) { @loader.load('unknown') }
+
     @loader.load('webgen')
     assert_nil(@website.ext.bundle_infos.instance_variable_get(:@infos))
     assert_equal({}, @website.ext.bundle_infos.bundles['webgen'])

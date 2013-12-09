@@ -193,7 +193,10 @@ module Webgen
           if level == 0
             # Create website object/automatically performs initialization; needed so that custom
             # commands can be added
-            website
+            begin
+              website
+            rescue Webgen::BundleLoadError
+            end
           end
         end
       rescue

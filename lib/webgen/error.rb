@@ -126,6 +126,21 @@ module Webgen
   end
 
 
+  # This error is raised when a needed bundle is not found.
+  class BundleLoadError < Error
+
+    # The name of the bundle that is missing.
+    attr_reader :bundle
+
+    # Create a new BundleLoadError.
+    def initialize(bundle)
+      super("The needed bundle '#{bundle}' is missing.", nil, nil)
+    end
+
+  end
+
+
+
   # This error is raised when a needed external command is not found.
   class CommandNotFoundError < Error
 
