@@ -1,0 +1,12 @@
+language: ruby
+rvm:
+  - 1.9.3
+  - 2.0.0
+  - rbx-2.1.1
+  - jruby-19mode
+
+before_install:
+  - sudo apt-get install texlive-latex-base texlive-latex-recommended texlive-latex-extra tidy libxml2-utils
+  - gem install cmdparse systemu kramdown rake minitest diff-lcs maruku RedCloth haml sass builder rdoc coderay erubis rdiscount archive-tar-minitar
+
+script: rake test
