@@ -1057,7 +1057,7 @@ options:
   website.link_to_current_page:
     summary:
       Specifies whether generated links to the current page should be used. If `false`, then a
-      `<span>` element is used instead of a `<href>` element.
+      `<span>` element is used instead of an `<a>` element.
     syntax: |
       `true` or `false`.
     example:
