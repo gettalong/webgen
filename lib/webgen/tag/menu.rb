@@ -15,7 +15,8 @@ module Webgen
 
         context[:nodes] = context.website.ext.node_finder.find(options, context.content_node)
         context.website.ext.item_tracker.add(context.dest_node, :nodes, :node_finder_option_set,
-                                             {:opts => options, :ref_alcn => context.content_node.alcn}, :meta_info)
+                                             {:opts => options, :ref_alcn => context.content_node.alcn},
+                                             context[:config]['tag.menu.tracking_style'])
 
         if context[:nodes].empty?
           ''

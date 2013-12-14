@@ -948,6 +948,16 @@ options:
       tag: |
         {menu: {options: {mi: {menu: true}}, template: /other.template}}
 
+  tag.menu.tracking_style:
+    summary: |
+      Specifies which kind of information should be tracked by the 'nodes' item tracker
+    syntax: |
+      `STYLE` where `STYLE` is 'meta_info' (if only changed meta information should be tracked) or
+      'content' (if the content should be tracked)
+    example:
+      tag: |
+        {menu: {options: {in_menu: true, sort: sort_info}, tracking_style: content}}
+
   tag.meta_info.escape_html:
     summary: |
       Specifies whether special HTML characters in the meta information value should be escaped.

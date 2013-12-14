@@ -330,7 +330,9 @@ option('tag.menu.item_level_class', 'webgen-menu-level')
 option('tag.menu.item_submenu_class', 'webgen-menu-submenu')
 option('tag.menu.item_submenu_inhierarchy_class', 'webgen-menu-submenu-inhierarchy')
 option('tag.menu.item_selected_class', 'webgen-menu-item-selected')
-
+option('tag.menu.tracking_style', 'meta_info') do |val|
+  val.to_s.intern
+end
 
 ########################################################################
 # Everything related to the task extension
