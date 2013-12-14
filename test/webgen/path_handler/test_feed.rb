@@ -62,6 +62,11 @@ EOF
       path = Webgen::Path.new('/test_feed_2') { StringIO.new("---\nunknow: yes") }
       @feed.create_nodes(path, 'unused')
     end
+
+    @path['version'] = 'atom'
+    @path['cn'] = 'atom.xml'
+    atom_node = @feed.create_nodes(@path.dup, @path_blocks)
+    assert_equal('atom.xml', atom_node.cn)
   end
 
   def test_content

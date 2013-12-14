@@ -70,8 +70,8 @@ module Webgen
         end
 
         path.ext = path['version']
-        path['dest_path'] = '<parent><basename>(.<lang>)<ext>'
-        path['cn'] = '<basename><ext>'
+        path['dest_path'] ||= '<parent><basename>(.<lang>)<ext>'
+        path['cn'] ||= '<basename><ext>'
         path['node_class'] = Node.to_s
         create_node(path) do |node|
           set_blocks(node, blocks)
