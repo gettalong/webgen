@@ -91,7 +91,7 @@ module Webgen
 
       # Create a new CommandParser class.
       def initialize
-        super(true, true, false)
+        super(false, true, false)
         @directory = nil
         @verbose = false
         @do_search = false
