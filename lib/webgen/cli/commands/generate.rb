@@ -39,14 +39,14 @@ EOF
         abort = false
         old_paths = []
         dirs = "{" << commandparser.website.config['sources'].map do |mp, type, *args|
-          type == :file_system ? File.join(args[0], args[1] || '**/*') : nil
+          type == :file_system ? File.join(commandparser.website.directory, args[0], args[1] || '**/*') : nil
         end.compact.join(',') << "}"
 
         Signal.trap('INT') {abort = true}
 
         while !abort
           paths = Dir[dirs].sort
-          if old_paths != paths || paths.any? {|p| File.mtime(p) > time}
+          if old_paths != paths || paths.any? {|p| File.file?(p) && File.mtime(p) > time}
             begin
               commandparser.website(true).execute_task(:generate_website)
             rescue Webgen::Error => e
