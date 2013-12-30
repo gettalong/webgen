@@ -706,6 +706,15 @@ options:
       tag: |
         {date: {format: '%Y-%m-%d'}}
 
+  tag.date.mi:
+    summary: |
+      The name of the meta information key (a date/time) which should be formatted.
+    syntax: |
+      `KEY` where `KEY` is the name of a meta information key
+    example:
+      tag: |
+        {date: {mi: modified_at, format: '%Y-%m-%d'}}
+
   tag.execute_command.command:
     summary: |
       The command that should be executed.

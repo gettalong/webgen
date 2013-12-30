@@ -9,7 +9,21 @@ module Webgen
 
       # Return the current date formatted as specified.
       def self.call(tag, body, context)
-        Time.now.strftime(context[:config]['tag.date.format'])
+        key = context[:config]['tag.date.mi']
+        val = context.content_node[key]
+
+        if val && val.respond_to?(:strftime)
+          time = val
+        elsif val
+          raise Webgen::RenderError.new("Value of meta information key '#{key}' not a valid date/time",
+                                        "tag.date", context.dest_node, context.ref_node)
+        elsif key
+          raise Webgen::RenderError.new("No meta information key '#{key}' found",
+                                        "tag.date", context.dest_node, context.ref_node)
+        else
+          time = Time.now
+        end
+        time.strftime(context[:config]['tag.date.format'])
       end
 
     end

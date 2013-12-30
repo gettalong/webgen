@@ -259,6 +259,7 @@ option('tag.prefix', '', &is_string)
 
 tag.register('Date')
 option('tag.date.format', '%Y-%m-%d %H:%M:%S', &is_string)
+option('tag.date.mi', nil, &is_string)
 
 tag.register('MetaInfo', :names => ['meta_info', :default])
 option('tag.meta_info.escape_html', true, &true_or_false)

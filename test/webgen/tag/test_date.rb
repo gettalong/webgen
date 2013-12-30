@@ -10,9 +10,14 @@ class TestTagDate < Minitest::Test
 
   def test_call
     context = setup_context
+    time = Time.now
     context[:config] = {'tag.date.format' => '%Y%m%d'}
+    context[:chain] = [Webgen::Node.new(@website.tree.dummy_root, '/', '/', 'created_at' => time)]
 
     assert_equal(Time.now.strftime("%Y%m%d"), Webgen::Tag::Date.call('date', '', context))
+
+    context[:config]['tag.date.mi'] = 'created_at'
+    assert_equal(time.strftime("%Y%m%d"), Webgen::Tag::Date.call('date', '', context))
   end
 
 end
