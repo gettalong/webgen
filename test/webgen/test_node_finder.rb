@@ -133,6 +133,8 @@ class TestNodeFinder < Minitest::Test
     # test filter: ancestors
     check.call(%w[/ /dir/ /dir/dir/ /dir/dir/file.html],
                @nf.find({:ancestors => true, :flatten => true}, tree['/dir/dir/file.html']))
+    check.call(%w[/dir/dir/],
+               @nf.find({:absolute_levels => 2, :ancestors => true, :flatten => true}, tree['/dir/dir/file.html']))
     check.call(%w[/ /dir/ /dir/dir/],
                @nf.find({:ancestors => true, :flatten => true}, tree['/dir/dir/']))
 

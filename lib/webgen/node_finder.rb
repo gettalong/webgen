@@ -287,7 +287,7 @@ module Webgen
         nodes.unshift(node)
         node = node.parent
       end
-      result.nodes = nodes
+      result.nodes = nodes & result.nodes
     end
 
     def filter_descendants(result, ref_node, enabled)
