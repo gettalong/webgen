@@ -12,7 +12,7 @@ class TestErubis < Minitest::Test
     @website.config.merge!('content_processor.erubis.options' => {}, 'content_processor.erubis.use_pi' => false)
     cp = Webgen::ContentProcessor::Erubis
 
-    @context.content = "<%= context[:doit] %>6\n<%= context.ref_node.alcn %>\n<%= context.node.alcn %>\n<%= context.dest_node.alcn %><% context.website %>"
+    @context.content = "<%= context[:doit] %>6\n<%= h(context.ref_node.alcn) %>\n<%= context.node.alcn %>\n<%= context.dest_node.alcn %><% context.website %>"
     assert_equal("hallo6\n/test\n/test\n/test", cp.call(@context).content)
 
     @context.content = "\n<%= 5* %>"

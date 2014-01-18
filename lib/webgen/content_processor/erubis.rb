@@ -9,16 +9,27 @@ module Webgen
     # Processes embedded Ruby statements with the +erubis+ library.
     module Erubis
 
+      class CompatibleEruby < ::Erubis::Eruby #:nodoc:
+        include ::Erubis::ErboutEnhancer
+        include ::Erubis::PercentLineEnhancer
+      end
+
+      class CompatiblePIEruby < ::Erubis::PI::Eruby #:nodoc:
+        include ::Erubis::ErboutEnhancer
+        include ::Erubis::PercentLineEnhancer
+      end
+
       # Including Erubis because of problem with resolving Erubis::XmlHelper et al
       include ::Erubis
+      extend ::Erubis::XmlHelper
 
       # Process the Ruby statements embedded in the content of +context+.
       def self.call(context)
         options = context.website.config['content_processor.erubis.options']
         erubis = if context.website.config['content_processor.erubis.use_pi']
-                   ::Erubis::PI::Eruby.new(context.content, options)
+                   CompatiblePIEruby.new(context.content, options)
                  else
-                   ::Erubis::Eruby.new(context.content, options)
+                   CompatibleEruby.new(context.content, options)
                  end
         erubis.filename = context.ref_node.alcn
         context.content = erubis.result(binding)
