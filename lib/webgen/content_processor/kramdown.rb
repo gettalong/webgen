@@ -33,10 +33,25 @@ module Webgen
 
       end
 
+      class ::Kramdown::Parser::WebgenKramdown < ::Kramdown::Parser::Kramdown #:nodoc:
+
+        LINK_DEFS_CACHE = {}
+
+        # Caching already normalized link definitions because this is potentially an O(n*m)
+        # operation where n...number of link definitions, m...number of invocations.
+        def update_link_definitions(link_defs)
+          link_defs.each do |k, v|
+            @link_defs[LINK_DEFS_CACHE[k] ||= normalize_link_id(k)] = v
+          end
+        end
+
+      end
+
       # Convert the content in +context+ to HTML.
       def self.call(context)
         options = context.website.config['content_processor.kramdown.options'].dup
         options[:link_defs] = context.website.ext.link_definitions.merge(options[:link_defs] || {})
+        options[:input] = 'WebgenKramdown'
         doc = ::Kramdown::Document.new(context.content, options)
         context.content = CustomHtmlConverter.new(doc.root, doc.options, context).convert(doc.root)
         context.content.encode!(doc.root.options[:encoding])
