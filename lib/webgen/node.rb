@@ -174,6 +174,7 @@ module Webgen
 
       # resolve any '.' and '..' paths in the target url
       if other_url.path =~ /\/\.\.?\// && other_url.scheme == 'webgen'
+        other_url = other_url.dup
         other_url.path = Pathname.new(other_url.path).cleanpath.to_s
       end
       route = my_url.route_to(other_url).to_s

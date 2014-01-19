@@ -8,12 +8,12 @@ require 'tmpdir'
 class TestPath < Minitest::Test
 
   def test_class_url
-    assert_equal("webgen://webgen.localhost/hallo", Webgen::Path.url("hallo").to_s)
-    assert_equal("webgen://webgen.localhost/hallo%20du", Webgen::Path.url("hallo du").to_s)
-    assert_equal("webgen://webgen.localhost/hall%C3%B6chen", Webgen::Path.url("hallöchen").to_s)
-    assert_equal("webgen://webgen.localhost/hallo#du", Webgen::Path.url("hallo#du").to_s)
+    assert_equal("webgen://lh/hallo", Webgen::Path.url("hallo").to_s)
+    assert_equal("webgen://lh/hallo%20du", Webgen::Path.url("hallo du").to_s)
+    assert_equal("webgen://lh/hall%C3%B6chen", Webgen::Path.url("hallöchen").to_s)
+    assert_equal("webgen://lh/hallo#du", Webgen::Path.url("hallo#du").to_s)
 
-    assert_equal("webgen://webgen.localhost/test", Webgen::Path.url("/test").to_s)
+    assert_equal("webgen://lh/test", Webgen::Path.url("/test").to_s)
     assert_equal("http://example.com/test", Webgen::Path.url("http://example.com/test").to_s)
 
     assert_equal("test", Webgen::Path.url("test", false).to_s)
@@ -21,8 +21,6 @@ class TestPath < Minitest::Test
   end
 
   def test_class_append
-    assert_raises(ArgumentError) { Webgen::Path.append('test', 'test') }
-    assert_raises(ArgumentError) { Webgen::Path.append('test/', 'test') }
     assert_equal('/', Webgen::Path.append('/', '/'))
     assert_equal('/dir', Webgen::Path.append('/other', '/dir'))
     assert_equal('/dir/', Webgen::Path.append('/other', '/dir/'))
@@ -56,7 +54,6 @@ class TestPath < Minitest::Test
 
     path = '/'
     assert(Webgen::Path.matches_pattern?(path, '/'))
-    assert(!Webgen::Path.matches_pattern?(path, ''))
 
     path = ''
     assert(!Webgen::Path.matches_pattern?(path, '/'))

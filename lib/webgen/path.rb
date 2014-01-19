@@ -38,31 +38,40 @@ module Webgen
     # not escaped. This is needed so that paths with fragments work correctly.
     URL_UNSAFE_PATTERN = Regexp.new("[^#{URI::PATTERN::UNRESERVED}#{URI::PATTERN::RESERVED}#]") # :nodoc:
 
-    # Base URI prepended to all internal URLs.
-    WEBGEN_BASE_URI = URI.parse('webgen://webgen.localhost/') # :nodoc:
+    # Hash that caches generated URLs
+    URL_CACHE = {} # :nodoc:
 
-    # Construct an internal URL for the given +path+ which can be an acn/alcn/absolute path.
+    # Construct an internal URL for the given +path+.
     #
-    # If the parameter +make_absolute+ is +true+, then a relative URL will be made absolute by
-    # prepending the special URL 'webgen://webgen.localhost/'.
+    # If the parameter +make_absolute+ is +true+, then the path will be made absolute by prepending
+    # the special URL 'webgen://lh'
     def self.url(path, make_absolute = true)
-      url = URI.parse(URI::DEFAULT_PARSER.escape(path, URL_UNSAFE_PATTERN))
-      url = WEBGEN_BASE_URI + url unless url.absolute? || !make_absolute
-      url
+      URL_CACHE[[path, make_absolute]] ||= begin
+                                             if absolute?(path) || !make_absolute
+                                               URI.parse(URI::DEFAULT_PARSER.escape(path, URL_UNSAFE_PATTERN))
+                                             else
+                                               URI.parse(URI::DEFAULT_PARSER.escape("webgen://lh#{path[0] != ?/ ? '/' : ''}#{path}",
+                                                                                    URL_UNSAFE_PATTERN))
+                                             end
+                                           end.freeze
+    end
+
+    # Return +true+ if the given URI is an absolute one, i.e. if it include a scheme.
+    def self.absolute?(uri)
+      uri =~ /\A[\w+.-]+:/
     end
 
     # Append the +path+ to the +base+ path.
     #
-    # The +base+ parameter has to be an acn/alcn/absolute path. If it represents a directory, it
-    # needs to have a trailing slash! The +path+ parameter doesn't need to be absolute and may
-    # contain path patterns.
+    # * The +base+ parameter has to be an acn/alcn/absolute path (i.e. starting with a slash).
+    # * If +base+ represents a directory, it needs to have a trailing slash!
+    # * The +path+ parameter doesn't need to be absolute and may contain path patterns.
     def self.append(base, path)
-      raise(ArgumentError, 'base needs to start with a slash (i.e. be an absolute path)') unless base[0] == ?/
-      url = url(base) + url(path, false)
-      (url.path << (url.fragment.nil? ? '' : "##{url.fragment}")).encode!(path.encoding)
+      result = url(base) + url(path, false)
+      (result.fragment.nil? ? result.path : "#{result.path}##{result.fragment}").encode!(path.encoding)
     end
 
-    # Return +true+ if the given path string matches the given path pattern.
+    # Return +true+ if the given path string matches the given non-empty path pattern.
     #
     # If a fragment path (i.e. one which has a hash character somewhere) should be matched, the
     # pattern needs to have a hash character as well.
@@ -70,8 +79,9 @@ module Webgen
     # For information on which patterns are supported, have a look at the API documentation of
     # File.fnmatch.
     def self.matches_pattern?(path, pattern, options = File::FNM_DOTMATCH|File::FNM_CASEFOLD|File::FNM_PATHNAME)
-      pattern += '/' if path =~ /\/$/ && pattern !~ /\/$|^$/
-      (path.to_s.include?('#') ? pattern.include?('#') : true) && File.fnmatch(pattern, path, options)
+      path = path.to_s
+      pattern += '/' if path[-1] == ?/ && pattern[-1] != ?/
+      (path.include?('#') ? pattern.include?('#') : true) && File.fnmatch(pattern, path, options)
     end
 
     # Construct a localized canonical name from a given canonical name and a language.
@@ -79,7 +89,7 @@ module Webgen
       if lang.nil?
         cn
       else
-        cn.split('.').insert((cn =~ /^\./ ? 2 : 1), lang.to_s).join('.')
+        cn.split('.').insert((cn.start_with?('.') ? 2 : 1), lang.to_s).join('.')
       end
     end
 
@@ -185,7 +195,7 @@ module Webgen
     #
     # Triggers analyzation of the path if invoked.
     def acn
-      if @path =~ /#/
+      if @path.include?('#')
         self.class.new(parent_path).acn << cn
       else
         parent_path + cn
@@ -196,7 +206,7 @@ module Webgen
     #
     # Triggers analyzation of the path if invoked.
     def alcn
-      if @path =~ /#/
+      if @path.include?('#')
         self.class.new(parent_path).alcn << lcn
       else
         parent_path + lcn
@@ -287,9 +297,9 @@ module Webgen
 
     # Analyse the path and extract the needed information.
     def analyse
-      if @path =~ /#/
+      if @path.include?('#')
         analyse_fragment
-      elsif @path =~ /\/$/
+      elsif @path[-1] == ?/
         analyse_directory
       else
         analyse_file
@@ -297,7 +307,7 @@ module Webgen
       @meta_info['title'] ||= @basename.tr('_-', ' ').capitalize
       @ext ||= ''
       raise "The basename of a path may not be empty: #{@path}" if @basename.empty? || @basename == '#'
-      raise "The parent path must start with a slash: #{@path}" if @path !~ /^\//
+      raise "The parent path must start with a slash: #{@path}" if @path[0] != ?/
     end
 
     # Analyse the path assuming it is a directory.
@@ -327,7 +337,7 @@ module Webgen
     # Analyse the path assuming it is a fragment.
     def analyse_fragment
       @parent_path, @basename =  @path.scan(/^(.*?)(#.*?)$/).first
-      raise "The parent path of a fragment path must be a file path and not a directory path: #{@path}" if @parent_path =~ /\/$/
+      raise "The parent path of a fragment path must be a file path and not a directory path: #{@path}" if @parent_path[-1] == ?/
       raise "A fragment path must only contain one hash character: #{path}" if @path.count("#") > 1
     end
 
