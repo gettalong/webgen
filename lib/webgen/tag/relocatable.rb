@@ -19,7 +19,7 @@ module Webgen
         path = context[:config]['tag.relocatable.path']
         result = ''
         begin
-          result = (Webgen::Path.url(path, false).absolute? ? path : resolve_path(path, context))
+          result = (Webgen::Path.absolute?(path) ? path : resolve_path(path, context))
         rescue URI::InvalidURIError => e
           context.website.logger.warn do
             ["Could not parse path '#{path}' for tag.relocatable in <#{context.ref_node}>",

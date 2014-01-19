@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*-
 
-require 'uri'
 require 'yaml'
+require 'webgen/path'
 require 'webgen/path_handler/base'
 require 'webgen/path_handler/page_utils'
 
@@ -31,7 +31,7 @@ module Webgen
             parent_path = create_directories(File.dirname(key), 'modified_at' => meta_info['modified_at'])
 
             dest_path = meta_info.delete('dest_path') || key
-            dest_path = if URI::parse(dest_path).absolute?
+            dest_path = if Webgen::Path.absolute?(dest_path)
                           dest_path
                         elsif dest_path =~ /^\//
                           "webgen:#{dest_path}"
