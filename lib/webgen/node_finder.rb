@@ -295,8 +295,7 @@ module Webgen
       result.ref_node_used = true
 
       result.nodes.keep_if do |n|
-        n = n.parent while n != n.tree.dummy_root && n != ref_node
-        n == ref_node
+        n.alcn.start_with?(ref_node.alcn)
       end
     end
 
@@ -307,9 +306,9 @@ module Webgen
       if value == true
         result.nodes.keep_if {|n| n.parent == ref_node.parent}
       else
-        value = [value].flatten.map {|i| (i = i.to_i) < 0 ? ref_node.level + 1 + i : i}
+        lower, upper = *[value].flatten.map {|i| (i = i.to_i) < 0 ? ref_node.level + 1 + i : i}
         result.nodes.keep_if do |n|
-          n.level >= value.first && n.level <= value.last && (n.parent.is_ancestor_of?(ref_node) || n.is_root?)
+          n.level >= lower && n.level <= upper && (n.parent.is_ancestor_of?(ref_node) || n.is_root?)
         end
       end
     end
