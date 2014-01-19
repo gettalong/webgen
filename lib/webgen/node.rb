@@ -189,7 +189,7 @@ module Webgen
     #
     # If the +lang+ parameter is not used, it defaults to the language of the current node.
     def proxy_node(lang = @lang)
-      self['proxy_path'] && resolve(self['proxy_path'], lang, true) || self
+      @meta_info['proxy_path'] && resolve(@meta_info['proxy_path'], lang, true) || self
     end
 
     # Return a HTML link from this node to the given node.
@@ -208,7 +208,7 @@ module Webgen
       attr = (rnode['link_attrs'].kind_of?(Hash) ? rnode['link_attrs'] : {}).merge(attr)
       link_text = attr.delete('link_text') || (rnode != node && rnode['routed_title']) || node['title']
 
-      attr['href'] = self.route_to(node, lang)
+      attr['href'] = route_to(node, lang)
       attr['hreflang'] = rnode.lang.to_s if rnode.lang
       attrs = attr.collect {|name,value| "#{name.to_s}=\"#{value}\"" }.sort.unshift('').join(' ')
       "<a#{attrs}>#{link_text}</a>"
