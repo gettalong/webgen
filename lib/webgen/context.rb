@@ -73,7 +73,7 @@ module Webgen
     def initialize(website, options = {}, persistent = {})
       @website = website
       (website.ext.context_modules || []).each {|m| self.extend(m)}
-      @options = {:content => ''}.merge(options)
+      @options = {:content => '', :chain => []}.merge(options)
       @persistent = persistent
     end
 

@@ -16,7 +16,7 @@ module Webgen
       #
       # The returned node should be used as source node for calculating relative paths to other nodes.
       def dest_node
-        @options[:dest_node] || self.content_node
+        @options[:dest_node] || content_node
       end
 
       # Return the reference node, ie. the node which provided the original content for this context
@@ -24,14 +24,14 @@ module Webgen
       #
       # The returned node should be used, for example, for resolving relative paths.
       def ref_node
-        @options[:chain] && @options[:chain].first
+        @options[:chain][0]
       end
 
       # Return the node that is ultimately rendered.
       #
       # This node should be used, for example, for retrieving meta information.
       def content_node
-        @options[:chain] && @options[:chain].last
+        @options[:chain][-1]
       end
       alias :node :content_node
 
