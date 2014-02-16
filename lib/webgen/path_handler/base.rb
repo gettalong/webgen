@@ -161,6 +161,7 @@ module Webgen
       # exists, the language part is forced to be in the destination path and the resulting
       # destination path is returned.
       def dest_path(parent, path)
+        path.meta_info['dest_path'] ||= '<parent><basename>(-<version>)(.<lang>)<ext>'
         dpath = construct_dest_path(parent, path, false)
         if (node = node_exists?(path, dpath)) && node.lang != path.meta_info['lang']
           dpath = construct_dest_path(parent, path, true)

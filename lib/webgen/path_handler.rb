@@ -393,7 +393,6 @@ module Webgen
         vpath = path.dup
         (mi ||= {})['version'] ||= name
         vpath.meta_info.merge!(mi)
-        vpath.meta_info['dest_path'] ||= '<parent><basename>(-<version>)(.<lang>)<ext>'
         @website.logger.debug do
           "Creating node version '#{vpath['version']}' from path <#{vpath}> with #{handler} handler"
         end
