@@ -214,6 +214,12 @@ module Webgen
       @instances[handler.intern] ||= extension(handler).new(@website)
     end
 
+    # Return the name of the give path handler instance.
+    def name_of_instance(instance)
+      @instances.rassoc(instance)[0] || 'unknown'
+    end
+    private :name_of_instance
+
 
     # Populate the website tree with nodes.
     #
@@ -277,10 +283,10 @@ module Webgen
             @website.blackboard.dispatch_msg(:after_node_written, node, content)
           rescue Webgen::Error => e
             e.path = node.alcn if e.path.to_s.empty?
-            e.location = "path_handler.#{node.node_info[:path_handler]}" unless e.location
+            e.location = "path_handler.#{name_of_instance(node.node_info[:path_handler])}" unless e.location
             raise
           rescue Exception => e
-            raise Webgen::RenderError.new(e, "path_handler.#{node.node_info[:path_handler]}", node)
+            raise Webgen::RenderError.new(e, "path_handler.#{name_of_instance(node.node_info[:path_handler])}", node)
           end
         end
         @website.blackboard.dispatch_msg(:after_all_nodes_written)
