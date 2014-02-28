@@ -5,11 +5,6 @@ require 'rubygems/package_task'
 require 'rdoc/task'
 require 'rdoc/rdoc'
 
-begin
-  require 'rubyforge'
-rescue LoadError
-end
-
 require 'fileutils'
 require 'rake/clean'
 require 'rake/testtask'
@@ -99,7 +94,7 @@ EOF
 
 Thanks for choosing webgen! Here are some places to get you started:
 * The webgen User Documentation at <http://webgen.gettalong.org/documentation/>
-* The mailing list archive at <http://rubyforge.org/pipermail/webgen-users/>
+* The mailing list archive at <https://groups.google.com/forum/?fromgroups#!forum/webgen-users>
 * The webgen Wiki at <http://github.com/gettalong/webgen/wiki>
 
 Have a look at <http://webgen.gettalong.org/news.html> for a list of changes!
@@ -118,7 +113,6 @@ EOF
     s.add_development_dependency('rake', '>= 0.8.3')
     s.add_development_dependency('minitest', '~> 5.0')
     s.add_development_dependency('diff-lcs', '~> 1.0')
-    s.add_development_dependency('rubyforge', '~> 2.0')
     s.add_development_dependency('maruku', '~> 0.7')
     s.add_development_dependency('RedCloth', '~> 4.1')
     s.add_development_dependency('haml', '~> 4.0')
@@ -146,7 +140,6 @@ EOF
     s.author = 'Thomas Leitner'
     s.email = 't_leitner@gmx.at'
     s.homepage = "http://webgen.gettalong.org"
-    s.rubyforge_project = 'webgen'
   end
 
   Gem::PackageTask.new(spec) do |pkg|
@@ -155,45 +148,13 @@ EOF
   end
 
   desc 'Release webgen version ' + Webgen::VERSION
-  task :release => [:clobber, :package, :publish_files, :post_news]
+  task :release => [:clobber, :package, :publish_files]
 
-  if defined? RubyForge
-    desc "Upload the release to Rubyforge"
-    task :publish_files => [:package] do
-      print 'Uploading files to Rubyforge...'
-      $stdout.flush
-
-      rf = RubyForge.new
-      rf.configure
-      rf.login
-
-      rf.userconfig["release_notes"] = ""
-      rf.userconfig["release_changes"] = ""
-      rf.userconfig["preformatted"] = false
-
-      files = %w[.gem .tgz .zip].collect {|ext| "pkg/webgen-#{Webgen::VERSION}" + ext}
-
-      rf.add_release('webgen', 'webgen', Webgen::VERSION, *files)
-
-      sh "gem push pkg/webgen-#{Webgen::VERSION}.gem"
-
-      puts 'done'
-    end
-
-    desc 'Post announcement to rubyforge.'
-    task :post_news do
-      print 'Posting announcement to Rubyforge ...'
-      $stdout.flush
-      rf = RubyForge.new
-      rf.configure
-      rf.login
-
-      text = "Have a look at http://webgen.gettalong.org/news.html for the release details!"
-      rf.post_news('webgen', "webgen #{Webgen::VERSION} released", text)
-      puts "done"
-    end
+  desc "Upload the release to rubygems.org"
+  task :publish_files => [:package] do
+    sh "gem push pkg/webgen-#{Webgen::VERSION}.gem"
+    puts 'done'
   end
-
 
   desc "Run the tests one by one to check for missing deps"
   task :test_isolated do

@@ -10,12 +10,10 @@ extensions.
 
 The author of webgen is Thomas Leitner -- he is reachable at <mailto:t_leitner@gmx.at>.
 
-You can discuss webgen or find help on the [webgen-users] mailing list
-which is mirrored to the [webgen-users Google group].
+You can discuss webgen or find help on the [webgen-users Google group].
 
 Or you can join the IRC channel [#webgen] on Freenode.
 
-[webgen-users]: http://rubyforge.org/pipermail/webgen-users/
 [webgen-users Google group]: https://groups.google.com/forum/?fromgroups#!forum/webgen-users
 [#webgen]: irc://chat.freenode.net/#webgen
 
