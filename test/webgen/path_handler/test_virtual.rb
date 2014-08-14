@@ -87,6 +87,7 @@ EOF
     refute_nil(node_en)
     refute_nil(@root.tree['/dirnew/dirnew/dirnew/'])
 
+    assert_equal(Webgen::PathHandler::Base::Node, node_de.class)
     assert_equal('new title', node_en['title'])
     assert_equal(@time.tv_usec, node_en['modified_at'].tv_usec)
     assert(node_en['no_output'])

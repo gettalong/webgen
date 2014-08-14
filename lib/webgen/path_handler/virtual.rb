@@ -47,6 +47,7 @@ module Webgen
             else
               entry_path[:virtual] = true
               entry_path['handler'] = 'virtual'
+              entry_path['node_class'] ||= Webgen::PathHandler::Base::Node.to_s
               @website.ext.path_handler.create_secondary_nodes(entry_path)
             end
           end
