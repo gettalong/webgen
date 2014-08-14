@@ -53,7 +53,7 @@ module Webgen
         # depending on the configuration option 'website.link_to_current_page'.
         def link_to(*args, &block)
           result = super
-          if !tree.website.config['website.link_to_current_page']
+          if !tree.website.config['website.link_to_current_page'] && args.first == self
             result.sub!(/<a/, '<span').sub!(/<\/a>/, '</span>').
               gsub!(/ (?:href|hreflang)=".*"/, '')
           end

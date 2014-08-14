@@ -157,7 +157,8 @@ class TestPathHandlerBase < Minitest::Test
 
     assert_equal('<a href="somename.html" hreflang="de">Somename</a>', node.link_to(child_de))
     @website.config['website.link_to_current_page'] = false
-    assert_equal('<span>Somename</span>', node.link_to(child_de))
+    assert_equal('<a href="somename.html" hreflang="de">Somename</a>', node.link_to(child_de))
+    assert_equal('<span>Somename</span>', child_de.link_to(child_de))
   end
 
 end
