@@ -274,7 +274,12 @@ module Webgen
           l
         end
       end.uniq
-      result.nodes.keep_if {|n| langs.any? {|l| n.lang == l}}
+      fallback = langs.delete('fallback')
+      result.nodes.keep_if do |n|
+        langs.any? {|l| n.lang == l} ||
+          (fallback && n.lang == @website.config['website.lang'] &&
+           !n.tree.translations(n).any? {|tn| langs.any? {|l| tn.lang == l}})
+      end
     end
 
     def filter_ancestors(result, ref_node, enabled)
