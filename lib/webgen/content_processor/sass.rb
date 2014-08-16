@@ -34,6 +34,12 @@ module Webgen
           @context = context
         end
 
+        def marshal_dump #:nodoc:
+        end
+
+        def marshal_load(data) #:nodoc:
+        end
+
         # @see Base#find_relative
         def find_relative(name, base, options)
           _find(base, name, options)
