@@ -42,7 +42,7 @@
 <rss version="2.0">
   <channel>
     <title><%= h(context.node['title']) %></title>
-    <link><%= context.node.feed_link %>"</link>
+    <link><%= context.node.feed_link %></link>
     <description><%= h(context.node['description']) %></description>
     <% if context.node['created_at'].kind_of?(Time) %>
     <pubdate><%= context.node['created_at'].rfc822 %></pubdate>
