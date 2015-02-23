@@ -323,9 +323,16 @@ module Webgen
       @parent_path = File.join(File.dirname(@path), '/')
       match_data = FILENAME_RE.match(File.basename(@path))
 
-      if !match_data[1].nil? && match_data[3].nil? && match_data[4].nil? # handle special case of sort_info.basename as basename.ext
+      if !match_data[1].nil? && match_data[3].nil? && match_data[4].nil?
+        # handle special case of sort_info.basename as basename.ext
         @basename = match_data[1]
         @ext = match_data[2]
+      elsif !match_data[1].nil? && match_data[3].nil? && !match_data[4].nil? &&
+          (lang = Webgen::LanguageManager.language_for_code(match_data[2]))
+        # handle special case of sort_info.basename.ext as basename.lang.ext if basename is a lang
+        @basename = match_data[1]
+        @meta_info['lang'] = lang
+        @ext = match_data[4]
       else
         @meta_info['sort_info'] ||= match_data[1].to_i unless match_data[1].nil?
         @basename               = match_data[2]

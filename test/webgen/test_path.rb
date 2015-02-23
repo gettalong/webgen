@@ -110,7 +110,11 @@ class TestPath < Minitest::Test
     check_proc.call(Webgen::Path.new('/5.png'),
                     '/', '5', nil, 'png', '5.png', '5.png', '/5.png', '/5.png', nil, '5')
     check_proc.call(Webgen::Path.new('/5.de.png'),
-                    '/', 'de', nil, 'png', 'de.png', 'de.png', '/de.png', '/de.png', 5, 'De')
+                    '/', '5', 'de', 'png', '5.png', '5.de.png', '/5.png', '/5.de.png', nil, '5')
+    check_proc.call(Webgen::Path.new('/5.de.png.gz'),
+                    '/', 'de', nil, 'png.gz', 'de.png.gz', 'de.png.gz', '/de.png.gz', '/de.png.gz', 5, 'De')
+    check_proc.call(Webgen::Path.new('/5.de.en.gz'),
+                    '/', 'de', 'en', 'gz', 'de.gz', 'de.en.gz', '/de.gz', '/de.en.gz', 5, 'De')
     check_proc.call(Webgen::Path.new('/5.66.png'),
                     '/', '66', nil, 'png', '66.png', '66.png', '/66.png', '/66.png', 5, '66')
 
