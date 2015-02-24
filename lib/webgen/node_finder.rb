@@ -34,8 +34,13 @@ module Webgen
   #
   # The +result.nodes+ accessor contains the array of nodes that should be manipulated in-place.
   #
-  # If a filter uses the reference node in any way, it has to set +result.ref_node_used+ to +true+
-  # to allow proper caching!
+  # If a filter uses the reference node, it has to tell the node finder about it to allow proper
+  # caching:
+  #
+  # * If the node's language property is used, +result.lang_used+ has to be set to +true+.
+  # * If the node's hierarchy level is used, +result.level_used+ has to be set to +true+.
+  # * If the node's parent is used, +result.parent_node_used+ has to be set to +true+.
+  # * In all other cases, +result.ref_node_used+ has to be set to +true+
   #
   # Here is a sample filter module which provides the ability to filter nodes based on the meta
   # information key +category+. The +category+ key contains an array with one or more categories.
@@ -58,7 +63,14 @@ module Webgen
     # Result class used when filtering the nodes.
     #
     # The attribute +ref_node_used+ must not be set to +false+ once it is +true+!
-    Result = Struct.new(:nodes, :ref_node_used)
+    Result = Struct.new(:nodes, :ref_node_used, :level_used, :lang_used, :parent_node_used) do
+      def merge_attrs!(result)
+        self.ref_node_used ||= result.ref_node_used
+        self.lang_used ||= result.lang_used
+        self.level_used ||= result.level_used
+        self.parent_node_used ||= result.parent_node_used
+      end
+    end
 
     # Create a new NodeFinder object for the given website.
     def initialize(website)
@@ -99,7 +111,7 @@ module Webgen
     # +ref_node+ is used as reference node.
     def find(opts_or_name, ref_node)
       if result = cached_result(opts_or_name, ref_node)
-        return result
+        return result.nodes
       end
       opts = prepare_options_hash(opts_or_name)
 
@@ -107,20 +119,21 @@ module Webgen
       flatten = true if limit || offset
       levels = [levels || [1, 1_000_000]].flatten.map {|i| i.to_i}
 
-      nodes, ref_node_used = filter_nodes(opts, ref_node)
+      result = filter_nodes(opts, ref_node)
+      nodes = result.nodes
 
       if flatten
         sort_nodes(nodes, sort, reverse)
         nodes = nodes[(offset.to_s.to_i)..(limit ? offset.to_s.to_i + limit.to_s.to_i - 1 : -1)] if limit || offset
       else
-        result = {}
+        temp = {}
         min_level = 1_000_000
         nodes.each {|n| min_level = n.level if n.level < min_level}
 
         nodes.each do |n|
           hierarchy_nodes = []
           (hierarchy_nodes.unshift(n); n = n.parent) while n.level >= min_level
-          hierarchy_nodes.inject(result) {|memo, hn| memo[hn] ||= {}}
+          hierarchy_nodes.inject(temp) {|memo, hn| memo[hn] ||= {}}
         end
 
         reducer = lambda do |h, level|
@@ -133,11 +146,13 @@ module Webgen
             h.map {|k,v| k}
           end
         end
-        nodes = reducer.call(result, 1)
+        nodes = reducer.call(temp, 1)
         sort_nodes(nodes, sort, reverse, false)
       end
 
-      cache_result(opts_or_name, ref_node, nodes, ref_node_used)
+      result.nodes = nodes
+      cache_result(opts_or_name, ref_node, result)
+      result.nodes
     end
 
     #######
@@ -145,15 +160,20 @@ module Webgen
     #######
 
     def cached_result(opts, ref_node)
-      result_cache[opts] || result_cache[[opts, ref_node.alcn]]
+      (result = result_cache[opts]) && result_cache[cache_key(opts, ref_node, result)]
     end
 
-    def cache_result(opts, ref_node, result, ref_node_used)
-      if ref_node_used
-        result_cache[[opts, ref_node.alcn]] = result
-      else
-        result_cache[opts] = result
-      end
+    def cache_result(opts, ref_node, result)
+      result_cache[opts] = result
+      result_cache[cache_key(opts, ref_node, result)] = result
+    end
+
+    def cache_key(opts, ref_node, result)
+      [opts,
+       result.ref_node_used && ref_node.alcn,
+       result.lang_used && ref_node.lang,
+       result.level_used && ref_node.level,
+       result.parent_node_used && ref_node.parent.alcn]
     end
 
     def result_cache
@@ -189,7 +209,7 @@ module Webgen
         end
       end
 
-      [result.nodes, result.ref_node_used]
+      result
     end
 
     def sort_nodes(nodes, sort, reverse, flat_mode = true)
@@ -217,9 +237,9 @@ module Webgen
       [opts].flatten.each do |cur_opts|
         cur_opts = prepare_options_hash(cur_opts)
         remove_non_filter_options(cur_opts)
-        nodes, ref_node_used = filter_nodes(cur_opts, ref_node)
-        result.nodes &= nodes
-        result.ref_node_used |= ref_node_used
+        inner_result = filter_nodes(cur_opts, ref_node)
+        result.nodes &= inner_result.nodes
+        result.merge_attrs!(inner_result)
       end
     end
 
@@ -227,9 +247,9 @@ module Webgen
       [opts].flatten.each do |cur_opts|
         cur_opts = prepare_options_hash(cur_opts)
         remove_non_filter_options(cur_opts)
-        nodes, ref_node_used = filter_nodes(cur_opts, ref_node)
-        result.nodes |= nodes
-        result.ref_node_used |= ref_node_used
+        inner_result = filter_nodes(cur_opts, ref_node)
+        result.nodes |= inner_result.nodes
+        result.merge_attrs!(inner_result)
       end
     end
 
@@ -237,9 +257,9 @@ module Webgen
       [opts].flatten.each do |cur_opts|
         cur_opts = prepare_options_hash(cur_opts)
         remove_non_filter_options(cur_opts)
-        nodes, ref_node_used = filter_nodes(cur_opts, ref_node)
-        result.nodes -= nodes
-        result.ref_node_used |= ref_node_used
+        inner_result = filter_nodes(cur_opts, ref_node)
+        result.nodes -= inner_result.nodes
+        result.merge_attrs!(inner_result)
       end
     end
 
@@ -248,15 +268,17 @@ module Webgen
     end
 
     def filter_alcn(result, ref_node, alcn)
-      result.ref_node_used = true
-      alcn = [alcn].flatten.map {|a| Webgen::Path.append(ref_node.alcn, a.to_s)}
+      alcn = [alcn].flatten.map do |a|
+        result.ref_node_used = true unless a.to_s.start_with?('/')
+        Webgen::Path.append(ref_node.alcn, a.to_s)
+      end
       result.nodes.keep_if {|n| alcn.any? {|a| n =~ a}}
     end
 
     def filter_absolute_levels(result, ref_node, range)
       range = [range].flatten.map do |i|
         if (i = i.to_i) < 0
-          result.ref_node_used = true
+          result.level_used = true
           ref_node.level + 1 + i
         else
           i
@@ -268,7 +290,7 @@ module Webgen
     def filter_lang(result, ref_node, langs)
       langs = [langs].flatten.map do |l|
         if l == 'node'
-          result.ref_node_used = true
+          result.lang_used = true
           ref_node.lang
         else
           l
@@ -306,7 +328,7 @@ module Webgen
 
     def filter_siblings(result, ref_node, value)
       return unless value
-      result.ref_node_used = true
+      result.parent_node_used = true
 
       if value == true
         result.nodes.keep_if {|n| n.parent == ref_node.parent}
