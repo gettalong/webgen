@@ -62,7 +62,14 @@ module Webgen
         method, _, type = *iid
         str = (type == :content ? "Content" : "Meta info") << " from these nodes"
         str << " (result of #{[method].flatten.join('.')}):"
-        [str] + data.flatten
+        data_mapper = lambda do |item|
+          if item.kind_of?(Array)
+            [item[0], item[1].map(&data_mapper).map {|inner| [inner].flatten.map {|l| "  #{l}"}}]
+          else
+            item
+          end
+        end
+        [str] + data.map(&data_mapper).flatten
       end
 
       # Use Webgen::NodeFinder to generate a (nested) list of nodes. The options hash has to contain
