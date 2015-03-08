@@ -146,7 +146,7 @@ module Webgen
         create_directory(api_path, Webgen::Path.new(File.dirname(klass_path_str) + '/'))
 
         path = Webgen::Path.new(klass_path_str, 'handler' => 'page', 'modified_at' => api_path['modified_at'],
-                                'title' => "#{klass.type} #{klass.full_name}", 'api_class_name' => klass.full_name,
+                                'title' => "#{klass.full_name}", 'api_class_name' => klass.full_name,
                                 'api_name' => api_path['api_name'], 'template' => api_path['api_template'])
         node = @website.ext.path_handler.create_secondary_nodes(path).first
 
