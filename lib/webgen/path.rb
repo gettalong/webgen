@@ -304,7 +304,11 @@ module Webgen
       else
         analyse_file
       end
-      @meta_info['title'] ||= @basename.tr('_-', ' ').capitalize
+      @meta_info['title'] ||= begin
+                                name = @basename.tr('_-', ' ')
+                                name[0] = name[0].upcase
+                                name
+                              end
       @ext ||= ''
       raise "The basename of a path may not be empty: #{@path}" if @basename.empty? || @basename == '#'
       raise "The parent path must start with a slash: #{@path}" if @path[0] != ?/
