@@ -15,7 +15,7 @@ end
 --- name:klass pipeline:erb
 <% klass = context.node.node_info[:rdoc_object] %>
 <div class="api-documentation api-<%= klass.type %>">
-  <h1 class="<%= klass.type %>"><%= klass.type %> <%= klass.full_name %></h1>
+  <h2 class="<%= klass.type %>"><%= klass.type %> <%= klass.full_name %></h2>
 
   <div class="description">
     <%= klass.description %>
