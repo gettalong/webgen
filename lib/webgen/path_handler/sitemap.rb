@@ -46,7 +46,7 @@ module Webgen
         path['node_class'] = Node.to_s
         create_node(path) do |node|
           set_blocks(node, blocks)
-          node.node_info[:entries] = {:flatten => true, :and => node['entries']}
+          node.node_info[:entries] = {:flatten => true, :not => {:mi => {'no_output' => true}}, :and => node['entries']}
           @website.ext.item_tracker.add(node, :nodes, :node_finder_option_set,
                                         {:opts => node.node_info[:entries], :ref_alcn => node.alcn}, :meta_info)
         end
