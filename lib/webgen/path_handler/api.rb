@@ -43,6 +43,7 @@ module Webgen
         api.file_nodes = {}
 
         rdoc.store.all_classes_and_modules.sort.each do |klass|
+          adapt_rdoc_class(path, klass)
           klass_node = create_page_node_for_class(path, dir_node, klass, output_flag_file)
           api.class_nodes[klass.full_name] = klass_node
           klass_node.node_info[:api] = api
@@ -137,13 +138,32 @@ module Webgen
       end
       protected :rdoc_store
 
+      # Adapt a RDoc class/module object to provide a different output path depending on the
+      # output_structure meta information of the API path.
+      def adapt_rdoc_class(api_path, klass)
+        case api_path['output_structure']
+        when 'hierarchical'
+          api_path['use_proxy_path'] = false
+          def klass.http_url(prefix)
+            if classes_and_modules.size > 0
+              super(prefix).sub(/\.html/, '/index.html')
+            else
+              super(prefix)
+            end
+          end
+        else
+          api_path['use_proxy_path'] = true
+        end
+      end
+      protected :adapt_rdoc_class
+
       # Create a page node for the given class +klass+ and return it.
       #
       # A link definition entry for the class is also created.
       def create_page_node_for_class(api_path, dir_node, klass, output_flag_file)
         klass_path_str = klass.http_url(dir_node.alcn)
 
-        create_directory(api_path, Webgen::Path.new(File.dirname(klass_path_str) + '/'))
+        create_directory(api_path, Webgen::Path.new(File.dirname(klass_path_str) + '/'), api_path['use_proxy_path'])
 
         path = Webgen::Path.new(klass_path_str, 'handler' => 'page', 'modified_at' => api_path['modified_at'],
                                 'title' => "#{klass.full_name}", 'api_class_name' => klass.full_name,

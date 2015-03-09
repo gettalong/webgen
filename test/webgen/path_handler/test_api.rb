@@ -5,6 +5,9 @@ require 'webgen/path_handler/api'
 
 class TestPathHandlerApi < Minitest::Test
 
+  class SampleTestSubclass
+  end
+
   include Webgen::TestHelper
 
   def setup
@@ -26,24 +29,39 @@ class TestPathHandlerApi < Minitest::Test
     FileUtils.rm_rf(@website.directory)
   end
 
-  def test_create_nodes
+  def setup_for_create_nodes
     @website.ext.path_handler = Webgen::PathHandler.new(@website)
     @website.ext.path_handler.register('Directory')
     @website.ext.path_handler.register('Page')
     @website.ext.path_handler.register('Copy')
     @website.ext.link_definitions = {}
-    @api.create_nodes(@path, nil)
+  end
 
-    assert(@website.tree['/my_dir/TestPathHandlerApi.en.html'])
-    assert_equal(['/my_dir/TestPathHandlerApi.en.html', 'TestPathHandlerApi'],
+  def assert_common_tests_for_create_nodes(test_alcn)
+    assert(@website.tree[test_alcn])
+    assert_equal([test_alcn, 'TestPathHandlerApi'],
                  @website.ext.link_definitions['my_api:TestPathHandlerApi'])
-    assert(@website.tree['/my_dir/TestPathHandlerApi.en.html#method-i-setup'])
-    assert_equal(['/my_dir/TestPathHandlerApi.en.html#method-i-setup', 'TestPathHandlerApi#setup'],
+    assert(@website.tree["#{test_alcn}#method-i-setup"])
+    assert_equal(["#{test_alcn}#method-i-setup", 'TestPathHandlerApi#setup'],
                  @website.ext.link_definitions['my_api:TestPathHandlerApi#setup'])
     assert(@website.tree['/my_dir/API_rdoc.en.html'])
+    assert(@website.tree['/my_dir/TestPathHandlerApi/SampleTestSubclass.en.html'])
 
     cache_dir = @website.tmpdir(File.join('path_handler.api', 'my_api'))
     assert(File.directory?(cache_dir))
+  end
+
+  def test_create_nodes
+    setup_for_create_nodes
+    @api.create_nodes(@path, nil)
+    assert_common_tests_for_create_nodes('/my_dir/TestPathHandlerApi.en.html')
+  end
+
+  def test_create_nodes_hierarchical
+    setup_for_create_nodes
+    @path['output_structure'] = 'hierarchical'
+    @api.create_nodes(@path, nil)
+    assert_common_tests_for_create_nodes('/my_dir/TestPathHandlerApi/index.en.html')
   end
 
   def test_rdoc_options
