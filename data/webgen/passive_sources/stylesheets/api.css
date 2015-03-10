@@ -61,7 +61,7 @@
 }
 
 .api-documentation .description p {
-  margin: 1em 0.4em;
+  margin: 1em 0;
 }
 
 .api-documentation .description li p {
@@ -183,9 +183,8 @@
 .api-documentation .method-detail {
   margin: 0.5em 0;
   padding: 0.5em 0;
-  cursor: pointer;
 }
-.api-documentation .method-detail:hover {
+.api-documentation .method-detail:hover, .api-documentation :target {
   background-color: #f1edba;
 }
 .api-documentation .method-heading {
@@ -244,7 +243,6 @@
 }
 
 .api-documentation #attribute-method-details .method-detail:hover {
-  background-color: transparent;
   cursor: default;
 }
 .api-documentation .attribute-access-type {
