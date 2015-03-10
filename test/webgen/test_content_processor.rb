@@ -76,6 +76,7 @@ class TestContentProcessor < Minitest::Test
   def test_normalize_pipeline
     @cp.register('MyProcessor')
     @cp.register('MyProcessor', :name => 'other')
+    assert_equal([], @cp.normalize_pipeline(nil))
     assert_equal(['my_processor', 'other', 'other'], @cp.normalize_pipeline('my_processor,other,other'))
     assert_equal(['my_processor', 'other', 'other'], @cp.normalize_pipeline('my_processor, other, other'))
     assert_equal(['my_processor', 'other', 'other'], @cp.normalize_pipeline(['my_processor','other','other']))

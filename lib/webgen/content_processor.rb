@@ -113,13 +113,13 @@ module Webgen
     # Normalize the content processor pipeline.
     #
     # The pipeline parameter can be a String in the format 'a,b,c' or 'a, b, c' or an array '[a, b,
-    # c]' with content processors a, b and c.
+    # c]' with content processor names a, b and c.
     #
     # Raises an error if an unknown content processor is found.
     #
     # Returns an array with valid content processors.
     def normalize_pipeline(pipeline)
-      pipeline = (pipeline.kind_of?(String) ? pipeline.split(/,\s*/) : pipeline)
+      pipeline = (pipeline.kind_of?(String) ? pipeline.split(/,\s*/) : pipeline.to_a)
       pipeline.each do |processor|
         raise Webgen::Error.new("Unknown content processor '#{processor}'") if !registered?(processor)
       end
