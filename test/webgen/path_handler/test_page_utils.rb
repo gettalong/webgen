@@ -82,6 +82,11 @@ class TestPageUtils < Minitest::Test
 
     node.render_block('content', @context, ['test', 'test'])
     assert_equal('testtestmycontent', @context.content)
+
+    # with no content processor
+    node.meta_info['blocks'] = {'content' => {'pipeline' => nil}}
+    node.render_block('content', @context)
+    assert_equal('mycontent', @context.content)
   end
 
 end

@@ -39,9 +39,11 @@ module Webgen
 
           context.content = blocks[name].dup
           context[:block_name] = name
-          pipeline ||= ((self['blocks'] || {})[name] || {})['pipeline'] ||
-            ((self['blocks'] || {})['defaults'] || {})['pipeline'] ||
-            []
+          pipeline ||= if (t = self['blocks']) && (t = t[name] || t['defaults']) && t.key?('pipeline')
+                         t['pipeline']
+                       else
+                         []
+                       end
           content_processor.normalize_pipeline(pipeline).each do |processor|
             content_processor.call(processor, context)
           end
