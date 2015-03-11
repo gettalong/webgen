@@ -48,6 +48,7 @@ module Webgen
           api.class_nodes[klass.full_name] = klass_node
           klass_node.node_info[:api] = api
           klass.each_method {|method| create_fragment_node_for_method(path, klass_node, method)}
+          klass.each_attribute {|attr| create_fragment_node_for_method(path, klass_node, attr)}
         end
 
         rdoc.store.all_files.sort.each do |file|
