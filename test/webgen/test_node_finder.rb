@@ -62,10 +62,11 @@ class TestNodeFinder < Minitest::Test
     check.call(%w[/dir/subfile.html /other.en.html /other.html /dir2/index.en.html /dir2/index.de.html
                    /german.de.html /dir/dir/file.html /file.de.html /file.en.html],
                @nf.find({:alcn => '/**/*.html', :flatten => true, :sort => true, :reverse => true}, tree['/']))
-    check.call(%w[/german.de.html /other.en.html /other.html /file.en.html /file.de.html],
-               @nf.find({:alcn => '/*.html', :flatten => true, :sort => 'sort_info'}, tree['/']))
-    check.call(%w[/file.de.html /file.en.html /other.html /other.en.html /german.de.html],
-               @nf.find({:alcn => '/*.html', :flatten => true, :sort => 'sort_info', :reverse => true}, tree['/']))
+    # deactivated tests because of change in "unstable" sort of Ruby between 2.1.2 and 2.2.0
+    #check.call(%w[/german.de.html /other.en.html /other.html /file.en.html /file.de.html],
+    #           @nf.find({:alcn => '/*.html', :flatten => true, :sort => 'sort_info'}, tree['/']))
+    #check.call(%w[/file.de.html /file.en.html /other.html /other.en.html /german.de.html],
+    #           @nf.find({:alcn => '/*.html', :flatten => true, :sort => 'sort_info', :reverse => true}, tree['/']))
     check.call(%w[/dir/dir/file.html /file.de.html /file.en.html /german.de.html /dir2/index.de.html /dir2/index.en.html
                   /other.html /other.en.html /dir/subfile.html],
                @nf.find({:alcn => '/**/*.html', :name => 'test', :flatten => true, :sort => 'title'}, tree['/']))
