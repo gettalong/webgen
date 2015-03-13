@@ -227,10 +227,12 @@ class TestPath < Minitest::Test
     assert_equal('hallo', path.io {|f| f.read })
 
     Dir.mktmpdir('webgen-path') do |dir|
-      File.open(File.join(dir, 'src'), 'wb+') {|f| f.write("\303\274")}
+      File.open(File.join(dir, 'src'), 'wb+') {|f| f.write("\xEF\xBB\xBF\303\274")}
       path = Webgen::Path.new('/test') {|mode| File.open(File.join(dir, 'src'), mode) }
-      assert_equal(1, path.data('r:UTF-8').length)
-      assert_equal(2, path.data('rb').length)
+      assert_equal(2, path.data('r:UTF-8').length)
+      assert_equal(5, path.data('rb').length)
+      path['io_open_mode'] = 'r:BOM|UTF-8'
+      assert_equal(1, path.data.length)
     end
 
     path = Webgen::Path.new('/test.page')

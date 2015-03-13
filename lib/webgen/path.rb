@@ -251,7 +251,8 @@ module Webgen
     # For a description of the parameter +mode+ see #io.
     #
     # An error is raised, if no IO object is associated with the Path instance.
-    def data(mode = 'r')
+    def data(mode = nil)
+      mode ||= @meta_info['io_open_mode'] || 'r'
       io(mode) {|io| io.read}
     end
 
