@@ -10,17 +10,15 @@ module Webgen
     class InstallCommand < CmdParse::Command
 
       def initialize # :nodoc:
-        super('install', false, false, true)
-        self.short_desc = 'Install an extension bundle'
-        self.description = Utils.format_command_desc(<<DESC)
+        super('install', takes_commands: false)
+        short_desc('Install an extension bundle')
+        long_desc(<<DESC)
 Installs an extension bundle via Rubygems. You can either provide the name
 of a webgen extension bundle, the name of a Rubygem or a local file name.
 DESC
       end
 
-      def execute(args) # :nodoc:
-        raise CmdParse::InvalidArgumentError.new("Bundle name needed but none given") if args.length == 0
-        name = args.first
+      def execute(name) # :nodoc:
         name = "webgen-#{name}-bundle" unless name =~ /\.gem$/ || name =~ /webgen-.*-bundle/
 
         inst = Gem::DependencyInstaller.new(:domain => :both, :force => false)

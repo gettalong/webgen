@@ -9,9 +9,9 @@ module Webgen
     class ShowConfigCommand < CmdParse::Command
 
       def initialize # :nodoc:
-        super('config', false, false, true)
-        self.short_desc = 'Show available configuration options'
-        self.description = Utils.format_command_desc(<<DESC)
+        super('config', takes_commands: false)
+        short_desc('Show available configuration options')
+        long_desc(<<DESC)
 Shows all available configuration options. The option name and default value as
 well as the currently used value are displayed.
 
@@ -24,22 +24,17 @@ Hint: A debug message will appear at the top of the output if this command is ru
 in the context of a website, there are unknown configuration options in the
 configuration file and the log level is set to debug.
 DESC
-        self.options = CmdParse::OptionParserWrapper.new do |opts|
-          opts.separator "Options:"
-          opts.on("-m", "--modified",
-                  *Utils.format_option_desc("Show modified configuration options only")) do |v|
+        options do |opts|
+          opts.on("-m", "--modified", "Show modified configuration options only") do |v|
             @modified = true
           end
-          opts.on("-d", "--[no-]descriptions",
-                  *Utils.format_option_desc("Show descriptions")) do |d|
+          opts.on("-d", "--[no-]descriptions", "Show descriptions") do |d|
             @show_description = d
           end
-          opts.on("-s", "--[no-]syntax",
-                  *Utils.format_option_desc("Show the syntax")) do |s|
+          opts.on("-s", "--[no-]syntax", "Show the syntax") do |s|
             @show_syntax = s
           end
-          opts.on("-e", "--[no-]example",
-                  *Utils.format_option_desc("Show usage examples")) do |e|
+          opts.on("-e", "--[no-]example", "Show usage examples") do |e|
             @show_examples = e
           end
         end
@@ -49,12 +44,11 @@ DESC
         @show_examples = false
       end
 
-      def execute(args) # :nodoc:
-        @show_description = @show_syntax = @show_examples = true if commandparser.verbose
+      def execute(selector = '') # :nodoc:
+        @show_description = @show_syntax = @show_examples = true if command_parser.verbose
 
-        config = commandparser.website.config
-        descriptions = commandparser.website.ext.bundle_infos.options
-        selector = args.first.to_s
+        config = command_parser.website.config
+        descriptions = command_parser.website.ext.bundle_infos.options
         config.options.select do |n, d|
           n.include?(selector) && (!@modified || config[n] != d.default)
         end.sort.each do |name, data|

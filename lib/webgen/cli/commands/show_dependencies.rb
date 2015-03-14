@@ -9,9 +9,9 @@ module Webgen
     class ShowDependenciesCommand < CmdParse::Command
 
       def initialize # :nodoc:
-        super('deps', false, false, true)
-        self.short_desc = 'Show dependencies for all paths'
-        self.description = Utils.format_command_desc(<<DESC)
+        super('deps', takes_commands: false)
+        short_desc('Show dependencies for all paths')
+        long_desc(<<DESC)
 Shows the dependencies (i.e. tracked items) for each path. This is only useful
 after webgen has generated the website at least once so that this information
 is available.
@@ -23,17 +23,16 @@ Hint: The global verbosity option enables additional output.
 DESC
       end
 
-      def execute(args) # :nodoc:
-        data = commandparser.website.ext.item_tracker.cached_items(commandparser.verbose)
+      def execute(selector = nil) # :nodoc:
+        data = command_parser.website.ext.item_tracker.cached_items(command_parser.verbose)
         if data.empty?
           puts "No data available, you need to generate the website first!"
           return
         end
-        arg = args.shift
 
-        data.select! {|alcn, _| alcn.include?(arg) } if arg
+        data.select! {|alcn, _| alcn.include?(selector) } if selector
         data.sort.each do |alcn, items|
-          if items.length > 0 || commandparser.verbose
+          if items.length > 0 || command_parser.verbose
             puts("#{Utils.light(Utils.blue(alcn))}: ")
             items.each {|d| puts("  #{[d].flatten.join("\n    ")}")}
           end

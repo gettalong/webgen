@@ -9,24 +9,18 @@ module Webgen
     class GenerateCommand < CmdParse::Command
 
       def initialize # :nodoc:
-        super('generate', false, false, false)
-        self.short_desc = 'Generate the webgen website'
-        self.description = Webgen::CLI::Utils.format_command_desc(<<EOF)
-This command is executed by default when no other command was specified.
-EOF
-        self.options = CmdParse::OptionParserWrapper.new do |opts|
-          opts.separator "Options:"
-          opts.on('-a', '--auto [SEC]', Integer,
-                  *Utils.format_option_desc("Auto-generate the website every SEC seconds (5=default, 0=off)")) do |val|
-            @auto_generate_secs = val || 5
-          end
+        super('generate', takes_commands: false)
+        short_desc('Generate the webgen website')
+        long_desc("This command is executed by default when no other command was specified.")
+        options.on('-a', '--auto [SEC]', Integer, "Auto-generate the website every SEC seconds (5=default, 0=off)") do |val|
+          @auto_generate_secs = val || 5
         end
         @auto_generate_secs = 0
       end
 
-      def execute(args) # :nodoc:
+      def execute # :nodoc:
         if @auto_generate_secs <= 0
-          commandparser.website.execute_task(:generate_website)
+          command_parser.website.execute_task(:generate_website)
         else
           auto_generate
         end
@@ -38,8 +32,8 @@ EOF
         time = Time.now
         abort = false
         old_paths = []
-        dirs = "{" << commandparser.website.config['sources'].map do |mp, type, *args|
-          type == :file_system ? File.join(commandparser.website.directory, args[0], args[1] || '**/*') : nil
+        dirs = "{" << command_parser.website.config['sources'].map do |mp, type, *args|
+          type == :file_system ? File.join(command_parser.website.directory, args[0], args[1] || '**/*') : nil
         end.compact.join(',') << "}"
 
         Signal.trap('INT') {abort = true}
@@ -48,7 +42,7 @@ EOF
           paths = Dir[dirs].sort
           if old_paths != paths || paths.any? {|p| File.file?(p) && File.mtime(p) > time}
             begin
-              commandparser.website(true).execute_task(:generate_website)
+              command_parser.website(true).execute_task(:generate_website)
             rescue Webgen::Error => e
               puts e.message
             end

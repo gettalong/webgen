@@ -38,24 +38,6 @@ module Webgen
         end
       end
 
-      # Format the command description.
-      #
-      # Returns an array of Strings.
-      #
-      # See Utils.format for more information.
-      def self.format_command_desc(desc)
-        format(desc, 76)
-      end
-
-      # Format the option description.
-      #
-      # Returns an array of Strings.
-      #
-      # See Utils.format for more information.
-      def self.format_option_desc(desc)
-        format(desc, 48)
-      end
-
       # Return an array of lines which represents the text in +content+ formatted so that no line is
       # longer than +width+ characters.
       #

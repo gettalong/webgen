@@ -9,9 +9,9 @@ module Webgen
     class ShowTreeCommand < CmdParse::Command
 
       def initialize # :nodoc:
-        super('tree', false, false, true)
-        self.short_desc = 'Show the node tree'
-        self.description = Utils.format_command_desc(<<DESC)
+        super('tree', takes_commands: false)
+        short_desc('Show the node tree')
+        long_desc(<<DESC)
 Shows the internal representation of all destination paths that have been created
 from the source paths. Additionally, the meta information associated with each
 node can be shown as well.
@@ -28,18 +28,14 @@ are displayed.
 
 Hint: The global verbosity option enables additional output.
 DESC
-        self.options = CmdParse::OptionParserWrapper.new do |opts|
-          opts.separator "Options:"
-          opts.on("-a", "--alcn",
-                  *Utils.format_option_desc("Use ALCN insted of LCN for paths")) do |v|
+        options do |opts|
+          opts.on("-a", "--alcn", "Use ALCN insted of LCN for paths") do |v|
             @use_alcn = true
           end
-          opts.on("-f", "--[no-]fragments",
-                  *Utils.format_option_desc("Show fragment nodes (default: no)")) do |v|
+          opts.on("-f", "--[no-]fragments", "Show fragment nodes (default: no)") do |v|
             @show_fragments = v
           end
-          opts.on("-m", "--[no-]meta-info",
-                  *Utils.format_option_desc("Show meta information (default: no)")) do |v|
+          opts.on("-m", "--[no-]meta-info", "Show meta information (default: no)") do |v|
             @meta_info = v
           end
         end
@@ -48,10 +44,9 @@ DESC
         @show_fragments = false
       end
 
-      def execute(args) # :nodoc:
-        selector = args.shift
-        commandparser.website.ext.path_handler.populate_tree
-        data = collect_data(commandparser.website.tree.dummy_root.children, selector)
+      def execute(selector = nil) # :nodoc:
+        command_parser.website.ext.path_handler.populate_tree
+        data = collect_data(command_parser.website.tree.dummy_root.children, selector)
         print_tree(data, selector)
       end
 
@@ -61,7 +56,7 @@ DESC
           if sub.length > 0 ||
               ((selector.nil? || node.alcn.include?(selector)) &&
                ((!node.is_fragment? || @show_fragments) &&
-                (!node['passive'] || commandparser.website.ext.item_tracker.node_referenced?(node))))
+                (!node['passive'] || command_parser.website.ext.item_tracker.node_referenced?(node))))
             data = [@use_alcn ? node.alcn : node.lcn]
             data << node.alcn
             data << (@meta_info ? node.meta_info.map {|k,v| "#{k}: #{v.inspect}"} : [])

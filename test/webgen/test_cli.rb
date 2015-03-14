@@ -7,7 +7,7 @@ class TestCLICommandParser < Minitest::Test
 
   class SampleCommand < CmdParse::Command
     def initialize
-      super('sample', false)
+      super('sample', takes_commands: false)
     end
   end
 
@@ -30,11 +30,11 @@ class TestCLICommandParser < Minitest::Test
     out, err = capture_io do
       begin
         @cli.parse(['help'])
-        assert_equal(Dir.pwd, @cli.directory + '/')
+        assert_equal(Dir.pwd, @cli.directory)
       rescue SystemExit
       end
     end
-    assert_match(/Global options:/, out)
+    assert_match(/Global Options:/, out)
     assert_match(/create.*generate.*help.*install.*sample.*.*show.*config.*deps.*extensions.*version/m, out)
   end
 

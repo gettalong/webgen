@@ -14,9 +14,9 @@ module Webgen
     class ShowCommand < CmdParse::Command
 
       def initialize # :nodoc:
-        super('show', true, true, false)
-        self.short_desc = 'Show various information about webgen or a website'
-        self.description = Webgen::CLI::Utils.format_command_desc(<<DESC)
+        super('show', takes_commands: true)
+        short_desc('Show various information about webgen or a website')
+        long_desc(<<DESC)
 Groups various commands together that are used for showing information about webgen,
 like available extensions or configuration options. If a sub-command is invoked in the
 context of a webgen website, information about the website is also included.

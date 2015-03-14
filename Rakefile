@@ -107,7 +107,7 @@ EOF
 
     s.required_ruby_version = '>= 1.9.3'
 
-    s.add_dependency('cmdparse', '~> 2.0', '>= 2.0.5')
+    s.add_dependency('cmdparse', '~> 3.0', '>= 3.0.1')
     s.add_dependency('systemu', '~> 2.5')
     s.add_dependency('kramdown', '~> 1.3')
     s.add_development_dependency('rake', '>= 0.8.3')

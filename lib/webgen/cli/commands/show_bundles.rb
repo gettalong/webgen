@@ -9,9 +9,9 @@ module Webgen
     class ShowBundlesCommand < CmdParse::Command
 
       def initialize # :nodoc:
-        super('bundles', false, false, true)
-        self.short_desc = 'Show extension bundles'
-        self.description = Utils.format_command_desc(<<DESC)
+        super('bundles', takes_commands: false)
+        short_desc('Show extension bundles')
+        long_desc(<<DESC)
 Shows all loaded, available and installable bundles.
 
 Loaded bundles are already used by the website, available ones are installed but
@@ -19,18 +19,14 @@ not used and installable bundles can be installed if needed.
 
 Hint: The global verbosity option enables additional output.
 DESC
-        self.options = CmdParse::OptionParserWrapper.new do |opts|
-          opts.separator "Options:"
-          opts.on("-r", "--[no-]remote",
-                  *Utils.format_option_desc("Use remote server for listing installable bundles")) do |remote|
-            @remote = remote
-          end
+        options.on("-r", "--[no-]remote", "Use remote server for listing installable bundles") do |remote|
+          @remote = remote
         end
         @remote = false
       end
 
-      def execute(args) # :nodoc:
-        bundles = commandparser.website.ext.bundle_infos.bundles.dup
+      def execute # :nodoc:
+        bundles = command_parser.website.ext.bundle_infos.bundles.dup
         bundles.each {|n,d| d[:state] = :loaded}
 
         populate_hash = lambda do |file|
@@ -63,7 +59,7 @@ DESC
             next unless name_tuple.name =~ /webgen-(.*)-bundle/
             bundle_name = $1
             if !bundles.has_key?(bundle_name)
-              bundles[bundle_name] = {:state => :installable, :gem => spec.first}
+              bundles[bundle_name] = {:state => :installable, :gem => name_tuple.name}
             end
           end
         end
@@ -89,7 +85,7 @@ DESC
         puts(Utils.light(Utils.blue(name)))
         puts("  State:    #{data[:state]}")
         puts("  Rubygem:  #{data[:gem]}") if data[:gem]
-        if commandparser.verbose && data['author']
+        if command_parser.verbose && data['author']
           puts("  Author:   #{data['author']}")
           print("  Summary:  ")
           puts(Utils.format(data['summary'], 78, 12, false))

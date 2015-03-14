@@ -11,12 +11,10 @@ module Webgen
     class CreateCommand < CmdParse::Command
 
       def initialize # :nodoc:
-        super('create', true, true, false)
-        self.short_desc = 'Create some product'
-        self.description = Webgen::CLI::Utils.format_command_desc(<<DESC)
-Groups various commands together that are used for creating products, like a
-website or an extension bundle.
-DESC
+        super('create')
+        short_desc('Create a website or an extension bundle')
+        long_desc("Groups various commands together that are used for creating products, like a " +
+                  "website or an extension bundle")
         add_command(CreateWebsiteCommand.new)
         add_command(CreateBundleCommand.new)
       end
