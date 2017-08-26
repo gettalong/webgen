@@ -1,8 +1,4 @@
 --- paths
-/**/:
-  handler: directory
-  proxy_path: index.html
-
 /**/*.template:
   handler: template
   blocks: {defaults: {pipeline: [erb,tags,blocks,html_head]}}
@@ -45,3 +41,7 @@
   handler: copy
   pipeline: scss
   no_output: true
+
+/**/:
+  handler: directory
+  proxy_path: index.html
