@@ -139,10 +139,10 @@ module Webgen
         website.execute_task(:generate_website)
       end
 
-      task :clobber => paste('clobber_', @name)
+      task :clobber => "clobber_#{@name}".intern
 
       desc "Remove webgen products"
-      task paste('clobber_', @name) do
+      task "clobber_#{@name}".intern do
         require 'webgen/website'
         require 'webgen/cli'
         website = Webgen::Website.new(@directory, Webgen::CLI::Logger.new($stdout), &@config_block)
