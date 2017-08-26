@@ -100,7 +100,7 @@ class TestPathHandlerBase < Minitest::Test
 
     check_dest_path.call('/', mi, '/', @website.tree.dummy_root)
 
-    index_en = Webgen::Node.new(node, 'index.page', '/index.html', {'lang' => 'en'})
+    Webgen::Node.new(node, 'index.page', '/index.html', {'lang' => 'en'})
     check_dest_path.call('/index.en.html', mi, '/index.html')
     check_dest_path.call('/index.en.html', {'dest_path' => "<parent>hallo.html"}, '/hallo.html')
     check_dest_path.call('/other.de.html', {'dest_path' => "<parent>index(.<lang>)<ext>"}, '/index.de.html')

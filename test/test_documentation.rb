@@ -11,8 +11,6 @@ class TestExtensionDocumentation < Minitest::Test
   def test_all_extensions_documented
     ws = Webgen::Website.new(File.join(Dir.tmpdir, '/abcdefgh'))
     documentation = ws.ext.bundle_infos.extensions.dup
-    author = "Thomas Leitner <t_leitner@gmx.at>"
-    docu_keys = Set.new(documentation.keys)
     ext_keys = Set.new(ws.ext.instance_eval { @table.keys })
 
     check_docu = lambda do |key|
@@ -47,7 +45,6 @@ class TestExtensionDocumentation < Minitest::Test
   def test_all_config_options_documented
     ws = Webgen::Website.new(File.join(Dir.tmpdir, '/abcdefgh'))
     documentation = ws.ext.bundle_infos.options.dup
-    docu_keys = Set.new(documentation.keys)
 
     check_docu = lambda do |key|
       data = documentation.delete(key.to_s)

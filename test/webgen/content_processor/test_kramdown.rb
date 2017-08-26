@@ -11,7 +11,7 @@ class TestContentProcessorKramdown < Minitest::Test
     setup_context
     cp = Webgen::ContentProcessor::Kramdown
     root = Webgen::Node.new(@website.tree.dummy_root, '/', '/')
-    hello = Webgen::Node.new(root, 'hello.html', '/hello.en.html')
+    Webgen::Node.new(root, 'hello.html', '/hello.en.html')
     @website.config['content_processor.kramdown.options'] = {:auto_ids => true}
     @website.config['content_processor.kramdown.handle_links'] = true
     @website.config['content_processor.kramdown.ignore_unknown_fragments'] = false

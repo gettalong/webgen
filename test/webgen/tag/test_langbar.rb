@@ -17,7 +17,7 @@ class TestTagLangbar < Minitest::Test
 
     root = Webgen::Node.new(@website.tree.dummy_root, '/', '/')
     node = Webgen::Node.new(root, 'file.html', '/file.html', {'lang' => 'en'})
-    de_node = Webgen::Node.new(root, 'file.html', '/file.de.html', {'lang' => 'de'})
+    Webgen::Node.new(root, 'file.html', '/file.de.html', {'lang' => 'de'})
     other = Webgen::Node.new(root, 'other.html', '/other.html', {'lang' => 'en'})
     setup_tag_template(root)
 

@@ -11,10 +11,10 @@ module Webgen
 
       # Include the specified file verbatim in the output, optionally escaping special HTML characters
       # and/or processing tags in it.
-      def self.call(tag, body, context)
+      def self.call(tag, _body, context)
         filename = context[:config]['tag.include_file.filename']
         filename = File.join(context.website.directory, filename) unless filename =~ /^(\/|\w:)/
-        if !File.exists?(filename)
+        if !File.exist?(filename)
           raise Webgen::RenderError.new("File '#{filename}' cannot be included because it does not exist",
                                         "tag.#{tag}", context.dest_node, context.ref_node)
         end

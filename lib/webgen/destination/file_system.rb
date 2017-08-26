@@ -21,7 +21,7 @@ module Webgen
 
       # Return +true+ if the given path exists.
       def exists?(path)
-        File.exists?(File.join(@root, path))
+        File.exist?(File.join(@root, path))
       end
 
       # Delete the given +path+

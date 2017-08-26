@@ -13,7 +13,7 @@ class TestLogger < Minitest::Test
   def test_log_output
     original = Webgen::CLI::Utils.use_colors
     Webgen::CLI::Utils.use_colors = false
-    out, err = capture_io do
+    out, _err = capture_io do
       l = Webgen::CLI::Logger.new
       l.level = ::Logger::DEBUG
       l.info { "information" }

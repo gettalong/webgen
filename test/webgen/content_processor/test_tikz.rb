@@ -15,9 +15,9 @@ class TestContentProcessorTikz < Minitest::Test
     @website.ext.content_processor.register('Blocks')
     @website.ext.content_processor.register('Erb')
     template_data = File.read(File.join(Webgen::Utils.data_dir, 'passive_sources', 'templates', 'tikz.template'))
-    node = RenderNode.new(template_data, @website.tree.dummy_root, '/template', '/template')
+    RenderNode.new(template_data, @website.tree.dummy_root, '/template', '/template')
 
-    @context.node.define_singleton_method(:[]) {|ignored| nil}
+    @context.node.define_singleton_method(:[]) {|_ignored| nil}
 
     call('\tikz \draw (0,0) -- (0,1);', 'test.png', [], '', '72 72', false)
     Timeout.timeout(0.2) { call('\tikz \draw (0,0) -- (0,1);', 'test.png', [], '', '72 72', false) } # test cache
@@ -31,6 +31,9 @@ class TestContentProcessorTikz < Minitest::Test
 
   def call(content, path, libs, opts, res, trans)
     @context.content = content
+    if @context.dest_node.singleton_class.method_defined?(:dest_path)
+      @context.dest_node.singleton_class.send(:remove_method, :dest_path)
+    end
     @context.dest_node.define_singleton_method(:dest_path) {path}
     @context.website.config.update('content_processor.tikz.resolution' => res,
                                    'content_processor.tikz.transparent' => trans,

@@ -67,7 +67,7 @@ module Webgen
         render_res, output_res = context['content_processor.tikz.resolution'].split(' ')
 
         File.write(tex_file, context.content)
-        execute("pdflatex -shell-escape -interaction=nonstopmode -halt-on-error #{basename}.tex", cwd, context) do |status, stdout, stderr|
+        execute("pdflatex -shell-escape -interaction=nonstopmode -halt-on-error #{basename}.tex", cwd, context) do |_status, stdout, stderr|
           errors = (stdout+stderr).scan(/^!(.*\n.*)/).join("\n")
           raise Webgen::RenderError.new("Error while parsing TikZ picture commands with PDFLaTeX: #{errors}",
                                         'content_processor.tikz', context.dest_node, context.ref_node)
@@ -84,7 +84,7 @@ module Webgen
         execute(cmd, cwd, context)
 
         if render_res != output_res
-          status, stdout, stderr = execute("identify #{basename}#{ext}", cwd, context)
+          _status, stdout, _stderr = execute("identify #{basename}#{ext}", cwd, context)
           width, height = stdout.scan(/\s\d+x\d+\s/).first.strip.split('x').collect do |s|
             s.to_f * output_res.to_f / render_res.to_f
           end

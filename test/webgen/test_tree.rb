@@ -116,7 +116,7 @@ class TestTree < Minitest::Test
 
     root = Webgen::Node.new(@tree.dummy_root, '/', '/')
     file = Webgen::Node.new(root, 'testfile', 'testfile')
-    dir = Webgen::Node.new(root, 'testdir/', 'testdir')
+    Webgen::Node.new(root, 'testdir/', 'testdir')
     virtual_root = Webgen::Node.new(root, 'vroot', '/', 'no_output' => true)
 
     @tree.delete_node(@tree.dummy_root)

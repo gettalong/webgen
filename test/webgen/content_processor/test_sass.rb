@@ -33,7 +33,7 @@ class TestSass < Minitest::Test
     partial2 = Webgen::Node.new(dirdir, '_other.scss', '/dir/dir/_other.scss')
     partial2.node_info[:path] = Webgen::Path.new('test') { StringIO.new('#id { color:white; }') }
     dir2 = Webgen::Node.new(root, 'dir2/', '/dir2/')
-    file = Webgen::Node.new(dir2, 'file.test', '/dir2/file.test')
+    Webgen::Node.new(dir2, 'file.test', '/dir2/file.test')
 
     @context[:chain] = [sass]
     @context.content = "@import 'unknown'"

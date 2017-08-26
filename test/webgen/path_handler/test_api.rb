@@ -15,7 +15,7 @@ class TestPathHandlerApi < Minitest::Test
 
     @api = Webgen::PathHandler::Api.new(@website)
 
-    root = Webgen::Node.new(@website.tree.dummy_root, '/', '/')
+    Webgen::Node.new(@website.tree.dummy_root, '/', '/')
 
     @page_file = File.dirname(__FILE__) + "/../../../API.rdoc"
     @path = Webgen::Path.new('/test.api', 'dest_path' => '<parent><basename><ext>',

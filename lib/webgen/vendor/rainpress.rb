@@ -72,7 +72,7 @@ class Rainpress
   #
   # We take care of Windows(\r\n), Unix(\n) and Mac(\r) newlines.
 	def remove_newlines!
-		@style.gsub! /\n|\r/, ''
+		@style.gsub!(/\n|\r/, '')
 	end
 
 	# Remove unneeded spaces
@@ -81,9 +81,9 @@ class Rainpress
   # 2. Remove spaces around ;:{},
   # 3. Remove tabs
   def remove_spaces!
-    @style.gsub! /\s*(\s|;|:|\}|\{|,)\s*/, '\1'
-    @style.gsub! "\t", ''
-	end
+    @style.gsub!(/\s*(\s|;|:|\}|\{|,)\s*/, '\1')
+    @style.gsub!("\t", '')
+  end
 
 	# Replace color values with their shorter equivalent
 	#
@@ -94,9 +94,9 @@ class Rainpress
  	#    * black -> #000
 	# 4. Replace #-values with their shorter name
 	#    * #f00 -> red
-	def shorten_colors!
+  def shorten_colors!
 	  # rgb(50,101,152) to #326598
-    @style.gsub! /rgb\s*\(\s*([0-9,\s]+)\s*\)/ do |match|
+    @style.gsub!(/rgb\s*\(\s*([0-9,\s]+)\s*\)/) do |match|
       out = '#'
       $1.split(',').each do |num|
         out += '0' if num.to_i < 16
@@ -105,7 +105,7 @@ class Rainpress
       out
     end
     # Convert #AABBCC to #ABC, keep if preceed by a '='
-    @style.gsub! /([^\"'=\s])(\s*)#([\da-f])\3([\da-f])\4([\da-f])\5/i, '\1#\3\4\5'
+    @style.gsub!(/([^\"'=\s])(\s*)#([\da-f])\3([\da-f])\4([\da-f])\5/i, '\1#\3\4\5')
 
     # At the moment we assume that colours only appear before ';' or '}' and
     # after a ':', if there could be an occurence of a color before or after
@@ -114,54 +114,54 @@ class Rainpress
 
     # shorten several names to numbers
     ## shorten white -> #fff
-    @style.gsub! /:\s*white\s*(;|\})/, ':#fff\1'
+    @style.gsub!(/:\s*white\s*(;|\})/, ':#fff\1')
 
     ## shorten black -> #000
-    @style.gsub! /:\s*black\s*(;|\})/, ':#000\1'
+    @style.gsub!(/:\s*black\s*(;|\})/, ':#000\1')
 
     # shotern several numbers to names
     ## shorten #f00 or #ff0000 -> red
-    @style.gsub! /:\s*#f{1,2}0{2,4}(;|\})/i, ':red\1'
+    @style.gsub!(/:\s*#f{1,2}0{2,4}(;|\})/i, ':red\1')
   end
 
   # Do miscellaneous compression methods on the style.
   def do_misc!
     # Replace 0(pt,px,em,%) with 0 but only when preceded by : or a white-space
-    @style.gsub! /([\s:]+)(0)(px|em|%|in|cm|mm|pc|pt|ex)/i, '\1\2'
+    @style.gsub!(/([\s:]+)(0)(px|em|%|in|cm|mm|pc|pt|ex)/i, '\1\2')
 
     # Replace :0 0 0 0(;|}) with :0(;|})
-    @style.gsub! /:0 0 0 0(;|\})/, ':0\1'
+    @style.gsub!(/:0 0 0 0(;|\})/, ':0\1')
 
     # Replace :0 0 0(;|}) with :0(;|})
-    @style.gsub! /:0 0 0(;|\})/, ':0\1'
+    @style.gsub!(/:0 0 0(;|\})/, ':0\1')
 
     # Replace :0 0(;|}) with :0(;|})
-    @style.gsub! /:0 0(;|\})/, ':0\1'
+    @style.gsub!(/:0 0(;|\})/, ':0\1')
 
     # Replace background-position:0; with background-position:0 0;
-    @style.gsub! 'background-position:0;', 'background-position:0 0;'
+    @style.gsub!('background-position:0;', 'background-position:0 0;')
 
     # Replace 0.6 to .6, but only when preceded by : or a white-space
-    @style.gsub! /[:\s]0+\.(\d+)/ do |match|
-      match.sub '0', '' # only first '0' !!
+    @style.gsub!(/[:\s]0+\.(\d+)/) do |match|
+      match.sub('0', '') # only first '0' !!
     end
 
     # Replace multiple ';' with a single ';'
-    @style.gsub! /[;]+/, ';'
+    @style.gsub!(/[;]+/, ';')
 
     # Replace ;} with }
-    @style.gsub! ';}', '}'
+    @style.gsub!(';}', '}')
 
     # Replace font-weight:normal; with 400
-    @style.gsub! /font-weight[\s]*:[\s]*normal[\s]*(;|\})/i,'font-weight:400\1'
-    @style.gsub! /font[\s]*:[\s]*normal[\s;\}]*/ do |match|
-      match.sub 'normal', '400'
+    @style.gsub!(/font-weight[\s]*:[\s]*normal[\s]*(;|\})/i,'font-weight:400\1')
+    @style.gsub!(/font[\s]*:[\s]*normal[\s;\}]*/) do |match|
+      match.sub('normal', '400')
     end
 
     # Replace font-weight:bold; with 700
-    @style.gsub! /font-weight[\s]*:[\s]*bold[\s]*(;|\})/,'font-weight:700\1'
-    @style.gsub! /font[\s]*:[\s]*bold[\s;\}]*/ do |match|
-      match.sub 'bold', '700'
+    @style.gsub!(/font-weight[\s]*:[\s]*bold[\s]*(;|\})/,'font-weight:700\1')
+    @style.gsub!(/font[\s]*:[\s]*bold[\s;\}]*/) do |match|
+      match.sub('bold', '700')
     end
   end
 

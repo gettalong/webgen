@@ -285,7 +285,7 @@ option('tag.include_file.escape_html', true, &true_or_false)
 
 tag.register('Coderay', :mandatory => ['lang'])
 option('tag.coderay.lang', 'ruby')
-option('tag.coderay.process_body', true &true_or_false)
+option('tag.coderay.process_body', true, &true_or_false)
 option('tag.coderay.wrap', 'div') do |val|
   val = val.to_s.intern
   raise "The value has to be either div or span" unless val == :div || val == :span
@@ -313,7 +313,7 @@ option('tag.langbar.separator', ' | ')
 option('tag.langbar.mapping', {}, &is_hash)
 
 tag.register('BreadcrumbTrail')
-option('tag.breadcrumb_trail.omit_dir_index', false &true_or_false)
+option('tag.breadcrumb_trail.omit_dir_index', false, &true_or_false)
 option('tag.breadcrumb_trail.start_level', 0, &is_integer)
 option('tag.breadcrumb_trail.end_level', -1, &is_integer)
 option('tag.breadcrumb_trail.separator', ' / ', &is_string)

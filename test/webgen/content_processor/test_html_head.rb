@@ -17,7 +17,7 @@ class TestHtmlHead < Minitest::Test
   def test_call
     context = Webgen::Context.new(@website, :chain => [@node])
     context.content = "</head>"
-    de_node = Webgen::Node.new(@root, 'test', 'test.de', {'lang' => 'de'})
+    Webgen::Node.new(@root, 'test', 'test.de', {'lang' => 'de'})
     assert_equal("\n<link type=\"text/html\" rel=\"alternate\" hreflang=\"de\" href=\"test.de\" /></head>",
                  @obj.call(context).content)
   end

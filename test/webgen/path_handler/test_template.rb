@@ -11,7 +11,7 @@ class TestPathHandlerTemplate < Minitest::Test
 
   def test_create_nodes
     setup_website
-    root = Webgen::Node.new(@website.tree.dummy_root, '/', '/')
+    Webgen::Node.new(@website.tree.dummy_root, '/', '/')
     @template = Webgen::PathHandler::Template.new(@website)
 
     path = Webgen::Path.new('/default.template', 'dest_path' => '<parent><basename><ext>') { StringIO.new('test') }

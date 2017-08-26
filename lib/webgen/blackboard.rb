@@ -22,9 +22,9 @@ module Webgen
     # unknown ID is specified, the listener is added as last entry in the listener array.
     def add_listener(msg_name, id = nil, position = {}, &block)
       position = if position[:before]
-                   (@listener[msg_name] || []).index {|id, obj| id == position[:before]}
+                   (@listener[msg_name] || []).index {|lid, obj| lid == position[:before]}
                  elsif position[:after]
-                   (pos = (@listener[msg_name] || []).index {|id, obj| id == position[:after]}) && pos + 1
+                   (pos = (@listener[msg_name] || []).index {|lid, obj| lid == position[:after]}) && pos + 1
                  end
       insert_listener_at_position(msg_name, id, position || -1, &block)
     end

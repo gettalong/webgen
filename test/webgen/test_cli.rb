@@ -27,7 +27,7 @@ class TestCLICommandParser < Minitest::Test
 
   def test_parse
     @cli.website.ext.cli.add_command(SampleCommand.new)
-    out, err = capture_io do
+    out, _err = capture_io do
       begin
         @cli.parse(['help'])
         assert_equal(Dir.pwd, @cli.directory)

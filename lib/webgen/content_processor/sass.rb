@@ -96,8 +96,8 @@ module Webgen
         def possible_filenames(path)
           dirname, basename = File.split(path)
           basename, ext = basename.scan(/^(.*?)(?:\.(sass|scss))?$/).first
-          (ext.nil? ? %w{sass scss} : [ext]).map do |ext|
-            [["#{dirname}/_#{basename}.#{ext}", ext.to_sym], ["#{dirname}/#{basename}.#{ext}", ext.to_sym]]
+          (ext.nil? ? %w{sass scss} : [ext]).map do |iext|
+            [["#{dirname}/_#{basename}.#{iext}", iext.to_sym], ["#{dirname}/#{basename}.#{iext}", iext.to_sym]]
           end.flatten(1)
         end
 

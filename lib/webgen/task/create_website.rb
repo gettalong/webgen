@@ -55,7 +55,7 @@ module Webgen
       #
       # Returns +true+ if the website has been created.
       def self.call(website, template = nil)
-        if File.exists?(website.directory)
+        if File.exist?(website.directory)
           raise Error.new("Directory <#{website.directory}> does already exist!")
         end
         if template && !website.ext.task.data(:create_website)[:templates].has_key?(template)
@@ -64,18 +64,18 @@ module Webgen
 
         begin
           Dir.mktmpdir do |tmpdir|
-            ws = Webgen::Website.new(tmpdir) do |ws|
-              ws.config['sources'] = [['/', :file_system, File.join(Webgen::Utils.data_dir, 'basic_website_template')]]
+            ws = Webgen::Website.new(tmpdir) do |iws|
+              iws.config['sources'] = [['/', :file_system, File.join(Webgen::Utils.data_dir, 'basic_website_template')]]
               if template
-                ws.config['sources'].unshift(['/', :file_system, website.ext.task.data(:create_website)[:templates][template]])
+                iws.config['sources'].unshift(['/', :file_system, website.ext.task.data(:create_website)[:templates][template]])
               end
-              ws.config['destination'] = [:file_system, File.expand_path(website.directory)]
-              ws.ext.path_handler.registered_extensions.each do |name, data|
+              iws.config['destination'] = [:file_system, File.expand_path(website.directory)]
+              iws.ext.path_handler.registered_extensions.each do |_name, data|
                 data.patterns = []
               end
-              ws.ext.path_handler.registered_extensions[:copy].patterns = ['**/*', '**/']
-              ws.logger.level = ::Logger::INFO
-              ws.logger.formatter = Proc.new do |severity, timestamp, progname, msg|
+              iws.ext.path_handler.registered_extensions[:copy].patterns = ['**/*', '**/']
+              iws.logger.level = ::Logger::INFO
+              iws.logger.formatter = Proc.new do |_severity, _timestamp, _progname, msg|
                 website.logger.vinfo(msg) if msg =~ /\[create\]/
               end
             end

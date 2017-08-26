@@ -22,7 +22,7 @@ class TestTagBreadcrumbTrail < Minitest::Test
                                   {'lang' => 'en', 'routed_title' => 'Dir11', 'title' => 'Index'})
     file11_en = Webgen::Node.new(dir11, 'file111.html', '/dir1/dir11/file111.html',
                                  {'lang' => 'en', 'title' => 'File111'})
-    index_en = Webgen::Node.new(root, 'index.html', '/index.html', {'lang' => 'en'})
+    Webgen::Node.new(root, 'index.html', '/index.html', {'lang' => 'en'})
     setup_tag_template(root)
 
     context[:chain] = [file11_en]

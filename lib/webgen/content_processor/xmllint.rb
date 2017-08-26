@@ -14,7 +14,7 @@ module Webgen
         Webgen::Utils::ExternalCommand.ensure_available!('xmllint', '--version')
 
         cmd = "xmllint #{context.website.config['content_processor.xmllint.options']} -"
-        status, stdout, stderr = systemu(cmd, 'stdin' => context.content)
+        status, _stdout, stderr = systemu(cmd, 'stdin' => context.content)
         if status.exitstatus != 0
           stderr.scan(/^-:(\d+):(.*?\n)(.*?\n)/).each do |line, error_msg, line_context|
             context.website.logger.warn do

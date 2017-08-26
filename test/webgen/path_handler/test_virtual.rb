@@ -76,7 +76,7 @@ EOF
   def test_create_node
     @time = Time.now
     path = Webgen::Path.new('/virtual', 'dest_path' => '<parent><basename>(.<lang>)<ext>', 'modified_at' => @time)
-    nodes = @virtual.create_nodes(path, Webgen::Page.from_data(CONTENT).blocks)
+    @virtual.create_nodes(path, Webgen::Page.from_data(CONTENT).blocks)
 
     node_de = @root.tree['/path.de.html']
     node_en = @root.tree['/directory/path.en.html']
