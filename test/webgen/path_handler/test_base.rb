@@ -144,7 +144,7 @@ class TestPathHandlerBase < Minitest::Test
     assert_equal(false, @obj.node_exists?(Webgen::Path.new('/somename.en.html', {'no_output' => true}),
                                           '/somename.html'))
     assert_equal(frag_de, @obj.node_exists?(Webgen::Path.new('/somename.de.html#othertest'), '/somename.html#no'))
-    assert_equal(nil, @obj.node_exists?(Webgen::Path.new('/unknown'), '/unknown'))
+    assert_nil(@obj.node_exists?(Webgen::Path.new('/unknown'), '/unknown'))
   end
 
   def test_base_node_methods

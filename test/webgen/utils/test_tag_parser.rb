@@ -65,7 +65,7 @@ class TestTagParser < Minitest::Test
     i = 0
     check_proc = proc do |tag, params, body|
       assert_equal(data[i][0], tag, 'error on tag with content: ' + content)
-      assert_equal(data[i][1], params, 'error on params with content: ' + content)
+      assert(data[i][1] == params, 'error on params with content: ' + content)
       assert_equal(data[i][2], body, 'error on body with content: ' + content)
       i += 1
       'test' + i.to_s

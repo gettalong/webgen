@@ -27,7 +27,7 @@ class TestPathHandlerCopy < Minitest::Test
     check_node = lambda do |src_path, mi, dest_path, pipeline|
       node = @copy.create_nodes(Webgen::Path.new(src_path, {'dest_path' => '<parent><basename><ext>'}.merge(mi)))
       refute_nil(node)
-      assert_equal(pipeline, node.meta_info['pipeline'])
+      assert(pipeline == node.meta_info['pipeline'])
       assert_equal(dest_path, node.dest_path)
     end
 

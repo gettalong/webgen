@@ -17,7 +17,7 @@ class TestCLICommandParser < Minitest::Test
 
   def test_initialize
     assert_equal(Logger::INFO, @cli.log_level)
-    assert_equal(nil, @cli.directory)
+    assert_nil(@cli.directory)
   end
 
   def test_website

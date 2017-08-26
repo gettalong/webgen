@@ -18,7 +18,7 @@ class TestNode < Minitest::Test
       assert_equal(cn, node.cn)
       assert_equal(lcn, node.lcn)
       assert_equal(alcn, node.alcn)
-      assert_equal(lang, node.lang)
+      assert(lang == node.lang)
       assert_kind_of(Webgen::Language, node.lang) if node.lang
       assert_equal(mi, node.meta_info)
       assert_equal({}, node.node_info)

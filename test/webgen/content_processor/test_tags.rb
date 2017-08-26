@@ -34,7 +34,7 @@ class TestContentProcessorTags < Minitest::Test
 
     stag.set_block do |tag, params, body, local_context|
       assert_equal('test', tag)
-      assert_equal(nil, params)
+      assert_nil(params)
       assert_equal('', body)
       assert_equal(@context, local_context)
     end

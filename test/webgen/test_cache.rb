@@ -37,11 +37,11 @@ class TestCache < Minitest::Test
     @cache.volatile[:key] = :value
     assert_equal(:value, @cache.volatile[:key])
     dump_and_restore
-    assert_equal(nil, @cache.volatile[:key])
+    assert_nil(@cache.volatile[:key])
 
     @cache.volatile[:key] = :value
     @cache.reset_volatile_cache
-    assert_equal(nil, @cache.volatile[:key])
+    assert_nil(@cache.volatile[:key])
   end
 
 end

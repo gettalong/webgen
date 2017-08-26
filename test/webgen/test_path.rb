@@ -70,13 +70,13 @@ class TestPath < Minitest::Test
       assert_kind_of(String, o.path)
       assert_equal(ppath, o.parent_path)
       assert_equal(bn, o.basename)
-      assert_equal(lang, o.meta_info['lang'])
+      assert(lang == o.meta_info['lang'])
       assert_equal(ext, o.ext)
       assert_equal(cn, o.cn)
       assert_equal(lcn, o.lcn)
       assert_equal(acn, o.acn)
       assert_equal(alcn, o.alcn)
-      assert_equal(oi, o.meta_info['sort_info'])
+      assert(oi == o.meta_info['sort_info'])
       assert_equal(title, o.meta_info['title'])
     end
 

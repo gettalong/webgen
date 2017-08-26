@@ -13,7 +13,7 @@ class TestTree < Minitest::Test
   end
 
   def test_initialize
-    refute_equal(nil, @tree.dummy_root)
+    refute_nil(@tree.dummy_root)
     assert_equal('', @tree.dummy_root.alcn)
   end
 
@@ -29,8 +29,8 @@ class TestTree < Minitest::Test
     assert_equal(@tree['/file.de.html'], @tree.translate_node(@tree['/file.en.html'], 'de'))
     assert_equal(@tree['/file.en.html'], @tree.translate_node(@tree['/file.en.html'], 'en'))
     assert_equal(@tree['/file.en.html'], @tree.translate_node(@tree['/file.de.html'], 'en'))
-    assert_equal(nil, @tree.translate_node(@tree['/file.de.html'], 'fr'))
-    assert_equal(nil, @tree.translate_node(@tree['/file.en.html'], nil))
+    assert_nil(@tree.translate_node(@tree['/file.de.html'], 'fr'))
+    assert_nil(@tree.translate_node(@tree['/file.en.html'], nil))
 
     assert_equal(@tree['/other.en.html'], @tree.translate_node(@tree['/other.html'], 'en'))
     assert_equal(@tree['/other.html'], @tree.translate_node(@tree['/other.html'], 'de'))
@@ -38,7 +38,7 @@ class TestTree < Minitest::Test
     assert_equal(@tree['/other.html'], @tree.translate_node(@tree['/other.en.html'], nil))
     assert_equal(@tree['/other.html'], @tree.translate_node(@tree['/other.en.html'], 'de'))
 
-    assert_equal(nil, @tree.translate_node(@tree['/file.en.html#frag'], nil))
+    assert_nil(@tree.translate_node(@tree['/file.en.html#frag'], nil))
     assert_equal(@tree['/file.en.html#frag'], @tree.translate_node(@tree['/file.en.html#frag'], 'en'))
     assert_equal(@tree['/file.de.html#frag'], @tree.translate_node(@tree['/file.en.html#frag'], 'de'))
   end
@@ -54,29 +54,29 @@ class TestTree < Minitest::Test
     setup_default_nodes(@tree)
 
     [@tree['/'], @tree['/file.de.html'], @tree['/file.en.html'], @tree['/other.html']].each do |n|
-      assert_equal(nil, n.resolve('file.html', nil))
+      assert_nil(n.resolve('file.html', nil))
       assert_equal(@tree['/file.en.html'], n.resolve('file.html', 'en'))
       assert_equal(@tree['/file.de.html'], n.resolve('file.html', 'de'))
-      assert_equal(nil, n.resolve('file.html', 'fr'))
+      assert_nil(n.resolve('file.html', 'fr'))
       assert_equal(@tree['/file.en.html'], n.resolve('file.en.html', nil))
       assert_equal(@tree['/file.en.html'], n.resolve('file.en.html', 'en'))
       assert_equal(@tree['/file.en.html'], n.resolve('file.en.html', 'de'))
-      assert_equal(nil, n.resolve('somename.fr.html', 'de'))
+      assert_nil(n.resolve('somename.fr.html', 'de'))
 
       assert_equal(@tree['/other.html'], n.resolve('other.html', nil))
       assert_equal(@tree['/other.html'], n.resolve('other.html', 'fr'))
       assert_equal(@tree['/other.en.html'], n.resolve('other.html', 'en'))
       assert_equal(@tree['/other.en.html'], n.resolve('other.en.html', nil))
       assert_equal(@tree['/other.en.html'], n.resolve('other.en.html', 'de'))
-      assert_equal(nil, n.resolve('other.fr.html', nil))
-      assert_equal(nil, n.resolve('other.fr.html', 'en'))
+      assert_nil(n.resolve('other.fr.html', nil))
+      assert_nil(n.resolve('other.fr.html', 'en'))
     end
 
     assert_equal(@tree['/file.en.html#frag'], @tree['/file.en.html'].resolve('#frag', 'de'))
     assert_equal(@tree['/file.en.html#frag'], @tree['/file.en.html'].resolve('#frag', nil))
     assert_equal(@tree['/file.en.html#nested'], @tree['/file.en.html'].resolve('#nested', nil))
 
-    assert_equal(nil, @tree.resolve_node('/file.html#frag', nil))
+    assert_nil(@tree.resolve_node('/file.html#frag', nil))
     assert_equal(@tree['/file.en.html#frag'], @tree.resolve_node('/file.html#frag', 'en'))
     assert_equal(@tree['/file.de.html#frag'], @tree.resolve_node('/file.html#frag', 'de'))
     assert_equal(@tree['/file.en.html#frag'], @tree.resolve_node('/file.en.html#frag', nil))
@@ -91,9 +91,9 @@ class TestTree < Minitest::Test
 
     nrcalls = 0
     @website.blackboard.add_listener(:node_resolution_failed) { nrcalls += 1 }
-    assert_equal(nil, @tree['/'].resolve('other.fr.html', nil, false))
+    assert_nil(@tree['/'].resolve('other.fr.html', nil, false))
     assert_equal(0, nrcalls)
-    assert_equal(nil, @tree['/'].resolve('other.fr.html', nil, true))
+    assert_nil(@tree['/'].resolve('other.fr.html', nil, true))
     assert_equal(1, nrcalls)
   end
 
