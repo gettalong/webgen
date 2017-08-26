@@ -55,15 +55,14 @@ module Webgen
           used_chain = (context[:chain].length > 1 ? context[:chain][1..-1] : context[:chain].dup)
         elsif options[:chain].kind_of?(Array)
           used_chain = options[:chain]
-          dest_node = context.dest_node
         else
           paths = options[:chain].split(';')
           used_chain = paths.collect do |path|
             context.ref_node.resolve(path.strip, context.dest_node.lang, true)
           end.compact
           return '' if used_chain.length != paths.length
-          dest_node = context.dest_node
         end
+        dest_node = context.dest_node
 
         if options[:node] == 'first'
           used_chain.shift while used_chain.length > 0 && !used_chain.first.blocks.has_key?(options[:name])
