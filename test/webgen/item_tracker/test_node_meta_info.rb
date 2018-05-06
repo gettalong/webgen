@@ -24,6 +24,14 @@ class TestNodeMetaInfo < Minitest::Test
     refute_same(@node.meta_info, @obj.item_data('alcn'))
     assert_equal('value', @obj.item_data('alcn', 'key'))
     refute_same(@node.meta_info['key'], @obj.item_data('alcn', 'key'))
+
+    @node.define_singleton_method(:meta_info) { {'key' => 'value', 'modified_at' => 5} }
+    assert_equal({'key' => 'value'}, @obj.item_data('alcn'))
+    @node.define_singleton_method(:meta_info) do
+      {'key' => 'value', 'modified_at' => 5, 'modified_at_in_dest_path' => true}
+    end
+    assert_equal({'key' => 'value', 'modified_at' => 5, 'modified_at_in_dest_path' => true},
+                 @obj.item_data('alcn'))
   end
 
   def test_item_changed?

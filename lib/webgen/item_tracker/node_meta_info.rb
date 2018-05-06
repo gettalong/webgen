@@ -35,7 +35,13 @@ module Webgen
 
       def item_data(alcn, key = nil) #:nodoc:
         mi = @website.tree[alcn].meta_info
-        key.nil? ? (mi = mi.dup; mi.delete(CONTENT_MODIFICATION_KEY); mi) : mi[key].dup
+        if key.nil? && mi['modified_at_in_dest_path']
+          mi
+        elsif key.nil?
+          (mi = mi.dup; mi.delete(CONTENT_MODIFICATION_KEY); mi)
+        else
+          mi[key].dup
+        end
       end
 
       def item_changed?(iid, old_data) #:nodoc:
