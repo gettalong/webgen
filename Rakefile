@@ -123,6 +123,7 @@ EOF
     s.add_development_dependency('erubis', '~> 2.6')
     s.add_development_dependency('rdiscount', '~> 1.3')
     s.add_development_dependency('archive-tar-minitar', '~> 0.5')
+    s.add_development_dependency('cssminify', '~> 1.0')
 
     s.files = PKG_FILES.to_a
     s.require_path = 'lib'

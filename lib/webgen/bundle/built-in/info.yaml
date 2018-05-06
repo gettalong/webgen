@@ -22,6 +22,9 @@ extensions:
   content_processor.builder:
     author: *author
     summary: Allows one to programatically create valid XHTML/XML documents
+  content_processor.cssminify:
+    author: *author
+    summary: Compresses CSS files
   content_processor.erb:
     author: *author
     summary: Allows one to use ERB (embedded Ruby) in the content

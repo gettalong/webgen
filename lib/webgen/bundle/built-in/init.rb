@@ -63,6 +63,7 @@ require 'webgen/content_processor'
 website.ext.content_processor = content_processor = Webgen::ContentProcessor.new
 content_processor.register('Blocks')
 content_processor.register('Builder')
+content_processor.register('CSSMinify', :name => 'cssminify')
 content_processor.register('Erb')
 option('content_processor.erb.trim_mode', '', &is_string)
 
