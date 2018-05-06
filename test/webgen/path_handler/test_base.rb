@@ -60,7 +60,7 @@ class TestPathHandlerBase < Minitest::Test
       assert_equal(expected, @obj.dest_path(parent, Webgen::Path.new(path, mi)))
     end
 
-    mi = {'dest_path' => '<parent><basename>(-<version>)(.<lang>)<ext>'}
+    mi = {'dest_path' => '<parent><basename>(-<version>)(-<modified_at>)(.<lang>)<ext>'}
 
     config['path_handler.lang_code_in_dest_path'] = true
     check_dest_path.call('/path.html', mi, '/path.html')
@@ -127,6 +127,10 @@ class TestPathHandlerBase < Minitest::Test
 
     check_dest_path.call('/path.html', {'dest_path' => "webgen:this is not changed"},
                          'this is not changed')
+
+    check_dest_path.call('/path.css', mi.merge('modified_at_in_dest_path' => true,
+                                               'modified_at' => Time.parse('2018-05-06 08:30:05')),
+                         '/path-20180506083005.css')
 
     assert_raises(Webgen::NodeCreationError) do
       check_dest_path.call('/path.html', {'dest_path' => "<hallo>"}, 'unused')
