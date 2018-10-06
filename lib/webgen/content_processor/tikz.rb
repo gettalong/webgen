@@ -7,7 +7,6 @@ require 'webgen/content_processor'
 require 'webgen/utils/external_command'
 
 Webgen::Utils::ExternalCommand.ensure_available!('pdflatex', '-v')
-Webgen::Utils::ExternalCommand.ensure_available!('pdfcrop', '--version')
 Webgen::Utils::ExternalCommand.ensure_available!('gs', '-v')
 Webgen::Utils::ExternalCommand.ensure_available!('convert', '-version')
 Webgen::Utils::ExternalCommand.ensure_available!('identify', '-version')
@@ -72,8 +71,6 @@ module Webgen
           raise Webgen::RenderError.new("Error while parsing TikZ picture commands with PDFLaTeX: #{errors}",
                                         'content_processor.tikz', context.dest_node, context.ref_node)
         end
-
-        execute("pdfcrop #{basename}.pdf #{basename}.pdf", cwd, context)
 
         if context['content_processor.tikz.transparent'] && ext =~ /\.png/i
           cmd = "gs -dSAFER -dBATCH -dNOPAUSE -r#{render_res} -sDEVICE=pngalpha -dGraphicsAlphaBits=4 " +

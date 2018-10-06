@@ -1,7 +1,6 @@
 --- name:content pipeline:erb
 \nonstopmode
-\documentclass{standalone}
-\usepackage{tikz}
+\documentclass[tikz]{standalone}
 
 <% if context['content_processor.tikz.libraries'] %>
 \usetikzlibrary{<%= context['content_processor.tikz.libraries'].join(',') %>}
