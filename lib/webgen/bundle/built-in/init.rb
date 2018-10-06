@@ -112,6 +112,7 @@ option('content_processor.tikz.resolution', '72 72',) do |val|
 end
 option('content_processor.tikz.transparent', false, &true_or_false)
 option('content_processor.tikz.template', '/templates/tikz.template', &is_string)
+option('content_processor.tikz.engine', 'pdflatex', &is_string)
 
 content_processor.register('Xmllint')
 option('content_processor.xmllint.options', "--catalogs --noout --valid", &is_string)
