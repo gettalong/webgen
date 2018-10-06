@@ -11,6 +11,7 @@ Webgen::Utils::ExternalCommand.ensure_available!('pdfcrop', '--version')
 Webgen::Utils::ExternalCommand.ensure_available!('gs', '-v')
 Webgen::Utils::ExternalCommand.ensure_available!('convert', '-version')
 Webgen::Utils::ExternalCommand.ensure_available!('identify', '-version')
+Webgen::Utils::ExternalCommand.ensure_available!('pdf2svg', '-v')
 
 module Webgen
   class ContentProcessor
@@ -78,17 +79,24 @@ module Webgen
         if context['content_processor.tikz.transparent'] && ext =~ /\.png/i
           cmd = "gs -dSAFER -dBATCH -dNOPAUSE -r#{render_res} -sDEVICE=pngalpha -dGraphicsAlphaBits=4 " +
             "-dTextAlphaBits=4 -sOutputFile=#{basename}#{ext} #{basename}.pdf"
+        elsif ext =~ /\.svg/i
+          # some installations of ghostscript (`gs`) also have a svg output device, but pdf2svg
+          # is a safer bet.
+          cmd = "pdf2svg #{basename}.pdf #{basename}.svg"
         else
           cmd = "convert -density #{render_res} #{basename}.pdf #{basename}#{ext}"
         end
         execute(cmd, cwd, context)
 
-        if render_res != output_res
-          _status, stdout, _stderr = execute("identify #{basename}#{ext}", cwd, context)
-          width, height = stdout.scan(/\s\d+x\d+\s/).first.strip.split('x').collect do |s|
-            s.to_f * output_res.to_f / render_res.to_f
+        # resizing doesn't really make sense on a vector graphic.
+        unless ext =~ /\.svg/i
+          if render_res != output_res
+            _status, stdout, _stderr = execute("identify #{basename}#{ext}", cwd, context)
+            width, height = stdout.scan(/\s\d+x\d+\s/).first.strip.split('x').collect do |s|
+              s.to_f * output_res.to_f / render_res.to_f
+            end
+            execute("convert -resize #{width}x#{height} #{basename}#{ext} #{basename}#{ext}", cwd, context)
           end
-          execute("convert -resize #{width}x#{height} #{basename}#{ext} #{basename}#{ext}", cwd, context)
         end
       end
       private_class_method :compile
