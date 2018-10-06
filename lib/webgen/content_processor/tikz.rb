@@ -11,7 +11,6 @@ Webgen::Utils::ExternalCommand.ensure_available!('pdfcrop', '--version')
 Webgen::Utils::ExternalCommand.ensure_available!('gs', '-v')
 Webgen::Utils::ExternalCommand.ensure_available!('convert', '-version')
 Webgen::Utils::ExternalCommand.ensure_available!('identify', '-version')
-Webgen::Utils::ExternalCommand.ensure_available!('pdf2svg', '-v')
 
 module Webgen
   class ContentProcessor
