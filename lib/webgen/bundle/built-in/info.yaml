@@ -404,6 +404,20 @@ options:
         \tikz \draw (0,0) -- (0,2) -- (2,2);
         {tikz}
 
+  content_processor.tikz.engine:
+    summary: |
+      Specifies which LaTeX engine should be used. Default is pdflatex, but you may want to use
+      xelatex or lualatex if needed.
+    syntax: |
+      `pdflatex` or `lualatex` or `xelatex`
+    example:
+      config: |
+        content_processor.tikz.engine: lualatex
+      tag: |
+        {tikz:: {path: tikz.png, content_processor.tikz.engine: xelatex}}
+        \tikz \draw (0,0) -- (0,2) -- (2,2);
+        {tikz}
+
   content_processor.xmllint.options:
     summary: |
       Options passed to the `xmllint` command.

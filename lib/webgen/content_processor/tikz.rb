@@ -31,7 +31,7 @@ module Webgen
       def self.prepare_options(context)
         %w[content_processor.tikz.resolution content_processor.tikz.transparent
            content_processor.tikz.libraries content_processor.tikz.opts
-           content_processor.tikz.template].each do |opt|
+           content_processor.tikz.template content_processor.tikz.engine].each do |opt|
           context[opt] = context.content_node[opt] || context.website.config[opt]
         end
         context['data'] = context.content
@@ -66,10 +66,11 @@ module Webgen
       def self.compile(context, cwd, tex_file, basename, ext)
         render_res, output_res = context['content_processor.tikz.resolution'].split(' ')
 
+        engine = context['content_processor.tikz.engine']
         File.write(tex_file, context.content)
-        execute("pdflatex -shell-escape -interaction=nonstopmode -halt-on-error #{basename}.tex", cwd, context) do |_status, stdout, stderr|
+        execute("#{engine} -shell-escape -interaction=nonstopmode -halt-on-error #{basename}.tex", cwd, context) do |_status, stdout, stderr|
           errors = (stdout+stderr).scan(/^!(.*\n.*)/).join("\n")
-          raise Webgen::RenderError.new("Error while parsing TikZ picture commands with PDFLaTeX: #{errors}",
+          raise Webgen::RenderError.new("Error while parsing TikZ picture commands with #{engine}: #{errors}",
                                         'content_processor.tikz', context.dest_node, context.ref_node)
         end
 
