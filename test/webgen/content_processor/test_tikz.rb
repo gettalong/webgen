@@ -19,13 +19,13 @@ class TestContentProcessorTikz < Minitest::Test
 
     @context.node.define_singleton_method(:[]) {|_ignored| nil}
 
-    call('\tikz \draw (0,0) -- (0,1);', 'test.png', [], '', '72 72', false)
-    Timeout.timeout(0.2) { call('\tikz \draw (0,0) -- (0,1);', 'test.png', [], '', '72 72', false) } # test cache
+    call('\tikz \draw (0,0) -- (1,1);', 'test.png', [], '', '72 72', false)
+    Timeout.timeout(0.2) { call('\tikz \draw (0,0) -- (1,1);', 'test.png', [], '', '72 72', false) } # test cache
     refute_nil(@context.content)
 
     assert_raises(Webgen::RenderError) { call('\tikz \asdfasdfasf', 'test.png', [], '', '72 72', false) }
 
-    call('\tikz \draw (0,0) -- (0,1);', '/images/test.gif', ['arrows'], '->', '72 72', true)
+    call('\tikz \draw (0,0) -- (1,1);', '/images/test.gif', ['arrows'], '->', '72 72', true)
     refute_nil(@context.content)
   end
 
@@ -44,7 +44,7 @@ class TestContentProcessorTikz < Minitest::Test
   end
 
   def teardown
-    FileUtils.rm_rf(@website.directory) if @website
+    #FileUtils.rm_rf(@website.directory) if @website
   end
 
 end
