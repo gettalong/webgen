@@ -7,6 +7,7 @@ rvm:
 
 before_install:
   - sudo apt-get install texlive-latex-base texlive-latex-recommended texlive-latex-extra tidy libxml2-utils
-  - gem install cmdparse systemu kramdown rake minitest diff-lcs RedCloth haml sass builder rdoc coderay erubis rdiscount archive-tar-minitar
+  - gem install cmdparse systemu kramdown rake minitest diff-lcs RedCloth haml sass builder coderay erubis rdiscount archive-tar-minitar
+  - gem install rdoc -v '5.1.0'
 
 script: rake test
