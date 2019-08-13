@@ -24,13 +24,15 @@ class TestHtmlHead < Minitest::Test
 
   def test_tags_from_context_data
     @node.meta_info['meta'] = {'other' => 'me'}
+    @node.meta_info['meta_property'] = {'otherprop' => 'me'}
     context = Webgen::Context.new(@website, :chain => [@node])
     context.persistent[:cp_html_head] = {
       :js_file => ['hallo.js', 'hallo2.js', 'hallo.js'],
       :js_inline => ["somescript", "anotherscript"],
       :css_file => ['hallo.css', 'hallo2.css', 'hallo.css'],
       :css_inline => ["somestyle", "anotherstyle"],
-      :meta => {:lucky => 'me<"'}
+      :meta => {:lucky => 'me<"'},
+      :meta_property => {:unlucky => 'me'},
     }
     assert_equal("\n<script type=\"text/javascript\" src=\"hallo.js\"></script>" +
                  "\n<script type=\"text/javascript\" src=\"hallo2.js\"></script>" +
@@ -41,10 +43,15 @@ class TestHtmlHead < Minitest::Test
                  "\n<style type=\"text/css\">/*<![CDATA[/*/\nsomestyle\n/*]]>*/</style>" +
                  "\n<style type=\"text/css\">/*<![CDATA[/*/\nanotherstyle\n/*]]>*/</style>" +
                  "\n<meta name=\"lucky\" content=\"me&lt;&quot;\" />" +
-                 "\n<meta name=\"other\" content=\"me\" />", @obj.tags_from_context_data(context))
+                 "\n<meta name=\"other\" content=\"me\" />" +
+                 "\n<meta property=\"unlucky\" content=\"me\" />" +
+                 "\n<meta property=\"otherprop\" content=\"me\" />",
+                 @obj.tags_from_context_data(context))
 
     context.persistent[:cp_html_head] = nil
-    assert_equal("\n<meta name=\"other\" content=\"me\" />", @obj.tags_from_context_data(context))
+    assert_equal("\n<meta name=\"other\" content=\"me\" />" +
+                 "\n<meta property=\"otherprop\" content=\"me\" />",
+                 @obj.tags_from_context_data(context))
 
   end
 

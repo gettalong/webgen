@@ -74,10 +74,12 @@ class TestContext < Minitest::Test
     @context.html_head.inline_fragment(:css, "content")
     @context.html_head.inline_fragment(:js, "content")
     @context.html_head.meta('name', 'content')
+    @context.html_head.meta_property('property', 'content')
 
     assert_equal(['content'], @context.persistent[:cp_html_head][:css_inline])
     assert_equal(['content'], @context.persistent[:cp_html_head][:js_inline])
     assert_equal({'name' => 'content'}, @context.persistent[:cp_html_head][:meta])
+    assert_equal({'property' => 'content'}, @context.persistent[:cp_html_head][:meta_property])
   end
 
 end

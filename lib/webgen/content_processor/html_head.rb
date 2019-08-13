@@ -73,6 +73,9 @@ module Webgen
         ((context.persistent[:cp_html_head] || {})[:meta] || {}).merge(context.content_node['meta'] || {}).each do |name, content|
           result += "\n<meta name=\"#{ERB::Util.h(name)}\" content=\"#{ERB::Util.h(content)}\" />"
         end
+        ((context.persistent[:cp_html_head] || {})[:meta_property] || {}).merge(context.content_node['meta_property'] || {}).each do |property, content|
+          result += "\n<meta property=\"#{ERB::Util.h(property)}\" content=\"#{ERB::Util.h(content)}\" />"
+        end
         result
       end
 
