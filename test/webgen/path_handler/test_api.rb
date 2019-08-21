@@ -6,9 +6,16 @@ require 'webgen/path_handler/api'
 class TestPathHandlerApi < Minitest::Test
 
   # Some Constant
-  TESTCONST = 42
+  TEST_CONST = 42
+
+  # Other Constant
+  OTHER_CONST = 43
+
+  def self.test_meth; end
+  def self.other_meth; end
 
   attr_reader :test_attr
+  attr_reader :other_attr
 
   class SampleTestSubclass
   end
@@ -49,14 +56,30 @@ class TestPathHandlerApi < Minitest::Test
     assert(@website.tree["#{test_alcn}#method-i-setup"])
     assert_equal(["#{test_alcn}#method-i-setup", 'TestPathHandlerApi#setup'],
                  @website.ext.link_definitions['my_api:TestPathHandlerApi#setup'])
+    assert(@website.tree["#{test_alcn}#method-c-test_meth"])
+    assert_equal(["#{test_alcn}#method-c-test_meth", 'TestPathHandlerApi::test_meth'],
+                 @website.ext.link_definitions['my_api:TestPathHandlerApi::test_meth'])
     assert(@website.tree["#{test_alcn}#attribute-i-test_attr"])
     assert_equal(["#{test_alcn}#attribute-i-test_attr", 'TestPathHandlerApi#test_attr'],
                  @website.ext.link_definitions['my_api:TestPathHandlerApi#test_attr'])
-    assert(@website.tree["#{test_alcn}#TESTCONST"])
-    assert_equal(["#{test_alcn}#TESTCONST", 'TestPathHandlerApi::TESTCONST'],
-                 @website.ext.link_definitions['my_api:TestPathHandlerApi::TESTCONST'])
+    assert(@website.tree["#{test_alcn}#TEST_CONST"])
+    assert_equal(["#{test_alcn}#TEST_CONST", 'TestPathHandlerApi::TEST_CONST'],
+                 @website.ext.link_definitions['my_api:TestPathHandlerApi::TEST_CONST'])
     assert(@website.tree['/my_dir/API_rdoc.en.html'])
     assert(@website.tree['/my_dir/TestPathHandlerApi/SampleTestSubclass.en.html'])
+
+    collector = lambda do |node|
+      node.children.empty? ? node.lcn : [node.lcn, node.children.map(&collector)]
+    end
+    result = @website.tree[test_alcn].children.map(&collector)
+
+    assert_equal([["#Constants", ["#OTHER_CONST", "#TEST_CONST"]],
+                  ["#Attributes", ["#attribute-i-other_attr", "#attribute-i-test_attr"]],
+                  ["#Class-Methods", ["#method-c-other_meth", "#method-c-test_meth"]],
+                  ["#Instance-Methods", ["#method-i-assert_common_tests_for_create_nodes",
+                  "#method-i-setup", "#method-i-setup_for_create_nodes", "#method-i-teardown",
+                  "#method-i-test_create_nodes", "#method-i-test_create_nodes_hierarchical",
+                  "#method-i-test_rdoc_options", "#method-i-test_rdoc_store"]]], result)
 
     cache_dir = @website.tmpdir(File.join('path_handler.api', 'my_api'))
     assert(File.directory?(cache_dir))

@@ -47,9 +47,9 @@ module Webgen
           klass_node = create_page_node_for_class(path, dir_node, klass, output_flag_file)
           api.class_nodes[klass.full_name] = klass_node
           klass_node.node_info[:api] = api
-          klass.each_method {|method| create_fragment_node_for_method(path, klass_node, method)}
-          klass.each_constant {|const| create_fragment_node_for_constant(path, klass_node, const)}
-          klass.each_attribute {|attr| create_fragment_node_for_method(path, klass_node, attr)}
+          create_fragment_nodes_for_constants(path, klass_node, klass)
+          create_fragment_nodes_for_attributes(path, klass_node, klass)
+          create_fragment_nodes_for_methods(path, klass_node, klass)
         end
 
         rdoc.store.all_files.sort.each do |file|
@@ -180,26 +180,76 @@ module Webgen
       end
       protected :create_page_node_for_class
 
+      # Creates fragment nodes for constants under the "Constants" fragment.
+      def create_fragment_nodes_for_constants(api_path, klass_node, klass)
+        return if klass.constants.none? {|const| const.display? }
+        constants_url = "#{klass_node.alcn}#Constants"
+        path = Webgen::Path.new(constants_url,
+                                {'handler' => 'copy', 'modified_at' => api_path['modified_at'],
+                                 'pipeline' => [], 'no_output' => true, 'title' => "Constants"})
+        const_node = @website.ext.path_handler.create_secondary_nodes(path).first
+        klass.constants.sort_by(&:name).each do |const|
+          create_fragment_node_for_constant(api_path, const_node, const)
+        end
+      end
+      protected :create_fragment_nodes_for_constants
+
       # Create a fragment node for the given constant.
       #
       # A link definition entry for the method is also created.
-      def create_fragment_node_for_constant(api_path, klass_node, constant)
-        constant_url = "#{klass_node.alcn}##{constant.name}"
+      def create_fragment_node_for_constant(api_path, parent_node, constant)
+        constant_url = "#{parent_node.alcn.sub(/#.*$/, '')}##{constant.name}"
         path = Webgen::Path.new(constant_url,
                                 {'handler' => 'copy', 'modified_at' => api_path['modified_at'],
+                                 'parent_alcn' => parent_node.alcn,
                                  'pipeline' => [], 'no_output' => true, 'title' => constant.name})
         @website.ext.path_handler.create_secondary_nodes(path)
         add_link_definition(api_path, constant.full_name, constant_url, constant.full_name)
       end
       protected :create_fragment_node_for_constant
 
+      # Creates fragment nodes for attributes under the "Attributes" fragment.
+      def create_fragment_nodes_for_attributes(api_path, parent_node, klass)
+        return if klass.attributes.none? {|attr| attr.display? }
+        attributes_url = "#{parent_node.alcn}#Attributes"
+        path = Webgen::Path.new(attributes_url,
+                                {'handler' => 'copy', 'modified_at' => api_path['modified_at'],
+                                  'parent_alcn' => parent_node.alcn,
+                                 'pipeline' => [], 'no_output' => true, 'title' => "Attributes"})
+        attr_node = @website.ext.path_handler.create_secondary_nodes(path).first
+        klass.attributes.sort_by(&:name).each do |attribute|
+          create_fragment_node_for_method(api_path, attr_node, attribute)
+        end
+      end
+      protected :create_fragment_nodes_for_attributes
+
+      # Creates fragment nodes for methods under the "Class Methods" or "Instance Methods"
+      # fragments.
+      def create_fragment_nodes_for_methods(api_path, klass_node, klass)
+        ["Class", "Instance"].each do |type|
+          method_list = klass.send("#{type.downcase}_method_list")
+          next if method_list.empty?
+          meth_url = "#{klass_node.alcn}##{type}-Methods"
+          path = Webgen::Path.new(meth_url,
+                                  {'handler' => 'copy', 'modified_at' => api_path['modified_at'],
+                                    'pipeline' => [], 'no_output' => true,
+                                    'title' => "#{type} Methods"})
+          meth_node = @website.ext.path_handler.create_secondary_nodes(path).first
+          method_list.sort_by(&:name).each do |method|
+            create_fragment_node_for_method(api_path, meth_node, method)
+          end
+        end
+      end
+      protected :create_fragment_nodes_for_attributes
+
       # Create a fragment node for the given method.
       #
       # A link definition entry for the method is also created.
-      def create_fragment_node_for_method(api_path, klass_node, method)
-        method_url = "#{klass_node.alcn}##{method.aref}"
+      def create_fragment_node_for_method(api_path, parent_node, method)
+        method_url = "#{parent_node.alcn.sub(/#.*$/, '')}##{method.aref}"
         path = Webgen::Path.new(method_url,
                                 {'handler' => 'copy', 'modified_at' => api_path['modified_at'],
+                                  'parent_alcn' => parent_node.alcn,
                                   'pipeline' => [], 'no_output' => true, 'title' => method.name})
         @website.ext.path_handler.create_secondary_nodes(path)
         add_link_definition(api_path, method.full_name, method_url, method.full_name)
