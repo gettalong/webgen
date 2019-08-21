@@ -5,6 +5,9 @@ require 'webgen/path_handler/api'
 
 class TestPathHandlerApi < Minitest::Test
 
+  # Some Constant
+  TESTCONST = 42
+
   attr_reader :test_attr
 
   class SampleTestSubclass
@@ -49,6 +52,9 @@ class TestPathHandlerApi < Minitest::Test
     assert(@website.tree["#{test_alcn}#attribute-i-test_attr"])
     assert_equal(["#{test_alcn}#attribute-i-test_attr", 'TestPathHandlerApi#test_attr'],
                  @website.ext.link_definitions['my_api:TestPathHandlerApi#test_attr'])
+    assert(@website.tree["#{test_alcn}#TESTCONST"])
+    assert_equal(["#{test_alcn}#TESTCONST", 'TestPathHandlerApi::TESTCONST'],
+                 @website.ext.link_definitions['my_api:TestPathHandlerApi::TESTCONST'])
     assert(@website.tree['/my_dir/API_rdoc.en.html'])
     assert(@website.tree['/my_dir/TestPathHandlerApi/SampleTestSubclass.en.html'])
 

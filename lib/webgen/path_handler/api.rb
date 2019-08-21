@@ -48,6 +48,7 @@ module Webgen
           api.class_nodes[klass.full_name] = klass_node
           klass_node.node_info[:api] = api
           klass.each_method {|method| create_fragment_node_for_method(path, klass_node, method)}
+          klass.each_constant {|const| create_fragment_node_for_constant(path, klass_node, const)}
           klass.each_attribute {|attr| create_fragment_node_for_method(path, klass_node, attr)}
         end
 
@@ -178,6 +179,19 @@ module Webgen
         node
       end
       protected :create_page_node_for_class
+
+      # Create a fragment node for the given constant.
+      #
+      # A link definition entry for the method is also created.
+      def create_fragment_node_for_constant(api_path, klass_node, constant)
+        constant_url = "#{klass_node.alcn}##{constant.name}"
+        path = Webgen::Path.new(constant_url,
+                                {'handler' => 'copy', 'modified_at' => api_path['modified_at'],
+                                 'pipeline' => [], 'no_output' => true, 'title' => constant.name})
+        @website.ext.path_handler.create_secondary_nodes(path)
+        add_link_definition(api_path, constant.full_name, constant_url, constant.full_name)
+      end
+      protected :create_fragment_node_for_constant
 
       # Create a fragment node for the given method.
       #
