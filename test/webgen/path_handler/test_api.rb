@@ -5,6 +5,8 @@ require 'webgen/path_handler/api'
 
 class TestPathHandlerApi < Minitest::Test
 
+  attr_reader :test_attr
+
   class SampleTestSubclass
   end
 
@@ -44,6 +46,9 @@ class TestPathHandlerApi < Minitest::Test
     assert(@website.tree["#{test_alcn}#method-i-setup"])
     assert_equal(["#{test_alcn}#method-i-setup", 'TestPathHandlerApi#setup'],
                  @website.ext.link_definitions['my_api:TestPathHandlerApi#setup'])
+    assert(@website.tree["#{test_alcn}#attribute-i-test_attr"])
+    assert_equal(["#{test_alcn}#attribute-i-test_attr", 'TestPathHandlerApi#test_attr'],
+                 @website.ext.link_definitions['my_api:TestPathHandlerApi#test_attr'])
     assert(@website.tree['/my_dir/API_rdoc.en.html'])
     assert(@website.tree['/my_dir/TestPathHandlerApi/SampleTestSubclass.en.html'])
 
