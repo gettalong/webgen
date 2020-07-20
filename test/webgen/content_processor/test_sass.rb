@@ -14,7 +14,7 @@ class TestSass < Minitest::Test
     @website.config['content_processor.sass.options'] = {}
     cp = Webgen::ContentProcessor::Sass
 
-    @context.content = "#main\n  :background-color #000"
+    @context.content = "#main\n  background-color: #000"
     result = "#main {\n  background-color: #000; }\n"
     assert_equal(result, cp.call(@context).content)
 

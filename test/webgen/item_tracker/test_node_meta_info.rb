@@ -8,7 +8,8 @@ class TestNodeMetaInfo < Minitest::Test
   def setup
     @website = Object.new
     @node = node = Object.new
-    @node.define_singleton_method(:meta_info) { {'key' => 'value'} }
+    @meta_info_data = meta_info_data = {'key' => 'value'}
+    @node.define_singleton_method(:meta_info) { meta_info_data }
     @website.define_singleton_method(:tree) { {'alcn' => node} }
     @obj = Webgen::ItemTracker::NodeMetaInfo.new(@website)
   end
@@ -25,11 +26,10 @@ class TestNodeMetaInfo < Minitest::Test
     assert_equal('value', @obj.item_data('alcn', 'key'))
     refute_same(@node.meta_info['key'], @obj.item_data('alcn', 'key'))
 
-    @node.define_singleton_method(:meta_info) { {'key' => 'value', 'modified_at' => 5} }
+    @meta_info_data['modified_at'] = 5
     assert_equal({'key' => 'value'}, @obj.item_data('alcn'))
-    @node.define_singleton_method(:meta_info) do
-      {'key' => 'value', 'modified_at' => 5, 'modified_at_in_dest_path' => true}
-    end
+    @meta_info_data['modified_at_in_dest_path'] = true
+
     assert_equal({'key' => 'value', 'modified_at' => 5, 'modified_at_in_dest_path' => true},
                  @obj.item_data('alcn'))
   end

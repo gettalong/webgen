@@ -14,10 +14,10 @@ class TestContentProcessorRuby < Minitest::Test
     @context.content = "context.content = context.dest_node.alcn"
     assert_equal(@context.dest_node.alcn, cp.call(@context).content)
 
-    @context.content = "5+5\n+=+6\n"
+    @context.content = "x = 5+5\n+=+6\n"
     assert_error_on_line(SyntaxError, 2) { cp.call(@context) }
 
-    @context.content = "5+5\nunknown\n++6"
+    @context.content = "x = 5+5\nunknown\n++6"
     assert_error_on_line(NameError, 2) { cp.call(@context) }
   end
 
