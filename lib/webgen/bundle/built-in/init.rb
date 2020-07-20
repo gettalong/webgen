@@ -65,7 +65,7 @@ content_processor.register('Blocks')
 content_processor.register('Builder')
 content_processor.register('CSSMinify', :name => 'cssminify')
 content_processor.register('Erb')
-option('content_processor.erb.trim_mode', '', &is_string)
+option('content_processor.erb.trim_mode', nil, &is_string)
 
 content_processor.register('Erubis')
 option('content_processor.erubis.use_pi', false, &true_or_false)
