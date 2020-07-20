@@ -128,11 +128,9 @@ EOF
     s.files = PKG_FILES.to_a
     s.require_path = 'lib'
     s.executables = ['webgen']
-    s.default_executable = 'webgen'
 
     #### Documentation
 
-    s.has_rdoc = true
     s.rdoc_options = ['--line-numbers', '--main', 'API.rdoc']
     s.extra_rdoc_files = ['API.rdoc']
 
