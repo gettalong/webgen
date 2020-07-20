@@ -5,7 +5,7 @@
 context.node.sitemap_entries.each do |item|
 %>
   <url>
-    <loc><%= URI.escape(item.url) %></loc>
+    <loc><%= ERB::Util.url_encode(item.url) %></loc>
     <lastmod><%= item['modified_at'].iso8601 %></lastmod>
     <changefreq><%= item['change_freq'] || context.node['default_change_freq'] %></changefreq>
     <% if priority = item['priority'] || context.node['default_priority'] %>
