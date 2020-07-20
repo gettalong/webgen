@@ -109,7 +109,7 @@ EOF
 
     s.add_dependency('cmdparse', '~> 3.0', '>= 3.0.1')
     s.add_dependency('systemu', '~> 2.5')
-    s.add_dependency('kramdown', '~> 1.3')
+    s.add_dependency('kramdown', '~> 2.3')
     s.add_development_dependency('rake', '>= 0.8.3')
     s.add_development_dependency('minitest', '~> 5.0')
     s.add_development_dependency('diff-lcs', '~> 1.0')
