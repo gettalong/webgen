@@ -115,7 +115,7 @@ EOF
     s.add_development_dependency('diff-lcs', '~> 1.0')
     s.add_development_dependency('maruku', '~> 0.7')
     s.add_development_dependency('RedCloth', '~> 4.1')
-    s.add_development_dependency('haml', '~> 4.0')
+    s.add_development_dependency('haml', '~> 5.0')
     s.add_development_dependency('sass', '~> 3.2')
     s.add_development_dependency('builder', '~> 2.1')
     s.add_development_dependency('rdoc', '~> 6.0')
