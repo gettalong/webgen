@@ -38,7 +38,7 @@ module Webgen
       def paths
         if !defined?(@paths)
           stream = open(@uri)
-          stream = Zlib::GzipReader.new(stream) if @uri =~ /(\.tar\.gz|\.tgz)$/
+          stream = Zlib::GzipReader.new(stream) if @uri.to_s =~ /(\.tar\.gz|\.tgz)$/
           Archive::Tar::Minitar::Input.open(stream) do |input|
             @paths = input.collect do |entry|
               path = entry.full_name
