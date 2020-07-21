@@ -118,7 +118,7 @@ EOF
     s.add_development_dependency('haml', '~> 4.0')
     s.add_development_dependency('sass', '~> 3.2')
     s.add_development_dependency('builder', '~> 2.1')
-    s.add_development_dependency('rdoc', '~> 4.0')
+    s.add_development_dependency('rdoc', '~> 6.0')
     s.add_development_dependency('coderay', '~> 1.0')
     s.add_development_dependency('erubis', '~> 2.6')
     s.add_development_dependency('rdiscount', '~> 1.3')

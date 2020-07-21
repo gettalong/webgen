@@ -92,7 +92,6 @@ module Webgen
         rdoc.options = rdoc_options(options)
         rdoc.store = rdoc_store(rdoc.options, cache_dir)
 
-        rdoc.exclude = rdoc.options.exclude
         rdoc.last_modified.replace(rdoc.setup_output_dir(cache_dir, false))
 
         if !(rdoc.parse_files(rdoc.options.files)).empty?
