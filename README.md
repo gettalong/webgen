@@ -5,6 +5,11 @@ files (which can be written in any markup language). It can generate
 dynamic content like menus on the fly and comes with many powerful
 extensions.
 
+Sponsors:
+
+* **GROSSWEBER** provides <a href="http://grossweber.com/b/kramdown" target="_blank">software
+  development consulting and training services</a>.
+
 
 ## Contact & Help
 
