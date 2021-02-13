@@ -82,15 +82,22 @@ module Webgen
     def self.languages
       unless defined?(@@languages)
         @@languages = {}
-        started = nil
-        data = File.readlines(__FILE__).each do |l|
-          next if !started && (started = (l == '__END__'))
+
+        reached_data_lines = false
+        data_lines = File.readlines(__FILE__).drop_while do |line|
+          next false if reached_data_lines
+          reached_data_lines = true if line == "__END__\n"
+          true
+        end
+
+        data_lines.each do |l|
           data = l.chomp.split('|').collect {|f| f.empty? ? nil : f}
           lang = Language.new(data[0..2], data[3])
           @@languages[lang.code2chars] ||= lang unless lang.code2chars.nil?
           @@languages[lang.code3chars] ||= lang unless lang.code3chars.nil?
           @@languages[lang.code3chars_alternative] ||= lang unless lang.code3chars_alternative.nil?
         end
+
         @@languages.freeze
       end
       @@languages

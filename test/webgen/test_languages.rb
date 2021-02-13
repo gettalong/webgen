@@ -64,4 +64,12 @@ class TestLanguages < Minitest::Test
                  Webgen::LanguageManager.language_for_code(en))
   end
 
+  def test_loaded_languages
+    # Languages should only be loaded from DATA section, after __END__ line
+    path = Webgen::LanguageManager.method(:languages).source_location.first
+    ignored_line = File.readlines(path).first
+    keys = Webgen::LanguageManager.languages.keys
+    refute_includes keys, ignored_line
+    refute_includes keys, ignored_line.chomp
+  end
 end
