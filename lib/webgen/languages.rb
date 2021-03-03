@@ -84,7 +84,7 @@ module Webgen
         @@languages = {}
         started = nil
         data = File.readlines(__FILE__).each do |l|
-          next if !started && (started = (l == '__END__'))
+          next unless (started ||= (l == "aar||aa|Afar|afar\n"))
           data = l.chomp.split('|').collect {|f| f.empty? ? nil : f}
           lang = Language.new(data[0..2], data[3])
           @@languages[lang.code2chars] ||= lang unless lang.code2chars.nil?

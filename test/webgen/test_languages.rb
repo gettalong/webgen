@@ -7,6 +7,7 @@ class TestLanguages < Minitest::Test
 
   def test_get_language
     assert_nil(Webgen::LanguageManager.language_for_code(nil))
+    assert_nil(Webgen::LanguageManager.language_for_code('__END__'))
 
     lang1 = Webgen::LanguageManager.language_for_code('ger')
     lang2 = Webgen::LanguageManager.language_for_code('deu')
