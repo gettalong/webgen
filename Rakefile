@@ -105,7 +105,7 @@ EOF
 
     #### Dependencies, requirements and files
 
-    s.required_ruby_version = '>= 2.0.0'
+    s.required_ruby_version = '>= 2.6.0'
 
     s.add_dependency('cmdparse', '~> 3.0', '>= 3.0.1')
     s.add_dependency('systemu', '~> 2.5')
