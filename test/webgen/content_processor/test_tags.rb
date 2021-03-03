@@ -37,6 +37,7 @@ class TestContentProcessorTags < Minitest::Test
       assert_nil(params)
       assert_equal('', body)
       assert_equal(@context, local_context)
+      ''
     end
     cp.call(@context)
   end

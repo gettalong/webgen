@@ -111,6 +111,7 @@ class TestTag < Minitest::Test
       assert_equal('test', tag)
       assert_equal({'param' => 'value'}, params)
       assert_equal('', body)
+      ''
     end
   end
 
