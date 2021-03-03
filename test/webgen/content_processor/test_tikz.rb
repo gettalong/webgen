@@ -39,7 +39,8 @@ class TestContentProcessorTikz < Minitest::Test
                                    'content_processor.tikz.transparent' => trans,
                                    'content_processor.tikz.libraries' => libs,
                                    'content_processor.tikz.opts' => opts,
-                                   'content_processor.tikz.template' => '/template')
+                                   'content_processor.tikz.template' => '/template',
+                                   'content_processor.tikz.engine' => 'pdflatex')
     Webgen::ContentProcessor::Tikz.call(@context)
   end
 
