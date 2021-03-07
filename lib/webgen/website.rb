@@ -4,6 +4,7 @@
 require 'stringio'
 require 'fileutils'
 require 'ostruct'
+require 'date'
 
 # Requirements for Website
 require 'webgen/core_ext'
