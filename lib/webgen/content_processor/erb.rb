@@ -13,7 +13,11 @@ module Webgen
 
       # Process the Ruby statements embedded in the content of +context+.
       def self.call(context)
-        erb = ERB.new(context.content, trim_mode: context.website.config['content_processor.erb.trim_mode'])
+        erb = if RUBY_VERSION < '2.6'
+                ERB.new(context.content, nil, context.website.config['content_processor.erb.trim_mode'] || '')
+              else
+                ERB.new(context.content, trim_mode: context.website.config['content_processor.erb.trim_mode'])
+              end
         erb.filename = context.ref_node.alcn
         context.content = erb.result(binding)
         context
