@@ -62,7 +62,7 @@ class TestContext < Minitest::Test
 
   def test_tags_methods
     context = Webgen::Context.new(@website)
-    tag = MiniTest::Mock.new
+    tag = Minitest::Mock.new
     tag.expect(:call, 'value', ['mytag', {'opt' => 'val'}, 'body', context])
     @website.ext.tag = tag
 

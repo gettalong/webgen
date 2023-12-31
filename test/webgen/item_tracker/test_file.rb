@@ -7,7 +7,7 @@ require 'webgen/item_tracker/file'
 class TestItemTrackerFile < Minitest::Test
 
   def setup
-    @website = MiniTest::Mock.new
+    @website = Minitest::Mock.new
     @obj = Webgen::ItemTracker::File.new(@website)
   end
 

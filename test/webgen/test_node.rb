@@ -111,7 +111,7 @@ class TestNode < Minitest::Test
     assert_equal(tree['/dir2/index.en.html'], tree['/dir2/'].proxy_node('en'))
     assert_equal(tree['/dir2/index.en.html'], tree['/dir2/'].proxy_node('en'))
 
-    @website.ext.item_tracker = MiniTest::Mock.new
+    @website.ext.item_tracker = Minitest::Mock.new
     @website.ext.item_tracker.expect(:add, nil, [:a, :b, :c, :d])
     tree['/dir/subfile.html'].meta_info['proxy_path'] = 'holla'
     assert_equal(tree['/dir/subfile.html'], tree['/dir/subfile.html'].proxy_node('pt'))

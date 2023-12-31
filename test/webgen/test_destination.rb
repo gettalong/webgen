@@ -12,7 +12,7 @@ end
 class TestDestination < Minitest::Test
 
   def setup
-    @website = MiniTest::Mock.new
+    @website = Minitest::Mock.new
     @dest = Webgen::Destination.new(@website)
   end
 

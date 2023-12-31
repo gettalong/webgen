@@ -18,10 +18,10 @@ class TestSourceStacked < Minitest::Test
   end
 
   def test_paths
-    path1 = MiniTest::Mock.new
+    path1 = Minitest::Mock.new
     path1.expect(:mount_at, 'path1', ['/'])
     path1.expect(:hash, 'path1'.hash)
-    path2 = MiniTest::Mock.new
+    path2 = Minitest::Mock.new
     path2.expect(:mount_at, 'path2', ['/hallo/'])
     path2.expect(:hash, 'path2'.hash)
 

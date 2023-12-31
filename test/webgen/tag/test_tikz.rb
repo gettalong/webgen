@@ -10,7 +10,7 @@ class TestTagTikz < Minitest::Test
     require 'webgen/tag/tikz' rescue skip($!.message)
 
     setup_context
-    @website.ext.path_handler = MiniTest::Mock.new
+    @website.ext.path_handler = Minitest::Mock.new
 
     root = Webgen::Node.new(@website.tree.dummy_root, '/', '/')
     node = Webgen::Node.new(root, 'file.page', '/file.html')

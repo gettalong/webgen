@@ -37,7 +37,7 @@ class TestItemTrackerNodes < Minitest::Test
 
   def test_item_changed?
     setup_default_nodes(@website.tree)
-    @website.ext.item_tracker = MiniTest::Mock.new
+    @website.ext.item_tracker = Minitest::Mock.new
     2.times do
       @website.ext.item_tracker.expect(:item_changed?, false, [:node_meta_info, @website.tree['/file.en.html']])
       @website.ext.item_tracker.expect(:item_changed?, false, [:node_meta_info, @website.tree['/file.de.html']])
