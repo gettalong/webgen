@@ -10,6 +10,7 @@ require 'webgen/cli/commands/generate'
 require 'webgen/cli/commands/show'
 require 'webgen/cli/commands/create'
 require 'webgen/cli/commands/install'
+require 'webgen/utils'
 
 module Webgen
 
@@ -129,7 +130,7 @@ module Webgen
           opts.on("-o", "--option CONFIG_OPTION", String, "Specify a simple configuration option (key=value)") do |v|
             k, v = v.split('=')
             begin
-              @config_options[k.to_s] = YAML.load(v.to_s)
+              @config_options[k.to_s] = Utils.yaml_load(v.to_s)
             rescue YAML::SyntaxError
               raise ConfigurationOptionError.new("Couldn't parse value for '#{k}': #{$!}")
             end

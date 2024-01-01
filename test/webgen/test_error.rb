@@ -26,7 +26,7 @@ class TestError < Minitest::Test
 
   def test_class_error_line
     begin
-      eval("5 =")
+      eval("5 =", binding, "(eval)", 1)
     rescue SyntaxError => e
       assert_equal(1, Webgen::Error.error_line(e))
     end
@@ -40,7 +40,7 @@ class TestError < Minitest::Test
 
   def test_class_error_file
     begin
-      eval("5 =")
+      eval("5 =", binding, "(eval)")
     rescue SyntaxError => e
       assert_equal('(eval)', Webgen::Error.error_file(e))
     end
@@ -79,7 +79,7 @@ class TestRenderError < Minitest::Test
     assert_match(/Error at location in <\/error:~5> while rendering <\/path>/, e.message)
 
     begin
-      eval("5 =")
+      eval("5 =", binding, "(eval)", 1)
     rescue SyntaxError
       e = Webgen::RenderError.new($!, 'location', '/path', '/error')
       assert_equal("/error", e.error_path)

@@ -5,6 +5,7 @@ require 'set'
 require 'yaml'
 require 'webgen/path_handler/base'
 require 'webgen/path_handler/page_utils'
+require 'webgen/utils'
 
 module Webgen
   class PathHandler
@@ -44,7 +45,7 @@ module Webgen
       # Add the data from the given page block to the hash.
       def add_data(path, content, block_name)
         entries = []
-        if content && (data = YAML::load(content))
+        if content && (data = Utils.yaml_load(content))
           data.each do |(*keys), value|
             value = Marshal.dump(value)
             keys.each {|key| entries << [Webgen::Path.append(path.parent_path, key), value]}

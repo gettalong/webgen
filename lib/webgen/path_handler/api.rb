@@ -226,7 +226,7 @@ module Webgen
       # fragments.
       def create_fragment_nodes_for_methods(api_path, klass_node, klass)
         ["Class", "Instance"].each do |type|
-          method_list = klass.send("#{type.downcase}_method_list")
+          method_list = type == 'Class' ? klass.class_method_list : klass.instance_methods
           next if method_list.empty?
           meth_url = "#{klass_node.alcn}##{type}-Methods"
           path = Webgen::Path.new(meth_url,

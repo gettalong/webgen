@@ -4,6 +4,7 @@ require 'yaml'
 require 'webgen/path'
 require 'webgen/path_handler/base'
 require 'webgen/path_handler/page_utils'
+require 'webgen/utils'
 
 module Webgen
   class PathHandler
@@ -65,7 +66,7 @@ module Webgen
       def read_entries(blocks)
         blocks.each do |name, content|
           begin
-            data = YAML::load(content)
+            data = Utils.yaml_load(content)
           rescue RuntimeError, ArgumentError, SyntaxError, YAML::SyntaxError => e
             raise RuntimeError, "Problem parsing block '#{name}' (it needs to contain a YAML hash): #{e.message}", e.backtrace
           end

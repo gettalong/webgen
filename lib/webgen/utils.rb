@@ -2,6 +2,7 @@
 
 require 'rbconfig'
 require 'webgen/core_ext'
+require 'yaml'
 
 module Webgen
 
@@ -32,6 +33,11 @@ module Webgen
       str.gsub!(/([a-z])([A-Z])/,'\1_\2')
       str.downcase!
       str
+    end
+
+    # Load the YAML string.
+    def self.yaml_load(str)
+      YAML.load(str, aliases: true, permitted_classes: [Symbol, Time])
     end
 
   end

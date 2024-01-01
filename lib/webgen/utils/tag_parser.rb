@@ -3,6 +3,7 @@
 require 'yaml'
 require 'strscan'
 require 'webgen/error'
+require 'webgen/utils'
 
 module Webgen
   module Utils
@@ -113,7 +114,7 @@ module Webgen
 
       # Parse the parameter string and return the result.
       def parse_params(param_string, tag)
-        YAML::load("--- #{param_string}")
+        Utils.yaml_load("--- #{param_string}")
       rescue ArgumentError, SyntaxError, YAML::SyntaxError => e
         raise Error.new("Could not parse parameter string '#{param_string}' for tag '#{tag}': #{e.message}")
       end

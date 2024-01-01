@@ -2,6 +2,7 @@
 
 require 'yaml'
 require 'webgen/error'
+require 'webgen/utils'
 
 module Webgen
 
@@ -171,7 +172,7 @@ module Webgen
     def load_from_file(filename)
       data = if String === filename || filename.respond_to?(:read)
                begin
-                 YAML::load(String === filename ? File.read(filename) : filename.read) || {}
+                 Utils.yaml_load(String === filename ? File.read(filename) : filename.read) || {}
                rescue RuntimeError, ArgumentError, SyntaxError, YAML::SyntaxError => e
                  raise Error, "Problem parsing configuration data (it needs to contain a YAML hash): #{e.message}", e.backtrace
                end

@@ -1,8 +1,8 @@
 # -*- encoding: utf-8 -*-
 
 require 'rbconfig'
-require 'yaml'
 require 'webgen/error'
+require 'webgen/utils'
 
 module Webgen
 
@@ -59,7 +59,7 @@ module Webgen
           if info_file.nil?
             @infos[:bundles][bundle] = {}
           else
-            infos = YAML.load(File.read(info_file))
+            infos = Utils.yaml_load(File.read(info_file))
             [:extensions, :options].each do |type|
               if data = infos.delete(type.to_s)
                 data.each do |name, hash|
@@ -134,7 +134,7 @@ module Webgen
 
         info_file = File.join(File.dirname(file), 'info.yaml')
         next unless File.file?(info_file)
-        next unless (begin YAML.load(File.read(info_file))['autoload']; rescue Exception; false end)
+        next unless (begin Utils.yaml_load(File.read(info_file))['autoload']; rescue Exception; false end)
 
         load(bundle_name)
       end

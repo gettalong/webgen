@@ -2,6 +2,7 @@
 
 require 'yaml'
 require 'webgen/error'
+require 'webgen/utils'
 
 module Webgen
 
@@ -49,7 +50,7 @@ module Webgen
           {}
         else
           begin
-            meta_info = YAML::load(mi_data.to_s)
+            meta_info = Utils.yaml_load(mi_data.to_s)
             unless meta_info.kind_of?(Hash)
               raise FormatError, "Invalid structure of meta information block: expected YAML hash but found #{meta_info.class}"
             end
@@ -78,7 +79,7 @@ module Webgen
           else
             md = RE_BLOCKS_START_COMPLEX.match(options.to_s)
             raise(FormatError, "Found invalid blocks starting line for block #{index}: #{options}") if content =~ /\A---/ || md.nil?
-            options = Hash[*md[1].to_s.scan(/(\w+):([^\s]*)/).map {|k,v| [k, (v == '' ? nil : YAML::load(v))]}.flatten]
+            options = Hash[*md[1].to_s.scan(/(\w+):([^\s]*)/).map {|k,v| [k, (v == '' ? nil : Utils.yaml_load(v))]}.flatten]
           end
 
           name = options.delete('name') || (index == 1 ? 'content' : 'block' + (index).to_s)

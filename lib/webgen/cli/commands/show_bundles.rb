@@ -1,6 +1,7 @@
 # -*- encoding: utf-8 -*-
 
 require 'webgen/cli/utils'
+require 'webgen/utils'
 
 module Webgen
   module CLI
@@ -32,7 +33,7 @@ DESC
         populate_hash = lambda do |file|
           bundle_name = File.basename(File.dirname(file))
           info_file = File.join(File.dirname(file), 'info.yaml')
-          bundles[bundle_name] ||= (File.file?(info_file) ? YAML.load(File.read(info_file)) : {})
+          bundles[bundle_name] ||= (File.file?(info_file) ? Utils.yaml_load(File.read(info_file)) : {})
           bundles[bundle_name][:state] ||= :available
           bundles[bundle_name]
         end
