@@ -94,7 +94,10 @@ module Webgen
 
       @level = -1
       @tree = @parent
-      (@level += 1; @tree = @tree.parent) while @tree.kind_of?(Webgen::Node)
+      while @tree.kind_of?(Webgen::Node)
+        @level += 1
+        @tree = @tree.parent
+      end
 
       @tree.register_node(self)
       @parent.children << self unless @parent == @tree
